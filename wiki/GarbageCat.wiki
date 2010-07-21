@@ -1,3 +1,0 @@
-= Introduction =
-
-GarbageCat parses Java garbage collection logging and provides analysis to support JVM tuning and troubleshooting for OpenJDK and Sun JDK. It differs from other tools in that it goes beyond the simple math of calculating statistics such as maximum pause time and throughput. It adds context to these numbers by identifying the associated collector or collector phase, allowing for much deeper insight and analysis. 
