@@ -1,0 +1,2 @@
+85238.030: [Full GC 85238.030: [CMS85238.672: [CMS-concurrent-mark: 0.666/0.686 secs] [Times: user=1.40 sys=0.01, real=0.69 secs]
+ (concurrent mode failure): 439328K->439609K(4023936K), 2.7153820 secs] 448884K->439609K(4177280K), [CMS Perm : 262143K->262143K(262144K)], 2.7156150 secs] [Times: user=3.35 sys=0.00, real=2.72 secs]

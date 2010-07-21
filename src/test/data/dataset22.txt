@@ -1,0 +1,2 @@
+100.714: [Full GC 100.714: [CMS[Unloading class $Proxy206]
+121.841: [GC 121.841: [ParNew: 136320K->17023K(153344K), 0.1101020 secs] 485892K->381436K(4590976K), 0.1102170 secs] [Times: user=0.16 sys=0.00, real=0.10 secs]

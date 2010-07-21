@@ -1,0 +1,5 @@
+10.204: [GC 10.204: [DefNew
+Desired survivor size 2228224 bytes, new threshold 1 (max 15)
+- age   1:    3177664 bytes,    3177664 total
+- age   2:    1278784 bytes,    4456448 total
+: 36825K->4352K(39424K), 0.0224830 secs] 44983K->14441K(126848K), 0.0225800 secs]

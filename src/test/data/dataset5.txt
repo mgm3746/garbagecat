@@ -1,0 +1,8 @@
+233288.698: [GC [1 CMS-initial-mark: 1117964K(1310720K)] 1569902K(2018560K), 2.0271745 secs]
+233290.726: [CMS-concurrent-mark-start]
+233307.273: [CMS-concurrent-mark: 16.547/16.547 secs]
+233307.273: [CMS-concurrent-preclean-start]
+233307.425: [CMS-concurrent-preclean: 0.137/0.151 secs]
+233307.425: [CMS-concurrent-abortable-preclean-start]
+233333.318: [GC 233333.319: [ParNew (promotion failed): 673108K->673108K(707840K), 1.5366054 secs]233334.855: [CMS233334.856: [CMS-concurrent-abortable-preclean: 12.033/27.431 secs]
+ (concurrent mode failure): 1125100K->1156809K(1310720K), 36.8003032 secs] 1791073K->1156809K(2018560K), 38.3378201 secs] 
