@@ -1,0 +1,3 @@
+4300.825: [Full GC 4300.825: [CMSbailing out to foreground collection
+4310.434: [CMS-concurrent-mark: 10.548/10.777 secs] [Times: user=40.43 sys=3.94, real=10.78 secs]
+ (concurrent mode failure): 6014591K->6014592K(6014592K), 79.9352305 secs] 6256895K->6147510K(6256896K), [CMS Perm : 206989K->206977K(262144K)], 79.9356622 secs] [Times: user=101.02 sys=3.09, real=79.94 secs]
