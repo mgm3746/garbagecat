@@ -85,7 +85,7 @@ Notes:
   # There is a limit of 1000 unidentified log lines that will be reported.
   # If there are any unidentifed logging lines, run the report again with the -p preprocessing option enabled.
   # Once prepocessing is done once, do not use the -p preprocessing option again, but instead specify the preprocessed file as input (e.g. java -jar /path/to/garbagecat-1.0.0.jar gc.log.pp).
-  # Please report unidentified log lines to mmillson at redhat.com so they can be accounted for in future releases either as new logging events or additional preprocessing.
+  # Please report unidentified log lines by opening an issue and zipping up and attaching the garbage collection logging.
 
 ==Example==
 
