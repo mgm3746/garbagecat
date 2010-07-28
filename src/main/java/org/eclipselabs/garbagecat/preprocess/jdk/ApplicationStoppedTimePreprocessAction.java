@@ -32,6 +32,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <h4>{@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} on second line:</h4>
+ * 
  * <pre>
  * 6545.692Total time for which application threads were stopped: 0.0007993 seconds
  * : [CMS-concurrent-abortable-preclean: 0.025/0.042 secs] [Times: user=0.04 sys=0.00, real=0.04 secs]
@@ -44,6 +46,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 6545.692: [CMS-concurrent-abortable-preclean: 0.025/0.042 secs] [Times: user=0.04 sys=0.00, real=0.04 secs]
  * </pre>
  * 
+ * <h4>{@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} on first line:</h4>
+ * 
+ * <pre>
+ * 234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for which application threads were stopped: 0.0123330 seconds
+ *  [Times: user=0.10 sys=0.00, real=0.12 secs]
+ * </pre>
+ * 
+ * Preprocessed:
+ * 
+ * <pre>
+ * Total time for which application threads were stopped: 0.0123330 seconds
+ * 234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs] [Times: user=0.10 sys=0.00, real=0.12 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -54,13 +70,15 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
 	 */
 	private static final String REGEX_LINE1 = "^("
 			+ JdkRegEx.TIMESTAMP
-			+ ")(Total time for which application threads were stopped: \\d{1,4}\\.\\d{7} seconds)$";
+			+ ")(: \\[CMS-concurrent-(abortable-preclean|mark|preclean): "
+			+ JdkRegEx.DURATION_FRACTION
+			+ "\\])?(Total time for which application threads were stopped: \\d{1,4}\\.\\d{7} seconds)$";
 
 	/**
 	 * Regular expressions defining the 2nd logging line.
 	 */
 	private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-abortable-preclean: "
-			+ JdkRegEx.DURATION_FRACTION + "\\])?" + JdkRegEx.TIMES_BLOCK + "?$";
+			+ JdkRegEx.DURATION_FRACTION + "\\])?" + JdkRegEx.TIMES_BLOCK + "[ ]*$";
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.
@@ -76,10 +94,13 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
 		if (matcher.find()) {
 			this.logEntry = logEntry;
 			// Split line1 logging apart
-			if (matcher.group(3) != null) {
-				this.logEntry = matcher.group(3) + "\n";
+			if (matcher.group(6) != null) {
+				this.logEntry = matcher.group(6) + "\n";
 				if (matcher.group(1) != null) {
 					this.logEntry = this.logEntry + matcher.group(1);
+				}
+				if (matcher.group(3) != null) {
+					this.logEntry = this.logEntry + matcher.group(3);
 				}
 			}
 		} else {

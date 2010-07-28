@@ -378,6 +378,27 @@ public class TestJdkUtil extends TestCase {
 				.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
 	}
 
+	/**
+	 * Test preprocessing a combined <code>CmsConcurrentEvent</code> and
+	 * <code>ApplicationStoppedTimeEvent</code> split across 2 lines.
+	 */
+	public void testCombinedCmsConcurrentApplicationStoppedTimeLogging() {
+		// TODO: Create File in platform independent way.
+		File testFile = new File("src/test/data/dataset27.txt");
+		GcaManager jvmManager = new GcaManager();
+		File preprocessedFile = jvmManager.preprocess(testFile, null);
+		jvmManager.store(preprocessedFile);
+		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
+				Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+		Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".", jvmRun.getEventTypes()
+				.contains(JdkUtil.LogEventType.CMS_CONCURRENT));
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".", jvmRun
+				.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
+	}
+
 	public void testRemoveBlankLines() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset20.txt");
