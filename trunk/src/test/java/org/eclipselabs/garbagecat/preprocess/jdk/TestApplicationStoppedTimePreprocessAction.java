@@ -30,4 +30,22 @@ public class TestApplicationStoppedTimePreprocessAction extends TestCase {
 				+ JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".",
 				ApplicationStoppedTimePreprocessAction.match(logLine, priorLogLine));
 	}
+
+	public void testLine2TimesBlock() {
+		String priorLogLine = "234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for"
+				+ " which application threads were stopped: 0.0123330 seconds";
+		String logLine = " [Times: user=0.10 sys=0.00, real=0.12 secs]";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".",
+				ApplicationStoppedTimePreprocessAction.match(logLine, priorLogLine));
+	}
+
+	public void testLine2TimesBlockWhitespaceAtEnd() {
+		String priorLogLine = "234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for"
+				+ " which application threads were stopped: 0.0123330 seconds";
+		String logLine = " [Times: user=0.10 sys=0.00, real=0.12 secs]   ";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".",
+				ApplicationStoppedTimePreprocessAction.match(logLine, priorLogLine));
+	}
 }
