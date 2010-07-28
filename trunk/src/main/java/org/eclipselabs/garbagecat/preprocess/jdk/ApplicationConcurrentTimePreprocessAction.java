@@ -32,6 +32,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <h4><{@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} on second line./h4>
+ * 
  * <pre>
  * 1122748.949Application time: 0.0005210 seconds
  * : [CMS-concurrent-mark-start]
@@ -44,6 +46,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 1122748.949: [CMS-concurrent-mark-start]
  * </pre>
  * 
+ * <h4><{@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} on first line./h4>
+ * 
+ * <pre>
+ * 408365.532: [CMS-concurrent-mark: 0.476/10.257 secs]Application time: 0.0576080 seconds
+ *  [Times: user=6.00 sys=0.28, real=10.26 secs]
+ * </pre>
+ * 
+ * Preprocessed:
+ * 
+ * <pre>
+ * Application time: 0.0576080 seconds
+ * 408365.532: [CMS-concurrent-mark: 0.476/10.257 secs] [Times: user=6.00 sys=0.28, real=10.26 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -53,14 +69,14 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
 	 * Regular expressions defining the 1st logging line.
 	 */
 	private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP
-			+ ")(: \\[CMS-concurrent-preclean: " + JdkRegEx.DURATION_FRACTION
-			+ "\\])?(Application time: \\d{1,4}\\.\\d{7} seconds)$";
+			+ ")(: \\[CMS-concurrent-(abortable-preclean|mark|preclean): "
+			+ JdkRegEx.DURATION_FRACTION + "\\])?(Application time: \\d{1,4}\\.\\d{7} seconds)$";
 
 	/**
 	 * Regular expressions defining the 2nd logging line.
 	 */
 	private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-mark-start\\])?"
-			+ JdkRegEx.TIMES_BLOCK + "?$";
+			+ JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.
@@ -76,8 +92,8 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
 		if (matcher.find()) {
 			this.logEntry = logEntry;
 			// Split line1 logging apart
-			if (matcher.group(5) != null) {
-				this.logEntry = matcher.group(5) + "\n";
+			if (matcher.group(6) != null) {
+				this.logEntry = matcher.group(6) + "\n";
 				if (matcher.group(1) != null) {
 					this.logEntry = this.logEntry + matcher.group(1);
 				}

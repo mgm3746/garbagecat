@@ -1,2 +1,2 @@
-1122748.949Application time: 0.0005210 seconds
-: [CMS-concurrent-mark-start]
+408365.532: [CMS-concurrent-mark: 0.476/10.257 secs]Application time: 0.0576080 seconds
+ [Times: user=6.00 sys=0.28, real=10.26 secs] 
