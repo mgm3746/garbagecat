@@ -37,6 +37,14 @@ public class TestCmsConcurrentEvent extends TestCase {
 				.match(logLine));
 	}
 
+	public void testMarkWithTimesData() {
+		String logLine = "242107.737: [CMS-concurrent-mark: 0.443/10.257 secs] "
+				+ "[Times: user=6.00 sys=0.28, real=10.26 secs]";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".", CmsConcurrentEvent
+				.match(logLine));
+	}
+
 	public void testPrecleanStart() {
 		String logLine = "252.707: [CMS-concurrent-preclean-start]";
 		Assert.assertTrue("Log line not recognized as "
