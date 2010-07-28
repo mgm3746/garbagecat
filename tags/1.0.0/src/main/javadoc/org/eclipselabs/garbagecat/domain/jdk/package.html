@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<!--
+
+/******************************************************************************
+ *                                                                            *
+ * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
+ * All rights reserved. This program and the accompanying materials           *
+ * are made available under the terms of the Eclipse Public License v1.0      *
+ * which accompanies this distribution, and is available at                   *
+ * http://www.eclipse.org/legal/epl-v10.html                                  *
+ *                                                                            *
+ * Contributors:                                                              *
+ *    Red Hat, Inc. - initial API and implementation                          *
+ ******************************************************************************/
+
+-->
+</head>
+<body>
+<p>Provides OpenJDK and Sun JDK domain classes.</p>
+<h3>Common handling of logging events:</h3>
+<p>1. Ignore any whitespace at the end of a logging line.</p>
+<p>2. Ignore the "Times" block that is sometimes at the end of a
+logging line. For example:</p>
+<pre>251.763: [GC [1 CMS-initial-mark: 4133273K(8218240K)] 4150346K(8367360K), 0.0174433 secs] [Times: user=0.02 sys=0.00, real=0.02 secs]</pre>
+<p>3. Ignore icms_dc data. For example:</p>
+<pre>
+165.805: [Full GC 165.805: [CMS: 101481K->97352K(1572864K), 1.1183800 secs] 287075K->97352K(2080768K), [CMS Perm : 68021K->67965K(262144K)] icms_dc=10 , 1.1186020 secs]
+</pre>
+<!-- Put @see and @since tags down here. -->
+</body>
+</html>
