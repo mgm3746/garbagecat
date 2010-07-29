@@ -182,6 +182,25 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * }
  *</pre>
  * 
+ * 
+ * <p>
+ * 6) With Class Data Sharing (CDS) information:
+ * </p>
+ * 
+ * <pre>
+ * 19.494: [ParNew: 308477K-&gt;25361K(309696K), 0.0911180 secs] 326271K-&gt;75121K(1014208K)Heap after gc invocations=4:
+ *  par new generation   total 309696K, used 25361K [0x00002aab1aab0000, 0x00002aab2fab0000, 0x00002aab2fab0000)
+ *   eden space 275328K,   0% used [0x00002aab1aab0000, 0x00002aab1aab0000, 0x00002aab2b790000)
+ *   from space 34368K,  73% used [0x00002aab2b790000, 0x00002aab2d0544a8, 0x00002aab2d920000)
+ *   to   space 34368K,   0% used [0x00002aab2d920000, 0x00002aab2d920000, 0x00002aab2fab0000)
+ *  tenured generation   total 704512K, used 49760K [0x00002aab2fab0000, 0x00002aab5aab0000, 0x00002aab7aab0000)
+ *    the space 704512K,   7% used [0x00002aab2fab0000, 0x00002aab32b482a0, 0x00002aab32b48400, 0x00002aab5aab0000)
+ *  compacting perm gen  total 262144K, used 65340K [0x00002aab7aab0000, 0x00002aab8aab0000, 0x00002aab8aab0000)
+ *    the space 262144K,  24% used [0x00002aab7aab0000, 0x00002aab7ea7f138, 0x00002aab7ea7f200, 0x00002aab8aab0000)
+ * No shared spaces configured.
+ * }
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -212,11 +231,13 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
 	private static final String[] REGEX_THROWAWAY = {
 			"^ (PSYoungGen|PSOldGen|ParOldGen|PSPermGen)[ ]+total " + JdkRegEx.SIZE + ", used "
 					+ JdkRegEx.SIZE + ".+$",
-			"^ (par new generation|concurrent mark-sweep generation|concurrent-mark-sweep perm gen)"
-					+ "[ ]+total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + ".+$",
-			"^  (eden|from|to|object)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$", "^}$",
-			"^\\{Heap before GC invocations=\\d{1,10} \\(full \\d{1}\\):$",
-			"^Heap after GC invocations=\\d{1,10} \\(full \\d{1}\\):$" };
+			"^ (par new generation|concurrent mark-sweep generation|concurrent-mark-sweep perm gen"
+					+ "|tenured generation|compacting perm gen)" + "[ ]+total " + JdkRegEx.SIZE
+					+ ", used " + JdkRegEx.SIZE + ".+$",
+			"^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$",
+			"^}$", "^\\{Heap before GC invocations=\\d{1,10} \\(full \\d{1}\\):$",
+			"^Heap after GC invocations=\\d{1,10} \\(full \\d{1}\\):$",
+			"No shared spaces configured." };
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.

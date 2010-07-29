@@ -253,4 +253,34 @@ public class TestPrintHeapAtGcPreprocessAction extends TestCase {
 				PrintHeapAtGcPreprocessAction.match(logLine));
 	}
 
+	public void testClassDataSharingLine() {
+		String logLine = "No shared spaces configured.";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
+				PrintHeapAtGcPreprocessAction.match(logLine));
+	}
+
+	public void testTenuredGenerationLine() {
+		String logLine = " tenured generation   total 704512K, used 17793K [0x00002aab2fab0000, "
+				+ "0x00002aab5aab0000, 0x00002aab7aab0000)";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
+				PrintHeapAtGcPreprocessAction.match(logLine));
+	}
+
+	public void testCompactingPermGenLine() {
+		String logLine = " compacting perm gen  total 262144K, used 65340K [0x00002aab7aab0000, "
+				+ "0x00002aab8aab0000, 0x00002aab8aab0000)";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
+				PrintHeapAtGcPreprocessAction.match(logLine));
+	}
+
+	public void testTheSpaceLine() {
+		String logLine = "   the space 704512K,   2% used [0x00002aab2fab0000, 0x00002aab30c107e8, "
+				+ "0x00002aab30c10800, 0x00002aab5aab0000)";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
+				PrintHeapAtGcPreprocessAction.match(logLine));
+	}
 }
