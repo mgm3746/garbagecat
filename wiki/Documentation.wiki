@@ -16,6 +16,19 @@ mvn assembly:assembly
 mvn javadoc:javadoc
 }}}
 
+If you get the following error:
+
+{{{
+org.apache.maven.surefire.booter.SurefireExecutionException: TestCase; nested exception is java.lang.NoClassDefFoundError: TestCase
+java.lang.NoClassDefFoundError: TestCase
+}}}
+
+Run the following command:
+
+{{{
+mvn -U -fn clean install
+}}}
+
 ==Usage==
 
 {{{
