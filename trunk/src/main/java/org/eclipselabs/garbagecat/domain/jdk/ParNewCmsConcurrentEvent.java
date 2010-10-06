@@ -48,11 +48,11 @@ public class ParNewCmsConcurrentEvent implements BlockingEvent, YoungCollection,
 	 * Regular expressions defining the logging.
 	 */
 	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
-			+ ": \\[ParNew" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-abortable-preclean: "
-			+ JdkRegEx.DURATION_FRACTION + "\\]: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-			+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
-			+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-			+ JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+			+ ": \\[ParNew" + JdkRegEx.TIMESTAMP
+			+ ": \\[CMS-concurrent-(abortable-preclean|mark|sweep): " + JdkRegEx.DURATION_FRACTION
+			+ "\\]: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+			+ JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+			+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.
@@ -109,16 +109,16 @@ public class ParNewCmsConcurrentEvent implements BlockingEvent, YoungCollection,
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			young = new Integer(matcher.group(5)).intValue();
-			youngEnd = new Integer(matcher.group(6)).intValue();
-			youngAvailable = new Integer(matcher.group(7)).intValue();
-			int totalBegin = new Integer(matcher.group(9)).intValue();
+			young = new Integer(matcher.group(6)).intValue();
+			youngEnd = new Integer(matcher.group(7)).intValue();
+			youngAvailable = new Integer(matcher.group(8)).intValue();
+			int totalBegin = new Integer(matcher.group(10)).intValue();
 			old = totalBegin - young;
-			int totalEnd = new Integer(matcher.group(10)).intValue();
+			int totalEnd = new Integer(matcher.group(11)).intValue();
 			oldEnd = totalEnd - youngEnd;
-			int totalAllocation = new Integer(matcher.group(11)).intValue();
+			int totalAllocation = new Integer(matcher.group(12)).intValue();
 			oldAllocation = totalAllocation - youngAvailable;
-			duration = JdkMath.convertSecsToMillis(matcher.group(12)).intValue();
+			duration = JdkMath.convertSecsToMillis(matcher.group(13)).intValue();
 		}
 	}
 

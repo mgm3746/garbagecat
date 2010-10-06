@@ -53,7 +53,7 @@ public class ParNewCmsConcurrentPreprocessAction implements PreprocessAction {
 	 */
 	private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC "
 			+ JdkRegEx.TIMESTAMP + ": \\[ParNew" + JdkRegEx.TIMESTAMP
-			+ ": \\[CMS-concurrent-(abortable-preclean|mark): " + JdkRegEx.DURATION_FRACTION
+			+ ": \\[CMS-concurrent-(abortable-preclean|mark|sweep): " + JdkRegEx.DURATION_FRACTION
 			+ "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
 	/**

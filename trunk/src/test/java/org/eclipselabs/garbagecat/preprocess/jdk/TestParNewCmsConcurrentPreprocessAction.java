@@ -44,4 +44,15 @@ public class TestParNewCmsConcurrentPreprocessAction extends TestCase {
 				+ JdkUtil.PreprocessActionType.PAR_NEW_CMS_CONCURRENT.toString() + ".",
 				ParNewCmsConcurrentPreprocessAction.match(logLine, priorLogLine, nextLogLine));
 	}
+
+	public void testLine1Sweep() {
+		String priorLogLine = "";
+		String logLine = "1821.661: [GC 1821.661: [ParNew1821.661: [CMS-concurrent-sweep: "
+				+ "42.841/48.076 secs] [Times: user=19.45 sys=0.45, real=48.06 secs]";
+		String nextLogLine = ": 36500K->3770K(38336K), 0.1767060 secs] 408349K->375618K(2092928K), "
+				+ "0.1769190 secs] [Times: user=0.05 sys=0.00, real=0.18 secs]";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.PreprocessActionType.PAR_NEW_CMS_CONCURRENT.toString() + ".",
+				ParNewCmsConcurrentPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+	}
 }
