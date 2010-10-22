@@ -160,6 +160,24 @@ public class TestJdkUtil extends TestCase {
 	}
 
 	/**
+	 * Test preprocessing <code>GcTimeLimitExceededEvent</code> with underlying
+	 * <code>ParallelOldCompactingEvent</code>.
+	 */
+	public void testSplitParallelOldCompactingEventLogging() {
+		// TODO: Create File in platform independent way.
+		File testFile = new File("src/test/data/dataset28.txt");
+		GcaManager jvmManager = new GcaManager();
+		File preprocessedFile = jvmManager.preprocess(testFile, null);
+		jvmManager.store(preprocessedFile);
+		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
+				Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+		Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".", jvmRun
+				.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING));
+	}
+
+	/**
 	 * Test preprocessing a split <code>CmsSerialOldEventConcurrentModeFailureEvent</code>.
 	 */
 	public void testSplitCmsConcurrentModeFailureEventMarkLogging() {
