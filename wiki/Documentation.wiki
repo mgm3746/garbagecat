@@ -96,7 +96,7 @@ Notes:
   # A garbage collection event corresponds to a single garbage collection log line.
   # You can get a good idea where hot spots are by running the report multiple times with varying throughput threshold levels.
   # There is a limit of 1000 unidentified log lines that will be reported.
-  # If there are any unidentifed logging lines, run the report again with the -p preprocessing option enabled.
+  # If there are any unidentifed logging lines, run the report again with the -p preprocessing option enabled. Preprocessing removes extraneous information (e.g. application logging when there is not a dedicated log file) and makes any format adjustments needed for parsing (e.g. combining logging that the JVM sometimes splits across two lines).
   # Once prepocessing is done once, do not use the -p preprocessing option again, but instead specify the preprocessed file as input (e.g. java -jar /path/to/garbagecat-1.0.0.jar gc.log.pp).
   # Please report unidentified log lines by opening an issue and zipping up and attaching the garbage collection logging.
 
