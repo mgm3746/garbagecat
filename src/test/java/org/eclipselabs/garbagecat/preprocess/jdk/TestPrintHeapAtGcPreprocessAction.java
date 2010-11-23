@@ -29,6 +29,13 @@ public class TestPrintHeapAtGcPreprocessAction extends TestCase {
 				+ JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
 				PrintHeapAtGcPreprocessAction.match(logLine));
 	}
+	
+	public void testHeapBeforeFullLine() {
+		String logLine = "{Heap before GC invocations=261 (full 10):";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
+				PrintHeapAtGcPreprocessAction.match(logLine));
+	}
 
 	public void testHeapAfterLine() {
 		String logLine = "Heap after gc invocations=362:";
