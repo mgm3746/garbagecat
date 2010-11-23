@@ -160,7 +160,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 5) With -XX:+PrintGCDateStamps:
+ * 5) With -XX:+PrintGCDateStamps and enumerating (zero-based) the number of full collections:
  * </p>
  * 
  * <pre>
@@ -235,8 +235,8 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
 					+ "|tenured generation|compacting perm gen)" + "[ ]+total " + JdkRegEx.SIZE
 					+ ", used " + JdkRegEx.SIZE + ".+$",
 			"^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$",
-			"^}$", "^\\{Heap before GC invocations=\\d{1,10} \\(full \\d{1}\\):$",
-			"^Heap after GC invocations=\\d{1,10} \\(full \\d{1}\\):$",
+			"^}$", "^\\{Heap before GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$",
+			"^Heap after GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$",
 			"No shared spaces configured." };
 
 	/**
