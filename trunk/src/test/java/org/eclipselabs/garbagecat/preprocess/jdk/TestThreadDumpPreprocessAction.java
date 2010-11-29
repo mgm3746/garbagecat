@@ -117,6 +117,13 @@ public class TestThreadDumpPreprocessAction extends TestCase {
 				ThreadDumpPreprocessAction.match(logLine));
 	}
 
+	public void testThreadDataNameWithForwardSlash() {
+		String logLine = "\"/com/my/MyThread-10\" prio=1 tid=0x093c3318 nid=0x7c5e runnable [0x49fdd000..0x49fdde30]";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.PreprocessActionType.THREAD_DUMP.toString() + ".",
+				ThreadDumpPreprocessAction.match(logLine));
+	}
+
 	public void testThreadData16Bytes() {
 		String logLine = "\"LDAPConnThread 10.235.5.15:1502\" daemon prio=1 tid=0x0000002bace3e260 "
 				+ "nid=0x2de1 runnable [0x00000000582d0000..0x00000000582d0e30]";
