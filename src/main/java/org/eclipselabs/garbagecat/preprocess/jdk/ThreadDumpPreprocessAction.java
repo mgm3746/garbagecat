@@ -111,7 +111,7 @@ public class ThreadDumpPreprocessAction implements PreprocessAction {
 			// title
 			"^Full thread dump(.*):$",
 			// thread data
-			"^\"[a-zA-z0-9\\-\\.\\@ \\:\\#\\(\\)\\[\\]]+\" (daemon )?prio=\\d{1,2} tid=0x[a-z0-9]{8,16} "
+			"^\"[a-zA-z0-9\\-\\.\\@ \\:\\#\\(\\)\\[\\]/]+\" (daemon )?prio=\\d{1,2} tid=0x[a-z0-9]{8,16} "
 					+ "nid=0x[a-z0-9]{3,4} (runnable|in Object.wait\\(\\)|waiting for monitor entry|"
 					+ "waiting on condition|sleeping)( )?(\\[0x[a-z0-9]{8,16}\\.\\.0x[a-z0-9]{8,16}\\])?[ ]*$",
 			// thread state
