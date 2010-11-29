@@ -258,7 +258,7 @@ public class TestJdkUtil extends TestCase {
 	/**
 	 * Test preprocessing <code>CmsSerialOldConcurrentModeFailureEvent</code> split over 3 lines.
 	 */
-	public void testSplit3LinesCmsConcurrentModeFailureEventAbortablePrecleanLogging() {
+	public void testSplit3LinesCmsConcurrentModeFailureEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset14.txt");
 		GcaManager jvmManager = new GcaManager();
@@ -634,5 +634,23 @@ public class TestJdkUtil extends TestCase {
 		Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
 		Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString()
 				+ ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+	}
+
+	/**
+	 * Test preprocessing <code>ParNewConcurrentModeFailureEvent</code> split over 3 lines.
+	 * 
+	 */
+	public void testSplit3LinesParNewConcurrentModeFailureEventLogging() {
+		// TODO: Create File in platform independent way.
+		File testFile = new File("src/test/data/dataset29.txt");
+		GcaManager jvmManager = new GcaManager();
+		File preprocessedFile = jvmManager.preprocess(testFile, null);
+		jvmManager.store(preprocessedFile);
+		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
+				Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+		Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".", jvmRun
+				.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE));
 	}
 }
