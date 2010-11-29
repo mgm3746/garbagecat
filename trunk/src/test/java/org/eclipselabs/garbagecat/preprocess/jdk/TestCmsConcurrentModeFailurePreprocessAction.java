@@ -106,6 +106,16 @@ public class TestCmsConcurrentModeFailurePreprocessAction extends TestCase {
 				CmsConcurrentModeFailurePreprocessAction.match(logLine, priorLogLine, nextLogLine));
 	}
 
+	public void testParNewHotSpotWarningBailingOutLine() {
+		String priorLogLine = "";
+		String logLine = "1901.217: [GC 1901.217: [ParNew: 261760K->261760K(261952K), 0.0000570 secs]"
+				+ "1901.217: [CMSJava HotSpot(TM) Server VM warning: bailing out to foreground collection";
+		String nextLogLine = "1907.974: [CMS-concurrent-mark: 23.751/40.476 secs]";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.PreprocessActionType.CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
+				CmsConcurrentModeFailurePreprocessAction.match(logLine, priorLogLine, nextLogLine));
+	}
+
 	public void testCmsSerialOldStandAloneMarkLine() {
 		String priorLogLine = "4300.825: [Full GC 4300.825: [CMSbailing out to foreground collection";
 		String logLine = "4310.434: [CMS-concurrent-mark: 10.548/10.777 secs] "
@@ -245,13 +255,23 @@ public class TestCmsConcurrentModeFailurePreprocessAction extends TestCase {
 				CmsConcurrentModeFailurePreprocessAction.match(logLine, priorLogLine, nextLogLine));
 	}
 
-	public void testNoConcurrentModeFailureLine() {
+	public void testPromotionFailedNoConcurrentModeFailureLine() {
 		String priorLogLine = "88063.609: [GC 88063.610: [ParNew (promotion failed): 513856K->513856K"
 				+ "(513856K), 4.0911197 secs]88067.701: [CMS88067.742: [CMS-concurrent-reset: 0.309/4.421 secs]"
 				+ " [Times: user=9.62 sys=3.73, real=4.42 secs]";
 		String logLine = ": 10612422K->4373474K(11911168K), 76.7523274 secs] 11075362K->4373474K(12425024K), "
 				+ "[CMS Perm : 214530K->213777K(524288K)], 80.8440551 secs] "
 				+ "[Times: user=80.01 sys=5.57, real=80.84 secs]";
+		String nextLogLine = "";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.PreprocessActionType.CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
+				CmsConcurrentModeFailurePreprocessAction.match(logLine, priorLogLine, nextLogLine));
+	}
+
+	public void testNoConcurrentModeFailureLine() {
+		String priorLogLine = "198.712: [Full GC 198.712: [CMS198.733: [CMS-concurrent-reset: 0.061/1.405 secs]";
+		String logLine = ": 14037K->31492K(1835008K), 0.7953140 secs] 210074K->31492K(2096960K), "
+				+ "[CMS Perm : 27817K->27784K(131072K)], 0.7955670 secs]";
 		String nextLogLine = "";
 		Assert.assertTrue("Log line not recognized as "
 				+ JdkUtil.PreprocessActionType.CMS_CONCURRENT_MODE_FAILURE.toString() + ".",

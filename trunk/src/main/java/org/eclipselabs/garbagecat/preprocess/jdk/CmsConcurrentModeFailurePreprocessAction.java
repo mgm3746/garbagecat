@@ -24,7 +24,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Combine {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent} and
+ * Combine {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent},
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent}, or
  * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent} logging
  * that is split across multiple lines into a single line.
  * </p>
@@ -89,6 +90,24 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * : 10612422K-&gt;4373474K(11911168K), 76.7523274 secs] 11075362K-&gt;4373474K(12425024K), [CMS Perm : 214530K-&gt;213777K(524288K)], 80.8440551 secs] [Times: user=80.01 sys=5.57, real=80.84 secs]
  * </pre>
  * 
+ * <p>
+ * 5)
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailureEvent}
+ * across 3 lines:
+ * </p>
+ * 
+ * <pre>
+ * 1901.217: [GC 1901.217: [ParNew: 261760K-&gt;261760K(261952K), 0.0000570 secs]1901.217: [CMSJava HotSpot(TM) Server VM warning: bailing out to foreground collection
+ * 1907.974: [CMS-concurrent-mark: 23.751/40.476 secs]
+ *  (concurrent mode failure): 1794415K-&gt;909664K(1835008K), 124.5953890 secs] 2056175K-&gt;909664K(2096960K) icms_dc=100 , 124.5963320 secs]
+ * </pre>
+ * 
+ * Preprocessed:
+ * 
+ * <pre>
+ * 1901.217: [GC 1901.217: [ParNew: 261760K-&gt;261760K(261952K), 0.0000570 secs]1901.217: [CMS1907.974: [CMS-concurrent-mark: 23.751/40.476 secs] (concurrent mode failure): 1794415K-&gt;909664K(1835008K), 124.5953890 secs] 2056175K-&gt;909664K(2096960K) icms_dc=100 , 124.5963320 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -98,10 +117,10 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
 	 * Regular expression(s) defining the 1st logging line.
 	 */
 	private static final String[] REGEX_LINE_INIT = {
-			// Serial old
+	// Serial old
 			"^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(System\\) )?" + JdkRegEx.TIMESTAMP
 					+ ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
-					+ ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): "
+					+ ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): "
 					+ JdkRegEx.DURATION_FRACTION + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
 			// ParNew
 			"^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
@@ -117,10 +136,28 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
 					+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
 					+ JdkRegEx.TIMESTAMP + ": \\[CMS)bailing out to foreground collection"
 					+ JdkRegEx.TIMES_BLOCK + "?[ ]*$",
-			// Added for dataset14 where logging is split across 3 lines
+			// Serial old bailing out first line when logging split across 3 lines (dataset14)
 			"^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.TIMESTAMP
 					+ ": \\[CMS)bailing out to foreground collection" + JdkRegEx.TIMES_BLOCK
 					+ "?[ ]*$",
+			// ParNew bailing out first line when logging split across 3 lines (dataset29)
+			"^("
+					+ JdkRegEx.TIMESTAMP
+					+ ": \\[GC "
+					+ JdkRegEx.TIMESTAMP
+					+ ": \\[ParNew: "
+					+ JdkRegEx.SIZE
+					+ "->"
+					+ JdkRegEx.SIZE
+					+ "\\("
+					+ JdkRegEx.SIZE
+					+ "\\), "
+					+ JdkRegEx.DURATION
+					+ "\\]"
+					+ JdkRegEx.TIMESTAMP
+					+ ": \\[CMS)Java HotSpot\\(TM\\) Server VM warning: bailing out to foreground collection"
+					+ JdkRegEx.TIMES_BLOCK + "?[ ]*$",
+			// 2nd line when logging split across 3 lines
 			"^(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION
 					+ "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
 

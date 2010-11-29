@@ -72,6 +72,56 @@ public class TestParNewConcurrentModeFailureEvent extends TestCase {
 		Assert.assertEquals("Duration not parsed correctly.", 7395, event.getDuration());
 	}
 
+	public void testPrecleanIncrementalModeLogLine() {
+		String logLine = "5075.405: [GC 5075.405: [ParNew: 261760K->261760K(261952K), 0.0000750 secs]"
+				+ "5075.405: [CMS5081.144: [CMS-concurrent-preclean: 14.653/31.189 secs] "
+				+ "(concurrent mode failure): 1796901K->1078231K(1835008K), 96.6130290 secs] "
+				+ "2058661K->1078231K(2096960K) icms_dc=100 , 96.6140400 secs]";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".",
+				ParNewConcurrentModeFailureEvent.match(logLine));
+		ParNewConcurrentModeFailureEvent event = new ParNewConcurrentModeFailureEvent(logLine);
+		Assert.assertEquals("Time stamp not parsed correctly.", 5075405, event.getTimestamp());
+		Assert.assertEquals("Young begin size not parsed correctly.", (2058661 - 1796901), event
+				.getYoungOccupancyInit());
+		Assert.assertEquals("Young end size not parsed correctly.", (1078231 - 1078231), event
+				.getYoungOccupancyEnd());
+		Assert.assertEquals("Young available size not parsed correctly.", (2096960 - 1835008),
+				event.getYoungSpace());
+		Assert.assertEquals("Old begin size not parsed correctly.", 1796901, event
+				.getOldOccupancyInit());
+		Assert.assertEquals("Old end size not parsed correctly.", 1078231, event
+				.getOldOccupancyEnd());
+		Assert.assertEquals("Old allocation size not parsed correctly.", 1835008, event
+				.getOldSpace());
+		Assert.assertEquals("Duration not parsed correctly.", 96614, event.getDuration());
+	}
+
+	public void testSweepIncrementalModeLogLine() {
+		String logLine = "5062.472: [GC 5062.472: [ParNew: 261760K->261760K(261952K), 0.0000610 secs]"
+				+ "5062.473: [CMS5073.876: [CMS-concurrent-sweep: 11.563/14.268 secs] "
+				+ "(concurrent mode failure): 1808263K->1078640K(1835008K), 88.9224480 secs] "
+				+ "2070023K->1078640K(2096960K) icms_dc=100 , 88.9234900 secs]";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".",
+				ParNewConcurrentModeFailureEvent.match(logLine));
+		ParNewConcurrentModeFailureEvent event = new ParNewConcurrentModeFailureEvent(logLine);
+		Assert.assertEquals("Time stamp not parsed correctly.", 5062472, event.getTimestamp());
+		Assert.assertEquals("Young begin size not parsed correctly.", (2070023 - 1808263), event
+				.getYoungOccupancyInit());
+		Assert.assertEquals("Young end size not parsed correctly.", (1078640 - 1078640), event
+				.getYoungOccupancyEnd());
+		Assert.assertEquals("Young available size not parsed correctly.", (2096960 - 1835008),
+				event.getYoungSpace());
+		Assert.assertEquals("Old begin size not parsed correctly.", 1808263, event
+				.getOldOccupancyInit());
+		Assert.assertEquals("Old end size not parsed correctly.", 1078640, event
+				.getOldOccupancyEnd());
+		Assert.assertEquals("Old allocation size not parsed correctly.", 1835008, event
+				.getOldSpace());
+		Assert.assertEquals("Duration not parsed correctly.", 88923, event.getDuration());
+	}
+
 	public void testMarkLogLine() {
 		String logLine = "27636.893: [GC 27636.893: [ParNew: 261760K->261760K(261952K), 0.0000130 secs]"
 				+ "27636.893: [CMS27639.231: [CMS-concurrent-mark: 4.803/4.803 secs] "

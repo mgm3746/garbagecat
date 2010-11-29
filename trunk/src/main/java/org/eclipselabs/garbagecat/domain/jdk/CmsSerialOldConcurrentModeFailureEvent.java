@@ -116,6 +116,16 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 85217.903: [Full GC 85217.903: [CMS85217.919: [CMS-concurrent-abortable-preclean: 0.723/3.756 secs] (concurrent mode failure) (concurrent mode failure)[YG occupancy: 33620K (153344K)]85217.919: [Rescan (parallel) , 0.0116680 secs]85217.931: [weak refs processing, 0.0167100 secs]85217.948: [class unloading, 0.0571300 secs]85218.005: [scrub symbol &amp; string tables, 0.0291210 secs]: 423728K-&gt;423633K(4023936K), 0.5165330 secs] 457349K-&gt;457254K(4177280K), [CMS Perm : 260428K-&gt;260406K(262144K)], 0.5167600 secs] [Times: user=0.55 sys=0.01, real=0.52 secs]
  * </pre>
  * 
+ * <p>
+ * Split into 2 lines then combined as 1 line by
+ * {@link org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction} with
+ * concurrent mode failure missing:
+ * </p>
+ * 
+ * <pre>
+ * 198.712: [Full GC 198.712: [CMS198.733: [CMS-concurrent-reset: 0.061/1.405 secs]: 14037K-&gt;31492K(1835008K), 0.7953140 secs] 210074K-&gt;31492K(2096960K), [CMS Perm : 27817K-&gt;27784K(131072K)], 0.7955670 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
 public class CmsSerialOldConcurrentModeFailureEvent implements BlockingEvent, OldCollection,
@@ -124,11 +134,15 @@ public class CmsSerialOldConcurrentModeFailureEvent implements BlockingEvent, Ol
 	/**
 	 * Regular expressions defining the logging.
 	 */
-	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(System\\) )?"
-			+ JdkRegEx.TIMESTAMP + "(: \\[CMS)?( CMS: abort preclean due to time )?("
-			+ JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): "
+	private static final String REGEX = "^"
+			+ JdkRegEx.TIMESTAMP
+			+ ": \\[Full GC (\\(System\\) )?"
+			+ JdkRegEx.TIMESTAMP
+			+ "(: \\[CMS)?( CMS: abort preclean due to time )?("
+			+ JdkRegEx.TIMESTAMP
+			+ ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): "
 			+ JdkRegEx.DURATION_FRACTION
-			+ "\\])? \\(concurrent mode (failure|interrupted)\\)( \\(concurrent mode failure\\)\\"
+			+ "\\])?( \\(concurrent mode (failure|interrupted)\\))?( \\(concurrent mode failure\\)\\"
 			+ "[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]"
 			+ JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]"
 			+ JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]"
@@ -210,19 +224,19 @@ public class CmsSerialOldConcurrentModeFailureEvent implements BlockingEvent, Ol
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			old = new Integer(matcher.group(22)).intValue();
-			oldEnd = new Integer(matcher.group(23)).intValue();
-			oldAllocation = new Integer(matcher.group(24)).intValue();
-			int totalBegin = new Integer(matcher.group(26)).intValue();
+			old = new Integer(matcher.group(23)).intValue();
+			oldEnd = new Integer(matcher.group(24)).intValue();
+			oldAllocation = new Integer(matcher.group(25)).intValue();
+			int totalBegin = new Integer(matcher.group(27)).intValue();
 			young = totalBegin - old;
-			int totalEnd = new Integer(matcher.group(27)).intValue();
+			int totalEnd = new Integer(matcher.group(28)).intValue();
 			youngEnd = totalEnd - oldEnd;
-			int totalAllocation = new Integer(matcher.group(28)).intValue();
+			int totalAllocation = new Integer(matcher.group(29)).intValue();
 			youngAvailable = totalAllocation - oldAllocation;
-			permGen = new Integer(matcher.group(29)).intValue();
-			permGenEnd = new Integer(matcher.group(30)).intValue();
-			permGenAllocation = new Integer(matcher.group(31)).intValue();
-			duration = JdkMath.convertSecsToMillis(matcher.group(33)).intValue();
+			permGen = new Integer(matcher.group(30)).intValue();
+			permGenEnd = new Integer(matcher.group(31)).intValue();
+			permGenAllocation = new Integer(matcher.group(32)).intValue();
+			duration = JdkMath.convertSecsToMillis(matcher.group(34)).intValue();
 		}
 	}
 

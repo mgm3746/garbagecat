@@ -289,6 +289,38 @@ public class TestCmsSerialOldConcurrentModeFailureEvent extends TestCase {
 		Assert.assertEquals("Duration not parsed correctly.", 516, event.getDuration());
 	}
 
+	public void testLogLineWithNoConcurrentModeFailure() {
+		String logLine = "198.712: [Full GC 198.712: [CMS198.733: [CMS-concurrent-reset: 0.061/1.405 secs]: "
+				+ "14037K->31492K(1835008K), 0.7953140 secs] 210074K->31492K(2096960K), "
+				+ "[CMS Perm : 27817K->27784K(131072K)], 0.7955670 secs]";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString() + ".",
+				CmsSerialOldConcurrentModeFailureEvent.match(logLine));
+		CmsSerialOldConcurrentModeFailureEvent event = new CmsSerialOldConcurrentModeFailureEvent(
+				logLine);
+		Assert.assertEquals("Time stamp not parsed correctly.", 198712, event.getTimestamp());
+		Assert.assertEquals("Young begin size not parsed correctly.", (210074 - 14037), event
+				.getYoungOccupancyInit());
+		Assert.assertEquals("Young end size not parsed correctly.", (31492 - 31492), event
+				.getYoungOccupancyEnd());
+		Assert.assertEquals("Young available size not parsed correctly.", (2096960 - 1835008),
+				event.getYoungSpace());
+		Assert.assertEquals("Old begin size not parsed correctly.", 14037, event
+				.getOldOccupancyInit());
+		Assert
+				.assertEquals("Old end size not parsed correctly.", 31492, event
+						.getOldOccupancyEnd());
+		Assert.assertEquals("Old allocation size not parsed correctly.", 1835008, event
+				.getOldSpace());
+		Assert.assertEquals("Perm gen begin size not parsed correctly.", 27817, event
+				.getPermOccupancyInit());
+		Assert.assertEquals("Perm gen end size not parsed correctly.", 27784, event
+				.getPermOccupancyEnd());
+		Assert.assertEquals("Perm gen allocation size not parsed correctly.", 131072, event
+				.getPermSpace());
+		Assert.assertEquals("Duration not parsed correctly.", 795, event.getDuration());
+	}
+
 	public void testLogLineWithTimesData() {
 		String logLine = "28282.075: [Full GC 28282.075 (concurrent mode failure): "
 				+ "1179601K->1179648K(1179648K), 10.7510650 secs] 1441361K->1180553K(1441600K), "

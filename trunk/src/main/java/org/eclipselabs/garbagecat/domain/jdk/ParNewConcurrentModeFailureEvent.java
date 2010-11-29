@@ -113,6 +113,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 27636.893: [GC 27636.893: [ParNew: 261760K-&gt;261760K(261952K), 0.0000130 secs]27636.893: [CMS27639.231: [CMS-concurrent-mark: 4.803/4.803 secs] (concurrent mode failure): 1150993K-&gt;1147420K(1179648K), 9.9779890 secs] 1412753K-&gt;1147420K(1441600K), 9.9783140 secs]
  * </pre>
  * 
+ * 
+ * <p>
+ * 5) In incremental mode (<code>-XX:+CMSIncrementalMode</code>):
+ * </p>
+ * 
+ * <pre>
+ * 5075.405: [GC 5075.405: [ParNew: 261760K-&gt;261760K(261952K), 0.0000750 secs]5075.405: [CMS5081.144: [CMS-concurrent-preclean: 14.653/31.189 secs] (concurrent mode failure): 1796901K-&gt;1078231K(1835008K), 96.6130290 secs] 2058661K-&gt;1078231K(2096960K) icms_dc=100 , 96.6140400 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
 public class ParNewConcurrentModeFailureEvent implements BlockingEvent, OldCollection,
@@ -124,11 +133,13 @@ public class ParNewConcurrentModeFailureEvent implements BlockingEvent, OldColle
 	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
 			+ ": \\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
 			+ "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS("
-			+ JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset): "
+			+ JdkRegEx.TIMESTAMP
+			+ ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): "
 			+ JdkRegEx.DURATION_FRACTION + "\\])? \\(concurrent mode failure\\): " + JdkRegEx.SIZE
 			+ "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
-			+ JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-			+ JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+			+ JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)"
+			+ JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
+			+ "?[ ]*$";
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.
@@ -194,7 +205,7 @@ public class ParNewConcurrentModeFailureEvent implements BlockingEvent, OldColle
 			youngEnd = totalEnd - oldEnd;
 			int totalAllocation = new Integer(matcher.group(18)).intValue();
 			youngAvailable = totalAllocation - oldAllocation;
-			duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+			duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
 		}
 	}
 

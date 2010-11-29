@@ -73,8 +73,9 @@ public class ParNewPromotionFailedCmsConcurrentModeFailureEvent implements Block
 			+ ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): "
 			+ JdkRegEx.DURATION_FRACTION + "\\])? \\(concurrent mode failure\\): " + JdkRegEx.SIZE
 			+ "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
-			+ JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-			+ JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+			+ JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)"
+			+ JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
+			+ "?[ ]*$";
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.
@@ -140,7 +141,7 @@ public class ParNewPromotionFailedCmsConcurrentModeFailureEvent implements Block
 			youngEnd = totalEnd - oldEnd;
 			int totalAllocation = new Integer(matcher.group(18)).intValue();
 			youngAvailable = totalAllocation - oldAllocation;
-			duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+			duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
 		}
 	}
 
