@@ -27,9 +27,18 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * Occurs when objects cannot be moved from the young to the old generation due to lack of space or
- * fragmentation. The young generation collection initiates a
- * {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} in an attempt to free up and
- * compact space.
+ * fragmentation. The young generation collection backs out of the young collection and initiates a
+ * {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} full collection in an attempt to
+ * free up and compact space. This is an expensive operation that typically results in large pause
+ * times.
+ * </p>
+ * 
+ * <p>
+ * The CMS collector is not a compacting collector. It discovers garbage and adds the memory to free
+ * lists of available space that it maintains based on popular object sizes. If many objects of
+ * varying sizes are allocated, the free lists will be split. This can lead to many free lists whose
+ * total size is large enough to satisfy the calculated free space needed for promotions; however,
+ * there is not enough contiguous space for one of the objects being promoted.
  * </p>
  * 
  * <p>
