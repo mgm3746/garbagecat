@@ -81,4 +81,11 @@ public class TestPrintTenuringDistributionPreprocessAction extends TestCase {
 				+ JdkUtil.PreprocessActionType.PRINT_TENURING_DISTRIBUTION.toString() + ".",
 				PrintTenuringDistributionPreprocessAction.match(logLine));
 	}
+
+	public void testTimesBlockLine() {
+		String logLine = " [Times: user=7.36 sys=0.01, real=1.99 secs]";
+		Assert.assertTrue("Log line not recognized as "
+				+ JdkUtil.PreprocessActionType.PRINT_TENURING_DISTRIBUTION.toString() + ".",
+				PrintTenuringDistributionPreprocessAction.match(logLine));
+	}
 }
