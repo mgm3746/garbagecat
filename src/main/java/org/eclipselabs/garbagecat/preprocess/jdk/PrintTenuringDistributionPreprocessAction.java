@@ -107,7 +107,8 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
 	 */
 	private static final String[] REGEX_THROWAWAY = {
 			"^Desired survivor size \\d{1,11} bytes, new threshold \\d{1,2} \\(max \\d{1,2}\\)$",
-			"^- age[ ]+\\d{1,2}:[ ]+\\d{1,11} bytes,[ ]+\\d{1,11} total$" };
+			"^- age[ ]+\\d{1,2}:[ ]+\\d{1,11} bytes,[ ]+\\d{1,11} total$",
+			"^" + JdkRegEx.TIMES_BLOCK + "[ ]*$" };
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.
