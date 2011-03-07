@@ -142,23 +142,6 @@ public class TestJdkUtil extends TestCase {
 	}
 
 	/**
-	 * Test preprocessing <code>PrintHeapAtGcPreprocessAction</code> with underlying
-	 * <code>ParNewEvent</code>.
-	 */
-	public void testSplitPrintHeapAtGcParNewEventLogging() {
-		// TODO: Create File in platform independent way.
-		File testFile = new File("src/test/data/dataset30.txt");
-		GcaManager jvmManager = new GcaManager();
-		File preprocessedFile = jvmManager.preprocess(testFile, null);
-		jvmManager.store(preprocessedFile);
-		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
-				Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-		Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-		Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString()
-				+ ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
-	}
-
-	/**
 	 * Test preprocessing <code>GcTimeLimitExceededEvent</code> with underlying
 	 * <code>ParallelSerialOldEvent</code>.
 	 */
@@ -347,23 +330,6 @@ public class TestJdkUtil extends TestCase {
 		Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
 		Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL.toString()
 				+ ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL));
-	}
-
-	/**
-	 * Test preprocessing <code>PrintTenuringDistributionPreprocessAction</code> with underlying
-	 * <code>ParNewEvent</code>.
-	 */
-	public void testSplitParNewEventLogging() {
-		// TODO: Create File in platform independent way.
-		File testFile = new File("src/test/data/dataset31.txt");
-		GcaManager jvmManager = new GcaManager();
-		File preprocessedFile = jvmManager.preprocess(testFile, null);
-		jvmManager.store(preprocessedFile);
-		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
-				Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-		Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-		Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString()
-				+ ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
 	}
 
 	public void testConvertLogEntryTimestampsToDate() {

@@ -218,8 +218,7 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
 					+ JdkRegEx.DURATION_FRACTION + "\\])$",
 			"^" + JdkRegEx.TIMESTAMP + ": \\[CMS" + JdkRegEx.TIMESTAMP
 					+ ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): "
-					+ JdkRegEx.DURATION_FRACTION + "\\]$",
-			"^(" + JdkRegEx.TIMESTAMP + ": \\[ParNew)( \\(promotion failed\\))?$" };
+					+ JdkRegEx.DURATION_FRACTION + "\\]$" };
 
 	/**
 	 * Regular expression for the end part of a line retained.
