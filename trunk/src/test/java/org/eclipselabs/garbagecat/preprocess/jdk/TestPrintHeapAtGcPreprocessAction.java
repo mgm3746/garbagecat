@@ -29,7 +29,7 @@ public class TestPrintHeapAtGcPreprocessAction extends TestCase {
 				+ JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
 				PrintHeapAtGcPreprocessAction.match(logLine));
 	}
-
+	
 	public void testHeapBeforeFullLine() {
 		String logLine = "{Heap before GC invocations=261 (full 10):";
 		Assert.assertTrue("Log line not recognized as "
@@ -286,21 +286,6 @@ public class TestPrintHeapAtGcPreprocessAction extends TestCase {
 	public void testTheSpaceLine() {
 		String logLine = "   the space 704512K,   2% used [0x00002aab2fab0000, 0x00002aab30c107e8, "
 				+ "0x00002aab30c10800, 0x00002aab5aab0000)";
-		Assert.assertTrue("Log line not recognized as "
-				+ JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
-				PrintHeapAtGcPreprocessAction.match(logLine));
-	}
-
-	public void testParNewLine() {
-		String logLine = "45.502: [ParNew";
-		Assert.assertTrue("Log line not recognized as "
-				+ JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
-				PrintHeapAtGcPreprocessAction.match(logLine));
-
-	}
-
-	public void testParNewPromotionFailedLine() {
-		String logLine = "18222.002: [ParNew (promotion failed)";
 		Assert.assertTrue("Log line not recognized as "
 				+ JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
 				PrintHeapAtGcPreprocessAction.match(logLine));
