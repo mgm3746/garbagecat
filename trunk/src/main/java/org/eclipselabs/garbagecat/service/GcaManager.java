@@ -34,6 +34,7 @@ import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction;
+import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.GcTimeLimitExceededPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ParNewCmsConcurrentPreprocessAction;
@@ -99,8 +100,9 @@ public class GcaManager {
 				while (nextLogLine != null) {
 					// currentLogLine will be null the first iteration
 					if (currentLogLine != null) {
-						preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine,
-								nextLogLine, jvmStartDate);
+						preprocessedLogLine = getPreprocessedLogEntry(
+								currentLogLine, priorLogLine, nextLogLine,
+								jvmStartDate);
 						if (preprocessedLogLine != null) {
 							bufferedWriter.write(preprocessedLogLine);
 						}
@@ -110,8 +112,8 @@ public class GcaManager {
 					nextLogLine = bufferedReader.readLine();
 				}
 				// Process last line
-				preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine,
-						nextLogLine, jvmStartDate);
+				preprocessedLogLine = getPreprocessedLogEntry(currentLogLine,
+						priorLogLine, nextLogLine, jvmStartDate);
 				if (preprocessedLogLine != null) {
 					bufferedWriter.write(preprocessedLogLine);
 				}
@@ -157,16 +159,19 @@ public class GcaManager {
 	}
 
 	/**
-	 * Determine the preprocessed log entry given the current, previous, and next log lines.
+	 * Determine the preprocessed log entry given the current, previous, and
+	 * next log lines.
 	 * 
-	 * The previous log line is needed to prevent preprocessing overlap where preprocessors have
-	 * common patterns that are treated in different ways (e.g. removing vs. keeping matches, line
-	 * break at end vs. no line break, etc.). For example, there is overlap between the
+	 * The previous log line is needed to prevent preprocessing overlap where
+	 * preprocessors have common patterns that are treated in different ways
+	 * (e.g. removing vs. keeping matches, line break at end vs. no line break,
+	 * etc.). For example, there is overlap between the
 	 * <code>CmsConcurrentModeFailurePreprocessEvent</code> and the
 	 * <code>PrintHeapAtGcPreprocessEvent</code>.
 	 * 
-	 * The next log line is needed to distinguish between truncated and split logging. A truncated
-	 * log entry can look exactly the same as the initial line of split logging.
+	 * The next log line is needed to distinguish between truncated and split
+	 * logging. A truncated log entry can look exactly the same as the initial
+	 * line of split logging.
 	 * 
 	 * @param currentLogLine
 	 *            The current log line.
@@ -178,33 +183,41 @@ public class GcaManager {
 	 *            The date and time the JVM was started.
 	 * @return
 	 */
-	private String getPreprocessedLogEntry(String currentLogLine, String priorLogLine,
-			String nextLogLine, Date jvmStartDate) {
+	private String getPreprocessedLogEntry(String currentLogLine,
+			String priorLogLine, String nextLogLine, Date jvmStartDate) {
 		String preprocessedLogLine = null;
 		if (!JdkUtil.discardLogLine(currentLogLine)) {
 			// First convert any datestamps to timestamps
 			if (DateStampPreprocessAction.match(currentLogLine)) {
-				if (jvmStartDate == null) {
-					throw new IllegalArgumentException(
-							"JVM start datetime must be defined to do datestamp to timestamp conversion.");
+				// The datestamp prefixes or replaces the timestamp
+				if (DateStampPrefixPreprocessAction.match(currentLogLine)) {
+					DateStampPrefixPreprocessAction action = new DateStampPrefixPreprocessAction(
+							currentLogLine);
+					currentLogLine = action.getLogEntry();
+				} else {
+					if (jvmStartDate == null) {
+						throw new IllegalArgumentException(
+								"JVM start datetime must be defined to do datestamp to timestamp conversion.");
+					}
+					DateStampPreprocessAction action = new DateStampPreprocessAction(
+							currentLogLine, jvmStartDate);
+					currentLogLine = action.getLogEntry();
 				}
-				DateStampPreprocessAction action = new DateStampPreprocessAction(currentLogLine,
-						jvmStartDate);
-				currentLogLine = action.getLogEntry();
 			}
 			// Other preprocessing
 			if (UnloadingClassPreprocessAction.match(currentLogLine)) {
 				UnloadingClassPreprocessAction action = new UnloadingClassPreprocessAction(
 						currentLogLine, nextLogLine);
 				preprocessedLogLine = action.getLogEntry();
-			} else if (CmsConcurrentModeFailurePreprocessAction.match(currentLogLine, priorLogLine,
-					nextLogLine)) {
+			} else if (CmsConcurrentModeFailurePreprocessAction.match(
+					currentLogLine, priorLogLine, nextLogLine)) {
 				CmsConcurrentModeFailurePreprocessAction action = new CmsConcurrentModeFailurePreprocessAction(
 						currentLogLine);
 				if (action.getLogEntry() != null) {
 					preprocessedLogLine = action.getLogEntry();
 				}
-			} else if (GcTimeLimitExceededPreprocessAction.match(currentLogLine, priorLogLine)) {
+			} else if (GcTimeLimitExceededPreprocessAction.match(
+					currentLogLine, priorLogLine)) {
 				GcTimeLimitExceededPreprocessAction action = new GcTimeLimitExceededPreprocessAction(
 						currentLogLine);
 				preprocessedLogLine = action.getLogEntry();
@@ -214,41 +227,45 @@ public class GcaManager {
 				if (action.getLogEntry() != null) {
 					preprocessedLogLine = action.getLogEntry();
 				}
-			} else if (PrintTenuringDistributionPreprocessAction.match(currentLogLine)) {
+			} else if (PrintTenuringDistributionPreprocessAction
+					.match(currentLogLine)) {
 				PrintTenuringDistributionPreprocessAction action = new PrintTenuringDistributionPreprocessAction(
 						currentLogLine);
 				if (action.getLogEntry() != null) {
 					preprocessedLogLine = action.getLogEntry();
 				}
-			} else if (ParNewCmsConcurrentPreprocessAction.match(currentLogLine, priorLogLine,
-					nextLogLine)) {
+			} else if (ParNewCmsConcurrentPreprocessAction.match(
+					currentLogLine, priorLogLine, nextLogLine)) {
 				ParNewCmsConcurrentPreprocessAction action = new ParNewCmsConcurrentPreprocessAction(
 						currentLogLine);
 				if (action.getLogEntry() != null) {
 					preprocessedLogLine = action.getLogEntry();
 				}
-			} else if (ApplicationConcurrentTimePreprocessAction
-					.match(currentLogLine, priorLogLine)) {
+			} else if (ApplicationConcurrentTimePreprocessAction.match(
+					currentLogLine, priorLogLine)) {
 				ApplicationConcurrentTimePreprocessAction action = new ApplicationConcurrentTimePreprocessAction(
 						currentLogLine);
 				if (action.getLogEntry() != null) {
 					preprocessedLogLine = action.getLogEntry();
 				}
-			} else if (ApplicationStoppedTimePreprocessAction.match(currentLogLine, priorLogLine)) {
+			} else if (ApplicationStoppedTimePreprocessAction.match(
+					currentLogLine, priorLogLine)) {
 				ApplicationStoppedTimePreprocessAction action = new ApplicationStoppedTimePreprocessAction(
 						currentLogLine);
 				if (action.getLogEntry() != null) {
 					preprocessedLogLine = action.getLogEntry();
 				}
 			} else {
-				preprocessedLogLine = currentLogLine + System.getProperty("line.separator");
+				preprocessedLogLine = currentLogLine
+						+ System.getProperty("line.separator");
 			}
 		}
 		return preprocessedLogLine;
 	}
 
 	/**
-	 * Parse the garbage collection logging for the JVM run and store the data in the data store.
+	 * Parse the garbage collection logging for the JVM run and store the data
+	 * in the data store.
 	 * 
 	 * @param logFile
 	 *            The garbage collection log file.
@@ -275,8 +292,10 @@ public class GcaManager {
 					}
 
 					// Populate events list.
-					List<JdkUtil.LogEventType> eventTypes = jvmDao.getEventTypes();
-					JdkUtil.LogEventType eventType = JdkUtil.determineEventType(event.getName());
+					List<JdkUtil.LogEventType> eventTypes = jvmDao
+							.getEventTypes();
+					JdkUtil.LogEventType eventType = JdkUtil
+							.determineEventType(event.getName());
 					if (!eventTypes.contains(eventType)) {
 						eventTypes.add(eventType);
 					}
@@ -310,15 +329,16 @@ public class GcaManager {
 	}
 
 	/**
-	 * Determine <code>BlockingEvent</code>s where throughput since last event does not meet the
-	 * throughput goal.
+	 * Determine <code>BlockingEvent</code>s where throughput since last event
+	 * does not meet the throughput goal.
 	 * 
 	 * @param jvm
 	 *            The JVM environment information.
 	 * @param throughputThreshold
 	 *            The bottleneck reporting throughput threshold.
-	 * @return A <code>List</code> of <code>BlockingEvent</code>s where the throughput between
-	 *         events is less than the throughput threshold goal.
+	 * @return A <code>List</code> of <code>BlockingEvent</code>s where the
+	 *         throughput between events is less than the throughput threshold
+	 *         goal.
 	 */
 	private List<String> getBottlenecks(Jvm jvm, int throughputThreshold) {
 		ArrayList<String> bottlenecks = new ArrayList<String>();
@@ -327,15 +347,20 @@ public class GcaManager {
 		BlockingEvent priorEvent = null;
 		while (iterator.hasNext()) {
 			BlockingEvent event = iterator.next();
-			if (priorEvent != null && JdkUtil.isBottleneck(event, priorEvent, throughputThreshold)) {
+			if (priorEvent != null
+					&& JdkUtil.isBottleneck(event, priorEvent,
+							throughputThreshold)) {
 				if (bottlenecks.size() == 0) {
 					// Add current and prior event
 					if (jvm.getStartDate() != null) {
 						// Convert timestamps to date/time
-						bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent
-								.getLogEntry(), jvm.getStartDate()));
-						bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event
-								.getLogEntry(), jvm.getStartDate()));
+						bottlenecks.add(JdkUtil
+								.convertLogEntryTimestampsToDateStamp(
+										priorEvent.getLogEntry(), jvm
+												.getStartDate()));
+						bottlenecks.add(JdkUtil
+								.convertLogEntryTimestampsToDateStamp(event
+										.getLogEntry(), jvm.getStartDate()));
 					} else {
 						bottlenecks.add(priorEvent.getLogEntry());
 						bottlenecks.add(event.getLogEntry());
@@ -343,16 +368,27 @@ public class GcaManager {
 				} else {
 					if (jvm.getStartDate() != null) {
 						// Compare datetime, since bottleneck has datetime
-						if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
-								jvm.getStartDate()).equals(bottlenecks.get(bottlenecks.size() - 1))) {
+						if (!JdkUtil
+								.convertLogEntryTimestampsToDateStamp(
+										priorEvent.getLogEntry(),
+										jvm.getStartDate())
+								.equals(bottlenecks.get(bottlenecks.size() - 1))) {
 							bottlenecks.add("...");
-							bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent
-									.getLogEntry(), jvm.getStartDate()));
-							bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event
-									.getLogEntry(), jvm.getStartDate()));
+							bottlenecks.add(JdkUtil
+									.convertLogEntryTimestampsToDateStamp(
+											priorEvent.getLogEntry(), jvm
+													.getStartDate()));
+							bottlenecks
+									.add(JdkUtil
+											.convertLogEntryTimestampsToDateStamp(
+													event.getLogEntry(), jvm
+															.getStartDate()));
 						} else {
-							bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event
-									.getLogEntry(), jvm.getStartDate()));
+							bottlenecks
+									.add(JdkUtil
+											.convertLogEntryTimestampsToDateStamp(
+													event.getLogEntry(), jvm
+															.getStartDate()));
 						}
 					} else {
 						// Compare timestamps, since bottleneck has timestamp
@@ -375,7 +411,8 @@ public class GcaManager {
 	/**
 	 * @param jvmOptions
 	 *            The JVM options used for the JVM run.
-	 * @return A <code>List</code> of analysis points based on the JVM options and data.
+	 * @return A <code>List</code> of analysis points based on the JVM options
+	 *         and data.
 	 */
 	private List<String> doAnalysis(Jvm jvm) {
 		List<String> analysis = new ArrayList<String>();
@@ -390,17 +427,20 @@ public class GcaManager {
 
 			// 2) Check to see if thread stack size explicitly set
 			if (jvm.getThreadStackSizeOption() == null) {
-				analysis.add(GcUtil.getPropertyValue("analysis", "thread.stack.size.not.set"));
+				analysis.add(GcUtil.getPropertyValue("analysis",
+						"thread.stack.size.not.set"));
 			}
 
 			// 3) Check to see if min and max heap sizes are the same
 			if (!jvm.isMinAndMaxHeapSpaceEqual()) {
-				analysis.add(GcUtil.getPropertyValue("analysis", "min.heap.not.equal.max.heap"));
+				analysis.add(GcUtil.getPropertyValue("analysis",
+						"min.heap.not.equal.max.heap"));
 			}
 
 			// 4) Check to see if min and max perm gen sizes are the same
 			if (!jvm.isMinAndMaxPermSpaceEqual()) {
-				analysis.add(GcUtil.getPropertyValue("analysis", "min.perm.not.equal.max.perm"));
+				analysis.add(GcUtil.getPropertyValue("analysis",
+						"min.perm.not.equal.max.perm"));
 			}
 
 			// TODO: Check to see if explicit GC interval is disabled or set.
