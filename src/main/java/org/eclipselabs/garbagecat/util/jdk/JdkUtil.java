@@ -77,7 +77,7 @@ public class JdkUtil {
 	 * Defined preprocessing actions.
 	 */
 	public enum PreprocessActionType {
-		APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, CMS_CONCURRENT_MODE_FAILURE, DATE_STAMP, GC_TIME_LIMIT_EXCEEDED, PAR_NEW_CMS_CONCURRENT, PRINT_HEAP_AT_GC, PRINT_TENURING_DISTRIBUTION, THREAD_DUMP, UNLOADING_CLASS
+		APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, CMS_CONCURRENT_MODE_FAILURE, DATE_STAMP, DATE_STAMP_PREFIX, GC_TIME_LIMIT_EXCEEDED, PAR_NEW_CMS_CONCURRENT, PRINT_HEAP_AT_GC, PRINT_TENURING_DISTRIBUTION, THREAD_DUMP, UNLOADING_CLASS
 	};
 
 	/**
@@ -121,13 +121,16 @@ public class JdkUtil {
 			eventType = LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING;
 		} else if (ParNewPromotionFailedCmsSerialOldEvent.match(logLine)) {
 			eventType = LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD;
-		} else if (ParNewPromotionFailedCmsSerialOldPermDataEvent.match(logLine)) {
+		} else if (ParNewPromotionFailedCmsSerialOldPermDataEvent
+				.match(logLine)) {
 			eventType = LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA;
 		} else if (ParNewPromotionFailedEvent.match(logLine)) {
 			eventType = LogEventType.PAR_NEW_PROMOTION_FAILED;
-		} else if (ParNewPromotionFailedCmsConcurrentModeFailureEvent.match(logLine)) {
+		} else if (ParNewPromotionFailedCmsConcurrentModeFailureEvent
+				.match(logLine)) {
 			eventType = LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE;
-		} else if (ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent.match(logLine)) {
+		} else if (ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent
+				.match(logLine)) {
 			eventType = LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA;
 		} else if (ParNewConcurrentModeFailureEvent.match(logLine)) {
 			eventType = LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE;
@@ -215,10 +218,12 @@ public class JdkUtil {
 			event = new ParNewPromotionFailedEvent(logLine);
 			break;
 		case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE:
-			event = new ParNewPromotionFailedCmsConcurrentModeFailureEvent(logLine);
+			event = new ParNewPromotionFailedCmsConcurrentModeFailureEvent(
+					logLine);
 			break;
 		case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA:
-			event = new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(logLine);
+			event = new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(
+					logLine);
 			break;
 		case PAR_NEW_CONCURRENT_MODE_FAILURE:
 			event = new ParNewConcurrentModeFailureEvent(logLine);
@@ -263,7 +268,8 @@ public class JdkUtil {
 			event = new UnknownEvent(logLine);
 			break;
 		default:
-			throw new AssertionError("Unexpected event type value: " + eventType);
+			throw new AssertionError("Unexpected event type value: "
+					+ eventType);
 		}
 		return event;
 	}
@@ -281,8 +287,9 @@ public class JdkUtil {
 	 *            The duration of the log event.
 	 * @return The <code>BlockingEvent</code> for the given event values.
 	 */
-	public static final BlockingEvent hydrateBlockingEvent(LogEventType eventType, String logEntry,
-			long timestamp, int duration) {
+	public static final BlockingEvent hydrateBlockingEvent(
+			LogEventType eventType, String logEntry, long timestamp,
+			int duration) {
 		BlockingEvent event = null;
 		switch (eventType) {
 		case PARALLEL_SCAVENGE:
@@ -298,7 +305,8 @@ public class JdkUtil {
 			event = new ParallelSerialOldEvent(logEntry, timestamp, duration);
 			break;
 		case PARALLEL_OLD_COMPACTING:
-			event = new ParallelOldCompactingEvent(logEntry, timestamp, duration);
+			event = new ParallelOldCompactingEvent(logEntry, timestamp,
+					duration);
 			break;
 		case SERIAL_OLD:
 			event = new SerialOldEvent(logEntry, timestamp, duration);
@@ -307,7 +315,8 @@ public class JdkUtil {
 			event = new CmsSerialOldEvent(logEntry, timestamp, duration);
 			break;
 		case CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE:
-			event = new CmsSerialOldConcurrentModeFailureEvent(logEntry, timestamp, duration);
+			event = new CmsSerialOldConcurrentModeFailureEvent(logEntry,
+					timestamp, duration);
 			break;
 		case CMS_INITIAL_MARK:
 			event = new CmsInitialMarkEvent(logEntry, timestamp, duration);
@@ -316,31 +325,36 @@ public class JdkUtil {
 			event = new CmsRemarkEvent(logEntry, timestamp, duration);
 			break;
 		case CMS_REMARK_WITH_CLASS_UNLOADING:
-			event = new CmsRemarkWithClassUnloadingEvent(logEntry, timestamp, duration);
+			event = new CmsRemarkWithClassUnloadingEvent(logEntry, timestamp,
+					duration);
 			break;
 		case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD:
-			event = new ParNewPromotionFailedCmsSerialOldEvent(logEntry, timestamp, duration);
-			break;
-		case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA:
-			event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(logEntry, timestamp,
-					duration);
-			break;
-		case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE:
-			event = new ParNewPromotionFailedCmsConcurrentModeFailureEvent(logEntry, timestamp,
-					duration);
-			break;
-		case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA:
-			event = new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(logEntry,
+			event = new ParNewPromotionFailedCmsSerialOldEvent(logEntry,
 					timestamp, duration);
 			break;
+		case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA:
+			event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(
+					logEntry, timestamp, duration);
+			break;
+		case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE:
+			event = new ParNewPromotionFailedCmsConcurrentModeFailureEvent(
+					logEntry, timestamp, duration);
+			break;
+		case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA:
+			event = new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(
+					logEntry, timestamp, duration);
+			break;
 		case PAR_NEW_CONCURRENT_MODE_FAILURE:
-			event = new ParNewConcurrentModeFailureEvent(logEntry, timestamp, duration);
+			event = new ParNewConcurrentModeFailureEvent(logEntry, timestamp,
+					duration);
 			break;
 		case PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA:
-			event = new ParNewConcurrentModeFailurePermDataEvent(logEntry, timestamp, duration);
+			event = new ParNewConcurrentModeFailurePermDataEvent(logEntry,
+					timestamp, duration);
 			break;
 		case PAR_NEW_PROMOTION_FAILED:
-			event = new ParNewPromotionFailedEvent(logEntry, timestamp, duration);
+			event = new ParNewPromotionFailedEvent(logEntry, timestamp,
+					duration);
 			break;
 		case PAR_NEW_CMS_SERIAL_OLD:
 			event = new ParNewCmsSerialOldEvent(logEntry, timestamp, duration);
@@ -352,7 +366,8 @@ public class JdkUtil {
 			event = new SerialSerialOldEvent(logEntry, timestamp, duration);
 			break;
 		case SERIAL_SERIAL_OLD_PERM_DATA:
-			event = new SerialSerialOldPermDataEvent(logEntry, timestamp, duration);
+			event = new SerialSerialOldPermDataEvent(logEntry, timestamp,
+					duration);
 			break;
 		case VERBOSE_GC_YOUNG:
 			event = new VerboseGcYoungEvent(logEntry, timestamp, duration);
@@ -361,17 +376,20 @@ public class JdkUtil {
 			event = new VerboseGcOldEvent(logEntry, timestamp, duration);
 			break;
 		case PAR_NEW_PROMOTION_FAILED_TRUNCATED:
-			event = new ParNewPromotionFailedTruncatedEvent(logEntry, timestamp, duration);
+			event = new ParNewPromotionFailedTruncatedEvent(logEntry,
+					timestamp, duration);
 			break;
 		default:
-			throw new AssertionError("Unexpected event type value: " + eventType + ": " + logEntry);
+			throw new AssertionError("Unexpected event type value: "
+					+ eventType + ": " + logEntry);
 		}
 		return event;
 	}
 
 	/**
 	 * @param eventType
-	 * @return true if the log event is blocking, false if it is concurrent or informational.
+	 * @return true if the log event is blocking, false if it is concurrent or
+	 *         informational.
 	 */
 	public static final boolean isBlocking(LogEventType eventType) {
 		return !(eventType == JdkUtil.LogEventType.CMS_CONCURRENT
@@ -400,25 +418,29 @@ public class JdkUtil {
 	 *            The date/time the JVM started.
 	 * @return the log entry with the timestamp converted to a datestamp.
 	 */
-	public static final String convertLogEntryTimestampsToDateStamp(String logEntry,
-			Date jvmStartDate) {
-		// Add the colon or space after the timestamp format so durations will not get picked up.
+	public static final String convertLogEntryTimestampsToDateStamp(
+			String logEntry, Date jvmStartDate) {
+		// Add the colon or space after the timestamp format so durations will
+		// not get picked up.
 		Pattern pattern = Pattern.compile(JdkRegEx.TIMESTAMP + "(: )");
 		Matcher matcher = pattern.matcher(logEntry);
 		StringBuffer sb = new StringBuffer();
 		while (matcher.find()) {
-			Date date = GcUtil.getDatePlusTimestamp(jvmStartDate, JdkMath.convertSecsToMillis(
-					matcher.group(1)).longValue());
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+			Date date = GcUtil.getDatePlusTimestamp(jvmStartDate, JdkMath
+					.convertSecsToMillis(matcher.group(1)).longValue());
+			SimpleDateFormat formatter = new SimpleDateFormat(
+					"yyyy-MM-dd HH:mm:ss,SSS");
 			// Only update the timestamp, keep the colon or space.
-			matcher.appendReplacement(sb, formatter.format(date) + matcher.group(2));
+			matcher.appendReplacement(sb, formatter.format(date)
+					+ matcher.group(2));
 		}
 		matcher.appendTail(sb);
 		return sb.toString();
 	}
 
 	/**
-	 * Convert all log entry datestamps to a timestamp (number of seconds after JVM startup).
+	 * Convert all log entry datestamps to a timestamp (number of seconds after
+	 * JVM startup).
 	 * 
 	 * @param logEntry
 	 *            The log entry.
@@ -426,19 +448,22 @@ public class JdkUtil {
 	 *            The date/time the JVM started.
 	 * @return the log entry with the timestamp converted to a date/time.
 	 */
-	public static final String convertLogEntryDateStampToTimeStamp(String logEntry,
-			Date jvmStartDate) {
-		// Add the colon or space after the datestamp format so durations will not get picked up.
+	public static final String convertLogEntryDateStampToTimeStamp(
+			String logEntry, Date jvmStartDate) {
+		// Add the colon or space after the datestamp format so durations will
+		// not get picked up.
 		Pattern pattern = Pattern.compile(JdkRegEx.DATESTAMP + "(: )");
 		Matcher matcher = pattern.matcher(logEntry);
 		StringBuffer sb = new StringBuffer();
 		while (matcher.find()) {
 
-			Date date = GcUtil.getDatePlusTimestamp(jvmStartDate, JdkMath.convertSecsToMillis(
-					matcher.group(1)).longValue());
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+			Date date = GcUtil.getDatePlusTimestamp(jvmStartDate, JdkMath
+					.convertSecsToMillis(matcher.group(1)).longValue());
+			SimpleDateFormat formatter = new SimpleDateFormat(
+					"yyyy-MM-dd HH:mm:ss,SSS");
 			// Only update the datestamp, keep the colon or space.
-			matcher.appendReplacement(sb, formatter.format(date) + matcher.group(2));
+			matcher.appendReplacement(sb, formatter.format(date)
+					+ matcher.group(2));
 		}
 		matcher.appendTail(sb);
 		return sb.toString();
@@ -449,53 +474,65 @@ public class JdkUtil {
 	 * 
 	 * @param logLine
 	 *            The log line.
-	 * @return True if the log line is not related to garbage collection logging or can otherwise be
-	 *         discarded, false if the log line should be retained.
+	 * @return True if the log line is not related to garbage collection logging
+	 *         or can otherwise be discarded, false if the log line should be
+	 *         retained.
 	 */
 	public static final boolean discardLogLine(String logLine) {
 		return ThreadDumpPreprocessAction.match(logLine)
-				|| ApplicationLoggingPreprocessAction.match(logLine) || logLine.length() == 0
+				|| ApplicationLoggingPreprocessAction.match(logLine)
+				|| logLine.length() == 0
 				|| logLine.matches(JdkRegEx.BLANK_LINE);
 	}
 
 	/**
-	 * Determine if the garbage collection event should be classified as a bottleneck.
+	 * Determine if the garbage collection event should be classified as a
+	 * bottleneck.
 	 * 
 	 * @param gcEvent
 	 *            Current garbage collection event.
 	 * @param priorEvent
 	 *            Previous garbage collection event.
 	 * @param throughputThreshold
-	 *            Throughput threshold (percent of time spent not doing garbage collection for a
-	 *            given time interval) to be considered a bottleneck. Whole number 0-100.
-	 * @return True if the garbage collection event pause time meets the bottleneck definition.
+	 *            Throughput threshold (percent of time spent not doing garbage
+	 *            collection for a given time interval) to be considered a
+	 *            bottleneck. Whole number 0-100.
+	 * @return True if the garbage collection event pause time meets the
+	 *         bottleneck definition.
 	 */
-	public static final boolean isBottleneck(BlockingEvent gcEvent, BlockingEvent priorEvent,
-			int throughputThreshold) throws TimeWarpException {
-		// Timestamp is the start of a garbage collection event; therefore, the interval is from the
+	public static final boolean isBottleneck(BlockingEvent gcEvent,
+			BlockingEvent priorEvent, int throughputThreshold)
+			throws TimeWarpException {
+		// Timestamp is the start of a garbage collection event; therefore, the
+		// interval is from the
 		// end of the prior event to the end of the current event.
-		long interval = gcEvent.getTimestamp() + gcEvent.getDuration() - priorEvent.getTimestamp()
-				- priorEvent.getDuration();
+		long interval = gcEvent.getTimestamp() + gcEvent.getDuration()
+				- priorEvent.getTimestamp() - priorEvent.getDuration();
 		// Verify data integrity
-		if (gcEvent.getTimestamp() < (priorEvent.getTimestamp() + (new Integer(priorEvent
-				.getDuration())).longValue())) {
+		if (gcEvent.getTimestamp() < (priorEvent.getTimestamp() + (new Integer(
+				priorEvent.getDuration())).longValue())) {
 			System.out.println("prior event: " + priorEvent.getLogEntry());
-			throw new TimeWarpException("Event overlap: " + gcEvent.getLogEntry());
+			throw new TimeWarpException("Event overlap: "
+					+ gcEvent.getLogEntry());
 		}
 		if (interval <= 0) {
-			throw new TimeWarpException("Negative interval: " + gcEvent.getLogEntry());
+			throw new TimeWarpException("Negative interval: "
+					+ gcEvent.getLogEntry());
 		}
-		// Determine the maximum duration for the given interval that meets the throughput goal.
+		// Determine the maximum duration for the given interval that meets the
+		// throughput goal.
 		BigDecimal durationThreshold = new BigDecimal(100 - throughputThreshold);
 		durationThreshold = durationThreshold.movePointLeft(2);
-		durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
+		durationThreshold = durationThreshold
+				.multiply(new BigDecimal(interval));
 		durationThreshold.setScale(0, RoundingMode.DOWN);
 		return (gcEvent.getDuration() > durationThreshold.intValue());
 	}
 
 	/**
-	 * Parse out the JVM option scalar value. For example, the value for <code>-Xss128k</code> is
-	 * 128k. The value for <code>-XX:PermSize=128M</code> is 128M.
+	 * Parse out the JVM option scalar value. For example, the value for
+	 * <code>-Xss128k</code> is 128k. The value for
+	 * <code>-XX:PermSize=128M</code> is 128M.
 	 * 
 	 * @param option
 	 *            The JVM option.
