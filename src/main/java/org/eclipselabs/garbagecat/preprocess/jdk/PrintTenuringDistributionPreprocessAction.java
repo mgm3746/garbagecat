@@ -24,8 +24,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Remove <code>-XX:+PrintTenuringDistribution</code> logging from the underlying garbage collection
- * event. This data is currently not being used for any analysis.
+ * Remove <code>-XX:+PrintTenuringDistribution</code> logging from the
+ * underlying garbage collection event. This data is currently not being used
+ * for any analysis.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -75,32 +76,69 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 877369.458: [GC 877369.459: [ParNew (promotion failed): 917504K-&gt;917504K(917504K), 5.5887120 secs]877375.047: [CMS877378.691: [CMS-concurrent-mark: 5.714/11.380 secs] (concurrent mode failure): 1567700K-&gt;1571451K(1572864K), 14.6444240 secs] 2370842K-&gt;1694149K(2490368K), [CMS Perm : 46359K-&gt;46354K(77352K)], 20.2345470 secs] [Times: user=22.17 sys=4.56, real=20.23 secs]
  * </pre>
  * 
+ * <p>
+ * 3) Underlying
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent} :
+ * </p>
+ * 
+ * <pre>
+ * 10.392: [GC
+ * Desired survivor size 497025024 bytes, new threshold 7 (max 15)
+ *  [PSYoungGen: 970752K->104301K(1456128K)] 970752K->104301K(3708928K), 0.1992940 secs] [Times: user=0.68 sys=0.05, real=0.20 secs]
+ * </pre>
+ * 
+ * <p>
+ * Preprocessed:
+ * </p>
+ * 
+ * <pre>
+ * 10.392: [GC [PSYoungGen: 970752K->104301K(1456128K)] 970752K->104301K(3708928K), 0.1992940 secs] [Times: user=0.68 sys=0.05, real=0.20 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class PrintTenuringDistributionPreprocessAction implements PreprocessAction {
+public class PrintTenuringDistributionPreprocessAction implements
+		PreprocessAction {
 
 	/**
 	 * Regular expressions for the beginning part of a line retained.
 	 */
 	private static final String[] REGEX_RETAIN_BEGINNING = {
-			"^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
-					+ ": \\[(Def|Par)New( \\(promotion failed\\))?)$",
+			"^(" + JdkRegEx.TIMESTAMP + ": \\[GC( " + JdkRegEx.TIMESTAMP
+					+ ": \\[(Def|Par)New)?( \\(promotion failed\\))?)$",
 			// Concurrent mode failure. Treat it like a beginning line.
-			"(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-					+ JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-					+ ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
+			"(: "
+					+ JdkRegEx.SIZE
+					+ "->"
+					+ JdkRegEx.SIZE
+					+ "\\("
+					+ JdkRegEx.SIZE
+					+ "\\), "
+					+ JdkRegEx.DURATION
+					+ "\\]"
+					+ JdkRegEx.TIMESTAMP
+					+ ": \\[CMS( CMS: abort preclean due to time )?"
+					+ JdkRegEx.TIMESTAMP
 					+ ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): "
-					+ JdkRegEx.DURATION_FRACTION + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+					+ JdkRegEx.DURATION_FRACTION + "\\])"
+					+ JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
 
 	/**
 	 * Regular expression for the end part of a line retained.
 	 */
 	private static final String[] REGEX_RETAIN_END = {
-	// Normal young collection
-	"^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-			+ JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-			+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$", };
+			// Normal young collection
+			"^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+					+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
+					+ JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+					+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+					+ JdkRegEx.TIMES_BLOCK + "?[ ]*$",
+			"^ \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+					+ JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->"
+					+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+					+ JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
+					+ "?[ ]*$" };
 
 	/**
 	 * Regular expressions for lines or parts of lines thrown away.
@@ -121,7 +159,8 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
 	 *            The log entry being processed.
 	 */
 	public PrintTenuringDistributionPreprocessAction(String logEntry) {
-		// Handle split logging. Keep parts of log lines needed for re-composing.
+		// Handle split logging. Keep parts of log lines needed for
+		// re-composing.
 		Pattern pattern;
 		Matcher matcher;
 		// Check to see if beginning of line should be retained.
@@ -155,7 +194,8 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
 	}
 
 	public String getName() {
-		return JdkUtil.PreprocessActionType.PRINT_TENURING_DISTRIBUTION.toString();
+		return JdkUtil.PreprocessActionType.PRINT_TENURING_DISTRIBUTION
+				.toString();
 	}
 
 	/**
