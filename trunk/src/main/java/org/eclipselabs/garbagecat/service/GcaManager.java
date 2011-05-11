@@ -68,6 +68,7 @@ public class GcaManager {
 		;
 	}
 
+	
 	/**
 	 * Remove extraneous information and format the log file for parsing.
 	 * 
@@ -76,88 +77,77 @@ public class GcaManager {
 	 * @param jvmStartDate
 	 *            The date and time the JVM was started.
 	 * @return Preprocessed garbage collection log file.
+	 * fixed Issue 17:  https://code.google.com/a/eclipselabs.org/p/garbagecat/issues/detail?id=17
 	 */
 	public File preprocess(File logFile, Date jvmStartDate) {
+		if (logFile == null)
+			throw new IllegalArgumentException("logFile == null!!");
+
 		File preprocessFile = new File(logFile.getPath() + ".pp");
+		long lLineCounter = 0;// will be used in statistics in near future
 
 		// Preprocess log file
-		if (logFile != null) {
-			FileReader fileReader = null;
-			BufferedReader bufferedReader = null;
-			FileWriter fileWriter = null;
-			BufferedWriter bufferedWriter = null;
-			try {
-				fileReader = new FileReader(logFile);
-				bufferedReader = new BufferedReader(fileReader);
-				String currentLogLine = null;
-				fileWriter = new FileWriter(preprocessFile);
-				bufferedWriter = new BufferedWriter(fileWriter);
 
-				String priorLogLine = null;
-				String nextLogLine = bufferedReader.readLine();
-				String preprocessedLogLine = null;
+		BufferedReader bufferedReader = null;
+		BufferedWriter bufferedWriter = null;
 
-				while (nextLogLine != null) {
-					// currentLogLine will be null the first iteration
-					if (currentLogLine != null) {
-						preprocessedLogLine = getPreprocessedLogEntry(
-								currentLogLine, priorLogLine, nextLogLine,
-								jvmStartDate);
-						if (preprocessedLogLine != null) {
-							bufferedWriter.write(preprocessedLogLine);
-						}
-					}
-					priorLogLine = currentLogLine;
-					currentLogLine = nextLogLine;
-					nextLogLine = bufferedReader.readLine();
-				}
-				// Process last line
+		try {
+			String currentLogLine = "" ;
+			String priorLogLine = "" ;
+			String preprocessedLogLine = "" ;
+
+			bufferedReader = new BufferedReader(new FileReader(logFile));
+			bufferedWriter = new BufferedWriter(new FileWriter(preprocessFile));
+
+			String nextLogLine = bufferedReader.readLine();
+			while (nextLogLine != null) {
+				lLineCounter++;
 				preprocessedLogLine = getPreprocessedLogEntry(currentLogLine,
 						priorLogLine, nextLogLine, jvmStartDate);
 				if (preprocessedLogLine != null) {
 					bufferedWriter.write(preprocessedLogLine);
 				}
 
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				// Close streams
-				if (bufferedReader != null) {
-					try {
-						bufferedReader.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				if (fileReader != null) {
-					try {
-						fileReader.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				if (bufferedWriter != null) {
-					try {
-						bufferedWriter.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				if (fileWriter != null) {
-					try {
-						fileWriter.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+				priorLogLine = currentLogLine;
+				currentLogLine = nextLogLine;
+				nextLogLine = bufferedReader.readLine();
+			}// while()
+
+			// Process last line
+			preprocessedLogLine = getPreprocessedLogEntry(currentLogLine,
+					priorLogLine, nextLogLine, jvmStartDate);
+			if (preprocessedLogLine != null) {
+				bufferedWriter.write(preprocessedLogLine);
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+
+			// Close streams
+			if (bufferedReader != null) {
+				try {
+					bufferedReader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 
-		}
-		return preprocessFile;
-	}
+			if (bufferedWriter != null) {
+				try {
+					bufferedWriter.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}// finally
 
+		return preprocessFile;
+	}// preprocess()
+
+	
 	/**
 	 * Determine the preprocessed log entry given the current, previous, and
 	 * next log lines.
