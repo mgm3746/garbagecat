@@ -134,6 +134,7 @@ public class GcUtil {
 		return calendar.getTime();
 	}
 
+	
 	/**
 	 * Add milliseconds to a given <code>Date</code>.
 	 * 
@@ -144,21 +145,10 @@ public class GcUtil {
 	 * @return start <code>Date</code> + timestamp.
 	 */
 	public static final Date getDatePlusTimestamp(Date start, long timestamp) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(start);
-		int days = daysInMilliSeconds(timestamp);
-		if (days > 0) {
-			// Add days first to avoid errors casting long to int
-			calendar.add(Calendar.DAY_OF_MONTH, days);
-			int milliseconds = new BigDecimal(timestamp).subtract(
-					new BigDecimal(days * 24 * 60 * 60 * 1000)).intValue();
-			calendar.add(Calendar.MILLISECOND, milliseconds);
-		} else {
-			// Safe to cast from long to int
-			calendar.add(Calendar.MILLISECOND, (int) timestamp);
-		}
-		return calendar.getTime();
-	}
+		long milis = start.getTime() + timestamp ;
+		return new Date(milis) ;
+	}//getDatePlusTimestamp()
+	
 
 	/**
 	 * Calculate the number of whole days (24 hour periods) for a given number of milliseconds
@@ -198,6 +188,7 @@ public class GcUtil {
 		return rb.getString(key);
 	}
 
+	
 	/**
 	 * Calculate the number of milliseconds between two dates.
 	 * 
@@ -208,11 +199,7 @@ public class GcUtil {
 	 * @return The interval between two dates in milliseconds.
 	 */
 	public static final long dateDiff(Date start, Date end) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(start);
-		long startMillis = calendar.getTimeInMillis();
-		calendar.setTime(end);
-		long endMillis = calendar.getTimeInMillis();
-		return endMillis - startMillis;
-	}
-}
+		return end.getTime()-start.getTime();
+	}// dateDiff()
+	
+}//GcUtil
