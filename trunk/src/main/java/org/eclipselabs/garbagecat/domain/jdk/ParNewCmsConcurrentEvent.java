@@ -40,6 +40,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
+ * @author jborelo
  * 
  */
 public class ParNewCmsConcurrentEvent implements BlockingEvent, YoungCollection, YoungData, OldData {
@@ -109,14 +110,14 @@ public class ParNewCmsConcurrentEvent implements BlockingEvent, YoungCollection,
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			young = new Integer(matcher.group(6)).intValue();
-			youngEnd = new Integer(matcher.group(7)).intValue();
-			youngAvailable = new Integer(matcher.group(8)).intValue();
-			int totalBegin = new Integer(matcher.group(10)).intValue();
+			young = Integer.parseInt(matcher.group(6)) ;
+			youngEnd = Integer.parseInt(matcher.group(7)) ;
+			youngAvailable = Integer.parseInt(matcher.group(8)) ;
+			int totalBegin = Integer.parseInt(matcher.group(10)) ;
 			old = totalBegin - young;
-			int totalEnd = new Integer(matcher.group(11)).intValue();
+			int totalEnd = Integer.parseInt(matcher.group(11)) ;
 			oldEnd = totalEnd - youngEnd;
-			int totalAllocation = new Integer(matcher.group(12)).intValue();
+			int totalAllocation = Integer.parseInt(matcher.group(12)) ;
 			oldAllocation = totalAllocation - youngAvailable;
 			duration = JdkMath.convertSecsToMillis(matcher.group(13)).intValue();
 		}

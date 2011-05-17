@@ -64,6 +64,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * TODO: Extend {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent}.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
+ * @author jborelo
  */
 public class CmsSerialOldEvent implements BlockingEvent, OldCollection, PermCollection, YoungData,
 		OldData, PermData {
@@ -149,18 +150,18 @@ public class CmsSerialOldEvent implements BlockingEvent, OldCollection, PermColl
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			old = new Integer(matcher.group(4)).intValue();
-			oldEnd = new Integer(matcher.group(5)).intValue();
-			oldAllocation = new Integer(matcher.group(6)).intValue();
-			int totalBegin = new Integer(matcher.group(8)).intValue();
+			old = Integer.parseInt(matcher.group(4)) ;
+			oldEnd = Integer.parseInt(matcher.group(5)) ;
+			oldAllocation = Integer.parseInt(matcher.group(6)) ;
+			int totalBegin = Integer.parseInt(matcher.group(8)) ;
 			young = totalBegin - old;
-			int totalEnd = new Integer(matcher.group(9)).intValue();
+			int totalEnd = Integer.parseInt(matcher.group(9)) ;
 			youngEnd = totalEnd - oldEnd;
-			int totalAllocation = new Integer(matcher.group(10)).intValue();
+			int totalAllocation = Integer.parseInt(matcher.group(10)) ;
 			youngAvailable = totalAllocation - oldAllocation;
-			permGen = new Integer(matcher.group(11)).intValue();
-			permGenEnd = new Integer(matcher.group(12)).intValue();
-			permGenAllocation = new Integer(matcher.group(13)).intValue();
+			permGen = Integer.parseInt(matcher.group(11)) ;
+			permGenEnd = Integer.parseInt(matcher.group(12)) ;
+			permGenAllocation = Integer.parseInt(matcher.group(13)) ;
 			duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
 		}
 	}
