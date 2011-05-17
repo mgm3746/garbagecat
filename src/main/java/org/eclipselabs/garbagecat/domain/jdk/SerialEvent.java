@@ -50,6 +50,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
+ * @author jborelo
  * 
  */
 public class SerialEvent implements BlockingEvent, YoungCollection, YoungData, OldData {
@@ -118,14 +119,14 @@ public class SerialEvent implements BlockingEvent, YoungCollection, YoungData, O
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			young = new Integer(matcher.group(4)).intValue();
-			youngEnd = new Integer(matcher.group(5)).intValue();
-			youngAvailable = new Integer(matcher.group(6)).intValue();
-			int totalBegin = new Integer(matcher.group(8)).intValue();
+			young = Integer.parseInt(matcher.group(4)) ;
+			youngEnd = Integer.parseInt(matcher.group(5)) ;
+			youngAvailable = Integer.parseInt(matcher.group(6)) ;
+			int totalBegin = Integer.parseInt(matcher.group(8)) ;
 			old = totalBegin - young;
-			int totalEnd = new Integer(matcher.group(9)).intValue();
+			int totalEnd = Integer.parseInt(matcher.group(9)) ;
 			oldEnd = totalEnd - youngEnd;
-			int totalAllocation = new Integer(matcher.group(10)).intValue();
+			int totalAllocation = Integer.parseInt(matcher.group(10)) ;
 			oldAllocation = totalAllocation - youngAvailable;
 			duration = JdkMath.convertSecsToMillis(matcher.group(11)).intValue();
 		}
