@@ -46,6 +46,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
+ * @author jborelo
  * 
  */
 public class SerialSerialOldEvent implements BlockingEvent, YoungCollection, OldCollection,
@@ -116,15 +117,15 @@ public class SerialSerialOldEvent implements BlockingEvent, YoungCollection, Old
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			old = new Integer(matcher.group(8)).intValue();
-			oldEnd = new Integer(matcher.group(9)).intValue();
-			oldAllocation = new Integer(matcher.group(10)).intValue();
+			old = Integer.parseInt(matcher.group(8)) ;
+			oldEnd = Integer.parseInt(matcher.group(9)) ;
+			oldAllocation = Integer.parseInt(matcher.group(10)) ;
 			// Compute young sizes on the major collection, not the initial young collection
-			int totalBegin = new Integer(matcher.group(12)).intValue();
+			int totalBegin = Integer.parseInt(matcher.group(12)) ;
 			young = totalBegin - old;
-			int totalEnd = new Integer(matcher.group(13)).intValue();
+			int totalEnd = Integer.parseInt(matcher.group(13)) ;
 			youngEnd = totalEnd - oldEnd;
-			int totalAllocation = new Integer(matcher.group(14)).intValue();
+			int totalAllocation = Integer.parseInt(matcher.group(14)) ;
 			youngAvailable = totalAllocation - oldAllocation;
 			duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
 		}
