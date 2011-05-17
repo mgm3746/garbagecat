@@ -39,6 +39,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
+ * @author jborelo
  * 
  */
 public class VerboseGcOldEvent implements BlockingEvent, OldCollection, CombinedData {
@@ -89,9 +90,9 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			combinedBegin = new Integer(matcher.group(2)).intValue();
-			combinedEnd = new Integer(matcher.group(3)).intValue();
-			combinedAllocation = new Integer(matcher.group(4)).intValue();
+			combinedBegin = Integer.parseInt(matcher.group(2));
+			combinedEnd = Integer.parseInt(matcher.group(3));
+			combinedAllocation = Integer.parseInt(matcher.group(4));
 			duration = JdkMath.convertSecsToMillis(matcher.group(5)).intValue();
 		}
 	}
@@ -147,4 +148,4 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
 	public static final boolean match(String logLine) {
 		return logLine.matches(REGEX);
 	}
-}
+}// VerboseGcOldEvent
