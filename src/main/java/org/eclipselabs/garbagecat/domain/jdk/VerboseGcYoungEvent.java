@@ -39,6 +39,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
+ * @author jborelo
  * 
  */
 public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, CombinedData {
@@ -88,13 +89,13 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
 		Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
-			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			combinedBegin = new Integer(matcher.group(2)).intValue();
-			combinedEnd = new Integer(matcher.group(3)).intValue();
-			combinedAllocation = new Integer(matcher.group(4)).intValue();
+			timestamp  = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+			combinedBegin = Integer.parseInt(matcher.group(2));
+			combinedEnd = Integer.parseInt(matcher.group(3));
+			combinedAllocation = Integer.parseInt(matcher.group(4));
 			duration = JdkMath.convertSecsToMillis(matcher.group(5)).intValue();
 		}
-	}
+	}// VerboseGcYoungEvent()
 
 	/**
 	 * Alternate constructor. Create logging event from values.
