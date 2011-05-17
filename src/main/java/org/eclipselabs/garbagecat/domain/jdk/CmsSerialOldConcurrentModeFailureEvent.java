@@ -127,6 +127,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
+ * @author jborelo
  */
 public class CmsSerialOldConcurrentModeFailureEvent implements BlockingEvent, OldCollection,
 		PermCollection, YoungData, OldData, PermData {
@@ -224,18 +225,18 @@ public class CmsSerialOldConcurrentModeFailureEvent implements BlockingEvent, Ol
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			old = new Integer(matcher.group(23)).intValue();
-			oldEnd = new Integer(matcher.group(24)).intValue();
-			oldAllocation = new Integer(matcher.group(25)).intValue();
-			int totalBegin = new Integer(matcher.group(27)).intValue();
+			old = Integer.parseInt(matcher.group(23)) ;
+			oldEnd = Integer.parseInt(matcher.group(24)) ;
+			oldAllocation = Integer.parseInt(matcher.group(25)) ;
+			int totalBegin = Integer.parseInt(matcher.group(27)) ;
 			young = totalBegin - old;
-			int totalEnd = new Integer(matcher.group(28)).intValue();
+			int totalEnd = Integer.parseInt(matcher.group(28)) ;
 			youngEnd = totalEnd - oldEnd;
-			int totalAllocation = new Integer(matcher.group(29)).intValue();
+			int totalAllocation = Integer.parseInt(matcher.group(29)) ;
 			youngAvailable = totalAllocation - oldAllocation;
-			permGen = new Integer(matcher.group(30)).intValue();
-			permGenEnd = new Integer(matcher.group(31)).intValue();
-			permGenAllocation = new Integer(matcher.group(32)).intValue();
+			permGen = Integer.parseInt(matcher.group(30)) ;
+			permGenEnd = Integer.parseInt(matcher.group(31)) ;
+			permGenAllocation = Integer.parseInt(matcher.group(32)) ;
 			duration = JdkMath.convertSecsToMillis(matcher.group(34)).intValue();
 		}
 	}
