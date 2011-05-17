@@ -81,6 +81,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
+ * @author jborelo
  */
 public class ParNewPromotionFailedCmsSerialOldEvent implements BlockingEvent, OldCollection,
 		PermCollection, YoungData, OldData {
@@ -150,15 +151,15 @@ public class ParNewPromotionFailedCmsSerialOldEvent implements BlockingEvent, Ol
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			old = new Integer(matcher.group(10)).intValue();
-			oldEnd = new Integer(matcher.group(11)).intValue();
-			oldAllocation = new Integer(matcher.group(12)).intValue();
-			int totalBegin = new Integer(matcher.group(14)).intValue();
+			old = Integer.parseInt(matcher.group(10)) ;
+			oldEnd = Integer.parseInt(matcher.group(11)) ;
+			oldAllocation = Integer.parseInt(matcher.group(12)) ;
+			int totalBegin = Integer.parseInt(matcher.group(14)) ;
 			// Don't use ParNew values because those are presumably sbefore the promotion failure.
 			young = totalBegin - old;
-			int totalEnd = new Integer(matcher.group(15)).intValue();
+			int totalEnd = Integer.parseInt(matcher.group(15)) ;
 			youngEnd = totalEnd - oldEnd;
-			int totalAllocation = new Integer(matcher.group(16)).intValue();
+			int totalAllocation = Integer.parseInt(matcher.group(16)) ;
 			youngAvailable = totalAllocation - oldAllocation;
 			duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
 		}
