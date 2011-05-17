@@ -53,6 +53,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
+ * @author jborelo
  * 
  */
 public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, YoungData, OldData {
@@ -120,14 +121,14 @@ public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, Yo
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			young = new Integer(matcher.group(3)).intValue();
-			youngEnd = new Integer(matcher.group(4)).intValue();
-			youngAvailable = new Integer(matcher.group(5)).intValue();
-			int totalBegin = new Integer(matcher.group(6)).intValue();
+			young = Integer.parseInt(matcher.group(3)) ;
+			youngEnd = Integer.parseInt(matcher.group(4)) ;
+			youngAvailable = Integer.parseInt(matcher.group(5)) ;
+			int totalBegin = Integer.parseInt(matcher.group(6)) ;
 			old = totalBegin - young;
-			int totalEnd = new Integer(matcher.group(7)).intValue();
+			int totalEnd = Integer.parseInt(matcher.group(7)) ;
 			oldEnd = totalEnd - youngEnd;
-			int totalAllocation = new Integer(matcher.group(8)).intValue();
+			int totalAllocation = Integer.parseInt(matcher.group(8)) ;
 			oldAllocation = totalAllocation - youngAvailable;
 			duration = JdkMath.convertSecsToMillis(matcher.group(9)).intValue();
 		}

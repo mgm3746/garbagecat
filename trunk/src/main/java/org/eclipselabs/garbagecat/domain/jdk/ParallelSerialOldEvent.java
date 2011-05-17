@@ -57,6 +57,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * TODO: Expand or extend {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent}.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
+ * @author jborelo
  * 
  */
 public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, PermCollection,
@@ -143,20 +144,20 @@ public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, Per
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			young = new Integer(matcher.group(3)).intValue();
-			youngEnd = new Integer(matcher.group(4)).intValue();
-			youngAvailable = new Integer(matcher.group(5)).intValue();
-			old = new Integer(matcher.group(6)).intValue();
-			oldEnd = new Integer(matcher.group(7)).intValue();
-			oldAllocation = new Integer(matcher.group(8)).intValue();
+                        young = Integer.parseInt(matcher.group(3)) ;
+			youngEnd = Integer.parseInt(matcher.group(4)) ;
+			youngAvailable = Integer.parseInt(matcher.group(5)) ;
+			old = Integer.parseInt(matcher.group(6)) ;
+			oldEnd = Integer.parseInt(matcher.group(7)) ;
+			oldAllocation = Integer.parseInt(matcher.group(8)) ;
 			// Do not need total begin/end/allocation, as these can be calculated.
-			permGen = new Integer(matcher.group(12)).intValue();
-			permGenEnd = new Integer(matcher.group(13)).intValue();
-			permGenAllocation = new Integer(matcher.group(14)).intValue();
+			permGen = Integer.parseInt(matcher.group(12)) ;
+			permGenEnd = Integer.parseInt(matcher.group(13)) ;
+			permGenAllocation = Integer.parseInt(matcher.group(14)) ;
 			duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
 		}
 	}
-
+ 
 	/**
 	 * Alternate constructor. Create parallel old detail logging event from values.
 	 * 
