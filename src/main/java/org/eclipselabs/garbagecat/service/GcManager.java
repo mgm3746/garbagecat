@@ -54,7 +54,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class GcaManager {
+public class GcManager {
 
 	/**
 	 * The JVM data access object.
@@ -64,7 +64,7 @@ public class GcaManager {
 	/**
 	 * Default constructor.
 	 */
-	public GcaManager() {
+	public GcManager() {
 		this.jvmDao = new JvmDao();
 		;
 	}

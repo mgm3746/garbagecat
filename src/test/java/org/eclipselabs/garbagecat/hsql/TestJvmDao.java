@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 import org.eclipselabs.garbagecat.domain.Jvm;
 import org.eclipselabs.garbagecat.domain.JvmRun;
-import org.eclipselabs.garbagecat.service.GcaManager;
+import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
@@ -34,7 +34,7 @@ public class TestJvmDao extends TestCase {
 
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset1.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		jvmManager.store(testFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
 				Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -65,7 +65,7 @@ public class TestJvmDao extends TestCase {
 
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset2.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		jvmManager.store(testFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
 				Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -94,7 +94,7 @@ public class TestJvmDao extends TestCase {
 	}
 
 	public void testLastTimestampNoEvents() {
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		jvmManager.store(null);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
 				Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);

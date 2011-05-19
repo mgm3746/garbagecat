@@ -31,7 +31,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.eclipselabs.garbagecat.domain.Jvm;
 import org.eclipselabs.garbagecat.domain.JvmRun;
-import org.eclipselabs.garbagecat.service.GcaManager;
+import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
@@ -94,7 +94,7 @@ public class Main {
 				String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
 				File logFile = new File(logFileName);
 
-				GcaManager jvmManager = new GcaManager();
+				GcManager jvmManager = new GcManager();
 
 				// Do preprocessing
 				if (cmd.hasOption("preprocess")) {

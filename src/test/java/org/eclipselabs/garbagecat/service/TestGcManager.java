@@ -21,7 +21,7 @@ import junit.framework.TestCase;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestGcaManager extends TestCase {
+public class TestGcManager extends TestCase {
 
 	/**
 	 * Test for NullPointerException caused by Issue 17:
@@ -30,7 +30,7 @@ public class TestGcaManager extends TestCase {
 	public void testNullPointerExceptionNotRaised() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset31.txt");		
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		try {
 			jvmManager.preprocess(testFile, null);
 		} catch (NullPointerException e) {
