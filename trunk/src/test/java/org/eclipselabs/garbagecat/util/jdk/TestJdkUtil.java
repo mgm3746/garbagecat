@@ -24,7 +24,7 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
-import org.eclipselabs.garbagecat.service.GcaManager;
+import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 
 /**
@@ -40,7 +40,7 @@ public class TestJdkUtil extends TestCase {
 	public void testParseLoggingWithApplicationTime() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset3.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		jvmManager.store(testFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
 				Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -57,7 +57,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitParNewPromotionFailedCmsConcurrentModeFailure() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset5.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -82,7 +82,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitPrintHeapAtGcCmsSerialOldEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset6.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -101,7 +101,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitPrintHeapAtGcParNewConcurrentModeFailureEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset7.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -121,7 +121,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitPrintHeapAtGcCmsSerialOldConcurrentModeFailureEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset8.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -141,7 +141,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitPrintHeapAtGcParNewPromotionFailedCmsConcurrentModeFailureEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset21.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -166,7 +166,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitParallelSerialOldEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset9.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -186,7 +186,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitParallelOldCompactingEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset28.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -207,7 +207,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitCmsConcurrentModeFailureEventMarkLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset10.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -227,7 +227,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitCmsConcurrentModeFailureEventAbortablePrecleanLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset11.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -247,7 +247,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitParNewPromotionFailedCmsConcurrentModeFailurePermData() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset12.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -272,7 +272,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitParNewCmsConcurrentModeFailurePermData() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset13.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -297,7 +297,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplit3LinesCmsConcurrentModeFailureEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset14.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -317,7 +317,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitParNewCmsConcurrentEventAbortablePrecleanLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset15.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -338,7 +338,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplit3LinesParNewPromotionFailedCmsConcurrentModeFailurePermDataEventMarkLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset16.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -363,7 +363,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitSerialEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset17.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -382,7 +382,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitParallelScavengeEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset30.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -423,7 +423,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplitMixedTenuringParNewPromotionFailedEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset18.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -448,7 +448,7 @@ public class TestJdkUtil extends TestCase {
 	public void testCombinedCmsConcurrentApplicationConcurrentTimeLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset19.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -471,7 +471,7 @@ public class TestJdkUtil extends TestCase {
 	public void testCombinedCmsConcurrentApplicationStoppedTimeLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset27.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -490,7 +490,7 @@ public class TestJdkUtil extends TestCase {
 	public void testRemoveBlankLines() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset20.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -619,7 +619,7 @@ public class TestJdkUtil extends TestCase {
 	public void testUnloadingClassPreprocessActionParallelSerialOldEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset24.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -639,7 +639,7 @@ public class TestJdkUtil extends TestCase {
 	public void testUnloadingClassPreprocessActionTruncatedEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset22.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -662,7 +662,7 @@ public class TestJdkUtil extends TestCase {
 	public void testParNewPromotionFailedTruncatedEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset23.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
@@ -684,7 +684,7 @@ public class TestJdkUtil extends TestCase {
 	public void testDateStampPreprocessActionLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset25.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, 2010);
 		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
@@ -711,7 +711,7 @@ public class TestJdkUtil extends TestCase {
 	public void testDateStampPreprocessActionLoggingDatestampPrefix() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset26.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, 2010);
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
@@ -740,7 +740,7 @@ public class TestJdkUtil extends TestCase {
 	public void testSplit3LinesParNewConcurrentModeFailureEventLogging() {
 		// TODO: Create File in platform independent way.
 		File testFile = new File("src/test/data/dataset29.txt");
-		GcaManager jvmManager = new GcaManager();
+		GcManager jvmManager = new GcManager();
 		File preprocessedFile = jvmManager.preprocess(testFile, null);
 		jvmManager.store(preprocessedFile);
 		JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null),
