@@ -80,13 +80,13 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
 	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.SIZE
 			+ "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
 			+ "\\]?[ ]*$";
+        private static Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
 
 	/**
 	 * Create serial old detail logging event from log entry.
 	 */
 	public VerboseGcYoungEvent(String logEntry) {
 		this.logEntry = logEntry;
-		Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp  = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
