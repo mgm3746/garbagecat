@@ -72,6 +72,7 @@ public class TruncatedEvent implements LogEvent {
 			"^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew"
 					+ JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-abortable-preclean: "
 					+ JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+        private static Pattern pattern = Pattern.compile("^" + JdkRegEx.TIMESTAMP + ".*$");
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.
@@ -88,7 +89,6 @@ public class TruncatedEvent implements LogEvent {
 	 */
 	public TruncatedEvent(String logEntry) {
 		this.logEntry = logEntry;
-		Pattern pattern = Pattern.compile("^" + JdkRegEx.TIMESTAMP + ".*$");
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
