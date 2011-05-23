@@ -94,6 +94,7 @@ public class ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent implemen
 			+ JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
 			+ JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
 			+ JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+        private static Pattern pattern = Pattern.compile(REGEX);
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.
@@ -160,8 +161,7 @@ public class ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent implemen
 	 * Create ParNew detail logging event from log entry.
 	 */
 	public ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(String logEntry) {
-		this.logEntry = logEntry;
-		Pattern pattern = Pattern.compile(REGEX);
+  		this.logEntry = logEntry;
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
