@@ -65,6 +65,7 @@ public class SerialSerialOldPermDataEvent implements BlockingEvent, YoungCollect
 			+ JdkRegEx.SIZE + "\\), \\[Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
 			+ JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
 			+ "?[ ]*$";
+        private static Pattern pattern = Pattern.compile(SerialSerialOldPermDataEvent.REGEX);
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.
@@ -131,8 +132,7 @@ public class SerialSerialOldPermDataEvent implements BlockingEvent, YoungCollect
 	 * Create ParNew detail logging event from log entry.
 	 */
 	public SerialSerialOldPermDataEvent(String logEntry) {
-		this.logEntry = logEntry;
-		Pattern pattern = Pattern.compile(SerialSerialOldPermDataEvent.REGEX);
+		this.logEntry = logEntry;		
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
