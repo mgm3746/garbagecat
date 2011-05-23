@@ -111,13 +111,13 @@ public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, Yo
 			+ JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
 			+ JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
 			+ JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+        private static final Pattern pattern = Pattern.compile(ParallelScavengeEvent.REGEX) ;
 
 	/**
 	 * Create parallel scavenge logging event from log entry.
 	 */
 	public ParallelScavengeEvent(String logEntry) {
-		this.logEntry = logEntry;
-		Pattern pattern = Pattern.compile(ParallelScavengeEvent.REGEX);
+                this.logEntry = logEntry;
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
