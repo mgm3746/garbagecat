@@ -55,6 +55,7 @@ public class ParNewCmsSerialOldEvent implements BlockingEvent, OldCollection, Yo
 			+ JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
 			+ JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
 			+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+        private static Pattern pattern = Pattern.compile(ParNewCmsSerialOldEvent.REGEX);
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.
@@ -107,7 +108,6 @@ public class ParNewCmsSerialOldEvent implements BlockingEvent, OldCollection, Yo
 	 */
 	public ParNewCmsSerialOldEvent(String logEntry) {
 		this.logEntry = logEntry;
-		Pattern pattern = Pattern.compile(ParNewCmsSerialOldEvent.REGEX);
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
