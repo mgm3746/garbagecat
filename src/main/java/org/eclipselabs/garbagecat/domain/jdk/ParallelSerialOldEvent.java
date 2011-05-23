@@ -135,12 +135,12 @@ public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, Per
 			+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
 			+ JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
+        private static Pattern pattern = Pattern.compile(ParallelSerialOldEvent.REGEX);
 	/**
 	 * Create parallel old detail logging event from log entry.
 	 */
 	public ParallelSerialOldEvent(String logEntry) {
 		this.logEntry = logEntry;
-		Pattern pattern = Pattern.compile(ParallelSerialOldEvent.REGEX);
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
