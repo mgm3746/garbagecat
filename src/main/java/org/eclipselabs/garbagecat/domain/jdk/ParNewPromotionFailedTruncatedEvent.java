@@ -56,6 +56,7 @@ public class ParNewPromotionFailedTruncatedEvent implements BlockingEvent {
 			+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
 			+ ": \\[CMS(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-mark: "
 			+ JdkRegEx.DURATION_FRACTION + "\\])?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+        private static Pattern pattern = Pattern.compile(REGEX);
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.
@@ -77,7 +78,6 @@ public class ParNewPromotionFailedTruncatedEvent implements BlockingEvent {
 	 */
 	public ParNewPromotionFailedTruncatedEvent(String logEntry) {
 		this.logEntry = logEntry;
-		Pattern pattern = Pattern.compile(REGEX);
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
