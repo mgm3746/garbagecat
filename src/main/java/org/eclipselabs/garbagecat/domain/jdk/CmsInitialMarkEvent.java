@@ -64,13 +64,13 @@ public class CmsInitialMarkEvent implements BlockingEvent {
 			+ ": \\[GC \\[1 CMS-initial-mark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
 			+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
 			+ JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+        private static 		Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
 
 	/**
 	 * Create CMS Initial Mark logging event from log entry.
 	 */
 	public CmsInitialMarkEvent(String logEntry) {
 		this.logEntry = logEntry;
-		Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
