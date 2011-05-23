@@ -95,75 +95,43 @@ public class JdkUtil {
 	 * @return The <code>LogEventType</code> of the log entry.
 	 */
 	public static final LogEventType identifyEventType(String logLine) {
-		LogEventType eventType = null;
-		// In order of most common events to limit checking
-		if (ParallelScavengeEvent.match(logLine)) {
-			eventType = LogEventType.PARALLEL_SCAVENGE;
-		} else if (ParNewEvent.match(logLine)) {
-			eventType = LogEventType.PAR_NEW;
-		} else if (ParNewCmsConcurrentEvent.match(logLine)) {
-			eventType = LogEventType.PAR_NEW_CMS_CONCURRENT;
-		} else if (ParallelSerialOldEvent.match(logLine)) {
-			eventType = LogEventType.PARALLEL_SERIAL_OLD;
-		} else if (ParallelOldCompactingEvent.match(logLine)) {
-			eventType = LogEventType.PARALLEL_OLD_COMPACTING;
-		} else if (SerialOldEvent.match(logLine)) {
-			eventType = LogEventType.SERIAL_OLD;
-		} else if (CmsSerialOldEvent.match(logLine)) {
-			eventType = LogEventType.CMS_SERIAL_OLD;
-		} else if (CmsSerialOldConcurrentModeFailureEvent.match(logLine)) {
-			eventType = LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE;
-		} else if (CmsInitialMarkEvent.match(logLine)) {
-			eventType = LogEventType.CMS_INITIAL_MARK;
-		} else if (CmsRemarkEvent.match(logLine)) {
-			eventType = LogEventType.CMS_REMARK;
-		} else if (CmsRemarkWithClassUnloadingEvent.match(logLine)) {
-			eventType = LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING;
-		} else if (ParNewPromotionFailedCmsSerialOldEvent.match(logLine)) {
-			eventType = LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD;
-		} else if (ParNewPromotionFailedCmsSerialOldPermDataEvent
-				.match(logLine)) {
-			eventType = LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA;
-		} else if (ParNewPromotionFailedEvent.match(logLine)) {
-			eventType = LogEventType.PAR_NEW_PROMOTION_FAILED;
-		} else if (ParNewPromotionFailedCmsConcurrentModeFailureEvent
-				.match(logLine)) {
-			eventType = LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE;
-		} else if (ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent
-				.match(logLine)) {
-			eventType = LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA;
-		} else if (ParNewConcurrentModeFailureEvent.match(logLine)) {
-			eventType = LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE;
-		} else if (ParNewConcurrentModeFailurePermDataEvent.match(logLine)) {
-			eventType = LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA;
-		} else if (ParNewCmsSerialOldEvent.match(logLine)) {
-			eventType = LogEventType.PAR_NEW_CMS_SERIAL_OLD;
-		} else if (SerialEvent.match(logLine)) {
-			eventType = LogEventType.SERIAL;
-		} else if (SerialSerialOldEvent.match(logLine)) {
-			eventType = LogEventType.SERIAL_SERIAL_OLD;
-		} else if (SerialSerialOldPermDataEvent.match(logLine)) {
-			eventType = LogEventType.SERIAL_SERIAL_OLD_PERM_DATA;
-		} else if (CmsConcurrentEvent.match(logLine)) {
-			eventType = LogEventType.CMS_CONCURRENT;
-		} else if (ApplicationConcurrentTimeEvent.match(logLine)) {
-			eventType = LogEventType.APPLICATION_CONCURRENT_TIME;
-		} else if (ApplicationStoppedTimeEvent.match(logLine)) {
-			eventType = LogEventType.APPLICATION_STOPPED_TIME;
-		} else if (VerboseGcYoungEvent.match(logLine)) {
-			eventType = LogEventType.VERBOSE_GC_YOUNG;
-		} else if (VerboseGcOldEvent.match(logLine)) {
-			eventType = LogEventType.VERBOSE_GC_OLD;
-		} else if (TruncatedEvent.match(logLine)) {
-			eventType = LogEventType.TRUNCATED;
-		} else if (ParNewPromotionFailedTruncatedEvent.match(logLine)) {
-			eventType = LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED;
-		} else {
-			eventType = LogEventType.UNKNOWN;
-		}
-		return eventType;
-	}
+         
+            // In order of most common events to limit checking
+            if (ParallelScavengeEvent.match(logLine)) return LogEventType.PARALLEL_SCAVENGE ;
+            if (ParNewEvent.match(logLine)) return LogEventType.PAR_NEW;
+            if (ParNewCmsConcurrentEvent.match(logLine)) return LogEventType.PAR_NEW_CMS_CONCURRENT;
+            if (ParallelSerialOldEvent.match(logLine)) return LogEventType.PARALLEL_SERIAL_OLD;
+            if (ParallelOldCompactingEvent.match(logLine)) return LogEventType.PARALLEL_OLD_COMPACTING;
+            if (SerialOldEvent.match(logLine)) return LogEventType.SERIAL_OLD;
+            if (CmsSerialOldEvent.match(logLine)) return LogEventType.CMS_SERIAL_OLD;
+            if (CmsSerialOldConcurrentModeFailureEvent.match(logLine)) return LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE;
+            if (CmsInitialMarkEvent.match(logLine)) return LogEventType.CMS_INITIAL_MARK;
+            if (CmsRemarkEvent.match(logLine)) return LogEventType.CMS_REMARK;
+            if (CmsRemarkWithClassUnloadingEvent.match(logLine)) return LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING;
+            if (ParNewPromotionFailedCmsSerialOldEvent.match(logLine)) return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD;
+            if (ParNewPromotionFailedCmsSerialOldPermDataEvent.match(logLine)) return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA;
+            if (ParNewPromotionFailedEvent.match(logLine)) return LogEventType.PAR_NEW_PROMOTION_FAILED;
+            if (ParNewPromotionFailedCmsConcurrentModeFailureEvent.match(logLine))  return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE;
+            if (ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent.match(logLine)) return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA;
+            if (ParNewConcurrentModeFailureEvent.match(logLine)) return LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE;
+            if (ParNewConcurrentModeFailurePermDataEvent.match(logLine))return LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA;
+            if (ParNewCmsSerialOldEvent.match(logLine)) return LogEventType.PAR_NEW_CMS_SERIAL_OLD;
+            if (SerialEvent.match(logLine)) return LogEventType.SERIAL;
+            if (SerialSerialOldEvent.match(logLine)) return LogEventType.SERIAL_SERIAL_OLD;
+            if (SerialSerialOldPermDataEvent.match(logLine)) return LogEventType.SERIAL_SERIAL_OLD_PERM_DATA;
+            if (CmsConcurrentEvent.match(logLine)) return LogEventType.CMS_CONCURRENT;
+            if (ApplicationConcurrentTimeEvent.match(logLine)) return LogEventType.APPLICATION_CONCURRENT_TIME;
+            if (ApplicationStoppedTimeEvent.match(logLine)) return LogEventType.APPLICATION_STOPPED_TIME;
+            if (VerboseGcYoungEvent.match(logLine)) return LogEventType.VERBOSE_GC_YOUNG;
+            if (VerboseGcOldEvent.match(logLine)) return LogEventType.VERBOSE_GC_OLD;
+            if (TruncatedEvent.match(logLine)) return LogEventType.TRUNCATED;
+            if (ParNewPromotionFailedTruncatedEvent.match(logLine)) return LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED;
 
+            return LogEventType.UNKNOWN ;
+
+	} //LogEventType()
+
+        
 	/**
 	 * Create <code>LogEvent</code> from GC log line.
 	 * 
