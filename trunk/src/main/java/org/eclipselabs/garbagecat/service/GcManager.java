@@ -261,63 +261,57 @@ public class GcManager {
 	 * @param logFile
 	 *            The garbage collection log file.
 	 */
-	public void store(File logFile) {
-		// Parse gc log file
-		if (logFile != null) {
-			FileReader fileReader = null;
-			BufferedReader bufferedReader = null;
-			try {
-				fileReader = new FileReader(logFile);
-				bufferedReader = new BufferedReader(fileReader);
-				String logLine = bufferedReader.readLine();
-				while (logLine != null) {
-					// If event has no timestamp, use most recent blocking
-					// timestamp in database.
-					LogEvent event = JdkUtil.parseLogLine(logLine);
-					if (event instanceof BlockingEvent) {
-						jvmDao.addBlockingEvent((BlockingEvent) event);
-					} else if (event instanceof UnknownEvent) {
-						if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
-							jvmDao.getUnidentifiedLogLines().add(logLine);
-						}
-					}
+    public void store(File logFile) {
+        
+        if (logFile == null) {
+            return;
+        }
+        
+        // Parse gc log file
+        BufferedReader bufferedReader = null;
+        try {
+            bufferedReader = new BufferedReader(new FileReader(logFile));
+            String logLine = bufferedReader.readLine();
+            while (logLine != null) {
+                // If event has no timestamp, use most recent blocking
+                // timestamp in database.
+                LogEvent event = JdkUtil.parseLogLine(logLine);
+                if (event instanceof BlockingEvent) {
+                    jvmDao.addBlockingEvent((BlockingEvent) event);
+                } else if (event instanceof UnknownEvent) {
+                    if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
+                        jvmDao.getUnidentifiedLogLines().add(logLine);
+                    }
+                }
 
-					// Populate events list.
-					List<JdkUtil.LogEventType> eventTypes = jvmDao
-							.getEventTypes();
-					JdkUtil.LogEventType eventType = JdkUtil
-							.determineEventType(event.getName());
-					if (!eventTypes.contains(eventType)) {
-						eventTypes.add(eventType);
-					}
+                // Populate events list.
+                List<JdkUtil.LogEventType> eventTypes = jvmDao.getEventTypes();
+                JdkUtil.LogEventType eventType = JdkUtil.determineEventType(event.getName());
+                if (!eventTypes.contains(eventType)) {
+                    eventTypes.add(eventType);
+                }
 
-					logLine = bufferedReader.readLine();
-				}
-				// Process final batch
-				jvmDao.processBatch();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				// Close streams
-				if (bufferedReader != null) {
-					try {
-						bufferedReader.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				if (fileReader != null) {
-					try {
-						fileReader.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
+                logLine = bufferedReader.readLine();
+            }// while()
+            
+            // Process final batch
+            jvmDao.processBatch();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // Close streams
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }// store()
 
 	/**
 	 * Determine <code>BlockingEvent</code>s where throughput since last event
