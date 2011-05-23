@@ -54,6 +54,7 @@ public class ParNewCmsConcurrentEvent implements BlockingEvent, YoungCollection,
 			+ "\\]: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
 			+ JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
 			+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+        private static Pattern pattern = Pattern.compile(ParNewCmsConcurrentEvent.REGEX);
 
 	/**
 	 * The log entry for the event. Can be used for debugging purposes.
@@ -106,7 +107,6 @@ public class ParNewCmsConcurrentEvent implements BlockingEvent, YoungCollection,
 	 */
 	public ParNewCmsConcurrentEvent(String logEntry) {
 		this.logEntry = logEntry;
-		Pattern pattern = Pattern.compile(ParNewCmsConcurrentEvent.REGEX);
 		Matcher matcher = pattern.matcher(logEntry);
 		if (matcher.find()) {
 			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
