@@ -24,9 +24,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Remove perm gen collection "Unloading class" logging. The perm gen is collected at the beginning
- * of some old collections, resulting in the perm gen logging being intermingled with the old
- * collection logging. For example:
+ * Remove perm gen collection "Unloading class" logging. The perm gen is collected at the beginning of some old
+ * collections, resulting in the perm gen logging being intermingled with the old collection logging. For example:
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -50,61 +49,58 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class UnloadingClassPreprocessAction implements PreprocessAction {
 
-	/**
-	 * Regular expression defining the logging.
-	 */
-	private static final String REGEX = "^(.*)" + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
+    /**
+     * Regular expression defining the logging.
+     */
+    private static final String REGEX = "^(.*)" + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * Create Unloading class event from log entry.
-	 * 
-	 * @param logEntry
-	 *            The log line.
-	 * @param nextLogEntry
-	 *            The next log line.
-	 */
-	public UnloadingClassPreprocessAction(String logEntry, String nextLogEntry) {
-		Pattern pattern = Pattern.compile(UnloadingClassPreprocessAction.REGEX);
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			// Do not add a newline if the next line requires preprocessing or the next log line is
-			// an unknown logging event (in that case assume the logging is split).
-			if (nextLogEntry != null
-					&& (match(nextLogEntry) || JdkUtil.identifyEventType(nextLogEntry).equals(
-							JdkUtil.LogEventType.UNKNOWN))) {
-				// No newline
-				this.logEntry = matcher.group(1) + matcher.group(2);
-			} else {
-				// Newline
-				this.logEntry = matcher.group(1) + matcher.group(2)
-						+ System.getProperty("line.separator");
-				;
-			}
-		}
-	}
+    /**
+     * Create Unloading class event from log entry.
+     * 
+     * @param logEntry
+     *            The log line.
+     * @param nextLogEntry
+     *            The next log line.
+     */
+    public UnloadingClassPreprocessAction(String logEntry, String nextLogEntry) {
+        Pattern pattern = Pattern.compile(UnloadingClassPreprocessAction.REGEX);
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            // Do not add a newline if the next line requires preprocessing or the next log line is
+            // an unknown logging event (in that case assume the logging is split).
+            if (nextLogEntry != null && (match(nextLogEntry) || JdkUtil.identifyEventType(nextLogEntry).equals(JdkUtil.LogEventType.UNKNOWN))) {
+                // No newline
+                this.logEntry = matcher.group(1) + matcher.group(2);
+            } else {
+                // Newline
+                this.logEntry = matcher.group(1) + matcher.group(2) + System.getProperty("line.separator");
+                ;
+            }
+        }
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public String getName() {
-		return JdkUtil.PreprocessActionType.UNLOADING_CLASS.toString();
-	}
+    public String getName() {
+        return JdkUtil.PreprocessActionType.UNLOADING_CLASS.toString();
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 
 }

@@ -23,28 +23,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class TestUnloadingClassPreprocessAction extends TestCase {
 
-	public void testLogLine() {
-		String logLine = "1187039.034: [Full GC[Unloading class sun.reflect.GeneratedSerializationConstructorAccessor13565]";
-		String nextLogLine = null;
-		Assert.assertTrue("Log line not recognized as "
-				+ JdkUtil.PreprocessActionType.UNLOADING_CLASS.toString() + ".",
-				UnloadingClassPreprocessAction.match(logLine));
-		UnloadingClassPreprocessAction event = new UnloadingClassPreprocessAction(logLine,
-				nextLogLine);
-		Assert.assertEquals("Log line not parsed correctly.", "1187039.034: [Full GC"
-				+ System.getProperty("line.separator"), event.getLogEntry());
-	}
+    public void testLogLine() {
+        String logLine = "1187039.034: [Full GC[Unloading class sun.reflect.GeneratedSerializationConstructorAccessor13565]";
+        String nextLogLine = null;
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNLOADING_CLASS.toString() + ".", UnloadingClassPreprocessAction.match(logLine));
+        UnloadingClassPreprocessAction event = new UnloadingClassPreprocessAction(logLine, nextLogLine);
+        Assert.assertEquals("Log line not parsed correctly.", "1187039.034: [Full GC" + System.getProperty("line.separator"), event.getLogEntry());
+    }
 
-	public void testLogLineWithUnderline() {
-		String logLine = "33872.769: [Full GC[Unloading class CargoClaimCoverLetter_1234153487841_717989]";
-		String nextLogLine = null;
-		Assert.assertTrue("Log line not recognized as "
-				+ JdkUtil.PreprocessActionType.UNLOADING_CLASS.toString() + ".",
-				UnloadingClassPreprocessAction.match(logLine));
-		UnloadingClassPreprocessAction event = new UnloadingClassPreprocessAction(logLine,
-				nextLogLine);
-		Assert.assertEquals("Log line not parsed correctly.", "33872.769: [Full GC"
-				+ System.getProperty("line.separator"), event.getLogEntry());
-	}
+    public void testLogLineWithUnderline() {
+        String logLine = "33872.769: [Full GC[Unloading class CargoClaimCoverLetter_1234153487841_717989]";
+        String nextLogLine = null;
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNLOADING_CLASS.toString() + ".", UnloadingClassPreprocessAction.match(logLine));
+        UnloadingClassPreprocessAction event = new UnloadingClassPreprocessAction(logLine, nextLogLine);
+        Assert.assertEquals("Log line not parsed correctly.", "33872.769: [Full GC" + System.getProperty("line.separator"), event.getLogEntry());
+    }
 
 }

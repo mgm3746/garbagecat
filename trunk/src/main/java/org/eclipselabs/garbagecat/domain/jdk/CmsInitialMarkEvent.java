@@ -26,9 +26,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * A stop-the-world phase of the concurrent low pause collector that identifies the initial set of
- * live objects directly reachable from GC roots. This event does not do any garbage collection,
- * only marking of objects.
+ * A stop-the-world phase of the concurrent low pause collector that identifies the initial set of live objects directly
+ * reachable from GC roots. This event does not do any garbage collection, only marking of objects.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -42,79 +41,77 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class CmsInitialMarkEvent implements BlockingEvent {
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * The elapsed clock time for the GC event in milliseconds (rounded).
-	 */
-	private int duration;
+    /**
+     * The elapsed clock time for the GC event in milliseconds (rounded).
+     */
+    private int duration;
 
-	/**
-	 * The time when the GC event happened in milliseconds after JVM startup.
-	 */
-	private long timestamp;
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP
-			+ ": \\[GC \\[1 CMS-initial-mark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
-			+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-			+ JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-        private static 		Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC \\[1 CMS-initial-mark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
 
-	/**
-	 * Create CMS Initial Mark logging event from log entry.
-	 */
-	public CmsInitialMarkEvent(String logEntry) {
-		this.logEntry = logEntry;
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
-		}
-	}
+    /**
+     * Create CMS Initial Mark logging event from log entry.
+     */
+    public CmsInitialMarkEvent(String logEntry) {
+        this.logEntry = logEntry;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
+        }
+    }
 
-	/**
-	 * Alternate constructor. Create CMS Initial Mark from values.
-	 * 
-	 * @param logEntry
-	 * @param timestamp
-	 * @param duration
-	 */
-	public CmsInitialMarkEvent(String logEntry, long timestamp, int duration) {
-		this.logEntry = logEntry;
-		this.timestamp = timestamp;
-		this.duration = duration;
-	}
+    /**
+     * Alternate constructor. Create CMS Initial Mark from values.
+     * 
+     * @param logEntry
+     * @param timestamp
+     * @param duration
+     */
+    public CmsInitialMarkEvent(String logEntry, long timestamp, int duration) {
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public int getDuration() {
-		return duration;
-	}
+    public int getDuration() {
+        return duration;
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.CMS_INITIAL_MARK.toString();
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.CMS_INITIAL_MARK.toString();
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 }

@@ -23,17 +23,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class TestApplicationStoppedTimeEvent extends TestCase {
 
-	public void testLogLine() {
-		String logLine = "Total time for which application threads were stopped: 0.0968457 seconds";
-		Assert.assertTrue("Log line not recognized as "
-				+ JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
-				ApplicationStoppedTimeEvent.match(logLine));
-	}
+    public void testLogLine() {
+        String logLine = "Total time for which application threads were stopped: 0.0968457 seconds";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".", ApplicationStoppedTimeEvent.match(logLine));
+    }
 
-	public void testLogLineWithSpacesAtEnd() {
-		String logLine = "Total time for which application threads were stopped: 0.0968457 seconds  ";
-		Assert.assertTrue("Log line not recognized as "
-				+ JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
-				ApplicationStoppedTimeEvent.match(logLine));
-	}
+    public void testLogLineWithSpacesAtEnd() {
+        String logLine = "Total time for which application threads were stopped: 0.0968457 seconds  ";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".", ApplicationStoppedTimeEvent.match(logLine));
+    }
 }

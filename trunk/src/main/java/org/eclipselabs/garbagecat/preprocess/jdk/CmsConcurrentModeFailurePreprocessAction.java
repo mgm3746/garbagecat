@@ -26,8 +26,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <p>
  * Combine {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent},
  * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent}, or
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent} logging
- * that is split across multiple lines into a single line.
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent} logging that is split across
+ * multiple lines into a single line.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -63,8 +63,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 3) {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent} across 3
- * lines:
+ * 3) {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent} across 3 lines:
  * </p>
  * 
  * <pre>
@@ -80,9 +79,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 4)
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent}
- * with "concurrent mode failure" missing:
+ * 4) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent} with
+ * "concurrent mode failure" missing:
  * </p>
  * 
  * <pre>
@@ -91,9 +89,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 5)
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailureEvent}
- * across 3 lines:
+ * 5) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailureEvent} across 3 lines:
  * </p>
  * 
  * <pre>
@@ -113,149 +109,119 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class CmsConcurrentModeFailurePreprocessAction implements PreprocessAction {
 
-	/**
-	 * Regular expression(s) defining the 1st logging line.
-	 */
-	private static final String[] REGEX_LINE_INIT = {
-	// Serial old
-			"^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(System\\) )?" + JdkRegEx.TIMESTAMP
-					+ ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
-					+ ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): "
-					+ JdkRegEx.DURATION_FRACTION + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
-			// ParNew
-			"^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
-					+ ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->"
-					+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-					+ JdkRegEx.TIMESTAMP + ": \\[CMS( CMS: abort preclean due to time )?"
-					+ JdkRegEx.TIMESTAMP
-					+ ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): "
-					+ JdkRegEx.DURATION_FRACTION + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
-			// ParNew bailing out (splits the initial line into 2 lines)
-			"^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
-					+ ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->"
-					+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-					+ JdkRegEx.TIMESTAMP + ": \\[CMS)bailing out to foreground collection"
-					+ JdkRegEx.TIMES_BLOCK + "?[ ]*$",
-			// Serial old bailing out first line when logging split across 3 lines (dataset14)
-			"^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.TIMESTAMP
-					+ ": \\[CMS)bailing out to foreground collection" + JdkRegEx.TIMES_BLOCK
-					+ "?[ ]*$",
-			// ParNew bailing out first line when logging split across 3 lines (dataset29)
-			"^("
-					+ JdkRegEx.TIMESTAMP
-					+ ": \\[GC "
-					+ JdkRegEx.TIMESTAMP
-					+ ": \\[ParNew: "
-					+ JdkRegEx.SIZE
-					+ "->"
-					+ JdkRegEx.SIZE
-					+ "\\("
-					+ JdkRegEx.SIZE
-					+ "\\), "
-					+ JdkRegEx.DURATION
-					+ "\\]"
-					+ JdkRegEx.TIMESTAMP
-					+ ": \\[CMS)Java HotSpot\\(TM\\) Server VM warning: bailing out to foreground collection"
-					+ JdkRegEx.TIMES_BLOCK + "?[ ]*$",
-			// 2nd line when logging split across 3 lines
-			"^(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION
-					+ "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+    /**
+     * Regular expression(s) defining the 1st logging line.
+     */
+    private static final String[] REGEX_LINE_INIT = {
+    // Serial old
+            "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(System\\) )?" + JdkRegEx.TIMESTAMP + ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
+                    + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): " + JdkRegEx.DURATION_FRACTION + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
+            // ParNew
+            "^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+                    + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
+                    + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): " + JdkRegEx.DURATION_FRACTION + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
+            // ParNew bailing out (splits the initial line into 2 lines)
+            "^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+                    + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS)bailing out to foreground collection" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
+            // Serial old bailing out first line when logging split across 3 lines (dataset14)
+            "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.TIMESTAMP + ": \\[CMS)bailing out to foreground collection" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
+            // ParNew bailing out first line when logging split across 3 lines (dataset29)
+            "^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+                    + JdkRegEx.TIMESTAMP + ": \\[CMS)Java HotSpot\\(TM\\) Server VM warning: bailing out to foreground collection" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
+            // 2nd line when logging split across 3 lines
+            "^(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
 
-	/**
-	 * Regular expression(s) defining the end logging line. In JDK 6 "failure" has been replaced
-	 * with "interrupted".
-	 */
-	private static final String[] REGEX_LINE_END = {
-			"^ \\(concurrent mode (failure|interrupted)\\).+$",
-			"^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-					+ JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-					+ JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-					+ "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
-					+ JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+    /**
+     * Regular expression(s) defining the end logging line. In JDK 6 "failure" has been replaced with "interrupted".
+     */
+    private static final String[] REGEX_LINE_END = {
+            "^ \\(concurrent mode (failure|interrupted)\\).+$",
+            "^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+                    + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * Create event from log entry.
-	 * 
-	 * @param logEntry
-	 *            The log entry being processed.
-	 */
-	public CmsConcurrentModeFailurePreprocessAction(String logEntry) {
-		if (isLastLineMatch(logEntry)) {
-			this.logEntry = logEntry + System.getProperty("line.separator");
-		} else {
-			Pattern pattern;
-			for (int i = 0; i < REGEX_LINE_INIT.length; i++) {
-				pattern = Pattern.compile(REGEX_LINE_INIT[i]);
-				Matcher matcher = pattern.matcher(logEntry);
-				if (matcher.find() && matcher.group(1) != null) {
-					this.logEntry = matcher.group(1);
-					break;
-				}
-			}
-		}
-	}
+    /**
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry being processed.
+     */
+    public CmsConcurrentModeFailurePreprocessAction(String logEntry) {
+        if (isLastLineMatch(logEntry)) {
+            this.logEntry = logEntry + System.getProperty("line.separator");
+        } else {
+            Pattern pattern;
+            for (int i = 0; i < REGEX_LINE_INIT.length; i++) {
+                pattern = Pattern.compile(REGEX_LINE_INIT[i]);
+                Matcher matcher = pattern.matcher(logEntry);
+                if (matcher.find() && matcher.group(1) != null) {
+                    this.logEntry = matcher.group(1);
+                    break;
+                }
+            }
+        }
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public String getName() {
-		return JdkUtil.PreprocessActionType.CMS_CONCURRENT_MODE_FAILURE.toString();
-	}
+    public String getName() {
+        return JdkUtil.PreprocessActionType.CMS_CONCURRENT_MODE_FAILURE.toString();
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @param priorLogLine
-	 *            The last log entry processed.
-	 * @param nextLogLine
-	 *            The next log entry processed.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
-		return ((isInitialLineMatch(logLine) && (isInitialLineMatch(nextLogLine) || isLastLineMatch(nextLogLine))) || (isLastLineMatch(logLine) && isInitialLineMatch(priorLogLine)));
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @param priorLogLine
+     *            The last log entry processed.
+     * @param nextLogLine
+     *            The next log entry processed.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
+        return ((isInitialLineMatch(logLine) && (isInitialLineMatch(nextLogLine) || isLastLineMatch(nextLogLine))) || (isLastLineMatch(logLine) && isInitialLineMatch(priorLogLine)));
+    }
 
-	/**
-	 * Check log line against initial line patterns to determine if the log line is a match or not.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches a line1 pattern, false otherwise.
-	 */
-	private static final boolean isInitialLineMatch(String logLine) {
-		boolean isInitialLineMatch = false;
-		for (int i = 0; i < REGEX_LINE_INIT.length; i++) {
-			if (logLine.matches(REGEX_LINE_INIT[i])) {
-				isInitialLineMatch = true;
-				break;
-			}
-		}
-		return isInitialLineMatch;
-	}
+    /**
+     * Check log line against initial line patterns to determine if the log line is a match or not.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches a line1 pattern, false otherwise.
+     */
+    private static final boolean isInitialLineMatch(String logLine) {
+        boolean isInitialLineMatch = false;
+        for (int i = 0; i < REGEX_LINE_INIT.length; i++) {
+            if (logLine.matches(REGEX_LINE_INIT[i])) {
+                isInitialLineMatch = true;
+                break;
+            }
+        }
+        return isInitialLineMatch;
+    }
 
-	/**
-	 * Check log line against last line patterns to determine if the log line is a match or not.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches a line2 pattern, false otherwise.
-	 */
-	private static final boolean isLastLineMatch(String logLine) {
-		boolean isLastLineMatch = false;
-		for (int i = 0; i < REGEX_LINE_END.length; i++) {
-			if (logLine.matches(REGEX_LINE_END[i])) {
-				isLastLineMatch = true;
-				break;
-			}
-		}
-		return isLastLineMatch;
-	}
+    /**
+     * Check log line against last line patterns to determine if the log line is a match or not.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches a line2 pattern, false otherwise.
+     */
+    private static final boolean isLastLineMatch(String logLine) {
+        boolean isLastLineMatch = false;
+        for (int i = 0; i < REGEX_LINE_END.length; i++) {
+            if (logLine.matches(REGEX_LINE_END[i])) {
+                isLastLineMatch = true;
+                break;
+            }
+        }
+        return isLastLineMatch;
+    }
 }

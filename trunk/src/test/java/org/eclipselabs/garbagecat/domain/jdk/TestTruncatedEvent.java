@@ -23,20 +23,17 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class TestTruncatedEvent extends TestCase {
 
-	public void testCmsSerialOldLine() {
-		String logLine = "100.714: [Full GC 100.714: [CMS";
-		Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.TRUNCATED.toString()
-				+ ".", TruncatedEvent.match(logLine));
-		TruncatedEvent event = new TruncatedEvent(logLine);
-		Assert.assertEquals("Time stamp not parsed correctly.", 100714, event.getTimestamp());
-	}
+    public void testCmsSerialOldLine() {
+        String logLine = "100.714: [Full GC 100.714: [CMS";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.TRUNCATED.toString() + ".", TruncatedEvent.match(logLine));
+        TruncatedEvent event = new TruncatedEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 100714, event.getTimestamp());
+    }
 
-	public void testParNewLine() {
-		String logLine = "9641.622: [GC 9641.622: [ParNew9641.696: [CMS-concurrent-abortable-preclean: "
-				+ "0.029/0.129 secs] [Times: user=0.25 sys=0.07, real=0.13 secs]";
-		Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.TRUNCATED.toString()
-				+ ".", TruncatedEvent.match(logLine));
-		TruncatedEvent event = new TruncatedEvent(logLine);
-		Assert.assertEquals("Time stamp not parsed correctly.", 9641622, event.getTimestamp());
-	}
+    public void testParNewLine() {
+        String logLine = "9641.622: [GC 9641.622: [ParNew9641.696: [CMS-concurrent-abortable-preclean: " + "0.029/0.129 secs] [Times: user=0.25 sys=0.07, real=0.13 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.TRUNCATED.toString() + ".", TruncatedEvent.match(logLine));
+        TruncatedEvent event = new TruncatedEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 9641622, event.getTimestamp());
+    }
 }

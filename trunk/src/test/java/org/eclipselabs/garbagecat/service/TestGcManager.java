@@ -23,18 +23,18 @@ import junit.framework.TestCase;
  */
 public class TestGcManager extends TestCase {
 
-	/**
-	 * Test for NullPointerException caused by Issue 17:
-	 * http://code.google.com/a/eclipselabs.org/p/garbagecat/issues/detail?id=17
-	 */
-	public void testNullPointerExceptionNotRaised() {
-		// TODO: Create File in platform independent way.
-		File testFile = new File("src/test/data/dataset31.txt");		
-		GcManager jvmManager = new GcManager();
-		try {
-			jvmManager.preprocess(testFile, null);
-		} catch (NullPointerException e) {
-			Assert.fail("Preprocessing results in NullPointerException.");
-		}
-	}
+    /**
+     * Test for NullPointerException caused by Issue 17:
+     * http://code.google.com/a/eclipselabs.org/p/garbagecat/issues/detail?id=17
+     */
+    public void testNullPointerExceptionNotRaised() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset31.txt");
+        GcManager jvmManager = new GcManager();
+        try {
+            jvmManager.preprocess(testFile, null);
+        } catch (NullPointerException e) {
+            Assert.fail("Preprocessing results in NullPointerException.");
+        }
+    }
 }

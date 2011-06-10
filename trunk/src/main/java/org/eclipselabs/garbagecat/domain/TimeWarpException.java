@@ -13,10 +13,9 @@
 package org.eclipselabs.garbagecat.domain;
 
 /**
- * Exception when the {@link org.eclipselabs.garbagecat.domain.LogEvent} chronology is not possible.
- * For
- * example, a {@link org.eclipselabs.garbagecat.domain.BlockingEvent} that starts
- * before a previous {@link org.eclipselabs.garbagecat.domain.BlockingEvent} finishes.
+ * Exception when the {@link org.eclipselabs.garbagecat.domain.LogEvent} chronology is not possible. For example, a
+ * {@link org.eclipselabs.garbagecat.domain.BlockingEvent} that starts before a previous
+ * {@link org.eclipselabs.garbagecat.domain.BlockingEvent} finishes.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
@@ -24,8 +23,8 @@ package org.eclipselabs.garbagecat.domain;
 @SuppressWarnings("serial")
 public class TimeWarpException extends RuntimeException {
 
-	public TimeWarpException(String string) {
-		super(string);
-	}
+    public TimeWarpException(String string) {
+        super(string);
+    }
 
 }

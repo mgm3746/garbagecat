@@ -24,8 +24,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Combine {@link org.eclipselabs.garbagecat.domain.jdk.ParNewCmsConcurrentEvent} logging split
- * across 2 lines.
+ * Combine {@link org.eclipselabs.garbagecat.domain.jdk.ParNewCmsConcurrentEvent} logging split across 2 lines.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -48,65 +47,60 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class ParNewCmsConcurrentPreprocessAction implements PreprocessAction {
 
-	/**
-	 * Regular expressions defining the 1st logging line.
-	 */
-	private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC "
-			+ JdkRegEx.TIMESTAMP + ": \\[ParNew" + JdkRegEx.TIMESTAMP
-			+ ": \\[CMS-concurrent-(abortable-preclean|mark|sweep): " + JdkRegEx.DURATION_FRACTION
-			+ "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    /**
+     * Regular expressions defining the 1st logging line.
+     */
+    private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS-concurrent-(abortable-preclean|mark|sweep): " + JdkRegEx.DURATION_FRACTION + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
-	/**
-	 * Regular expressions defining the 2nd logging line.
-	 */
-	private static final String REGEX_LINE2 = "^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-			+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
-			+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-			+ JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    /**
+     * Regular expressions defining the 2nd logging line.
+     */
+    private static final String REGEX_LINE2 = "^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * Create event from log entry.
-	 */
-	public ParNewCmsConcurrentPreprocessAction(String logEntry) {
-		Pattern pattern = Pattern.compile(REGEX_LINE1);
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			this.logEntry = logEntry;
-			if (matcher.group(1) != null) {
-				// Retain logging before
-				this.logEntry = matcher.group(1);
-			}
-		} else {
-			this.logEntry = logEntry + "\n";
-		}
-	}
+    /**
+     * Create event from log entry.
+     */
+    public ParNewCmsConcurrentPreprocessAction(String logEntry) {
+        Pattern pattern = Pattern.compile(REGEX_LINE1);
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            this.logEntry = logEntry;
+            if (matcher.group(1) != null) {
+                // Retain logging before
+                this.logEntry = matcher.group(1);
+            }
+        } else {
+            this.logEntry = logEntry + "\n";
+        }
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public String getName() {
-		return JdkUtil.PreprocessActionType.PAR_NEW_CMS_CONCURRENT.toString();
-	}
+    public String getName() {
+        return JdkUtil.PreprocessActionType.PAR_NEW_CMS_CONCURRENT.toString();
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @param priorLogLine
-	 *            The last log entry processed.
-	 * @param nextLogLine
-	 *            The next log entry processed.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
-		return ((logLine.matches(REGEX_LINE1) && nextLogLine.matches(REGEX_LINE2)) || (logLine
-				.matches(REGEX_LINE2) && priorLogLine.matches(REGEX_LINE1)));
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @param priorLogLine
+     *            The last log entry processed.
+     * @param nextLogLine
+     *            The next log entry processed.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
+        return ((logLine.matches(REGEX_LINE1) && nextLogLine.matches(REGEX_LINE2)) || (logLine.matches(REGEX_LINE2) && priorLogLine.matches(REGEX_LINE1)));
+    }
 }

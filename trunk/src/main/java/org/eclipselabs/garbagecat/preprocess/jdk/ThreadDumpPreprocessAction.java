@@ -20,13 +20,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Remove thread dump output. Garbage collection logging goes to standard out by default, the same
- * location as thread dumps.
+ * Remove thread dump output. Garbage collection logging goes to standard out by default, the same location as thread
+ * dumps.
  * </p>
  * 
  * <p>
- * It is recommended to log garbage collection logging to a dedicated file with the
- * <code>-Xverboselog:</code> option to avoid mixing thread dumps with garbage collection logging.
+ * It is recommended to log garbage collection logging to a dedicated file with the <code>-Xverboselog:</code> option to
+ * avoid mixing thread dumps with garbage collection logging.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -102,68 +102,64 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class ThreadDumpPreprocessAction implements PreprocessAction {
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX[] = {
-			// beginning date/time
-			"^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$",
-			// title
-			"^Full thread dump(.*):$",
-			// thread data
-			"^\"[a-zA-z0-9\\-\\.\\@ \\:\\#\\(\\)\\[\\]/]+\" (daemon )?prio=\\d{1,2} tid=0x[a-z0-9]{8,16} "
-					+ "nid=0x[a-z0-9]{3,4} (runnable|in Object.wait\\(\\)|waiting for monitor entry|"
-					+ "waiting on condition|sleeping)( )?(\\[0x[a-z0-9]{8,16}\\.\\.0x[a-z0-9]{8,16}\\])?[ ]*$",
-			// thread state
-			"^   java.lang.Thread.State: (RUNNABLE|WAITING \\(on object monitor\\)|"
-					+ "BLOCKED \\(on object monitor\\)|TIMED_WAITING \\(on object monitor\\)|TERMINATED|"
-					+ "TIMED_WAITING \\(sleeping\\))$",
-			// stack trace location line
-			"^\\tat (.*)$",
-			// stack trace event line
-			"^\\t- (locked|waiting to lock|waiting on) (.*)$",
-			// Heap summary lines
-			"^JNI global references: \\d{1,6}$", "^Heap$", "^ par new generation   total.*$",
-			"^  eden space.*$", "^  from space.*$", "^  to   space.*$",
-			"^ concurrent mark-sweep generation total.*$",
-			"^ concurrent-mark-sweep perm gen total.*$" };
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX[] = {
+            // beginning date/time
+            "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$",
+            // title
+            "^Full thread dump(.*):$",
+            // thread data
+            "^\"[a-zA-z0-9\\-\\.\\@ \\:\\#\\(\\)\\[\\]/]+\" (daemon )?prio=\\d{1,2} tid=0x[a-z0-9]{8,16} " + "nid=0x[a-z0-9]{3,4} (runnable|in Object.wait\\(\\)|waiting for monitor entry|"
+                    + "waiting on condition|sleeping)( )?(\\[0x[a-z0-9]{8,16}\\.\\.0x[a-z0-9]{8,16}\\])?[ ]*$",
+            // thread state
+            "^   java.lang.Thread.State: (RUNNABLE|WAITING \\(on object monitor\\)|" + "BLOCKED \\(on object monitor\\)|TIMED_WAITING \\(on object monitor\\)|TERMINATED|"
+                    + "TIMED_WAITING \\(sleeping\\))$",
+            // stack trace location line
+            "^\\tat (.*)$",
+            // stack trace event line
+            "^\\t- (locked|waiting to lock|waiting on) (.*)$",
+            // Heap summary lines
+            "^JNI global references: \\d{1,6}$", "^Heap$", "^ par new generation   total.*$", "^  eden space.*$", "^  from space.*$", "^  to   space.*$",
+            "^ concurrent mark-sweep generation total.*$", "^ concurrent-mark-sweep perm gen total.*$" };
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * Create thread dump event from log entry.
-	 */
-	public ThreadDumpPreprocessAction(String logEntry) {
-		this.logEntry = logEntry;
-	}
+    /**
+     * Create thread dump event from log entry.
+     */
+    public ThreadDumpPreprocessAction(String logEntry) {
+        this.logEntry = logEntry;
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public String getName() {
-		return JdkUtil.PreprocessActionType.THREAD_DUMP.toString();
-	}
+    public String getName() {
+        return JdkUtil.PreprocessActionType.THREAD_DUMP.toString();
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		boolean isMatch = false;
-		for (int i = 0; i < REGEX.length; i++) {
-			if (logLine.matches(REGEX[i])) {
-				isMatch = true;
-				break;
-			}
-		}
-		return isMatch;
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        boolean isMatch = false;
+        for (int i = 0; i < REGEX.length; i++) {
+            if (logLine.matches(REGEX[i])) {
+                isMatch = true;
+                break;
+            }
+        }
+        return isMatch;
+    }
 
 }

@@ -26,8 +26,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * A garbage collection event where the logging has been truncated for some reason. It could be an
- * indication the JVM is under stress.
+ * A garbage collection event where the logging has been truncated for some reason. It could be an indication the JVM is
+ * under stress.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -55,74 +55,72 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class TruncatedEvent implements LogEvent {
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String[] REGEX = {
-			/*
-			 * The beginning of a {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} or
-			 * {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent}.
-			 */
-			"^" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.TIMESTAMP + ": \\[CMS$",
-			/*
-			 * The beginning of a {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} followed
-			 * by
-			 * a {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent}.
-			 */
-			"^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew"
-					+ JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-abortable-preclean: "
-					+ JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
-        private static Pattern pattern = Pattern.compile("^" + JdkRegEx.TIMESTAMP + ".*$");
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String[] REGEX = {
+            /*
+             * The beginning of a {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} or {@link
+             * org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent}.
+             */
+            "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.TIMESTAMP + ": \\[CMS$",
+            /*
+             * The beginning of a {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} followed by a {@link
+             * org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent}.
+             */
+            "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION + "\\]"
+                    + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+    private static Pattern pattern = Pattern.compile("^" + JdkRegEx.TIMESTAMP + ".*$");
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * The time when the GC event happened in milliseconds after JVM startup.
-	 */
-	private long timestamp;
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
-	/**
-	 * Create ParNew detail logging event from log entry.
-	 */
-	public TruncatedEvent(String logEntry) {
-		this.logEntry = logEntry;
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-		}
-	}
+    /**
+     * Create ParNew detail logging event from log entry.
+     */
+    public TruncatedEvent(String logEntry) {
+        this.logEntry = logEntry;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+        }
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.TRUNCATED.toString();
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.TRUNCATED.toString();
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		boolean isMatch = false;
-		for (int i = 0; i < REGEX.length; i++) {
-			if (logLine.matches(REGEX[i])) {
-				isMatch = true;
-				break;
-			}
-		}
-		return isMatch;
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        boolean isMatch = false;
+        for (int i = 0; i < REGEX.length; i++) {
+            if (logLine.matches(REGEX[i])) {
+                isMatch = true;
+                break;
+            }
+        }
+        return isMatch;
+    }
 
 }

@@ -32,8 +32,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * Enabled with <code>-XX:+UseParallelGC</code> JVM option. This is really a
- * {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent}; however, the logging is different.
- * Treat as a separate event for now.
+ * {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent}; however, the logging is different. Treat as a separate
+ * event for now.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -60,177 +60,172 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, PermCollection,
-		YoungData, OldData, PermData {
+public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData {
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * The elapsed clock time for the GC event in milliseconds (rounded).
-	 */
-	private int duration;
+    /**
+     * The elapsed clock time for the GC event in milliseconds (rounded).
+     */
+    private int duration;
 
-	/**
-	 * The time when the GC event happened in milliseconds after JVM startup.
-	 */
-	private long timestamp;
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
-	/**
-	 * Young generation size (kilobytes) at beginning of GC event.
-	 */
-	private int young;
+    /**
+     * Young generation size (kilobytes) at beginning of GC event.
+     */
+    private int young;
 
-	/**
-	 * Young generation size (kilobytes) at end of GC event.
-	 */
-	private int youngEnd;
+    /**
+     * Young generation size (kilobytes) at end of GC event.
+     */
+    private int youngEnd;
 
-	/**
-	 * Available space in young generation (kilobytes). Equals young generation allocation minus one
-	 * survivor space.
-	 */
-	private int youngAvailable;
+    /**
+     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
+     */
+    private int youngAvailable;
 
-	/**
-	 * Old generation size (kilobytes) at beginning of GC event.
-	 */
-	private int old;
+    /**
+     * Old generation size (kilobytes) at beginning of GC event.
+     */
+    private int old;
 
-	/**
-	 * Old generation size (kilobytes) at end of GC event.
-	 */
-	private int oldEnd;
+    /**
+     * Old generation size (kilobytes) at end of GC event.
+     */
+    private int oldEnd;
 
-	/**
-	 * Space allocated to old generation (kilobytes).
-	 */
-	private int oldAllocation;
+    /**
+     * Space allocated to old generation (kilobytes).
+     */
+    private int oldAllocation;
 
-	/**
-	 * Permanent generation size (kilobytes) at beginning of GC event.
-	 */
-	private int permGen;
+    /**
+     * Permanent generation size (kilobytes) at beginning of GC event.
+     */
+    private int permGen;
 
-	/**
-	 * Permanent generation size (kilobytes) at end of GC event.
-	 */
-	private int permGenEnd;
+    /**
+     * Permanent generation size (kilobytes) at end of GC event.
+     */
+    private int permGenEnd;
 
-	/**
-	 * Space allocated to permanent generation (kilobytes).
-	 */
-	private int permGenAllocation;
+    /**
+     * Space allocated to permanent generation (kilobytes).
+     */
+    private int permGenAllocation;
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP
-			+ ": \\[(Full GC|Full GC \\(System\\)) \\[PSYoungGen: " + JdkRegEx.SIZE + "->"
-			+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE + "->"
-			+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->"
-			+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->"
-			+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
-			+ JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full GC|Full GC \\(System\\)) \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
-        private static Pattern pattern = Pattern.compile(ParallelSerialOldEvent.REGEX);
-	/**
-	 * Create parallel old detail logging event from log entry.
-	 */
-	public ParallelSerialOldEvent(String logEntry) {
-		this.logEntry = logEntry;
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                        young = Integer.parseInt(matcher.group(3)) ;
-			youngEnd = Integer.parseInt(matcher.group(4)) ;
-			youngAvailable = Integer.parseInt(matcher.group(5)) ;
-			old = Integer.parseInt(matcher.group(6)) ;
-			oldEnd = Integer.parseInt(matcher.group(7)) ;
-			oldAllocation = Integer.parseInt(matcher.group(8)) ;
-			// Do not need total begin/end/allocation, as these can be calculated.
-			permGen = Integer.parseInt(matcher.group(12)) ;
-			permGenEnd = Integer.parseInt(matcher.group(13)) ;
-			permGenAllocation = Integer.parseInt(matcher.group(14)) ;
-			duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
-		}
-	}
- 
-	/**
-	 * Alternate constructor. Create parallel old detail logging event from values.
-	 * 
-	 * @param logEntry
-	 * @param timestamp
-	 * @param duration
-	 */
-	public ParallelSerialOldEvent(String logEntry, long timestamp, int duration) {
-		this.logEntry = logEntry;
-		this.timestamp = timestamp;
-		this.duration = duration;
-	}
+    private static Pattern pattern = Pattern.compile(ParallelSerialOldEvent.REGEX);
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    /**
+     * Create parallel old detail logging event from log entry.
+     */
+    public ParallelSerialOldEvent(String logEntry) {
+        this.logEntry = logEntry;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            young = Integer.parseInt(matcher.group(3));
+            youngEnd = Integer.parseInt(matcher.group(4));
+            youngAvailable = Integer.parseInt(matcher.group(5));
+            old = Integer.parseInt(matcher.group(6));
+            oldEnd = Integer.parseInt(matcher.group(7));
+            oldAllocation = Integer.parseInt(matcher.group(8));
+            // Do not need total begin/end/allocation, as these can be calculated.
+            permGen = Integer.parseInt(matcher.group(12));
+            permGenEnd = Integer.parseInt(matcher.group(13));
+            permGenAllocation = Integer.parseInt(matcher.group(14));
+            duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
+        }
+    }
 
-	public int getDuration() {
-		return duration;
-	}
+    /**
+     * Alternate constructor. Create parallel old detail logging event from values.
+     * 
+     * @param logEntry
+     * @param timestamp
+     * @param duration
+     */
+    public ParallelSerialOldEvent(String logEntry, long timestamp, int duration) {
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public int getYoungOccupancyInit() {
-		return young;
-	}
+    public int getDuration() {
+        return duration;
+    }
 
-	public int getYoungOccupancyEnd() {
-		return youngEnd;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	public int getYoungSpace() {
-		return youngAvailable;
-	}
+    public int getYoungOccupancyInit() {
+        return young;
+    }
 
-	public int getOldOccupancyInit() {
-		return old;
-	}
+    public int getYoungOccupancyEnd() {
+        return youngEnd;
+    }
 
-	public int getOldOccupancyEnd() {
-		return oldEnd;
-	}
+    public int getYoungSpace() {
+        return youngAvailable;
+    }
 
-	public int getOldSpace() {
-		return oldAllocation;
-	}
+    public int getOldOccupancyInit() {
+        return old;
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString();
-	}
+    public int getOldOccupancyEnd() {
+        return oldEnd;
+    }
 
-	public int getPermOccupancyInit() {
-		return permGen;
-	}
+    public int getOldSpace() {
+        return oldAllocation;
+    }
 
-	public int getPermOccupancyEnd() {
-		return permGenEnd;
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString();
+    }
 
-	public int getPermSpace() {
-		return permGenAllocation;
-	}
+    public int getPermOccupancyInit() {
+        return permGen;
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    public int getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    public int getPermSpace() {
+        return permGenAllocation;
+    }
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 }

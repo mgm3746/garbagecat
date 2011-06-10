@@ -31,9 +31,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * Combined {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedEvent} and
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent}. This appears to
- * be a result of a chain reaction where the
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedEvent} initiates a
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent}. This appears to be a result of a
+ * chain reaction where the {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedEvent} initiates a
  * {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} which leads to a
  * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent}.
  * </p>
@@ -61,154 +60,145 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class ParNewPromotionFailedCmsConcurrentModeFailureEvent implements BlockingEvent,
-		OldCollection, PermCollection, YoungData, OldData {
+public class ParNewPromotionFailedCmsConcurrentModeFailureEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData {
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
-			+ ": \\[ParNew \\(promotion failed\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-			+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-			+ ": \\[CMS(" + JdkRegEx.TIMESTAMP
-			+ ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): "
-			+ JdkRegEx.DURATION_FRACTION + "\\])? \\(concurrent mode failure\\): " + JdkRegEx.SIZE
-			+ "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
-			+ JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)"
-			+ JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
-			+ "?[ ]*$";
-        
-        private static Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew \\(promotion failed\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): "
+            + JdkRegEx.DURATION_FRACTION + "\\])? \\(concurrent mode failure\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    private static Pattern pattern = Pattern.compile(REGEX);
 
-	/**
-	 * The elapsed clock time for the GC event in milliseconds (rounded).
-	 */
-	private int duration;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * The time when the GC event happened in milliseconds after JVM startup.
-	 */
-	private long timestamp;
+    /**
+     * The elapsed clock time for the GC event in milliseconds (rounded).
+     */
+    private int duration;
 
-	/**
-	 * Young generation size (kilobytes) at beginning of GC event.
-	 */
-	private int young;
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
-	/**
-	 * Young generation size (kilobytes) at end of GC event.
-	 */
-	private int youngEnd;
+    /**
+     * Young generation size (kilobytes) at beginning of GC event.
+     */
+    private int young;
 
-	/**
-	 * Available space in young generation (kilobytes). Equals young generation allocation minus one
-	 * survivor space.
-	 */
-	private int youngAvailable;
+    /**
+     * Young generation size (kilobytes) at end of GC event.
+     */
+    private int youngEnd;
 
-	/**
-	 * Old generation size (kilobytes) at beginning of GC event.
-	 */
-	private int old;
+    /**
+     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
+     */
+    private int youngAvailable;
 
-	/**
-	 * Old generation size (kilobytes) at end of GC event.
-	 */
-	private int oldEnd;
+    /**
+     * Old generation size (kilobytes) at beginning of GC event.
+     */
+    private int old;
 
-	/**
-	 * Space allocated to old generation (kilobytes).
-	 */
-	private int oldAllocation;
+    /**
+     * Old generation size (kilobytes) at end of GC event.
+     */
+    private int oldEnd;
 
-	/**
-	 * Create ParNew detail logging event from log entry.
-	 */
-	public ParNewPromotionFailedCmsConcurrentModeFailureEvent(String logEntry) {
- 		this.logEntry = logEntry;
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			old = Integer.parseInt(matcher.group(12)) ;
-			oldEnd = Integer.parseInt(matcher.group(13)) ;
-			oldAllocation = Integer.parseInt(matcher.group(14)) ;
-			int totalBegin = Integer.parseInt(matcher.group(16)) ;
-			young = totalBegin - old;
-			int totalEnd = Integer.parseInt(matcher.group(17)) ;
-			youngEnd = totalEnd - oldEnd;
-			int totalAllocation = Integer.parseInt(matcher.group(18)) ;
-			youngAvailable = totalAllocation - oldAllocation;
-			duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
-		}
-	}
+    /**
+     * Space allocated to old generation (kilobytes).
+     */
+    private int oldAllocation;
 
-	/**
-	 * Alternate constructor. Create ParNew detail logging event from values.
-	 * 
-	 * @param logEntry
-	 * @param timestamp
-	 * @param duration
-	 */
-	public ParNewPromotionFailedCmsConcurrentModeFailureEvent(String logEntry, long timestamp,
-			int duration) {
-		this.logEntry = logEntry;
-		this.timestamp = timestamp;
-		this.duration = duration;
-	}
+    /**
+     * Create ParNew detail logging event from log entry.
+     */
+    public ParNewPromotionFailedCmsConcurrentModeFailureEvent(String logEntry) {
+        this.logEntry = logEntry;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            old = Integer.parseInt(matcher.group(12));
+            oldEnd = Integer.parseInt(matcher.group(13));
+            oldAllocation = Integer.parseInt(matcher.group(14));
+            int totalBegin = Integer.parseInt(matcher.group(16));
+            young = totalBegin - old;
+            int totalEnd = Integer.parseInt(matcher.group(17));
+            youngEnd = totalEnd - oldEnd;
+            int totalAllocation = Integer.parseInt(matcher.group(18));
+            youngAvailable = totalAllocation - oldAllocation;
+            duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
+        }
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    /**
+     * Alternate constructor. Create ParNew detail logging event from values.
+     * 
+     * @param logEntry
+     * @param timestamp
+     * @param duration
+     */
+    public ParNewPromotionFailedCmsConcurrentModeFailureEvent(String logEntry, long timestamp, int duration) {
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
 
-	public int getDuration() {
-		return duration;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public int getDuration() {
+        return duration;
+    }
 
-	public int getYoungOccupancyInit() {
-		return young;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	public int getYoungOccupancyEnd() {
-		return youngEnd;
-	}
+    public int getYoungOccupancyInit() {
+        return young;
+    }
 
-	public int getYoungSpace() {
-		return youngAvailable;
-	}
+    public int getYoungOccupancyEnd() {
+        return youngEnd;
+    }
 
-	public int getOldOccupancyInit() {
-		return old;
-	}
+    public int getYoungSpace() {
+        return youngAvailable;
+    }
 
-	public int getOldOccupancyEnd() {
-		return oldEnd;
-	}
+    public int getOldOccupancyInit() {
+        return old;
+    }
 
-	public int getOldSpace() {
-		return oldAllocation;
-	}
+    public int getOldOccupancyEnd() {
+        return oldEnd;
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString();
-	}
+    public int getOldSpace() {
+        return oldAllocation;
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString();
+    }
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 }
