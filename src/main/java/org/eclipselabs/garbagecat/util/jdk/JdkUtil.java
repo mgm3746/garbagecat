@@ -126,10 +126,11 @@ public class JdkUtil {
             if (VerboseGcOldEvent.match(logLine)) return LogEventType.VERBOSE_GC_OLD;
             if (TruncatedEvent.match(logLine)) return LogEventType.TRUNCATED;
             if (ParNewPromotionFailedTruncatedEvent.match(logLine)) return LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED;
-
+            
+            
+            // no idea  what event is
             return LogEventType.UNKNOWN ;
-
-	} //LogEventType()
+	}
 
         
 	/**
@@ -242,6 +243,7 @@ public class JdkUtil {
 		return event;
 	}
 
+	
 	/**
 	 * Create <code>BlockingEvent</code> from values.
 	 * 
@@ -354,17 +356,20 @@ public class JdkUtil {
 		return event;
 	}
 
+	
 	/**
 	 * @param eventType
 	 * @return true if the log event is blocking, false if it is concurrent or
 	 *         informational.
 	 */
 	public static final boolean isBlocking(LogEventType eventType) {
-		return !(eventType == JdkUtil.LogEventType.CMS_CONCURRENT
+		return !(  eventType == JdkUtil.LogEventType.CMS_CONCURRENT
 				|| eventType == JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME
-				|| eventType == JdkUtil.LogEventType.APPLICATION_STOPPED_TIME || eventType == JdkUtil.LogEventType.UNKNOWN);
+				|| eventType == JdkUtil.LogEventType.APPLICATION_STOPPED_TIME 
+				|| eventType == JdkUtil.LogEventType.UNKNOWN);
 	}
 
+	
 	public static final LogEventType determineEventType(String eventTypeString) {
 		LogEventType logEventType = null;
 		LogEventType[] logEventTypes = LogEventType.values();
@@ -453,6 +458,7 @@ public class JdkUtil {
 				|| logLine.matches(JdkRegEx.BLANK_LINE);
 	}
 
+	
 	/**
 	 * Determine if the garbage collection event should be classified as a
 	 * bottleneck.
@@ -474,29 +480,27 @@ public class JdkUtil {
 		// Timestamp is the start of a garbage collection event; therefore, the
 		// interval is from the
 		// end of the prior event to the end of the current event.
-		long interval = gcEvent.getTimestamp() + gcEvent.getDuration()
-				- priorEvent.getTimestamp() - priorEvent.getDuration();
+		long interval = gcEvent.getTimestamp() + gcEvent.getDuration() - priorEvent.getTimestamp() - priorEvent.getDuration();
+
 		// Verify data integrity
-		if (gcEvent.getTimestamp() < (priorEvent.getTimestamp() + (new Integer(
-				priorEvent.getDuration())).longValue())) {
+		if (gcEvent.getTimestamp() < (priorEvent.getTimestamp() + priorEvent.getDuration())) {
 			System.out.println("prior event: " + priorEvent.getLogEntry());
-			throw new TimeWarpException("Event overlap: "
-					+ gcEvent.getLogEntry());
+			throw new TimeWarpException("Event overlap: " + gcEvent.getLogEntry());
 		}
 		if (interval <= 0) {
-			throw new TimeWarpException("Negative interval: "
-					+ gcEvent.getLogEntry());
+			throw new TimeWarpException("Negative interval: "	+ gcEvent.getLogEntry());
 		}
+		
 		// Determine the maximum duration for the given interval that meets the
 		// throughput goal.
 		BigDecimal durationThreshold = new BigDecimal(100 - throughputThreshold);
 		durationThreshold = durationThreshold.movePointLeft(2);
-		durationThreshold = durationThreshold
-				.multiply(new BigDecimal(interval));
+		durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
 		durationThreshold.setScale(0, RoundingMode.DOWN);
 		return (gcEvent.getDuration() > durationThreshold.intValue());
 	}
 
+	
 	/**
 	 * Parse out the JVM option scalar value. For example, the value for
 	 * <code>-Xss128k</code> is 128k. The value for
