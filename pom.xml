@@ -64,6 +64,29 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 					<stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.6</version>
+        <configuration>
+          <configLocation>src/main/config/checkstyle/checkstyle.xml</configLocation>
+        </configuration>
+        <executions>
+          <execution>
+            <id>package_execution</id>
+            <phase>package</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>test_execution</id>
+            <phase>test</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -84,6 +107,23 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<version>1.1</version>
 		</dependency>
 	</dependencies>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.6</version>
+        <configuration>
+          <configLocation>src/main/config/checkstyle/checkstyle.xml</configLocation>
+        </configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.2</version>
+			</plugin>
+		</plugins>
+	</reporting>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm
