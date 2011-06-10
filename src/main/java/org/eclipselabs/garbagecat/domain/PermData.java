@@ -20,19 +20,18 @@ package org.eclipselabs.garbagecat.domain;
  */
 public interface PermData {
 
-	/**
-	 * @return Perm generation initial occupancy (kilobytes).
-	 */
-	int getPermOccupancyInit();
+    /**
+     * @return Perm generation initial occupancy (kilobytes).
+     */
+    int getPermOccupancyInit();
 
-	/**
-	 * @return Total perm generation space (kilobytes) at the end of the event (i.e. it reflects any
-	 *         resizing).
-	 */
-	int getPermSpace();
+    /**
+     * @return Total perm generation space (kilobytes) at the end of the event (i.e. it reflects any resizing).
+     */
+    int getPermSpace();
 
-	/**
-	 * @return Perm generation end occupancy (kilobytes).
-	 */
-	int getPermOccupancyEnd();
+    /**
+     * @return Perm generation end occupancy (kilobytes).
+     */
+    int getPermOccupancyEnd();
 }

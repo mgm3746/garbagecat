@@ -21,13 +21,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Logging enabled with the <code>-XX:+PrintGCApplicationConcurrentTime</code> JVM option. It shows
- * the time the application runs between collection pauses.
+ * Logging enabled with the <code>-XX:+PrintGCApplicationConcurrentTime</code> JVM option. It shows the time the
+ * application runs between collection pauses.
  * 
  * <p>
- * This option is redundant, as the same information can be calculated from the GC logging
- * timestamps and durations. Therefore, advise against using it, as it adds overhead with no
- * analysis value.
+ * This option is redundant, as the same information can be calculated from the GC logging timestamps and durations.
+ * Therefore, advise against using it, as it adds overhead with no analysis value.
  * </p>
  * </p>
  * 
@@ -42,32 +41,32 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class ApplicationConcurrentTimeEvent implements LogEvent {
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX = "^Application time: \\d{1,4}\\.\\d{7} seconds[ ]*$";
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^Application time: \\d{1,4}\\.\\d{7} seconds[ ]*$";
 
-	public String getLogEntry() {
-		throw new UnsupportedOperationException("Event does not include log entry information");
-	}
+    public String getLogEntry() {
+        throw new UnsupportedOperationException("Event does not include log entry information");
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString();
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString();
+    }
 
-	public long getTimestamp() {
-		throw new UnsupportedOperationException("Event does not include timestamp information");
-	}
+    public long getTimestamp() {
+        throw new UnsupportedOperationException("Event does not include timestamp information");
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 
 }

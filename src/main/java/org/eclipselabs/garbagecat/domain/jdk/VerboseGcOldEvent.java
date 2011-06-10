@@ -28,8 +28,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Full collection when only <code>-verbose:gc</code> JVM option specified. It does not appear to be
- * possible to determine the collector.
+ * Full collection when only <code>-verbose:gc</code> JVM option specified. It does not appear to be possible to
+ * determine the collector.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -44,108 +44,106 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class VerboseGcOldEvent implements BlockingEvent, OldCollection, CombinedData {
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * The elapsed clock time for the GC event in milliseconds (rounded).
-	 */
-	private int duration;
+    /**
+     * The elapsed clock time for the GC event in milliseconds (rounded).
+     */
+    private int duration;
 
-	/**
-	 * The time when the GC event happened in milliseconds after JVM startup.
-	 */
-	private long timestamp;
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
-	/**
-	 * Combined young + old generation size (kilobytes) at beginning of GC event.
-	 */
-	private int combinedBegin;
+    /**
+     * Combined young + old generation size (kilobytes) at beginning of GC event.
+     */
+    private int combinedBegin;
 
-	/**
-	 * Combined young + old generation size (kilobytes) at end of GC event.
-	 */
-	private int combinedEnd;
+    /**
+     * Combined young + old generation size (kilobytes) at end of GC event.
+     */
+    private int combinedEnd;
 
-	/**
-	 * Combined young + old generation allocation (kilobytes).
-	 */
-	private int combinedAllocation;
+    /**
+     * Combined young + old generation allocation (kilobytes).
+     */
+    private int combinedAllocation;
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.SIZE
-			+ "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
-			+ "\\]?[ ]*$";
-        private static Pattern pattern = Pattern.compile(VerboseGcOldEvent.REGEX);
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
+    private static Pattern pattern = Pattern.compile(VerboseGcOldEvent.REGEX);
 
-	/**
-	 * Create serial old detail logging event from log entry.
-	 */
-	public VerboseGcOldEvent(String logEntry) {
-		this.logEntry = logEntry;
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			combinedBegin = Integer.parseInt(matcher.group(2));
-			combinedEnd = Integer.parseInt(matcher.group(3));
-			combinedAllocation = Integer.parseInt(matcher.group(4));
-			duration = JdkMath.convertSecsToMillis(matcher.group(5)).intValue();
-		}
-	}
+    /**
+     * Create serial old detail logging event from log entry.
+     */
+    public VerboseGcOldEvent(String logEntry) {
+        this.logEntry = logEntry;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            combinedBegin = Integer.parseInt(matcher.group(2));
+            combinedEnd = Integer.parseInt(matcher.group(3));
+            combinedAllocation = Integer.parseInt(matcher.group(4));
+            duration = JdkMath.convertSecsToMillis(matcher.group(5)).intValue();
+        }
+    }
 
-	/**
-	 * Alternate constructor. Create logging event from values.
-	 * 
-	 * @param logEntry
-	 * @param timestamp
-	 * @param duration
-	 */
-	public VerboseGcOldEvent(String logEntry, long timestamp, int duration) {
-		this.logEntry = logEntry;
-		this.timestamp = timestamp;
-		this.duration = duration;
-	}
+    /**
+     * Alternate constructor. Create logging event from values.
+     * 
+     * @param logEntry
+     * @param timestamp
+     * @param duration
+     */
+    public VerboseGcOldEvent(String logEntry, long timestamp, int duration) {
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.VERBOSE_GC_OLD.toString();
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.VERBOSE_GC_OLD.toString();
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public int getDuration() {
-		return duration;
-	}
+    public int getDuration() {
+        return duration;
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	public int getCombinedOccupancyInit() {
-		return combinedBegin;
-	}
+    public int getCombinedOccupancyInit() {
+        return combinedBegin;
+    }
 
-	public int getCombinedOccupancyEnd() {
-		return combinedEnd;
-	}
+    public int getCombinedOccupancyEnd() {
+        return combinedEnd;
+    }
 
-	public int getCombinedSpace() {
-		return combinedAllocation;
-	}
+    public int getCombinedSpace() {
+        return combinedAllocation;
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 }// VerboseGcOldEvent

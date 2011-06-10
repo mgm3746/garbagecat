@@ -20,13 +20,13 @@ package org.eclipselabs.garbagecat.preprocess.jdk;
  */
 public interface PreprocessAction {
 
-	/**
-	 * @return The log entry for the action.
-	 */
-	String getLogEntry();
+    /**
+     * @return The log entry for the action.
+     */
+    String getLogEntry();
 
-	/**
-	 * @return The action identifier.
-	 */
-	String getName();
+    /**
+     * @return The action identifier.
+     */
+    String getName();
 }

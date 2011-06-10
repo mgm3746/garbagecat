@@ -22,8 +22,8 @@ package org.eclipselabs.garbagecat.domain;
  */
 public interface BlockingEvent extends LogEvent {
 
-	/**
-	 * @return The elapsed clock time for the event in milliseconds (rounded).
-	 */
-	int getDuration();
+    /**
+     * @return The elapsed clock time for the event in milliseconds (rounded).
+     */
+    int getDuration();
 }// BlockingEvent

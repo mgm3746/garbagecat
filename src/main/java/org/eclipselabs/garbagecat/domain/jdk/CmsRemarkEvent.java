@@ -26,12 +26,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * The second stop-the-world phase of the concurrent low pause collector. All live objects are
- * marked, starting with the objects identified in the
- * {@link org.eclipselabs.garbagecat.domain.jdk.CmsInitialMarkEvent}. This event does not do any
- * garbage collection. It rescans objects directly reachable from GC roots, processes weak
- * references, and remarks objects. It is actually 3 events, but for GC analysis, it is treated as
- * one event.
+ * The second stop-the-world phase of the concurrent low pause collector. All live objects are marked, starting with the
+ * objects identified in the {@link org.eclipselabs.garbagecat.domain.jdk.CmsInitialMarkEvent}. This event does not do
+ * any garbage collection. It rescans objects directly reachable from GC roots, processes weak references, and remarks
+ * objects. It is actually 3 events, but for GC analysis, it is treated as one event.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -45,84 +43,82 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class CmsRemarkEvent implements BlockingEvent {
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * The elapsed clock time for the GC event in milliseconds (rounded).
-	 */
-	private int duration;
+    /**
+     * The elapsed clock time for the GC event in milliseconds (rounded).
+     */
+    private int duration;
 
-	/**
-	 * The time when the GC event happened in milliseconds after JVM startup.
-	 */
-	private long timestamp;
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC\\[YG occupancy: "
-			+ JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP
-			+ ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-			+ ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\] \\[1 CMS-remark: "
-			+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\("
-			+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\] \\[1 CMS-remark: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
-        private static Pattern pattern = Pattern.compile(CmsRemarkEvent.REGEX);
-	/**
-	 * Create CMS Remark logging event from log entry.
-	 * 
-	 * @param logEntry
-	 */
-	public CmsRemarkEvent(String logEntry) {
-		this.logEntry = logEntry;		
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			// The last duration is the total duration for the phase.
-			duration = JdkMath.convertSecsToMillis(matcher.group(12)).intValue();
-		}
-	}
+    private static Pattern pattern = Pattern.compile(CmsRemarkEvent.REGEX);
 
-	/**
-	 * Alternate constructor. Create CMS Remark logging event from values.
-	 * 
-	 * @param logEntry
-	 * @param timestamp
-	 * @param duration
-	 */
-	public CmsRemarkEvent(String logEntry, long timestamp, int duration) {
-		this.logEntry = logEntry;
-		this.timestamp = timestamp;
-		this.duration = duration;
-	}
+    /**
+     * Create CMS Remark logging event from log entry.
+     * 
+     * @param logEntry
+     */
+    public CmsRemarkEvent(String logEntry) {
+        this.logEntry = logEntry;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            // The last duration is the total duration for the phase.
+            duration = JdkMath.convertSecsToMillis(matcher.group(12)).intValue();
+        }
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    /**
+     * Alternate constructor. Create CMS Remark logging event from values.
+     * 
+     * @param logEntry
+     * @param timestamp
+     * @param duration
+     */
+    public CmsRemarkEvent(String logEntry, long timestamp, int duration) {
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
 
-	public int getDuration() {
-		return duration;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public int getDuration() {
+        return duration;
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.CMS_REMARK.toString();
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.CMS_REMARK.toString();
+    }
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 }

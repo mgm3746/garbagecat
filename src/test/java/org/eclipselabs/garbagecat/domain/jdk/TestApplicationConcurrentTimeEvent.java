@@ -23,17 +23,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class TestApplicationConcurrentTimeEvent extends TestCase {
 
-	public void testLogLine() {
-		String logLine = "Application time: 130.5284640 seconds";
-		Assert.assertTrue("Log line not recognized as "
-				+ JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
-				ApplicationConcurrentTimeEvent.match(logLine));
-	}
+    public void testLogLine() {
+        String logLine = "Application time: 130.5284640 seconds";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".", ApplicationConcurrentTimeEvent.match(logLine));
+    }
 
-	public void testLogLineWithSpacesAtEnd() {
-		String logLine = "Application time: 130.5284640 seconds   ";
-		Assert.assertTrue("Log line not recognized as "
-				+ JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
-				ApplicationConcurrentTimeEvent.match(logLine));
-	}
+    public void testLogLineWithSpacesAtEnd() {
+        String logLine = "Application time: 130.5284640 seconds   ";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".", ApplicationConcurrentTimeEvent.match(logLine));
+    }
 }

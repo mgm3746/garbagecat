@@ -22,9 +22,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Any number of events that happen concurrently with the JVM's execution of
- * application threads. These events are not included in the GC analysis since
- * there is no application pause time.
+ * Any number of events that happen concurrently with the JVM's execution of application threads. These events are not
+ * included in the GC analysis since there is no application pause time.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -74,38 +73,32 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class CmsConcurrentEvent implements LogEvent {
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX = "^( CMS: abort preclean due to time )?("
-			+ JdkRegEx.DATESTAMP
-			+ ": )?"
-			+ JdkRegEx.TIMESTAMP
-			+ ": \\[CMS-concurrent.+$";
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^( CMS: abort preclean due to time )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent.+$";
 
-	public String getLogEntry() {
-		throw new UnsupportedOperationException(
-				"Event does not include log entry information");
-	}
+    public String getLogEntry() {
+        throw new UnsupportedOperationException("Event does not include log entry information");
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.CMS_CONCURRENT.toString();
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.CMS_CONCURRENT.toString();
+    }
 
-	public long getTimestamp() {
-		throw new UnsupportedOperationException(
-				"Event does not include timestamp information");
-	}
+    public long getTimestamp() {
+        throw new UnsupportedOperationException("Event does not include timestamp information");
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 
 }

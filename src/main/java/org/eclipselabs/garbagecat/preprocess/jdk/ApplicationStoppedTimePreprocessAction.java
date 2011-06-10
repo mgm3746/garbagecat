@@ -25,9 +25,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * Combined {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} and
- * {@link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent} split across 2 lines.
- * Split into separate events. Appears to happen when the JVM is under stress with low throughput.
- * It could be a JVM bug.
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent} split across 2 lines. Split into separate
+ * events. Appears to happen when the JVM is under stress with low throughput. It could be a JVM bug.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -65,69 +64,64 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class ApplicationStoppedTimePreprocessAction implements PreprocessAction {
 
-	/**
-	 * Regular expressions defining the 1st logging line.
-	 */
-	private static final String REGEX_LINE1 = "^("
-			+ JdkRegEx.TIMESTAMP
-			+ ")(: \\[CMS-concurrent-(abortable-preclean|mark|preclean): "
-			+ JdkRegEx.DURATION_FRACTION
-			+ "\\])?(Total time for which application threads were stopped: \\d{1,4}\\.\\d{7} seconds)$";
+    /**
+     * Regular expressions defining the 1st logging line.
+     */
+    private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP + ")(: \\[CMS-concurrent-(abortable-preclean|mark|preclean): " + JdkRegEx.DURATION_FRACTION
+            + "\\])?(Total time for which application threads were stopped: \\d{1,4}\\.\\d{7} seconds)$";
 
-	/**
-	 * Regular expressions defining the 2nd logging line.
-	 */
-	private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-abortable-preclean: "
-			+ JdkRegEx.DURATION_FRACTION + "\\])?" + JdkRegEx.TIMES_BLOCK + "[ ]*$";
+    /**
+     * Regular expressions defining the 2nd logging line.
+     */
+    private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION + "\\])?" + JdkRegEx.TIMES_BLOCK + "[ ]*$";
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * Create event from log entry.
-	 */
-	public ApplicationStoppedTimePreprocessAction(String logEntry) {
-		Pattern pattern = Pattern.compile(REGEX_LINE1);
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			this.logEntry = logEntry;
-			// Split line1 logging apart
-			if (matcher.group(6) != null) {
-				this.logEntry = matcher.group(6) + "\n";
-				if (matcher.group(1) != null) {
-					this.logEntry = this.logEntry + matcher.group(1);
-				}
-				if (matcher.group(3) != null) {
-					this.logEntry = this.logEntry + matcher.group(3);
-				}
-			}
-		} else {
-			// line2 logging
-			this.logEntry = logEntry + "\n";
-		}
-	}
+    /**
+     * Create event from log entry.
+     */
+    public ApplicationStoppedTimePreprocessAction(String logEntry) {
+        Pattern pattern = Pattern.compile(REGEX_LINE1);
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            this.logEntry = logEntry;
+            // Split line1 logging apart
+            if (matcher.group(6) != null) {
+                this.logEntry = matcher.group(6) + "\n";
+                if (matcher.group(1) != null) {
+                    this.logEntry = this.logEntry + matcher.group(1);
+                }
+                if (matcher.group(3) != null) {
+                    this.logEntry = this.logEntry + matcher.group(3);
+                }
+            }
+        } else {
+            // line2 logging
+            this.logEntry = logEntry + "\n";
+        }
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public String getName() {
-		return JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString();
-	}
+    public String getName() {
+        return JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString();
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @param priorLogLine
-	 *            The last log entry processed.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine, String priorLogLine) {
-		return (logLine.matches(REGEX_LINE1) || (logLine.matches(REGEX_LINE2) && priorLogLine
-				.matches(REGEX_LINE1)));
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @param priorLogLine
+     *            The last log entry processed.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine, String priorLogLine) {
+        return (logLine.matches(REGEX_LINE1) || (logLine.matches(REGEX_LINE2) && priorLogLine.matches(REGEX_LINE1)));
+    }
 }

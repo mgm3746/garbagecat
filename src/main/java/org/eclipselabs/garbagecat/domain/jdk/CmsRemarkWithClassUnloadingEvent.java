@@ -26,9 +26,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * A {@link org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent} with the
- * <code>-XX:+CMSClassUnloadingEnabled</code> JVM option enabled to allow perm gen collections. The
- * concurrent low pause collector does not allow for class unloading by default.
+ * A {@link org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent} with the <code>-XX:+CMSClassUnloadingEnabled</code>
+ * JVM option enabled to allow perm gen collections. The concurrent low pause collector does not allow for class
+ * unloading by default.
  * 
  * <h3>Example Logging</h3>
  * </p>
@@ -42,86 +42,82 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent {
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * The elapsed clock time for the GC event in milliseconds (rounded).
-	 */
-	private int duration;
+    /**
+     * The elapsed clock time for the GC event in milliseconds (rounded).
+     */
+    private int duration;
 
-	/**
-	 * The time when the GC event happened in milliseconds after JVM startup.
-	 */
-	private long timestamp;
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC\\[YG occupancy: "
-			+ JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP
-			+ ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-			+ ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-			+ ": \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-			+ ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\] \\[1 CMS-remark: "
-			+ JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\("
-			+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-        private static Pattern pattern = Pattern.compile(CmsRemarkWithClassUnloadingEvent.REGEX);
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\] \\[1 CMS-remark: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static Pattern pattern = Pattern.compile(CmsRemarkWithClassUnloadingEvent.REGEX);
 
-	/**
-	 * Create CMS Remark with class unloading logging event from log entry.
-	 * 
-	 * @param logEntry
-	 */
-	public CmsRemarkWithClassUnloadingEvent(String logEntry) {
-		this.logEntry = logEntry;		
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			// The last duration is the total duration for the phase.
-			duration = JdkMath.convertSecsToMillis(matcher.group(16)).intValue();
-		}
-	}
+    /**
+     * Create CMS Remark with class unloading logging event from log entry.
+     * 
+     * @param logEntry
+     */
+    public CmsRemarkWithClassUnloadingEvent(String logEntry) {
+        this.logEntry = logEntry;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            // The last duration is the total duration for the phase.
+            duration = JdkMath.convertSecsToMillis(matcher.group(16)).intValue();
+        }
+    }
 
-	/**
-	 * Alternate constructor. Create CMS Remark with class unloading logging event from values.
-	 * 
-	 * @param logEntry
-	 * @param timestamp
-	 * @param duration
-	 */
-	public CmsRemarkWithClassUnloadingEvent(String logEntry, long timestamp, int duration) {
-		this.logEntry = logEntry;
-		this.timestamp = timestamp;
-		this.duration = duration;
-	}
+    /**
+     * Alternate constructor. Create CMS Remark with class unloading logging event from values.
+     * 
+     * @param logEntry
+     * @param timestamp
+     * @param duration
+     */
+    public CmsRemarkWithClassUnloadingEvent(String logEntry, long timestamp, int duration) {
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public int getDuration() {
-		return duration;
-	}
+    public int getDuration() {
+        return duration;
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING.toString();
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING.toString();
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 }

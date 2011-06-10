@@ -23,18 +23,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class TestDateStampPrefixPreprocessAction extends TestCase {
 
-	public void testLogLine() {
-		String logLine = "2010-04-16T12:11:18.979+0200: 84.335: [GC 84.336: [ParNew: 273152K->858K(341376K), "
-				+ "0.0030008 secs] 273152K->858K(980352K), 0.0031183 secs] "
-				+ "[Times: user=0.00 sys=0.00, real=0.00 secs]";
-		Assert.assertTrue("Log line not recognized as "
-				+ JdkUtil.PreprocessActionType.DATE_STAMP.toString() + ".",
-				DateStampPrefixPreprocessAction.match(logLine));
-		DateStampPrefixPreprocessAction preprocessAction = new DateStampPrefixPreprocessAction(
-				logLine);
-		String preprocessedLogLine = "84.335: [GC 84.336: [ParNew: 273152K->858K(341376K), 0.0030008 secs] "
-				+ "273152K->858K(980352K), 0.0031183 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]";
-		Assert.assertEquals("Log line not parsed correctly.",
-				preprocessedLogLine, preprocessAction.getLogEntry());
-	}
+    public void testLogLine() {
+        String logLine = "2010-04-16T12:11:18.979+0200: 84.335: [GC 84.336: [ParNew: 273152K->858K(341376K), " + "0.0030008 secs] 273152K->858K(980352K), 0.0031183 secs] "
+                + "[Times: user=0.00 sys=0.00, real=0.00 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP.toString() + ".", DateStampPrefixPreprocessAction.match(logLine));
+        DateStampPrefixPreprocessAction preprocessAction = new DateStampPrefixPreprocessAction(logLine);
+        String preprocessedLogLine = "84.335: [GC 84.336: [ParNew: 273152K->858K(341376K), 0.0030008 secs] " + "273152K->858K(980352K), 0.0031183 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]";
+        Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
+    }
 }

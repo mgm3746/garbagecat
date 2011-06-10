@@ -26,9 +26,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Truncated
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailureEvent},
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent}, {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldEvent}, or
+ * Truncated {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailureEvent},
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent},
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldEvent}, or
  * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldPermDataEvent}
  * </p>
  * 
@@ -48,81 +48,79 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class ParNewPromotionFailedTruncatedEvent implements BlockingEvent {
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
-			+ ": \\[ParNew \\(promotion failed\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-			+ JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-			+ ": \\[CMS(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-mark: "
-			+ JdkRegEx.DURATION_FRACTION + "\\])?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-        private static Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew \\(promotion failed\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\])?"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static Pattern pattern = Pattern.compile(REGEX);
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * The elapsed clock time for the GC event in milliseconds (rounded).
-	 */
-	private int duration;
+    /**
+     * The elapsed clock time for the GC event in milliseconds (rounded).
+     */
+    private int duration;
 
-	/**
-	 * The time when the GC event happened in milliseconds after JVM startup.
-	 */
-	private long timestamp;
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
-	/**
-	 * Create ParNew detail logging event from log entry.
-	 */
-	public ParNewPromotionFailedTruncatedEvent(String logEntry) {
-		this.logEntry = logEntry;
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
-		}
-	}
+    /**
+     * Create ParNew detail logging event from log entry.
+     */
+    public ParNewPromotionFailedTruncatedEvent(String logEntry) {
+        this.logEntry = logEntry;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
+        }
+    }
 
-	/**
-	 * Alternate constructor. Create ParNew detail logging event from values.
-	 * 
-	 * @param logEntry
-	 * @param timestamp
-	 * @param duration
-	 */
-	public ParNewPromotionFailedTruncatedEvent(String logEntry, long timestamp, int duration) {
-		this.logEntry = logEntry;
-		this.timestamp = timestamp;
-		this.duration = duration;
-	}
+    /**
+     * Alternate constructor. Create ParNew detail logging event from values.
+     * 
+     * @param logEntry
+     * @param timestamp
+     * @param duration
+     */
+    public ParNewPromotionFailedTruncatedEvent(String logEntry, long timestamp, int duration) {
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public int getDuration() {
-		return duration;
-	}
+    public int getDuration() {
+        return duration;
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED.toString();
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED.toString();
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 
 }

@@ -32,27 +32,24 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * Combined {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedEvent} and
- * {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} with perm data. Occurs when
- * objects cannot be moved from the young to the old generation due to lack of space or
- * fragmentation. The young generation collection backs out of the young collection and initiates a
- * {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} full collection in an attempt to
- * free up and compact space. This is an expensive operation that typically results in large pause
- * times.
+ * {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} with perm data. Occurs when objects cannot be moved
+ * from the young to the old generation due to lack of space or fragmentation. The young generation collection backs out
+ * of the young collection and initiates a {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} full
+ * collection in an attempt to free up and compact space. This is an expensive operation that typically results in large
+ * pause times.
  * </p>
  * 
  * <p>
- * The CMS collector is not a compacting collector. It discovers garbage and adds the memory to free
- * lists of available space that it maintains based on popular object sizes. If many objects of
- * varying sizes are allocated, the free lists will be split. This can lead to many free lists whose
- * total size is large enough to satisfy the calculated free space needed for promotions; however,
- * there is not enough contiguous space for one of the objects being promoted.
+ * The CMS collector is not a compacting collector. It discovers garbage and adds the memory to free lists of available
+ * space that it maintains based on popular object sizes. If many objects of varying sizes are allocated, the free lists
+ * will be split. This can lead to many free lists whose total size is large enough to satisfy the calculated free space
+ * needed for promotions; however, there is not enough contiguous space for one of the objects being promoted.
  * </p>
  * 
  * <p>
- * Prior to Java 5.0 the space requirement was the worst-case scenario that all young generation
- * objects get promoted to the old generation (the young generation guarantee). Starting in Java 5.0
- * the space requirement is an estimate based on recent promotion history and is usually much less
- * than the young generation guarantee.
+ * Prior to Java 5.0 the space requirement was the worst-case scenario that all young generation objects get promoted to
+ * the old generation (the young generation guarantee). Starting in Java 5.0 the space requirement is an estimate based
+ * on recent promotion history and is usually much less than the young generation guarantee.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -62,12 +59,11 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * The CMS collector run in incremental mode (icms), enabled with
- * <code>-XX:+CMSIncrementalMode</code>. In this mode, the CMS collector does not hold the processor
- * for the entire long concurrent phases but periodically stops them and yields the processor back
- * to other threads in application. It divides the work to be done in concurrent phases into small
- * chunks called duty cycles and schedules them between minor collections. This is very useful for
- * applications that need low pause times and are run on machines with a small number of processors.
+ * The CMS collector run in incremental mode (icms), enabled with <code>-XX:+CMSIncrementalMode</code>. In this mode,
+ * the CMS collector does not hold the processor for the entire long concurrent phases but periodically stops them and
+ * yields the processor back to other threads in application. It divides the work to be done in concurrent phases into
+ * small chunks called duty cycles and schedules them between minor collections. This is very useful for applications
+ * that need low pause times and are run on machines with a small number of processors.
  * </p>
  * 
  * <pre>
@@ -77,182 +73,175 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class ParNewPromotionFailedCmsSerialOldPermDataEvent implements BlockingEvent,
-		OldCollection, PermCollection, YoungData, OldData, PermData {
+public class ParNewPromotionFailedCmsSerialOldPermDataEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData {
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
-			+ ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-			+ "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-			+ ": \\[CMS: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-			+ JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-			+ JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-			+ JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
-			+ JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-        private static Pattern pattern = Pattern.compile(ParNewPromotionFailedCmsSerialOldPermDataEvent.REGEX);
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
+            + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]"
+            + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static Pattern pattern = Pattern.compile(ParNewPromotionFailedCmsSerialOldPermDataEvent.REGEX);
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * The elapsed clock time for the GC event in milliseconds (rounded).
-	 */
-	private int duration;
+    /**
+     * The elapsed clock time for the GC event in milliseconds (rounded).
+     */
+    private int duration;
 
-	/**
-	 * The time when the GC event happened in milliseconds after JVM startup.
-	 */
-	private long timestamp;
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
-	/**
-	 * Young generation size (kilobytes) at beginning of GC event.
-	 */
-	private int young;
+    /**
+     * Young generation size (kilobytes) at beginning of GC event.
+     */
+    private int young;
 
-	/**
-	 * Young generation size (kilobytes) at end of GC event.
-	 */
-	private int youngEnd;
+    /**
+     * Young generation size (kilobytes) at end of GC event.
+     */
+    private int youngEnd;
 
-	/**
-	 * Available space in young generation (kilobytes). Equals young generation allocation minus one
-	 * survivor space.
-	 */
-	private int youngAvailable;
+    /**
+     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
+     */
+    private int youngAvailable;
 
-	/**
-	 * Old generation size (kilobytes) at beginning of GC event.
-	 */
-	private int old;
+    /**
+     * Old generation size (kilobytes) at beginning of GC event.
+     */
+    private int old;
 
-	/**
-	 * Old generation size (kilobytes) at end of GC event.
-	 */
-	private int oldEnd;
+    /**
+     * Old generation size (kilobytes) at end of GC event.
+     */
+    private int oldEnd;
 
-	/**
-	 * Space allocated to old generation (kilobytes).
-	 */
-	private int oldAllocation;
+    /**
+     * Space allocated to old generation (kilobytes).
+     */
+    private int oldAllocation;
 
-	/**
-	 * Permanent generation size (kilobytes) at beginning of GC event.
-	 */
-	private int permGen;
+    /**
+     * Permanent generation size (kilobytes) at beginning of GC event.
+     */
+    private int permGen;
 
-	/**
-	 * Permanent generation size (kilobytes) at end of GC event.
-	 */
-	private int permGenEnd;
+    /**
+     * Permanent generation size (kilobytes) at end of GC event.
+     */
+    private int permGenEnd;
 
-	/**
-	 * Space allocated to permanent generation (kilobytes).
-	 */
-	private int permGenAllocation;
+    /**
+     * Space allocated to permanent generation (kilobytes).
+     */
+    private int permGenAllocation;
 
-	/**
-	 * Create ParNew detail logging event from log entry.
-	 */
-	public ParNewPromotionFailedCmsSerialOldPermDataEvent(String logEntry) {
-		this.logEntry = logEntry;
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			old = Integer.parseInt(matcher.group(9)) ;
-			oldEnd = Integer.parseInt(matcher.group(10)) ;
-			oldAllocation = Integer.parseInt(matcher.group(11)) ;
-			int totalBegin = Integer.parseInt(matcher.group(13)) ;
-			// Don't use ParNew values because those are presumably sbefore the promotion failure.
-			young = totalBegin - old;
-			int totalEnd = Integer.parseInt(matcher.group(14)) ;
-			youngEnd = totalEnd - oldEnd;
-			int totalAllocation = Integer.parseInt(matcher.group(15)) ;
-			youngAvailable = totalAllocation - oldAllocation;
-			permGen = Integer.parseInt(matcher.group(16)) ;
-			permGenEnd = Integer.parseInt(matcher.group(17)) ;
-			permGenAllocation = Integer.parseInt(matcher.group(18)) ;
-			duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
-		}
-	}
+    /**
+     * Create ParNew detail logging event from log entry.
+     */
+    public ParNewPromotionFailedCmsSerialOldPermDataEvent(String logEntry) {
+        this.logEntry = logEntry;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            old = Integer.parseInt(matcher.group(9));
+            oldEnd = Integer.parseInt(matcher.group(10));
+            oldAllocation = Integer.parseInt(matcher.group(11));
+            int totalBegin = Integer.parseInt(matcher.group(13));
+            // Don't use ParNew values because those are presumably sbefore the promotion failure.
+            young = totalBegin - old;
+            int totalEnd = Integer.parseInt(matcher.group(14));
+            youngEnd = totalEnd - oldEnd;
+            int totalAllocation = Integer.parseInt(matcher.group(15));
+            youngAvailable = totalAllocation - oldAllocation;
+            permGen = Integer.parseInt(matcher.group(16));
+            permGenEnd = Integer.parseInt(matcher.group(17));
+            permGenAllocation = Integer.parseInt(matcher.group(18));
+            duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
+        }
+    }
 
-	/**
-	 * Alternate constructor. Create ParNew detail logging event from values.
-	 * 
-	 * @param logEntry
-	 * @param timestamp
-	 * @param duration
-	 */
-	public ParNewPromotionFailedCmsSerialOldPermDataEvent(String logEntry, long timestamp,
-			int duration) {
-		this.logEntry = logEntry;
-		this.timestamp = timestamp;
-		this.duration = duration;
-	}
+    /**
+     * Alternate constructor. Create ParNew detail logging event from values.
+     * 
+     * @param logEntry
+     * @param timestamp
+     * @param duration
+     */
+    public ParNewPromotionFailedCmsSerialOldPermDataEvent(String logEntry, long timestamp, int duration) {
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public int getDuration() {
-		return duration;
-	}
+    public int getDuration() {
+        return duration;
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	public int getYoungOccupancyInit() {
-		return young;
-	}
+    public int getYoungOccupancyInit() {
+        return young;
+    }
 
-	public int getYoungOccupancyEnd() {
-		return youngEnd;
-	}
+    public int getYoungOccupancyEnd() {
+        return youngEnd;
+    }
 
-	public int getYoungSpace() {
-		return youngAvailable;
-	}
+    public int getYoungSpace() {
+        return youngAvailable;
+    }
 
-	public int getOldOccupancyInit() {
-		return old;
-	}
+    public int getOldOccupancyInit() {
+        return old;
+    }
 
-	public int getOldOccupancyEnd() {
-		return oldEnd;
-	}
+    public int getOldOccupancyEnd() {
+        return oldEnd;
+    }
 
-	public int getOldSpace() {
-		return oldAllocation;
-	}
+    public int getOldSpace() {
+        return oldAllocation;
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString();
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString();
+    }
 
-	public int getPermOccupancyInit() {
-		return permGen;
-	}
+    public int getPermOccupancyInit() {
+        return permGen;
+    }
 
-	public int getPermOccupancyEnd() {
-		return permGenEnd;
-	}
+    public int getPermOccupancyEnd() {
+        return permGenEnd;
+    }
 
-	public int getPermSpace() {
-		return permGenAllocation;
-	}
+    public int getPermSpace() {
+        return permGenAllocation;
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 }

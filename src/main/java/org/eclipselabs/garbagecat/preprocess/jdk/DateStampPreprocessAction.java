@@ -27,15 +27,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Logging with a datestamp instead of the timestamp indicating the number of
- * seconds after JVM startup. Enabled with the
- * <code>-XX:+PrintGCDateStamps</code> option added in JDK 1.6 update 4.
+ * Logging with a datestamp instead of the timestamp indicating the number of seconds after JVM startup. Enabled with
+ * the <code>-XX:+PrintGCDateStamps</code> option added in JDK 1.6 update 4.
  * </p>
  * 
  * <p>
- * It appears that initial implementations replace the timestamp with a
- * datestamp and later versions of the JDK prefix the normal timestamp with a
- * datestamp.
+ * It appears that initial implementations replace the timestamp with a datestamp and later versions of the JDK prefix
+ * the normal timestamp with a datestamp.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -55,56 +53,55 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class DateStampPreprocessAction implements PreprocessAction {
 
-	/**
-	 * Regular expressions defining the logging line.
-	 */
-	private static final String REGEX_LINE = "^" + JdkRegEx.DATESTAMP
-			+ ": (.*)$";
+    /**
+     * Regular expressions defining the logging line.
+     */
+    private static final String REGEX_LINE = "^" + JdkRegEx.DATESTAMP + ": (.*)$";
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * Create event from log entry.
-	 * 
-	 * @param logEntry
-	 *            The log entry.
-	 * @param jvmStartDate
-	 *            The date and time the JVM was started.
-	 */
-	public DateStampPreprocessAction(String logEntry, Date jvmStartDate) {
-		Pattern pattern = Pattern.compile(REGEX_LINE);
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			String logEntryMinusDateStamp = matcher.group(11);
-			StringBuffer sb = new StringBuffer();
-			Date datestamp = GcUtil.parseDateStamp(matcher.group(1));
-			long diff = GcUtil.dateDiff(jvmStartDate, datestamp);
-			sb.append((JdkMath.convertMillisToSecs(diff)).toString());
-			sb.append(": ");
-			sb.append(logEntryMinusDateStamp);
-			this.logEntry = sb.toString();
-		}
-	}
+    /**
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry.
+     * @param jvmStartDate
+     *            The date and time the JVM was started.
+     */
+    public DateStampPreprocessAction(String logEntry, Date jvmStartDate) {
+        Pattern pattern = Pattern.compile(REGEX_LINE);
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            String logEntryMinusDateStamp = matcher.group(11);
+            StringBuffer sb = new StringBuffer();
+            Date datestamp = GcUtil.parseDateStamp(matcher.group(1));
+            long diff = GcUtil.dateDiff(jvmStartDate, datestamp);
+            sb.append((JdkMath.convertMillisToSecs(diff)).toString());
+            sb.append(": ");
+            sb.append(logEntryMinusDateStamp);
+            this.logEntry = sb.toString();
+        }
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public String getName() {
-		return JdkUtil.PreprocessActionType.DATE_STAMP.toString();
-	}
+    public String getName() {
+        return JdkUtil.PreprocessActionType.DATE_STAMP.toString();
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX_LINE);
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX_LINE);
+    }
 }

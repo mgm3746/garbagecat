@@ -23,9 +23,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class TestUnknownEvent extends TestCase {
 
-	public void testLogLine() {
-		String logLine = "Mike was here!!!";
-		Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNKNOWN.toString()
-				+ ".", JdkUtil.parseLogLine(logLine) instanceof UnknownEvent);
-	}
+    public void testLogLine() {
+        String logLine = "Mike was here!!!";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNKNOWN.toString() + ".", JdkUtil.parseLogLine(logLine) instanceof UnknownEvent);
+    }
 }

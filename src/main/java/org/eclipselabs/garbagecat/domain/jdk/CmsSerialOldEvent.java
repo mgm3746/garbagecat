@@ -32,15 +32,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * The concurrent low pause collector does not compact. When fragmentation becomes an issue a
- * {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent} compacts the heap. Made a separate
- * event for tracking purposes.
+ * {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent} compacts the heap. Made a separate event for tracking
+ * purposes.
  * </p>
  * 
  * <p>
- * It also happens for undetermined reasons, possibly the JVM requires a certain amount of heap or
- * combination of resources that is not being met, and consequently the concurrent low pause
- * collector is not used despite being specified with the <code>-XX:+UseConcMarkSweepGC</code> JVM
- * option.
+ * It also happens for undetermined reasons, possibly the JVM requires a certain amount of heap or combination of
+ * resources that is not being met, and consequently the concurrent low pause collector is not used despite being
+ * specified with the <code>-XX:+UseConcMarkSweepGC</code> JVM option.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -66,179 +65,173 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class CmsSerialOldEvent implements BlockingEvent, OldCollection, PermCollection, YoungData,
-		OldData, PermData {
+public class CmsSerialOldEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData {
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * The elapsed clock time for the GC event in milliseconds (rounded).
-	 */
-	private int duration;
+    /**
+     * The elapsed clock time for the GC event in milliseconds (rounded).
+     */
+    private int duration;
 
-	/**
-	 * The time when the GC event happened in milliseconds after JVM startup.
-	 */
-	private long timestamp;
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
-	/**
-	 * Young generation size (kilobytes) at beginning of GC event.
-	 */
-	private int young;
+    /**
+     * Young generation size (kilobytes) at beginning of GC event.
+     */
+    private int young;
 
-	/**
-	 * Young generation size (kilobytes) at end of GC event.
-	 */
-	private int youngEnd;
+    /**
+     * Young generation size (kilobytes) at end of GC event.
+     */
+    private int youngEnd;
 
-	/**
-	 * Available space in young generation (kilobytes). Equals young generation allocation minus one
-	 * survivor space.
-	 */
-	private int youngAvailable;
+    /**
+     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
+     */
+    private int youngAvailable;
 
-	/**
-	 * Old generation size (kilobytes) at beginning of GC event.
-	 */
-	private int old;
+    /**
+     * Old generation size (kilobytes) at beginning of GC event.
+     */
+    private int old;
 
-	/**
-	 * Old generation size (kilobytes) at end of GC event.
-	 */
-	private int oldEnd;
+    /**
+     * Old generation size (kilobytes) at end of GC event.
+     */
+    private int oldEnd;
 
-	/**
-	 * Space allocated to old generation (kilobytes).
-	 */
-	private int oldAllocation;
+    /**
+     * Space allocated to old generation (kilobytes).
+     */
+    private int oldAllocation;
 
-	/**
-	 * Permanent generation size (kilobytes) at beginning of GC event.
-	 */
-	private int permGen;
+    /**
+     * Permanent generation size (kilobytes) at beginning of GC event.
+     */
+    private int permGen;
 
-	/**
-	 * Permanent generation size (kilobytes) at end of GC event.
-	 */
-	private int permGenEnd;
+    /**
+     * Permanent generation size (kilobytes) at end of GC event.
+     */
+    private int permGenEnd;
 
-	/**
-	 * Space allocated to permanent generation (kilobytes).
-	 */
-	private int permGenAllocation;
+    /**
+     * Space allocated to permanent generation (kilobytes).
+     */
+    private int permGenAllocation;
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX = "^" + JdkRegEx.TIMESTAMP
-			+ ": \\[(Full GC|Full GC \\(System\\)) " + JdkRegEx.TIMESTAMP + ": \\[CMS: "
-			+ JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-			+ JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-			+ JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-			+ JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
-			+ JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-        private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full GC|Full GC \\(System\\)) " + JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
 
-	/**
-	 * Create CMS logging event from log entry.
-	 */
-	public CmsSerialOldEvent(String logEntry) {
-		this.logEntry = logEntry;		
-		Matcher matcher = pattern.matcher(logEntry);
-		if (matcher.find()) {
-			timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-			old = Integer.parseInt(matcher.group(4)) ;
-			oldEnd = Integer.parseInt(matcher.group(5)) ;
-			oldAllocation = Integer.parseInt(matcher.group(6)) ;
-			int totalBegin = Integer.parseInt(matcher.group(8)) ;
-			young = totalBegin - old;
-			int totalEnd = Integer.parseInt(matcher.group(9)) ;
-			youngEnd = totalEnd - oldEnd;
-			int totalAllocation = Integer.parseInt(matcher.group(10)) ;
-			youngAvailable = totalAllocation - oldAllocation;
-			permGen = Integer.parseInt(matcher.group(11)) ;
-			permGenEnd = Integer.parseInt(matcher.group(12)) ;
-			permGenAllocation = Integer.parseInt(matcher.group(13)) ;
-			duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
-		}
-	}
+    /**
+     * Create CMS logging event from log entry.
+     */
+    public CmsSerialOldEvent(String logEntry) {
+        this.logEntry = logEntry;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            old = Integer.parseInt(matcher.group(4));
+            oldEnd = Integer.parseInt(matcher.group(5));
+            oldAllocation = Integer.parseInt(matcher.group(6));
+            int totalBegin = Integer.parseInt(matcher.group(8));
+            young = totalBegin - old;
+            int totalEnd = Integer.parseInt(matcher.group(9));
+            youngEnd = totalEnd - oldEnd;
+            int totalAllocation = Integer.parseInt(matcher.group(10));
+            youngAvailable = totalAllocation - oldAllocation;
+            permGen = Integer.parseInt(matcher.group(11));
+            permGenEnd = Integer.parseInt(matcher.group(12));
+            permGenAllocation = Integer.parseInt(matcher.group(13));
+            duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
+        }
+    }
 
-	/**
-	 * Alternate constructor. Create CMS logging event from values.
-	 * 
-	 * @param logEntry
-	 * @param timestamp
-	 * @param duration
-	 */
-	public CmsSerialOldEvent(String logEntry, long timestamp, int duration) {
-		this.logEntry = logEntry;
-		this.timestamp = timestamp;
-		this.duration = duration;
-	}
+    /**
+     * Alternate constructor. Create CMS logging event from values.
+     * 
+     * @param logEntry
+     * @param timestamp
+     * @param duration
+     */
+    public CmsSerialOldEvent(String logEntry, long timestamp, int duration) {
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public int getDuration() {
-		return duration;
-	}
+    public int getDuration() {
+        return duration;
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	public int getYoungOccupancyInit() {
-		return young;
-	}
+    public int getYoungOccupancyInit() {
+        return young;
+    }
 
-	public int getYoungOccupancyEnd() {
-		return youngEnd;
-	}
+    public int getYoungOccupancyEnd() {
+        return youngEnd;
+    }
 
-	public int getYoungSpace() {
-		return youngAvailable;
-	}
+    public int getYoungSpace() {
+        return youngAvailable;
+    }
 
-	public int getOldOccupancyInit() {
-		return old;
-	}
+    public int getOldOccupancyInit() {
+        return old;
+    }
 
-	public int getOldOccupancyEnd() {
-		return oldEnd;
-	}
+    public int getOldOccupancyEnd() {
+        return oldEnd;
+    }
 
-	public int getOldSpace() {
-		return oldAllocation;
-	}
+    public int getOldSpace() {
+        return oldAllocation;
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.CMS_SERIAL_OLD.toString();
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.CMS_SERIAL_OLD.toString();
+    }
 
-	public int getPermOccupancyInit() {
-		return permGen;
-	}
+    public int getPermOccupancyInit() {
+        return permGen;
+    }
 
-	public int getPermOccupancyEnd() {
-		return permGenEnd;
-	}
+    public int getPermOccupancyEnd() {
+        return permGenEnd;
+    }
 
-	public int getPermSpace() {
-		return permGenAllocation;
-	}
+    public int getPermSpace() {
+        return permGenAllocation;
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 }

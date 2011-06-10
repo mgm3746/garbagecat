@@ -24,8 +24,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Remove <code>-XX:+PrintHeapAtGC</code> logging from the underlying garbage collection event. This
- * data is currently not being used for any analysis.
+ * Remove <code>-XX:+PrintHeapAtGC</code> logging from the underlying garbage collection event. This data is currently
+ * not being used for any analysis.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -94,8 +94,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 3) Underlying
- * {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent}:
+ * 3) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent}:
  * </p>
  * 
  * <pre>
@@ -127,8 +126,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 4) Underlying
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailureEvent}:
+ * 4) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailureEvent}:
  * </p>
  * 
  * <pre>
@@ -206,109 +204,99 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
 
-	/**
-	 * Regular expressions for the beginning part of a line retained.
-	 */
-	private static final String[] REGEX_RETAIN_BEGINNING = {
-			"^([^{]+)?(\\{)?Heap (before|after) gc invocations=\\d{1,10}:$",
-			"^(" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE
-					+ "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
-					+ "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS" + JdkRegEx.TIMESTAMP
-					+ ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset): "
-					+ JdkRegEx.DURATION_FRACTION + "\\])$",
-			"^" + JdkRegEx.TIMESTAMP + ": \\[CMS" + JdkRegEx.TIMESTAMP
-					+ ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): "
-					+ JdkRegEx.DURATION_FRACTION + "\\]$" };
+    /**
+     * Regular expressions for the beginning part of a line retained.
+     */
+    private static final String[] REGEX_RETAIN_BEGINNING = {
+            "^([^{]+)?(\\{)?Heap (before|after) gc invocations=\\d{1,10}:$",
+            "^(" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+                    + JdkRegEx.TIMESTAMP + ": \\[CMS" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset): " + JdkRegEx.DURATION_FRACTION + "\\])$",
+            "^" + JdkRegEx.TIMESTAMP + ": \\[CMS" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]$" };
 
-	/**
-	 * Regular expression for the end part of a line retained.
-	 */
-	private static final String REGEX_RETAIN_END = "^, " + JdkRegEx.DURATION + "\\]$";
+    /**
+     * Regular expression for the end part of a line retained.
+     */
+    private static final String REGEX_RETAIN_END = "^, " + JdkRegEx.DURATION + "\\]$";
 
-	/**
-	 * Regular expressions for lines or parts of lines thrown away.
-	 */
-	private static final String[] REGEX_THROWAWAY = {
-			"^ (PSYoungGen|PSOldGen|ParOldGen|PSPermGen)[ ]+total " + JdkRegEx.SIZE + ", used "
-					+ JdkRegEx.SIZE + ".+$",
-			"^ (par new generation|concurrent mark-sweep generation|concurrent-mark-sweep perm gen"
-					+ "|tenured generation|compacting perm gen)" + "[ ]+total " + JdkRegEx.SIZE
-					+ ", used " + JdkRegEx.SIZE + ".+$",
-			"^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$",
-			"^}$", "^\\{Heap before GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$",
-			"^Heap after GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$",
-			"No shared spaces configured." };
+    /**
+     * Regular expressions for lines or parts of lines thrown away.
+     */
+    private static final String[] REGEX_THROWAWAY = {
+            "^ (PSYoungGen|PSOldGen|ParOldGen|PSPermGen)[ ]+total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + ".+$",
+            "^ (par new generation|concurrent mark-sweep generation|concurrent-mark-sweep perm gen" + "|tenured generation|compacting perm gen)" + "[ ]+total " + JdkRegEx.SIZE + ", used "
+                    + JdkRegEx.SIZE + ".+$", "^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$", "^}$",
+            "^\\{Heap before GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$", "^Heap after GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$", "No shared spaces configured." };
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * Create event from log entry.
-	 * 
-	 * @param logEntry
-	 *            The log entry being processed.
-	 */
-	public PrintHeapAtGcPreprocessAction(String logEntry) {
-		// Handle split logging. Keep parts of log lines needed for re-composing.
-		Pattern pattern;
-		Matcher matcher;
-		// Check to see if beginning of line should be retained.
-		boolean retainBeginning = false;
-		for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++) {
-			pattern = Pattern.compile(REGEX_RETAIN_BEGINNING[i]);
-			matcher = pattern.matcher(logEntry);
-			if (matcher.find() && matcher.group(1) != null) {
-				// Retain beginning of line.
-				this.logEntry = matcher.group(1);
-				retainBeginning = true;
-			}
-		}
-		// Check to see if end of line should be retained.
-		if (!retainBeginning) {
-			pattern = Pattern.compile(REGEX_RETAIN_END);
-			matcher = pattern.matcher(logEntry);
-			if (matcher.find()) {
-				this.logEntry = logEntry + "\n";
-			}
-		}
-	}
+    /**
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry being processed.
+     */
+    public PrintHeapAtGcPreprocessAction(String logEntry) {
+        // Handle split logging. Keep parts of log lines needed for re-composing.
+        Pattern pattern;
+        Matcher matcher;
+        // Check to see if beginning of line should be retained.
+        boolean retainBeginning = false;
+        for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++) {
+            pattern = Pattern.compile(REGEX_RETAIN_BEGINNING[i]);
+            matcher = pattern.matcher(logEntry);
+            if (matcher.find() && matcher.group(1) != null) {
+                // Retain beginning of line.
+                this.logEntry = matcher.group(1);
+                retainBeginning = true;
+            }
+        }
+        // Check to see if end of line should be retained.
+        if (!retainBeginning) {
+            pattern = Pattern.compile(REGEX_RETAIN_END);
+            matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                this.logEntry = logEntry + "\n";
+            }
+        }
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public String getName() {
-		return JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString();
-	}
+    public String getName() {
+        return JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString();
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		boolean match = false;
-		for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
-			if (logLine.matches(REGEX_THROWAWAY[i])) {
-				match = true;
-				break;
-			}
-		}
-		if (!match) {
-			for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++) {
-				if (logLine.matches(REGEX_RETAIN_BEGINNING[i])) {
-					match = true;
-					break;
-				}
-			}
-		}
-		if (!match && logLine.matches(REGEX_RETAIN_END)) {
-			match = true;
-		}
-		return match;
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        boolean match = false;
+        for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
+            if (logLine.matches(REGEX_THROWAWAY[i])) {
+                match = true;
+                break;
+            }
+        }
+        if (!match) {
+            for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++) {
+                if (logLine.matches(REGEX_RETAIN_BEGINNING[i])) {
+                    match = true;
+                    break;
+                }
+            }
+        }
+        if (!match && logLine.matches(REGEX_RETAIN_END)) {
+            match = true;
+        }
+        return match;
+    }
 }

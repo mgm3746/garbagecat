@@ -25,8 +25,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * It is recommended to log garbage collection logging to a dedicated file with the
- * <code>-Xverboselog:</code> option and avoid mixing application and garbage collection logging.
+ * It is recommended to log garbage collection logging to a dedicated file with the <code>-Xverboselog:</code> option
+ * and avoid mixing application and garbage collection logging.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -67,59 +67,59 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class ApplicationLoggingPreprocessAction implements PreprocessAction {
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX[] = {
-	// HH:MM:SS datestamp
-			"^(\\d{4}-\\d{2}-\\d{2} )?\\d{2}:\\d{2}:\\d{2},\\d{3} (DEBUG|ERROR|FATAL|INFO|TRACE|WARN) .*$",
-			// Exceptions, Errors
-			"^(java|com|org).*(Exception|Error).*$",
-			// Oracle exceptions
-			"^ORA-\\d{1,6}.*$",
-			// stack trace
-			"^\\tat (java|com|org|oracle).*$",
-			// stack trace caused by
-			"^Caused by: (java|com|org|oracle).*$",
-			// stack trace ellipsis
-			"\\t\\.\\.\\. \\d{1,3} more$" };
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX[] = {
+    // HH:MM:SS datestamp
+            "^(\\d{4}-\\d{2}-\\d{2} )?\\d{2}:\\d{2}:\\d{2},\\d{3} (DEBUG|ERROR|FATAL|INFO|TRACE|WARN) .*$",
+            // Exceptions, Errors
+            "^(java|com|org).*(Exception|Error).*$",
+            // Oracle exceptions
+            "^ORA-\\d{1,6}.*$",
+            // stack trace
+            "^\\tat (java|com|org|oracle).*$",
+            // stack trace caused by
+            "^Caused by: (java|com|org|oracle).*$",
+            // stack trace ellipsis
+            "\\t\\.\\.\\. \\d{1,3} more$" };
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * Create thread dump event from log entry.
-	 */
-	public ApplicationLoggingPreprocessAction(String logEntry) {
-		this.logEntry = logEntry;
-	}
+    /**
+     * Create thread dump event from log entry.
+     */
+    public ApplicationLoggingPreprocessAction(String logEntry) {
+        this.logEntry = logEntry;
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public String getName() {
-		return JdkUtil.PreprocessActionType.APPLICATION_LOGGING.toString();
-	}
+    public String getName() {
+        return JdkUtil.PreprocessActionType.APPLICATION_LOGGING.toString();
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		boolean isMatch = false;
-		for (int i = 0; i < REGEX.length; i++) {
-			if (logLine.matches(REGEX[i])) {
-				isMatch = true;
-				break;
-			}
-		}
-		return isMatch;
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        boolean isMatch = false;
+        for (int i = 0; i < REGEX.length; i++) {
+            if (logLine.matches(REGEX[i])) {
+                isMatch = true;
+                break;
+            }
+        }
+        return isMatch;
+    }
 
 }

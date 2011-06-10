@@ -20,19 +20,19 @@ package org.eclipselabs.garbagecat.domain;
  */
 public interface YoungData {
 
-	/**
-	 * @return Young generation initial occupancy (kilobytes).
-	 */
-	int getYoungOccupancyInit();
+    /**
+     * @return Young generation initial occupancy (kilobytes).
+     */
+    int getYoungOccupancyInit();
 
-	/**
-	 * @return Total young generation space (kilobytes) at the end of the event (i.e. it reflects
-	 *         any resizing). Equals young generation allocation minus one survivor space.
-	 */
-	int getYoungSpace();
+    /**
+     * @return Total young generation space (kilobytes) at the end of the event (i.e. it reflects any resizing). Equals
+     *         young generation allocation minus one survivor space.
+     */
+    int getYoungSpace();
 
-	/**
-	 * @return Young generation end occupancy (kilobytes).
-	 */
-	int getYoungOccupancyEnd();
+    /**
+     * @return Young generation end occupancy (kilobytes).
+     */
+    int getYoungOccupancyEnd();
 }

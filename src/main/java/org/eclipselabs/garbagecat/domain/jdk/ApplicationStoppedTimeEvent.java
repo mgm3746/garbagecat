@@ -21,14 +21,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Logging enabled with the <code>-XX:+PrintGCApplicationStoppedTime</code> JVM option. It shows the
- * length of a collection pause. For example:
+ * Logging enabled with the <code>-XX:+PrintGCApplicationStoppedTime</code> JVM option. It shows the length of a
+ * collection pause. For example:
  * </p>
  * 
  * <p>
- * This option is redundant, as the same information can be calculated from the GC logging
- * timestamps and durations. Therefore, advise against using it, as it adds overhead with no
- * analysis value.
+ * This option is redundant, as the same information can be calculated from the GC logging timestamps and durations.
+ * Therefore, advise against using it, as it adds overhead with no analysis value.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -42,33 +41,32 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class ApplicationStoppedTimeEvent implements LogEvent {
 
-	/**
-	 * Regular expressions defining the logging.
-	 */
-	private static final String REGEX = "^Total time for which application threads were "
-			+ "stopped: \\d{1,4}\\.\\d{7} seconds[ ]*$";
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^Total time for which application threads were " + "stopped: \\d{1,4}\\.\\d{7} seconds[ ]*$";
 
-	public String getLogEntry() {
-		throw new UnsupportedOperationException("Event does not include log entry information");
-	}
+    public String getLogEntry() {
+        throw new UnsupportedOperationException("Event does not include log entry information");
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString();
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString();
+    }
 
-	public long getTimestamp() {
-		throw new UnsupportedOperationException("Event does not include timestamp information");
-	}
+    public long getTimestamp() {
+        throw new UnsupportedOperationException("Event does not include timestamp information");
+    }
 
-	/**
-	 * Determine if the logLine matches the logging pattern(s) for this event.
-	 * 
-	 * @param logLine
-	 *            The log line to test.
-	 * @return true if the log line matches the event pattern, false otherwise.
-	 */
-	public static final boolean match(String logLine) {
-		return logLine.matches(REGEX);
-	}
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX);
+    }
 
 }

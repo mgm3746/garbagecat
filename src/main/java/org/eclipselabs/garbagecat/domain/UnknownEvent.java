@@ -22,31 +22,31 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class UnknownEvent implements LogEvent {
 
-	/**
-	 * The log entry for the event. Can be used for debugging purposes.
-	 */
-	private String logEntry;
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @param logEntry
-	 */
-	public UnknownEvent(String logEntry) {
-		super();
-		this.logEntry = logEntry;
-	}
+    /**
+     * Default constructor.
+     * 
+     * @param logEntry
+     */
+    public UnknownEvent(String logEntry) {
+        super();
+        this.logEntry = logEntry;
+    }
 
-	public String getLogEntry() {
-		return logEntry;
-	}
+    public String getLogEntry() {
+        return logEntry;
+    }
 
-	public String getName() {
-		return JdkUtil.LogEventType.UNKNOWN.toString();
-	}
+    public String getName() {
+        return JdkUtil.LogEventType.UNKNOWN.toString();
+    }
 
-	public long getTimestamp() {
-		throw new UnsupportedOperationException("Event does not include timestamp information");
-	}
+    public long getTimestamp() {
+        throw new UnsupportedOperationException("Event does not include timestamp information");
+    }
 
 }
