@@ -60,7 +60,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData {
+public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData,
+        PermData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -125,9 +126,12 @@ public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, Per
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full GC|Full GC \\(System\\)) \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP
+            + ": \\[(Full GC|Full GC \\(System\\)) \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(ParallelSerialOldEvent.REGEX);
 

@@ -78,9 +78,11 @@ public class GcTimeLimitExceededPreprocessAction implements PreprocessAction {
     /**
      * Regular expressions defining the 1st logging line.
      */
-    private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] \\[(PS|Par)OldGen: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])(      |\t)GC time (would exceed|is exceeding) GCTimeLimit of 98%$";
+    private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC \\[PSYoungGen: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] \\[(PS|Par)OldGen: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)\\])(      |\t)GC time (would exceed|is exceeding) GCTimeLimit of 98%$";
 
     /**
      * Regular expressions defining the 2nd logging line.

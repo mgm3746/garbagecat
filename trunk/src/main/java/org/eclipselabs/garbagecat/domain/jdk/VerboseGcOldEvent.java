@@ -77,7 +77,8 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
     private static Pattern pattern = Pattern.compile(VerboseGcOldEvent.REGEX);
 
     /**

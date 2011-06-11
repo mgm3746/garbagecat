@@ -70,14 +70,23 @@ public class JdkUtil {
      * Defined logging events.
      */
     public enum LogEventType {
-        SERIAL_OLD, SERIAL, PAR_NEW_CONCURRENT_MODE_FAILURE, PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA, PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD, PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA, PAR_NEW_PROMOTION_FAILED, PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE, PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA, PAR_NEW, PAR_NEW_CMS_CONCURRENT, PAR_NEW_CMS_SERIAL_OLD, PARALLEL_SERIAL_OLD, PARALLEL_SCAVENGE, PARALLEL_OLD_COMPACTING, CMS_SERIAL_OLD, CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE, CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK, CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD, SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED
+        SERIAL_OLD, SERIAL, PAR_NEW_CONCURRENT_MODE_FAILURE, PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA,
+        PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD, PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA,
+        PAR_NEW_PROMOTION_FAILED, PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE, 
+        PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA, PAR_NEW, PAR_NEW_CMS_CONCURRENT,
+        PAR_NEW_CMS_SERIAL_OLD, PARALLEL_SERIAL_OLD, PARALLEL_SCAVENGE, PARALLEL_OLD_COMPACTING, CMS_SERIAL_OLD,
+        CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE, CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK,
+        CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD,
+        SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED
     };
 
     /**
      * Defined preprocessing actions.
      */
     public enum PreprocessActionType {
-        APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, CMS_CONCURRENT_MODE_FAILURE, DATE_STAMP, DATE_STAMP_PREFIX, GC_TIME_LIMIT_EXCEEDED, PAR_NEW_CMS_CONCURRENT, PRINT_HEAP_AT_GC, PRINT_TENURING_DISTRIBUTION, THREAD_DUMP, UNLOADING_CLASS
+        APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, CMS_CONCURRENT_MODE_FAILURE, 
+        DATE_STAMP, DATE_STAMP_PREFIX, GC_TIME_LIMIT_EXCEEDED, PAR_NEW_CMS_CONCURRENT, PRINT_HEAP_AT_GC, 
+        PRINT_TENURING_DISTRIBUTION, THREAD_DUMP, UNLOADING_CLASS
     };
 
     /**
@@ -280,7 +289,8 @@ public class JdkUtil {
      *            The duration of the log event.
      * @return The <code>BlockingEvent</code> for the given event values.
      */
-    public static final BlockingEvent hydrateBlockingEvent(LogEventType eventType, String logEntry, long timestamp, int duration) {
+    public static final BlockingEvent hydrateBlockingEvent(LogEventType eventType, String logEntry, long timestamp,
+            int duration) {
         BlockingEvent event = null;
         switch (eventType) {
         case PARALLEL_SCAVENGE:
@@ -369,7 +379,10 @@ public class JdkUtil {
      * @return true if the log event is blocking, false if it is concurrent or informational.
      */
     public static final boolean isBlocking(LogEventType eventType) {
-        return !(eventType == JdkUtil.LogEventType.CMS_CONCURRENT || eventType == JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME || eventType == JdkUtil.LogEventType.APPLICATION_STOPPED_TIME || eventType == JdkUtil.LogEventType.UNKNOWN);
+        return !(eventType == JdkUtil.LogEventType.CMS_CONCURRENT
+                || eventType == JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME
+                || eventType == JdkUtil.LogEventType.APPLICATION_STOPPED_TIME 
+                || eventType == JdkUtil.LogEventType.UNKNOWN);
     }
 
     public static final LogEventType determineEventType(String eventTypeString) {
@@ -400,7 +413,8 @@ public class JdkUtil {
         Matcher matcher = pattern.matcher(logEntry);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
-            Date date = GcUtil.getDatePlusTimestamp(jvmStartDate, JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
+            Date date = GcUtil.getDatePlusTimestamp(jvmStartDate, JdkMath.convertSecsToMillis(matcher.group(1))
+                    .longValue());
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
             // Only update the timestamp, keep the colon or space.
             matcher.appendReplacement(sb, formatter.format(date) + matcher.group(2));
@@ -426,7 +440,8 @@ public class JdkUtil {
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
 
-            Date date = GcUtil.getDatePlusTimestamp(jvmStartDate, JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
+            Date date = GcUtil.getDatePlusTimestamp(jvmStartDate, JdkMath.convertSecsToMillis(matcher.group(1))
+                    .longValue());
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
             // Only update the datestamp, keep the colon or space.
             matcher.appendReplacement(sb, formatter.format(date) + matcher.group(2));
@@ -444,7 +459,8 @@ public class JdkUtil {
      *         the log line should be retained.
      */
     public static final boolean discardLogLine(String logLine) {
-        return ThreadDumpPreprocessAction.match(logLine) || ApplicationLoggingPreprocessAction.match(logLine) || logLine.length() == 0 || logLine.matches(JdkRegEx.BLANK_LINE);
+        return ThreadDumpPreprocessAction.match(logLine) || ApplicationLoggingPreprocessAction.match(logLine)
+                || logLine.length() == 0 || logLine.matches(JdkRegEx.BLANK_LINE);
     }
 
     /**
@@ -459,11 +475,13 @@ public class JdkUtil {
      *            be considered a bottleneck. Whole number 0-100.
      * @return True if the garbage collection event pause time meets the bottleneck definition.
      */
-    public static final boolean isBottleneck(BlockingEvent gcEvent, BlockingEvent priorEvent, int throughputThreshold) throws TimeWarpException {
+    public static final boolean isBottleneck(BlockingEvent gcEvent, BlockingEvent priorEvent, int throughputThreshold)
+            throws TimeWarpException {
         // Timestamp is the start of a garbage collection event; therefore, the
         // interval is from the
         // end of the prior event to the end of the current event.
-        long interval = gcEvent.getTimestamp() + gcEvent.getDuration() - priorEvent.getTimestamp() - priorEvent.getDuration();
+        long interval = gcEvent.getTimestamp() + gcEvent.getDuration() - priorEvent.getTimestamp()
+                - priorEvent.getDuration();
 
         // Verify data integrity
         if (gcEvent.getTimestamp() < (priorEvent.getTimestamp() + priorEvent.getDuration())) {

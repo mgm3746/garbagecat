@@ -67,7 +67,8 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
     /**
      * Regular expressions defining the 1st logging line.
      */
-    private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP + ")(: \\[CMS-concurrent-(abortable-preclean|mark|preclean): " + JdkRegEx.DURATION_FRACTION
+    private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP
+            + ")(: \\[CMS-concurrent-(abortable-preclean|mark|preclean): " + JdkRegEx.DURATION_FRACTION
             + "\\])?(Application time: \\d{1,4}\\.\\d{7} seconds)$";
 
     /**

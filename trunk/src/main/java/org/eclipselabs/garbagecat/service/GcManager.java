@@ -166,7 +166,8 @@ public class GcManager {
      *            The date and time the JVM was started.
      * @return
      */
-    private String getPreprocessedLogEntry(String currentLogLine, String priorLogLine, String nextLogLine, Date jvmStartDate) {
+    private String getPreprocessedLogEntry(String currentLogLine, String priorLogLine, String nextLogLine,
+            Date jvmStartDate) {
         String preprocessedLogLine = null;
         if (!JdkUtil.discardLogLine(currentLogLine)) {
             // First convert any datestamps to timestamps
@@ -177,7 +178,8 @@ public class GcManager {
                     currentLogLine = action.getLogEntry();
                 } else {
                     if (jvmStartDate == null) {
-                        throw new IllegalArgumentException("JVM start datetime must be defined to do datestamp to timestamp conversion.");
+                        throw new IllegalArgumentException(
+                                "JVM start datetime must be defined to do datestamp to timestamp conversion.");
                     }
                     DateStampPreprocessAction action = new DateStampPreprocessAction(currentLogLine, jvmStartDate);
                     currentLogLine = action.getLogEntry();
@@ -188,7 +190,8 @@ public class GcManager {
                 UnloadingClassPreprocessAction action = new UnloadingClassPreprocessAction(currentLogLine, nextLogLine);
                 preprocessedLogLine = action.getLogEntry();
             } else if (CmsConcurrentModeFailurePreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
-                CmsConcurrentModeFailurePreprocessAction action = new CmsConcurrentModeFailurePreprocessAction(currentLogLine);
+                CmsConcurrentModeFailurePreprocessAction action = new CmsConcurrentModeFailurePreprocessAction(
+                        currentLogLine);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
@@ -201,7 +204,8 @@ public class GcManager {
                     preprocessedLogLine = action.getLogEntry();
                 }
             } else if (PrintTenuringDistributionPreprocessAction.match(currentLogLine)) {
-                PrintTenuringDistributionPreprocessAction action = new PrintTenuringDistributionPreprocessAction(currentLogLine);
+                PrintTenuringDistributionPreprocessAction action = new PrintTenuringDistributionPreprocessAction(
+                        currentLogLine);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
@@ -211,12 +215,14 @@ public class GcManager {
                     preprocessedLogLine = action.getLogEntry();
                 }
             } else if (ApplicationConcurrentTimePreprocessAction.match(currentLogLine, priorLogLine)) {
-                ApplicationConcurrentTimePreprocessAction action = new ApplicationConcurrentTimePreprocessAction(currentLogLine);
+                ApplicationConcurrentTimePreprocessAction action = new ApplicationConcurrentTimePreprocessAction(
+                        currentLogLine);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
             } else if (ApplicationStoppedTimePreprocessAction.match(currentLogLine, priorLogLine)) {
-                ApplicationStoppedTimePreprocessAction action = new ApplicationStoppedTimePreprocessAction(currentLogLine);
+                ApplicationStoppedTimePreprocessAction action = new ApplicationStoppedTimePreprocessAction(
+                        currentLogLine);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
@@ -307,8 +313,10 @@ public class GcManager {
                     // Add current and prior event
                     if (jvm.getStartDate() != null) {
                         // Convert timestamps to date/time
-                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm.getStartDate()));
-                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm.getStartDate()));
+                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm
+                                .getStartDate()));
+                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm
+                                .getStartDate()));
                     } else {
                         bottlenecks.add(priorEvent.getLogEntry());
                         bottlenecks.add(event.getLogEntry());
@@ -316,12 +324,16 @@ public class GcManager {
                 } else {
                     if (jvm.getStartDate() != null) {
                         // Compare datetime, since bottleneck has datetime
-                        if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm.getStartDate()).equals(bottlenecks.get(bottlenecks.size() - 1))) {
+                        if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm.getStartDate())
+                                .equals(bottlenecks.get(bottlenecks.size() - 1))) {
                             bottlenecks.add("...");
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm.getStartDate()));
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm.getStartDate()));
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm
+                                    .getStartDate()));
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm
+                                    .getStartDate()));
                         } else {
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm.getStartDate()));
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm
+                                    .getStartDate()));
                         }
                     } else {
                         // Compare timestamps, since bottleneck has timestamp

@@ -111,18 +111,21 @@ public class ThreadDumpPreprocessAction implements PreprocessAction {
             // title
             "^Full thread dump(.*):$",
             // thread data
-            "^\"[a-zA-z0-9\\-\\.\\@ \\:\\#\\(\\)\\[\\]/]+\" (daemon )?prio=\\d{1,2} tid=0x[a-z0-9]{8,16} " + "nid=0x[a-z0-9]{3,4} (runnable|in Object.wait\\(\\)|waiting for monitor entry|"
+            "^\"[a-zA-z0-9\\-\\.\\@ \\:\\#\\(\\)\\[\\]/]+\" (daemon )?prio=\\d{1,2} tid=0x[a-z0-9]{8,16} "
+                    + "nid=0x[a-z0-9]{3,4} (runnable|in Object.wait\\(\\)|waiting for monitor entry|"
                     + "waiting on condition|sleeping)( )?(\\[0x[a-z0-9]{8,16}\\.\\.0x[a-z0-9]{8,16}\\])?[ ]*$",
             // thread state
-            "^   java.lang.Thread.State: (RUNNABLE|WAITING \\(on object monitor\\)|" + "BLOCKED \\(on object monitor\\)|TIMED_WAITING \\(on object monitor\\)|TERMINATED|"
+            "^   java.lang.Thread.State: (RUNNABLE|WAITING \\(on object monitor\\)|"
+                    + "BLOCKED \\(on object monitor\\)|TIMED_WAITING \\(on object monitor\\)|TERMINATED|"
                     + "TIMED_WAITING \\(sleeping\\))$",
             // stack trace location line
             "^\\tat (.*)$",
             // stack trace event line
             "^\\t- (locked|waiting to lock|waiting on) (.*)$",
             // Heap summary lines
-            "^JNI global references: \\d{1,6}$", "^Heap$", "^ par new generation   total.*$", "^  eden space.*$", "^  from space.*$", "^  to   space.*$",
-            "^ concurrent mark-sweep generation total.*$", "^ concurrent-mark-sweep perm gen total.*$" };
+            "^JNI global references: \\d{1,6}$", "^Heap$", "^ par new generation   total.*$", "^  eden space.*$",
+            "^  from space.*$", "^  to   space.*$", "^ concurrent mark-sweep generation total.*$",
+            "^ concurrent-mark-sweep perm gen total.*$" };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

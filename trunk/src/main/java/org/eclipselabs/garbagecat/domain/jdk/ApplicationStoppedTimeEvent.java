@@ -44,7 +44,8 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^Total time for which application threads were " + "stopped: \\d{1,4}\\.\\d{7} seconds[ ]*$";
+    private static final String REGEX = "^Total time for which application threads were "
+            + "stopped: \\d{1,4}\\.\\d{7} seconds[ ]*$";
 
     public String getLogEntry() {
         throw new UnsupportedOperationException("Event does not include log entry information");

@@ -209,9 +209,14 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
      */
     private static final String[] REGEX_RETAIN_BEGINNING = {
             "^([^{]+)?(\\{)?Heap (before|after) gc invocations=\\d{1,10}:$",
-            "^(" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-                    + JdkRegEx.TIMESTAMP + ": \\[CMS" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset): " + JdkRegEx.DURATION_FRACTION + "\\])$",
-            "^" + JdkRegEx.TIMESTAMP + ": \\[CMS" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]$" };
+            "^(" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->"
+                    + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+                    + ": \\[CMS" + JdkRegEx.TIMESTAMP
+                    + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset): " + JdkRegEx.DURATION_FRACTION
+                    + "\\])$",
+            "^" + JdkRegEx.TIMESTAMP + ": \\[CMS" + JdkRegEx.TIMESTAMP
+                    + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): " + JdkRegEx.DURATION_FRACTION
+                    + "\\]$" };
 
     /**
      * Regular expression for the end part of a line retained.
@@ -223,9 +228,12 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
      */
     private static final String[] REGEX_THROWAWAY = {
             "^ (PSYoungGen|PSOldGen|ParOldGen|PSPermGen)[ ]+total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + ".+$",
-            "^ (par new generation|concurrent mark-sweep generation|concurrent-mark-sweep perm gen" + "|tenured generation|compacting perm gen)" + "[ ]+total " + JdkRegEx.SIZE + ", used "
-                    + JdkRegEx.SIZE + ".+$", "^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$", "^}$",
-            "^\\{Heap before GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$", "^Heap after GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$", "No shared spaces configured." };
+            "^ (par new generation|concurrent mark-sweep generation|concurrent-mark-sweep perm gen"
+                    + "|tenured generation|compacting perm gen)" + "[ ]+total " + JdkRegEx.SIZE + ", used "
+                    + JdkRegEx.SIZE + ".+$",
+            "^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$", "^}$",
+            "^\\{Heap before GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$",
+            "^Heap after GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$", "No shared spaces configured." };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

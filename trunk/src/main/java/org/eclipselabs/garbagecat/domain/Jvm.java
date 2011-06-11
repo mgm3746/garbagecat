@@ -152,7 +152,8 @@ public class Jvm {
      * @return True if the minimum and maximum heap space are set equal.
      */
     public boolean isMinAndMaxHeapSpaceEqual() {
-        return getMaxHeapValue() != null && getMinHeapValue() != null && getMaxHeapValue().toUpperCase().equals(getMinHeapValue().toUpperCase());
+        return getMaxHeapValue() != null && getMinHeapValue() != null
+                && getMaxHeapValue().toUpperCase().equals(getMinHeapValue().toUpperCase());
     }
 
     /**
@@ -219,7 +220,9 @@ public class Jvm {
      * @return True if the minimum and maximum permanent generation space are set equal.
      */
     public boolean isMinAndMaxPermSpaceEqual() {
-        return (getMaxPermValue() == null && getMinPermValue() == null) || (getMaxPermValue() == null && getMinPermValue() != null)
-                || (getMaxPermValue() != null && getMinPermValue() != null && getMaxPermValue().toUpperCase().equals(getMinPermValue().toUpperCase()));
+        return (getMaxPermValue() == null && getMinPermValue() == null)
+                || (getMaxPermValue() == null && getMinPermValue() != null)
+                || (getMaxPermValue() != null && getMinPermValue() != null && getMaxPermValue().toUpperCase().equals(
+                        getMinPermValue().toUpperCase()));
     }
 }
