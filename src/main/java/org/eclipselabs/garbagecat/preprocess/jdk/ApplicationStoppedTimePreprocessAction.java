@@ -67,13 +67,15 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
     /**
      * Regular expressions defining the 1st logging line.
      */
-    private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP + ")(: \\[CMS-concurrent-(abortable-preclean|mark|preclean): " + JdkRegEx.DURATION_FRACTION
+    private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP
+            + ")(: \\[CMS-concurrent-(abortable-preclean|mark|preclean): " + JdkRegEx.DURATION_FRACTION
             + "\\])?(Total time for which application threads were stopped: \\d{1,4}\\.\\d{7} seconds)$";
 
     /**
      * Regular expressions defining the 2nd logging line.
      */
-    private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION + "\\])?" + JdkRegEx.TIMES_BLOCK + "[ ]*$";
+    private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION
+            + "\\])?" + JdkRegEx.TIMES_BLOCK + "[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

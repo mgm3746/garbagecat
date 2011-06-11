@@ -36,8 +36,8 @@ public class Constants {
     /**
      * Partial log warning.
      */
-    public static final String WARNING_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED = "First timestamp is greater than " + FIRST_TIMESTAMP_THRESHOLD
-            + " seconds. Partial log file or unrecognized logging format.";
+    public static final String WARNING_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED = "First timestamp is greater than "
+            + FIRST_TIMESTAMP_THRESHOLD + " seconds. Partial log file or unrecognized logging format.";
 
     /**
      * Make default constructor private so the class cannot be instantiated.

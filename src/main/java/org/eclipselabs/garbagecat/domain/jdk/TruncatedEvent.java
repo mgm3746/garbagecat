@@ -68,7 +68,8 @@ public class TruncatedEvent implements LogEvent {
              * The beginning of a {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} followed by a {@link
              * org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent}.
              */
-            "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION + "\\]"
+            "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew" + JdkRegEx.TIMESTAMP
+                    + ": \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION + "\\]"
                     + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
     private static Pattern pattern = Pattern.compile("^" + JdkRegEx.TIMESTAMP + ".*$");
 

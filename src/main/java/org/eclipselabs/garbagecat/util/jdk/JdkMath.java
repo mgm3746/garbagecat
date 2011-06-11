@@ -99,7 +99,8 @@ public class JdkMath {
      *            Prior collection timestamp (milliseconds after JVM startup). 0 for the first collection.
      * @return Throughput as a percent. 0 means all time was spent doing GC. 100 means no time was spent doing GC.
      */
-    public static int calcThroughput(int currentDuration, long currentTimestamp, int priorDuration, long priorTimestamp) {
+    public static int calcThroughput(final int currentDuration, final long currentTimestamp, final int priorDuration,
+            final long priorTimestamp) {
         long timeTotal = currentTimestamp + new Long(currentDuration).longValue() - priorTimestamp;
         long timeNotGc = timeTotal - new Long(currentDuration).longValue() - new Long(priorDuration).longValue();
         BigDecimal throughput = new BigDecimal(timeNotGc);

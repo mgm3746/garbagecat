@@ -36,7 +36,8 @@ public class JdkRegEx {
      * 
      * 2) Plus GMT: 2010-04-16T12:11:18.979+0200
      */
-    public static final String DATESTAMP = "((\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d{3})(-|\\+)(\\d{4}))";
+    public static final String DATESTAMP = "((\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d{3})(-|\\+)"
+            + "(\\d{4}))";
 
     /**
      * The size of memory in kilobytes. Sometimes there is a space between the number and the "K" units.
@@ -65,7 +66,8 @@ public class JdkRegEx {
      * 
      * For example: [Times: user=0.31 sys=0.00, real=0.04 secs]
      */
-    public static final String TIMES_BLOCK = "( \\[Times: user=\\d{1,4}[\\.\\,]\\d{2} sys=\\d{1,4}[\\.\\,]\\d{2}, " + "real=\\d{1,4}[\\.\\,]\\d{2} secs\\])";
+    public static final String TIMES_BLOCK = "( \\[Times: user=\\d{1,4}[\\.\\,]\\d{2} sys=\\d{1,4}[\\.\\,]\\d{2}, "
+            + "real=\\d{1,4}[\\.\\,]\\d{2} secs\\])";
 
     /**
      * Data when the CMS collector is run in incremental mode with the <code>-XX:+CMSIncrementalMode</code> JVM option.

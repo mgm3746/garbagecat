@@ -101,25 +101,31 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
      * Regular expressions for the beginning part of a line retained.
      */
     private static final String[] REGEX_RETAIN_BEGINNING = {
-            "^(" + JdkRegEx.TIMESTAMP + ": \\[GC( " + JdkRegEx.TIMESTAMP + ": \\[(Def|Par)New)?( \\(promotion failed\\))?)$",
+            "^(" + JdkRegEx.TIMESTAMP + ": \\[GC( " + JdkRegEx.TIMESTAMP
+                    + ": \\[(Def|Par)New)?( \\(promotion failed\\))?)$",
             // Concurrent mode failure. Treat it like a beginning line.
-            "(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS( CMS: abort preclean due to time )?"
-                    + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): " + JdkRegEx.DURATION_FRACTION + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+            "(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+                    + JdkRegEx.TIMESTAMP + ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
+                    + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): " + JdkRegEx.DURATION_FRACTION
+                    + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
 
     /**
      * Regular expression for the end part of a line retained.
      */
     private static final String[] REGEX_RETAIN_END = {
             // Normal young collection
-            "^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-                    + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
-            "^ \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
+            "^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
+                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
+                    + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
+            "^ \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
+                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
                     + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
 
     /**
      * Regular expressions for lines or parts of lines thrown away.
      */
-    private static final String[] REGEX_THROWAWAY = { "^Desired survivor size \\d{1,11} bytes, new threshold \\d{1,2} \\(max \\d{1,2}\\)$",
+    private static final String[] REGEX_THROWAWAY = {
+            "^Desired survivor size \\d{1,11} bytes, new threshold \\d{1,2} \\(max \\d{1,2}\\)$",
             "^- age[ ]+\\d{1,2}:[ ]+\\d{1,11} bytes,[ ]+\\d{1,11} total$" };
 
     /**

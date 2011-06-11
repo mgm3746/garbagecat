@@ -41,7 +41,8 @@ public class GcUtil {
      * 2009-09-18 00:00:08,172
      * </pre>
      */
-    public static final String START_DATE_TIME_REGEX = "^(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}),(\\d{3})$";
+    public static final String START_DATE_TIME_REGEX = "^(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}),"
+            + "(\\d{3})$";
 
     /**
      * Make default constructor private so the class cannot be instantiated.
@@ -73,7 +74,8 @@ public class GcUtil {
         Pattern pattern = Pattern.compile(START_DATE_TIME_REGEX);
         Matcher matcher = pattern.matcher(startDateTime);
         if (matcher.find()) {
-            date = getDate(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6), matcher.group(7));
+            date = getDate(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5),
+                    matcher.group(6), matcher.group(7));
         }
         return date;
     }
@@ -90,7 +92,8 @@ public class GcUtil {
         Pattern pattern = Pattern.compile(JdkRegEx.DATESTAMP);
         Matcher matcher = pattern.matcher(datestamp);
         if (matcher.find()) {
-            date = getDate(matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6), matcher.group(7), matcher.group(8));
+            date = getDate(matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6),
+                    matcher.group(7), matcher.group(8));
         }
         return date;
     }

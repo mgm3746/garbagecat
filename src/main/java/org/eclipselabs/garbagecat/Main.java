@@ -60,7 +60,8 @@ public class Main {
         options.addOption("h", "help", false, "help");
         options.addOption("o", "options", true, "JVM options used during JVM run");
         options.addOption("p", "preprocess", false, "preprocessing flag");
-        options.addOption("s", "startdatetime", true, "JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS) for converting GC logging timestamps to datetime");
+        options.addOption("s", "startdatetime", true,
+                "JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS) for converting GC logging timestamps to datetime");
         options.addOption("t", "threshold", true, "threshold (0-100) for throughput bottleneck reporting");
     }
 
@@ -177,7 +178,8 @@ public class Main {
             Pattern pattern = Pattern.compile(thresholdRegEx);
             Matcher matcher = pattern.matcher(thresholdOptionValue);
             if (!matcher.find()) {
-                throw new IllegalArgumentException("'" + thresholdOptionValue + "' is not a valid threshold: " + thresholdRegEx);
+                throw new IllegalArgumentException("'" + thresholdOptionValue + "' is not a valid threshold: "
+                        + thresholdRegEx);
             }
         }
         // startdatetime
@@ -186,7 +188,8 @@ public class Main {
             Pattern pattern = Pattern.compile(GcUtil.START_DATE_TIME_REGEX);
             Matcher matcher = pattern.matcher(startdatetimeOptionValue);
             if (!matcher.find()) {
-                throw new IllegalArgumentException("'" + startdatetimeOptionValue + "' is not a valid startdatetime: " + GcUtil.START_DATE_TIME_REGEX);
+                throw new IllegalArgumentException("'" + startdatetimeOptionValue + "' is not a valid startdatetime: "
+                        + GcUtil.START_DATE_TIME_REGEX);
             }
         }
         // JVM options

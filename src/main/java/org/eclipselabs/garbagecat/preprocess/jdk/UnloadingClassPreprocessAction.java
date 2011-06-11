@@ -73,7 +73,9 @@ public class UnloadingClassPreprocessAction implements PreprocessAction {
         if (matcher.find()) {
             // Do not add a newline if the next line requires preprocessing or the next log line is
             // an unknown logging event (in that case assume the logging is split).
-            if (nextLogEntry != null && (match(nextLogEntry) || JdkUtil.identifyEventType(nextLogEntry).equals(JdkUtil.LogEventType.UNKNOWN))) {
+            if (nextLogEntry != null
+                    && (match(nextLogEntry) || JdkUtil.identifyEventType(nextLogEntry).equals(
+                            JdkUtil.LogEventType.UNKNOWN))) {
                 // No newline
                 this.logEntry = matcher.group(1) + matcher.group(2);
             } else {

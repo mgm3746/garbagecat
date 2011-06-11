@@ -51,9 +51,11 @@ public class JvmDao {
      * old_space, because some logging events log combined new + old sizes.
      * 
      */
-    private static final String[] TABLES_CREATE_SQL = { "create table blocking_event (id integer identity, " + "time_stamp bigint, event_name varchar(64), duration integer, young_space integer, "
+    private static final String[] TABLES_CREATE_SQL = { "create table blocking_event (id integer identity, "
+            + "time_stamp bigint, event_name varchar(64), duration integer, young_space integer, "
             + "old_space integer, combined_space integer, perm_space integer, young_occupancy_init integer, "
-            + "old_occupancy_init integer, combined_occupancy_init integer, perm_occupancy_init integer, log_entry varchar(500))" };
+            + "old_occupancy_init integer, combined_occupancy_init integer, perm_occupancy_init integer, "
+            + "log_entry varchar(500))" };
 
     private static final String[] TABLES_DELETE_SQL = { "delete from blocking_event " };
 
@@ -155,8 +157,10 @@ public class JvmDao {
     public synchronized void processBatch() {
         PreparedStatement pst = null;
         try {
-            String sqlInsertBlockingEvent = "insert into blocking_event (time_stamp, event_name, " + "duration, young_space, old_space, combined_space, perm_space, young_occupancy_init, "
-                    + "old_occupancy_init, combined_occupancy_init, perm_occupancy_init, log_entry) " + "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+            String sqlInsertBlockingEvent = "insert into blocking_event (time_stamp, event_name, "
+                    + "duration, young_space, old_space, combined_space, perm_space, young_occupancy_init, "
+                    + "old_occupancy_init, combined_occupancy_init, perm_occupancy_init, log_entry) "
+                    + "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
 
             final int TIME_STAMP_INDEX = 1;
             final int EVENT_NAME_INDEX = 2;
@@ -307,7 +311,8 @@ public class JvmDao {
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
-            rs = statement.executeQuery("select time_stamp from blocking_event where id = " + "(select min(id) from blocking_event)");
+            rs = statement.executeQuery("select time_stamp from blocking_event where id = "
+                    + "(select min(id) from blocking_event)");
             if (rs.next()) {
                 firstTimestamp = rs.getLong(1);
             }
@@ -383,7 +388,8 @@ public class JvmDao {
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
-            rs = statement.executeQuery("select time_stamp from blocking_event where id = " + "(select max(id) from blocking_event)");
+            rs = statement.executeQuery("select time_stamp from blocking_event where id = "
+                    + "(select max(id) from blocking_event)");
             if (rs.next()) {
                 lastTimestamp = rs.getLong(1);
             }
@@ -421,7 +427,8 @@ public class JvmDao {
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
-            rs = statement.executeQuery("select duration from blocking_event where id = " + "(select max(id) from blocking_event)");
+            rs = statement.executeQuery("select duration from blocking_event where id = "
+                    + "(select max(id) from blocking_event)");
             if (rs.next()) {
                 duration = rs.getInt(1);
             }
@@ -480,11 +487,13 @@ public class JvmDao {
         try {
             statement = connection.createStatement();
             StringBuffer sql = new StringBuffer();
-            sql.append("select time_stamp, event_name, duration, log_entry from blocking_event" + " order by time_stamp asc");
+            sql.append("select time_stamp, event_name, duration, log_entry from blocking_event"
+                    + " order by time_stamp asc");
             rs = statement.executeQuery(sql.toString());
             while (rs.next()) {
                 LogEventType eventType = JdkUtil.determineEventType(rs.getString(2));
-                BlockingEvent event = JdkUtil.hydrateBlockingEvent(eventType, rs.getString(4), rs.getLong(1), rs.getInt(3));
+                BlockingEvent event = JdkUtil.hydrateBlockingEvent(eventType, rs.getString(4), rs.getLong(1), rs
+                        .getInt(3));
                 events.add(event);
             }
         } catch (SQLException e) {
@@ -526,7 +535,8 @@ public class JvmDao {
             sql.append("' order by time_stamp asc");
             rs = statement.executeQuery(sql.toString());
             while (rs.next()) {
-                BlockingEvent event = JdkUtil.hydrateBlockingEvent(eventType, rs.getString(3), rs.getLong(1), rs.getInt(2));
+                BlockingEvent event = JdkUtil.hydrateBlockingEvent(eventType, rs.getString(3), rs.getLong(1), rs
+                        .getInt(2));
                 events.add(event);
             }
         } catch (SQLException e) {
@@ -595,7 +605,8 @@ public class JvmDao {
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
-            rs = statement.executeQuery("select max(young_space + old_space " + "+ combined_space) from blocking_event");
+            rs = statement
+                    .executeQuery("select max(young_space + old_space " + "+ combined_space) from blocking_event");
             if (rs.next()) {
                 space = rs.getInt(1);
             }
@@ -630,7 +641,8 @@ public class JvmDao {
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
-            rs = statement.executeQuery("select max(young_occupancy_init + old_occupancy_init " + "+ combined_occupancy_init) from blocking_event");
+            rs = statement.executeQuery("select max(young_occupancy_init + old_occupancy_init "
+                    + "+ combined_occupancy_init) from blocking_event");
             if (rs.next()) {
                 occupancy = rs.getInt(1);
             }

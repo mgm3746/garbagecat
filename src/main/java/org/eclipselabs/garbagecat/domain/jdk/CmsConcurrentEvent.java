@@ -76,7 +76,8 @@ public class CmsConcurrentEvent implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^( CMS: abort preclean due to time )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent.+$";
+    private static final String REGEX = "^( CMS: abort preclean due to time )?(" + JdkRegEx.DATESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent.+$";
 
     public String getLogEntry() {
         throw new UnsupportedOperationException("Event does not include log entry information");
