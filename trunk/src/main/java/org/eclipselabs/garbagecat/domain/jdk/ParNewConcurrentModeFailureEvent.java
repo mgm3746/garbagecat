@@ -62,12 +62,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * short-lived objects. The default value for <code>-XX:MaxTenuringThreshold</code> for the CMS collector is 0, meaning
  * that objects surviving a young collection are immediately promoted to the old generation. Add the following JVM
  * option to allow more time for objects to expire in the young generation: <code>-XX:MaxTenuringThreshold=32</code>.</li>
- * <li>If the old generation has available space, the cause is likely fragmentation. Fragmentation can be avoided by:
- * (1) increasing the heap size, (2) enabling large pages support with large heaps (> 2GB) with the following JVM
- * options: <code>-XX:+UseLargePages XX:LargePageSizeInBytes=64k</code>, (3) on Windows <a
- * href="http://www.microsoft.com/whdc/system/platform/server/PAE/PAEmem.mspx">enable the 3GB switch in boot.ini</a> to
- * extend address space from 2GB to 3GB (<a href="http://java.sun.com/docs/hotspot/HotSpotFAQ.html#gc_heap_32bit">not
- * supported starting JDK 1.6</a>).</li>
+ * <li>If the old generation has available space, the cause is likely fragmentation. Fragmentation can be avoided by
+ * increasing the heap size.</li>
  * </ol>
  * </p>
  * 
