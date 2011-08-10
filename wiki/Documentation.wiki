@@ -11,6 +11,25 @@
 
 ==Building==
 
+Maven 2.2 is required. Download the latest Maven 2.2 (2.2.1): http://maven.apache.org/download.html
+
+Copy the download to where you want to install it and unzip it:
+{{{
+cp ~/Downloads/apache-maven-2.2.1-bin.tar.gz ~/opt/
+cd ~/opt/
+tar -xvzf apache-maven-2.2.1-bin.tar.gz
+rm apache-maven-2.2.1-bin.tar.gz
+}}}
+
+
+Set M2_HOME and add the maven executables to your PATH. For example, in  ~/.bash_profile:
+{{{
+M2_HOME=/home/mmillson/opt/apache-maven-2.2.1
+PATH=$M2_HOME/bin:$PATH
+export PATH M2_HOME
+}}}
+
+Build it:
 {{{
 mvn assembly:assembly
 mvn javadoc:javadoc
