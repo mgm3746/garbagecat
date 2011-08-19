@@ -1,0 +1,17 @@
+27067.966: [GC {Heap before gc invocations=498:
+ par new generation   total 261952K, used 261760K [0x80b90000, 0x90b90000, 0x90b90000)
+  eden space 261760K, 100% used [0x80b90000, 0x90b30000, 0x90b30000)
+  from space 192K,   0% used [0x90b30000, 0x90b30000, 0x90b60000)
+  to   space 192K,   0% used [0x90b60000, 0x90b60000, 0x90b90000)
+ concurrent mark-sweep generation total 1179648K, used 1147900K [0x90b90000, 0xd8b90000, 0xd8b90000)
+ concurrent-mark-sweep perm gen total 262144K, used 71227K [0xd8b90000, 0xe8b90000, 0xf0b90000)
+27067.966: [ParNew: 261760K->261760K(261952K), 0.0000160 secs]27067.966: [CMS27067.966: [CMS-concurrent-abortable-preclean: 2.272/29.793 secs]
+ (concurrent mode failure): 1147900K->1155037K(1179648K), 7.3953900 secs] 1409660K->1155037K(1441600K)Heap after gc invocations=499:
+ par new generation   total 261952K, used 0K [0x80b90000, 0x90b90000, 0x90b90000)
+  eden space 261760K,   0% used [0x80b90000, 0x80b90000, 0x90b30000)
+  from space 192K,   0% used [0x90b30000, 0x90b30000, 0x90b60000)
+  to   space 192K,   0% used [0x90b60000, 0x90b60000, 0x90b90000)
+ concurrent mark-sweep generation total 1179648K, used 1155037K [0x90b90000, 0xd8b90000, 0xd8b90000)
+ concurrent-mark-sweep perm gen total 262144K, used 71187K [0xd8b90000, 0xe8b90000, 0xf0b90000)
+}
+, 7.3957620 secs]
