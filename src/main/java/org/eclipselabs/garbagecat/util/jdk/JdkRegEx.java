@@ -65,11 +65,11 @@ public class JdkRegEx {
     public static final String SIZE_JDK7 = "(\\d{1,8})([" + KILOBYTES + MEGABYTES + "])";
 
     /**
-     * The duration of the event in seconds with 7 decimal places.
+     * The duration of the event in seconds with 7-8 decimal places.
      * 
-     * For example: 0.0225213 secs
+     * For example: 0.0225213 secs, 0.00376500 secs
      */
-    public static final String DURATION = "(\\d{1,4}[\\.\\,]\\d{7}) secs";
+    public static final String DURATION = "(\\d{1,4}[\\.\\,]\\d{7,8}) secs";
 
     /**
      * The duration of the event as a fraction of a time period.

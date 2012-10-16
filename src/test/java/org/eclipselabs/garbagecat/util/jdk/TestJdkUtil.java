@@ -558,4 +558,20 @@ public class TestJdkUtil extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".", jvmRun.getEventTypes().contains(
                 JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE));
     }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code>.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset32.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE_PREPROCESSED.toString()
+                + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE_PREPROCESSED));
+    }
 }
