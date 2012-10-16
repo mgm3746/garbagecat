@@ -1,0 +1,3 @@
+10.392: [GC
+Desired survivor size 497025024 bytes, new threshold 7 (max 15)
+ [PSYoungGen: 970752K->104301K(1456128K)] 970752K->104301K(3708928K), 0.1992940 secs] [Times: user=0.68 sys=0.05, real=0.20 secs]

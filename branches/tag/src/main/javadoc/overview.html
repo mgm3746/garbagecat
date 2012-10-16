@@ -1,0 +1,272 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<!--
+
+/******************************************************************************
+ *                                                                            *
+ * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
+ * All rights reserved. This program and the accompanying materials           *
+ * are made available under the terms of the Eclipse Public License v1.0      *
+ * which accompanies this distribution, and is available at                   *
+ * http://www.eclipse.org/legal/epl-v10.html                                  *
+ *                                                                            *
+ * Contributors:                                                              *
+ *    Red Hat, Inc. - initial API and implementation                          *
+ ******************************************************************************/
+
+-->
+</head>
+<body>
+<p>Garbage Cat parses Java garbage collection logging and provides
+analysis to support JVM tuning and troubleshooting for OpenJDK and Sun
+JDK. It differs from other tools in that it goes beyond the simple math
+of calculating statistics such as maximum pause time and throughput. It
+adds context to these numbers by identifying the associated collector or
+collector phase, which allows for much deeper insight and analysis. This
+is especially relevant to collectors such as the Concurrent Mark Sweep
+collector that have multiple concurrent and stop-the-world phases.</p>
+
+<p>For more information, see the <a
+	href="http://code.google.com/a/eclipselabs.org/p/garbagecat/">Garbage
+Cat project</a>.</p>
+<h2>Supports</h2>
+<ul>
+	<li>OpenJDK</li>
+	<li>Sun JDK 1.5 and higher</li>
+	<li>Best utilized with the following GC logging options:<br />
+	-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps
+	</li>
+</ul>
+<h2>Building</h2>
+<div class="code"><pre>
+mvn assembly:assembly
+mvn javadoc:javadoc
+</pre></div>
+<h2>Usage</h2>
+<pre>
+java -jar garbagecat-1.0.0.jar --help
+usage: garbagecat [OPTION]... [FILE]
+ -h,--help                  help
+ -o,--options &lt;arg&gt;         JVM options used during JVM run 
+ -p,--preprocess            preprocessing flag
+ -s,--startdatetime &lt;arg&gt;   JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS)
+                            for converting GC logging timestamps to datetime
+ -t,--threshold &lt;arg&gt;       threshold (0-100) for throughput bottleneck
+                            reporting
+</pre>
+<p>Notes:</p>
+<ol>
+	<li>Specifying the JVM options used during the JVM run allows for
+	more detailed analysis.</li>
+	<li>When preprocessing is enabled, a preprocessed file will be
+	created in the same location as the input file with a ".pp" file
+	extension added.</li>
+	<li>See <a
+		href="org/eclipselabs/garbagecat/preprocess/package-summary.html">general
+	preprocessing</a> and <a
+		href="org/eclipselabs/garbagecat/preprocess/jdk/package-summary.html">JDK
+	preprocessing</a> for more information on preprocessing.</li>
+	<li>The startdatetime option sets the JVM startup datetime so GC
+	logging timestamps (the number of seconds since JVM startup) can be
+	converted to a standard datetime when reporting bottlenecks. This
+	allows GC bottlenecks and application logging to be correlated.</li>
+	<li>If threshold is not defined, it defaults to 90.</li>
+	<li>Throughput = (Time spent <em>not</em> doing GC) / (Total
+	Time). Throughput of 100 means no time spent doing GC (good).
+	Throughput of 0 means all time spent doing GC (bad).</li>
+	<li>A report called report.txt is created in the directory where
+	the Garbage Cat tool is run.</li>
+</ol>
+<h2>Report</h2>
+<pre>
+========================================
+Throughput less than 90% for PARALLEL_SCAVENGE
+========================================
+18020.492: [GC [PSYoungGen: 161888K-&gt;1376K(166016K)] 949359K-&gt;789159K(1214592K), 0.0294550 secs]
+18020.680: [GC [PSYoungGen: 3431K-&gt;288K(159936K)] 791214K-&gt;788615K(1208512K), 0.0206630 secs]
+...
+36039.921: [GC [PSYoungGen: 165776K-&gt;8752K(166784K)] 1024637K-&gt;867893K(1215360K), 0.0340270 secs]
+36040.106: [GC [PSYoungGen: 39649K-&gt;1024K(167744K)] 898790K-&gt;861694K(1216320K), 0.0269690 secs]
+...
+191119.769: [GC [PSYoungGen: 195760K-&gt;6208K(197888K)] 1157602K-&gt;968330K(1246464K), 0.0333630 secs]
+191119.803: [GC [PSYoungGen: 6615K-&gt;96K(201984K)] 968738K-&gt;968480K(1250560K), 0.0289500 secs]
+========================================
+SUMMARY:
+========================================
+JVM options: -Xms1024m -Xmx2048m
+# GC Events: 46044
+GC Event Types: PARALLEL_SCAVENGE, PARALLEL_SERIAL_OLD
+Max Heap Space: 1566912K
+Max Heap Occupancy: 1562164K
+Max Perm Space: 77864K
+Max Perm Occupancy: 46645K
+Throughput: 99%
+Max Pause: 4098 ms
+Total Pause: 1703657 ms
+First Timestamp: 4616 ms
+Last Timestamp: 232465068 ms
+========================================
+0 UNIDENTIFIED LOG LINE(S):
+========================================
+</pre>
+<p>Notes:</p>
+<ol>
+	<li>The report contains three sections: (1) Bottlenecks, (2)
+	Summary, and (3) Unidentified log lines.</li>
+	<li>A bottleneck is when throughput between two consecutive GC
+	events of the <em>same</em> type is less than the specified throughput
+	threshold.</li>
+	<li>Bottlenecks are reported within the same GC event type because
+	there does not seem to be a correlation between timestamps between
+	event types (due to different threads, perhaps?). For example, the
+	duration of a tenured collection can exceed the time interval elapsed
+	since the previous young collection. Also, it makes sense to look for
+	bottlenecks within an event type, as typical issues are continuous
+	young collections one after another or continuous old collections one
+	after another.</li>
+	<li>An ellipsis (...) between log lines in the bottleneck section
+	indicates time periods when throughput was above the threshold.</li>
+	<li>If the bottleneck section is missing, then no bottlenecks were
+	found for the given threshold.</li>
+	<li>See the <a
+		href="org/eclipselabs/garbagecat/domain/jdk/package-summary.html">org.eclipselabs.garbagecat.domain.jdk
+	package summary</a> for GC event type definitions. There is a table that
+	lists all the event types with links to detailed explanations and
+	example logging.</li>
+	<li>A garbage collection event corresponds to a single garbage
+	collection log line.</li>
+	<li>You can get a good idea where hot spots are by running the
+	report multiple times with varying throughput threshold levels.</li>
+	<li>There is a limit of 1000 unidentified log lines that will be
+	reported.</li>
+	<li>If there are any unidentifed logging lines, run the report
+	again with the -p preprocessing option enabled.</li>
+	<li>Once prepocessing is done once, do not use the -p
+	preprocessing option again, but instead specify the preprocessed file
+	as input (e.g. <code>java -jar /path/to/garbagecat-1.0.0.jar
+	gc.log.pp</code>).</li>
+	<li>Please report unidentified log lines to mmillson at redhat.com
+	so they can be accounted for in future releases either as new logging
+	events or additional preprocessing.</li>
+</ol>
+<h2>Example</h2>
+<ol>
+	<li>Run without any options: <br />
+	<pre>java -jar garbagecat-1.0.0.jar gc.log</pre></li>
+	<li>The bottom of the report shows Garbage Cat found 1000 (the
+	maximum) unidentified lines:<br />
+	<pre>
+...
+========================================
+1000 UNIDENTIFIED LOG LINE(S):
+========================================
+6.065: [Full GC {Heap before gc invocations=0:
+ par new generation   total 261952K, used 199028K [0x80b90000, 0x90b90000, 0x90b90000)
+  eden space 261760K,  76% used [0x80b90000, 0x8cded0d0, 0x90b30000)
+  from space 192K,   0% used [0x90b30000, 0x90b30000, 0x90b60000)
+  to   space 192K,   0% used [0x90b60000, 0x90b60000, 0x90b90000)
+ concurrent mark-sweep generation total 262144K, used 0K [0x90b90000, 0xa0b90000, 0xd8b90000)
+ concurrent-mark-sweep perm gen total 262144K, used 15186K [0xd8b90000, 0xe8b90000, 0xf0b90000)
+6.065: [CMS: 0K-&gt;8200K(262144K), 0.2010540 secs] 199028K-&gt;8200K(524096K), [CMS Perm : 15186K-&gt;15115K(262144K)]Heap after gc invocations=1:
+ par new generation   total 261952K, used 0K [0x80b90000, 0x90b90000, 0x90b90000)
+  eden space 261760K,   0% used [0x80b90000, 0x80b90000, 0x90b30000)
+  from space 192K,   0% used [0x90b30000, 0x90b30000, 0x90b60000)
+  to   space 192K,   0% used [0x90b60000, 0x90b60000, 0x90b90000)
+ concurrent mark-sweep generation total 262144K, used 8200K [0x90b90000, 0xa0b90000, 0xd8b90000)
+ concurrent-mark-sweep perm gen total 262144K, used 15115K [0xd8b90000, 0xe8b90000, 0xf0b90000)
+}
+, 0.2012310 secs]
+...
+	</pre></li>
+	<li>Run with the preproccess flag: <br />
+	<pre>java -jar garbagecat-1.0.0.jar -p gc.log</pre></li>
+	<li>There are no unidentified log lines after preprocessing:<pre>
+...
+========================================
+SUMMARY:
+========================================
+# GC Events: 24744
+GC Event Types: CMS_SERIAL_OLD, PAR_NEW, CMS_INITIAL_MARK, CMS_CONCURRENT, CMS_REMARK, PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE, PAR_NEW_CONCURRENT_MODE_FAILURE, CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE, PAR_NEW_PROMOTION_FAILED
+Max Heap Space: 1441600K
+Max Heap Occupancy: 1441600K
+Max Perm Space: 262144K
+Max Perm Occupancy: 73168K
+Throughput: 98%
+Max Pause: 37643 ms
+Total Pause: 37765732 ms
+First Timestamp: 6065 ms
+Last Timestamp: 2500548254 ms
+========================================
+0 UNIDENTIFIED LOG LINE(S):
+========================================
+...	
+	</pre></li>
+	<li>Throughput 95% and above is considered good, so 98% throughput
+	is very good. However, overall throughput will sometimes mask localized
+	throughput issues, especially in this case when the GC logging covers
+	almost 29 days.</li>
+	<li>There is a max pause time of almost 40 seconds, not good.</li>
+	<li>The <a
+		href="org/eclipselabs/garbagecat/domain/jdk/ParNewPromotionFailedCmsConcurrentModeFailureEvent.html">PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE</a>,
+	<a
+		href="org/eclipselabs/garbagecat/domain/jdk/ParNewConcurrentModeFailureEvent.html">PAR_NEW_CONCURRENT_MODE_FAILURE</a>,
+	<a
+		href="org/eclipselabs/garbagecat/domain/jdk/CmsSerialOldConcurrentModeFailureEvent.html">CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE</a>,
+	<a
+		href="org/eclipselabs/garbagecat/domain/jdk/ParNewPromotionFailedEvent.html">PAR_NEW_PROMOTION_FAILED</a>,
+	and <a
+		href="org/eclipselabs/garbagecat/domain/jdk/CmsSerialOldEvent.html">CMS_SERIAL_OLD</a>
+	events are all concerns for similar reasons</a>.</li>
+</ol>
+<p>The steps above really are all that is needed to determine the
+issue; however, following is some additional analysis to show the rest
+of the tool's functionality.</p>
+<ol>
+	<li>The max perm size appears to be much larger than needed. Since
+	this is 32-bit, address space can be an issue. It looks like 128MB
+	would be plenty big enough.</li>
+	<li>To get an idea where the biggest GC bottlenecks are, run
+	again, this time specifying a throughput threshold of 10% (90+% of time
+	spent in GC). You don't need to preprocess again, so pass in the
+	preprocessed file: <pre>java -jar garbagecat-1.0.0.jar -t 10 gc.log.pp</pre>
+	</li>
+	<li>The new report shows many stretches where almost all time is
+	spent doing garbage collection. For example, this 70 second interval:<pre>
+2495490.528: [Full GC 2495490.528: [CMS (concurrent mode failure): 1179647K-&gt;1179648K(1179648K), 7.7971770 secs] 1441599K-&gt;1440481K(1441600K), [CMS Perm : 72831K-&gt;72830K(262144K)], 7.7974610 secs]
+2495498.338: [Full GC 2495498.338: [CMS (concurrent mode failure): 1179648K-&gt;1179648K(1179648K), 7.9398610 secs] 1441599K-&gt;1440455K(1441600K), [CMS Perm : 72832K-&gt;72832K(262144K)], 7.9401510 secs]
+2495506.293: [Full GC 2495506.293: [CMS (concurrent mode failure): 1179648K-&gt;1179648K(1179648K), 7.9886750 secs] 1441599K-&gt;1440570K(1441600K), [CMS Perm : 72834K-&gt;72833K(262144K)], 7.9889480 secs]
+2495514.300: [Full GC 2495514.301: [CMS (concurrent mode failure): 1179648K-&gt;1179647K(1179648K), 8.7149400 secs] 1441600K-&gt;1440451K(1441600K), [CMS Perm : 72839K-&gt;72831K(262144K)], 8.7153850 secs]
+2495523.446: [Full GC 2495523.446 (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 12.9441410 secs] 1441599K-&gt;1440523K(1441600K), [CMS Perm : 72832K-&gt;72831K(262144K)], 12.9444090 secs]
+...
+2495536.400: [Full GC 2495536.400: [CMS (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 7.8316830 secs] 1441599K-&gt;1440330K(1441600K), [CMS Perm : 72831K-&gt;72824K(262144K)], 7.8319710 secs]
+2495544.248: [Full GC 2495544.249: [CMS (concurrent mode failure): 1179648K-&gt;1179647K(1179648K), 7.2906420 secs] 1441599K-&gt;1440451K(1441600K), [CMS Perm : 72835K-&gt;72827K(262144K)], 7.2910060 secs]
+2495551.565: [Full GC 2495551.565: [CMS (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 7.5929380 secs] 1441599K-&gt;1440526K(1441600K), [CMS Perm : 72844K-&gt;72834K(262144K)], 7.5933150 secs]
+2495559.638: [Full GC 2495559.638 (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 12.0032770 secs] 1441599K-&gt;1440585K(1441600K), [CMS Perm : 72841K-&gt;72832K(262144K)], 12.0035460 secs]
+	</pre></li>
+	<li>Suppose we want to get an idea of the use cases being executed
+	related to the above garbage collection. To do this, pass in the first
+	timestamp in the JBoss <code>boot.log</code> using the <code>startdatetime</code>
+	option. For example, suppose we know that JBoss was started on
+	September 15, 2009 and see the following first line in boot.log: <pre>10:50:43,343 INFO  [Server] Starting JBoss (MX MicroKernel)...</pre>Run
+	again with the following options: <pre>java -jar garbagecat-1.0.0.jar -t 10 -s "2009-09-15 10:50:43,343" gc.log.pp
+	</pre></li>
+	<li>The report now displays the bottleneck lines with a date/time
+	that can be used to cross reference application and/or web access
+	logging:<pre>
+2009-10-14 08:02:13,871: [Full GC 2009-10-14 08:02:13,871: [CMS (concurrent mode failure): 1179647K-&gt;1179648K(1179648K), 7.7971770 secs] 1441599K-&gt;1440481K(1441600K), [CMS Perm : 72831K-&gt;72830K(262144K)], 7.7974610 secs]
+2009-10-14 08:02:21,681: [Full GC 2009-10-14 08:02:21,681: [CMS (concurrent mode failure): 1179648K-&gt;1179648K(1179648K), 7.9398610 secs] 1441599K-&gt;1440455K(1441600K), [CMS Perm : 72832K-&gt;72832K(262144K)], 7.9401510 secs]
+2009-10-14 08:02:29,636: [Full GC 2009-10-14 08:02:29,636: [CMS (concurrent mode failure): 1179648K-&gt;1179648K(1179648K), 7.9886750 secs] 1441599K-&gt;1440570K(1441600K), [CMS Perm : 72834K-&gt;72833K(262144K)], 7.9889480 secs]
+2009-10-14 08:02:37,643: [Full GC 2009-10-14 08:02:37,644: [CMS (concurrent mode failure): 1179648K-&gt;1179647K(1179648K), 8.7149400 secs] 1441600K-&gt;1440451K(1441600K), [CMS Perm : 72839K-&gt;72831K(262144K)], 8.7153850 secs]
+2009-10-14 08:02:46,789: [Full GC 2495523.446 (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 12.9441410 secs] 1441599K-&gt;1440523K(1441600K), [CMS Perm : 72832K-&gt;72831K(262144K)], 12.9444090 secs]
+...
+2009-10-14 08:02:59,743: [Full GC 2009-10-14 08:02:59,743: [CMS (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 7.8316830 secs] 1441599K-&gt;1440330K(1441600K), [CMS Perm : 72831K-&gt;72824K(262144K)], 7.8319710 secs]
+2009-10-14 08:03:07,591: [Full GC 2009-10-14 08:03:07,592: [CMS (concurrent mode failure): 1179648K-&gt;1179647K(1179648K), 7.2906420 secs] 1441599K-&gt;1440451K(1441600K), [CMS Perm : 72835K-&gt;72827K(262144K)], 7.2910060 secs]
+2009-10-14 08:03:14,908: [Full GC 2009-10-14 08:03:14,908: [CMS (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 7.5929380 secs] 1441599K-&gt;1440526K(1441600K), [CMS Perm : 72844K-&gt;72834K(262144K)], 7.5933150 secs]
+2009-10-14 08:03:22,981: [Full GC 2495559.638 (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 12.0032770 secs] 1441599K-&gt;1440585K(1441600K), [CMS Perm : 72841K-&gt;72832K(262144K)], 12.0035460 secs]
+	</pre></li>
+</ol>
+<!-- Put @see and @since tags down here. -->
+</body>
+</html>

@@ -1,0 +1,3 @@
+1901.217: [GC 1901.217: [ParNew: 261760K->261760K(261952K), 0.0000570 secs]1901.217: [CMSJava HotSpot(TM) Server VM warning: bailing out to foreground collection
+1907.974: [CMS-concurrent-mark: 23.751/40.476 secs]
+ (concurrent mode failure): 1794415K->909664K(1835008K), 124.5953890 secs] 2056175K->909664K(2096960K) icms_dc=100 , 124.5963320 secs]
