@@ -33,6 +33,11 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * output is in a different format.
  * </p>
  * 
+ * <p>
+ * It is not recommended that <code>-XX:+PrintGCDetails</code> be used with JDK7 unless there is a specific need, as it
+ * causes very verbose logging and may affect performance.
+ * </p>
+ * 
  * <h3>Example Logging</h3>
  * 
  * <pre>
