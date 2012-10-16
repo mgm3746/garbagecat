@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
+import java.util.regex.Pattern;
+
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -126,6 +128,12 @@ public class ThreadDumpPreprocessAction implements PreprocessAction {
             "^JNI global references: \\d{1,6}$", "^Heap$", "^ par new generation   total.*$", "^  eden space.*$",
             "^  from space.*$", "^  to   space.*$", "^ concurrent mark-sweep generation total.*$",
             "^ concurrent-mark-sweep perm gen total.*$" };
+    private static final Pattern PATTERN[] = new Pattern[REGEX.length];
+    static {
+    	for (int i = 0; i < REGEX.length; i++)
+    		PATTERN[i] = Pattern.compile(REGEX[i]);
+    }
+    
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -155,14 +163,12 @@ public class ThreadDumpPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        boolean isMatch = false;
-        for (int i = 0; i < REGEX.length; i++) {
-            if (logLine.matches(REGEX[i])) {
-                isMatch = true;
-                break;
+        for (int i = 0; i < PATTERN.length; i++) {
+            if (PATTERN[i].matcher(logLine).matches()) {
+                return true;
             }
         }
-        return isMatch;
+        return false;
     }
 
 }

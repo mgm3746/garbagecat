@@ -70,12 +70,14 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
     private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP
             + ")(: \\[CMS-concurrent-(abortable-preclean|mark|preclean): " + JdkRegEx.DURATION_FRACTION
             + "\\])?(Total time for which application threads were stopped: \\d{1,4}\\.\\d{7} seconds)$";
+    private static final Pattern PATTERN1 = Pattern.compile(REGEX_LINE1);
 
     /**
      * Regular expressions defining the 2nd logging line.
      */
     private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION
             + "\\])?" + JdkRegEx.TIMES_BLOCK + "[ ]*$";
+    private static final Pattern PATTERN2 = Pattern.compile(REGEX_LINE2);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -86,8 +88,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
      * Create event from log entry.
      */
     public ApplicationStoppedTimePreprocessAction(String logEntry) {
-        Pattern pattern = Pattern.compile(REGEX_LINE1);
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN1.matcher(logEntry);
         if (matcher.find()) {
             this.logEntry = logEntry;
             // Split line1 logging apart
@@ -124,6 +125,6 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine) {
-        return (logLine.matches(REGEX_LINE1) || (logLine.matches(REGEX_LINE2) && priorLogLine.matches(REGEX_LINE1)));
+        return (PATTERN1.matcher(logLine).matches() || (PATTERN2.matcher(logLine).matches() && PATTERN1.matcher(priorLogLine).matches()));
     }
 }

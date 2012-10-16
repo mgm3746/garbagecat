@@ -53,6 +53,7 @@ public class ParNewCmsConcurrentPreprocessAction implements PreprocessAction {
     private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
             + ": \\[ParNew" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|sweep): "
             + JdkRegEx.DURATION_FRACTION + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final Pattern PATTERN1 = Pattern.compile(REGEX_LINE1);
 
     /**
      * Regular expressions defining the 2nd logging line.
@@ -60,6 +61,7 @@ public class ParNewCmsConcurrentPreprocessAction implements PreprocessAction {
     private static final String REGEX_LINE2 = "^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final Pattern PATTERN2 = Pattern.compile(REGEX_LINE2);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -70,8 +72,7 @@ public class ParNewCmsConcurrentPreprocessAction implements PreprocessAction {
      * Create event from log entry.
      */
     public ParNewCmsConcurrentPreprocessAction(String logEntry) {
-        Pattern pattern = Pattern.compile(REGEX_LINE1);
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN1.matcher(logEntry);
         if (matcher.find()) {
             this.logEntry = logEntry;
             if (matcher.group(1) != null) {
@@ -103,8 +104,8 @@ public class ParNewCmsConcurrentPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
-        boolean isFirstLine = logLine.matches(REGEX_LINE1) && nextLogLine.matches(REGEX_LINE2);
-        boolean isSecondLine = logLine.matches(REGEX_LINE2) && priorLogLine.matches(REGEX_LINE1);
+        boolean isFirstLine = PATTERN1.matcher(logLine).matches() && PATTERN2.matcher(nextLogLine).matches();
+        boolean isSecondLine = PATTERN2.matcher(logLine).matches() && PATTERN1.matcher(priorLogLine).matches();
         return isFirstLine || isSecondLine;
     }
 }
