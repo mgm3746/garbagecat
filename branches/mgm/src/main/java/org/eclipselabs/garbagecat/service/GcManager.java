@@ -36,6 +36,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreproces
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
+import org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.GcTimeLimitExceededPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ParNewCmsConcurrentPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.PrintHeapAtGcPreprocessAction;
@@ -226,6 +227,12 @@ public class GcManager {
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
+            } else if (G1PrintGcDetailsPreprocessAction.match(currentLogLine)) {
+                G1PrintGcDetailsPreprocessAction action = new G1PrintGcDetailsPreprocessAction(currentLogLine,
+                        nextLogLine);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
             } else {
                 preprocessedLogLine = currentLogLine + System.getProperty("line.separator");
             }
@@ -313,10 +320,10 @@ public class GcManager {
                     // Add current and prior event
                     if (jvm.getStartDate() != null) {
                         // Convert timestamps to date/time
-                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm
-                                .getStartDate()));
-                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm
-                                .getStartDate()));
+                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
+                                jvm.getStartDate()));
+                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(),
+                                jvm.getStartDate()));
                     } else {
                         bottlenecks.add(priorEvent.getLogEntry());
                         bottlenecks.add(event.getLogEntry());
@@ -327,13 +334,13 @@ public class GcManager {
                         if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm.getStartDate())
                                 .equals(bottlenecks.get(bottlenecks.size() - 1))) {
                             bottlenecks.add("...");
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm
-                                    .getStartDate()));
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm
-                                    .getStartDate()));
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
+                                    jvm.getStartDate()));
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(),
+                                    jvm.getStartDate()));
                         } else {
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm
-                                    .getStartDate()));
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(),
+                                    jvm.getStartDate()));
                         }
                     } else {
                         // Compare timestamps, since bottleneck has timestamp

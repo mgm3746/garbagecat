@@ -31,6 +31,8 @@ import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkWithClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1YoungEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1YoungPreprocessedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent;
@@ -77,7 +79,8 @@ public class JdkUtil {
         PAR_NEW_CMS_SERIAL_OLD, PARALLEL_SERIAL_OLD, PARALLEL_SCAVENGE, PARALLEL_OLD_COMPACTING, CMS_SERIAL_OLD,
         CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE, CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK,
         CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD,
-        SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED
+        SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED,
+        G1_YOUNG, G1_YOUNG_PREPROCESSED
     };
 
     /**
@@ -86,7 +89,7 @@ public class JdkUtil {
     public enum PreprocessActionType {
         APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, CMS_CONCURRENT_MODE_FAILURE, 
         DATE_STAMP, DATE_STAMP_PREFIX, GC_TIME_LIMIT_EXCEEDED, PAR_NEW_CMS_CONCURRENT, PRINT_HEAP_AT_GC, 
-        PRINT_TENURING_DISTRIBUTION, THREAD_DUMP, UNLOADING_CLASS
+        PRINT_TENURING_DISTRIBUTION, THREAD_DUMP, UNLOADING_CLASS, G1_PRINT_GC_DETAILS
     };
 
     /**
@@ -144,6 +147,10 @@ public class JdkUtil {
             return LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA;
         if (ParNewCmsSerialOldEvent.match(logLine))
             return LogEventType.PAR_NEW_CMS_SERIAL_OLD;
+        if (G1YoungEvent.match(logLine))
+            return LogEventType.G1_YOUNG;
+        if (G1YoungPreprocessedEvent.match(logLine))
+            return LogEventType.G1_YOUNG_PREPROCESSED;
         if (SerialEvent.match(logLine))
             return LogEventType.SERIAL;
         if (SerialSerialOldEvent.match(logLine))
@@ -237,6 +244,12 @@ public class JdkUtil {
         case PAR_NEW_CMS_SERIAL_OLD:
             event = new ParNewCmsSerialOldEvent(logLine);
             break;
+        case G1_YOUNG:
+            event = new G1YoungEvent(logLine);
+            break;
+        case G1_YOUNG_PREPROCESSED:
+            event = new G1YoungPreprocessedEvent(logLine);
+            break;            
         case SERIAL:
             event = new SerialEvent(logLine);
             break;
@@ -350,6 +363,12 @@ public class JdkUtil {
         case PAR_NEW_CMS_SERIAL_OLD:
             event = new ParNewCmsSerialOldEvent(logEntry, timestamp, duration);
             break;
+        case G1_YOUNG:
+            event = new G1YoungEvent(logEntry, timestamp, duration);
+            break;   
+        case G1_YOUNG_PREPROCESSED:
+            event = new G1YoungPreprocessedEvent(logEntry, timestamp, duration);
+            break;        
         case SERIAL:
             event = new SerialEvent(logEntry, timestamp, duration);
             break;

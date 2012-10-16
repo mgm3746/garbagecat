@@ -83,42 +83,52 @@ public class TestJdkRegEx extends TestCase {
         Assert.assertTrue("'1234K' is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
+    public void testSize7ValidKilobytes() {
+        String size = "1234K";
+        Assert.assertTrue("'1234K' is a valid size.", size.matches(JdkRegEx.SIZE_JDK7));
+    }
+
+    public void testSize7ValidMegabytes() {
+        String size = "20M";
+        Assert.assertTrue("'30<' is a valid size.", size.matches(JdkRegEx.SIZE_JDK7));
+    }
+
     public void testSizeWithInvalidCharacter() {
         String size = "A234K";
         Assert.assertFalse("Size is a decimal number.", size.matches(JdkRegEx.SIZE));
     }
 
-    public void testDuration7WithCharacter() {
+    public void testDurationWithCharacter() {
         String duration = "0.02A5213 secs";
         Assert.assertFalse("Duration is a decimal number.", duration.matches(JdkRegEx.DURATION));
     }
 
-    public void testDuration7WithFewerDecimalPlaces() {
+    public void testDurationWithFewerDecimalPlaces() {
         String duration = "0.022521 secs";
-        Assert.assertFalse("Duration has 7 decimal places.", duration.matches(JdkRegEx.DURATION));
+        Assert.assertFalse("Duration has 7-8 decimal places.", duration.matches(JdkRegEx.DURATION));
     }
 
-    public void testDuration7WithMoreDecimalPlaces() {
-        String duration = "0.02252139 secs";
-        Assert.assertFalse("Duration has 7 decimal places.", duration.matches(JdkRegEx.DURATION));
+    public void testDurationWithMoreDecimalPlaces() {
+        String duration = "0.022521399 secs";
+        Assert.assertFalse("Duration has 7-8 decimal places.", duration.matches(JdkRegEx.DURATION));
     }
 
-    public void testDuration7WithNoDecimal() {
+    public void testDurationWithNoDecimal() {
         String duration = "00225213 secs";
-        Assert.assertFalse("Duration has 7 decimal places.", duration.matches(JdkRegEx.DURATION));
+        Assert.assertFalse("Duration has 7-8 decimal places.", duration.matches(JdkRegEx.DURATION));
     }
 
-    public void testDuration7LessThanOne() {
+    public void testDurationLessThanOne() {
         String duration = ".0225213 secs";
         Assert.assertFalse("Durations less than one have a leading zero.", duration.matches(JdkRegEx.DURATION));
     }
 
-    public void testDuration7WithoutUnits() {
+    public void testDurationWithoutUnits() {
         String duration = "0.0225213 sec";
         Assert.assertFalse("Durations have 'secs' for units.", duration.matches(JdkRegEx.DURATION));
     }
 
-    public void testDuration7Valid() {
+    public void testDurationValid() {
         String duration = "0.0225213 secs";
         Assert.assertTrue("'0.0225213 secs' is a valid duration.", duration.matches(JdkRegEx.DURATION));
     }
@@ -129,19 +139,23 @@ public class TestJdkRegEx extends TestCase {
     }
 
     public void testParallelScavengeValid() {
-        String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] " + "160183K->133159K(585088K), 0.0225213 secs]";
-        Assert.assertTrue("'19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] " + "160183K->133159K(585088K), 0.0225213 secs]' " + "is a valid parallel scavenge log entry.", ParallelScavengeEvent
-                .match(logLine));
+        String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
+                + "160183K->133159K(585088K), 0.0225213 secs]";
+        Assert.assertTrue("'19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
+                + "160183K->133159K(585088K), 0.0225213 secs]' " + "is a valid parallel scavenge log entry.",
+                ParallelScavengeEvent.match(logLine));
     }
 
     public void testUnloadingClassBlock() {
         String unloadingClassBlock = "[Unloading class sun.reflect.GeneratedSerializationConstructorAccessor13565]";
-        Assert.assertTrue("'" + unloadingClassBlock + "' " + "is a valid class unloading block.", unloadingClassBlock.matches(JdkRegEx.UNLOADING_CLASS_BLOCK));
+        Assert.assertTrue("'" + unloadingClassBlock + "' " + "is a valid class unloading block.",
+                unloadingClassBlock.matches(JdkRegEx.UNLOADING_CLASS_BLOCK));
     }
 
     public void testUnloadingClassProxyBlock() {
         String unloadingClassBlock = "[Unloading class $Proxy109]";
-        Assert.assertTrue("'" + unloadingClassBlock + "' " + "is a valid class unloading block.", unloadingClassBlock.matches(JdkRegEx.UNLOADING_CLASS_BLOCK));
+        Assert.assertTrue("'" + unloadingClassBlock + "' " + "is a valid class unloading block.",
+                unloadingClassBlock.matches(JdkRegEx.UNLOADING_CLASS_BLOCK));
     }
 
     public void testDatestampGmtMinus() {

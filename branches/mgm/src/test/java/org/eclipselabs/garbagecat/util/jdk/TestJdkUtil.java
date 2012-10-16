@@ -57,8 +57,9 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 3, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE));
+        Assert.assertTrue("Log line not recognized as "
+                + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".", jvmRun
+                .getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE));
     }
 
     /**
@@ -72,7 +73,8 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".", jvmRun
+                .getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
     }
 
     /**
@@ -87,8 +89,9 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE));
     }
 
     /**
@@ -103,8 +106,10 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString()
+                        + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE));
     }
 
     /**
@@ -119,8 +124,9 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE));
+        Assert.assertTrue("Log line not recognized as "
+                + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".", jvmRun
+                .getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE));
     }
 
     /**
@@ -134,7 +140,8 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD));
     }
 
     /**
@@ -148,7 +155,9 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".", jvmRun
+                        .getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING));
     }
 
     /**
@@ -162,8 +171,10 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString()
+                        + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE));
     }
 
     /**
@@ -177,8 +188,10 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString()
+                        + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE));
     }
 
     /**
@@ -192,8 +205,12 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA));
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA
+                                .toString() + ".",
+                jvmRun.getEventTypes().contains(
+                        JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA));
     }
 
     /**
@@ -207,8 +224,9 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA));
+        Assert.assertTrue("Log line not recognized as "
+                + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".", jvmRun
+                .getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA));
     }
 
     /**
@@ -222,8 +240,10 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString()
+                        + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE));
     }
 
     /**
@@ -238,7 +258,8 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CMS_CONCURRENT.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CMS_CONCURRENT));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CMS_CONCURRENT));
     }
 
     /**
@@ -252,8 +273,12 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA));
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA
+                                .toString() + ".",
+                jvmRun.getEventTypes().contains(
+                        JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA));
     }
 
     /**
@@ -268,7 +293,8 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL.toString() + ".", jvmRun
+                .getEventTypes().contains(JdkUtil.LogEventType.SERIAL));
     }
 
     /**
@@ -283,7 +309,8 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE));
     }
 
     public void testConvertLogEntryTimestampsToDate() {
@@ -296,9 +323,12 @@ public class TestJdkUtil extends TestCase {
         calendar.set(Calendar.MINUTE, 21);
         calendar.set(Calendar.SECOND, 44);
         calendar.set(Calendar.MILLISECOND, 12);
-        String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] " + "89399K->11655K(907328K), 0.0387074 secs]";
-        String logLineConverted = "1966-08-18 19:22:04,201: [GC 1966-08-18 19:22:04,202: [ParNew: 86199K->8454K(91712K), " + "0.0375060 secs] 89399K->11655K(907328K), 0.0387074 secs]";
-        Assert.assertEquals("Timestamps not converted to date/time correctly", logLineConverted, JdkUtil.convertLogEntryTimestampsToDateStamp(logLine, calendar.getTime()));
+        String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
+                + "89399K->11655K(907328K), 0.0387074 secs]";
+        String logLineConverted = "1966-08-18 19:22:04,201: [GC 1966-08-18 19:22:04,202: [ParNew: 86199K->8454K(91712K), "
+                + "0.0375060 secs] 89399K->11655K(907328K), 0.0387074 secs]";
+        Assert.assertEquals("Timestamps not converted to date/time correctly", logLineConverted,
+                JdkUtil.convertLogEntryTimestampsToDateStamp(logLine, calendar.getTime()));
     }
 
     /**
@@ -313,8 +343,12 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA));
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA
+                                .toString() + ".",
+                jvmRun.getEventTypes().contains(
+                        JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA));
     }
 
     /**
@@ -329,9 +363,10 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".", jvmRun
+                .getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString()
+                + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
     }
 
     /**
@@ -346,9 +381,10 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".", jvmRun
+                .getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString()
+                + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
     }
 
     public void testRemoveBlankLines() {
@@ -376,12 +412,14 @@ public class TestJdkUtil extends TestCase {
 
         // Test boundary
         int throughputThreshold = 50;
-        Assert.assertFalse("Event incorrectly flagged as a bottleneck.", JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
+        Assert.assertFalse("Event incorrectly flagged as a bottleneck.",
+                JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
 
         // Test bottleneck
         duration2 = 501;
         gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
-        Assert.assertTrue("Event should have been flagged as a bottleneck.", JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
+        Assert.assertTrue("Event should have been flagged as a bottleneck.",
+                JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
 
     }
 
@@ -400,21 +438,26 @@ public class TestJdkUtil extends TestCase {
 
         // Test boundary
         int throughputThreshold = 41;
-        Assert.assertFalse("Event incorrectly flagged as a bottleneck.", JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
+        Assert.assertFalse("Event incorrectly flagged as a bottleneck.",
+                JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
 
         // Test boundary
         throughputThreshold = 42;
-        Assert.assertTrue("Event should have been flagged as a bottleneck.", JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
+        Assert.assertTrue("Event should have been flagged as a bottleneck.",
+                JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
     }
 
     public void testBottleneckDetectionParNew() {
-        String previousLogLine = "56.462: [GC 56.462: [ParNew: 64768K->7168K(64768K), 0.0823950 secs] " + "142030K->88353K(567808K), 0.0826320 secs] [Times: user=0.10 sys=0.00, real=0.08 secs]";
+        String previousLogLine = "56.462: [GC 56.462: [ParNew: 64768K->7168K(64768K), 0.0823950 secs] "
+                + "142030K->88353K(567808K), 0.0826320 secs] [Times: user=0.10 sys=0.00, real=0.08 secs]";
         BlockingEvent priorEvent = new ParNewEvent(previousLogLine);
-        String logLine = "57.026: [GC 57.026: [ParNew: 64768K->7168K(64768K), 0.1763320 secs] " + "145953K->98916K(567808K), 0.1765710 secs] [Times: user=0.30 sys=0.00, real=0.17 secs]";
+        String logLine = "57.026: [GC 57.026: [ParNew: 64768K->7168K(64768K), 0.1763320 secs] "
+                + "145953K->98916K(567808K), 0.1765710 secs] [Times: user=0.30 sys=0.00, real=0.17 secs]";
         BlockingEvent gcEvent = new ParNewEvent(logLine);
         // Test boundary
         int throughputThreshold = 90;
-        Assert.assertTrue("Event should have been flagged as a bottleneck.", JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
+        Assert.assertTrue("Event should have been flagged as a bottleneck.",
+                JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
     }
 
     public void testTimeWarp() {
@@ -432,14 +475,16 @@ public class TestJdkUtil extends TestCase {
         // Test boundary
         int throughputThreshold = 100;
 
-        Assert.assertTrue("Event should have been flagged as a bottleneck.", JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
+        Assert.assertTrue("Event should have been flagged as a bottleneck.",
+                JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
 
         // Decrease timestamp by 1 ms to 2nd event start before 1st event
         // finishes
         timestamp2 = 10999L;
         gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
         try {
-            Assert.assertTrue("Event should have been flagged as a bottleneck.", JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
+            Assert.assertTrue("Event should have been flagged as a bottleneck.",
+                    JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
         } catch (Exception e) {
             Assert.assertTrue("Expected TimeWarpException not thrown.", e instanceof TimeWarpException);
         }
@@ -464,7 +509,8 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD));
     }
 
     /**
@@ -478,8 +524,10 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.TRUNCATED.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.TRUNCATED));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.TRUNCATED.toString() + ".", jvmRun
+                .getEventTypes().contains(JdkUtil.LogEventType.TRUNCATED));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".", jvmRun
+                .getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
     }
 
     /**
@@ -494,9 +542,11 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED.toString()
+                        + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".", jvmRun
+                .getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
     }
 
     /**
@@ -518,7 +568,8 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".", jvmRun
+                .getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
     }
 
     /**
@@ -540,7 +591,8 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".", jvmRun
+                .getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
     }
 
     /**
@@ -555,7 +607,24 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".", jvmRun.getEventTypes().contains(
-                JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE));
+    }
+
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code>.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset32.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PREPROCESSED.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PREPROCESSED));
     }
 }

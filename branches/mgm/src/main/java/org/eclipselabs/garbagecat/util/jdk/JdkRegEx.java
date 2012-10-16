@@ -40,18 +40,36 @@ public class JdkRegEx {
             + "(\\d{4}))";
 
     /**
-     * The size of memory in kilobytes. Sometimes there is a space between the number and the "K" units.
+     * The size of memory in kilobytes (K). Sometimes there is a space between the number and units.
      * 
      * For example: 27808K, 16172 K
      */
     public static final String SIZE = "(\\d{1,8})[ ]?K";
 
     /**
-     * The duration of the event in seconds with 7 decimal places.
+     * The size of memory in kilobytes (K) or megabytes (M). Starting with JDK 1.7, units are not consistent line to
+     * line or even within a single logging line.
+     * 
+     * For example: 2128K, 30M
+     */
+    public static final String SIZE_JDK7 = "(\\d{1,8})([KM])";
+
+    /**
+     * Kilobyte units identifier.
+     */
+    public static final String KILOBYTES = "K";
+
+    /**
+     * Megabyte units identifier.
+     */
+    public static final String MEGABYTES = "M";
+
+    /**
+     * The duration of the event in seconds with 7-8 decimal places.
      * 
      * For example: 0.0225213 secs
      */
-    public static final String DURATION = "(\\d{1,4}[\\.\\,]\\d{7}) secs";
+    public static final String DURATION = "(\\d{1,4}[\\.\\,]\\d{7,8}) secs";
 
     /**
      * The duration of the event as a fraction of a time period.
