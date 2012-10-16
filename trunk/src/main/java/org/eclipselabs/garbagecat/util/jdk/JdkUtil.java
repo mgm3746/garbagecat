@@ -31,6 +31,13 @@ import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkWithClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1CleanupEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1ConcurrentEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1MixedPause;
+import org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1YoungPause;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent;
@@ -77,7 +84,8 @@ public class JdkUtil {
         PAR_NEW_CMS_SERIAL_OLD, PARALLEL_SERIAL_OLD, PARALLEL_SCAVENGE, PARALLEL_OLD_COMPACTING, CMS_SERIAL_OLD,
         CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE, CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK,
         CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD,
-        SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED
+        SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED,
+        G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC
     };
 
     /**
@@ -164,6 +172,20 @@ public class JdkUtil {
             return LogEventType.TRUNCATED;
         if (ParNewPromotionFailedTruncatedEvent.match(logLine))
             return LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED;
+        if (G1YoungPause.match(logLine))
+            return LogEventType.G1_YOUNG_PAUSE;
+        if (G1MixedPause.match(logLine))
+            return LogEventType.G1_MIXED_PAUSE;
+        if (G1ConcurrentEvent.match(logLine))
+            return LogEventType.G1_CONCURRENT;
+        if (G1YoungInitialMarkEvent.match(logLine))
+            return LogEventType.G1_YOUNG_INITIAL_MARK;
+        if (G1RemarkEvent.match(logLine))
+            return LogEventType.G1_REMARK;
+        if (G1FullGCEvent.match(logLine))
+            return LogEventType.G1_FULL_GC;
+        if (G1CleanupEvent.match(logLine))
+            return LogEventType.G1_CLEANUP;
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -267,6 +289,27 @@ public class JdkUtil {
         case PAR_NEW_PROMOTION_FAILED_TRUNCATED:
             event = new ParNewPromotionFailedTruncatedEvent(logLine);
             break;
+        case G1_YOUNG_PAUSE:
+            event = new G1YoungPause(logLine);
+            break;
+        case G1_MIXED_PAUSE:
+            event = new G1MixedPause(logLine);
+            break;
+        case G1_CONCURRENT:
+            event = new G1ConcurrentEvent(logLine);
+            break;
+        case G1_YOUNG_INITIAL_MARK:
+            event = new G1YoungInitialMarkEvent(logLine);
+            break;
+        case G1_REMARK:
+            event = new G1RemarkEvent(logLine);
+            break;
+        case G1_CLEANUP:
+            event = new G1CleanupEvent(logLine);
+            break;
+        case G1_FULL_GC:
+            event = new G1FullGCEvent(logLine);
+            break;
         case UNKNOWN:
             event = new UnknownEvent(logLine);
             break;
@@ -368,6 +411,24 @@ public class JdkUtil {
         case PAR_NEW_PROMOTION_FAILED_TRUNCATED:
             event = new ParNewPromotionFailedTruncatedEvent(logEntry, timestamp, duration);
             break;
+        case G1_YOUNG_PAUSE:
+            event = new G1YoungPause(logEntry, timestamp, duration);
+            break;
+        case G1_MIXED_PAUSE:
+            event = new G1MixedPause(logEntry, timestamp, duration);
+            break;
+        case G1_YOUNG_INITIAL_MARK:
+            event = new G1YoungInitialMarkEvent(logEntry, timestamp, duration);
+            break;
+        case G1_REMARK:
+            event = new G1RemarkEvent(logEntry, timestamp, duration);
+            break;
+        case G1_CLEANUP:
+            event = new G1CleanupEvent(logEntry, timestamp, duration);
+            break;
+        case G1_FULL_GC:
+            event = new G1FullGCEvent(logEntry, timestamp, duration);
+            break;
         default:
             throw new AssertionError("Unexpected event type value: " + eventType + ": " + logEntry);
         }
@@ -380,6 +441,7 @@ public class JdkUtil {
      */
     public static final boolean isBlocking(LogEventType eventType) {
         return !(eventType == JdkUtil.LogEventType.CMS_CONCURRENT
+                || eventType == JdkUtil.LogEventType.G1_CONCURRENT
                 || eventType == JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME
                 || eventType == JdkUtil.LogEventType.APPLICATION_STOPPED_TIME 
                 || eventType == JdkUtil.LogEventType.UNKNOWN);

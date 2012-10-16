@@ -47,6 +47,13 @@ public class JdkRegEx {
     public static final String SIZE = "(\\d{1,8})[ ]?K";
 
     /**
+     * The size of memory in megabytes. Sometimes there is a space between the number and the "M" units.
+     * 
+     * For example: 27808M, 16172 M
+     */
+    public static final String SIZE_MB = "(\\d{1,8})[ ]?M";
+
+    /**
      * The duration of the event in seconds with 7 decimal places.
      * 
      * For example: 0.0225213 secs

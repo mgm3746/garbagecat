@@ -5,7 +5,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 	<groupId>garbagecat</groupId>
 	<artifactId>garbagecat</artifactId>
 	<name>Garbage Cat</name>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<description>Java garbage collection analyzer tool.</description>
 	<url>http://code.google.com/a/eclipselabs.org/p/garbagecat/</url>
 	<developers>
