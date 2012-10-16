@@ -38,6 +38,7 @@ import org.eclipselabs.garbagecat.domain.jdk.G1MixedPause;
 import org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungPause;
+import org.eclipselabs.garbagecat.domain.jdk.G1YoungPausePreprocessedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent;
@@ -85,7 +86,8 @@ public class JdkUtil {
         CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE, CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK,
         CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD,
         SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED,
-        G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC
+        G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
+        G1_YOUNG_PAUSE_PREPROCESSED
     };
 
     /**
@@ -94,7 +96,7 @@ public class JdkUtil {
     public enum PreprocessActionType {
         APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, CMS_CONCURRENT_MODE_FAILURE, 
         DATE_STAMP, DATE_STAMP_PREFIX, GC_TIME_LIMIT_EXCEEDED, PAR_NEW_CMS_CONCURRENT, PRINT_HEAP_AT_GC, 
-        PRINT_TENURING_DISTRIBUTION, THREAD_DUMP, UNLOADING_CLASS
+        PRINT_TENURING_DISTRIBUTION, THREAD_DUMP, UNLOADING_CLASS, G1_PRINT_GC_DETAILS
     };
 
     /**
@@ -186,6 +188,8 @@ public class JdkUtil {
             return LogEventType.G1_FULL_GC;
         if (G1CleanupEvent.match(logLine))
             return LogEventType.G1_CLEANUP;
+        if (G1YoungPausePreprocessedEvent.match(logLine))
+            return LogEventType.G1_YOUNG_PAUSE_PREPROCESSED;        
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -310,6 +314,9 @@ public class JdkUtil {
         case G1_FULL_GC:
             event = new G1FullGCEvent(logLine);
             break;
+        case G1_YOUNG_PAUSE_PREPROCESSED:
+            event = new G1YoungPausePreprocessedEvent(logLine);
+            break;            
         case UNKNOWN:
             event = new UnknownEvent(logLine);
             break;
@@ -429,6 +436,9 @@ public class JdkUtil {
         case G1_FULL_GC:
             event = new G1FullGCEvent(logEntry, timestamp, duration);
             break;
+        case G1_YOUNG_PAUSE_PREPROCESSED:
+            event = new G1YoungPausePreprocessedEvent(logEntry, timestamp, duration);
+            break;            
         default:
             throw new AssertionError("Unexpected event type value: " + eventType + ": " + logEntry);
         }

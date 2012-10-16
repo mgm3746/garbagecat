@@ -36,6 +36,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreproces
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
+import org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.GcTimeLimitExceededPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ParNewCmsConcurrentPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.PrintHeapAtGcPreprocessAction;
@@ -226,7 +227,14 @@ public class GcManager {
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
+            } else if (G1PrintGcDetailsPreprocessAction.match(currentLogLine)) {
+                G1PrintGcDetailsPreprocessAction action = new G1PrintGcDetailsPreprocessAction(currentLogLine,
+                        nextLogLine);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
             } else {
+
                 preprocessedLogLine = currentLogLine + System.getProperty("line.separator");
             }
         }
