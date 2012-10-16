@@ -59,7 +59,7 @@ public class G1MixedPause implements BlockingEvent, CombinedData {
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC pause \\(mixed\\) "
-            + JdkRegEx.SIZE_MB + "->" + JdkRegEx.SIZE_MB + "\\(" + JdkRegEx.SIZE_MB + "\\), "
+            + JdkRegEx.SIZE_JDK7 + "->" + JdkRegEx.SIZE_JDK7 + "\\(" + JdkRegEx.SIZE_JDK7 + "\\), "
             + JdkRegEx.DURATION + "\\]";
     private static final Pattern pattern = Pattern.compile(REGEX);
     /**

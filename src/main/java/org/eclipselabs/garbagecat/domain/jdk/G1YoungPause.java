@@ -28,7 +28,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * G1 collector young generation collection. 
+ * G1 collector young generation collection.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -59,9 +59,8 @@ public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedDat
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC pause \\(young\\) "
-            + JdkRegEx.SIZE_MB + "->" + JdkRegEx.SIZE_MB + "\\(" + JdkRegEx.SIZE_MB + "\\), "
-            + JdkRegEx.DURATION + "\\]";
+            + ": \\[GC pause \\(young\\) " + JdkRegEx.SIZE_JDK7 + "->" + JdkRegEx.SIZE_JDK7 + "\\("
+            + JdkRegEx.SIZE_JDK7 + "\\), " + JdkRegEx.DURATION + "\\]";
     private static final Pattern pattern = Pattern.compile(REGEX);
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -101,10 +100,19 @@ public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedDat
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            combined = Integer.parseInt(matcher.group(13)) * 1024;
-            combinedEnd = Integer.parseInt(matcher.group(14)) * 1024;
-            combinedAvailable = Integer.parseInt(matcher.group(15)) * 1024;
-            duration = JdkMath.convertSecsToMillis(matcher.group(16)).intValue();
+            combined = Integer.parseInt(matcher.group(13));
+            if (matcher.group(14).equals(JdkRegEx.MEGABYTES)) {
+                combined = combined * 1024;
+            }
+            combinedEnd = Integer.parseInt(matcher.group(15));
+            if (matcher.group(16).equals(JdkRegEx.MEGABYTES)) {
+                combinedEnd = combinedEnd * 1024;
+            }
+            combinedAvailable = Integer.parseInt(matcher.group(17));
+            if (matcher.group(18).equals(JdkRegEx.MEGABYTES)) {
+                combinedAvailable = combinedAvailable * 1024;
+            }
+            duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
         }
     }
 
