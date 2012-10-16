@@ -124,6 +124,7 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine) {
-    	return (PATTERN1.matcher(logLine).matches() || (PATTERN2.matcher(logLine).matches() && PATTERN1.matcher(priorLogLine).matches()));
+        return (PATTERN1.matcher(logLine).matches() || (PATTERN2.matcher(logLine).matches() && PATTERN1.matcher(
+                priorLogLine).matches()));
     }
 }

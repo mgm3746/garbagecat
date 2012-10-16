@@ -132,12 +132,12 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
     private static final Pattern PATTERN_THROWAWAY[] = new Pattern[REGEX_THROWAWAY.length];
     
     static {
-    	for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++)
-    		PATTERN_BEGINNING[i] = Pattern.compile(REGEX_RETAIN_BEGINNING[i]);
-    	for (int i = 0; i < REGEX_RETAIN_END.length; i++)
-    		PATTERN_END[i] = Pattern.compile(REGEX_RETAIN_END[i]);
-    	for (int i = 0; i < REGEX_THROWAWAY.length; i++)
-    		PATTERN_THROWAWAY[i] = Pattern.compile(REGEX_THROWAWAY[i]);
+        for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++)
+            PATTERN_BEGINNING[i] = Pattern.compile(REGEX_RETAIN_BEGINNING[i]);
+        for (int i = 0; i < REGEX_RETAIN_END.length; i++)
+            PATTERN_END[i] = Pattern.compile(REGEX_RETAIN_END[i]);
+        for (int i = 0; i < REGEX_THROWAWAY.length; i++)
+            PATTERN_THROWAWAY[i] = Pattern.compile(REGEX_THROWAWAY[i]);
     }
 
     /**
