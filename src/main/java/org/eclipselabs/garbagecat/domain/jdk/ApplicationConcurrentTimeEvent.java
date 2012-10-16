@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.util.regex.Pattern;
+
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -46,6 +48,11 @@ public class ApplicationConcurrentTimeEvent implements LogEvent {
      */
     private static final String REGEX = "^Application time: \\d{1,4}\\.\\d{7} seconds[ ]*$";
 
+    /**
+     * RegEx pattern.
+     */
+    private static Pattern pattern = Pattern.compile(ApplicationConcurrentTimeEvent.REGEX);
+
     public String getLogEntry() {
         throw new UnsupportedOperationException("Event does not include log entry information");
     }
@@ -66,7 +73,7 @@ public class ApplicationConcurrentTimeEvent implements LogEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return pattern.matcher(logLine).matches();
     }
 
 }
