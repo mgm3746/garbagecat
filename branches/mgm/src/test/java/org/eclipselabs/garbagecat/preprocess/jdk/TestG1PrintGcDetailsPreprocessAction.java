@@ -130,4 +130,43 @@ public class TestG1PrintGcDetailsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString()
                 + ".", G1PrintGcDetailsPreprocessAction.match(logLine));
     }
+
+    public void testSummaryHeapLine() {
+        String logLine = "Heap";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString()
+                + ".", G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+
+    public void testSummaryGarbageFirstHeapLine() {
+        String logLine = " garbage-first heap   total 60416K, used 6685K [0x00007f9128c00000, 0x00007f912c700000, "
+                + "0x00007f9162e00000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString()
+                + ".", G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+
+    public void testSummaryRegionSizeLine() {
+        String logLine = "  region size 1024K, 6 young (6144K), 1 survivors (1024K)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString()
+                + ".", G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+
+    public void testSummaryCompactingPermGenLine() {
+        String logLine = " compacting perm gen  total 20480K, used 7323K [0x00007f9162e00000, 0x00007f9164200000, "
+                + "0x00007f9168000000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString()
+                + ".", G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+
+    public void testSummaryTheSpaceLine() {
+        String logLine = "   the space 20480K,  35% used [0x00007f9162e00000, 0x00007f9163526df0, 0x00007f9163526e00, "
+                + "0x00007f9164200000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString()
+                + ".", G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+
+    public void testSummaryNoSharedSpacesConfiguredLine() {
+        String logLine = "No shared spaces configured.";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString()
+                + ".", G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
 }

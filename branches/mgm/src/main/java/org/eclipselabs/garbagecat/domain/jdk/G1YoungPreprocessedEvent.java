@@ -29,7 +29,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * Young generation collector used when <code>-XX:+UseG1GC</code> JVM option specified, preprocessed from
- * <code>-XX:+PrintGCDetails</code>.
+ * <code>-XX:+PrintGCDetails</code>. The same as {@link org.eclipselabs.garbagecat.domain.jdk.G1YoungEvent}, except the
+ * output is in a different format.
  * </p>
  * 
  * <h3>Example Logging</h3>

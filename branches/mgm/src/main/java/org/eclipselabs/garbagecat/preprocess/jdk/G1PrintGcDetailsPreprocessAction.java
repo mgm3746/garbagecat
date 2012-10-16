@@ -21,8 +21,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Remove G1 collector verbose logging when <code>-XX:+UseG1GC</code> used in combinations with
- * <code>-XX:+PrintGCDetails</code>.
+ * Remove G1 collector verbose logging when <code>-XX:+UseG1GC</code> used in combination with
+ * <code>-XX:+PrintGCDetails</code>. It is currently not being used for analysis.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -54,6 +54,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *       [Choose CSet:   0.0 ms]
  *    [ 8192K->2112K(59M)]
  *  [Times: user=0.01 sys=0.00, real=0.01 secs]
+ * </pre>
+ * 
+ * <p>
+ * The summary output after the final GC event:
+ * </p>
+ * 
+ * <pre>
+ * Heap
+ *  garbage-first heap   total 60416K, used 6685K [0x00007f9128c00000, 0x00007f912c700000, 0x00007f9162e00000)
+ *   region size 1024K, 6 young (6144K), 1 survivors (1024K)
+ *  compacting perm gen  total 20480K, used 7323K [0x00007f9162e00000, 0x00007f9164200000, 0x00007f9168000000)
+ *    the space 20480K,  35% used [0x00007f9162e00000, 0x00007f9163526df0, 0x00007f9163526e00, 0x00007f9164200000)
+ * No shared spaces configured.
  * </pre>
  * 
  * <p>
@@ -121,7 +134,19 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
             //
             "^   \\[Clear CT:.+$",
             //
-            "^      \\[Choose CSet:.+$" };
+            "^      \\[Choose CSet:.+$",
+            //
+            "^Heap$",
+            //
+            "^ garbage-first heap   total.+$",
+            //
+            "^  region size .+$",
+            //
+            "^ compacting perm gen  total.+$",
+            //
+            "^   the space.+$",
+            //
+            "^No shared spaces configured\\.$" };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

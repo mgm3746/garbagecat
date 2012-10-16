@@ -1,26 +1,32 @@
-0.304: [GC pause (young), 0.00376500 secs]
-   [Parallel Time:   3.6 ms]
-      [GC Worker Start Time (ms):  304.3  304.4  305.7  305.7]
-      [Update RS (ms):  0.0  0.0  0.0  0.0
-       Avg:   0.0, Min:   0.0, Max:   0.0]
-         [Processed Buffers : 0 0 4 2
-          Sum: 6, Avg: 1, Min: 0, Max: 4]
-      [Ext Root Scanning (ms):  1.6  2.3  0.6  0.6
-       Avg:   1.3, Min:   0.6, Max:   2.3]
+0.807: [GC pause (young), 0.00290200 secs]
+   [Parallel Time:   2.7 ms]
+      [GC Worker Start Time (ms):  807.5  807.8  807.8  810.1]
+      [Update RS (ms):  0.1  0.1  0.0  0.0
+       Avg:   0.0, Min:   0.0, Max:   0.1]
+         [Processed Buffers : 2 1 0 0
+          Sum: 3, Avg: 0, Min: 0, Max: 2]
+      [Ext Root Scanning (ms):  0.6  0.3  0.4  0.0
+       Avg:   0.3, Min:   0.0, Max:   0.6]
       [Mark Stack Scanning (ms):  0.0  0.0  0.0  0.0
        Avg:   0.0, Min:   0.0, Max:   0.0]
       [Scan RS (ms):  0.0  0.0  0.0  0.0
        Avg:   0.0, Min:   0.0, Max:   0.0]
-      [Object Copy (ms):  1.9  1.3  1.2  1.2
-       Avg:   1.4, Min:   1.2, Max:   1.9]
-      [Termination (ms):  0.1  0.0  0.5  0.5
-       Avg:   0.2, Min:   0.0, Max:   0.5]
+      [Object Copy (ms):  0.5  0.5  0.5  0.0
+       Avg:   0.4, Min:   0.0, Max:   0.5]
+      [Termination (ms):  1.4  1.5  1.4  0.0
+       Avg:   1.1, Min:   0.0, Max:   1.5]
          [Termination Attempts : 1 1 1 1
           Sum: 4, Avg: 1, Min: 1, Max: 1]
-      [GC Worker End Time (ms):  308.0  308.0  308.0  308.0]
-      [Other:   0.7 ms]
-   [Clear CT:   0.0 ms]
+      [GC Worker End Time (ms):  810.1  810.2  810.1  810.1]
+      [Other:   0.9 ms]
+   [Clear CT:   0.1 ms]
    [Other:   0.1 ms]
       [Choose CSet:   0.0 ms]
-   [ 8192K->2112K(59M)]
- [Times: user=0.01 sys=0.00, real=0.01 secs]
+   [ 29M->2589K(59M)]
+ [Times: user=0.01 sys=0.00, real=0.01 secs] 
+Heap
+ garbage-first heap   total 60416K, used 6685K [0x00007f9128c00000, 0x00007f912c700000, 0x00007f9162e00000)
+  region size 1024K, 6 young (6144K), 1 survivors (1024K)
+ compacting perm gen  total 20480K, used 7323K [0x00007f9162e00000, 0x00007f9164200000, 0x00007f9168000000)
+   the space 20480K,  35% used [0x00007f9162e00000, 0x00007f9163526df0, 0x00007f9163526e00, 0x00007f9164200000)
+No shared spaces configured.
