@@ -101,7 +101,7 @@ public class JvmDao {
             // "");
 
             // In-process standalone mode for deployment.
-            connection = DriverManager.getConnection("jdbc:hsqldb:file:gcdb", "sa", "");
+            connection = DriverManager.getConnection("jdbc:hsqldb:mem:gcdb", "sa", "");
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             throw new RuntimeException("Error accessing database.");
