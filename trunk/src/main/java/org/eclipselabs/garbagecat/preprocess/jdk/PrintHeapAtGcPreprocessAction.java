@@ -217,11 +217,13 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
             "^" + JdkRegEx.TIMESTAMP + ": \\[CMS" + JdkRegEx.TIMESTAMP
                     + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): " + JdkRegEx.DURATION_FRACTION
                     + "\\]$" };
+    private static final Pattern PATTERN_BEGINNING[] = new Pattern[REGEX_RETAIN_BEGINNING.length];
 
     /**
      * Regular expression for the end part of a line retained.
      */
     private static final String REGEX_RETAIN_END = "^, " + JdkRegEx.DURATION + "\\]$";
+    private static final Pattern PATTERN_END = Pattern.compile(REGEX_RETAIN_END);
 
     /**
      * Regular expressions for lines or parts of lines thrown away.
@@ -234,6 +236,15 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
             "^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$", "^}$",
             "^\\{Heap before GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$",
             "^Heap after GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$", "No shared spaces configured." };
+    private static final Pattern PATTERN_THROWAWAY[] = new Pattern[REGEX_THROWAWAY.length];
+    
+    static {
+    	for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++)
+    		PATTERN_BEGINNING[i] = Pattern.compile(REGEX_RETAIN_BEGINNING[i]);
+
+    	for (int i = 0; i < REGEX_THROWAWAY.length; i++)
+    		PATTERN_THROWAWAY[i] = Pattern.compile(REGEX_THROWAWAY[i]);
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -248,23 +259,21 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
      */
     public PrintHeapAtGcPreprocessAction(String logEntry) {
         // Handle split logging. Keep parts of log lines needed for re-composing.
-        Pattern pattern;
         Matcher matcher;
         // Check to see if beginning of line should be retained.
         boolean retainBeginning = false;
-        for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++) {
-            pattern = Pattern.compile(REGEX_RETAIN_BEGINNING[i]);
-            matcher = pattern.matcher(logEntry);
+        for (int i = 0; i < PATTERN_BEGINNING.length; i++) {
+            matcher = PATTERN_BEGINNING[i].matcher(logEntry);
             if (matcher.find() && matcher.group(1) != null) {
                 // Retain beginning of line.
                 this.logEntry = matcher.group(1);
                 retainBeginning = true;
+                break;
             }
         }
         // Check to see if end of line should be retained.
         if (!retainBeginning) {
-            pattern = Pattern.compile(REGEX_RETAIN_END);
-            matcher = pattern.matcher(logEntry);
+            matcher = PATTERN_END.matcher(logEntry);
             if (matcher.find()) {
                 this.logEntry = logEntry + "\n";
             }
@@ -287,24 +296,16 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        boolean match = false;
-        for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
-            if (logLine.matches(REGEX_THROWAWAY[i])) {
-                match = true;
-                break;
+        for (int i = 0; i < PATTERN_THROWAWAY.length; i++) {
+            if (PATTERN_THROWAWAY[i].matcher(logLine).matches()) {
+                return true;
             }
         }
-        if (!match) {
-            for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++) {
-                if (logLine.matches(REGEX_RETAIN_BEGINNING[i])) {
-                    match = true;
-                    break;
-                }
+        for (int i = 0; i < PATTERN_BEGINNING.length; i++) {
+            if (PATTERN_BEGINNING[i].matcher(logLine).matches()) {
+                return true;
             }
         }
-        if (!match && logLine.matches(REGEX_RETAIN_END)) {
-            match = true;
-        }
-        return match;
+        return PATTERN_END.matcher(logLine).matches();
     }
 }

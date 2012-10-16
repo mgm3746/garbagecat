@@ -57,6 +57,7 @@ public class DateStampPreprocessAction implements PreprocessAction {
      * Regular expressions defining the logging line.
      */
     private static final String REGEX_LINE = "^" + JdkRegEx.DATESTAMP + ": (.*)$";
+    private static final Pattern PATTERN = Pattern.compile(REGEX_LINE);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -72,17 +73,12 @@ public class DateStampPreprocessAction implements PreprocessAction {
      *            The date and time the JVM was started.
      */
     public DateStampPreprocessAction(String logEntry, Date jvmStartDate) {
-        Pattern pattern = Pattern.compile(REGEX_LINE);
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             String logEntryMinusDateStamp = matcher.group(11);
-            StringBuffer sb = new StringBuffer();
             Date datestamp = GcUtil.parseDateStamp(matcher.group(1));
             long diff = GcUtil.dateDiff(jvmStartDate, datestamp);
-            sb.append((JdkMath.convertMillisToSecs(diff)).toString());
-            sb.append(": ");
-            sb.append(logEntryMinusDateStamp);
-            this.logEntry = sb.toString();
+            this.logEntry = JdkMath.convertMillisToSecs(diff)+ ": " + logEntryMinusDateStamp;
         }
     }
 
@@ -102,6 +98,6 @@ public class DateStampPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX_LINE);
+        return PATTERN.matcher(logLine).matches();
     }
 }

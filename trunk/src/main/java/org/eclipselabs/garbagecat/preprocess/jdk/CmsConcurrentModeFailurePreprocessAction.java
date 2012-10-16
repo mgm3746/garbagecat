@@ -112,7 +112,7 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
     /**
      * Regular expression(s) defining the 1st logging line.
      */
-    private static final String[] REGEX_LINE_INIT = {
+    private static final String[] REGEX_LINE_BEGINNING = {
     // Serial old
             "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(System\\) )?" + JdkRegEx.TIMESTAMP
                     + ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
@@ -140,6 +140,7 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
             // 2nd line when logging split across 3 lines
             "^(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\])"
                     + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+    private static final Pattern PATTERN_BEGINNING[] = new Pattern[REGEX_LINE_BEGINNING.length];
 
     /**
      * Regular expression(s) defining the end logging line. In JDK 6 "failure" has been replaced with "interrupted".
@@ -150,6 +151,15 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
                     + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : "
                     + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION
                     + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+    private static final Pattern PATTERN_END[] = new Pattern[REGEX_LINE_END.length];
+
+    static {
+    	for (int i = 0; i < REGEX_LINE_BEGINNING.length; i++)
+    		PATTERN_BEGINNING[i] = Pattern.compile(REGEX_LINE_BEGINNING[i]);
+    	for (int i = 0; i < REGEX_LINE_END.length; i++)
+    		PATTERN_END[i] = Pattern.compile(REGEX_LINE_END[i]);
+    }
+    
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -166,10 +176,8 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
         if (isLastLineMatch(logEntry)) {
             this.logEntry = logEntry + System.getProperty("line.separator");
         } else {
-            Pattern pattern;
-            for (int i = 0; i < REGEX_LINE_INIT.length; i++) {
-                pattern = Pattern.compile(REGEX_LINE_INIT[i]);
-                Matcher matcher = pattern.matcher(logEntry);
+            for (int i = 0; i < PATTERN_BEGINNING.length; i++) {
+                Matcher matcher = PATTERN_BEGINNING[i].matcher(logEntry);
                 if (matcher.find() && matcher.group(1) != null) {
                     this.logEntry = matcher.group(1);
                     break;
@@ -212,14 +220,12 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
      * @return true if the log line matches a line1 pattern, false otherwise.
      */
     private static final boolean isInitialLineMatch(String logLine) {
-        boolean isInitialLineMatch = false;
-        for (int i = 0; i < REGEX_LINE_INIT.length; i++) {
-            if (logLine.matches(REGEX_LINE_INIT[i])) {
-                isInitialLineMatch = true;
-                break;
+        for (int i = 0; i < PATTERN_BEGINNING.length; i++) {
+            if (PATTERN_BEGINNING[i].matcher(logLine).matches()) {
+                return true;
             }
         }
-        return isInitialLineMatch;
+        return false;
     }
 
     /**
@@ -230,13 +236,11 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
      * @return true if the log line matches a line2 pattern, false otherwise.
      */
     private static final boolean isLastLineMatch(String logLine) {
-        boolean isLastLineMatch = false;
-        for (int i = 0; i < REGEX_LINE_END.length; i++) {
-            if (logLine.matches(REGEX_LINE_END[i])) {
-                isLastLineMatch = true;
-                break;
+        for (int i = 0; i < PATTERN_END.length; i++) {
+            if (PATTERN_END[i].matcher(logLine).matches()) {
+                return true;
             }
         }
-        return isLastLineMatch;
+        return false;
     }
 }

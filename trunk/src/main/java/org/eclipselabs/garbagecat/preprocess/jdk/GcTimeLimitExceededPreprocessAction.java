@@ -83,11 +83,13 @@ public class GcTimeLimitExceededPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\)\\])(      |\t)GC time (would exceed|is exceeding) GCTimeLimit of 98%$";
+    private static final Pattern PATTERN1 = Pattern.compile(REGEX_LINE1);
 
     /**
      * Regular expressions defining the 2nd logging line.
      */
     private static final String REGEX_LINE2 = "^, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final Pattern PATTERN2 = Pattern.compile(REGEX_LINE2);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -98,8 +100,7 @@ public class GcTimeLimitExceededPreprocessAction implements PreprocessAction {
      * Create event from log entry.
      */
     public GcTimeLimitExceededPreprocessAction(String logEntry) {
-        Pattern pattern = Pattern.compile(REGEX_LINE1);
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN1.matcher(logEntry);
         if (matcher.find()) {
             this.logEntry = logEntry;
             if (matcher.group(1) != null) {
@@ -129,6 +130,6 @@ public class GcTimeLimitExceededPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine) {
-        return (logLine.matches(REGEX_LINE1) || (logLine.matches(REGEX_LINE2) && priorLogLine.matches(REGEX_LINE1)));
+        return (PATTERN1.matcher(logLine).matches() || (PATTERN2.matcher(logLine).matches() && PATTERN1.matcher(priorLogLine).matches()));
     }
 }

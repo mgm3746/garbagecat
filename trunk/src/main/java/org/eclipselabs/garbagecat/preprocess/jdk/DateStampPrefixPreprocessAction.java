@@ -54,6 +54,7 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
      * Regular expressions defining the logging line.
      */
     private static final String REGEX_LINE = "^" + JdkRegEx.DATESTAMP + ": (" + JdkRegEx.TIMESTAMP + ": (.*))$";
+    private static final Pattern PATTERN = Pattern.compile(REGEX_LINE);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -67,8 +68,7 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
      *            The log entry.
      */
     public DateStampPrefixPreprocessAction(String logEntry) {
-        Pattern pattern = Pattern.compile(REGEX_LINE);
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             String logEntryMinusDateStamp = matcher.group(11);
             this.logEntry = logEntryMinusDateStamp;
@@ -91,6 +91,6 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX_LINE);
+        return PATTERN.matcher(logLine).matches();
     }
 }

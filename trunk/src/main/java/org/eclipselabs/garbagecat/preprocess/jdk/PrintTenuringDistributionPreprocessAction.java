@@ -108,6 +108,7 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
                     + JdkRegEx.TIMESTAMP + ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
                     + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): " + JdkRegEx.DURATION_FRACTION
                     + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+    private static final Pattern PATTERN_BEGINNING[] = new Pattern[REGEX_RETAIN_BEGINNING.length];
 
     /**
      * Regular expression for the end part of a line retained.
@@ -120,6 +121,7 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
             "^ \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
                     + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
                     + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+    private static final Pattern PATTERN_END[] = new Pattern[REGEX_RETAIN_END.length];
 
     /**
      * Regular expressions for lines or parts of lines thrown away.
@@ -127,6 +129,16 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
     private static final String[] REGEX_THROWAWAY = {
             "^Desired survivor size \\d{1,11} bytes, new threshold \\d{1,2} \\(max \\d{1,2}\\)$",
             "^- age[ ]+\\d{1,2}:[ ]+\\d{1,11} bytes,[ ]+\\d{1,11} total$" };
+    private static final Pattern PATTERN_THROWAWAY[] = new Pattern[REGEX_THROWAWAY.length];
+    
+    static {
+    	for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++)
+    		PATTERN_BEGINNING[i] = Pattern.compile(REGEX_RETAIN_BEGINNING[i]);
+    	for (int i = 0; i < REGEX_RETAIN_END.length; i++)
+    		PATTERN_END[i] = Pattern.compile(REGEX_RETAIN_END[i]);
+    	for (int i = 0; i < REGEX_THROWAWAY.length; i++)
+    		PATTERN_THROWAWAY[i] = Pattern.compile(REGEX_THROWAWAY[i]);
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -142,13 +154,11 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
     public PrintTenuringDistributionPreprocessAction(String logEntry) {
         // Handle split logging. Keep parts of log lines needed for
         // re-composing.
-        Pattern pattern;
         Matcher matcher;
         // Check to see if beginning of line should be retained.
         boolean retainBeginning = false;
-        for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++) {
-            pattern = Pattern.compile(REGEX_RETAIN_BEGINNING[i]);
-            matcher = pattern.matcher(logEntry);
+        for (int i = 0; i < PATTERN_BEGINNING.length; i++) {
+            matcher = PATTERN_BEGINNING[i].matcher(logEntry);
             if (matcher.find() && matcher.group(1) != null) {
                 // Retain beginning of line.
                 this.logEntry = matcher.group(1);
@@ -158,8 +168,8 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
         // Check to see if end of line should be retained.
         if (!retainBeginning) {
             boolean retain = false;
-            for (int i = 0; i < REGEX_RETAIN_END.length; i++) {
-                if (logEntry.matches(REGEX_RETAIN_END[i])) {
+            for (int i = 0; i < PATTERN_END.length; i++) {
+                if (PATTERN_END[i].matcher(logEntry).matches()) {
                     retain = true;
                     break;
                 }
@@ -186,29 +196,21 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        boolean match = false;
-        for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
-            if (logLine.matches(REGEX_THROWAWAY[i])) {
-                match = true;
-                break;
+        for (int i = 0; i < PATTERN_THROWAWAY.length; i++) {
+            if (PATTERN_THROWAWAY[i].matcher(logLine).matches()) {
+                return true;
             }
         }
-        if (!match) {
-            for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++) {
-                if (logLine.matches(REGEX_RETAIN_BEGINNING[i])) {
-                    match = true;
-                    break;
-                }
+        for (int i = 0; i < PATTERN_BEGINNING.length; i++) {
+            if (PATTERN_BEGINNING[i].matcher(logLine).matches()) {
+                return true;
             }
         }
-        if (!match) {
-            for (int i = 0; i < REGEX_RETAIN_END.length; i++) {
-                if (logLine.matches(REGEX_RETAIN_END[i])) {
-                    match = true;
-                    break;
-                }
+        for (int i = 0; i < PATTERN_END.length; i++) {
+            if (PATTERN_END[i].matcher(logLine).matches()) {
+                return true;
             }
         }
-        return match;
+        return false;
     }
 }

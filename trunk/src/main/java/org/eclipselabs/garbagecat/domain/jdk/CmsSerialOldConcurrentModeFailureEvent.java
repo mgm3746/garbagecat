@@ -293,6 +293,6 @@ public class CmsSerialOldConcurrentModeFailureEvent implements BlockingEvent, Ol
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return pattern.matcher(logLine).matches();
     }
 }

@@ -53,6 +53,7 @@ public class UnloadingClassPreprocessAction implements PreprocessAction {
      * Regular expression defining the logging.
      */
     private static final String REGEX = "^(.*)" + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
+    private static final Pattern PATTERN = Pattern.compile(REGEX);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -68,8 +69,7 @@ public class UnloadingClassPreprocessAction implements PreprocessAction {
      *            The next log line.
      */
     public UnloadingClassPreprocessAction(String logEntry, String nextLogEntry) {
-        Pattern pattern = Pattern.compile(UnloadingClassPreprocessAction.REGEX);
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             // Do not add a newline if the next line requires preprocessing or the next log line is
             // an unknown logging event (in that case assume the logging is split).
@@ -102,7 +102,7 @@ public class UnloadingClassPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return PATTERN.matcher(logLine).matches();
     }
 
 }
