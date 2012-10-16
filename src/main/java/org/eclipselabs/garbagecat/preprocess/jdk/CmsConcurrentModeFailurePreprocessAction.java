@@ -154,10 +154,10 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
     private static final Pattern PATTERN_END[] = new Pattern[REGEX_LINE_END.length];
 
     static {
-    	for (int i = 0; i < REGEX_LINE_BEGINNING.length; i++)
-    		PATTERN_BEGINNING[i] = Pattern.compile(REGEX_LINE_BEGINNING[i]);
-    	for (int i = 0; i < REGEX_LINE_END.length; i++)
-    		PATTERN_END[i] = Pattern.compile(REGEX_LINE_END[i]);
+        for (int i = 0; i < REGEX_LINE_BEGINNING.length; i++)
+            PATTERN_BEGINNING[i] = Pattern.compile(REGEX_LINE_BEGINNING[i]);
+        for (int i = 0; i < REGEX_LINE_END.length; i++)
+            PATTERN_END[i] = Pattern.compile(REGEX_LINE_END[i]);
     }
     
 

@@ -130,8 +130,8 @@ public class ThreadDumpPreprocessAction implements PreprocessAction {
             "^ concurrent-mark-sweep perm gen total.*$" };
     private static final Pattern PATTERN[] = new Pattern[REGEX.length];
     static {
-    	for (int i = 0; i < REGEX.length; i++)
-    		PATTERN[i] = Pattern.compile(REGEX[i]);
+        for (int i = 0; i < REGEX.length; i++)
+            PATTERN[i] = Pattern.compile(REGEX[i]);
     }
     
 
