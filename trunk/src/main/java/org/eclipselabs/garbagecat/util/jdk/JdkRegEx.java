@@ -47,11 +47,22 @@ public class JdkRegEx {
     public static final String SIZE = "(\\d{1,8})[ ]?K";
 
     /**
-     * The size of memory in megabytes. Sometimes there is a space between the number and the "M" units.
-     * 
-     * For example: 27808M, 16172 M
+     * Kilobyte units identifier.
      */
-    public static final String SIZE_MB = "(\\d{1,8})[ ]?M";
+    public static final String KILOBYTES = "K";
+
+    /**
+     * Megabyte units identifier.
+     */
+    public static final String MEGABYTES = "M";
+
+    /**
+     * The size of memory in kilobytes (K) or megabytes (M). Starting with JDK 1.7, units are not consistent line to
+     * line or even within a single logging line.
+     * 
+     * For example: 2128K, 30M
+     */
+    public static final String SIZE_JDK7 = "(\\d{1,8})([" + KILOBYTES + MEGABYTES + "])";
 
     /**
      * The duration of the event in seconds with 7 decimal places.

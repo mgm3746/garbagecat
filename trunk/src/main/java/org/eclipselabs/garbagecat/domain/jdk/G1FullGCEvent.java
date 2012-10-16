@@ -59,7 +59,7 @@ public class G1FullGCEvent implements BlockingEvent, CombinedData {
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[Full GC \\((.+?)\\) "
-            + JdkRegEx.SIZE_MB + "->" + JdkRegEx.SIZE_MB + "\\(" + JdkRegEx.SIZE_MB + "\\), "
+            + JdkRegEx.SIZE_JDK7 + "->" + JdkRegEx.SIZE_JDK7 + "\\(" + JdkRegEx.SIZE_JDK7 + "\\), "
             + JdkRegEx.DURATION + "\\]";
     private static final Pattern pattern = Pattern.compile(REGEX);
     /**

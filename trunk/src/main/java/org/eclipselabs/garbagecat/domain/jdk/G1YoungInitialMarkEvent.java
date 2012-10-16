@@ -58,7 +58,7 @@ public class G1YoungInitialMarkEvent implements BlockingEvent, CombinedData {
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC pause \\(young\\) \\(initial-mark\\) "
-            + JdkRegEx.SIZE_MB + "->" + JdkRegEx.SIZE_MB + "\\(" + JdkRegEx.SIZE_MB + "\\), "
+            + JdkRegEx.SIZE_JDK7 + "->" + JdkRegEx.SIZE_JDK7 + "\\(" + JdkRegEx.SIZE_JDK7 + "\\), "
             + JdkRegEx.DURATION + "\\]";
     private static final Pattern pattern = Pattern.compile(REGEX);
 
