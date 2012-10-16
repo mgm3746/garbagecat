@@ -87,6 +87,11 @@ public class TestJdkRegEx extends TestCase {
         String size = "A234K";
         Assert.assertFalse("Size is a decimal number.", size.matches(JdkRegEx.SIZE));
     }
+    
+    public void testSizeWithNineTensPlaces() {
+        String size = "129092672K";
+        Assert.assertTrue("'129092672K' is a valid size.", size.matches(JdkRegEx.SIZE));
+    }
 
     public void testDuration7WithCharacter() {
         String duration = "0.02A5213 secs";

@@ -44,7 +44,7 @@ public class JdkRegEx {
      * 
      * For example: 27808K, 16172 K
      */
-    public static final String SIZE = "(\\d{1,8})[ ]?K";
+    public static final String SIZE = "(\\d{1,9})[ ]?K";
 
     /**
      * Kilobyte units identifier.
