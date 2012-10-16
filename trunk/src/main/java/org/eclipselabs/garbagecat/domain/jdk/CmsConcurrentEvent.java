@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.util.regex.Pattern;
+
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -79,6 +81,11 @@ public class CmsConcurrentEvent implements LogEvent {
     private static final String REGEX = "^( CMS: abort preclean due to time )?(" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent.+$";
 
+    /**
+     * RegEx pattern.
+     */
+    private static final Pattern pattern = Pattern.compile(REGEX);
+
     public String getLogEntry() {
         throw new UnsupportedOperationException("Event does not include log entry information");
     }
@@ -99,7 +106,7 @@ public class CmsConcurrentEvent implements LogEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return pattern.matcher(logLine).matches();
     }
 
 }
