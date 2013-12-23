@@ -45,6 +45,18 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 84.335: [GC 84.336: [ParNew: 273152K-&gt;858K(341376K), 0.0030008 secs] 273152K-&gt;858K(980352K), 0.0031183 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
  * </pre>
  * 
+ * <h3>Example Logging with multiple datestamps</h3>
+ * 
+ * <pre>
+ * 2013-12-09T16:18:17.813+0000: 13.086: [GC2013-12-09T16:18:17.813+0000: 13.086: [ParNew: 272640K->33532K(306688K), 0.0381419 secs] 272640K->33532K(1014528K), 0.0383306 secs] [Times: user=0.11 sys=0.02, real=0.04 secs]
+ * </pre>
+ * 
+ * Preprocessed:
+ * 
+ * <pre>
+ * 13.086: [GC 13.086: [ParNew: 272640K->33532K(306688K), 0.0381419 secs] 272640K->33532K(1014528K), 0.0383306 secs] [Times: user=0.11 sys=0.02, real=0.04 secs]
+ * </pre> 
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -68,12 +80,22 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
      *            The log entry.
      */
     public DateStampPrefixPreprocessAction(String logEntry) {
-        Matcher matcher = PATTERN.matcher(logEntry);
-        if (matcher.find()) {
-            String logEntryMinusDateStamp = matcher.group(11);
-            this.logEntry = logEntryMinusDateStamp;
+        Pattern p = Pattern.compile(JdkRegEx.DATESTAMP + ": (" + JdkRegEx.TIMESTAMP + ": )");
+        Matcher matcher = p.matcher(logEntry);
+        StringBuffer sb = new StringBuffer();
+        boolean initialMatch = true;
+        while (matcher.find()){
+            if(initialMatch) {
+                // No whitespace at beginning of log line
+                matcher.appendReplacement(sb, matcher.group(11));
+            } else {                
+                matcher.appendReplacement(sb, " " + matcher.group(11));
+            }
+            initialMatch = false;
         }
-    }
+        matcher.appendTail(sb);
+        this.logEntry = sb.toString();
+        }
 
     public String getLogEntry() {
         return logEntry;

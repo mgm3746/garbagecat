@@ -500,7 +500,7 @@ public class TestJdkUtil extends TestCase {
     }
 
     /**
-     * Test <code>DateStampPreprocessAction</code> with datestamp.
+     * Test <code>DateStampPreprocessAction</code>.
      */
     public void testDateStampPreprocessActionLogging() {
         // TODO: Create File in platform independent way.
@@ -522,11 +522,33 @@ public class TestJdkUtil extends TestCase {
     }
 
     /**
-     * Test <code>DateStampPreprocessAction</code> with datestamp prefix,
+     * Test <code>DateStampPrefixPreprocessAction</code>.
      */
-    public void testDateStampPreprocessActionLoggingDatestampPrefix() {
+    public void testDateStampPrefixPreprocessAction() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset26.txt");
+        GcManager jvmManager = new GcManager();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, 2010);
+        calendar.set(Calendar.MONTH, Calendar.APRIL);
+        calendar.set(Calendar.DAY_OF_MONTH, 16);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        File preprocessedFile = jvmManager.preprocess(testFile, calendar.getTime());
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+    }
+    
+    /**
+     * Test <code>DateStampPrefixPreprocessAction</code> with multiple datestamps.
+     */
+    public void testDateStampPrefixPreprocessActionMultiple() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset33.txt");
         GcManager jvmManager = new GcManager();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 2010);
