@@ -79,4 +79,11 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 1118, event.getDuration());
     }
+    
+    public void testLogLineAfterPreprocessing() {
+        String logLine = "1504.625: [Full GC1504.625: [CMS: 1172695K->840574K(1549164K), 3.7572507 secs] 1301420K->840574K(1855852K), [CMS Perm : 226817K->226813K(376168K)], " +
+        		"3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]";
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 1504625L, event.getTimestamp());
+    }
 }

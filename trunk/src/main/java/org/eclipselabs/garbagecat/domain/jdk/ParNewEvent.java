@@ -59,9 +59,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2010-02-26T08:31:51.990-0600: [GC [ParNew: 150784K-&gt;4291K(169600K), 0.0246670 secs] 150784K-&gt;4291K(1029760K), 0.0247500 secs] [Times: user=0.06 sys=0.01, real=0.02 secs]
  * </pre>
  * 
+ * <p>
+ * 4) After {@link org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction} with no space after GC:
+ * </p>
+ * 
  * <pre>
+ * raw:
  * 2013-12-09T16:18:17.813+0000: 13.086: [GC2013-12-09T16:18:17.813+0000: 13.086: [ParNew: 272640K-&gt;33532K(306688K), 0.0381419 secs] 272640K-&gt;33532K(1014528K), 0.0383306 secs] [Times: user=0.11 sys=0.02, real=0.04 secs]
- * </pre> 
+ * </pre>
+ * 
+ * <pre>
+ * preprocessed:
+ * 84.335: [GC 84.336: [ParNew: 273152K-&gt;858K(341376K), 0.0030008 secs] 273152K-&gt;858K(980352K), 0.0031183 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+ * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
@@ -72,7 +82,7 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC (" + JdkRegEx.TIMESTAMP
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(" + JdkRegEx.TIMESTAMP
             + ": )?\\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
             + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)"
             + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
@@ -130,16 +140,16 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            young = Integer.parseInt(matcher.group(5));
-            youngEnd = Integer.parseInt(matcher.group(6));
-            youngAvailable = Integer.parseInt(matcher.group(7));
-            int totalBegin = Integer.parseInt(matcher.group(9));
+            young = Integer.parseInt(matcher.group(6));
+            youngEnd = Integer.parseInt(matcher.group(7));
+            youngAvailable = Integer.parseInt(matcher.group(8));
+            int totalBegin = Integer.parseInt(matcher.group(10));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(10));
+            int totalEnd = Integer.parseInt(matcher.group(11));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(11));
+            int totalAllocation = Integer.parseInt(matcher.group(12));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(13)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(14)).intValue();
         }
     }
 

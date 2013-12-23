@@ -83,15 +83,8 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
         Pattern p = Pattern.compile(JdkRegEx.DATESTAMP + ": (" + JdkRegEx.TIMESTAMP + ": )");
         Matcher matcher = p.matcher(logEntry);
         StringBuffer sb = new StringBuffer();
-        boolean initialMatch = true;
         while (matcher.find()){
-            if(initialMatch) {
-                // No whitespace at beginning of log line
-                matcher.appendReplacement(sb, matcher.group(11));
-            } else {                
-                matcher.appendReplacement(sb, " " + matcher.group(11));
-            }
-            initialMatch = false;
+            matcher.appendReplacement(sb, matcher.group(11));
         }
         matcher.appendTail(sb);
         this.logEntry = sb.toString();

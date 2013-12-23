@@ -60,6 +60,21 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2.928: [Full GC (System) 2.929: [CMS: 0K-&gt;6501K(8218240K), 0.2525532 secs] 66502K-&gt;6501K(8367360K), [CMS Perm : 16640K-&gt;16623K(524288K)], 0.2527331 secs]
  * </pre>
  * 
+ * <p>
+ * 3) After {@link org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction} with no space after Full GC:
+ * </p>
+ * 
+ * <pre>
+ * raw:
+ * 2013-12-09T16:43:09.366+0000: 1504.625: [Full GC2013-12-09T16:43:09.366+0000: 1504.625: [CMS: 1172695K-&gt;840574K(1549164K), 3.7572507 secs] 1301420K-&gt;840574K(1855852K), [CMS Perm : 226817K-&gt;226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
+
+ * </pre>
+ * 
+ * <pre>
+ * preprocessed:
+ * 1504.625: [Full GC1504.625: [CMS: 1172695K-&gt;840574K(1549164K), 3.7572507 secs] 1301420K-&gt;840574K(1855852K), [CMS Perm : 226817K-&gt;226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
+ * </pre>
+ * 
  * TODO: Extend {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent}.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -130,7 +145,7 @@ public class CmsSerialOldEvent implements BlockingEvent, OldCollection, PermColl
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full GC|Full GC \\(System\\)) "
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full GC|Full GC \\(System\\))( )?"
             + JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]"
@@ -145,19 +160,19 @@ public class CmsSerialOldEvent implements BlockingEvent, OldCollection, PermColl
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            old = Integer.parseInt(matcher.group(4));
-            oldEnd = Integer.parseInt(matcher.group(5));
-            oldAllocation = Integer.parseInt(matcher.group(6));
-            int totalBegin = Integer.parseInt(matcher.group(8));
+            old = Integer.parseInt(matcher.group(5));
+            oldEnd = Integer.parseInt(matcher.group(6));
+            oldAllocation = Integer.parseInt(matcher.group(7));
+            int totalBegin = Integer.parseInt(matcher.group(9));
             young = totalBegin - old;
-            int totalEnd = Integer.parseInt(matcher.group(9));
+            int totalEnd = Integer.parseInt(matcher.group(10));
             youngEnd = totalEnd - oldEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(10));
+            int totalAllocation = Integer.parseInt(matcher.group(11));
             youngAvailable = totalAllocation - oldAllocation;
-            permGen = Integer.parseInt(matcher.group(11));
-            permGenEnd = Integer.parseInt(matcher.group(12));
-            permGenAllocation = Integer.parseInt(matcher.group(13));
-            duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
+            permGen = Integer.parseInt(matcher.group(12));
+            permGenEnd = Integer.parseInt(matcher.group(13));
+            permGenAllocation = Integer.parseInt(matcher.group(14));
+            duration = JdkMath.convertSecsToMillis(matcher.group(16)).intValue();
         }
     }
 

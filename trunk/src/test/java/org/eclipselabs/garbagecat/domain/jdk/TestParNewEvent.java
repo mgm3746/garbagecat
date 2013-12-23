@@ -78,4 +78,11 @@ public class TestParNewEvent extends TestCase {
         ParNewEvent event = new ParNewEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 4687597901L, event.getTimestamp());
     }
+    
+    public void testLogLineAfterPreprocessing() {
+        String logLine = "13.086: [GC13.086: [ParNew: 272640K->33532K(306688K), 0.0381419 secs] 272640K->33532K(1014528K), 0.0383306 secs] " +
+        		"[Times: user=0.11 sys=0.02, real=0.04 secs]";
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 13086L, event.getTimestamp());
+    }
 }
