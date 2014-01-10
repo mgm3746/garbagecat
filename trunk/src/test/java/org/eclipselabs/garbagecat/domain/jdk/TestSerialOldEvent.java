@@ -45,7 +45,7 @@ public class TestSerialOldEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".", SerialOldEvent.match(logLine));
     }
 
-    public void testLogLineJdf16() {
+    public void testLogLineJdk16() {
         String logLine = "2.457: [Full GC (System) 2.457: " + "[Tenured: 1092K->2866K(116544K), 0.0489980 secs] 11012K->2866K(129664K), " + "[Perm : 8602K->8604K(131072K)], 0.0490880 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".", SerialOldEvent.match(logLine));
         SerialOldEvent event = new SerialOldEvent(logLine);
