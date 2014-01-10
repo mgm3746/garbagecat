@@ -85,7 +85,7 @@ public class GcManager {
             throw new IllegalArgumentException("logFile == null!!");
 
         File preprocessFile = new File(logFile.getPath() + ".pp");
-        long lLineCounter = 0;// will be used in statistics in near future
+        long lineCounter = 0;// will be used in statistics in near future
 
         // Preprocess log file
 
@@ -102,7 +102,7 @@ public class GcManager {
 
             String nextLogLine = bufferedReader.readLine();
             while (nextLogLine != null) {
-                lLineCounter++;
+                lineCounter++;
                 preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate);
                 if (preprocessedLogLine != null) {
                     bufferedWriter.write(preprocessedLogLine);
