@@ -96,6 +96,15 @@ public class Main {
 
                 // Do preprocessing
                 if (cmd.hasOption("preprocess")) {
+                    /*
+                     * Requiring the JVM start date/time for preprocessing is a hack to handle datestamps. When
+                     * garbagecat was started there was no <code>-XX:+PrintGCDateStamps</code> option. When it was
+                     * introduced in JDK 1.6 update 4, the easiest thing to do to handle datestamps was to preprocess
+                     * the datestamps and convert them to timestamps.
+                     * 
+                     * TODO: Handle datetimes separately from preprocessing so preprocessing doesn't require passing in
+                     * the JVM start date/time.
+                     */
                     logFile = jvmManager.preprocess(logFile, jvmStartDate);
                 }
 
