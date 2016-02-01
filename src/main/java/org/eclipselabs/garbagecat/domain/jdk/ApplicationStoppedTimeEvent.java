@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -46,9 +47,8 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^Total time for which application threads were "
+    private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": )?Total time for which application threads were "
             + "stopped: \\d{1,4}\\.\\d{7} seconds[ ]*$";
-
     /**
      * RegEx pattern.
      */

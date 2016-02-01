@@ -582,7 +582,7 @@ public class TestJdkUtil extends TestCase {
     }
     
     /**
-     * Test <code>G1PrintGcDetailsPreprocessAction</code>.
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_PAUSE.
      * 
      */
     public void testG1PrintGcDetailsPreprocessActionLogging() {
@@ -593,7 +593,154 @@ public class TestJdkUtil extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE_PREPROCESSED.toString()
-                + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE_PREPROCESSED));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString()
+                + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+    }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_PAUSE Evacuation Pause.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionG1EvaluationPauseLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset34.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString()
+                + ".", jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+    }
+    
+    public void testConvertSizeG1DetailsBytesToSizeG1() {
+        String size = "0.0";
+        char units = 'B';
+        Assert.assertEquals("Bytes not converted to expected format.", "0K",
+                JdkUtil.convertSizeG1DetailsToSizeG1(size, units));
+    }
+
+    public void testConvertSizeG1DetailsKilobytesToSizeG1() {
+        String size = "8192.0";
+        char units = 'K';
+        Assert.assertEquals("Bytes not converted to expected format.", "8192K",
+                JdkUtil.convertSizeG1DetailsToSizeG1(size, units));
+    }
+
+    public void testConvertSizeG1DetailsMegabytesToSizeG1() {
+        String size = "28.0";
+        char units = 'M';
+        Assert.assertEquals("Bytes not converted to expected format.", "28M",
+                JdkUtil.convertSizeG1DetailsToSizeG1(size, units));
+    }
+
+    public void testConvertSizeG1DetailsGigabytesToSizeG1() {
+        String size = "30.0";
+        char units = 'G';
+        Assert.assertEquals("Bytes not converted to expected format.", "30720M",
+                JdkUtil.convertSizeG1DetailsToSizeG1(size, units));
+    }
+    
+    public void testConvertSizeG1DetailsToSizeG1Rounding() {
+        String size = "24.9";
+        char units = 'M';
+        Assert.assertEquals("Bytes not converted to expected format.", "25M",
+                JdkUtil.convertSizeG1DetailsToSizeG1(size, units));
+    }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_PAUSE GCLocker Initiated GC.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionGCLockerInitiatedGCLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset35.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+    }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_FULL_GC.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionG1FullGCLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset36.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
+    }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_INITIAL_MARK.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionYoungInitialMarkLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset37.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK));
+    }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_REMARK.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionRemarkLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset38.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_REMARK));
+    }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_MIXED_PAUSE.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionMixedPauseLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset39.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_MIXED_PAUSE));
+    }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_CLEANUP.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionCleanupLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset40.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CLEANUP));
     }
 }

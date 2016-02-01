@@ -199,7 +199,7 @@ public class GcManager {
             } else if (GcTimeLimitExceededPreprocessAction.match(currentLogLine, priorLogLine)) {
                 GcTimeLimitExceededPreprocessAction action = new GcTimeLimitExceededPreprocessAction(currentLogLine);
                 preprocessedLogLine = action.getLogEntry();
-            } else if (PrintHeapAtGcPreprocessAction.match(currentLogLine)) {
+            } else if (PrintHeapAtGcPreprocessAction.match(currentLogLine, priorLogLine)) {
                 PrintHeapAtGcPreprocessAction action = new PrintHeapAtGcPreprocessAction(currentLogLine);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();

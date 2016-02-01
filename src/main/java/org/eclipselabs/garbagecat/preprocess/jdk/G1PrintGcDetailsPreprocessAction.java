@@ -12,6 +12,9 @@
  ******************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -26,6 +29,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <h3>Example Logging</h3>
+ * 
+ * <p>
+ * 1) Young collection:
+ * </p>
  *
  * <pre>
  * 0.304: [GC pause (young), 0.00376500 secs]
@@ -57,16 +64,41 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  *
  * <p>
- * The summary output after the final GC event:
+ * Preprocessed:
  * </p>
  *
  * <pre>
- * Heap
- *  garbage-first heap   total 60416K, used 6685K [0x00007f9128c00000, 0x00007f912c700000, 0x00007f9162e00000)
- *   region size 1024K, 6 young (6144K), 1 survivors (1024K)
- *  compacting perm gen  total 20480K, used 7323K [0x00007f9162e00000, 0x00007f9164200000, 0x00007f9168000000)
- *    the space 20480K,  35% used [0x00007f9162e00000, 0x00007f9163526df0, 0x00007f9163526e00, 0x00007f9164200000)
- * No shared spaces configured.
+ * 0.304: [GC pause (young), 0.00376500 secs] 8192K->2112K(59M) [Times: user=0.01 sys=0.00, real=0.01 secs]
+ * </pre>
+ * 
+ * <p>
+ * 2) JDK8 G1 Evacuation Pause:
+ * </p>
+ *
+ * <pre>
+ * 2.192: [GC pause (G1 Evacuation Pause) (young)
+ * Desired survivor size 8388608 bytes, new threshold 15 (max 15)
+ * , 0.0209631 secs]
+ *    [Parallel Time: 12.6 ms, GC Workers: 6]
+ *       [GC Worker Start (ms): Min: 2191.9, Avg: 2191.9, Max: 2191.9, Diff: 0.1]
+ *       [Ext Root Scanning (ms): Min: 2.7, Avg: 3.0, Max: 3.5, Diff: 0.8, Sum: 18.1]
+ *       [Update RS (ms): Min: 0.0, Avg: 0.0, Max: 0.1, Diff: 0.1, Sum: 0.1]
+ *          [Processed Buffers: Min: 0, Avg: 8.0, Max: 39, Diff: 39, Sum: 48]
+ *       [Scan RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+ *       [Object Copy (ms): Min: 9.0, Avg: 9.4, Max: 9.8, Diff: 0.8, Sum: 56.7]
+ *       [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+ *       [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.2]
+ *       [GC Worker Total (ms): Min: 12.5, Avg: 12.5, Max: 12.6, Diff: 0.1, Sum: 75.3]
+ *       [GC Worker End (ms): Min: 2204.4, Avg: 2204.4, Max: 2204.4, Diff: 0.0]
+ *    [Code Root Fixup: 0.0 ms]
+ *    [Clear CT: 0.1 ms]
+ *    [Other: 8.2 ms]
+ *       [Choose CSet: 0.0 ms]
+ *       [Ref Proc: 7.9 ms]
+ *       [Ref Enq: 0.1 ms]
+ *       [Free CSet: 0.0 ms]
+ *    [Eden: 128.0M(128.0M)->0.0B(112.0M) Survivors: 0.0B->16.0M Heap: 128.0M(30.0G)->24.9M(30.0G)]
+ *  [Times: user=0.09 sys=0.02, real=0.03 secs]
  * </pre>
  *
  * <p>
@@ -74,7 +106,120 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 0.304: [GC pause (young), 0.00376500 secs] [ 8192K->2112K(59M)] [Times: user=0.01 sys=0.00, real=0.01 secs]
+ * 2.192: [GC pause (G1 Evacuation Pause) (young), 0.0209631 secs] 128.0M->24.9M(30.0G) [Times: user=0.09 sys=0.02, real=0.03 secs]
+ * </pre>
+ * 
+ * <p>
+ * 3) JDK8 GCLocker Initiated GC:
+ * </p>
+ *
+ * <pre>
+ * 5.293: [GC pause (GCLocker Initiated GC) (young)
+ * Desired survivor size 8388608 bytes, new threshold 15 (max 15)
+ * - age   1:    3074480 bytes,    3074480 total
+ * , 0.0176868 secs]
+ *    [Parallel Time: 9.3 ms, GC Workers: 6]
+ *       [GC Worker Start (ms): Min: 5292.9, Avg: 5293.0, Max: 5293.0, Diff: 0.0]
+ *       [Ext Root Scanning (ms): Min: 3.1, Avg: 3.9, Max: 4.4, Diff: 1.2, Sum: 23.2]
+ *       [Update RS (ms): Min: 0.2, Avg: 0.6, Max: 1.0, Diff: 0.8, Sum: 3.8]
+ *          [Processed Buffers: Min: 1, Avg: 3.2, Max: 6, Diff: 5, Sum: 19]
+ *       [Scan RS (ms): Min: 0.1, Avg: 0.2, Max: 0.4, Diff: 0.3, Sum: 1.5]
+ *       [Object Copy (ms): Min: 4.2, Avg: 4.5, Max: 4.8, Diff: 0.6, Sum: 26.9]
+ *       [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+ *       [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+ *       [GC Worker Total (ms): Min: 9.2, Avg: 9.2, Max: 9.3, Diff: 0.0, Sum: 55.5]
+ *       [GC Worker End (ms): Min: 5302.2, Avg: 5302.2, Max: 5302.2, Diff: 0.0]
+ *    [Code Root Fixup: 0.0 ms]
+ *    [Clear CT: 0.1 ms]
+ *    [Other: 8.3 ms]
+ *       [Choose CSet: 0.0 ms]
+ *       [Ref Proc: 8.0 ms]
+ *       [Ref Enq: 0.1 ms]
+ *       [Free CSet: 0.0 ms]
+ *    [Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: 415.0M(30.0G)->313.0M(30.0G)]
+ *  [Times: user=0.01 sys=0.00, real=0.02 secs]
+ * </pre>
+ *
+ * <p>
+ * Preprocessed:
+ * </p>
+ *
+ * <pre>
+ * 5.293: [GC pause (GCLocker Initiated GC) (young), 0.0176868 secs] 415M->313M(30720M) [Times: user=0.01 sys=0.00, real=0.02 secs]
+ * </pre>
+ * 
+ * <p>
+ * 4) JDK8 Remark:
+ * </p>
+ *
+ * <pre>
+ * 2971.469: [GC remark 2972.470: [GC ref-proc, 0.1656600 secs]
+ *  [Times: user=0.22 sys=0.00, real=0.22 secs]
+ * </pre>
+ *
+ * <p>
+ * Preprocessed:
+ * </p>
+ *
+ * <pre>
+ * 2971.469: [GC remark, 0.2274544 secs] [Times: user=0.22 sys=0.00, real=0.22 secs]
+ * </pre>
+ * 
+ *  * <p>
+ * 5) JDK8 Mixed Pause:
+ * </p>
+ *
+ * <pre>
+ * 2973.338: [GC pause (G1 Evacuation Pause) (mixed)
+ * Desired survivor size 8388608 bytes, new threshold 15 (max 15)
+ * - age   1:    1228792 bytes,    1228792 total
+ * - age   2:    3465472 bytes,    4694264 total
+ * - age   3:      61528 bytes,    4755792 total
+ * - age   4:    1792320 bytes,    6548112 total
+ * - age   5:    1095352 bytes,    7643464 total
+ * , 0.0457502 secs]
+ *    [Parallel Time: 41.1 ms, GC Workers: 6]
+ *       [GC Worker Start (ms): Min: 2973338.2, Avg: 2973338.2, Max: 2973338.3, Diff: 0.0]
+ *       [Ext Root Scanning (ms): Min: 21.6, Avg: 25.5, Max: 29.1, Diff: 7.5, Sum: 153.0]
+ *       [Update RS (ms): Min: 0.0, Avg: 2.7, Max: 6.5, Diff: 6.5, Sum: 15.9]
+ *          [Processed Buffers: Min: 0, Avg: 17.5, Max: 39, Diff: 39, Sum: 105]
+ *       [Scan RS (ms): Min: 1.3, Avg: 5.1, Max: 6.2, Diff: 4.8, Sum: 30.6]
+ *       [Object Copy (ms): Min: 6.8, Avg: 7.8, Max: 11.3, Diff: 4.5, Sum: 46.6]
+ *       [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+ *       [GC Worker Other (ms): Min: 0.0, Avg: 0.1, Max: 0.1, Diff: 0.1, Sum: 0.3]
+ *       [GC Worker Total (ms): Min: 41.1, Avg: 41.1, Max: 41.1, Diff: 0.0, Sum: 246.5]
+ *       [GC Worker End (ms): Min: 2973379.3, Avg: 2973379.3, Max: 2973379.3, Diff: 0.0]
+ *    [Code Root Fixup: 0.0 ms]
+ *    [Clear CT: 1.9 ms]
+ *    [Other: 2.7 ms]
+ *       [Choose CSet: 0.2 ms]
+ *       [Ref Proc: 0.2 ms]
+ *       [Ref Enq: 0.0 ms]
+ *       [Free CSet: 1.9 ms]
+ *    [Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: 12.9G(30.0G)->11.3G(30.0G)]
+ *  [Times: user=0.19 sys=0.00, real=0.05 secs]
+ *
+ * <p>
+ * Preprocessed:
+ * </p>
+ *
+ * <pre>
+ * 2971.469: [GC remark, 0.2274544 secs] [Times: user=0.22 sys=0.00, real=0.22 secs]
+ * </pre>
+ * 
+ * 6) JDK8 GC Cleanup:
+ * </p>
+ *
+ * <pre>
+ * 2972.698: [GC cleanup 13G->12G(30G), 0.0358748 secs]
+ *  [Times: user=0.19 sys=0.00, real=0.03 secs]
+ *
+ * <p>
+ * Preprocessed:
+ * </p>
+ *
+ * <pre>
+ * 2972.698: [GC cleanup 13G->12G(30G), 0.0358748 secs] [Times: user=0.19 sys=0.00, real=0.03 secs]
  * </pre>
  *
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -83,16 +228,57 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
 
     /**
-     * Regular expression for retained beginning.
+     * Regular expression for retained beginning YoungPause collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause \\(young\\), "
-            + JdkRegEx.DURATION + "\\]$";
+    private static final String REGEX_RETAIN_BEGINNING_YOUNG = "^" + JdkRegEx.TIMESTAMP
+            + ": \\[GC pause( \\((G1 Evacuation Pause|GCLocker Initiated GC)\\))? \\(young\\)( \\(initial-mark\\))?(, "
+            + JdkRegEx.DURATION + "\\])?$";
 
     /**
-     * Regular expression for retained middle.
+     * Regular expression for retained beginning FullGC collection.
      */
-    private static final String REGEX_RETAIN_MIDDLE = "^   \\[ " + JdkRegEx.SIZE_JDK7 + "->" + JdkRegEx.SIZE_JDK7
-            + "\\(" + JdkRegEx.SIZE_JDK7 + "\\)]$";
+    private static final String REGEX_RETAIN_BEGINNING_FULL = "^" + JdkRegEx.TIMESTAMP
+            + ": \\[Full GC \\(System.gc\\(\\)\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
+            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]$";
+    
+    /**
+     * Regular expression for retained beginning Remark collection.
+     */
+    private static final String REGEX_RETAIN_BEGINNING_REMARK = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC remark) "
+            + JdkRegEx.TIMESTAMP + ": \\[GC ref-proc, " + JdkRegEx.DURATION + "\\](, " + JdkRegEx.DURATION + "\\])$";
+    
+    /**
+     * Regular expression for retained beginning Mixed collection.
+     */
+    private static final String REGEX_RETAIN_BEGINNING_MIXED = "^" + JdkRegEx.TIMESTAMP
+            + ": \\[GC pause \\(G1 Evacuation Pause\\) \\(mixed\\)$";
+    
+    /**
+     * Regular expression for retained beginning Cleanup collection.
+     */
+    private static final String REGEX_RETAIN_BEGINNING_CLEANUP = "^" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup "
+            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION
+            + "\\]$";
+
+    /**
+     * Regular expression for retained middle YoungPause collection.
+     */
+    private static final String REGEX_RETAIN_MIDDLE_YOUNG = "^   \\[( " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1
+            + "\\(" + JdkRegEx.SIZE_G1 + "\\))\\]$";
+
+    /**
+     * Regular expression for retained middle JDK8.
+     */
+    private static final String REGEX_RETAIN_MIDDLE_JDK8 = "^   \\[Eden: " + JdkRegEx.SIZE_G1_DETAILS + "\\("
+            + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS
+            + "\\) Survivors: " + JdkRegEx.SIZE_G1_DETAILS + "->" + JdkRegEx.SIZE_G1_DETAILS + " Heap: "
+            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\("
+            + JdkRegEx.SIZE_G1_DETAILS + "\\)\\]$";
+
+    /**
+     * Regular expression for retained middle duration.
+     */
+    private static final String REGEX_RETAIN_MIDDLE_DURATION = "^, " + JdkRegEx.DURATION + "\\]$";
 
     /**
      * Regular expression for retained end.
@@ -103,50 +289,52 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
      * Regular expressions for lines thrown away.
      */
     private static final String[] REGEX_THROWAWAY = {
-            //
+
             "^   \\[Parallel Time:.+$",
+            // JDK8 does not have "Time"
+            "^      \\[GC Worker Start( Time)? \\(ms\\):.+$",
             //
-            "^      \\[GC Worker Start Time \\(ms\\):.+$",
+            "^      \\[Ext Root Scanning \\(ms\\):.+$",
+            //
+            "^      \\[SATB Filtering \\(ms\\):.+",
             //
             "^      \\[Update RS \\(ms\\):.+$",
-            //
-            "^       Avg:.+$",
-            //
-            "^         \\[Processed Buffers :.+$",
-            //
-            "^          Sum:.+$",
-            //
-            "      \\[Ext Root Scanning \\(ms\\):.+$",
-            //
-            "^      \\[Mark Stack Scanning \\(ms\\):.+$",
+            // Earlier JDKs appear to have a superfluous space
+            "^         \\[Processed Buffers( )?:.+$",
             //
             "^      \\[Scan RS \\(ms\\):.+$",
             //
-            "^      \\[Object Copy \\(ms\\).+$",
+            "^      \\[Object Copy \\(ms\\):.+$",
             //
             "^      \\[Termination \\(ms\\):.+$",
             //
-            "^         \\[Termination Attempts :.+$",
+            "^      \\[GC Worker Other \\(ms\\):.+$",
             //
-            "^      \\[GC Worker End Time \\(ms\\):.+$",
+            "^      \\[GC Worker Total \\(ms\\):.+$",
+            // JDK8 does not have "Time"
+            "^      \\[GC Worker End( Time)? \\(ms\\):.+$",
             //
-            "^([ ]{3}|[ ]{6})\\[Other:.+$",
+            "^   \\[Code Root Fixup:.+$",
             //
             "^   \\[Clear CT:.+$",
+            // JDK8 has 3 leading spaces
+            "^   (   )?\\[Other:.+$",
             //
             "^      \\[Choose CSet:.+$",
             //
-            "^Heap$",
+            "^      \\[Ref Proc:.+$",
             //
-            "^ garbage-first heap   total.+$",
+            "^      \\[Ref Enq:.+$",
             //
-            "^  region size .+$",
+            "^      \\[Free CSet:.+$",
             //
-            "^ compacting perm gen  total.+$",
+            "^          Sum:.+$",
             //
-            "^   the space.+$",
+            "^      \\[Mark Stack Scanning \\(ms\\):.+$",
             //
-            "^No shared spaces configured\\.$" };
+            "^         \\[Termination Attempts :.+$",
+            //
+            "^       Avg:.+$" };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -162,12 +350,43 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
      *            The next log line.
      */
     public G1PrintGcDetailsPreprocessAction(String logEntry, String nextLogEntry) {
-        if (logEntry.matches(REGEX_RETAIN_BEGINNING) || logEntry.matches(REGEX_RETAIN_MIDDLE)
-                || logEntry.matches(REGEX_RETAIN_END)) {
+        if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG) || logEntry.matches(REGEX_RETAIN_BEGINNING_FULL)
+                || logEntry.matches(REGEX_RETAIN_BEGINNING_MIXED) || logEntry.matches(REGEX_RETAIN_BEGINNING_CLEANUP)) {
             this.logEntry = logEntry;
-        }
-        if (logEntry.matches(REGEX_RETAIN_END)) {
-            this.logEntry = this.logEntry + System.getProperty("line.separator");
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_REMARK)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_REMARK);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1) + matcher.group(5);
+            }
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_YOUNG)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_YOUNG);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_JDK8)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_JDK8);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                // For now put logging in standard G1 form (K and M). If standard logging one day has B, G, or
+                // decimals, we would want to remove this from preprocessing and expand the normal handling to account
+                // for decimals, bytes, and/or gigabytes.
+                this.logEntry = " ";
+                this.logEntry = this.logEntry
+                        + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(13), matcher.group(14).charAt(0));
+                this.logEntry = this.logEntry + "->";
+                this.logEntry = this.logEntry
+                        + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(17), matcher.group(18).charAt(0));
+                this.logEntry = this.logEntry + "(";
+                this.logEntry = this.logEntry
+                        + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(19), matcher.group(20).charAt(0));
+                this.logEntry = this.logEntry + ")";
+            }
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_DURATION)) {
+            this.logEntry = logEntry;
+        } else if (logEntry.matches(REGEX_RETAIN_END)) {
+            this.logEntry = logEntry + System.getProperty("line.separator");
         }
     }
 
@@ -184,11 +403,16 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
      *
      * @param logLine
      *            The log line to test.
+     * @param priorLogLine
+     *            The last log entry processed.
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        if (logLine.matches(REGEX_RETAIN_BEGINNING) || logLine.matches(REGEX_RETAIN_MIDDLE)
+        if (logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG) || logLine.matches(REGEX_RETAIN_BEGINNING_FULL)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_REMARK) || logLine.matches(REGEX_RETAIN_BEGINNING_MIXED)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_CLEANUP) || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_JDK8) || logLine.matches(REGEX_RETAIN_MIDDLE_DURATION)
                 || logLine.matches(REGEX_RETAIN_END)) {
             match = true;
         } else {
@@ -201,5 +425,4 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
         }
         return match;
     }
-
 }

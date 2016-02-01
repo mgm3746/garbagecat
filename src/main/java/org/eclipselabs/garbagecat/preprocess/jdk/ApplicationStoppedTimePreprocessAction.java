@@ -25,13 +25,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * Combined {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} and
- * {@link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent} split across 2 lines. Split into separate
- * events. Appears to happen when the JVM is under stress with low throughput. It could be a JVM bug.
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent}
+ * split across 2 lines. Split into separate events. Appears to happen when the
+ * JVM is under stress with low throughput. It could be a JVM bug.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
- * <h4>{@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} on second line:</h4>
+ * <h4>{@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} on
+ * second line:</h4>
  * 
  * <pre>
  * 6545.692Total time for which application threads were stopped: 0.0007993 seconds
@@ -45,7 +47,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 6545.692: [CMS-concurrent-abortable-preclean: 0.025/0.042 secs] [Times: user=0.04 sys=0.00, real=0.04 secs]
  * </pre>
  * 
- * <h4>{@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} on first line:</h4>
+ * <h4>{@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} on first
+ * line:</h4>
  * 
  * <pre>
  * 234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for which application threads were stopped: 0.0123330 seconds
@@ -93,7 +96,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
             this.logEntry = logEntry;
             // Split line1 logging apart
             if (matcher.group(6) != null) {
-                this.logEntry = matcher.group(6) + "\n";
+                this.logEntry = matcher.group(6) + System.getProperty("line.separator");
                 if (matcher.group(1) != null) {
                     this.logEntry = this.logEntry + matcher.group(1);
                 }
@@ -125,7 +128,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine) {
-        return (PATTERN1.matcher(logLine).matches() || (PATTERN2.matcher(logLine).matches() && PATTERN1.matcher(
-                priorLogLine).matches()));
+        return (PATTERN1.matcher(logLine).matches()
+                || (PATTERN2.matcher(logLine).matches() && PATTERN1.matcher(priorLogLine).matches()));
     }
 }

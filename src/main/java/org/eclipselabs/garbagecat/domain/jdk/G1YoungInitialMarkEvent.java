@@ -48,6 +48,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2010-02-26T08:31:51.990-0600: [GC pause (young) (initial-mark) 102M->24M(512M), 0.0254200 secs]
  * </pre>
  * 
+ * <p>
+ * 3) Preprocessed:
+ * </p>
+ * 
+ * <pre>
+ * 2970.268: [GC pause (G1 Evacuation Pause) (young) (initial-mark), 0.0698627 secs] 13926M->13824M(30720M) [Times: user=0.28 sys=0.00, real=0.08 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
  * 
@@ -57,11 +65,26 @@ public class G1YoungInitialMarkEvent implements BlockingEvent, CombinedData {
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC pause \\(young\\) \\(initial-mark\\) "
-            + JdkRegEx.SIZE_JDK7 + "->" + JdkRegEx.SIZE_JDK7 + "\\(" + JdkRegEx.SIZE_JDK7 + "\\), "
-            + JdkRegEx.DURATION + "\\]";
+            + ": \\[GC pause \\(young\\) \\(initial-mark\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
+            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    
+    /**
+     * Regular expression preprocessed.
+     */
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP
+            + ": \\[GC pause \\(G1 Evacuation Pause\\) \\(young\\) \\(initial-mark\\), " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)" + JdkRegEx.TIMES_BLOCK
+            + "?[ ]*$";
+    
+    /**
+     * Pattern standard format.
+     */
     private static final Pattern pattern = Pattern.compile(REGEX);
 
+    /**
+     * Pattern preprocessed.
+     */
+    private static final Pattern patternPreprocessed = Pattern.compile(REGEX_PREPROCESSED);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -101,11 +124,23 @@ public class G1YoungInitialMarkEvent implements BlockingEvent, CombinedData {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
+            // standard format
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            combined = Integer.parseInt(matcher.group(13)) * 1024;
-            combinedEnd = Integer.parseInt(matcher.group(14)) * 1024;
-            combinedAvailable = Integer.parseInt(matcher.group(15)) * 1024;
-            duration = JdkMath.convertSecsToMillis(matcher.group(16)).intValue();
+            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(14).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
+            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), matcher.group(18).charAt(0));
+            duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+        } else {
+            // preprocessed format
+            matcher = patternPreprocessed.matcher(logEntry);
+            if (matcher.find()) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(3)), matcher.group(4).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(6).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)),
+                        matcher.group(8).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(2)).intValue();
+            }
         }
     }
 
@@ -157,6 +192,6 @@ public class G1YoungInitialMarkEvent implements BlockingEvent, CombinedData {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return logLine.matches(REGEX) || logLine.matches(REGEX_PREPROCESSED);
     }
 }

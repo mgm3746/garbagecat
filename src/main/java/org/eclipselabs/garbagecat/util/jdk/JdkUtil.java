@@ -38,7 +38,6 @@ import org.eclipselabs.garbagecat.domain.jdk.G1MixedPause;
 import org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungPause;
-import org.eclipselabs.garbagecat.domain.jdk.G1YoungPausePreprocessedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent;
@@ -86,8 +85,7 @@ public class JdkUtil {
         CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE, CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK,
         CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD,
         SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED,
-        G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
-        G1_YOUNG_PAUSE_PREPROCESSED
+        G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC
     };
 
     /**
@@ -187,9 +185,7 @@ public class JdkUtil {
         if (G1FullGCEvent.match(logLine))
             return LogEventType.G1_FULL_GC;
         if (G1CleanupEvent.match(logLine))
-            return LogEventType.G1_CLEANUP;
-        if (G1YoungPausePreprocessedEvent.match(logLine))
-            return LogEventType.G1_YOUNG_PAUSE_PREPROCESSED;        
+            return LogEventType.G1_CLEANUP;            
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -313,10 +309,7 @@ public class JdkUtil {
             break;
         case G1_FULL_GC:
             event = new G1FullGCEvent(logLine);
-            break;
-        case G1_YOUNG_PAUSE_PREPROCESSED:
-            event = new G1YoungPausePreprocessedEvent(logLine);
-            break;            
+            break;                     
         case UNKNOWN:
             event = new UnknownEvent(logLine);
             break;
@@ -435,9 +428,6 @@ public class JdkUtil {
             break;
         case G1_FULL_GC:
             event = new G1FullGCEvent(logEntry, timestamp, duration);
-            break;
-        case G1_YOUNG_PAUSE_PREPROCESSED:
-            event = new G1YoungPausePreprocessedEvent(logEntry, timestamp, duration);
             break;            
         default:
             throw new AssertionError("Unexpected event type value: " + eventType + ": " + logEntry);
@@ -592,5 +582,49 @@ public class JdkUtil {
             }
         }
         return value;
+    }
+    
+    /**
+     * Convert {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1_DETAILS} to
+     * {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1}.
+     * 
+     * @param size
+     *            The size in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1_DETAILS} format (e.g.
+     *            '128.0').
+     * @param units
+     *            The units in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1_DETAILS} format (e.g.
+     *            'G').
+     * @return The size block in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1} format (e.g.
+     *         '131072M').
+     */
+    public static String convertSizeG1DetailsToSizeG1(final String size, final char units) {
+
+        BigDecimal sizeG1 = new BigDecimal(size);
+        char unitsG1;
+
+        switch (units) {
+
+        case 'B':
+            // Convert to K
+            sizeG1 = sizeG1.divide(new BigDecimal("1024"));
+            unitsG1 = 'K';
+            break;
+        case 'K':
+            unitsG1 = 'K';
+            break;
+        case 'M':
+            unitsG1 = 'M';
+            break;
+        case 'G':
+            // Convert to M
+            sizeG1 = sizeG1.multiply(new BigDecimal("1024"));
+            unitsG1 = 'M';
+            break;
+        default:
+            throw new AssertionError("Unexpected units value: " + units);
+
+        }
+        sizeG1 = sizeG1.setScale(0, RoundingMode.HALF_EVEN);
+        return Integer.toString(sizeG1.intValue()) + unitsG1;
     }
 }

@@ -108,4 +108,26 @@ public class JdkMath {
         throughput = throughput.movePointRight(2);
         return throughput.intValue();
     }
+    
+    /**
+     * Calculate size in kilobytes.
+     * 
+     * @param size
+     *            Size block value.
+     * @param units
+     *            Size block units.
+     * @return The size in Kilobytes.
+     */
+    public static int calcKilobytes(final int size, final char units) {
+        int kilobytes = size;
+        switch (units) {
+        case 'M':
+            kilobytes = kilobytes * 1024;
+            break;
+        case 'G':
+            kilobytes = kilobytes * 1024 * 1024;
+            break;
+        }
+        return kilobytes;
+    }  
 }

@@ -180,7 +180,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * }
  *</pre>
  * 
- * 
  * <p>
  * 6) With Class Data Sharing (CDS) information:
  * </p>
@@ -197,6 +196,28 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *    the space 262144K,  24% used [0x00002aab7aab0000, 0x00002aab7ea7f138, 0x00002aab7ea7f200, 0x00002aab8aab0000)
  * No shared spaces configured.
  * }
+ * </pre>
+ * 
+ * <p>
+ * 7) G1 collector verbose:
+ * </p>
+ * 
+ * <pre>
+ * Heap
+ *  garbage-first heap   total 60416K, used 6685K [0x00007f9128c00000, 0x00007f912c700000, 0x00007f9162e00000)
+ *   region size 1024K, 6 young (6144K), 1 survivors (1024K)
+ *  compacting perm gen  total 20480K, used 7323K [0x00007f9162e00000, 0x00007f9164200000, 0x00007f9168000000)
+ *    the space 20480K,  35% used [0x00007f9162e00000, 0x00007f9163526df0, 0x00007f9163526e00, 0x00007f9164200000)
+ * No shared spaces configured.
+ * </pre>
+ * 
+ * <p>
+ * 8) G1 collector minimized output:
+ * </p>
+ * 
+ * <pre>
+ *  garbage-first heap   total 60416K, used 6685K [0x00007f9128c00000, 0x00007f912c700000, 0x00007f9162e00000)
+ *   region size 1024K, 6 young (6144K), 1 survivors (1024K)
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -229,13 +250,31 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
      * Regular expressions for lines or parts of lines thrown away.
      */
     private static final String[] REGEX_THROWAWAY = {
+            //
             "^ (PSYoungGen|PSOldGen|ParOldGen|PSPermGen)[ ]+total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + ".+$",
+            //
             "^ (par new generation|concurrent mark-sweep generation|concurrent-mark-sweep perm gen"
                     + "|tenured generation|compacting perm gen)" + "[ ]+total " + JdkRegEx.SIZE + ", used "
                     + JdkRegEx.SIZE + ".+$",
-            "^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$", "^}$",
+            //
+            "^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$",
+            //
+            "^}$",
+            //
             "^\\{Heap before GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$",
-            "^Heap after GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$", "No shared spaces configured." };
+            //
+            "^Heap after GC invocations=\\d{1,10} \\(full \\d{1,10}\\):$",
+            //
+            "No shared spaces configured.",
+            //
+            "^Heap$",
+            //
+            "^ garbage-first heap   total.+$",
+            //
+            "^  region size .+$",
+            //
+            "^  the space.+$" };
+    
     private static final Pattern PATTERN_THROWAWAY[] = new Pattern[REGEX_THROWAWAY.length];
     
     static {
@@ -275,7 +314,7 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
         if (!retainBeginning) {
             matcher = PATTERN_END.matcher(logEntry);
             if (matcher.find()) {
-                this.logEntry = logEntry + "\n";
+                this.logEntry = logEntry + System.getProperty("line.separator");;
             }
         }
     }
@@ -293,9 +332,11 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
      * 
      * @param logLine
      *            The log line to test.
+     * @param priorLogLine
+     *            The last log entry processed.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
+    public static final boolean match(String logLine, String priorLogLine) {
         for (int i = 0; i < PATTERN_THROWAWAY.length; i++) {
             if (PATTERN_THROWAWAY[i].matcher(logLine).matches()) {
                 return true;
@@ -306,6 +347,6 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
                 return true;
             }
         }
-        return PATTERN_END.matcher(logLine).matches();
+        return PATTERN_END.matcher(logLine).matches() && match(priorLogLine, null);
     }
 }

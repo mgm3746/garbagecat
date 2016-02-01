@@ -55,13 +55,30 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class G1MixedPause implements BlockingEvent, CombinedData {
 
     /**
-     * Regular expressions defining the logging.
+     * Regular expression standard format.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC pause \\(mixed\\) "
-            + JdkRegEx.SIZE_JDK7 + "->" + JdkRegEx.SIZE_JDK7 + "\\(" + JdkRegEx.SIZE_JDK7 + "\\), "
-            + JdkRegEx.DURATION + "\\]";
+            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    
+    /**
+     * Regular expression preprocessed.
+     */
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP
+            + ": \\[GC pause \\(G1 Evacuation Pause\\) \\(mixed\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_G1
+            + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    
+    /**
+     * Pattern standard format.
+     */
     private static final Pattern pattern = Pattern.compile(REGEX);
+
+    /**
+     * Pattern preprocessed.
+     */
+    private static final Pattern patternPreprocessed = Pattern.compile(REGEX_PREPROCESSED);
+    
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -99,11 +116,24 @@ public class G1MixedPause implements BlockingEvent, CombinedData {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
+            // standard format
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            combined = Integer.parseInt(matcher.group(13)) * 1024;
-            combinedEnd = Integer.parseInt(matcher.group(14)) * 1024;
-            combinedAvailable = Integer.parseInt(matcher.group(15)) * 1024;
-            duration = JdkMath.convertSecsToMillis(matcher.group(16)).intValue();
+            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(14).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
+            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), 
+                    matcher.group(18).charAt(0));
+            duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+        } else {
+            // preprocessed format
+            matcher = patternPreprocessed.matcher(logEntry);
+            if (matcher.find()) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(3)), matcher.group(4).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(6).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)),
+                        matcher.group(8).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(2)).intValue();
+            }
         }
     }
 
@@ -156,6 +186,6 @@ public class G1MixedPause implements BlockingEvent, CombinedData {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return logLine.matches(REGEX) || logLine.matches(REGEX_PREPROCESSED);
     }
 }

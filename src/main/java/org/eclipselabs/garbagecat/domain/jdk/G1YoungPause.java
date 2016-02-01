@@ -1,14 +1,8 @@
 /******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2012 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
+ * Garbage Cat * * Copyright (c) 2008-2012 Red Hat, Inc. * All rights reserved. This program and the accompanying
+ * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
+ * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
+ * initial API and implementation *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
@@ -49,6 +43,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2010-02-26T08:31:51.990-0600: [GC pause (young) 102M->24M(512M), 0.0254200 secs]
  * </pre>
  * 
+ * <p>
+ * 3) After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction}:
+ * </p>
+ * 
+ * <pre>
+ * 1.807: [GC pause (young), 0.00290200 secs] 29M->2589K(59M) [Times: user=0.01 sys=0.00, real=0.01 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
  * 
@@ -56,12 +58,30 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedData {
 
     /**
-     * Regular expressions defining the logging.
+     * Regular expression standard format.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC pause \\(young\\) " + JdkRegEx.SIZE_JDK7 + "->" + JdkRegEx.SIZE_JDK7 + "\\("
-            + JdkRegEx.SIZE_JDK7 + "\\), " + JdkRegEx.DURATION + "\\]";
+            + ": \\[GC pause \\(young\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
+            + "\\), " + JdkRegEx.DURATION + "\\]";
+
+    /**
+     * Regular expression preprocessed.
+     */
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP
+            + ": \\[GC pause( \\((G1 Evacuation Pause|GCLocker Initiated GC)\\))? \\(young\\), " + JdkRegEx.DURATION
+            + "\\] " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+
+    /**
+     * Pattern standard format.
+     */
     private static final Pattern pattern = Pattern.compile(REGEX);
+
+    /**
+     * Pattern preprocessed.
+     */
+    private static final Pattern patternPreprocessed = Pattern.compile(REGEX_PREPROCESSED);
+
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -99,20 +119,24 @@ public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedDat
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
+            // standard format
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            combined = Integer.parseInt(matcher.group(13));
-            if (matcher.group(14).equals(JdkRegEx.MEGABYTES)) {
-                combined = combined * 1024;
-            }
-            combinedEnd = Integer.parseInt(matcher.group(15));
-            if (matcher.group(16).equals(JdkRegEx.MEGABYTES)) {
-                combinedEnd = combinedEnd * 1024;
-            }
-            combinedAvailable = Integer.parseInt(matcher.group(17));
-            if (matcher.group(18).equals(JdkRegEx.MEGABYTES)) {
-                combinedAvailable = combinedAvailable * 1024;
-            }
+            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(14).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
+            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), 
+                    matcher.group(18).charAt(0));
             duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+        } else {
+            // preprocessed format
+            matcher = patternPreprocessed.matcher(logEntry);
+            if (matcher.find()) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(6).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(8).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)),
+                        matcher.group(10).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(4)).intValue();
+            }
         }
     }
 
@@ -165,6 +189,6 @@ public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedDat
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return logLine.matches(REGEX) || logLine.matches(REGEX_PREPROCESSED);
     }
 }

@@ -1,14 +1,8 @@
 /******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2012 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
+ * Garbage Cat * * Copyright (c) 2008-2012 Red Hat, Inc. * All rights reserved. This program and the accompanying
+ * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
+ * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
+ * initial API and implementation *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
@@ -56,9 +50,9 @@ public class G1RemarkEvent implements BlockingEvent {
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC remark, "
-            + JdkRegEx.DURATION + "\\]";
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    
     private static final Pattern pattern = Pattern.compile(REGEX);
-
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -74,7 +68,6 @@ public class G1RemarkEvent implements BlockingEvent {
      * The time when the GC event happened in milliseconds after JVM startup.
      */
     private long timestamp;
-
 
     /**
      * Create detail logging event from log entry.
@@ -120,7 +113,8 @@ public class G1RemarkEvent implements BlockingEvent {
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
      * 
-     * @param logLine The log line to test.
+     * @param logLine
+     *            The log line to test.
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {

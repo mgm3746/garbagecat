@@ -1,7 +1,7 @@
 /******************************************************************************
  * Garbage Cat                                                                *
  *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
+ * Copyright (c) 2008-2012 Red Hat, Inc.                                      *
  * All rights reserved. This program and the accompanying materials           *
  * are made available under the terms of the Eclipse Public License v1.0      *
  * which accompanies this distribution, and is available at                   *
@@ -27,7 +27,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * G1 collector Full GC event. 
+ * G1 collector Full GC event.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -48,6 +48,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2010-02-26T08:31:51.990-0600: [Full GC (System.gc()) 2270M->2038M(3398M), 5.8360430 secs]
  * </pre>
  * 
+ * <p>
+ * 3) After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction}:
+ * </p>
+ * 
+ * <pre>
+ * 105.151: [Full GC (System.gc()) 5820M->1381M(30G), 5.5390169 secs] 5820M->1382M(30720M) [Times: user=5.76 sys=1.00, real=5.53 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
  * 
@@ -58,9 +66,10 @@ public class G1FullGCEvent implements BlockingEvent, CombinedData {
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[Full GC \\((.+?)\\) "
-            + JdkRegEx.SIZE_JDK7 + "->" + JdkRegEx.SIZE_JDK7 + "\\(" + JdkRegEx.SIZE_JDK7 + "\\), "
-            + JdkRegEx.DURATION + "\\]";
+            + ": \\[Full GC \\((.+?)\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
+            + "\\), " + JdkRegEx.DURATION + "\\]( " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
+            + JdkRegEx.SIZE_G1 + "\\))?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    
     private static final Pattern pattern = Pattern.compile(REGEX);
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -106,10 +115,11 @@ public class G1FullGCEvent implements BlockingEvent, CombinedData {
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             trigger = matcher.group(13);
-            combined = Integer.parseInt(matcher.group(14)) * 1024;
-            combinedEnd = Integer.parseInt(matcher.group(15)) * 1024;
-            combinedAvailable = Integer.parseInt(matcher.group(16)) * 1024;
-            duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
+            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(14)), matcher.group(15).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(17).charAt(0));
+            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)), 
+                    matcher.group(19).charAt(0));
+            duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
         }
     }
 

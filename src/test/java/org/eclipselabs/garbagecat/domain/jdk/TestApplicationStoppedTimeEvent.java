@@ -32,4 +32,9 @@ public class TestApplicationStoppedTimeEvent extends TestCase {
         String logLine = "Total time for which application threads were stopped: 0.0968457 seconds  ";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".", ApplicationStoppedTimeEvent.match(logLine));
     }
+    
+    public void testLogLineJdk8() {
+        String logLine = "1.977: Total time for which application threads were stopped: 0.0002054 seconds";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".", ApplicationStoppedTimeEvent.match(logLine));
+    }
 }

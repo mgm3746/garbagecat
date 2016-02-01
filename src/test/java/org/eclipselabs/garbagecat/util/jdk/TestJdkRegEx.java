@@ -172,4 +172,24 @@ public class TestJdkRegEx extends TestCase {
         String timesBlock = " [Times: user=2889.80 sys=2.42, real=2891.01 secs]";
         Assert.assertTrue("'" + timesBlock + "' " + "is a valid times block.", timesBlock.matches(JdkRegEx.TIMES_BLOCK));
     }
+    
+    public void testSizeG1Bytes() {
+        String size = "0.0B";
+        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_DETAILS));
+    }
+    
+    public void testSizeG1Kilobytes() {
+        String size = "8192.0K";
+        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_DETAILS));
+    }
+    
+    public void testSizeG1Megabytes() {
+        String size = "28.0M";
+        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_DETAILS));
+    }
+    
+    public void testSizeG1Gigaytes() {
+        String size = "30.0G";
+        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_DETAILS));
+    }
 }

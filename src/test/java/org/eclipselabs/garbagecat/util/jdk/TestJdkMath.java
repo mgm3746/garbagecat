@@ -72,5 +72,17 @@ public class TestJdkMath extends TestCase {
         long duration = 123456;
         Assert.assertEquals("Millis not converted to seconds with expected rounding mode.", "123.456", JdkMath.convertMillisToSecs(duration).toString());
     }
+    
+    public void testCalcKilobytesMegabytes() {
+        int size = 1;
+        char units = 'M';
+        Assert.assertEquals("Megabytes not converted to kilobytes.", 1024, JdkMath.calcKilobytes(size, units));
+    }
+    
+    public void testCalcKilobytesGigabytes() {
+        int size = 1;
+        char units = 'G';
+        Assert.assertEquals("Megabytes not converted to kilobytes.", 1048576, JdkMath.calcKilobytes(size, units));
+    }
 
 }

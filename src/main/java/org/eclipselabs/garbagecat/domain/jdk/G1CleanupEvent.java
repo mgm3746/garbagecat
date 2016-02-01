@@ -48,6 +48,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2010-02-26T08:31:51.990-0600: [GC cleanup 297M->236M(512M), 0.0014690 secs]
  * </pre>
  * 
+ * <p>
+ * 3) With -XX:+PrintGCDateStamps:
+ * </p>
+ * 
+ * <pre>
+ * 2010-02-26T08:31:51.990-0600: [GC cleanup 297M->236M(512M), 0.0014690 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
  * 
@@ -59,8 +67,9 @@ public class G1CleanupEvent implements BlockingEvent, CombinedData {
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC cleanup "
-            + JdkRegEx.SIZE_JDK7 + "->" + JdkRegEx.SIZE_JDK7 + "\\(" + JdkRegEx.SIZE_JDK7 + "\\), "
-            + JdkRegEx.DURATION + "\\]";
+            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    
     private static final Pattern pattern = Pattern.compile(REGEX);
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -100,10 +109,11 @@ public class G1CleanupEvent implements BlockingEvent, CombinedData {
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            combined = Integer.parseInt(matcher.group(13)) * 1024;
-            combinedEnd = Integer.parseInt(matcher.group(14)) * 1024;
-            combinedAvailable = Integer.parseInt(matcher.group(15)) * 1024;
-            duration = JdkMath.convertSecsToMillis(matcher.group(16)).intValue();
+            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(14).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
+            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), 
+                    matcher.group(18).charAt(0));
+            duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
         }
     }
 

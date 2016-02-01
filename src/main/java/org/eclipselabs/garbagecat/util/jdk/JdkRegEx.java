@@ -45,6 +45,11 @@ public class JdkRegEx {
      * For example: 27808K, 16172 K
      */
     public static final String SIZE = "(\\d{1,9})[ ]?K";
+    
+    /**
+     * Byte units identifier.
+     */
+    public static final String BYTES = "B";
 
     /**
      * Kilobyte units identifier.
@@ -55,14 +60,29 @@ public class JdkRegEx {
      * Megabyte units identifier.
      */
     public static final String MEGABYTES = "M";
+    
+    /**
+     * Gigabyte units identifier.
+     */
+    public static final String GIGABYTES = "G";
 
     /**
-     * The size of memory in kilobytes (K) or megabytes (M). Starting with JDK 1.7, units are not consistent line to
-     * line or even within a single logging line.
+     * The size of memory in kilobytes (K), megabytes (M), or gigabytes (G). With the G1 collector units are not
+     * consistent line to line or even within a single logging line.
      * 
-     * For example: 2128K, 30M
+     * For example: 2128K, 30M, 30G
      */
-    public static final String SIZE_JDK7 = "(\\d{1,8})([" + KILOBYTES + MEGABYTES + "])";
+    public static final String SIZE_G1 = "(\\d{1,8})([" + KILOBYTES + MEGABYTES + GIGABYTES + "])";
+    
+    /**
+     * The size of memory in bytes (B), kilobytes (K), megabytes (M), or gigabytes (G) to one decimal place. See with
+     * G1 collector <code>-XX:+PrintGCDetails</code>. With the G1 collector units are not consistent line to line or
+     * even within a single logging line.
+     * 
+     * For example: 0.0B, 8192.0K, 28.0M, 30.0G
+     */
+    public static final String SIZE_G1_DETAILS = "(\\d{1,8}\\.\\d)([" + BYTES + KILOBYTES + MEGABYTES + GIGABYTES
+            + "])";
 
     /**
      * The duration of the event in seconds with 7-8 decimal places.
@@ -90,11 +110,11 @@ public class JdkRegEx {
     /**
      * Data when the CMS collector is run in incremental mode with the <code>-XX:+CMSIncrementalMode</code> JVM option.
      * In this mode, the CMS collector does not hold the processor(s) for the entire long concurrent phases but
-     * periodically stops them and yields the processor back to other threads in the application. It divides the work to
-     * be done in concurrent phases into small chunks called duty cycles and schedules them between minor collections.
-     * This is very useful for applications that need low pause times and are run on machines with a small number of
-     * processors. The icms_dc value is the time in percentage that the concurrent work took between two young
-     * generation collections.
+     * periodically stops them and yields the processor back to other threads in the application. It divides the work
+     * to be done in concurrent phases into small chunks called duty cycles and schedules them between minor
+     * collections. This is very useful for applications that need low pause times and are run on machines with a small
+     * number of processors. The icms_dc value is the time in percentage that the concurrent work took between two
+     * young generation collections.
      * 
      * For example: icms_dc=70
      */

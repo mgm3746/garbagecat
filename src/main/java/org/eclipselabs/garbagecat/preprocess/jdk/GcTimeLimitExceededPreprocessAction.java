@@ -126,11 +126,12 @@ public class GcTimeLimitExceededPreprocessAction implements PreprocessAction {
      * @param logLine
      *            The log line to test.
      * @param priorLogLine
-     *            The last log entry processed.
+     *            The last log entry processed. Required due to sharing same duration line as
+     *            {@org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction}.
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine) {
-        return (PATTERN1.matcher(logLine).matches() || (PATTERN2.matcher(logLine).matches() && PATTERN1.matcher(
-                priorLogLine).matches()));
+        return (PATTERN1.matcher(logLine).matches()
+                || (PATTERN2.matcher(logLine).matches() && PATTERN1.matcher(priorLogLine).matches()));
     }
 }
