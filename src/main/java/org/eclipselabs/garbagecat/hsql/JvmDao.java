@@ -488,7 +488,7 @@ public class JvmDao {
             statement = connection.createStatement();
             StringBuffer sql = new StringBuffer();
             sql.append("select time_stamp, event_name, duration, log_entry from blocking_event"
-                    + " order by time_stamp asc");
+                    + " order by time_stamp asc, id asc");
             rs = statement.executeQuery(sql.toString());
             while (rs.next()) {
                 LogEventType eventType = JdkUtil.determineEventType(rs.getString(2));
