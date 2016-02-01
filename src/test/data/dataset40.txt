@@ -1,0 +1,2 @@
+2972.698: [GC cleanup 13G->12G(30G), 0.0358748 secs]
+ [Times: user=0.19 sys=0.00, real=0.03 secs]
