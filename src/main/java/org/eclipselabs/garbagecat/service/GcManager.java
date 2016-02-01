@@ -30,6 +30,7 @@ import org.eclipselabs.garbagecat.domain.Jvm;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
@@ -264,6 +265,8 @@ public class GcManager {
                 LogEvent event = JdkUtil.parseLogLine(logLine);
                 if (event instanceof BlockingEvent) {
                     jvmDao.addBlockingEvent((BlockingEvent) event);
+                } else if (event instanceof ApplicationStoppedTimeEvent) {
+                    jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
                 } else if (event instanceof UnknownEvent) {
                     if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
                         jvmDao.getUnidentifiedLogLines().add(logLine);
@@ -280,8 +283,9 @@ public class GcManager {
                 logLine = bufferedReader.readLine();
             }// while()
 
-            // Process final batch
-            jvmDao.processBatch();
+            // Process final batches
+            jvmDao.processBlockingBatch();
+            jvmDao.processStoppedTimeBatch();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -398,6 +402,8 @@ public class GcManager {
             // TODO: Check for instrumentation.
 
             // TODO: -Xbatch warning
+            
+            // TODO: application.stopped.time.missing
 
         }
         return analysis;
@@ -415,25 +421,23 @@ public class GcManager {
     public JvmRun getJvmRun(Jvm jvm, int throughputThreshold) {
         JvmRun jvmRun = new JvmRun(jvm, throughputThreshold);
         jvmRun.setFirstTimestamp(jvmDao.getFirstTimestamp());
-        jvmRun.setLastTimestamp(jvmDao.getLastTimestamp());
+        jvmRun.setLastTimestamp(jvmDao.getLastGcTimestamp());
         jvmRun.setMaxHeapSpace(jvmDao.getMaxHeapSpace());
         jvmRun.setMaxHeapOccupancy(jvmDao.getMaxHeapOccupancy());
         jvmRun.setMaxPermSpace(jvmDao.getMaxPermSpace());
         jvmRun.setMaxPermOccupancy(jvmDao.getMaxPermOccupancy());
-        jvmRun.setMaxPause(jvmDao.getMaxPause());
-        jvmRun.setTotalPause(jvmDao.getTotalPause());
+        jvmRun.setMaxPause(jvmDao.getMaxGcPause());
+        jvmRun.setTotalGcPause(jvmDao.getTotalGcPause());
         jvmRun.setBlockingEventCount(jvmDao.getBlockingEventCount());
+        jvmRun.setLastGcDuration(jvmDao.getLastGcDuration());
+        jvmRun.setMaxStoppedTime(jvmDao.getMaxStoppedTime());
+        jvmRun.setTotalStoppedTime(jvmDao.getTotalStoppedTime());
+        jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
         jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
         jvmRun.setEventTypes(jvmDao.getEventTypes());
         jvmRun.setBottlenecks(getBottlenecks(jvm, throughputThreshold));
-        // Can still do some anlysis, even without GC data
+        // Can still do some analysis, even without GC data
         jvmRun.setAnalysis(doAnalysis(jvm));
-        // Calculate throughput if there are blocking events
-        if (jvmRun.getBlockingEventCount() > 0) {
-            jvmRun.setThroughput(jvmDao.getThroughput());
-        } else {
-            jvmRun.setThroughput(100L);
-        }
         return jvmRun;
     }
 }

@@ -1,19 +1,11 @@
 /******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
+ * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
+ * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
+ * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
+ * initial API and implementation *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.hsql;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -28,7 +20,8 @@ import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermData;
 import org.eclipselabs.garbagecat.domain.YoungData;
-import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
+import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
@@ -43,7 +36,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 public class JvmDao {
 
     /**
-     * SQL statements to create table(s).
+     * SQL statement(s) to create table(s).
      * 
      * Notes:
      * 
@@ -51,13 +44,20 @@ public class JvmDao {
      * old_space, because some logging events log combined new + old sizes.
      * 
      */
-    private static final String[] TABLES_CREATE_SQL = { "create table blocking_event (id integer identity, "
-            + "time_stamp bigint, event_name varchar(64), duration integer, young_space integer, "
-            + "old_space integer, combined_space integer, perm_space integer, young_occupancy_init integer, "
-            + "old_occupancy_init integer, combined_occupancy_init integer, perm_occupancy_init integer, "
-            + "log_entry varchar(500))" };
+    private static final String[] TABLES_CREATE_SQL = {
+            "create table blocking_event (id integer identity, "
+                    + "time_stamp bigint, event_name varchar(64), duration integer, young_space integer, "
+                    + "old_space integer, combined_space integer, perm_space integer, young_occupancy_init integer, "
+                    + "old_occupancy_init integer, combined_occupancy_init integer, perm_occupancy_init integer, "
+                    + "log_entry varchar(500))",
+            "create table application_stopped_time (id integer identity, "
+                    + "time_stamp bigint, event_name varchar(64), duration integer, log_entry varchar(500))" };
 
-    private static final String[] TABLES_DELETE_SQL = { "delete from blocking_event " };
+    /**
+     * SQL statement(s) to delete table(s).
+     */
+    private static final String[] TABLES_DELETE_SQL = { "delete from blocking_event ",
+            "delete from application_stopped_time " };
 
     /**
      * The database connection.
@@ -80,9 +80,14 @@ public class JvmDao {
     private static int batchSize = 100;
 
     /**
-     * Batch database inserts for improved performance.
+     * Batch blocking database inserts for improved performance.
      */
-    private List<BlockingEvent> batch;
+    private List<BlockingEvent> blockingBatch;
+
+    /**
+     * Batch stopped time database inserts for improved performance.
+     */
+    private List<ApplicationStoppedTimeEvent> stoppedTimeBatch;
 
     public JvmDao() {
         try {
@@ -132,7 +137,8 @@ public class JvmDao {
 
         eventTypes = new ArrayList<LogEventType>();
         unidentifiedLogLines = new ArrayList<String>();
-        batch = new ArrayList<BlockingEvent>();
+        blockingBatch = new ArrayList<BlockingEvent>();
+        stoppedTimeBatch = new ArrayList<ApplicationStoppedTimeEvent>();
     }
 
     public List<String> getUnidentifiedLogLines() {
@@ -148,13 +154,24 @@ public class JvmDao {
     }
 
     public void addBlockingEvent(BlockingEvent event) {
-        if (batch.size() == batchSize) {
-            processBatch();
+        if (blockingBatch.size() == batchSize) {
+            processBlockingBatch();
         }
-        batch.add(event);
+        blockingBatch.add(event);
     }
 
-    public synchronized void processBatch() {
+    public void addStoppedTimeEvent(ApplicationStoppedTimeEvent event) {
+        if (stoppedTimeBatch.size() == batchSize) {
+            processStoppedTimeBatch();
+        }
+        stoppedTimeBatch.add(event);
+    }
+
+    /**
+     * Add blocking events to database.
+     */
+    public synchronized void processBlockingBatch() {
+
         PreparedStatement pst = null;
         try {
             String sqlInsertBlockingEvent = "insert into blocking_event (time_stamp, event_name, "
@@ -177,8 +194,8 @@ public class JvmDao {
 
             pst = connection.prepareStatement(sqlInsertBlockingEvent);
 
-            for (int i = 0; i < batch.size(); i++) {
-                BlockingEvent event = batch.get(i);
+            for (int i = 0; i < blockingBatch.size(); i++) {
+                BlockingEvent event = blockingBatch.get(i);
                 pst.setLong(TIME_STAMP_INDEX, event.getTimestamp());
                 pst.setString(EVENT_NAME_INDEX, event.getName());
                 pst.setInt(DURATION_INDEX, event.getDuration());
@@ -218,7 +235,7 @@ public class JvmDao {
             System.err.println(e.getMessage());
             throw new RuntimeException("Error inserting blocking event.");
         } finally {
-            batch.clear();
+            blockingBatch.clear();
             try {
                 pst.close();
             } catch (SQLException e) {
@@ -229,11 +246,51 @@ public class JvmDao {
     }
 
     /**
-     * The maximum blocking event pause time.
+     * Add stopped time events to database.
+     */
+    public synchronized void processStoppedTimeBatch() {
+
+        PreparedStatement pst = null;
+        try {
+            String sqlInsertBlockingEvent = "insert into application_stopped_time (time_stamp, event_name, "
+                    + "duration, log_entry) " + "values(?, ?, ?, ?)";
+
+            final int TIME_STAMP_INDEX = 1;
+            final int EVENT_NAME_INDEX = 2;
+            final int DURATION_INDEX = 3;
+            final int LOG_ENTRY_INDEX = 4;
+
+            pst = connection.prepareStatement(sqlInsertBlockingEvent);
+
+            for (int i = 0; i < stoppedTimeBatch.size(); i++) {
+                ApplicationStoppedTimeEvent event = stoppedTimeBatch.get(i);
+                pst.setLong(TIME_STAMP_INDEX, event.getTimestamp());
+                pst.setString(EVENT_NAME_INDEX, event.getName());
+                pst.setInt(DURATION_INDEX, event.getDuration());
+                pst.setString(LOG_ENTRY_INDEX, event.getLogEntry());
+                pst.addBatch();
+            }
+            pst.executeBatch();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Error inserting stopped time event.");
+        } finally {
+            blockingBatch.clear();
+            try {
+                pst.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closingPreparedStatement.");
+            }
+        }
+    }
+
+    /**
+     * The maximum GC blocking event pause time.
      * 
      * @return maximum pause duration (milliseconds).
      */
-    public synchronized int getMaxPause() {
+    public synchronized int getMaxGcPause() {
         int maxPause = 0;
         Statement statement = null;
         ResultSet rs = null;
@@ -268,7 +325,7 @@ public class JvmDao {
      * 
      * @return total pause duration (milliseconds).
      */
-    public synchronized int getTotalPause() {
+    public synchronized int getTotalGcPause() {
         int totalPause = 0;
         Statement statement = null;
         ResultSet rs = null;
@@ -311,8 +368,8 @@ public class JvmDao {
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
-            rs = statement.executeQuery("select time_stamp from blocking_event where id = "
-                    + "(select min(id) from blocking_event)");
+            rs = statement.executeQuery(
+                    "select time_stamp from blocking_event where id = " + "(select min(id) from blocking_event)");
             if (rs.next()) {
                 firstTimestamp = rs.getLong(1);
             }
@@ -343,14 +400,14 @@ public class JvmDao {
      * 
      * @return The time of the last blocking event, in milliseconds after JVM startup.
      */
-    public synchronized long getLastTimestamp() {
+    public synchronized long getLastGcTimestamp() {
         long lastTimestamp = 0;
         // Retrieve last timestamp from batch or database.
-        if (batch.size() > 0) {
-            BlockingEvent event = batch.get(batch.size() - 1);
+        if (blockingBatch.size() > 0) {
+            BlockingEvent event = blockingBatch.get(blockingBatch.size() - 1);
             lastTimestamp = event.getTimestamp();
         } else {
-            lastTimestamp = getDbLastTimeStamp();
+            lastTimestamp = getGcLastTimeStamp();
         }
         return lastTimestamp;
     }
@@ -362,14 +419,14 @@ public class JvmDao {
      * 
      * @return The duration of the last blocking event (milliseconds).
      */
-    public synchronized int getLastDuration() {
+    public synchronized int getLastGcDuration() {
         int lastDuration = 0;
         // Retrieve last duration from batch or database.
-        if (batch.size() > 0) {
-            BlockingEvent event = batch.get(batch.size() - 1);
+        if (blockingBatch.size() > 0) {
+            BlockingEvent event = blockingBatch.get(blockingBatch.size() - 1);
             lastDuration = event.getDuration();
         } else {
-            lastDuration = getDbLastDuration();
+            lastDuration = getGcLastDuration();
         }
         return lastDuration;
     }
@@ -382,14 +439,14 @@ public class JvmDao {
      * @return The time of the last blocking event in database, in milliseconds after JVM startup.
      */
 
-    private synchronized long getDbLastTimeStamp() {
+    private synchronized long getGcLastTimeStamp() {
         long lastTimestamp = 0;
         Statement statement = null;
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
-            rs = statement.executeQuery("select time_stamp from blocking_event where id = "
-                    + "(select max(id) from blocking_event)");
+            rs = statement.executeQuery(
+                    "select time_stamp from blocking_event where id = " + "(select max(id) from blocking_event)");
             if (rs.next()) {
                 lastTimestamp = rs.getLong(1);
             }
@@ -421,14 +478,14 @@ public class JvmDao {
      * @return The duration of the last blocking event in database (milliseconds).
      */
 
-    private synchronized int getDbLastDuration() {
+    private synchronized int getGcLastDuration() {
         int duration = 0;
         Statement statement = null;
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
-            rs = statement.executeQuery("select duration from blocking_event where id = "
-                    + "(select max(id) from blocking_event)");
+            rs = statement.executeQuery(
+                    "select duration from blocking_event where id = " + "(select max(id) from blocking_event)");
             if (rs.next()) {
                 duration = rs.getInt(1);
             }
@@ -488,12 +545,12 @@ public class JvmDao {
             statement = connection.createStatement();
             StringBuffer sql = new StringBuffer();
             sql.append("select time_stamp, event_name, duration, log_entry from blocking_event"
-                    + " order by time_stamp asc");
+                    + " order by time_stamp asc, id asc");
             rs = statement.executeQuery(sql.toString());
             while (rs.next()) {
                 LogEventType eventType = JdkUtil.determineEventType(rs.getString(2));
-                BlockingEvent event = JdkUtil.hydrateBlockingEvent(eventType, rs.getString(4), rs.getLong(1), rs
-                        .getInt(3));
+                BlockingEvent event = JdkUtil.hydrateBlockingEvent(eventType, rs.getString(4), rs.getLong(1),
+                        rs.getInt(3));
                 events.add(event);
             }
         } catch (SQLException e) {
@@ -535,8 +592,8 @@ public class JvmDao {
             sql.append("' order by time_stamp asc");
             rs = statement.executeQuery(sql.toString());
             while (rs.next()) {
-                BlockingEvent event = JdkUtil.hydrateBlockingEvent(eventType, rs.getString(3), rs.getLong(1), rs
-                        .getInt(2));
+                BlockingEvent event = JdkUtil.hydrateBlockingEvent(eventType, rs.getString(3), rs.getLong(1),
+                        rs.getInt(2));
                 events.add(event);
             }
         } catch (SQLException e) {
@@ -735,33 +792,111 @@ public class JvmDao {
         }
         return occupancy;
     }
+    
+    /**
+     * The maximum stopped time event pause time.
+     * 
+     * @return maximum pause duration (milliseconds).
+     */
+    public synchronized int getMaxStoppedTime() {
+        int maxStoppedTime = 0;
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            statement = connection.createStatement();
+            rs = statement.executeQuery("select max(duration) from application_stopped_time");
+            if (rs.next()) {
+                long micros = rs.getInt(1);                
+                maxStoppedTime = JdkMath.convertMicrosToMillis(micros).intValue();
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Error determine maximum stopped time.");
+        } finally {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing ResultSet.");
+            }
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing Statement.");
+            }
+        }
+        return maxStoppedTime;
+    }
 
     /**
-     * Calculate the throughput for the JVM session. Throughput is the percent of time not spent doing GC. 0 means all
-     * time was spent doing GC. 100 means no time was spent doing GC.
+     * The total stopped time event pause time.
      * 
-     * @return Throughput as a percent.
+     * @return total pause duration (milliseconds).
      */
-    public long getThroughput() {
-        long firstTimestamp = getFirstTimestamp();
-        long lastTimestamp = getLastTimestamp();
-        int lastDuration = getLastDuration();
-        int totalPause = getTotalPause();
-
-        long timeTotal;
-
-        if (lastTimestamp > firstTimestamp && firstTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
-            // Partial log. Use the timestamp of the first GC event, not 0, in order to determine
-            // throughput more accurately.
-            timeTotal = lastTimestamp + new Long(lastDuration).longValue() - firstTimestamp;
-        } else {
-            // Complete log or a log with only 1 event.
-            timeTotal = lastTimestamp + new Long(lastDuration).longValue();
+    public synchronized int getTotalStoppedTime() {
+        int totalStoppedTime = 0;
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            statement = connection.createStatement();
+            rs = statement.executeQuery("select sum(duration) from application_stopped_time");
+            if (rs.next()) {
+                long micros = rs.getInt(1);
+                totalStoppedTime = JdkMath.convertMicrosToMillis(micros).intValue();
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Error determining total stopped time.");
+        } finally {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing ResultSet.");
+            }
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing Statement.");
+            }
         }
-        long timeNotGc = timeTotal - new Long(totalPause).longValue();
-        BigDecimal throughput = new BigDecimal(timeNotGc);
-        throughput = throughput.divide(new BigDecimal(timeTotal), 2, RoundingMode.HALF_EVEN);
-        throughput = throughput.movePointRight(2);
-        return throughput.intValue();
+        return totalStoppedTime;
+    }
+
+    /**
+     * The total number of stopped time events.
+     * 
+     * @return total number of stopped time events.
+     */
+    public synchronized int getStoppedTimeEventCount() {
+        int count = 0;
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            statement = connection.createStatement();
+            rs = statement.executeQuery("select count(id) from application_stopped_time");
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Error determining stopped time event count.");
+        } finally {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing ResultSet.");
+            }
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing Statement.");
+            }
+        }
+        return count;
     }
 }

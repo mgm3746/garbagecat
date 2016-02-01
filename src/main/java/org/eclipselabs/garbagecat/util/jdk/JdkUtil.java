@@ -275,7 +275,7 @@ public class JdkUtil {
             event = new ApplicationConcurrentTimeEvent();
             break;
         case APPLICATION_STOPPED_TIME:
-            event = new ApplicationStoppedTimeEvent();
+            event = new ApplicationStoppedTimeEvent(logLine);
             break;
         case VERBOSE_GC_YOUNG:
             event = new VerboseGcYoungEvent(logLine);

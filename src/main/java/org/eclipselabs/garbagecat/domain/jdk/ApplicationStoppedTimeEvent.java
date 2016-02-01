@@ -1,20 +1,16 @@
 /******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
+ * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
+ * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
+ * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
+ * initial API and implementation *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -24,14 +20,42 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Logging enabled with the <code>-XX:+PrintGCApplicationStoppedTime</code> JVM option. It shows the length of a
- * collection pause. For example:
+ * Logging enabled with the <code>-XX:+PrintGCApplicationStoppedTime</code> JVM option. It shows the time spent in a
+ * safepoint, when all threads are stopped and reachable by the JVM. Many JVM operations require that all threads be in
+ * a safepoint to execute. The most common is a "stop the world" garbage collection.
  * </p>
  * 
  * <p>
- * This option is redundant, as the same information can be calculated from the GC logging timestamps and durations.
- * Therefore, advise against using it, as it adds overhead with no analysis value.
+ * This option used to only include garbage collection time, and it used to not be accurate. Therefore it was ignored.
+ * However, beginning in JDK7/8, it started included stopped time for the other JVM operations performed at safepoint.
+ * Therefore, it is now a required logging option to determine overall throughput and identify throughput and pause
+ * issues not related to garbage collection.
  * </p>
+ * 
+ * <p>
+ * Other JVM operations that require a safepoint:
+ * <ul>
+ * <li>ThreadDump</li>
+ * <li>HeapDumper</li>
+ * <li>GetAllStackTrace</li>
+ * <li>PrintThreads</li>
+ * <li>PrintJNI</li>
+ * <li>RevokeBias</li>
+ * <li>Deoptimization</li>
+ * <li>FindDeadlock</li>
+ * <li>EnableBiasLocking</li>
+ * </ul>
+ * </p>
+ * 
+ * <h3>Example Logging</h3>
+ * 
+ * <p>
+ * 1) Standard format:
+ * </p>
+ * 
+ * <pre>
+ * Total time for which application threads were stopped: 0.0968457 seconds
+ * </pre>
  * 
  * <h3>Example Logging</h3>
  * 
@@ -45,17 +69,63 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class ApplicationStoppedTimeEvent implements LogEvent {
 
     /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * The elapsed clock time for the GC event in microseconds (rounded).
+     */
+    private int duration;
+
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
+
+    /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": )?Total time for which application threads were "
-            + "stopped: \\d{1,4}\\.\\d{7} seconds[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": )?Total time for which application threads "
+            + "were stopped: (\\d{1,4}\\.\\d{7}) seconds[ ]*$";
     /**
      * RegEx pattern.
      */
     private static Pattern pattern = Pattern.compile(ApplicationStoppedTimeEvent.REGEX);
 
+    /**
+     * Create application stopped time logging event from log entry.
+     */
+    public ApplicationStoppedTimeEvent(String logEntry) {
+        this.logEntry = logEntry;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            if (matcher.group(2) != null) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(2)).longValue();
+            }
+            duration = JdkMath.convertSecsToMicros(matcher.group(3)).intValue();
+        }
+    }
+
+    /**
+     * Alternate constructor. Create application stopped time event from values.
+     * 
+     * @param logEntry
+     * @param timestamp
+     * @param duration
+     */
+    public ApplicationStoppedTimeEvent(String logEntry, long timestamp, int duration) {
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
+
     public String getLogEntry() {
-        throw new UnsupportedOperationException("Event does not include log entry information");
+        return logEntry;
+    }
+
+    public int getDuration() {
+        return duration;
     }
 
     public String getName() {
@@ -63,7 +133,7 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
     }
 
     public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
+        return timestamp;
     }
 
     /**

@@ -244,7 +244,7 @@ public class Main {
             }
             if (jvmRun.getBlockingEventCount() > 0) {
                 bufferedWriter.write("# GC Events: " + jvmRun.getBlockingEventCount() + "\n");
-                bufferedWriter.write("GC Event Types: ");
+                bufferedWriter.write("Event Types: ");
                 List<LogEventType> eventTypes = jvmRun.getEventTypes();
                 Iterator<LogEventType> iterator = eventTypes.iterator();
                 boolean firstEvent = true;
@@ -259,20 +259,34 @@ public class Main {
                     }
                 }
                 bufferedWriter.write("\n");
-                // Max Heap space.
+                // Max heap space.
                 bufferedWriter.write("Max Heap Space: " + jvmRun.getMaxHeapSpace() + "K\n");
-                // Max Heap occupancy.
+                // Max heap occupancy.
                 bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K\n");
-                // Max Perm space.
-                bufferedWriter.write("Max Perm Space: " + jvmRun.getMaxPermSpace() + "K\n");
-                // Max Perm occupancy.
-                bufferedWriter.write("Max Perm Occupancy: " + jvmRun.getMaxPermOccupancy() + "K\n");
-                // Throughput
-                bufferedWriter.write("Throughput: " + jvmRun.getThroughput() + "%\n");
-                // Max pause
-                bufferedWriter.write("Max Pause: " + jvmRun.getMaxPause() + " ms\n");
-                // Total pause time
-                bufferedWriter.write("Total Pause: " + jvmRun.getTotalPause() + " ms\n");
+                if (jvmRun.getMaxPermSpace() > 0) {
+                    // Max perm space.
+                    bufferedWriter.write("Max Perm Space: " + jvmRun.getMaxPermSpace() + "K\n");
+                    // Max perm occupancy.
+                    bufferedWriter.write("Max Perm Occupancy: " + jvmRun.getMaxPermOccupancy() + "K\n");
+                }
+                // GC throughput
+                bufferedWriter.write("GC Throughput: " + jvmRun.getGcThroughput() + "%\n");
+                // GC max pause
+                bufferedWriter.write("GC Max Pause: " + jvmRun.getMaxGcPause() + " ms\n");
+                // GC total pause time
+                bufferedWriter.write("GC Total Pause: " + jvmRun.getTotalGcPause() + " ms\n");
+                if (jvmRun.getStoppedTimeEventCount() > 0) {
+                    // Stopped time events
+                    bufferedWriter.write("# Stopped Time Events: " + jvmRun.getStoppedTimeEventCount() + "\n");
+                    // Stopped time throughput
+                    bufferedWriter.write("Stopped Time Throughput: " + jvmRun.getStoppedTimeThroughput() + "%\n");
+                    // Max stopped time
+                    bufferedWriter.write("Stopped Time Max Pause: " + jvmRun.getMaxStoppedTime() + " ms\n");
+                    // Total stopped time
+                    bufferedWriter.write("Stopped Time Total: " + jvmRun.getTotalStoppedTime() + " ms\n");
+                    // Ratio of GC vs. stopped time. 100 means all stopped time due to GC.
+                    bufferedWriter.write("GC/Stopped Ratio: " + jvmRun.getGcStoppedRatio() + "%\n");
+                }
                 // First Timestamp
                 bufferedWriter.write("First Timestamp: " + jvmRun.getFirstTimestamp() + " ms\n");
                 // Last Timestamp

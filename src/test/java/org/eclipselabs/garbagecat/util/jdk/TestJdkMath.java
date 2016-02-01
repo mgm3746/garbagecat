@@ -43,6 +43,16 @@ public class TestJdkMath extends TestCase {
         String secs = "0.0985";
         Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 98, JdkMath.convertSecsToMillis(secs).intValue());
     }
+    
+    public void testConvertDurationToMicrosRoundUp() {
+        String secs = "0.0968475";
+        Assert.assertEquals("Secs not converted to microseconds with expected rounding mode.", 96847, JdkMath.convertSecsToMicros(secs).intValue());
+    }
+
+    public void testConvertDurationToMicrosRoundDown() {
+        String secs = "0.0968485";
+        Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 96848, JdkMath.convertSecsToMicros(secs).intValue());
+    }
 
     public void testThroughput() {
         int duration = 81;

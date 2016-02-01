@@ -1,19 +1,16 @@
 /******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
+ * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
+ * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
+ * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
+ * initial API and implementation *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 /**
@@ -56,19 +53,14 @@ public class JvmRun {
     private int maxPermOccupancy;
 
     /**
-     * Throughput as a percent rounded to the nearest integer.
+     * Maximum GC pause duration (milliseconds).
      */
-    private long throughput;
+    private int maxGcPause;
 
     /**
-     * Maximum pause duration (milliseconds).
+     * Total GC pause duration (milliseconds).
      */
-    private int maxPause;
-
-    /**
-     * Total pause duration (milliseconds).
-     */
-    private int totalPause;
+    private int totalGcPause;
 
     /**
      * Time of the first blocking event, in milliseconds after JVM startup.
@@ -81,9 +73,29 @@ public class JvmRun {
     private long lastTimestamp;
 
     /**
+     * Duration of the last blocking event (milliseconds). Required to compute throughput for very short JVM runs.
+     */
+    private long lastGcDuration;
+
+    /**
      * Total number of blocking events.
      */
     private int blockingEventCount;
+
+    /**
+     * Maximum stopped time duration (milliseconds).
+     */
+    private int maxStoppedTime;
+
+    /**
+     * Total stopped time duration (milliseconds).
+     */
+    private int totalStoppedTime;
+
+    /**
+     * Total number of {@link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent}.
+     */
+    private int stoppedTimeEventCount;
 
     /**
      * <code>BlockingEvent</code>s where throughput does not meet the throughput goal.
@@ -166,28 +178,20 @@ public class JvmRun {
         this.maxPermOccupancy = maxPermOccupancy;
     }
 
-    public long getThroughput() {
-        return throughput;
-    }
-
-    public void setThroughput(long throughput) {
-        this.throughput = throughput;
-    }
-
-    public int getMaxPause() {
-        return maxPause;
+    public int getMaxGcPause() {
+        return maxGcPause;
     }
 
     public void setMaxPause(int maxPause) {
-        this.maxPause = maxPause;
+        this.maxGcPause = maxPause;
     }
 
-    public int getTotalPause() {
-        return totalPause;
+    public int getTotalGcPause() {
+        return totalGcPause;
     }
 
-    public void setTotalPause(int totalPause) {
-        this.totalPause = totalPause;
+    public void setTotalGcPause(int totalGcPause) {
+        this.totalGcPause = totalGcPause;
     }
 
     public long getFirstTimestamp() {
@@ -206,12 +210,44 @@ public class JvmRun {
         this.lastTimestamp = lastTimestamp;
     }
 
+    public long getLastGcDuration() {
+        return lastGcDuration;
+    }
+
+    public void setLastGcDuration(long lastGcDuration) {
+        this.lastGcDuration = lastGcDuration;
+    }
+
     public int getBlockingEventCount() {
         return blockingEventCount;
     }
 
     public void setBlockingEventCount(int blockingEventCount) {
         this.blockingEventCount = blockingEventCount;
+    }
+
+    public int getStoppedTimeEventCount() {
+        return stoppedTimeEventCount;
+    }
+
+    public void setStoppedTimeEventCount(int stoppedTimeEventCount) {
+        this.stoppedTimeEventCount = stoppedTimeEventCount;
+    }
+
+    public int getMaxStoppedTime() {
+        return maxStoppedTime;
+    }
+
+    public void setMaxStoppedTime(int maxStoppedTime) {
+        this.maxStoppedTime = maxStoppedTime;
+    }
+
+    public int getTotalStoppedTime() {
+        return totalStoppedTime;
+    }
+
+    public void setTotalStoppedTime(int totalStoppedTime) {
+        this.totalStoppedTime = totalStoppedTime;
     }
 
     public List<String> getBottlenecks() {
@@ -246,4 +282,78 @@ public class JvmRun {
         this.analysis = analysis;
     }
 
+    /*
+     * Throughput based only on garbage collection as a percent rounded to the nearest integer. CG throughput is the
+     * percent of time not spent doing GC. 0 means all time was spent doing GC. 100 means no time was spent doing GC.
+     */
+    public long getGcThroughput() {
+        long gcThroughput;
+        if (blockingEventCount > 0) {
+            long timeTotal;
+            if (lastTimestamp > firstTimestamp && firstTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
+                // Partial log. Use the timestamp of the first GC event, not 0, in order to determine
+                // throughput more accurately.
+                timeTotal = lastTimestamp + new Long(lastGcDuration).longValue() - firstTimestamp;
+            } else {
+                // Complete log or a log with only 1 event.
+                timeTotal = lastTimestamp + new Long(lastGcDuration).longValue();
+            }
+            long timeNotGc = timeTotal - new Long(totalGcPause).longValue();
+            BigDecimal throughput = new BigDecimal(timeNotGc);
+            throughput = throughput.divide(new BigDecimal(timeTotal), 2, RoundingMode.HALF_EVEN);
+            throughput = throughput.movePointRight(2);
+            gcThroughput = throughput.longValue();
+
+        } else {
+            gcThroughput = 100L;
+        }
+        return gcThroughput;
+    }
+    
+    /*
+     * Throughput based on stopped time as a percent rounded to the nearest integer. Stopped time throughput is the
+     * percent of total time the JVM threads were running (not in a safepoint). 0 means all stopped time. 100 means no
+     * stopped time.
+     */
+    public long getStoppedTimeThroughput() {
+        long stoppedTimeThroughput;
+        if (stoppedTimeEventCount > 0) {
+            long timeTotal;
+            if (lastTimestamp > firstTimestamp && firstTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
+                // Partial log. Use the timestamp of the first GC event, not 0, in order to determine
+                // throughput more accurately.
+                timeTotal = lastTimestamp + new Long(lastGcDuration).longValue() - firstTimestamp;
+            } else {
+                // Complete log or a log with only 1 event.
+                timeTotal = lastTimestamp + new Long(lastGcDuration).longValue();
+            }
+            long timeNotGc = timeTotal - new Long(totalStoppedTime).longValue();
+            BigDecimal throughput = new BigDecimal(timeNotGc);
+            throughput = throughput.divide(new BigDecimal(timeTotal), 2, RoundingMode.HALF_EVEN);
+            throughput = throughput.movePointRight(2);
+            stoppedTimeThroughput = throughput.longValue();
+
+        } else {
+            stoppedTimeThroughput = 100L;
+        }
+        return stoppedTimeThroughput;
+    }
+    
+    /**
+     * Ratio of GC to Stopped Time as a percent rounded to the nearest integer. 100 means all stopped time spent doing
+     * GC. 0 means none of the stopped time was due to GC.
+     */
+    public long getGcStoppedRatio() {
+        long gcStoppedRatio;
+        if (totalGcPause > 0 && totalStoppedTime > 0) {
+            BigDecimal ratio = new BigDecimal(totalGcPause);
+            ratio = ratio.divide(new BigDecimal(totalStoppedTime), 2, RoundingMode.HALF_EVEN);
+            ratio = ratio.movePointRight(2);
+            gcStoppedRatio = ratio.longValue();
+
+        } else {
+            gcStoppedRatio = 100L;
+        }
+        return gcStoppedRatio;
+    }
 }

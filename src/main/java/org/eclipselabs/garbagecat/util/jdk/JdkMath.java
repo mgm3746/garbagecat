@@ -49,7 +49,7 @@ public class JdkMath {
     }
 
     /**
-     * Convert milliseconds seconds.
+     * Convert milliseconds to seconds.
      * 
      * For example: Convert 123456 123.456.
      * 
@@ -59,6 +59,40 @@ public class JdkMath {
      */
     public static BigDecimal convertMillisToSecs(long millis) {
         BigDecimal duration = new BigDecimal(millis);
+        duration = duration.movePointLeft(3);
+        duration = duration.setScale(3, RoundingMode.HALF_EVEN);
+        return duration;
+    }
+    
+    /**
+     * Convert seconds to microseconds.
+     * 
+     * For example: Convert 0.0225213 to 23521
+     * 
+     * @param secs
+     *            Seconds as a whole number or decimal.
+     * @return Microseconds rounded to a whole number.
+     */
+    public static BigDecimal convertSecsToMicros(String secs) {
+        // BigDecimal does not accept decimal commas, only decimal periods
+        BigDecimal duration = new BigDecimal(secs.replace(",", "."));
+        duration = duration.movePointRight(6);
+        // Round down to avoid TimeWarpExceptions when events are spaced close together
+        duration = duration.setScale(0, RoundingMode.DOWN);
+        return duration;
+    }
+
+    /**
+     * Convert microseconds to milliseconds.
+     * 
+     * For example: Convert 987654321 987.654.
+     * 
+     * @param millis
+     *            Microseconds as a whole number.
+     * @return Seconds rounded to 3 decimal places.
+     */
+    public static BigDecimal convertMicrosToMillis(long micros) {
+        BigDecimal duration = new BigDecimal(micros);
         duration = duration.movePointLeft(3);
         duration = duration.setScale(3, RoundingMode.HALF_EVEN);
         return duration;
