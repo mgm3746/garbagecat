@@ -12,6 +12,7 @@
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 import junit.framework.Assert;
@@ -36,7 +37,7 @@ public class TestG1FullGCEvent extends TestCase {
         G1FullGCEvent event = new G1FullGCEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 105151, event.getTimestamp());
         Assert.assertEquals("Combined begin size not parsed correctly.", 5959680, event.getCombinedOccupancyInit());
-        Assert.assertEquals("Trigger not parsed correctly.", "System.gc()", event.getTrigger());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
         Assert.assertEquals("Combined end size not parsed correctly.", 1414144, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 31457280, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 5539, event.getDuration());
@@ -50,7 +51,7 @@ public class TestG1FullGCEvent extends TestCase {
         G1FullGCEvent event = new G1FullGCEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 105151, event.getTimestamp());
         Assert.assertEquals("Combined begin size not parsed correctly.", 5959680, event.getCombinedOccupancyInit());
-        Assert.assertEquals("Trigger not parsed correctly.", "System.gc()", event.getTrigger());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
         Assert.assertEquals("Combined end size not parsed correctly.", 1414144, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 31457280, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 5539, event.getDuration());

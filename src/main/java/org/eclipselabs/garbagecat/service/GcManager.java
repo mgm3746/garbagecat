@@ -23,6 +23,7 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.Jvm;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.TriggerEvent;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
@@ -256,6 +257,16 @@ public class GcManager {
                 LogEvent event = JdkUtil.parseLogLine(logLine);
                 if (event instanceof BlockingEvent) {
                     jvmDao.addBlockingEvent((BlockingEvent) event);
+
+                    // Populate triggers list.
+                    if (event instanceof TriggerEvent) {
+                        List<JdkUtil.TriggerType> triggerTypes = jvmDao.getTriggerTypes();
+                        JdkUtil.TriggerType triggerType = JdkUtil
+                                .determineTriggerType(((TriggerEvent) event).getTrigger());
+                        if (!triggerTypes.contains(triggerType)) {
+                            triggerTypes.add(triggerType);
+                        }
+                    }
                 } else if (event instanceof ApplicationStoppedTimeEvent) {
                     jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
                 } else if (event instanceof UnknownEvent) {
@@ -272,7 +283,7 @@ public class GcManager {
                 }
 
                 logLine = bufferedReader.readLine();
-            } // while()
+            }
 
             // Process final batches
             jvmDao.processBlockingBatch();
@@ -381,6 +392,7 @@ public class GcManager {
         jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
         jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
         jvmRun.setEventTypes(jvmDao.getEventTypes());
+        jvmRun.setTriggerTypes(jvmDao.getTriggerTypes());
         jvmRun.setBottlenecks(getBottlenecks(jvm, throughputThreshold));
         return jvmRun;
     }

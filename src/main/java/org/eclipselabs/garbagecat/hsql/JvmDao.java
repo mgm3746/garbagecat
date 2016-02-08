@@ -24,6 +24,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.TriggerType;
 
 /**
  * <p>
@@ -68,6 +69,11 @@ public class JvmDao {
      * List of all event types associate with JVM run.
      */
     List<LogEventType> eventTypes;
+    
+    /**
+     * Trigger types
+     */
+    private List<TriggerType> triggerTypes;
 
     /**
      * Logging lines that do not match any known GC events.
@@ -136,6 +142,7 @@ public class JvmDao {
         }
 
         eventTypes = new ArrayList<LogEventType>();
+        triggerTypes = new ArrayList<TriggerType>();
         unidentifiedLogLines = new ArrayList<String>();
         blockingBatch = new ArrayList<BlockingEvent>();
         stoppedTimeBatch = new ArrayList<ApplicationStoppedTimeEvent>();
@@ -145,12 +152,12 @@ public class JvmDao {
         return unidentifiedLogLines;
     }
 
-    public void setUnidentifiedLogLines(List<String> unidentifiedLogLines) {
-        this.unidentifiedLogLines = unidentifiedLogLines;
-    }
-
     public List<LogEventType> getEventTypes() {
         return eventTypes;
+    }
+    
+    public List<TriggerType> getTriggerTypes() {
+        return triggerTypes;
     }
 
     public void addBlockingEvent(BlockingEvent event) {

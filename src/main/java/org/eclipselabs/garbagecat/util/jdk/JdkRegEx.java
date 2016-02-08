@@ -133,6 +133,12 @@ public class JdkRegEx {
      * Blank line.
      */
     public static final String BLANK_LINE = "^\\s+$";
+    
+    /**
+     * System.gc() trigger
+     */
+    public static final String TRIGGER_SYSTEM_GC = "System.gc\\(\\)";
+
 
     /**
      * Make default constructor private so the class cannot be instantiated.

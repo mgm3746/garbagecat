@@ -9,11 +9,13 @@ package org.eclipselabs.garbagecat.domain;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.TriggerType;
 
 /**
  * JVM run data.
@@ -105,7 +107,7 @@ public class JvmRun {
     private List<String> bottlenecks;
 
     /**
-     * .Log lines that do not match any existing logging patterns.
+     * Log lines that do not match any existing logging patterns.
      */
     private List<String> unidentifiedLogLines;
 
@@ -113,6 +115,11 @@ public class JvmRun {
      * Event types.
      */
     private List<LogEventType> eventTypes;
+    
+    /**
+     * Trigger types
+     */
+    private List<TriggerType> triggerTypes;
 
     /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
@@ -270,6 +277,14 @@ public class JvmRun {
     public void setEventTypes(List<LogEventType> eventTypes) {
         this.eventTypes = eventTypes;
     }
+    
+    public List<TriggerType> getTriggerTypes() {
+        return triggerTypes;
+    }
+
+    public void setTriggerTypes(List<TriggerType> triggerTypes) {
+        this.triggerTypes = triggerTypes;
+    }
 
     /*
      * Throughput based only on garbage collection as a percent rounded to the nearest integer. CG throughput is the
@@ -362,6 +377,11 @@ public class JvmRun {
         // 2) Check to see if -XX:+PrintGCApplicationStoppedTime enabled
         if (!eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)) {
             analysis.add(GcUtil.getPropertyValue("analysis", "application.stopped.time.missing"));
+        }
+
+        // 3) Check for explicit gc
+        if (triggerTypes.contains(TriggerType.SYSTEM_GC)) {
+            analysis.add(GcUtil.getPropertyValue("analysis", "explicit.gc"));
         }
 
         // JVM options analysis

@@ -13,17 +13,15 @@
 package org.eclipselabs.garbagecat.domain;
 
 /**
- * <p>
- * Base "stop-the-world" event where application threads are paused.
- * </p>
+ * Trigger event.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public interface BlockingEvent extends LogEvent {
+public interface TriggerEvent {
 
     /**
-     * @return The elapsed clock time for the event in milliseconds (rounded).
+     * @return The trigger for the event.
      */
-    int getDuration();
+    String getTrigger();
 }

@@ -1,14 +1,8 @@
 /******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
+ * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
+ * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
+ * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
+ * initial API and implementation *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
@@ -77,14 +71,14 @@ public class JdkUtil {
      * Defined logging events.
      */
     public enum LogEventType {
-        SERIAL_OLD, SERIAL, PAR_NEW_CONCURRENT_MODE_FAILURE, PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA,
-        PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD, PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA,
+        SERIAL_OLD, SERIAL, PAR_NEW_CONCURRENT_MODE_FAILURE, PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA, 
+        PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD, PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA, 
         PAR_NEW_PROMOTION_FAILED, PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE, 
-        PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA, PAR_NEW, PAR_NEW_CMS_CONCURRENT,
-        PAR_NEW_CMS_SERIAL_OLD, PARALLEL_SERIAL_OLD, PARALLEL_SCAVENGE, PARALLEL_OLD_COMPACTING, CMS_SERIAL_OLD,
-        CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE, CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK,
-        CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD,
-        SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED,
+        PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA, PAR_NEW, PAR_NEW_CMS_CONCURRENT, 
+        PAR_NEW_CMS_SERIAL_OLD, PARALLEL_SERIAL_OLD, PARALLEL_SCAVENGE, PARALLEL_OLD_COMPACTING, CMS_SERIAL_OLD, 
+        CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE, CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK, 
+        CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD, 
+        SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED, 
         G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC
     };
 
@@ -95,6 +89,13 @@ public class JdkUtil {
         APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, CMS_CONCURRENT_MODE_FAILURE, 
         DATE_STAMP, DATE_STAMP_PREFIX, GC_TIME_LIMIT_EXCEEDED, PAR_NEW_CMS_CONCURRENT, PRINT_HEAP_AT_GC, 
         PRINT_TENURING_DISTRIBUTION, THREAD_DUMP, UNLOADING_CLASS, G1_PRINT_GC_DETAILS
+    };
+
+    /**
+     * Defined triggers.
+     */
+    public enum TriggerType {
+        SYSTEM_GC
     };
 
     /**
@@ -185,7 +186,7 @@ public class JdkUtil {
         if (G1FullGCEvent.match(logLine))
             return LogEventType.G1_FULL_GC;
         if (G1CleanupEvent.match(logLine))
-            return LogEventType.G1_CLEANUP;            
+            return LogEventType.G1_CLEANUP;
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -309,7 +310,7 @@ public class JdkUtil {
             break;
         case G1_FULL_GC:
             event = new G1FullGCEvent(logLine);
-            break;                     
+            break;
         case UNKNOWN:
             event = new UnknownEvent(logLine);
             break;
@@ -428,7 +429,7 @@ public class JdkUtil {
             break;
         case G1_FULL_GC:
             event = new G1FullGCEvent(logEntry, timestamp, duration);
-            break;            
+            break;
         default:
             throw new AssertionError("Unexpected event type value: " + eventType + ": " + logEntry);
         }
@@ -440,10 +441,9 @@ public class JdkUtil {
      * @return true if the log event is blocking, false if it is concurrent or informational.
      */
     public static final boolean isBlocking(LogEventType eventType) {
-        return !(eventType == JdkUtil.LogEventType.CMS_CONCURRENT
-                || eventType == JdkUtil.LogEventType.G1_CONCURRENT
+        return !(eventType == JdkUtil.LogEventType.CMS_CONCURRENT || eventType == JdkUtil.LogEventType.G1_CONCURRENT
                 || eventType == JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME
-                || eventType == JdkUtil.LogEventType.APPLICATION_STOPPED_TIME 
+                || eventType == JdkUtil.LogEventType.APPLICATION_STOPPED_TIME
                 || eventType == JdkUtil.LogEventType.UNKNOWN);
     }
 
@@ -457,6 +457,16 @@ public class JdkUtil {
             }
         }
         return logEventType;
+    }
+
+    public static final TriggerType determineTriggerType(String triggerTypeString) {
+        TriggerType triggerType = null;
+        if (triggerTypeString.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
+            triggerType = TriggerType.SYSTEM_GC;
+        } else {
+            throw new IllegalArgumentException("Unknown trigger: '" + triggerTypeString + "'.");
+        }
+        return triggerType;
     }
 
     /**
@@ -475,8 +485,8 @@ public class JdkUtil {
         Matcher matcher = pattern.matcher(logEntry);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
-            Date date = GcUtil.getDatePlusTimestamp(jvmStartDate, JdkMath.convertSecsToMillis(matcher.group(1))
-                    .longValue());
+            Date date = GcUtil.getDatePlusTimestamp(jvmStartDate,
+                    JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
             // Only update the timestamp, keep the colon or space.
             matcher.appendReplacement(sb, formatter.format(date) + matcher.group(2));
@@ -502,8 +512,8 @@ public class JdkUtil {
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
 
-            Date date = GcUtil.getDatePlusTimestamp(jvmStartDate, JdkMath.convertSecsToMillis(matcher.group(1))
-                    .longValue());
+            Date date = GcUtil.getDatePlusTimestamp(jvmStartDate,
+                    JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
             // Only update the datestamp, keep the colon or space.
             matcher.appendReplacement(sb, formatter.format(date) + matcher.group(2));
@@ -517,8 +527,8 @@ public class JdkUtil {
      * 
      * @param logLine
      *            The log line.
-     * @return True if the log line is not related to garbage collection logging or can otherwise be discarded, false if
-     *         the log line should be retained.
+     * @return True if the log line is not related to garbage collection logging or can otherwise be discarded, false
+     *         if the log line should be retained.
      */
     public static final boolean discardLogLine(String logLine) {
         return ThreadDumpPreprocessAction.match(logLine) || ApplicationLoggingPreprocessAction.match(logLine)
@@ -533,8 +543,8 @@ public class JdkUtil {
      * @param priorEvent
      *            Previous garbage collection event.
      * @param throughputThreshold
-     *            Throughput threshold (percent of time spent not doing garbage collection for a given time interval) to
-     *            be considered a bottleneck. Whole number 0-100.
+     *            Throughput threshold (percent of time spent not doing garbage collection for a given time interval)
+     *            to be considered a bottleneck. Whole number 0-100.
      * @return True if the garbage collection event pause time meets the bottleneck definition.
      */
     public static final boolean isBottleneck(BlockingEvent gcEvent, BlockingEvent priorEvent, int throughputThreshold)
@@ -583,7 +593,7 @@ public class JdkUtil {
         }
         return value;
     }
-    
+
     /**
      * Convert {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1_DETAILS} to
      * {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1}.
