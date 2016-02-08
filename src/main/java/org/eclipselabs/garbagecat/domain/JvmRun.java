@@ -8,9 +8,11 @@ package org.eclipselabs.garbagecat.domain;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 /**
@@ -111,11 +113,6 @@ public class JvmRun {
      * Event types.
      */
     private List<LogEventType> eventTypes;
-
-    /**
-     * Analysis points.
-     */
-    private List<String> analysis;
 
     /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
@@ -274,14 +271,6 @@ public class JvmRun {
         this.eventTypes = eventTypes;
     }
 
-    public List<String> getAnalysis() {
-        return analysis;
-    }
-
-    public void setAnalysis(List<String> analysis) {
-        this.analysis = analysis;
-    }
-
     /*
      * Throughput based only on garbage collection as a percent rounded to the nearest integer. CG throughput is the
      * percent of time not spent doing GC. 0 means all time was spent doing GC. 100 means no time was spent doing GC.
@@ -309,7 +298,7 @@ public class JvmRun {
         }
         return gcThroughput;
     }
-    
+
     /*
      * Throughput based on stopped time as a percent rounded to the nearest integer. Stopped time throughput is the
      * percent of total time the JVM threads were running (not in a safepoint). 0 means all stopped time. 100 means no
@@ -338,7 +327,7 @@ public class JvmRun {
         }
         return stoppedTimeThroughput;
     }
-    
+
     /**
      * Ratio of GC to Stopped Time as a percent rounded to the nearest integer. 100 means all stopped time spent doing
      * GC. 0 means none of the stopped time was due to GC.
@@ -355,5 +344,52 @@ public class JvmRun {
             gcStoppedRatio = 100L;
         }
         return gcStoppedRatio;
+    }
+
+    /**
+     * Analysis points.
+     * 
+     * @return A <code>List</code> of analysis points based on the JVM options and data.
+     */
+    public List<String> getAnalysis() {
+        List<String> analysis = new ArrayList<String>();
+
+        // 1) Check for partial log
+        if (GcUtil.isPartialLog(firstTimestamp)) {
+            analysis.add(Constants.WARNING_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
+        }
+
+        // 2) Check to see if -XX:+PrintGCApplicationStoppedTime enabled
+        if (!eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)) {
+            analysis.add(GcUtil.getPropertyValue("analysis", "application.stopped.time.missing"));
+        }
+
+        // JVM options analysis
+        if (jvm.getOptions() != null) {
+
+            // 2) Check to see if thread stack size explicitly set
+            if (jvm.getThreadStackSizeOption() == null) {
+                analysis.add(GcUtil.getPropertyValue("analysis", "thread.stack.size.not.set"));
+            }
+
+            // 3) Check to see if min and max heap sizes are the same
+            if (!jvm.isMinAndMaxHeapSpaceEqual()) {
+                analysis.add(GcUtil.getPropertyValue("analysis", "min.heap.not.equal.max.heap"));
+            }
+
+            // 4) Check to see if min and max perm gen sizes are the same
+            if (!jvm.isMinAndMaxPermSpaceEqual()) {
+                analysis.add(GcUtil.getPropertyValue("analysis", "min.perm.not.equal.max.perm"));
+            }
+
+            // TODO: Check to see if explicit GC interval is disabled or set.
+
+            // TODO: If explicit GC interval is set, try disabling explicit GC.
+
+            // TODO: Check for instrumentation.
+
+            // TODO: -Xbatch warning
+        }
+        return analysis;
     }
 }

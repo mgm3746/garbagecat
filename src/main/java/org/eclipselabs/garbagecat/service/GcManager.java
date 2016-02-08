@@ -1,14 +1,8 @@
 /******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
+ * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
+ * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
+ * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
+ * initial API and implementation *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.service;
 
@@ -43,8 +37,6 @@ import org.eclipselabs.garbagecat.preprocess.jdk.ParNewCmsConcurrentPreprocessAc
 import org.eclipselabs.garbagecat.preprocess.jdk.PrintHeapAtGcPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.PrintTenuringDistributionPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.UnloadingClassPreprocessAction;
-import org.eclipselabs.garbagecat.util.Constants;
-import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -78,8 +70,7 @@ public class GcManager {
      *            Raw garbage collection log file.
      * @param jvmStartDate
      *            The date and time the JVM was started.
-     * @return Preprocessed garbage collection log file. fixed Issue 17:
-     *         https://code.google.com/a/eclipselabs.org/p/garbagecat/issues/detail?id=17
+     * @return Preprocessed garbage collection log file.
      */
     public File preprocess(File logFile, Date jvmStartDate) {
         if (logFile == null)
@@ -112,7 +103,7 @@ public class GcManager {
                 priorLogLine = currentLogLine;
                 currentLogLine = nextLogLine;
                 nextLogLine = bufferedReader.readLine();
-            }// while()
+            } // while()
 
             // Process last line
             preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate);
@@ -142,7 +133,7 @@ public class GcManager {
                     e.printStackTrace();
                 }
             }
-        }// finally
+        } // finally
 
         return preprocessFile;
     }// preprocess()
@@ -151,8 +142,8 @@ public class GcManager {
      * Determine the preprocessed log entry given the current, previous, and next log lines.
      * 
      * The previous log line is needed to prevent preprocessing overlap where preprocessors have common patterns that
-     * are treated in different ways (e.g. removing vs. keeping matches, line break at end vs. no line break, etc.). For
-     * example, there is overlap between the <code>CmsConcurrentModeFailurePreprocessEvent</code> and the
+     * are treated in different ways (e.g. removing vs. keeping matches, line break at end vs. no line break, etc.).
+     * For example, there is overlap between the <code>CmsConcurrentModeFailurePreprocessEvent</code> and the
      * <code>PrintHeapAtGcPreprocessEvent</code>.
      * 
      * The next log line is needed to distinguish between truncated and split logging. A truncated log entry can look
@@ -281,7 +272,7 @@ public class GcManager {
                 }
 
                 logLine = bufferedReader.readLine();
-            }// while()
+            } // while()
 
             // Process final batches
             jvmDao.processBlockingBatch();
@@ -325,10 +316,10 @@ public class GcManager {
                     // Add current and prior event
                     if (jvm.getStartDate() != null) {
                         // Convert timestamps to date/time
-                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm
-                                .getStartDate()));
-                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm
-                                .getStartDate()));
+                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
+                                jvm.getStartDate()));
+                        bottlenecks.add(
+                                JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm.getStartDate()));
                     } else {
                         bottlenecks.add(priorEvent.getLogEntry());
                         bottlenecks.add(event.getLogEntry());
@@ -339,13 +330,13 @@ public class GcManager {
                         if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm.getStartDate())
                                 .equals(bottlenecks.get(bottlenecks.size() - 1))) {
                             bottlenecks.add("...");
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm
-                                    .getStartDate()));
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm
-                                    .getStartDate()));
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
+                                    jvm.getStartDate()));
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(),
+                                    jvm.getStartDate()));
                         } else {
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm
-                                    .getStartDate()));
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(),
+                                    jvm.getStartDate()));
                         }
                     } else {
                         // Compare timestamps, since bottleneck has timestamp
@@ -362,51 +353,6 @@ public class GcManager {
             priorEvent = event;
         }
         return bottlenecks;
-    }
-
-    /**
-     * @param jvmOptions
-     *            The JVM options used for the JVM run.
-     * @return A <code>List</code> of analysis points based on the JVM options and data.
-     */
-    private List<String> doAnalysis(Jvm jvm) {
-        List<String> analysis = new ArrayList<String>();
-
-        // 1) Check for partial log
-        if (GcUtil.isPartialLog(jvmDao.getFirstTimestamp())) {
-            analysis.add(Constants.WARNING_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
-        }
-
-        // JVM options analysis
-        if (jvm.getOptions() != null) {
-
-            // 2) Check to see if thread stack size explicitly set
-            if (jvm.getThreadStackSizeOption() == null) {
-                analysis.add(GcUtil.getPropertyValue("analysis", "thread.stack.size.not.set"));
-            }
-
-            // 3) Check to see if min and max heap sizes are the same
-            if (!jvm.isMinAndMaxHeapSpaceEqual()) {
-                analysis.add(GcUtil.getPropertyValue("analysis", "min.heap.not.equal.max.heap"));
-            }
-
-            // 4) Check to see if min and max perm gen sizes are the same
-            if (!jvm.isMinAndMaxPermSpaceEqual()) {
-                analysis.add(GcUtil.getPropertyValue("analysis", "min.perm.not.equal.max.perm"));
-            }
-
-            // TODO: Check to see if explicit GC interval is disabled or set.
-
-            // TODO: If explicit GC interval is set, try disabling explicit GC.
-
-            // TODO: Check for instrumentation.
-
-            // TODO: -Xbatch warning
-            
-            // TODO: application.stopped.time.missing
-
-        }
-        return analysis;
     }
 
     /**
@@ -436,8 +382,6 @@ public class GcManager {
         jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
         jvmRun.setEventTypes(jvmDao.getEventTypes());
         jvmRun.setBottlenecks(getBottlenecks(jvm, throughputThreshold));
-        // Can still do some analysis, even without GC data
-        jvmRun.setAnalysis(doAnalysis(jvm));
         return jvmRun;
     }
 }

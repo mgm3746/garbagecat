@@ -92,7 +92,6 @@ public class TestJvmDao extends TestCase {
                 + " [Tenured: 468292K->482213K(819200K), 1.9920590 secs] 824995K->482213K(1187840K),"
                 + " [Perm : 123092K->122684K(262144K)], 1.9924510 secs]");
         jvmDao.addBlockingEvent(event3);
-<<<<<<< HEAD
         jvmDao.processBlockingBatch();
 
         // check they are the correct way around
@@ -126,13 +125,4 @@ public class TestJvmDao extends TestCase {
         Assert.assertEquals("Stopped time throughput not calculated correctly.", 63, jvmRun.getStoppedTimeThroughput());
         Assert.assertEquals("GC/Stopped ratio not calculated correctly.", 6, jvmRun.getGcStoppedRatio());
     }
-=======
-        jvmDao.processBatch();
-
-        // check they are the correct way around
-        List<BlockingEvent> events = jvmDao.getBlockingEvents();
-        Assert.assertTrue(events.get(1) instanceof ParNewEvent);
-        Assert.assertTrue(events.get(2) instanceof SerialOldEvent);
-    }      
->>>>>>> branch 'master' of https://github.com/mgm3746/garbagecat.git
 }

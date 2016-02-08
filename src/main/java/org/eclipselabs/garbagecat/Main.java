@@ -1,14 +1,8 @@
 /******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
+ * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
+ * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
+ * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
+ * initial API and implementation *
  ******************************************************************************/
 package org.eclipselabs.garbagecat;
 
@@ -187,8 +181,8 @@ public class Main {
             Pattern pattern = Pattern.compile(thresholdRegEx);
             Matcher matcher = pattern.matcher(thresholdOptionValue);
             if (!matcher.find()) {
-                throw new IllegalArgumentException("'" + thresholdOptionValue + "' is not a valid threshold: "
-                        + thresholdRegEx);
+                throw new IllegalArgumentException(
+                        "'" + thresholdOptionValue + "' is not a valid threshold: " + thresholdRegEx);
             }
         }
         // startdatetime
@@ -294,13 +288,14 @@ public class Main {
             } else {
                 bufferedWriter.write("ERROR: No GC events found.\n");
             }
+            bufferedWriter.write("========================================\n");
 
-            // Print analysis information
-            bufferedWriter.write("========================================\n");
-            bufferedWriter.write("ANALYSIS:\n");
-            bufferedWriter.write("========================================\n");
+            // Print any analysis information
             List<String> analysis = jvmRun.getAnalysis();
-            if (analysis.size() > 0) {
+            if (!analysis.isEmpty()) {
+                bufferedWriter.write("ANALYSIS:\n");
+                bufferedWriter.write("========================================\n");
+
                 Iterator<String> iterator = analysis.iterator();
                 while (iterator.hasNext()) {
                     String bullet = iterator.next();
@@ -308,21 +303,22 @@ public class Main {
                     bufferedWriter.write(bullet);
                     bufferedWriter.write("\n");
                 }
+                bufferedWriter.write("========================================\n");
             }
 
-            // Unidentified log line information
+            // Print any Unidentified log lines
             List<String> unidentifiedLogLines = jvmRun.getUnidentifiedLogLines();
-            bufferedWriter.write("========================================\n");
-            bufferedWriter.write(unidentifiedLogLines.size() + " UNIDENTIFIED LOG LINE(S):\n");
-            bufferedWriter.write("========================================\n");
+            if (!unidentifiedLogLines.isEmpty()) {
+                bufferedWriter.write(unidentifiedLogLines.size() + " UNIDENTIFIED LOG LINE(S):\n");
+                bufferedWriter.write("========================================\n");
 
-            if (unidentifiedLogLines.size() > 0) {
                 Iterator<String> iterator = unidentifiedLogLines.iterator();
                 while (iterator.hasNext()) {
                     String unidentifiedLogLine = iterator.next();
                     bufferedWriter.write(unidentifiedLogLine);
                     bufferedWriter.write("\n");
                 }
+                bufferedWriter.write("========================================\n");
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
