@@ -115,7 +115,7 @@ public class JvmRun {
      * Event types.
      */
     private List<LogEventType> eventTypes;
-    
+
     /**
      * Trigger types
      */
@@ -277,7 +277,7 @@ public class JvmRun {
     public void setEventTypes(List<LogEventType> eventTypes) {
         this.eventTypes = eventTypes;
     }
-    
+
     public List<TriggerType> getTriggerTypes() {
         return triggerTypes;
     }
@@ -382,6 +382,11 @@ public class JvmRun {
         // 3) Check for explicit gc
         if (triggerTypes.contains(TriggerType.SYSTEM_GC)) {
             analysis.add(GcUtil.getPropertyValue("analysis", "explicit.gc"));
+        }
+
+        // 4) Check for significant stopped time unrelated to GC
+        if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME) && getGcStoppedRatio() < 80) {
+            analysis.add(GcUtil.getPropertyValue("analysis", "gc.stopped.ratio"));
         }
 
         // JVM options analysis
