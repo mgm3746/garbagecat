@@ -32,6 +32,9 @@ import org.eclipselabs.garbagecat.domain.jdk.G1MixedPause;
 import org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungPause;
+import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
+import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
+import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent;
@@ -79,7 +82,8 @@ public class JdkUtil {
         CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE, CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK, 
         CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD, 
         SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED, 
-        G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC
+        G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC, 
+        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION
     };
 
     /**
@@ -187,6 +191,12 @@ public class JdkUtil {
             return LogEventType.G1_FULL_GC;
         if (G1CleanupEvent.match(logLine))
             return LogEventType.G1_CLEANUP;
+        if (HeaderCommandLineFlagsEvent.match(logLine))
+            return LogEventType.HEADER_COMMAND_LINE_FLAGS;
+        if (HeaderMemoryEvent.match(logLine))
+            return LogEventType.HEADER_MEMORY;
+        if (HeaderVersionEvent.match(logLine))
+            return LogEventType.HEADER_VERSION;
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -311,6 +321,15 @@ public class JdkUtil {
         case G1_FULL_GC:
             event = new G1FullGCEvent(logLine);
             break;
+        case HEADER_COMMAND_LINE_FLAGS:
+            event = new HeaderCommandLineFlagsEvent(logLine);
+            break;
+        case HEADER_MEMORY:
+            event = new HeaderMemoryEvent(logLine);
+            break;
+        case HEADER_VERSION:
+            event = new HeaderVersionEvent(logLine);
+            break;            
         case UNKNOWN:
             event = new UnknownEvent(logLine);
             break;
@@ -584,7 +603,7 @@ public class JdkUtil {
     public static final String getOptionValue(String option) {
         String value = null;
         if (option != null) {
-            String regex = "^-[a-zA-Z:]+(=)?(\\d{1,6}(k|K|m|M|g|G))$";
+            String regex = "^-[a-zA-Z:]+(=)?(\\d{1,12}(k|K|m|M|g|G)?)$";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(option);
             if (matcher.find()) {

@@ -216,6 +216,23 @@ public class Main {
         try {
             fileWriter = new FileWriter(reportFile);
             bufferedWriter = new BufferedWriter(fileWriter);
+            
+            // Print JVM information
+            if (jvmRun.getJvm().getVersion() != null || jvmRun.getJvm().getOptions() != null
+                    || jvmRun.getJvm().getMemory() != null) {
+                bufferedWriter.write("========================================\n");
+                bufferedWriter.write("JVM:\n");
+                bufferedWriter.write("========================================\n");
+                if (jvmRun.getJvm().getVersion() != null) {
+                    bufferedWriter.write("Version: " + jvmRun.getJvm().getVersion() + "\n");
+                }
+                if (jvmRun.getJvm().getOptions() != null) {
+                    bufferedWriter.write("Options: " + jvmRun.getJvm().getOptions() + "\n");
+                }
+                if (jvmRun.getJvm().getMemory() != null) {
+                    bufferedWriter.write("Memory: " + jvmRun.getJvm().getMemory() + "\n");
+                }
+            }
 
             // Print bottleneck information
             List<String> bottlenecks = jvmRun.getBottlenecks();
@@ -233,9 +250,6 @@ public class Main {
             bufferedWriter.write("========================================\n");
             bufferedWriter.write("SUMMARY:\n");
             bufferedWriter.write("========================================\n");
-            if (jvmRun.getJvm().getOptions() != null) {
-                bufferedWriter.write("JVM options: " + jvmRun.getJvm().getOptions() + "\n");
-            }
             if (jvmRun.getBlockingEventCount() > 0) {
                 bufferedWriter.write("# GC Events: " + jvmRun.getBlockingEventCount() + "\n");
                 bufferedWriter.write("Event Types: ");

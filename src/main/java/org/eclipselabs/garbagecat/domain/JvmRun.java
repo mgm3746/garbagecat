@@ -9,7 +9,6 @@ package org.eclipselabs.garbagecat.domain;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.Constants;

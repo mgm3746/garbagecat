@@ -12,19 +12,11 @@
  ******************************************************************************/
 package org.eclipselabs.garbagecat.hsql;
 
-import java.io.File;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.Jvm;
-import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
-import org.eclipselabs.garbagecat.service.GcManager;
-import org.eclipselabs.garbagecat.util.Constants;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.TriggerType;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -34,51 +26,6 @@ import junit.framework.TestCase;
  * 
  */
 public class TestJvmDao extends TestCase {
-
-    public void testSummaryStatsParallel() {
-
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset1.txt");
-        GcManager jvmManager = new GcManager();
-        jvmManager.store(testFile);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-
-        Assert.assertEquals("Max heap space not calculated correctly.", 1034624, jvmRun.getMaxHeapSpace());
-        Assert.assertEquals("Max heap occupancy not calculated correctly.", 1013058, jvmRun.getMaxHeapOccupancy());
-        Assert.assertEquals("Max pause not calculated correctly.", 2782, jvmRun.getMaxGcPause());        
-        Assert.assertEquals("Max perm gen space not calculated correctly.", 159936, jvmRun.getMaxPermSpace());
-        Assert.assertEquals("Max perm gen occupancy not calculated correctly.", 76972, jvmRun.getMaxPermOccupancy());
-        Assert.assertEquals("Total GC duration not calculated correctly.", 5614, jvmRun.getTotalGcPause());
-        Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE));
-        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD));
-    }
-
-    public void testSummaryStatsParNew() {
-
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset2.txt");
-        GcManager jvmManager = new GcManager();
-        jvmManager.store(testFile);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-
-        Assert.assertEquals("Max heap space not calculated correctly.", 1048256, jvmRun.getMaxHeapSpace());
-        Assert.assertEquals("Max heap occupancy not calculated correctly.", 424192, jvmRun.getMaxHeapOccupancy());
-        Assert.assertEquals("Max pause not calculated correctly.", 1070, jvmRun.getMaxGcPause());
-        Assert.assertEquals("Max perm gen space not calculated correctly.", 99804, jvmRun.getMaxPermSpace());
-        Assert.assertEquals("Max perm gen occupancy not calculated correctly.", 60155, jvmRun.getMaxPermOccupancy());
-        Assert.assertEquals("Total GC duration not calculated correctly.", 1282, jvmRun.getTotalGcPause());
-        Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
-        Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
-    }
-
-    public void testLastTimestampNoEvents() {
-        GcManager jvmManager = new GcManager();
-        jvmManager.store(null);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Last timestamp not correct.", 0, jvmRun.getLastTimestamp());
-    }
     
     public void testSameTimestampOrdering() {
         JvmDao jvmDao = new JvmDao();
@@ -100,30 +47,4 @@ public class TestJvmDao extends TestCase {
         Assert.assertTrue(events.get(1) instanceof ParNewEvent);
         Assert.assertTrue(events.get(2) instanceof SerialOldEvent);
     }   
-    
-    public void testSummaryStatsStoppedTime() {
-
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset41.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Max heap space not calculated correctly.", 31457280, jvmRun.getMaxHeapSpace());
-        Assert.assertEquals("Max heap occupancy not calculated correctly.", 140288, jvmRun.getMaxHeapOccupancy());
-        Assert.assertEquals("Max GC pause not calculated correctly.", 41, jvmRun.getMaxGcPause());
-        Assert.assertEquals("Max perm gen space not calculated correctly.", 0, jvmRun.getMaxPermSpace());
-        Assert.assertEquals("Max perm gen occupancy not calculated correctly.", 0, jvmRun.getMaxPermOccupancy());
-        Assert.assertEquals("Total GC pause time not calculated correctly.", 61, jvmRun.getTotalGcPause());
-        Assert.assertEquals("GC last timestamp not calculated correctly.", 2847, jvmRun.getLastTimestamp());
-        Assert.assertEquals("GC throughput not calculated correctly.", 98, jvmRun.getGcThroughput());
-        Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE));
-        Assert.assertTrue(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " not identified.", jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME));        
-        Assert.assertEquals("Stopped Time event count not correct.", 6, jvmRun.getStoppedTimeEventCount());
-        Assert.assertEquals("Max stopped time not calculated correctly.", 1000, jvmRun.getMaxStoppedTime());
-        Assert.assertEquals("Total stopped time not calculated correctly.", 1064, jvmRun.getTotalStoppedTime());
-        Assert.assertEquals("Stopped time throughput not calculated correctly.", 63, jvmRun.getStoppedTimeThroughput());
-        Assert.assertEquals("GC/Stopped ratio not calculated correctly.", 6, jvmRun.getGcStoppedRatio());
-    }
 }

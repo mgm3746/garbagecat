@@ -1,0 +1,731 @@
+/******************************************************************************
+ * Garbage Cat                                                                *
+ *                                                                            *
+ * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
+ * All rights reserved. This program and the accompanying materials           *
+ * are made available under the terms of the Eclipse Public License v1.0      *
+ * which accompanies this distribution, and is available at                   *
+ * http://www.eclipse.org/legal/epl-v10.html                                  *
+ *                                                                            *
+ * Contributors:                                                              *
+ *    Red Hat, Inc. - initial API and implementation                          *
+ ******************************************************************************/
+package org.eclipselabs.garbagecat.domain;
+
+import java.io.File;
+import java.util.Calendar;
+
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.TriggerType;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
+/**
+ * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
+ * 
+ */
+public class TestJvmRun extends TestCase {
+    
+    public void testSummaryStatsParallel() {
+
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset1.txt");
+        GcManager jvmManager = new GcManager();
+        jvmManager.store(testFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+
+        Assert.assertEquals("Max heap space not calculated correctly.", 1034624, jvmRun.getMaxHeapSpace());
+        Assert.assertEquals("Max heap occupancy not calculated correctly.", 1013058, jvmRun.getMaxHeapOccupancy());
+        Assert.assertEquals("Max pause not calculated correctly.", 2782, jvmRun.getMaxGcPause());        
+        Assert.assertEquals("Max perm gen space not calculated correctly.", 159936, jvmRun.getMaxPermSpace());
+        Assert.assertEquals("Max perm gen occupancy not calculated correctly.", 76972, jvmRun.getMaxPermOccupancy());
+        Assert.assertEquals("Total GC duration not calculated correctly.", 5614, jvmRun.getTotalGcPause());
+        Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE));
+        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD));
+    }
+
+    public void testSummaryStatsParNew() {
+
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset2.txt");
+        GcManager jvmManager = new GcManager();
+        jvmManager.store(testFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+
+        Assert.assertEquals("Max heap space not calculated correctly.", 1048256, jvmRun.getMaxHeapSpace());
+        Assert.assertEquals("Max heap occupancy not calculated correctly.", 424192, jvmRun.getMaxHeapOccupancy());
+        Assert.assertEquals("Max pause not calculated correctly.", 1070, jvmRun.getMaxGcPause());
+        Assert.assertEquals("Max perm gen space not calculated correctly.", 99804, jvmRun.getMaxPermSpace());
+        Assert.assertEquals("Max perm gen occupancy not calculated correctly.", 60155, jvmRun.getMaxPermOccupancy());
+        Assert.assertEquals("Total GC duration not calculated correctly.", 1282, jvmRun.getTotalGcPause());
+        Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
+        Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
+    }
+    
+    public void testLastTimestampNoEvents() {
+        GcManager jvmManager = new GcManager();
+        jvmManager.store(null);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Last timestamp not correct.", 0, jvmRun.getLastTimestamp());
+    }
+
+    /**
+     * Test parsing logging with -XX:+PrintGCApplicationConcurrentTime and -XX:+PrintGCApplicationStoppedTime output.
+     */
+    public void testParseLoggingWithApplicationTime() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset3.txt");
+        GcManager jvmManager = new GcManager();
+        jvmManager.store(testFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event count not correct.", 3, jvmRun.getEventTypes().size());
+        Assert.assertEquals("Should not be any unidentified log lines.", 0, jvmRun.getUnidentifiedLogLines().size());
+    }
+
+    /**
+     * Test preprocessing a split <code>ParNewPromotionFailedCmsConcurrentModeFailureEvent</code>.
+     */
+    public void testSplitParNewPromotionFailedCmsConcurrentModeFailure() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset5.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 3, jvmRun.getEventTypes().size());
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
+                jvmRun.getEventTypes()
+                        .contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE));
+    }
+
+    /**
+     * Test preprocessing <code>PrintHeapAtGcPreprocessAction</code> with underlying <code>CmsSerialOldEvent</code>.
+     */
+    public void testSplitPrintHeapAtGcCmsSerialOldEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset6.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
+    }
+
+    /**
+     * Test preprocessing <code>PrintHeapAtGcPreprocessAction</code> with underlying
+     * <code>ParNewConcurrentModeFailureEvent</code>.
+     */
+    public void testSplitPrintHeapAtGcParNewConcurrentModeFailureEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset7.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE));
+    }
+
+    /**
+     * Test preprocessing <code>PrintHeapAtGcPreprocessAction</code> with underlying
+     * <code>CmsSerialOldConcurrentModeFailureEvent</code>.
+     */
+    public void testSplitPrintHeapAtGcCmsSerialOldConcurrentModeFailureEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset8.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString()
+                        + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE));
+    }
+
+    /**
+     * Test preprocessing <code>PrintHeapAtGcPreprocessAction</code> with underlying
+     * <code>ParNewConcurrentModeFailureEvent</code>.
+     */
+    public void testSplitPrintHeapAtGcParNewPromotionFailedCmsConcurrentModeFailureEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset21.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
+                jvmRun.getEventTypes()
+                        .contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE));
+    }
+
+    /**
+     * Test preprocessing <code>GcTimeLimitExceededEvent</code> with underlying <code>ParallelSerialOldEvent</code>.
+     */
+    public void testSplitParallelSerialOldEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset9.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD));
+    }
+
+    /**
+     * Test preprocessing <code>GcTimeLimitExceededEvent</code> with underlying <code>ParallelOldCompactingEvent</code>
+     * .
+     */
+    public void testSplitParallelOldCompactingEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset28.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING));
+    }
+
+    /**
+     * Test preprocessing a split <code>CmsSerialOldEventConcurrentModeFailureEvent</code>.
+     */
+    public void testSplitCmsConcurrentModeFailureEventMarkLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset10.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString()
+                        + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE));
+    }
+
+    /**
+     * Test preprocessing a split <code>CmsSerialOldConcurrentModeFailureEvent</code>.
+     */
+    public void testSplitCmsConcurrentModeFailureEventAbortablePrecleanLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset11.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString()
+                        + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE));
+    }
+
+    /**
+     * Test preprocessing a split <code>ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent</code>.
+     */
+    public void testSplitParNewPromotionFailedCmsConcurrentModeFailurePermData() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset12.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as "
+                + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
+                jvmRun.getEventTypes()
+                        .contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA));
+    }
+
+    /**
+     * Test preprocessing a split <code>ParNewCmsConcurrentModeFailurePermDataEvent</code>.
+     */
+    public void testSplitParNewCmsConcurrentModeFailurePermData() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset13.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA));
+    }
+
+    /**
+     * Test preprocessing <code>CmsSerialOldConcurrentModeFailureEvent</code> split over 3 lines.
+     */
+    public void testSplit3LinesCmsConcurrentModeFailureEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset14.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE.toString()
+                        + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE));
+    }
+
+    /**
+     * Test preprocessing a split <code>ParNewCmsConcurrentEvent</code> that does not include the
+     * "concurrent mode failure" text.
+     */
+    public void testSplitParNewCmsConcurrentEventAbortablePrecleanLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset15.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CMS_CONCURRENT));
+    }
+
+    /**
+     * Test preprocessing <code>ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent</code> split over 3 lines.
+     */
+    public void testSplit3LinesParNewPromotionFailedCmsConcurrentModeFailurePermDataEventMarkLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset16.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as "
+                + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
+                jvmRun.getEventTypes()
+                        .contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA));
+    }
+
+    /**
+     * Test preprocessing <code>PrintTenuringDistributionPreprocessAction</code> with underlying
+     * <code>SerialEvent</code>.
+     */
+    public void testSplitSerialEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset17.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL));
+    }
+
+    /**
+     * Test preprocessing <code>PrintTenuringDistributionPreprocessAction</code> with underlying
+     * <code>ParallelScavengeEvent</code>.
+     */
+    public void testSplitParallelScavengeEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset30.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE));
+    }
+    
+    /**
+     * Test preprocessing a split <code>ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent</code> with
+     * -XX:+PrintTenuringDistribution logging between the initial and final lines.
+     */
+    public void testSplitMixedTenuringParNewPromotionFailedEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset18.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as "
+                + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
+                jvmRun.getEventTypes()
+                        .contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA));
+    }
+
+    /**
+     * Test preprocessing a combined <code>CmsConcurrentEvent</code> and <code>ApplicationConcurrentTimeEvent</code>
+     * split across 2 lines.
+     */
+    public void testCombinedCmsConcurrentApplicationConcurrentTimeLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset19.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
+    }
+
+    /**
+     * Test preprocessing a combined <code>CmsConcurrentEvent</code> and <code>ApplicationStoppedTimeEvent</code> split
+     * across 2 lines.
+     */
+    public void testCombinedCmsConcurrentApplicationStoppedTimeLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset27.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
+    }
+
+    public void testRemoveBlankLines() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset20.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+    }
+
+    /**
+     * Test preprocessing <code>UnloadingClassPreprocessAction</code> with underlying
+     * <code>ParallelSerialOldEvent</code>.
+     */
+    public void testUnloadingClassPreprocessActionParallelSerialOldEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset24.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD));
+    }
+
+    /**
+     * Test preprocessing <code>UnloadingClassPreprocessAction</code> with underlying <code>TruncatedEvent</code>.
+     */
+    public void testUnloadingClassPreprocessActionTruncatedEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset22.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.TRUNCATED.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.TRUNCATED));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+    }
+
+    /**
+     * Test to make sure a <code>ParNewPromotionFailedTruncatedEvent</code> is not mistakenly preprocessed as a
+     * <code>ParNewCmsConcurrentPreprocessAction</code>.
+     */
+    public void testParNewPromotionFailedTruncatedEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset23.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED.toString()
+                        + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+    }
+
+    /**
+     * Test <code>DateStampPreprocessAction</code>.
+     */
+    public void testDateStampPreprocessActionLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset25.txt");
+        GcManager jvmManager = new GcManager();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, 2010);
+        calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+        calendar.set(Calendar.DAY_OF_MONTH, 26);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        File preprocessedFile = jvmManager.preprocess(testFile, calendar.getTime());
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+    }
+
+    /**
+     * Test <code>DateStampPrefixPreprocessAction</code>.
+     */
+    public void testDateStampPrefixPreprocessAction() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset26.txt");
+        GcManager jvmManager = new GcManager();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, 2010);
+        calendar.set(Calendar.MONTH, Calendar.APRIL);
+        calendar.set(Calendar.DAY_OF_MONTH, 16);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        File preprocessedFile = jvmManager.preprocess(testFile, calendar.getTime());
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+    }
+
+    /**
+     * Test <code>DateStampPrefixPreprocessAction</code> with multiple datestamps.
+     */
+    public void testDateStampPrefixPreprocessActionMultiple() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset33.txt");
+        GcManager jvmManager = new GcManager();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, 2010);
+        calendar.set(Calendar.MONTH, Calendar.APRIL);
+        calendar.set(Calendar.DAY_OF_MONTH, 16);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        File preprocessedFile = jvmManager.preprocess(testFile, calendar.getTime());
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+    }
+
+    /**
+     * Test preprocessing <code>ParNewConcurrentModeFailureEvent</code> split over 3 lines.
+     * 
+     */
+    public void testSplit3LinesParNewConcurrentModeFailureEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset29.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE));
+    }
+
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_PAUSE.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset32.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+    }
+
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_PAUSE Evacuation Pause.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionG1EvaluationPauseLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset34.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+    }
+
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_PAUSE GCLocker Initiated GC.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionGCLockerInitiatedGCLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset35.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+    }
+
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_FULL_GC.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionG1FullGCLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset36.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
+        Assert.assertTrue(JdkUtil.TriggerType.SYSTEM_GC.toString() + " trigger not identified.",
+                jvmRun.getTriggerTypes().contains(TriggerType.SYSTEM_GC));
+    }
+
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_INITIAL_MARK.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionYoungInitialMarkLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset37.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK));
+    }
+
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_REMARK.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionRemarkLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset38.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_REMARK));
+    }
+
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_MIXED_PAUSE.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionMixedPauseLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset39.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_MIXED_PAUSE));
+    }
+
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_CLEANUP.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionCleanupLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset40.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CLEANUP));
+    }
+    
+    public void testSummaryStatsStoppedTime() {
+
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset41.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Max heap space not calculated correctly.", 31457280, jvmRun.getMaxHeapSpace());
+        Assert.assertEquals("Max heap occupancy not calculated correctly.", 140288, jvmRun.getMaxHeapOccupancy());
+        Assert.assertEquals("Max GC pause not calculated correctly.", 41, jvmRun.getMaxGcPause());
+        Assert.assertEquals("Max perm gen space not calculated correctly.", 0, jvmRun.getMaxPermSpace());
+        Assert.assertEquals("Max perm gen occupancy not calculated correctly.", 0, jvmRun.getMaxPermOccupancy());
+        Assert.assertEquals("Total GC pause time not calculated correctly.", 61, jvmRun.getTotalGcPause());
+        Assert.assertEquals("GC last timestamp not calculated correctly.", 2847, jvmRun.getLastTimestamp());
+        Assert.assertEquals("GC throughput not calculated correctly.", 98, jvmRun.getGcThroughput());
+        Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE));
+        Assert.assertTrue(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " not identified.", jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME));        
+        Assert.assertEquals("Stopped Time event count not correct.", 6, jvmRun.getStoppedTimeEventCount());
+        Assert.assertEquals("Max stopped time not calculated correctly.", 1000, jvmRun.getMaxStoppedTime());
+        Assert.assertEquals("Total stopped time not calculated correctly.", 1064, jvmRun.getTotalStoppedTime());
+        Assert.assertEquals("Stopped time throughput not calculated correctly.", 63, jvmRun.getStoppedTimeThroughput());
+        Assert.assertEquals("GC/Stopped ratio not calculated correctly.", 6, jvmRun.getGcStoppedRatio());
+    }  
+    
+    public void testHeaderLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset42.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " information not identified.", jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS));
+        Assert.assertTrue(JdkUtil.LogEventType.HEADER_MEMORY.toString() + " information not identified.", jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY));
+        Assert.assertTrue(JdkUtil.LogEventType.HEADER_VERSION.toString() + " information not identified.", jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION));
+    } 
+}

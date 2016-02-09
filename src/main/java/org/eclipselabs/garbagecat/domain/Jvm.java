@@ -35,6 +35,16 @@ public class Jvm {
      * The JVM options for the JVM run.
      */
     private String options;
+    
+    /**
+     * JVM version.
+     */
+    private String version;
+    
+    /**
+     * JVM memory information.
+     */
+    private String memory;
 
     /**
      * Constructor accepting list of JVM options.
@@ -49,12 +59,53 @@ public class Jvm {
         this.startDate = jvmStartDate;
     }
 
+    /**
+     * @return The date and time the JVM was started.     
+     */
     public Date getStartDate() {
         return startDate;
     }
 
+    /**
+     * @return The JVM options.     
+     */
     public String getOptions() {
         return options;
+    }    
+    
+    /**
+     * @param options The JVM options to set.
+     */
+    public void setOptions(String options) {
+        this.options = options;
+    }
+
+    /**
+     * @return The JVM version information.     
+     */
+    public String getVersion() {
+        return version;
+    }
+    
+    /**
+     * @param version The JVM version information to set.
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
+    
+    /**
+     * @return The JVM memory information.     
+     */
+    public String getMemory() {
+        return memory;
+    }
+    
+    /**
+     * @param memory The JVM memory information to set.
+     */
+    public void setMemory(String memory) {
+        this.memory = memory;
     }
 
     /**
@@ -100,7 +151,7 @@ public class Jvm {
     public String getMinHeapOption() {
         String option = null;
         if (options != null) {
-            String regex = "(-Xms\\d{1,5}(m|M|g|G))";
+            String regex = "((-Xms\\d{1,5}(m|M|g|G))|(-XX:InitialHeapSize=\\d{1,12}(m|M|g|G)?))";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(options);
             if (matcher.find()) {
@@ -122,6 +173,7 @@ public class Jvm {
      * 
      * <pre>
      * -Xmx1024m
+     * -XX:InitialHeapSize=1234567890
      * </pre>
      * 
      * @return The maximum heap space, or null if not explicitly set.
@@ -129,7 +181,7 @@ public class Jvm {
     public String getMaxHeapOption() {
         String option = null;
         if (options != null) {
-            String regex = "(-Xmx\\d{1,5}(m|M|g|G))";
+            String regex = "((-Xmx\\d{1,5}(m|M|g|G))|(-XX:MaxHeapSize=\\d{1,12}(m|M|g|G)?))";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(options);
             if (matcher.find()) {
@@ -168,7 +220,7 @@ public class Jvm {
     public String getMinPermOption() {
         String option = null;
         if (options != null) {
-            String regex = "(-XX:PermSize=\\d{1,5}(m|M|g|G))";
+            String regex = "(-XX:PermSize=\\d{1,10}(m|M|g|G)?)";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(options);
             if (matcher.find()) {
@@ -197,7 +249,7 @@ public class Jvm {
     public String getMaxPermOption() {
         String option = null;
         if (options != null) {
-            String regex = "(-XX:MaxPermSize=\\d{1,5}(m|M|g|G))";
+            String regex = "(-XX:MaxPermSize=\\d{1,10}(m|M|g|G)?)";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(options);
             if (matcher.find()) {

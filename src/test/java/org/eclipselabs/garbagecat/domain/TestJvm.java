@@ -139,6 +139,13 @@ public class TestJvm extends TestCase {
         jvm = new Jvm("-Xms256k -Xmx256M", null);
         Assert.assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxHeapSpaceEqual());
     }
+    
+    public void testIsMinAndMaxHeapSpaceEqualVerboseOptions() {
+        Jvm jvm = new Jvm("-XX:InitialHeapSize=1234567890 -XX:MaxHeapSize=1234567890", null);
+        Assert.assertTrue("Min and max heap are equal.", jvm.isMinAndMaxHeapSpaceEqual());
+        jvm = new Jvm("-XX:InitialHeapSize=1234567890 -XX:MaxHeapSize=1234567891", null);
+        Assert.assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxHeapSpaceEqual());
+    }
 
     public void testGetMinPermSmallM() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:PermSize=128m -XX:MaxPermSize=128m";
@@ -206,6 +213,13 @@ public class TestJvm extends TestCase {
         jvm = new Jvm("-XX:MaxPermSize=256M", null);
         Assert.assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxPermSpaceEqual());
         jvm = new Jvm("-XX:PermSize=128m -XX:MaxPermSize=256M", null);
+        Assert.assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxPermSpaceEqual());
+    }
+    
+    public void testIsMinAndMaxPermSpaceEqualVerboseOptions() {
+        Jvm jvm = new Jvm("-XX:MaxPermSize=1234567890 -XX:PermSize=1234567890", null);
+        Assert.assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
+        jvm = new Jvm("-XX:MaxPermSize=1234567890 -XX:PermSize=1234567891", null);
         Assert.assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxPermSpaceEqual());
     }
 }

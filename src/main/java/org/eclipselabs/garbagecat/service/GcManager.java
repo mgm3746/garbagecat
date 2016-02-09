@@ -26,6 +26,9 @@ import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.TriggerEvent;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
+import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
+import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
@@ -269,6 +272,12 @@ public class GcManager {
                     }
                 } else if (event instanceof ApplicationStoppedTimeEvent) {
                     jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
+                } else if (event instanceof HeaderCommandLineFlagsEvent) {
+                    jvmDao.setOptions(((HeaderCommandLineFlagsEvent) event).getJvmOptions());
+                } else if (event instanceof HeaderMemoryEvent) {
+                    jvmDao.setMemory(((HeaderMemoryEvent) event).getLogEntry());
+                } else if (event instanceof HeaderVersionEvent) {
+                    jvmDao.setVersion(((HeaderVersionEvent) event).getLogEntry());
                 } else if (event instanceof UnknownEvent) {
                     if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
                         jvmDao.getUnidentifiedLogLines().add(logLine);
@@ -377,6 +386,10 @@ public class GcManager {
      */
     public JvmRun getJvmRun(Jvm jvm, int throughputThreshold) {
         JvmRun jvmRun = new JvmRun(jvm, throughputThreshold);
+        // Override any options passed in on command line
+        jvmRun.getJvm().setOptions(jvmDao.getOptions());
+        jvmRun.getJvm().setMemory(jvmDao.getMemory());
+        jvmRun.getJvm().setVersion(jvmDao.getVersion());
         jvmRun.setFirstTimestamp(jvmDao.getFirstTimestamp());
         jvmRun.setLastTimestamp(jvmDao.getLastGcTimestamp());
         jvmRun.setMaxHeapSpace(jvmDao.getMaxHeapSpace());

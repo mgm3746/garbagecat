@@ -94,6 +94,21 @@ public class JvmDao {
      * Batch stopped time database inserts for improved performance.
      */
     private List<ApplicationStoppedTimeEvent> stoppedTimeBatch;
+    
+    /**
+     * The JVM options for the JVM run.
+     */
+    private String options;
+    
+    /**
+     * JVM version.
+     */
+    private String version;
+    
+    /**
+     * JVM memory information.
+     */
+    private String memory;
 
     public JvmDao() {
         try {
@@ -172,6 +187,48 @@ public class JvmDao {
             processStoppedTimeBatch();
         }
         stoppedTimeBatch.add(event);
+    }
+    
+    /**
+     * @return The JVM options.     
+     */
+    public String getOptions() {
+        return options;
+    }    
+    
+    /**
+     * @param options The JVM options to set.
+     */
+    public void setOptions(String options) {
+        this.options = options;
+    }
+
+    /**
+     * @return The JVM version information.     
+     */
+    public String getVersion() {
+        return version;
+    }
+    
+    /**
+     * @param version The JVM version information to set.
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
+    
+    /**
+     * @return The JVM memory information.     
+     */
+    public String getMemory() {
+        return memory;
+    }
+    
+    /**
+     * @param memory The JVM memory information to set.
+     */
+    public void setMemory(String memory) {
+        this.memory = memory;
     }
 
     /**
