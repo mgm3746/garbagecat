@@ -463,6 +463,8 @@ public class JdkUtil {
         return !(eventType == JdkUtil.LogEventType.CMS_CONCURRENT || eventType == JdkUtil.LogEventType.G1_CONCURRENT
                 || eventType == JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME
                 || eventType == JdkUtil.LogEventType.APPLICATION_STOPPED_TIME
+                || eventType == JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS
+                || eventType == JdkUtil.LogEventType.HEADER_MEMORY || eventType == JdkUtil.LogEventType.HEADER_VERSION
                 || eventType == JdkUtil.LogEventType.UNKNOWN);
     }
 

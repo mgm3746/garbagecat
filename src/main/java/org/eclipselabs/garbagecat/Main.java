@@ -258,7 +258,11 @@ public class Main {
                 boolean firstEvent = true;
                 while (iterator.hasNext()) {
                     LogEventType eventType = iterator.next();
-                    if (!eventType.equals(LogEventType.UNKNOWN)) {
+                    // Don't report header or unknown events
+                    if (!eventType.equals(LogEventType.HEADER_COMMAND_LINE_FLAGS)
+                            && !eventType.equals(LogEventType.HEADER_MEMORY)
+                            && !eventType.equals(LogEventType.HEADER_VERSION)
+                            && !eventType.equals(LogEventType.UNKNOWN)) {
                         if (!firstEvent) {
                             bufferedWriter.write(", ");
                         }
