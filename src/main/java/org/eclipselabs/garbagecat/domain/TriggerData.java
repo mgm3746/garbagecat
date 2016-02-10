@@ -13,12 +13,12 @@
 package org.eclipselabs.garbagecat.domain;
 
 /**
- * Trigger event.
+ * Trigger data.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public interface TriggerEvent {
+public interface TriggerData {
 
     /**
      * @return The trigger for the event.

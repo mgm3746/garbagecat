@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
-import org.eclipselabs.garbagecat.domain.TriggerEvent;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -61,7 +61,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1FullGCEvent implements BlockingEvent, TriggerEvent, CombinedData {
+public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData {
 
     /**
      * Regular expressions defining the logging.

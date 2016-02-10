@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
-import org.eclipselabs.garbagecat.domain.TriggerEvent;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -64,7 +64,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerEvent {
+public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

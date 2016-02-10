@@ -23,7 +23,7 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.Jvm;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
-import org.eclipselabs.garbagecat.domain.TriggerEvent;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
@@ -262,10 +262,10 @@ public class GcManager {
                     jvmDao.addBlockingEvent((BlockingEvent) event);
 
                     // Populate triggers list.
-                    if (event instanceof TriggerEvent) {
+                    if (event instanceof TriggerData) {
                         List<JdkUtil.TriggerType> triggerTypes = jvmDao.getTriggerTypes();
                         JdkUtil.TriggerType triggerType = JdkUtil
-                                .determineTriggerType(((TriggerEvent) event).getTrigger());
+                                .determineTriggerType(((TriggerData) event).getTrigger());
                         if (!triggerTypes.contains(triggerType)) {
                             triggerTypes.add(triggerType);
                         }
