@@ -141,7 +141,7 @@ public class ParallelOldCompactingEvent implements BlockingEvent, OldCollection,
     private int permGenAllocation;
     
     /**
-     * The trigger for the GC event such as "Metadata GC Threshold".
+     * The trigger for the GC event.
      */
     private String trigger;
 

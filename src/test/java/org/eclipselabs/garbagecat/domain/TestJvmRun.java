@@ -565,7 +565,7 @@ public class TestJvmRun extends TestCase {
      * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_PAUSE.
      * 
      */
-    public void testG1PrintGcDetailsPreprocessActionLogging() {
+    public void testG1PrintGcDetailsPreprocessActionG1YoungPauseLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset32.txt");
         GcManager jvmManager = new GcManager();
@@ -578,10 +578,10 @@ public class TestJvmRun extends TestCase {
     }
 
     /**
-     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_PAUSE Evacuation Pause.
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_PAUSE with G1_EVACUATION_PAUSE trigger.
      * 
      */
-    public void testG1PrintGcDetailsPreprocessActionG1EvaluationPauseLogging() {
+    public void testG1PrintGcDetailsPreprocessActionG1EvacuationPauseLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset34.txt");
         GcManager jvmManager = new GcManager();
@@ -594,12 +594,28 @@ public class TestJvmRun extends TestCase {
     }
 
     /**
-     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_PAUSE GCLocker Initiated GC.
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_PAUSE with GCLOCKER_INITIATED_GC trigger.
      * 
      */
-    public void testG1PrintGcDetailsPreprocessActionGCLockerInitiatedGCLogging() {
+    public void testG1PrintGcDetailsPreprocessActionG1YoungPauseWithGCLockerInitiatedGCLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset35.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+    }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_PAUSE with TO_SPACE_EXHAUSTED trigger.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionToSpaceExhaustedLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset45.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile);
@@ -642,6 +658,22 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK));
     }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_YOUNG_INITIAL_MARK.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionG1InitialMarkWithCodeRootLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset43.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK));
+    }
 
     /**
      * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_REMARK.
@@ -660,12 +692,28 @@ public class TestJvmRun extends TestCase {
     }
 
     /**
-     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_MIXED_PAUSE.
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_MIXED_PAUSE with G1_EVACUATION_PAUSE trigger.
      * 
      */
     public void testG1PrintGcDetailsPreprocessActionMixedPauseLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset39.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_MIXED_PAUSE));
+    }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_MIXED_PAUSE with no trigger.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionMixedPauseNoTriggerLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset46.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile);
@@ -727,5 +775,39 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " information not identified.", jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS));
         Assert.assertTrue(JdkUtil.LogEventType.HEADER_MEMORY.toString() + " information not identified.", jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY));
         Assert.assertTrue(JdkUtil.LogEventType.HEADER_VERSION.toString() + " information not identified.", jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION));
-    } 
+    }  
+
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_CONCURRENT.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionConcurrentLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset44.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CONCURRENT));
+    }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT.
+     * 
+     */
+    public void testG1PrintGcDetailsPreprocessActionYoungConcurrentLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset47.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CONCURRENT));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));        
+    }
 }

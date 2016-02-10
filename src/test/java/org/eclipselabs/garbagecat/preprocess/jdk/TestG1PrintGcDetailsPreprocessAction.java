@@ -30,12 +30,19 @@ public class TestG1PrintGcDetailsPreprocessAction extends TestCase {
                 G1PrintGcDetailsPreprocessAction.match(logLine));
     }
 
+    public void testLogLineRootRegionScanWaiting() {
+        String logLine = "   [Root Region Scan Waiting: 112.3 ms]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+    
     public void testLogLineParallelTime() {
         String logLine = "   [Parallel Time: 12.6 ms, GC Workers: 6]";
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
                 G1PrintGcDetailsPreprocessAction.match(logLine));
-    }
+    }    
 
     public void testLogLineGcWorkerStart() {
         String logLine = "      [GC Worker Start Time (ms):  807.5  807.8  807.8  810.1]";
@@ -134,6 +141,28 @@ public class TestG1PrintGcDetailsPreprocessAction extends TestCase {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
                 G1PrintGcDetailsPreprocessAction.match(logLine));
     }
+    
+    public void testLogLineCodeRootMigration() {
+        String logLine = "   [Code Root Migration: 0.8 ms]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+    
+    public void testLogLineCodeRootScanning() {
+        String logLine = "      [Code Root Scanning (ms): Min: 0.0, Avg: 0.2, Max: 0.4, Diff: 0.4, Sum: 0.8]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+    
+    public void testLogLineCodeRootMarking() {
+        String logLine = "      [Code Root Marking (ms): Min: 0.1, Avg: 1.8, Max: 3.7, Diff: 3.7, Sum: 7.2]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+
 
     public void testLogLineClearCt() {
         String logLine = "   [Clear CT: 0.1 ms]";
@@ -241,6 +270,13 @@ public class TestG1PrintGcDetailsPreprocessAction extends TestCase {
                 G1PrintGcDetailsPreprocessAction.match(logLine));
     }
     
+    public void testLogLineToSpaceExhausted() {
+        String logLine = "27997.968: [GC pause (young) (to-space exhausted), 0.1208740 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+    
     public void testLogLineFullGC() {
         String logLine = "105.151: [Full GC (System.gc()) 5820M->1381M(30G), 5.5390169 secs]";
         Assert.assertTrue(
@@ -276,8 +312,50 @@ public class TestG1PrintGcDetailsPreprocessAction extends TestCase {
                 G1PrintGcDetailsPreprocessAction.match(logLine));
     }
     
+    public void testLogMixedNoTrigger() {
+        String logLine = "3082.652: [GC pause (mixed), 0.0762060 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+    
     public void testLogCleanup() {
         String logLine = "2972.698: [GC cleanup 13G->12G(30G), 0.0358748 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+    
+    public void testLogLineConcurrent() {
+        String logLine = "27744.494: [GC concurrent-mark-start]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+    
+    public void testLogLineYoungPauseWithToSpaceExhaustedTrigger() {
+        String logLine = "27997.968: [GC pause (young) (to-space exhausted), 0.1208740 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+    
+    public void testLogLineFullGcNoTrigger() {
+        String logLine = "27999.141: [Full GC 18G->4153M(26G), 10.1760410 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    } 
+    
+    public void testLogLineMixedYoungPauseWithConcurrentRootRegionScanEnd() {
+        String logLine = "4969.943: [GC pause (young)4970.158: [GC concurrent-root-region-scan-end, 0.5703200 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+    
+    public void testLogLineMixedYoungPauseWithConcurrentCleanupEnd() {
+        String logLine = "6554.823: [GC pause (young)6554.824: [GC concurrent-cleanup-end, 0.0029080 secs]";
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
                 G1PrintGcDetailsPreprocessAction.match(logLine));

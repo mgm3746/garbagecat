@@ -50,8 +50,8 @@ public class TestG1FullGCEvent extends TestCase {
                 G1FullGCEvent.match(logLine));
         G1FullGCEvent event = new G1FullGCEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 105151, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC)); 
         Assert.assertEquals("Combined begin size not parsed correctly.", 5959680, event.getCombinedOccupancyInit());
-        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
         Assert.assertEquals("Combined end size not parsed correctly.", 1414144, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 31457280, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 5539, event.getDuration());
@@ -63,5 +63,18 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
                 G1FullGCEvent.match(logLine));
     }
-
+    
+    public void testLogLinePreprocessedWithNoTrigger() {
+        String logLine = "27999.141: [Full GC 18G->4153M(26G), 10.1760410 secs] 19354M->4154M(26624M) "
+                + "[Times: user=13.12 sys=0.02, real=10.17 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
+                G1FullGCEvent.match(logLine));
+        G1FullGCEvent event = new G1FullGCEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 27999141, event.getTimestamp());
+        Assert.assertNull("Trigger not parsed correctly.", event.getTrigger());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 18874368, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 4252672, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 27262976, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 10176, event.getDuration());
+    }
 }

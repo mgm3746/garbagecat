@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -51,11 +52,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 1.807: [GC pause (young), 0.00290200 secs] 29M->2589K(59M) [Times: user=0.01 sys=0.00, real=0.01 secs]
  * </pre>
  * 
+ * <p>
+ * 3) After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction} with trigger:
+ * </p>
+ * 
+ * <pre>
+ * 27997.968: [GC pause (young) (to-space exhausted), 0.1208740 secs] 19354M->18227M(26624M) [Times: user=0.41 sys=0.02, real=0.12 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
  * 
  */
-public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedData {
+public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedData, TriggerData {
 
     /**
      * Regular expression standard format.
@@ -67,11 +76,12 @@ public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedDat
     /**
      * Regular expression preprocessed.
      */
-    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP
-            + ": \\[GC pause( \\((G1 Evacuation Pause|GCLocker Initiated GC)\\))? \\(young\\), " + JdkRegEx.DURATION
-            + "\\] " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)"
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause( " + JdkRegEx.TRIGGER
+            + ")? \\(young\\)( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?, "
+            + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)"
             + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-
+    /**
     /**
      * Pattern standard format.
      */
@@ -111,6 +121,11 @@ public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedDat
      * Available space in multiple generation (kilobytes).
      */
     private int combinedAvailable;
+    
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Create detail logging event from log entry.
@@ -131,11 +146,18 @@ public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedDat
             matcher = patternPreprocessed.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(6).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(8).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)),
-                        matcher.group(10).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(4)).intValue();
+                String triggerBefore = matcher.group(2);
+                String triggerAfter = matcher.group(5);
+                if(triggerBefore == null && triggerAfter != null){
+                    trigger = matcher.group(5);
+                }else if (triggerBefore != null && triggerAfter == null){
+                    trigger = matcher.group(3);
+                }
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(8).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)), matcher.group(10).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)),
+                        matcher.group(12).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
             }
         }
     }
@@ -179,6 +201,10 @@ public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedDat
 
     public String getName() {
         return JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString();
+    }
+    
+    public String getTrigger() {
+        return trigger;
     }
 
     /**

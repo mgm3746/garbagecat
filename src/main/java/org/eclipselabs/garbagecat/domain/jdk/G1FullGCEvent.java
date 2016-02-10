@@ -66,10 +66,10 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[Full GC \\((.+?)\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\), " + JdkRegEx.DURATION + "\\]( " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\))?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(("
+            + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\) )?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
+            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]( " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1
+            + "\\(" + JdkRegEx.SIZE_G1 + "\\))?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     
     private static final Pattern pattern = Pattern.compile(REGEX);
     /**
@@ -88,7 +88,7 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData {
     private long timestamp;
 
     /**
-     * The trigger for the GC event such as "System.gc()".
+     * The trigger for the GC event.
      */
     private String trigger;
 
@@ -115,12 +115,12 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData {
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            trigger = matcher.group(13);
-            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(14)), matcher.group(15).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(17).charAt(0));
-            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)), 
-                    matcher.group(19).charAt(0));
-            duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
+            trigger = matcher.group(14);
+            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(17).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)), matcher.group(19).charAt(0));
+            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(20)), 
+                    matcher.group(21).charAt(0));
+            duration = JdkMath.convertSecsToMillis(matcher.group(22)).intValue();
         }
     }
 

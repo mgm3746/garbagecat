@@ -112,7 +112,7 @@ public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, Yo
     private int oldAllocation;
     
     /**
-     * The trigger for the GC event such as "System.gc()".
+     * The trigger for the GC event.
      */
     private String trigger;
 

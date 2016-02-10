@@ -153,6 +153,21 @@ public class JdkRegEx {
      * Allocation Failure trigger
      */
     public static final String TRIGGER_ALLOCATION_FAILURE = "Allocation Failure";
+    
+    /**
+     * Allocation Failure trigger
+     */
+    public static final String TRIGGER_TO_SPACE_EXHAUSTED = "to-space exhausted";
+    
+    /**
+     * Allocation Failure trigger
+     */
+    public static final String TRIGGER_G1_EVACUATION_PAUSE = "G1 Evacuation Pause";
+    
+    /**
+     * Allocation Failure trigger
+     */
+    public static final String TRIGGER_GCLOCKER_INITIATED_GC = "GCLocker Initiated GC";
 
     /**
      * Make default constructor private so the class cannot be instantiated.
