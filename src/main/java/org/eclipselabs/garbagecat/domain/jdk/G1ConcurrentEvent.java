@@ -32,6 +32,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Standard formats:
+ * </p>
+ * 
  * <pre>
  * 251.781: [GC concurrent-root-region-scan-start]
  * </pre>
@@ -56,6 +60,22 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 253.189: [GC concurrent-cleanup-end, 0.0001200]
  * </pre>
  * 
+ * <pre>
+ * 27768.373: [GC concurrent-root-region-scan-start]
+ * </pre>
+ * 
+ * <pre>
+ * 27768.671: [GC concurrent-root-region-scan-end, 0.2974990 secs]
+ * </pre>
+ * 
+ * <p>
+ * 2) After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction}:
+ * </p>
+ * 
+ * <pre>
+ * 27744.494: [GC concurrent-mark-start], 0.3349320 secs] 10854M->9765M(26624M) [Times: user=0.98 sys=0.00, real=0.33 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
  * 
@@ -65,8 +85,8 @@ public class G1ConcurrentEvent implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[GC concurrent.+$";
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[GC concurrent.+$";
     private static final Pattern pattern = Pattern.compile(REGEX);
     
     /**

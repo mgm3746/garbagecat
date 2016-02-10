@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -78,8 +79,8 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
                 ParallelScavengeEvent.match(logLine));
         ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
-        Assert.assertEquals("Time stamp not parsed correctly.", "Metadata GC Threshold", event.getTrigger());
-        Assert.assertEquals("Trigger not parsed correctly.", 1219, event.getTimestamp());
+        Assert.assertEquals("Time stamp not parsed correctly.", 1219, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));        
         Assert.assertEquals("Young begin size not parsed correctly.", 1226834, event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", 17779, event.getYoungOccupancyEnd());
         Assert.assertEquals("Young available size not parsed correctly.", 1835008, event.getYoungSpace());

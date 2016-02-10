@@ -9,6 +9,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -41,14 +42,28 @@ public class TestG1YoungInitialMarkEvent extends TestCase {
                 G1YoungInitialMarkEvent.match(logLine));
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 12970268, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));  
         Assert.assertEquals("Combined begin size not parsed correctly.", 14260224, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 14155776, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 31457280, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 69, event.getDuration());
     }
     
+    public void testInitialMarkWithoutEvacuationPauseTriggerPreprocessed() {
+        String logLine = "27474.176: [GC pause (young) (initial-mark), 0.4234530 secs] 14131M->8821M(26624M) "
+                + "[Times: user=1.66 sys=0.02, real=0.43 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
+                G1YoungInitialMarkEvent.match(logLine));
+        G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 27474176, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 14470144, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 9032704, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 27262976, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 423, event.getDuration());
+    }
+    
     public void testInitialMarkPreprocessedWhiteSpacesAtEnd() {
-        String logLine = "12970.268: [GC pause (G1 Evacuation Pause) (young) (initial-mark), 0.0698627 secs] "
+        String logLine = "2970.268: [GC pause (G1 Evacuation Pause) (young) (initial-mark), 0.0698627 secs] "
                 + "13926M->13824M(30720M) [Times: user=0.28 sys=0.00, real=0.08 secs]     ";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
                 G1YoungInitialMarkEvent.match(logLine));

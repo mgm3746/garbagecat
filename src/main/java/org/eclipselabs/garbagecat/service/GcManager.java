@@ -1,8 +1,14 @@
 /******************************************************************************
- * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
- * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
- * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
- * initial API and implementation *
+ * Garbage Cat                                                                *
+ *                                                                            *
+ * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
+ * All rights reserved. This program and the accompanying materials           *
+ * are made available under the terms of the Eclipse Public License v1.0      *
+ * which accompanies this distribution, and is available at                   *
+ * http://www.eclipse.org/legal/epl-v10.html                                  *
+ *                                                                            *
+ * Contributors:                                                              *
+ *    Red Hat, Inc. - initial API and implementation                          *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.service;
 
@@ -13,7 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.ArrayList; 
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -95,11 +101,16 @@ public class GcManager {
 
             bufferedReader = new BufferedReader(new FileReader(logFile));
             bufferedWriter = new BufferedWriter(new FileWriter(preprocessFile));
+            
+            // Used for detangling intermingled logging events that span multiple lines
+            List<String> entangledLogLines = new ArrayList<String>();
 
             String nextLogLine = bufferedReader.readLine();
             while (nextLogLine != null) {
                 lineCounter++;
-                preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate);
+
+                preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
+                        entangledLogLines);
                 if (preprocessedLogLine != null) {
                     bufferedWriter.write(preprocessedLogLine);
                 }
@@ -110,7 +121,8 @@ public class GcManager {
             } // while()
 
             // Process last line
-            preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate);
+            preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
+                    entangledLogLines);
             if (preprocessedLogLine != null) {
                 bufferedWriter.write(preprocessedLogLine);
             }
@@ -161,10 +173,12 @@ public class GcManager {
      *            The next log line.
      * @param jvmStartDate
      *            The date and time the JVM was started.
+     * @param savedLogLines
+     *            Log lines to be output out of order.
      * @return
      */
     private String getPreprocessedLogEntry(String currentLogLine, String priorLogLine, String nextLogLine,
-            Date jvmStartDate) {
+            Date jvmStartDate, List<String> savedLogLines) {
         String preprocessedLogLine = null;
         if (!JdkUtil.discardLogLine(currentLogLine)) {
             // First convert any datestamps to timestamps
@@ -224,13 +238,12 @@ public class GcManager {
                     preprocessedLogLine = action.getLogEntry();
                 }
             } else if (G1PrintGcDetailsPreprocessAction.match(currentLogLine)) {
-                G1PrintGcDetailsPreprocessAction action = new G1PrintGcDetailsPreprocessAction(currentLogLine,
-                        nextLogLine);
+                G1PrintGcDetailsPreprocessAction action = new G1PrintGcDetailsPreprocessAction(priorLogLine,
+                        currentLogLine, nextLogLine, savedLogLines);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
             } else {
-
                 preprocessedLogLine = currentLogLine + System.getProperty("line.separator");
             }
         }

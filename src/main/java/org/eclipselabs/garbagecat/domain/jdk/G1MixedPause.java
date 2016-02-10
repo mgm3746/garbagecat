@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -48,11 +49,27 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2010-02-26T08:31:51.990-0600: [GC pause (mixed) 102M->24M(512M), 0.0254200 secs]
  * </pre>
  * 
+ * <p>
+ * 3)  After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction} with trigger:
+ * </p>
+ * 
+ * <pre>
+ * 2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs] 13210M->11571M(30720M) [Times: user=0.19 sys=0.00, real=0.05 secs]
+ * </pre>
+ * 
+ * <p>
+ * 4)  After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction} with trigger:
+ * </p>
+ * 
+ * <pre>
+ * 3082.652: [GC pause (mixed), 0.0762060 secs] 12083M->9058M(26624M) [Times: user=0.30 sys=0.00, real=0.08 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
  * 
  */
-public class G1MixedPause implements BlockingEvent, CombinedData {
+public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData {
 
     /**
      * Regular expression standard format.
@@ -65,9 +82,10 @@ public class G1MixedPause implements BlockingEvent, CombinedData {
     /**
      * Regular expression preprocessed.
      */
-    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP
-            + ": \\[GC pause \\(G1 Evacuation Pause\\) \\(mixed\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_G1
-            + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\) )?\\(mixed\\), " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)" + JdkRegEx.TIMES_BLOCK
+            + "?[ ]*$";
     
     /**
      * Pattern standard format.
@@ -108,6 +126,11 @@ public class G1MixedPause implements BlockingEvent, CombinedData {
      * Available space in multiple generation (kilobytes).
      */
     private int combinedAvailable;
+    
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Create detail logging event from log entry.
@@ -128,11 +151,12 @@ public class G1MixedPause implements BlockingEvent, CombinedData {
             matcher = patternPreprocessed.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(3)), matcher.group(4).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(6).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)),
-                        matcher.group(8).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(2)).intValue();
+                trigger = matcher.group(3);
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(6).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(8).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)),
+                        matcher.group(10).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(4)).intValue();
             }
         }
     }
@@ -176,6 +200,10 @@ public class G1MixedPause implements BlockingEvent, CombinedData {
 
     public String getName() {
         return JdkUtil.LogEventType.G1_MIXED_PAUSE.toString();
+    }
+    
+    public String getTrigger() {
+        return trigger;
     }
 
     /**

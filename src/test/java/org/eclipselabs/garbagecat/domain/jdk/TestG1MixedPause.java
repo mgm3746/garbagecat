@@ -12,6 +12,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -55,15 +56,29 @@ public class TestG1MixedPause extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 168, event.getDuration());
     }
     
-    public void testMixedPausePreprocessed() {
+    public void testMixedPausePreprocessedWithTrigger() {
         String logLine = "2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs] 13210M->11571M(30720M)"
                 + " [Times: user=0.19 sys=0.00, real=0.05 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".", G1MixedPause.match(logLine));
         G1MixedPause event = new G1MixedPause(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 2973338, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE)); 
         Assert.assertEquals("Combined begin size not parsed correctly.", 13527040, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 11848704, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 31457280, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 45, event.getDuration());
+    }
+    
+    public void testMixedPausePreprocessedWithoutTrigger() {
+        String logLine = "3082.652: [GC pause (mixed), 0.0762060 secs] 12083M->9058M(26624M) "
+                + "[Times: user=0.30 sys=0.00, real=0.08 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".", G1MixedPause.match(logLine));
+        G1MixedPause event = new G1MixedPause(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 3082652, event.getTimestamp());
+        Assert.assertNull("Trigger not parsed correctly.", event.getTrigger()); 
+        Assert.assertEquals("Combined begin size not parsed correctly.", 12372992, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 9275392, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 27262976, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 76, event.getDuration());
     }
 }
