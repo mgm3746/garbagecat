@@ -273,9 +273,9 @@ public class Main {
                 bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K\n");
                 if (jvmRun.getMaxPermSpace() > 0) {
                     // Max perm space.
-                    bufferedWriter.write("Max Perm Space: " + jvmRun.getMaxPermSpace() + "K\n");
+                    bufferedWriter.write("Max Perm/Metaspace Space: " + jvmRun.getMaxPermSpace() + "K\n");
                     // Max perm occupancy.
-                    bufferedWriter.write("Max Perm Occupancy: " + jvmRun.getMaxPermOccupancy() + "K\n");
+                    bufferedWriter.write("Max Perm/Metaspace Occupancy: " + jvmRun.getMaxPermOccupancy() + "K\n");
                 }
                 // GC throughput
                 bufferedWriter.write("GC Throughput: " + jvmRun.getGcThroughput() + "%\n");

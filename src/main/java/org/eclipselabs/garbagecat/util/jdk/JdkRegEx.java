@@ -135,10 +135,24 @@ public class JdkRegEx {
     public static final String BLANK_LINE = "^\\s+$";
     
     /**
+     * Trigger.
+     */
+    public static final String TRIGGER = "\\((.+?)\\)";
+    
+    /**
      * System.gc() trigger
      */
-    public static final String TRIGGER_SYSTEM_GC = "System.gc\\(\\)";
+    public static final String TRIGGER_SYSTEM_GC = "System(.gc\\(\\))?";
+    
+    /**
+     * Metadata GC Threshold trigger
+     */
+    public static final String TRIGGER_METADATA_GC_THRESHOLD = "Metadata GC Threshold";
 
+    /**
+     * Allocation Failure trigger
+     */
+    public static final String TRIGGER_ALLOCATION_FAILURE = "Allocation Failure";
 
     /**
      * Make default constructor private so the class cannot be instantiated.

@@ -99,7 +99,7 @@ public class JdkUtil {
      * Defined triggers.
      */
     public enum TriggerType {
-        SYSTEM_GC
+        SYSTEM_GC, METADATA_GC_THRESHOLD, ALLOCATION_FAILURE, UNDEFINED, UNKNOWN
     };
 
     /**
@@ -478,12 +478,27 @@ public class JdkUtil {
         return logEventType;
     }
 
+    /**
+     * Determine trigger type.
+     * 
+     * @param triggerTypeString
+     *            The trigger string.
+     * @return the trigger type.
+     */
     public static final TriggerType determineTriggerType(String triggerTypeString) {
         TriggerType triggerType = null;
-        if (triggerTypeString.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-            triggerType = TriggerType.SYSTEM_GC;
+        if (triggerTypeString == null) {
+            triggerType = TriggerType.UNDEFINED;
         } else {
-            throw new IllegalArgumentException("Unknown trigger: '" + triggerTypeString + "'.");
+            if (triggerTypeString.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
+                triggerType = TriggerType.SYSTEM_GC;
+            } else if (triggerTypeString.matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD)) {
+                triggerType = TriggerType.METADATA_GC_THRESHOLD;
+            } else if (triggerTypeString.matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE)) {
+                triggerType = TriggerType.ALLOCATION_FAILURE;
+            } else {
+                triggerType = TriggerType.UNKNOWN;
+            }
         }
         return triggerType;
     }

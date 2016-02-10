@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -52,6 +53,7 @@ public class TestParallelOldCompactingEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".", ParallelOldCompactingEvent.match(logLine));
         ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 2417, event.getTimestamp());
+        Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.SYSTEM_GC.toString() + ".", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
         Assert.assertEquals("Young begin size not parsed correctly.", 1788, event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
         Assert.assertEquals("Young available size not parsed correctly.", 12736, event.getYoungSpace());
@@ -62,5 +64,25 @@ public class TestParallelOldCompactingEvent extends TestCase {
         Assert.assertEquals("Perm gen end size not parsed correctly.", 8593, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 102, event.getDuration());
+    }
+    
+    public void testLogLineJdk8() {
+        String logLine = "1.234: [Full GC (Metadata GC Threshold) [PSYoungGen: 17779K->0K(1835008K)] "
+                + "[ParOldGen: 16K->16894K(4194304K)] 17795K->16894K(6029312K), [Metaspace: 19114K->19114K(1067008K)], "
+                + "0.0352132 secs] [Times: user=0.09 sys=0.00, real=0.04 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".", ParallelOldCompactingEvent.match(logLine));
+        ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 1234, event.getTimestamp());
+        Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.METADATA_GC_THRESHOLD.toString() + ".", event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
+        Assert.assertEquals("Young begin size not parsed correctly.", 17779, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 1835008, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 16, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 16894, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 4194304, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 19114, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 19114, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1067008, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 35, event.getDuration());
     }
 }

@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
+import org.eclipselabs.garbagecat.domain.TriggerEvent;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -51,11 +52,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 14112.691: [GC-- [PSYoungGen: 313864K-&gt;313864K(326656K)] 879670K-&gt;1012935K(1025728K), 0.9561947 secs]
  * </pre>
  * 
+ * <p>
+ * 3) JDK8 with trigger.
+ * </p>
+ * 
+ * <pre>
+ * 1.219: [GC (Metadata GC Threshold) [PSYoungGen: 1226834K->17779K(1835008K)] 1226834K->17795K(6029312K), 0.0144911 secs] [Times: user=0.04 sys=0.00, real=0.01 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  * 
  */
-public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, YoungData, OldData {
+public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerEvent {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -101,13 +110,19 @@ public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, Yo
      * Space allocated to old generation (kilobytes).
      */
     private int oldAllocation;
+    
+    /**
+     * The trigger for the GC event such as "System.gc()".
+     */
+    private String trigger;
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC(--)? \\[PSYoungGen: " + JdkRegEx.SIZE
-            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC(--)? (" + JdkRegEx.TRIGGER
+            + " )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     private static final Pattern pattern = Pattern.compile(ParallelScavengeEvent.REGEX);
 
     /**
@@ -118,16 +133,17 @@ public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, Yo
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            young = Integer.parseInt(matcher.group(3));
-            youngEnd = Integer.parseInt(matcher.group(4));
-            youngAvailable = Integer.parseInt(matcher.group(5));
-            int totalBegin = Integer.parseInt(matcher.group(6));
+            trigger = matcher.group(4);
+            young = Integer.parseInt(matcher.group(5));
+            youngEnd = Integer.parseInt(matcher.group(6));
+            youngAvailable = Integer.parseInt(matcher.group(7));
+            int totalBegin = Integer.parseInt(matcher.group(8));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(7));
+            int totalEnd = Integer.parseInt(matcher.group(9));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(8));
+            int totalAllocation = Integer.parseInt(matcher.group(10));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(9)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(11)).intValue();
         }
     }
 
@@ -182,6 +198,10 @@ public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, Yo
 
     public String getName() {
         return JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString();
+    }
+    
+    public String getTrigger() {
+        return trigger;
     }
 
     /**

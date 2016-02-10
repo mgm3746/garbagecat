@@ -88,7 +88,7 @@ public class G1FullGCEvent implements BlockingEvent, TriggerEvent, CombinedData 
     private long timestamp;
 
     /**
-     * The trigger for the Full GC event such as "System.gc()".
+     * The trigger for the GC event such as "System.gc()".
      */
     private String trigger;
 

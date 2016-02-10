@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermCollection;
 import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.TriggerEvent;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -64,12 +65,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2.417: [Full GC (System) [PSYoungGen: 1788K-&gt;0K(12736K)] [ParOldGen: 1084K-&gt;2843K(116544K)] 2872K-&gt;2843K(129280K) [PSPermGen: 8602K-&gt;8593K(131072K)], 0.1028360 secs]
  * </pre>
  * 
+ * <p>
+ * 3) JDK8 with "Metaspace" instead of "PSPermGen" and comma after old gen block.
+ * </p>
+ * 
+ * <pre>
+ * 1.234: [Full GC (Metadata GC Threshold) [PSYoungGen: 17779K->0K(1835008K)] [ParOldGen: 16K->16894K(4194304K)] 17795K->16894K(6029312K), [Metaspace: 19114K->19114K(1067008K)], 0.0352132 secs] [Times: user=0.09 sys=0.00, real=0.04 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  * 
  */
 public class ParallelOldCompactingEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData,
-        PermData {
+        PermData, TriggerEvent {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -130,14 +139,19 @@ public class ParallelOldCompactingEvent implements BlockingEvent, OldCollection,
      * Space allocated to permanent generation (kilobytes).
      */
     private int permGenAllocation;
+    
+    /**
+     * The trigger for the GC event such as "Metadata GC Threshold".
+     */
+    private String trigger;
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP
-            + ": \\[(Full GC|Full GC \\(System\\)) \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\] \\[ParOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: "
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (" + JdkRegEx.TRIGGER
+            + " )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\] \\[ParOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(,)? \\[(PSPermGen|Metaspace): "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
             + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
@@ -151,17 +165,18 @@ public class ParallelOldCompactingEvent implements BlockingEvent, OldCollection,
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            young = Integer.parseInt(matcher.group(3));
-            youngEnd = Integer.parseInt(matcher.group(4));
-            youngAvailable = Integer.parseInt(matcher.group(5));
-            old = Integer.parseInt(matcher.group(6));
-            oldEnd = Integer.parseInt(matcher.group(7));
-            oldAllocation = Integer.parseInt(matcher.group(8));
+            trigger = matcher.group(3);
+            young = Integer.parseInt(matcher.group(4));
+            youngEnd = Integer.parseInt(matcher.group(5));
+            youngAvailable = Integer.parseInt(matcher.group(6));
+            old = Integer.parseInt(matcher.group(7));
+            oldEnd = Integer.parseInt(matcher.group(8));
+            oldAllocation = Integer.parseInt(matcher.group(9));
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Integer.parseInt(matcher.group(12));
-            permGenEnd = Integer.parseInt(matcher.group(13));
-            permGenAllocation = Integer.parseInt(matcher.group(14));
-            duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
+            permGen = Integer.parseInt(matcher.group(15));
+            permGenEnd = Integer.parseInt(matcher.group(16));
+            permGenAllocation = Integer.parseInt(matcher.group(17));
+            duration = JdkMath.convertSecsToMillis(matcher.group(18)).intValue();
         }
     }
 
@@ -228,6 +243,10 @@ public class ParallelOldCompactingEvent implements BlockingEvent, OldCollection,
 
     public int getPermSpace() {
         return permGenAllocation;
+    }
+    
+    public String getTrigger() {
+        return trigger;
     }
 
     /**
