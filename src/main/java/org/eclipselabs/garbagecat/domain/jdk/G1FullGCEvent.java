@@ -28,7 +28,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * G1 collector Full GC event.
+ * G1 collector Full GC event. A serial (single-threaded) collector.
  * </p>
  * 
  * <h3>Example Logging</h3>
