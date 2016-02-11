@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -32,14 +33,26 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Standard format:
+ * </p>
+ * 
  * <pre>
  * 251.763: [GC [1 CMS-initial-mark: 4133273K(8218240K)] 4150346K(8367360K), 0.0174433 secs]
+ * </pre>
+ * 
+ * <p>
+ * 2) JDK8 with trigger:
+ * </p>
+ * 
+ * <pre>
+ * 8.722: [GC (CMS Initial Mark) [1 CMS-initial-mark: 0K(989632K)] 187663K(1986432K), 0.0157899 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class CmsInitialMarkEvent implements BlockingEvent {
+public class CmsInitialMarkEvent implements BlockingEvent, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -55,13 +68,18 @@ public class CmsInitialMarkEvent implements BlockingEvent {
      * The time when the GC event happened in milliseconds after JVM startup.
      */
     private long timestamp;
+    
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC \\[1 CMS-initial-mark: " + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
-            + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC (\\((" + JdkRegEx.TRIGGER_CMS_INITIAL_MARK
+            + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     private static Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
 
     /**
@@ -72,7 +90,8 @@ public class CmsInitialMarkEvent implements BlockingEvent {
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
+            trigger = matcher.group(3);
+            duration = JdkMath.convertSecsToMillis(matcher.group(8)).intValue();
         }
     }
 
@@ -103,6 +122,10 @@ public class CmsInitialMarkEvent implements BlockingEvent {
 
     public String getName() {
         return JdkUtil.LogEventType.CMS_INITIAL_MARK.toString();
+    }
+    
+    public String getTrigger() {
+        return trigger;
     }
 
     /**

@@ -1,14 +1,8 @@
 /******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
+ * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
+ * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
+ * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
+ * initial API and implementation *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
@@ -16,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -42,17 +37,25 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 2) JDK 1.7:
+ * 2) JDK 1.7 with "scrub symbol table" and "scrub string table" vs. "scrub symbol & string tables":
  * </p>
  * 
  * <pre>
  * 75.500: [GC[YG occupancy: 163958 K (306688 K)]75.500: [Rescan (parallel) , 0.0491823 secs]75.549: [weak refs processing, 0.0088472 secs]75.558: [class unloading, 0.0049468 secs]75.563: [scrub symbol table, 0.0034342 secs]75.566: [scrub string table, 0.0005542 secs] [1 CMS-remark: 378031K(707840K)] 541989K(1014528K), 0.0687411 secs] [Times: user=0.13 sys=0.00, real=0.07 secs]
  * </pre>
  * 
+ * <p>
+ * 3) JDK8 with trigger and no space after "scrub symbol table":
+ * </p>
+ * 
+ * <pre>
+ * 13.758: [GC (CMS Final Remark) [YG occupancy: 235489 K (996800 K)]13.758: [Rescan (parallel) , 0.0268664 secs]13.785: [weak refs processing, 0.0000365 secs]13.785: [class unloading, 0.0058936 secs]13.791: [scrub symbol table, 0.0081277 secs]13.799: [scrub string table, 0.0007018 secs][1 CMS-remark: 0K(989632K)] 235489K(1986432K), 0.0430349 secs] [Times: user=0.36 sys=0.00, real=0.04 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent {
+public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -70,15 +73,20 @@ public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent {
     private long timestamp;
 
     /**
-     * Regular expressions defining the logging.
+     * The trigger for the GC event.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
-            + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION
-            + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[class unloading, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.TIMESTAMP
-            + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\]|" + JdkRegEx.TIMESTAMP
-            + ": \\[scrub symbol table, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[scrub string table, " + JdkRegEx.DURATION + "\\]) \\[1 CMS-remark: " + JdkRegEx.SIZE + "\\("
+    private String trigger;
+
+    /**
+     * Regular expressions defining the logging.
+     */ 
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
+            + ")\\) )?\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[class unloading, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": ((\\[scrub symbol & string tables, "
+            + JdkRegEx.DURATION + "\\])|(\\[scrub symbol table, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[scrub string table, " + JdkRegEx.DURATION + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
             + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     private static Pattern pattern = Pattern.compile(CmsRemarkWithClassUnloadingEvent.REGEX);
@@ -93,8 +101,9 @@ public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent {
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            trigger = matcher.group(3);
             // The last duration is the total duration for the phase.
-            duration = JdkMath.convertSecsToMillis(matcher.group(21)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(25)).intValue();
         }
     }
 
@@ -125,6 +134,10 @@ public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent {
 
     public String getName() {
         return JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING.toString();
+    }
+
+    public String getTrigger() {
+        return trigger;
     }
 
     /**

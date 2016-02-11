@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -84,5 +85,21 @@ public class TestParNewEvent extends TestCase {
         		"[Times: user=0.11 sys=0.02, real=0.04 secs]";
         ParNewEvent event = new ParNewEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 13086L, event.getTimestamp());
+    }
+    
+    public void testLogJdk8WithTrigger() {
+        String logLine = "6.703: [GC (Allocation Failure) 6.703: [ParNew: 886080K->11485K(996800K), 0.0193349 secs] "
+                + "886080K->11485K(1986432K), 0.0198375 secs] [Times: user=0.09 sys=0.01, real=0.02 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".", ParNewEvent.match(logLine));
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 6703, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));  
+        Assert.assertEquals("Young begin size not parsed correctly.", 886080, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 11485, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 996800, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", (886080 - 886080), event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", (11485 - 11485), event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", (1986432 - 996800), event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 19, event.getDuration());
     }
 }

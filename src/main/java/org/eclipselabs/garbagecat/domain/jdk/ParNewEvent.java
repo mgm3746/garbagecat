@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -73,19 +74,29 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 84.335: [GC 84.336: [ParNew: 273152K-&gt;858K(341376K), 0.0030008 secs] 273152K-&gt;858K(980352K), 0.0031183 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
  * </pre>
  * 
+ * <p>
+ * 5) JDK8 with trigger:
+ * </p>
+ * 
+ * <pre>
+ * 6.703: [GC (Allocation Failure) 6.703: [ParNew: 886080K->11485K(996800K), 0.0193349 secs] 886080K->11485K(1986432K), 0.0198375 secs] [Times: user=0.09 sys=0.01, real=0.02 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  * 
  */
-public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, OldData {
+public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(" + JdkRegEx.TIMESTAMP
-            + ": )?\\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)"
-            + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(\\(("
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\) )?(" + JdkRegEx.TIMESTAMP + ": )?\\[ParNew: " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    
     private static final Pattern pattern = Pattern.compile(ParNewEvent.REGEX);
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -131,6 +142,11 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
      * Space allocated to old generation (kilobytes).
      */
     private int oldAllocation;
+    
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Create ParNew detail logging event from log entry.
@@ -140,16 +156,17 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            young = Integer.parseInt(matcher.group(6));
-            youngEnd = Integer.parseInt(matcher.group(7));
-            youngAvailable = Integer.parseInt(matcher.group(8));
-            int totalBegin = Integer.parseInt(matcher.group(10));
+            trigger = matcher.group(5);
+            young = Integer.parseInt(matcher.group(8));
+            youngEnd = Integer.parseInt(matcher.group(9));
+            youngAvailable = Integer.parseInt(matcher.group(10));
+            int totalBegin = Integer.parseInt(matcher.group(12));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(11));
+            int totalEnd = Integer.parseInt(matcher.group(13));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(12));
+            int totalAllocation = Integer.parseInt(matcher.group(14));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(14)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(16)).intValue();
         }
     }
 
@@ -204,6 +221,10 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
 
     public String getName() {
         return JdkUtil.LogEventType.PAR_NEW.toString();
+    }
+    
+    public String getTrigger() {
+        return trigger;
     }
 
     /**
