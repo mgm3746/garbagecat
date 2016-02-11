@@ -413,11 +413,11 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
      *            The log line.
      * @param nextLogEntry
      *            The next log line.
-     * @param savedLogLines
+     * @param entangledLogLines
      *            Log lines to be output out of order.
      */
     public G1PrintGcDetailsPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntr,
-            List<String> savedLogLines) {
+            List<String> entangledLogLines) {
         if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE)
                 || logEntry.matches(REGEX_RETAIN_BEGINNING_INITIAL_MARK)
                 || logEntry.matches(REGEX_RETAIN_BEGINNING_FULL_GC) || logEntry.matches(REGEX_RETAIN_BEGINNING_MIXED)
@@ -428,8 +428,7 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                // Add concurrent part to saved lines list
-                savedLogLines.add(matcher.group(25));
+                entangledLogLines.add(matcher.group(25));
             }
             // Output beginning of young line
             this.logEntry = matcher.group(12);
@@ -438,7 +437,7 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
             Matcher matcher = pattern.matcher(priorLogEntry);
             if (matcher.matches()) {
-                savedLogLines.add(logEntry);
+                entangledLogLines.add(logEntry);
             } else {
                 this.logEntry = logEntry;
             }
@@ -476,15 +475,15 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
             this.logEntry = logEntry;
         } else if (logEntry.matches(REGEX_RETAIN_END)) {
             this.logEntry = logEntry + System.getProperty("line.separator");
-            // Output any saved log lines
-            Iterator<String> iterator = savedLogLines.iterator();
+            // Output any entangled log lines
+            Iterator<String> iterator = entangledLogLines.iterator();
             while (iterator.hasNext()) {
                 String logLine = iterator.next();
                 this.logEntry = this.logEntry + logLine;
                 this.logEntry = this.logEntry + System.getProperty("line.separator");
             }
-            // Remove savedLogLines entries
-            savedLogLines.clear();
+            // Reset entangled log lines
+            entangledLogLines.clear();
         }
     }
 

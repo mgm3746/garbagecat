@@ -173,12 +173,12 @@ public class GcManager {
      *            The next log line.
      * @param jvmStartDate
      *            The date and time the JVM was started.
-     * @param savedLogLines
-     *            Log lines to be output out of order.
+     * @param entangledLogLines
+     *            Log lines mixed in with other logging events.
      * @return
      */
     private String getPreprocessedLogEntry(String currentLogLine, String priorLogLine, String nextLogLine,
-            Date jvmStartDate, List<String> savedLogLines) {
+            Date jvmStartDate, List<String> entangledLogLines) {
         String preprocessedLogLine = null;
         if (!JdkUtil.discardLogLine(currentLogLine)) {
             // First convert any datestamps to timestamps
@@ -239,7 +239,7 @@ public class GcManager {
                 }
             } else if (G1PrintGcDetailsPreprocessAction.match(currentLogLine)) {
                 G1PrintGcDetailsPreprocessAction action = new G1PrintGcDetailsPreprocessAction(priorLogLine,
-                        currentLogLine, nextLogLine, savedLogLines);
+                        currentLogLine, nextLogLine, entangledLogLines);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
