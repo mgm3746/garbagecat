@@ -73,7 +73,7 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 3899, event.getDuration());
     }
     
-    public void testJDK8LogLine() {
+    public void testJDK8LogLineWithMetatdataGcThreshholdTrigger() {
         String logLine = "1.219: [GC (Metadata GC Threshold) [PSYoungGen: 1226834K->17779K(1835008K)] "
                 + "1226834K->17795K(6029312K), 0.0144911 secs] [Times: user=0.04 sys=0.00, real=0.01 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
@@ -88,5 +88,39 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old end size not parsed correctly.", 17795 - 17779, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 6029312 - 1835008, event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 14, event.getDuration());
+    }
+    
+    public void testJDK8LogLineWithGcLockerInitiateGcTrigger() {
+        String logLine = "4.172: [GC (GCLocker Initiated GC) [PSYoungGen: 649034K->114285K(1223168K)] "
+                + "673650K->138909K(4019712K), 0.0711412 secs] [Times: user=0.24 sys=0.01, real=0.08 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
+                ParallelScavengeEvent.match(logLine));
+        ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 4172, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));        
+        Assert.assertEquals("Young begin size not parsed correctly.", 649034, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 114285, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 1223168, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 673650 - 649034, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 138909 - 114285, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 4019712 - 1223168, event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 71, event.getDuration());
+    }
+    
+    public void testJDK8LogLineWithAllocationFailureTrigger() {
+        String logLine = "7.682: [GC (Allocation Failure) [PSYoungGen: 1048576K->131690K(1223168K)] "
+                + "1118082K->201204K(4019712K), 0.0657426 secs] [Times: user=0.13 sys=0.00, real=0.07 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
+                ParallelScavengeEvent.match(logLine));
+        ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 7682, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));        
+        Assert.assertEquals("Young begin size not parsed correctly.", 1048576, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 131690, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 1223168, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 1118082 - 1048576, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 201204 - 131690, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 4019712 - 1223168, event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 65, event.getDuration());
     }
 }
