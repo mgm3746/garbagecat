@@ -49,8 +49,8 @@
 <h2>
 <a id="download" class="anchor" href="#download" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Download</h2>
 
-<p><a href="https://github.com/mgm3746/garbagecat/releases/download/v2.0.0/garbagecat-2.0.0.zip">garbagecat-2.0.0.zip</a><br>
-<a href="https://github.com/mgm3746/garbagecat/releases/download/v2.0.0/garbagecat-2.0.0.tar.gz">garbagecat-2.0.0.tar.gz</a></p>
+<p><a href="https://github.com/mgm3746/garbagecat/releases/download/v2.0.1/garbagecat-2.0.1.zip">garbagecat-2.0.1.zip</a><br>
+<a href="https://github.com/mgm3746/garbagecat/releases/download/v2.0.1/garbagecat-2.0.1.tar.gz">garbagecat-2.0.1.tar.gz</a></p>
 
 <h2>
 <a id="building" class="anchor" href="#building" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Building</h2>
@@ -99,7 +99,7 @@ java.lang.NoClassDefFoundError: TestCase</p>
 <h2>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
 
-<pre><code>java -jar garbagecat-2.0.0.jar --help
+<pre><code>java -jar garbagecat-2.0.x.jar --help
 usage: garbagecat [OPTION]... [FILE]
  -h,--help                  help
  -o,--options &lt;arg&gt;         JVM options used during JVM run 
@@ -173,7 +173,7 @@ ANALYSIS:
 <li>You can get a good idea where hot spots are by running the report multiple times with varying throughput threshold levels.</li>
 <li>There is a limit of 1000 unidentified log lines that will be reported.</li>
 <li>If there are any unidentifed logging lines, run the report again with the -p preprocessing option enabled. Preprocessing removes extraneous information (e.g. application logging when there is not a dedicated log file) and makes any format adjustments needed for parsing (e.g. combining logging that the JVM sometimes splits across two lines).</li>
-<li>Once prepocessing is done once, do not use the -p preprocessing option again, but instead specify the preprocessed file as input (e.g. java -jar /path/to/garbagecat-2.0.0.jar gc.log.pp).</li>
+<li>Once prepocessing is done once, do not use the -p preprocessing option again, but instead specify the preprocessed file as input (e.g. java -jar /path/to/garbagecat-2.0.x.jar gc.log.pp).</li>
 <li>Please report unidentified log lines by opening an issue and zipping up and attaching the garbage collection logging.</li>
 </ol>
 
@@ -184,7 +184,7 @@ ANALYSIS:
 <li>Run without any options:</li>
 </ol>
 
-<pre><code>java -jar garbagecat-2.0.0.jar gc.log
+<pre><code>java -jar garbagecat-2.0.x.jar gc.log
 </code></pre>
 
 <ol>
@@ -218,7 +218,7 @@ ANALYSIS:
 <li>Run with the preproccess flag:</li>
 </ol>
 
-<pre><code>java -jar garbagecat-2.0.0.jar -p gc.log
+<pre><code>java -jar garbagecat-2.0.x.jar -p gc.log
 </code></pre>
 
 <ol>
@@ -257,7 +257,7 @@ Last Timestamp: 2500548254 ms
 <li>To get an idea where the biggest GC bottlenecks are, run again, this time specifying a throughput threshold of 10% (90+% of time spent in GC). You don't need to preprocess again, so pass in the preprocessed file:</li>
 </ol>
 
-<pre><code>java -jar garbagecat-2.0.0.jar -t 10 gc.log.pp
+<pre><code>java -jar garbagecat-2.0.x.jar -t 10 gc.log.pp
 </code></pre>
 
 <ol>
@@ -287,7 +287,7 @@ Last Timestamp: 2500548254 ms
 <li>Run again with the following options:</li>
 </ol>
 
-<pre><code>java -jar garbagecat-2.0.0.jar -t 10 -s "2009-09-15 10:50:43,343" gc.log.pp
+<pre><code>java -jar garbagecat-2.0.x.jar -t 10 -s "2009-09-15 10:50:43,343" gc.log.pp
 </code></pre>
 
 <ol>
