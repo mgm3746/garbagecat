@@ -29,4 +29,11 @@ public class TestHeaderVersionEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEADER_VERSION.toString() + ".",
                 HeaderVersionEvent.match(logLine));
     }
+    
+    public void testLineOpenJdk() {
+        String logLine = "OpenJDK 64-Bit Server VM (24.95-b01) for linux-amd64 JRE (1.7.0_95-b00), built on "
+                + "Jan 18 2016 21:57:50 by \"mockbuild\" with gcc 4.8.5 20150623 (Red Hat 4.8.5-4)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEADER_VERSION.toString() + ".",
+                HeaderVersionEvent.match(logLine));
+    }
 }

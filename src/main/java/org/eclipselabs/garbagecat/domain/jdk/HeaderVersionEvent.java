@@ -28,6 +28,18 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) OpenJDK:
+ * </p>
+ * 
+ * <pre>
+ * OpenJDK 64-Bit Server VM (24.95-b01) for linux-amd64 JRE (1.7.0_95-b00), built on Jan 18 2016 21:57:50 by "mockbuild" with gcc 4.8.5 20150623 (Red Hat 4.8.5-4)
+ * </pre>
+ * 
+ * <p>
+ * 2) Oracle JDK:
+ * </p>
+ * 
  * <pre>
  * Java HotSpot(TM) 64-Bit Server VM (24.85-b08) for linux-amd64 JRE (1.7.0_85-b34), built on Sep 29 2015 08:44:21 by "java_re" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
  * </pre>
@@ -40,7 +52,7 @@ public class HeaderVersionEvent implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^Java HotSpot\\(TM\\) .+$";
+    private static final String REGEX = "^(Java HotSpot\\(TM\\)|OpenJDK) .+$";
     private static Pattern pattern = Pattern.compile(HeaderVersionEvent.REGEX);
 
     /**
