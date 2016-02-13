@@ -9,10 +9,11 @@
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * @author James Livingston
@@ -72,5 +73,14 @@ public class TestG1ConcurrentEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".", G1ConcurrentEvent.match(logLine));
         G1ConcurrentEvent  event = new G1ConcurrentEvent (logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 27744494, event.getTimestamp());
+    }
+    
+    public void testLogLineCleanupEndWithDatestamp() {
+        String logLine = "2016-02-11T18:15:35.431-0500: 14974.501: [GC concurrent-cleanup-end, 0.0033880 secs]";
+        // Datestamp preprocessing is done before any other preprocessing
+        DateStampPrefixPreprocessAction action = new DateStampPrefixPreprocessAction(logLine);
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".", G1ConcurrentEvent.match(action.getLogEntry()));
+        G1ConcurrentEvent  event = new G1ConcurrentEvent (logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 14974501, event.getTimestamp());
     }
 }

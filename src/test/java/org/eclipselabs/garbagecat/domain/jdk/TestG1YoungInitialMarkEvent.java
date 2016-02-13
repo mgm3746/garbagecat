@@ -42,7 +42,7 @@ public class TestG1YoungInitialMarkEvent extends TestCase {
                 G1YoungInitialMarkEvent.match(logLine));
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 12970268, event.getTimestamp());
-        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));  
+        Assert.assertNull("Trigger not parsed correctly.", event.getTrigger()); 
         Assert.assertEquals("Combined begin size not parsed correctly.", 14260224, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 14155776, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 31457280, event.getCombinedSpace());
@@ -67,5 +67,18 @@ public class TestG1YoungInitialMarkEvent extends TestCase {
                 + "13926M->13824M(30720M) [Times: user=0.28 sys=0.00, real=0.08 secs]     ";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
                 G1YoungInitialMarkEvent.match(logLine));
+    }
+    
+    public void testInitialMarkWithToSpaceExhaustedTriggerPreprocessed() {
+        String logLine = "60346.050: [GC pause (young) (initial-mark) (to-space exhausted), 1.0224350 secs] "
+                + "23450M->19661M(26624M) [Times: user=3.03 sys=0.02, real=1.02 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
+                G1YoungInitialMarkEvent.match(logLine));
+        G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 60346050, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 24012800, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 20132864, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 27262976, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 1022, event.getDuration());
     }
 }

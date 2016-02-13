@@ -76,6 +76,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 27744.494: [GC concurrent-mark-start], 0.3349320 secs] 10854M->9765M(26624M) [Times: user=0.98 sys=0.00, real=0.33 secs]
  * </pre>
  * 
+ * <p>
+ * 3) With datestamp and "secs" after duration:
+ * 
+ * <pre>
+ * 2016-02-11T18:15:35.431-0500: 14974.501: [GC concurrent-cleanup-end, 0.0033880 secs]
+ * </pre>
+ * </p>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
  * 

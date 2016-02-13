@@ -35,6 +35,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Standard logging:
+ * </p>
+ * 
  * <pre>
  * 2010-04-16T12:11:18.979+0200: 84.335: [GC 84.336: [ParNew: 273152K-&gt;858K(341376K), 0.0030008 secs] 273152K-&gt;858K(980352K), 0.0031183 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
  * </pre>
@@ -45,7 +49,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 84.335: [GC 84.336: [ParNew: 273152K-&gt;858K(341376K), 0.0030008 secs] 273152K-&gt;858K(980352K), 0.0031183 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
  * </pre>
  * 
- * <h3>Example Logging with multiple datestamps</h3>
+ * <p>
+ * 2) Logging with multiple datestamps:
+ * </p>
  * 
  * <pre>
  * 2013-12-09T16:18:17.813+0000: 13.086: [GC2013-12-09T16:18:17.813+0000: 13.086: [ParNew: 272640K->33532K(306688K), 0.0381419 secs] 272640K->33532K(1014528K), 0.0383306 secs] [Times: user=0.11 sys=0.02, real=0.04 secs]
@@ -57,6 +63,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 13.086: [GC 13.086: [ParNew: 272640K->33532K(306688K), 0.0381419 secs] 272640K->33532K(1014528K), 0.0383306 secs] [Times: user=0.11 sys=0.02, real=0.04 secs]
  * </pre> 
  * 
+ * <p>
+ * 3) G1 Ergonomics logging:
+ * </p>
+ * 
+ * <pre>
+ * 2016-02-11T17:26:43.599-0500:  12042.669: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: 250438, predicted base time: 229.38 ms, remaining time: 270.62 ms, target pause time: 500.00 ms]
+ * </pre>
+ * 
+ * Preprocessed:
+ * 
+ * <pre>
+ * 12042.669: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: 250438, predicted base time: 229.38 ms, remaining time: 270.62 ms, target pause time: 500.00 ms]
+ * </pre> 
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -65,7 +85,7 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
     /**
      * Regular expressions defining the logging line.
      */
-    private static final String REGEX_LINE = "^" + JdkRegEx.DATESTAMP + ": (" + JdkRegEx.TIMESTAMP + ": (.*))$";
+    private static final String REGEX_LINE = "^" + JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.TIMESTAMP + ": (.*))$";
     private static final Pattern PATTERN = Pattern.compile(REGEX_LINE);
 
     /**
@@ -80,11 +100,11 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
      *            The log entry.
      */
     public DateStampPrefixPreprocessAction(String logEntry) {
-        Pattern p = Pattern.compile(JdkRegEx.DATESTAMP + ": (" + JdkRegEx.TIMESTAMP + ": )");
+        Pattern p = Pattern.compile(JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.TIMESTAMP + ": )");
         Matcher matcher = p.matcher(logEntry);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()){
-            matcher.appendReplacement(sb, matcher.group(11));
+            matcher.appendReplacement(sb, matcher.group(13));
         }
         matcher.appendTail(sb);
         this.logEntry = sb.toString();
