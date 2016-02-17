@@ -185,9 +185,11 @@ public class GcManager {
             if (DateStampPreprocessAction.match(currentLogLine)) {
                 // The datestamp prefixes or replaces the timestamp
                 if (DateStampPrefixPreprocessAction.match(currentLogLine)) {
+                    // Datestamp + Timestamp combination => drop the timestamp
                     DateStampPrefixPreprocessAction action = new DateStampPrefixPreprocessAction(currentLogLine);
                     currentLogLine = action.getLogEntry();
                 } else {
+                    // Datestamp only. Convert datestamp to timestamp.
                     if (jvmStartDate == null) {
                         throw new IllegalArgumentException(
                                 "JVM start datetime must be defined to do datestamp to timestamp conversion.");

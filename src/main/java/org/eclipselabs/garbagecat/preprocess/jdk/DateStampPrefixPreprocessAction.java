@@ -77,6 +77,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 12042.669: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: 250438, predicted base time: 229.38 ms, remaining time: 270.62 ms, target pause time: 500.00 ms]
  * </pre> 
  * 
+ * <p>
+ * 3) Double datestamp:
+ * </p>
+ * 
+ * <pre>
+ * 2016-02-16T03:13:56.897-0500: 2016-02-16T03:13:56.897-0500: 23934.242: 23934.242: [GC concurrent-root-region-scan-start]
+ * </pre>
+ * 
+ * Preprocessed:
+ * 
+ * <pre>
+ * 23934.242: [GC concurrent-root-region-scan-start]
+ * </pre> 
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -85,7 +99,9 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
     /**
      * Regular expressions defining the logging line.
      */
-    private static final String REGEX_LINE = "^" + JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.TIMESTAMP + ": (.*))$";
+    private static final String REGEX_LINE = "^" + JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.DATESTAMP + ": "
+            + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": (.*))$";
+    
     private static final Pattern PATTERN = Pattern.compile(REGEX_LINE);
 
     /**
@@ -100,11 +116,12 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
      *            The log entry.
      */
     public DateStampPrefixPreprocessAction(String logEntry) {
-        Pattern p = Pattern.compile(JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.TIMESTAMP + ": )");
+        Pattern p = Pattern.compile(JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.DATESTAMP + ": " + JdkRegEx.TIMESTAMP
+                + ": )?(" + JdkRegEx.TIMESTAMP + ": )");
         Matcher matcher = p.matcher(logEntry);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()){
-            matcher.appendReplacement(sb, matcher.group(13));
+            matcher.appendReplacement(sb, matcher.group(25));
         }
         matcher.appendTail(sb);
         this.logEntry = sb.toString();

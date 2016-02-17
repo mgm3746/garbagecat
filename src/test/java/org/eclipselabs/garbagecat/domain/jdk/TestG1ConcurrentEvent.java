@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 
 /**
  * @author James Livingston
+ * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
 public class TestG1ConcurrentEvent extends TestCase {
     public void testRootRegionScanStart() {

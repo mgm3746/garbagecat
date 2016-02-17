@@ -403,17 +403,6 @@ public class TestG1PrintGcDetailsPreprocessAction extends TestCase {
                 G1PrintGcDetailsPreprocessAction.match(action.getLogEntry()));
     }
     
-    public void testLogLineG1ErgonomicsWithDatestampAndDoubleTimestamp() {
-        String logLine = "2016-02-12T00:05:06.348-0500: 35945.418:  35945.418: [G1Ergonomics (CSet Construction) start "
-                + "choosing CSet, _pending_cards: 279876, predicted base time: 236.99 ms, remaining time: 263.01 ms, "
-                + "target pause time: 500.00 ms]";
-        // Datestamp preprocessing is done before any other preprocessing
-        DateStampPrefixPreprocessAction action = new DateStampPrefixPreprocessAction(logLine);                
-        Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
-                G1PrintGcDetailsPreprocessAction.match(action.getLogEntry()));
-    }
-    
     public void testLogLineYoungPauseWithG1Ergonomics() {
         String logLine = "72945.823: [GC pause (young) 72945.823: [G1Ergonomics (CSet Construction) start choosing "
                 + "CSet, _pending_cards: 497394, predicted base time: 66.16 ms, remaining time: 433.84 ms, target pause "

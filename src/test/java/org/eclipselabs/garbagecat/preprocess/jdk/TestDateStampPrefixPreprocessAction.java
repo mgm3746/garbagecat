@@ -53,4 +53,13 @@ public class TestDateStampPrefixPreprocessAction extends TestCase {
                 + "273946, predicted base time: 242.44 ms, remaining time: 257.56 ms, target pause time: 500.00 ms]";
         Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
     }
+    
+    public void testG1LogLineDoubleTimestamp() {
+        String logLine = "2016-02-16T03:13:56.897-0500: 2016-02-16T03:13:56.897-0500: 23934.242: 23934.242: "
+                + "[GC concurrent-root-region-scan-start]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP.toString() + ".", DateStampPrefixPreprocessAction.match(logLine));
+        DateStampPrefixPreprocessAction preprocessAction = new DateStampPrefixPreprocessAction(logLine);
+        String preprocessedLogLine = "23934.242: [GC concurrent-root-region-scan-start]";
+        Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
+    }
 }
