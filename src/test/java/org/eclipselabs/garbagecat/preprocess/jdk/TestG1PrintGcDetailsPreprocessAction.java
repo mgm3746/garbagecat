@@ -412,6 +412,17 @@ public class TestG1PrintGcDetailsPreprocessAction extends TestCase {
                 G1PrintGcDetailsPreprocessAction.match(logLine));
     }
     
+    public void testLogLineYoungPauseWithG1ErgonomicsAndDateStamps() {
+        String logLine = "2016-02-16T01:02:06.283-0500: 16023.627: [GC pause (young)2016-02-16T01:02:06.338-0500:  "
+                + "16023.683: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: 36870, predicted base "
+                + "time: 143.96 ms, remaining time: 856.04 ms, target pause time: 1000.00 ms]";
+        // Datestamp preprocessing is done before any other preprocessing
+        DateStampPrefixPreprocessAction action = new DateStampPrefixPreprocessAction(logLine);
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(action.getLogEntry()));
+    }    
+    
     public void testLogLineYoungInitialMarkWithG1Ergonomics() {
         String logLine = "2016-02-11T15:22:23.213-0500: 4582.283: [GC pause (young) (initial-mark) 4582.283: [G1Ergonomics "
                 + "(CSet Construction) start choosing CSet, _pending_cards: 6084, predicted base time: 41.16 ms, remaining "
@@ -445,6 +456,15 @@ public class TestG1PrintGcDetailsPreprocessAction extends TestCase {
     
     public void testLogLineSingleConcurrentMarkStartBlock() {
         String logLine = "[GC concurrent-mark-start]";
+        // Datestamp preprocessing is done before any other preprocessing
+        DateStampPrefixPreprocessAction action = new DateStampPrefixPreprocessAction(logLine);
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(action.getLogEntry()));
+    }
+    
+    public void testLogLineGcConcurrentRootRegionScanEndMissingTimestamp() {
+        String logLine = "[GC concurrent-root-region-scan-end, 0.6380480 secs]";
         // Datestamp preprocessing is done before any other preprocessing
         DateStampPrefixPreprocessAction action = new DateStampPrefixPreprocessAction(logLine);
         Assert.assertTrue(

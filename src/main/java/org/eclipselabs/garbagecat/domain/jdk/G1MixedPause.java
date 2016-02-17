@@ -83,7 +83,8 @@ public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData {
      * Regular expression preprocessed.
      */
     private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\) )?\\(mixed\\), " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\) )?\\(mixed\\)( \\(("
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?, " + JdkRegEx.DURATION + "\\] "
             + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)" + JdkRegEx.TIMES_BLOCK
             + "?[ ]*$";
     
@@ -151,12 +152,18 @@ public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData {
             matcher = patternPreprocessed.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                trigger = matcher.group(3);
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(6).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(8).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)),
-                        matcher.group(10).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(4)).intValue();
+                if(matcher.group(2) != null){
+                    trigger = matcher.group(3);
+                } else {
+                    if (matcher.group(4) != null) {
+                        trigger = matcher.group(5);
+                    }
+                }
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(8).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)), matcher.group(10).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)),
+                        matcher.group(12).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
             }
         }
     }

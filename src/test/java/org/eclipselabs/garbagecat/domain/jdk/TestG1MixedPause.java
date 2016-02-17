@@ -56,7 +56,7 @@ public class TestG1MixedPause extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 168, event.getDuration());
     }
     
-    public void testMixedPausePreprocessedWithTrigger() {
+    public void testMixedPausePreprocessedWithTriggerBeforeMixed() {
         String logLine = "2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs] 13210M->11571M(30720M)"
                 + " [Times: user=0.19 sys=0.00, real=0.05 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".", G1MixedPause.match(logLine));
@@ -67,6 +67,19 @@ public class TestG1MixedPause extends TestCase {
         Assert.assertEquals("Combined end size not parsed correctly.", 11848704, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 31457280, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 45, event.getDuration());
+    }
+    
+    public void testMixedPausePreprocessedWithTriggerAfterMixed() {
+        String logLine = "17161.927: [GC pause (mixed) (to-space exhausted), 2.7599360 secs] 25805M->26317M(26624M) "
+                + "[Times: user=6.73 sys=0.23, real=2.76 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".", G1MixedPause.match(logLine));
+        G1MixedPause event = new G1MixedPause(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 17161927, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED)); 
+        Assert.assertEquals("Combined begin size not parsed correctly.", 25805 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 26317 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 26624 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 2759, event.getDuration());
     }
     
     public void testMixedPausePreprocessedWithoutTrigger() {

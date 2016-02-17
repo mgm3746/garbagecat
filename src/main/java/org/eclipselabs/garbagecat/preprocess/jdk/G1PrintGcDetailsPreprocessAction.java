@@ -283,7 +283,7 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
             + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))? \\(young\\)( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE
             + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, "
-            + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+)?$";
+            + JdkRegEx.DURATION + "\\])?)(( )?" + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+)?$";
 
     /**
      * Regular expression for retained beginning G1_YOUNG_INITIAL_MARK collection.
@@ -415,7 +415,7 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
             //
             "^         \\[Termination Attempts :.+$",
             // maybe a logging bug?
-            "^\\[GC concurrent-mark-start\\]$",
+            "^\\[GC concurrent.+$",
             //
             "^       Avg:.+$",
             // Ergonomics
