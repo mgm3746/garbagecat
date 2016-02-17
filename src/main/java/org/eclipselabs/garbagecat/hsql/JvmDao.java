@@ -52,7 +52,7 @@ public class JvmDao {
                     + "old_occupancy_init integer, combined_occupancy_init integer, perm_occupancy_init integer, "
                     + "log_entry varchar(500))",
             "create table application_stopped_time (id integer identity, "
-                    + "time_stamp bigint, event_name varchar(64), duration integer, log_entry varchar(500))" };
+                    + "time_stamp bigint, event_name varchar(64), duration bigint, log_entry varchar(500))" };
 
     /**
      * SQL statement(s) to delete table(s).
@@ -896,7 +896,7 @@ public class JvmDao {
     /**
      * The total stopped time event pause time.
      * 
-     * @return total pause duration (milliseconds).
+     * @return total pause duration (microseconds).
      */
     public synchronized int getTotalStoppedTime() {
         int totalStoppedTime = 0;
@@ -906,7 +906,7 @@ public class JvmDao {
             statement = connection.createStatement();
             rs = statement.executeQuery("select sum(duration) from application_stopped_time");
             if (rs.next()) {
-                long micros = rs.getInt(1);
+                long micros = rs.getLong(1);
                 totalStoppedTime = JdkMath.convertMicrosToMillis(micros).intValue();
             }
         } catch (SQLException e) {
