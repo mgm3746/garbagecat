@@ -27,8 +27,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * G1_FULL_GC
  * </p>
  * 
- * <p>
- * G1 collector Full GC event. A serial (single-threaded) collector.
+ * G1 collector Full GC event. A serial (single-threaded) collector, which means it will take a very long time to
+ * collect a large heap. If the G1 collector is running optimally, there will not be any G1 Full GC collections. G1
+ * Full GCs happen when the PermGen/Metaspace fills up or when there are more allocations than the G1 can concurrently
+ * collect.
  * </p>
  * 
  * <h3>Example Logging</h3>

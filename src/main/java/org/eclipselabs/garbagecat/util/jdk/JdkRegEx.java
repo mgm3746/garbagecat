@@ -140,7 +140,7 @@ public class JdkRegEx {
     public static final String TRIGGER = "\\((.+?)\\)";
     
     /**
-     * System.gc() trigger
+     * System.gc() trigger. Explicit garbage collection invoked.
      */
     public static final String TRIGGER_SYSTEM_GC = "System(.gc\\(\\))?";
     
@@ -150,7 +150,7 @@ public class JdkRegEx {
     public static final String TRIGGER_METADATA_GC_THRESHOLD = "Metadata GC Threshold";
 
     /**
-     * Allocation Failure trigger
+     * Allocation Failure trigger.
      */
     public static final String TRIGGER_ALLOCATION_FAILURE = "Allocation Failure";
     
@@ -160,12 +160,13 @@ public class JdkRegEx {
     public static final String TRIGGER_TO_SPACE_EXHAUSTED = "to-space exhausted";
     
     /**
-     * G1 Evacuation Pause trigger
+     * G1 Evacuation Pause trigger. Live objects are copied out of one region (evacuated) to another region to free
+     * contiguous space. For both young and mixed collections.
      */
     public static final String TRIGGER_G1_EVACUATION_PAUSE = "G1 Evacuation Pause";
     
     /**
-     * GCLocker Initiated GC trigger
+     * GCLocker Initiated GC trigger. 
      */
     public static final String TRIGGER_GCLOCKER_INITIATED_GC = "GCLocker Initiated GC";
     

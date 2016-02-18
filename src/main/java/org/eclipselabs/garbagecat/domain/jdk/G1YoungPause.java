@@ -29,7 +29,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * G1 collector young generation collection.
+ * G1 young generation collection. Live objects from Eden and Survivor regions are copied to new regions, either to a
+ * survivor region or promoted to the old space (promoted).
  * </p>
  * 
  * <h3>Example Logging</h3>

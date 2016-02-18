@@ -27,7 +27,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * G1 collector cleanup phase. 
+ * G1 collector cleanup phase. The final phase of the marking cycle when accounting (identify free regions and regions
+ * that are candidates for mixed garbage collection) and scrubbing takes place.
  * </p>
  * 
  * <h3>Example Logging</h3>

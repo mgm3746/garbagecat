@@ -28,7 +28,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * G1 collector mixed-generation collection. 
+ * G1 mixed generation collection. Performed at the same time as a young collection, so it is a collection of the young
+ * space and the low liveness regions of the old space. The <code>-XX:InitiatingHeapOccupancyPercent</code> defines the
+ * heap occupancy threshold for initiating a mixed pause.
  * </p>
  * 
  * <h3>Example Logging</h3>
