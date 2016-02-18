@@ -276,28 +276,29 @@ public class GcManager {
                 LogEvent event = JdkUtil.parseLogLine(logLine);
                 if (event instanceof BlockingEvent) {
                     jvmDao.addBlockingEvent((BlockingEvent) event);
+                    
+                    // Analysis
 
-                    // Check if explicit GC is causing a serial collector to be invoked
-                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL)) {
-                        if (event instanceof CmsSerialOldEvent || event instanceof G1FullGCEvent) {
+                    // 1) Explicit GC causing a serial collector to be invoked
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL)
+                            && (event instanceof CmsSerialOldEvent || event instanceof G1FullGCEvent)) {
+                        String trigger = ((TriggerData) event).getTrigger();
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
+                            jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL);
+                        }
+                    } else {
+                        // 2) Explicit GC not invoking a serial collector, but causing unnecessary collections
+                        if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC)
+                                && !(event instanceof CmsSerialOldEvent || event instanceof G1FullGCEvent)
+                                && event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
                             if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL);
+                                jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC);
                             }
-                        }  
-                    } else{
-                        // Check if explicit GC is causing unnecessary collections
-                        if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC)) {
-                            if (event instanceof TriggerData) {
-                                String trigger = ((TriggerData) event).getTrigger();
-                                if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                                    jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC);
-                                }
-                            }                        
                         }
                     }
                     
-                    // Check if G1 Full GC collector is being invoked for reasons other than explicit GC
+                    // 3) G1 Full GC collector is being invoked for reasons other than explicit GC
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_G1_FULL_GC)) {
                         if (event instanceof G1FullGCEvent) {
                             String trigger = ((TriggerData) event).getTrigger();
