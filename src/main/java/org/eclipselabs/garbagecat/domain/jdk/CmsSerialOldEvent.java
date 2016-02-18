@@ -15,12 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.OldCollection;
-import org.eclipselabs.garbagecat.domain.OldData;
-import org.eclipselabs.garbagecat.domain.PermCollection;
-import org.eclipselabs.garbagecat.domain.PermData;
-import org.eclipselabs.garbagecat.domain.YoungData;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -61,13 +56,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 3) After {@link org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction} with no space after Full GC:
+ * 3) After {@link org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction} with no space after Full
+ * GC:
  * </p>
  * 
  * <pre>
  * raw:
  * 2013-12-09T16:43:09.366+0000: 1504.625: [Full GC2013-12-09T16:43:09.366+0000: 1504.625: [CMS: 1172695K-&gt;840574K(1549164K), 3.7572507 secs] 1301420K-&gt;840574K(1855852K), [CMS Perm : 226817K-&gt;226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
-
+ * 
  * </pre>
  * 
  * <pre>
@@ -75,104 +71,61 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 1504.625: [Full GC1504.625: [CMS: 1172695K-&gt;840574K(1549164K), 3.7572507 secs] 1301420K-&gt;840574K(1855852K), [CMS Perm : 226817K-&gt;226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
  * </pre>
  * 
- * TODO: Extend {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent}.
- * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class CmsSerialOldEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData {
+public class CmsSerialOldEvent extends SerialOldEvent
+        implements TriggerData {
 
     /**
-     * The log entry for the event. Can be used for debugging purposes.
+     * The trigger for the GC event.
      */
-    private String logEntry;
-
-    /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
-     */
-    private int duration;
-
-    /**
-     * The time when the GC event happened in milliseconds after JVM startup.
-     */
-    private long timestamp;
-
-    /**
-     * Young generation size (kilobytes) at beginning of GC event.
-     */
-    private int young;
-
-    /**
-     * Young generation size (kilobytes) at end of GC event.
-     */
-    private int youngEnd;
-
-    /**
-     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
-     */
-    private int youngAvailable;
-
-    /**
-     * Old generation size (kilobytes) at beginning of GC event.
-     */
-    private int old;
-
-    /**
-     * Old generation size (kilobytes) at end of GC event.
-     */
-    private int oldEnd;
-
-    /**
-     * Space allocated to old generation (kilobytes).
-     */
-    private int oldAllocation;
-
-    /**
-     * Permanent generation size (kilobytes) at beginning of GC event.
-     */
-    private int permGen;
-
-    /**
-     * Permanent generation size (kilobytes) at end of GC event.
-     */
-    private int permGenEnd;
-
-    /**
-     * Space allocated to permanent generation (kilobytes).
-     */
-    private int permGenAllocation;
+    private String trigger;
 
     /**
      * Regular expressions defining the logging.
      */
+    /*
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full GC|Full GC \\(System\\))( )?"
-            + JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]"
             + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    */
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\(("
+            + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\) )?" + JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    
     private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
 
     /**
      * Create CMS logging event from log entry.
      */
     public CmsSerialOldEvent(String logEntry) {
-        this.logEntry = logEntry;
+        
+        super.setLogEntry(logEntry);
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            old = Integer.parseInt(matcher.group(5));
-            oldEnd = Integer.parseInt(matcher.group(6));
-            oldAllocation = Integer.parseInt(matcher.group(7));
-            int totalBegin = Integer.parseInt(matcher.group(9));
-            young = totalBegin - old;
-            int totalEnd = Integer.parseInt(matcher.group(10));
-            youngEnd = totalEnd - oldEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(11));
-            youngAvailable = totalAllocation - oldAllocation;
-            permGen = Integer.parseInt(matcher.group(12));
-            permGenEnd = Integer.parseInt(matcher.group(13));
-            permGenAllocation = Integer.parseInt(matcher.group(14));
-            duration = JdkMath.convertSecsToMillis(matcher.group(16)).intValue();
+            super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
+            super.setOldOccupancyInit(Integer.parseInt(matcher.group(7)));
+            super.setOldOccupancyEnd(Integer.parseInt(matcher.group(8)));
+            super.setOldSpace(Integer.parseInt(matcher.group(9)));
+            int totalBegin = Integer.parseInt(matcher.group(11));
+            super.setYoungOccupancyInit(totalBegin - super.getOldOccupancyInit());
+            int totalEnd = Integer.parseInt(matcher.group(12));
+            super.setYoungOccupancyEnd(totalEnd - super.getOldOccupancyEnd());
+            int totalAllocation = Integer.parseInt(matcher.group(13));
+            super.setYoungSpace(totalAllocation - super.getOldSpace());
+            super.setPermOccupancyInit(Integer.parseInt(matcher.group(14)));
+            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(15)));
+            super.setPermSpace(Integer.parseInt(matcher.group(16)));
+            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(18)).intValue());
+            if (matcher.group(4) != null){
+                trigger = matcher.group(4);
+            }
         }
     }
 
@@ -184,63 +137,19 @@ public class CmsSerialOldEvent implements BlockingEvent, OldCollection, PermColl
      * @param duration
      */
     public CmsSerialOldEvent(String logEntry, long timestamp, int duration) {
-        this.logEntry = logEntry;
-        this.timestamp = timestamp;
-        this.duration = duration;
+        super.setLogEntry(logEntry);
+        super.setTimestamp(timestamp);
+        super.setDuration(duration);
     }
-
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public int getYoungOccupancyInit() {
-        return young;
-    }
-
-    public int getYoungOccupancyEnd() {
-        return youngEnd;
-    }
-
-    public int getYoungSpace() {
-        return youngAvailable;
-    }
-
-    public int getOldOccupancyInit() {
-        return old;
-    }
-
-    public int getOldOccupancyEnd() {
-        return oldEnd;
-    }
-
-    public int getOldSpace() {
-        return oldAllocation;
-    }
-
+    
     public String getName() {
         return JdkUtil.LogEventType.CMS_SERIAL_OLD.toString();
     }
 
-    public int getPermOccupancyInit() {
-        return permGen;
+    public String getTrigger() {
+        return trigger;
     }
-
-    public int getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    public int getPermSpace() {
-        return permGenAllocation;
-    }
-
+    
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
      * 
@@ -248,7 +157,7 @@ public class CmsSerialOldEvent implements BlockingEvent, OldCollection, PermColl
      *            The log line to test.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
+    public static boolean match(String logLine) {
         return pattern.matcher(logLine).matches();
     }
 }

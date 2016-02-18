@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -49,6 +50,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         String logLine = "2.425: [Full GC (System) 2.425: " + "[CMS: 1231K->2846K(114688K), 0.0827010 secs] 8793K->2846K(129472K), " + "[CMS Perm : 8602K->8593K(131072K)], 0.0828090 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".", CmsSerialOldEvent.match(logLine));
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
         Assert.assertEquals("Time stamp not parsed correctly.", 2425, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", 7562, event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());

@@ -471,4 +471,22 @@ public class TestG1PrintGcDetailsPreprocessAction extends TestCase {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
                 G1PrintGcDetailsPreprocessAction.match(action.getLogEntry()));
     }
+    
+    public void testLogLineBeginningYoungConcurrent() {
+        String logLine = "2016-02-16T01:05:36.945-0500: 16233.809: [GC pause (young)2016-02-16T01:05:37.046-0500: "
+                + "16233.910: [GC concurrent-root-region-scan-end, 0.5802520 secs]";
+        // Datestamp preprocessing is done before any other preprocessing
+        DateStampPrefixPreprocessAction action = new DateStampPrefixPreprocessAction(logLine);
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(action.getLogEntry()));
+    }
+    
+    public void testLogLineErgonomicsMissingDatastamp() {
+        String logLine = ": 16233.910:  16233.910: [G1Ergonomics (CSet Construction) add young regions to CSet, eden: "
+                + "76 regions, survivors: 7 regions, predicted young region time: 87.81 ms]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
 }

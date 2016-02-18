@@ -129,6 +129,12 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
             + "\\), \\[Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], "
             + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     private static Pattern pattern = Pattern.compile(SerialOldEvent.REGEX);
+    
+    /**
+     * Default constructor
+     */
+    public SerialOldEvent() { 
+    }
 
     /**
      * Create serial old detail logging event from log entry.
@@ -170,50 +176,98 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
 
     public String getLogEntry() {
         return logEntry;
+    }    
+
+    protected void setLogEntry(String logEntry) {
+        this.logEntry = logEntry;
     }
 
     public int getDuration() {
         return duration;
+    }    
+
+    protected void setDuration(int duration) {
+        this.duration = duration;
     }
 
     public long getTimestamp() {
         return timestamp;
+    }    
+
+    protected void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public int getYoungOccupancyInit() {
         return young;
+    }    
+
+    protected void setYoungOccupancyInit(int young) {
+        this.young = young;
     }
 
     public int getYoungOccupancyEnd() {
         return youngEnd;
     }
+    
+    protected void setYoungOccupancyEnd(int youngEnd) {
+        this.youngEnd = youngEnd;
+    }
 
     public int getYoungSpace() {
         return youngAvailable;
+    }
+    
+    protected void setYoungSpace(int youngAvailable) {
+        this.youngAvailable = youngAvailable;
     }
 
     public int getOldOccupancyInit() {
         return old;
     }
+    
+    protected void setOldOccupancyInit(int old) {
+        this.old = old;
+    }
 
     public int getOldOccupancyEnd() {
         return oldEnd;
+    }
+    
+    protected void setOldOccupancyEnd(int oldEnd) {
+        this.oldEnd = oldEnd;
     }
 
     public int getOldSpace() {
         return oldAllocation;
     }
+    
+    protected void setOldSpace(int oldAllocation) {
+        this.oldAllocation = oldAllocation;
+    }
 
     public int getPermOccupancyInit() {
         return permGen;
+    }
+    
+    protected void setPermOccupancyInit(int permGen) {
+        this.permGen = permGen;
     }
 
     public int getPermOccupancyEnd() {
         return permGenEnd;
     }
+    
+    protected void setPermOccupancyEnd(int permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
 
     public int getPermSpace() {
         return permGenAllocation;
+    }
+    
+    protected void setPermSpace(int permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
     }
 
     public String getName() {
@@ -227,7 +281,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
      *            The log line to test.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
+    public static boolean match(String logLine) {
         return pattern.matcher(logLine).matches();
     }
 }

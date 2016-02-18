@@ -8,13 +8,12 @@ package org.eclipselabs.garbagecat.domain;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
+import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.TriggerType;
 
 /**
  * JVM run data.
@@ -114,11 +113,11 @@ public class JvmRun {
      * Event types.
      */
     private List<LogEventType> eventTypes;
-
+    
     /**
-     * Trigger types
+     * Analysis property keys.
      */
-    private List<TriggerType> triggerTypes;
+    private List<String> analysisKeys;
 
     /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
@@ -277,12 +276,12 @@ public class JvmRun {
         this.eventTypes = eventTypes;
     }
 
-    public List<TriggerType> getTriggerTypes() {
-        return triggerTypes;
+    public List<String> getAnalysisKeys() {
+        return analysisKeys;
     }
 
-    public void setTriggerTypes(List<TriggerType> triggerTypes) {
-        this.triggerTypes = triggerTypes;
+    public void setAnalysisKeys(List<String> analysisKeys) {
+        this.analysisKeys = analysisKeys;
     }
 
     /*
@@ -365,45 +364,39 @@ public class JvmRun {
      * 
      * @return A <code>List</code> of analysis points based on the JVM options and data.
      */
-    public List<String> getAnalysis() {
-        List<String> analysis = new ArrayList<String>();
-
+    public void doAnalysis() {
+ 
         // 1) Check for partial log
         if (GcUtil.isPartialLog(firstTimestamp)) {
-            analysis.add(Constants.WARNING_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
+            analysisKeys.add(Analysis.KEY_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
         }
 
         // 2) Check to see if -XX:+PrintGCApplicationStoppedTime enabled
         if (!eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)) {
-            analysis.add(GcUtil.getPropertyValue("analysis", "application.stopped.time.missing"));
+            analysisKeys.add(Analysis.KEY_APPLICATION_STOPPED_TIME_MISSING);
         }
 
-        // 3) Check for explicit gc
-        if (triggerTypes.contains(TriggerType.SYSTEM_GC)) {
-            analysis.add(GcUtil.getPropertyValue("analysis", "explicit.gc"));
-        }
-
-        // 4) Check for significant stopped time unrelated to GC
+        // 3) Check for significant stopped time unrelated to GC
         if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME) && getGcStoppedRatio() < 80) {
-            analysis.add(GcUtil.getPropertyValue("analysis", "gc.stopped.ratio"));
+            analysisKeys.add(Analysis.GC_STOPPED_RATIO);
         }
 
-        // JVM options analysis
+        // 4) JVM options analysis
         if (jvm.getOptions() != null) {
 
-            // 2) Check to see if thread stack size explicitly set
+            // Check to see if thread stack size explicitly set
             if (jvm.getThreadStackSizeOption() == null) {
-                analysis.add(GcUtil.getPropertyValue("analysis", "thread.stack.size.not.set"));
+                analysisKeys.add(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET);
             }
 
-            // 3) Check to see if min and max heap sizes are the same
+            // Check to see if min and max heap sizes are the same
             if (!jvm.isMinAndMaxHeapSpaceEqual()) {
-                analysis.add(GcUtil.getPropertyValue("analysis", "min.heap.not.equal.max.heap"));
+                analysisKeys.add(Analysis.KEY_MIN_HEAP_NOT_EQUAL_MAX_HEAP);
             }
 
-            // 4) Check to see if min and max perm gen sizes are the same
+            // Check to see if min and max perm gen sizes are the same
             if (!jvm.isMinAndMaxPermSpaceEqual()) {
-                analysis.add(GcUtil.getPropertyValue("analysis", "min.perm.not.equal.max.perm"));
+                analysisKeys.add(Analysis.KEY_MIN_PERM_NOT_EQUAL_MAX_HEAP);
             }
 
             // TODO: Check to see if explicit GC interval is disabled or set.
@@ -414,6 +407,5 @@ public class JvmRun {
 
             // TODO: -Xbatch warning
         }
-        return analysis;
     }
 }

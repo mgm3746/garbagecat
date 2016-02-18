@@ -24,7 +24,6 @@ import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.TriggerType;
 
 /**
  * <p>
@@ -71,9 +70,9 @@ public class JvmDao {
     List<LogEventType> eventTypes;
     
     /**
-     * Trigger types
+     * Analysis property keys.
      */
-    private List<TriggerType> triggerTypes;
+    private List<String> analysisKeys;
 
     /**
      * Logging lines that do not match any known GC events.
@@ -157,7 +156,7 @@ public class JvmDao {
         }
 
         eventTypes = new ArrayList<LogEventType>();
-        triggerTypes = new ArrayList<TriggerType>();
+        analysisKeys = new ArrayList<String>();
         unidentifiedLogLines = new ArrayList<String>();
         blockingBatch = new ArrayList<BlockingEvent>();
         stoppedTimeBatch = new ArrayList<ApplicationStoppedTimeEvent>();
@@ -171,8 +170,14 @@ public class JvmDao {
         return eventTypes;
     }
     
-    public List<TriggerType> getTriggerTypes() {
-        return triggerTypes;
+    public List<String> getAnalysisKeys() {
+        return analysisKeys;
+    }    
+
+    public void addAnalysisKey(String analysisKey) {
+        if (!analysisKeys.contains(analysisKey)) {
+            analysisKeys.add(analysisKey);
+        }
     }
 
     public void addBlockingEvent(BlockingEvent event) {

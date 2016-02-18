@@ -414,12 +414,12 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
             "^      \\[Mark Stack Scanning \\(ms\\):.+$",
             //
             "^         \\[Termination Attempts :.+$",
-            // maybe a logging bug?
+            // Partial concurrent event. Maybe a logging bug?
             "^\\[GC concurrent.+$",
             //
             "^       Avg:.+$",
-            // Ergonomics
-            "^( )?(" + JdkRegEx.TIMESTAMP + ":  )?" + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+$" };
+            // Ergonomics. 
+            "^(:)?( )?(" + JdkRegEx.TIMESTAMP + ":  )?" + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+$" };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

@@ -28,6 +28,7 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
+import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 /**
@@ -112,7 +113,8 @@ public class Main {
                 if (cmd.hasOption("threshold")) {
                     throughputThreshold = Integer.parseInt(cmd.getOptionValue('t'));
                 }
-                JvmRun jvmRun = jvmManager.getJvmRun(jvm, throughputThreshold);
+                JvmRun jvmRun = jvmManager.getJvmRun(jvm, throughputThreshold);                
+                jvmRun.doAnalysis();
                 createReport(jvmRun);
             }
         }
@@ -309,16 +311,16 @@ public class Main {
             bufferedWriter.write("========================================\n");
 
             // Print any analysis information
-            List<String> analysis = jvmRun.getAnalysis();
-            if (!analysis.isEmpty()) {
+            List<String> analysisKeys = jvmRun.getAnalysisKeys();
+            if (!analysisKeys.isEmpty()) {
                 bufferedWriter.write("ANALYSIS:\n");
                 bufferedWriter.write("========================================\n");
 
-                Iterator<String> iterator = analysis.iterator();
+                Iterator<String> iterator = analysisKeys.iterator();
                 while (iterator.hasNext()) {
-                    String bullet = iterator.next();
+                    String key = iterator.next();
                     bufferedWriter.write("*");
-                    bufferedWriter.write(bullet);
+                    bufferedWriter.write(GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, key));
                     bufferedWriter.write("\n");
                 }
                 bufferedWriter.write("========================================\n");

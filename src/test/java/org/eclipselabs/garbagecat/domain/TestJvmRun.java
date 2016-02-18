@@ -17,9 +17,9 @@ import java.util.Calendar;
 
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.TriggerType;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -640,7 +640,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
         Assert.assertTrue(JdkUtil.TriggerType.SYSTEM_GC.toString() + " trigger not identified.",
-                jvmRun.getTriggerTypes().contains(TriggerType.SYSTEM_GC));
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC));
     }
 
     /**

@@ -34,20 +34,9 @@ public class Constants {
     public static final int DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD = 90;
 
     /**
-     * Partial log warning.
-     */
-    public static final String WARNING_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED = "First timestamp is greater than "
-            + FIRST_TIMESTAMP_THRESHOLD + " seconds. Partial log file or unrecognized logging format.";
-
-    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Constants() {
 
     }
-
-    /**
-     * Dummy value to be used when data is unknown (e.g. due to logging options).
-     */
-    // public static final int DATA_MISSING = -1;
 }

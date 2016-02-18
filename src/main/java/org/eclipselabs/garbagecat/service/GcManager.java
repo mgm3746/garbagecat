@@ -19,7 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +32,7 @@ import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
@@ -47,6 +48,8 @@ import org.eclipselabs.garbagecat.preprocess.jdk.ParNewCmsConcurrentPreprocessAc
 import org.eclipselabs.garbagecat.preprocess.jdk.PrintHeapAtGcPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.PrintTenuringDistributionPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.UnloadingClassPreprocessAction;
+import org.eclipselabs.garbagecat.util.jdk.Analysis;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -87,7 +90,6 @@ public class GcManager {
             throw new IllegalArgumentException("logFile == null!!");
 
         File preprocessFile = new File(logFile.getPath() + ".pp");
-        long lineCounter = 0;// will be used in statistics in near future
 
         // Preprocess log file
 
@@ -107,7 +109,6 @@ public class GcManager {
 
             String nextLogLine = bufferedReader.readLine();
             while (nextLogLine != null) {
-                lineCounter++;
 
                 preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
                         entangledLogLines);
@@ -276,13 +277,19 @@ public class GcManager {
                 if (event instanceof BlockingEvent) {
                     jvmDao.addBlockingEvent((BlockingEvent) event);
 
-                    // Populate triggers list.
+                    // Check for explicit gc = System.gc()
                     if (event instanceof TriggerData) {
-                        List<JdkUtil.TriggerType> triggerTypes = jvmDao.getTriggerTypes();
-                        JdkUtil.TriggerType triggerType = JdkUtil
-                                .determineTriggerType(((TriggerData) event).getTrigger());
-                        if (!triggerTypes.contains(triggerType)) {
-                            triggerTypes.add(triggerType);
+                        String trigger = ((TriggerData) event).getTrigger();
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
+                            if (event instanceof CmsSerialOldEvent) {
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_SERIAL_OLD_SYSTEM_GC)) {
+                                    jvmDao.addAnalysisKey(Analysis.KEY_CMS_SERIAL_OLD_SYSTEM_GC);
+                                }
+                            } else {
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC)) {
+                                    jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC);
+                                }
+                            }
                         }
                     }
                 } else if (event instanceof ApplicationStoppedTimeEvent) {
@@ -420,7 +427,7 @@ public class GcManager {
         jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
         jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
         jvmRun.setEventTypes(jvmDao.getEventTypes());
-        jvmRun.setTriggerTypes(jvmDao.getTriggerTypes());
+        jvmRun.setAnalysisKeys(jvmDao.getAnalysisKeys());
         jvmRun.setBottlenecks(getBottlenecks(jvm, throughputThreshold));
         return jvmRun;
     }
