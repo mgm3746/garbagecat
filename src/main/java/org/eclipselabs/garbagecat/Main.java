@@ -113,8 +113,7 @@ public class Main {
                 if (cmd.hasOption("threshold")) {
                     throughputThreshold = Integer.parseInt(cmd.getOptionValue('t'));
                 }
-                JvmRun jvmRun = jvmManager.getJvmRun(jvm, throughputThreshold);                
-                jvmRun.doAnalysis();
+                JvmRun jvmRun = jvmManager.getJvmRun(jvm, throughputThreshold);               
                 createReport(jvmRun);
             }
         }

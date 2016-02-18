@@ -36,9 +36,9 @@ public class Analysis {
     public static final String KEY_EXPLICIT_GC = "explicit.gc";
     
     /**
-     * Property key for explicit garbage collection.
+     * Property key for explicit garbage collection by a serial collector.
      */
-    public static final String KEY_CMS_SERIAL_OLD_SYSTEM_GC = "cms_serial_old_system_gc";
+    public static final String KEY_EXPLICIT_GC_SERIAL = "explicit.gc.serial";
     
     /**
      * Property key for -XX:+PrintGCApplicationStoppedTime missing.
@@ -49,7 +49,7 @@ public class Analysis {
      * Property key for the ratio of gc time vs. stopped time showing a significant amount of stopped time (>20%) is
      * not GC related.
      */
-    public static final String GC_STOPPED_RATIO = "gc.stopped.ratio";
+    public static final String KEY_GC_STOPPED_RATIO = "gc.stopped.ratio";
     
     /**
      * Property key for thread stack size not set.
@@ -64,7 +64,12 @@ public class Analysis {
     /**
      * Property key for min perm/metaspace not equal to max perm/metaspace.
      */
-    public static final String KEY_MIN_PERM_NOT_EQUAL_MAX_HEAP = "min.perm.not.equal.max.perm";     
+    public static final String KEY_MIN_PERM_NOT_EQUAL_MAX_HEAP = "min.perm.not.equal.max.perm";   
+    
+    /**
+     * Property key for the G1_FULL_GC collector being invoked.
+     */
+    public static final String KEY_G1_FULL_GC = "g1.full.gc";  
 
     /**
      * Make default constructor private so the class cannot be instantiated.

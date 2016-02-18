@@ -360,12 +360,16 @@ public class JvmRun {
     }
 
     /**
-     * Analysis points.
+     * Do analysis.
      * 
      * @return A <code>List</code> of analysis points based on the JVM options and data.
      */
     public void doAnalysis() {
- 
+        
+        if (jvm.getOptions() != null) {
+            doJvmOptionsAnalysis();
+        }
+        
         // 1) Check for partial log
         if (GcUtil.isPartialLog(firstTimestamp)) {
             analysisKeys.add(Analysis.KEY_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
@@ -378,34 +382,36 @@ public class JvmRun {
 
         // 3) Check for significant stopped time unrelated to GC
         if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME) && getGcStoppedRatio() < 80) {
-            analysisKeys.add(Analysis.GC_STOPPED_RATIO);
+            analysisKeys.add(Analysis.KEY_GC_STOPPED_RATIO);
+        }
+    }
+    
+    /**
+     * Do JVM options analysis.
+     */
+    private void doJvmOptionsAnalysis() {
+        
+        // Check to see if thread stack size explicitly set
+        if (jvm.getThreadStackSizeOption() == null) {
+            analysisKeys.add(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET);
         }
 
-        // 4) JVM options analysis
-        if (jvm.getOptions() != null) {
-
-            // Check to see if thread stack size explicitly set
-            if (jvm.getThreadStackSizeOption() == null) {
-                analysisKeys.add(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET);
-            }
-
-            // Check to see if min and max heap sizes are the same
-            if (!jvm.isMinAndMaxHeapSpaceEqual()) {
-                analysisKeys.add(Analysis.KEY_MIN_HEAP_NOT_EQUAL_MAX_HEAP);
-            }
-
-            // Check to see if min and max perm gen sizes are the same
-            if (!jvm.isMinAndMaxPermSpaceEqual()) {
-                analysisKeys.add(Analysis.KEY_MIN_PERM_NOT_EQUAL_MAX_HEAP);
-            }
-
-            // TODO: Check to see if explicit GC interval is disabled or set.
-
-            // TODO: If explicit GC interval is set, try disabling explicit GC.
-
-            // TODO: Check for instrumentation.
-
-            // TODO: -Xbatch warning
+        // Check to see if min and max heap sizes are the same
+        if (!jvm.isMinAndMaxHeapSpaceEqual()) {
+            analysisKeys.add(Analysis.KEY_MIN_HEAP_NOT_EQUAL_MAX_HEAP);
         }
+
+        // Check to see if min and max perm gen sizes are the same
+        if (!jvm.isMinAndMaxPermSpaceEqual()) {
+            analysisKeys.add(Analysis.KEY_MIN_PERM_NOT_EQUAL_MAX_HEAP);
+        }
+
+        // TODO: Check to see if explicit GC interval is disabled or set.
+
+        // TODO: If explicit GC interval is set, try disabling explicit GC.
+
+        // TODO: Check for instrumentation.
+
+        // TODO: -Xbatch warning
     }
 }

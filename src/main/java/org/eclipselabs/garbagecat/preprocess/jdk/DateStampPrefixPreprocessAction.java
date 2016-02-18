@@ -99,8 +99,8 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
     /**
      * Regular expressions defining the logging line.
      */
-    private static final String REGEX_LINE = "^" + JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.DATESTAMP + ": "
-            + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": (.*))$";
+    private static final String REGEX_LINE = "^" + JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.DATESTAMP + "(: )?)?(("
+            + JdkRegEx.TIMESTAMP + ": )(:)?( )?)(" + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.DATESTAMP + ": )?(.*)$";
     
     private static final Pattern PATTERN = Pattern.compile(REGEX_LINE);
 
@@ -116,12 +116,12 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
      *            The log entry.
      */
     public DateStampPrefixPreprocessAction(String logEntry) {
-        Pattern p = Pattern.compile(JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.DATESTAMP + ": " + JdkRegEx.TIMESTAMP
-                + ": )?(" + JdkRegEx.TIMESTAMP + ": )");
+        Pattern p = Pattern.compile(JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.DATESTAMP + "(: )?)?(("
+            + JdkRegEx.TIMESTAMP + ": )(:)?( )?)(" + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.DATESTAMP + ": )?");
         Matcher matcher = p.matcher(logEntry);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()){
-            matcher.appendReplacement(sb, matcher.group(25));
+            matcher.appendReplacement(sb, matcher.group(26));
         }
         matcher.appendTail(sb);
         this.logEntry = sb.toString();

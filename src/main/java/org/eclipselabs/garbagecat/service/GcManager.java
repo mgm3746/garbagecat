@@ -33,6 +33,7 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
@@ -271,27 +272,40 @@ public class GcManager {
             bufferedReader = new BufferedReader(new FileReader(logFile));
             String logLine = bufferedReader.readLine();
             while (logLine != null) {
-                // If event has no timestamp, use most recent blocking
-                // timestamp in database.
+                // If event has no timestamp, use most recent blocking timestamp in database.
                 LogEvent event = JdkUtil.parseLogLine(logLine);
                 if (event instanceof BlockingEvent) {
                     jvmDao.addBlockingEvent((BlockingEvent) event);
 
-                    // Check for explicit gc = System.gc()
-                    if (event instanceof TriggerData) {
-                        String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                            if (event instanceof CmsSerialOldEvent) {
-                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_SERIAL_OLD_SYSTEM_GC)) {
-                                    jvmDao.addAnalysisKey(Analysis.KEY_CMS_SERIAL_OLD_SYSTEM_GC);
-                                }
-                            } else {
-                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC)) {
+                    // Check if explicit GC is causing a serial collector to be invoked
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL)) {
+                        if (event instanceof CmsSerialOldEvent || event instanceof G1FullGCEvent) {
+                            String trigger = ((TriggerData) event).getTrigger();
+                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
+                                jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL);
+                            }
+                        }  
+                    } else{
+                        // Check if explicit GC is causing unnecessary collections
+                        if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC)) {
+                            if (event instanceof TriggerData) {
+                                String trigger = ((TriggerData) event).getTrigger();
+                                if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
                                     jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC);
                                 }
-                            }
+                            }                        
                         }
                     }
+                    
+                    // Check if G1 Full GC collector is being invoked for reasons other than explicit GC
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_G1_FULL_GC)) {
+                        if (event instanceof G1FullGCEvent) {
+                            String trigger = ((TriggerData) event).getTrigger();
+                            if (trigger == null || !trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
+                                jvmDao.addAnalysisKey(Analysis.KEY_G1_FULL_GC);
+                            }
+                        }
+                    }                     
                 } else if (event instanceof ApplicationStoppedTimeEvent) {
                     jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
                 } else if (event instanceof HeaderCommandLineFlagsEvent) {
@@ -334,7 +348,7 @@ public class GcManager {
             }
         }
 
-    }// store()
+    }
 
     /**
      * Determine <code>BlockingEvent</code>s where throughput since last event does not meet the throughput goal.
@@ -429,6 +443,7 @@ public class GcManager {
         jvmRun.setEventTypes(jvmDao.getEventTypes());
         jvmRun.setAnalysisKeys(jvmDao.getAnalysisKeys());
         jvmRun.setBottlenecks(getBottlenecks(jvm, throughputThreshold));
+        jvmRun.doAnalysis();
         return jvmRun;
     }
 }

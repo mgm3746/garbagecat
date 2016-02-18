@@ -47,6 +47,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE));
         Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD));
+        Assert.assertTrue(Analysis.KEY_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_APPLICATION_STOPPED_TIME_MISSING));
     }
 
     public void testSummaryStatsParNew() {
@@ -104,6 +105,7 @@ public class TestJvmRun extends TestCase {
                         + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
                 jvmRun.getEventTypes()
                         .contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE));
+        Assert.assertTrue(Analysis.KEY_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED));
     }
 
     /**
@@ -640,7 +642,9 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
         Assert.assertTrue(JdkUtil.TriggerType.SYSTEM_GC.toString() + " trigger not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC));
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL));
+        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_SERIAL + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL));
+        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC + " analysis incorrectly identified.", !jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC));
     }
 
     /**
@@ -763,6 +767,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("Total stopped time not calculated correctly.", 1064, jvmRun.getTotalStoppedTime());
         Assert.assertEquals("Stopped time throughput not calculated correctly.", 63, jvmRun.getStoppedTimeThroughput());
         Assert.assertEquals("GC/Stopped ratio not calculated correctly.", 6, jvmRun.getGcStoppedRatio());
+        Assert.assertTrue(Analysis.KEY_GC_STOPPED_RATIO + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_GC_STOPPED_RATIO));
     }  
     
     public void testHeaderLogging() {
@@ -775,6 +780,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " information not identified.", jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS));
         Assert.assertTrue(JdkUtil.LogEventType.HEADER_MEMORY.toString() + " information not identified.", jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY));
         Assert.assertTrue(JdkUtil.LogEventType.HEADER_VERSION.toString() + " information not identified.", jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION));
+        Assert.assertTrue(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET));
     }  
 
     /**
