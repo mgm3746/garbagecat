@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -51,6 +52,7 @@ public class TestParallelSerialOldEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".", ParallelSerialOldEvent.match(logLine));
         ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 4165, event.getTimestamp());
+        Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.SYSTEM_GC.toString() + ".", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
         Assert.assertEquals("Young begin size not parsed correctly.", 1784, event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
         Assert.assertEquals("Young available size not parsed correctly.", 12736, event.getYoungSpace());

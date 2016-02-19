@@ -71,7 +71,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData {
+public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData, G1Collection {
 
     /**
      * Regular expression standard format.

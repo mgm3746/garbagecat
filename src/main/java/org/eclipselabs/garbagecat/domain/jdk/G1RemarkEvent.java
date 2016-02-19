@@ -45,7 +45,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1RemarkEvent implements BlockingEvent {
+public class G1RemarkEvent implements BlockingEvent, G1Collection {
     /**
      * Regular expressions defining the logging.
      */

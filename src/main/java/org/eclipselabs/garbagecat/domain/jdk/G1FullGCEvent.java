@@ -64,7 +64,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData {
+public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, G1Collection {
 
     /**
      * Regular expressions defining the logging.

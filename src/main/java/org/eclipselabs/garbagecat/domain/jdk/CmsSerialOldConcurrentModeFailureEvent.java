@@ -117,7 +117,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  */
 public class CmsSerialOldConcurrentModeFailureEvent implements BlockingEvent, OldCollection, PermCollection, YoungData,
-        OldData, PermData {
+        OldData, PermData, CmsCollection {
 
     /**
      * Regular expressions defining the logging.

@@ -644,7 +644,8 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(JdkUtil.TriggerType.SYSTEM_GC.toString() + " trigger not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL));
         Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_SERIAL + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL));
-        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC + " analysis incorrectly identified.", !jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC));
+        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_UNECESSARY_CMS_G1 + " analysis incorrectly identified.", !jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_UNECESSARY_CMS_G1));
+        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_UNNECESSARY + " analysis incorrectly identified.", !jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_UNNECESSARY));
     }
 
     /**
@@ -955,5 +956,22 @@ public class TestJvmRun extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CONCURRENT)); 
+    }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
+     * 
+     */
+    public void testExplicitGcAnalsysisParallelSerialOld() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset56.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE));
+        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD));
+        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_UNNECESSARY + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_UNNECESSARY));
     }
 }

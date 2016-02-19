@@ -32,7 +32,9 @@ import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.CmsCollection;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1Collection;
 import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
@@ -288,12 +290,16 @@ public class GcManager {
                         }
                     } else {
                         // 2) Explicit GC not invoking a serial collector, but causing unnecessary collections
-                        if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC)
+                        if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_UNECESSARY_CMS_G1)
                                 && !(event instanceof CmsSerialOldEvent || event instanceof G1FullGCEvent)
                                 && event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
                             if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC);
+                                if (event instanceof CmsCollection || event instanceof G1Collection) {
+                                    jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_UNECESSARY_CMS_G1);
+                                } else {
+                                    jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_UNNECESSARY);
+                                }
                             }
                         }
                     }

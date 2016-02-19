@@ -55,7 +55,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent, TriggerData {
+public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent, TriggerData, CmsCollection {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

@@ -31,9 +31,14 @@ public class Analysis {
     public static final String KEY_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED = "first.timestamp.threshold.exceeded";
     
     /**
-     * Property key for explicit garbage collection.
+     * Property key for explicit gc with concurrent collectors (CMS, G1).
      */
-    public static final String KEY_EXPLICIT_GC = "explicit.gc";
+    public static final String KEY_EXPLICIT_GC_UNECESSARY_CMS_G1 = "explicit.gc.unnecessary.cms.g1";
+    
+    /**
+     * Property key for explicit gc with non concurrent collectors (Serial, ParallelSerial).
+     */
+    public static final String KEY_EXPLICIT_GC_UNNECESSARY = "explicit.gc.unnecessary";
     
     /**
      * Property key for explicit garbage collection by a serial collector.

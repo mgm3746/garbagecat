@@ -71,7 +71,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedData, TriggerData {
+public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedData, TriggerData, G1Collection {
 
     /**
      * Regular expression standard format.

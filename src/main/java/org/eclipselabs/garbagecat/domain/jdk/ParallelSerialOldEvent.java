@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermCollection;
 import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -47,7 +48,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 2) Alternate format (Note "Full GC" vs. "Full GC (System)"):
+ * 2) With trigger (Note "Full GC" vs. "Full GC (System)"):
  * </p>
  * 
  * <pre>
@@ -61,7 +62,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData,
-        PermData {
+        PermData, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -122,12 +123,18 @@ public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, Per
      * Space allocated to permanent generation (kilobytes).
      */
     private int permGenAllocation;
+    
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP
-            + ": \\[(Full GC|Full GC \\(System\\)) \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + ": \\[Full GC (" + JdkRegEx.TRIGGER
+            + " )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
@@ -143,17 +150,20 @@ public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, Per
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            young = Integer.parseInt(matcher.group(3));
-            youngEnd = Integer.parseInt(matcher.group(4));
-            youngAvailable = Integer.parseInt(matcher.group(5));
-            old = Integer.parseInt(matcher.group(6));
-            oldEnd = Integer.parseInt(matcher.group(7));
-            oldAllocation = Integer.parseInt(matcher.group(8));
+            if (matcher.group(3) != null) {
+                trigger = matcher.group(3);
+            }
+            young = Integer.parseInt(matcher.group(4));
+            youngEnd = Integer.parseInt(matcher.group(5));
+            youngAvailable = Integer.parseInt(matcher.group(6));
+            old = Integer.parseInt(matcher.group(7));
+            oldEnd = Integer.parseInt(matcher.group(8));
+            oldAllocation = Integer.parseInt(matcher.group(9));
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Integer.parseInt(matcher.group(12));
-            permGenEnd = Integer.parseInt(matcher.group(13));
-            permGenAllocation = Integer.parseInt(matcher.group(14));
-            duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
+            permGen = Integer.parseInt(matcher.group(13));
+            permGenEnd = Integer.parseInt(matcher.group(14));
+            permGenAllocation = Integer.parseInt(matcher.group(15));
+            duration = JdkMath.convertSecsToMillis(matcher.group(16)).intValue();
         }
     }
 
@@ -220,6 +230,10 @@ public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, Per
 
     public int getPermSpace() {
         return permGenAllocation;
+    }
+    
+    public String getTrigger() {
+        return trigger;
     }
 
     /**
