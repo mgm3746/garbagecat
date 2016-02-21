@@ -489,4 +489,18 @@ public class TestG1PrintGcDetailsPreprocessAction extends TestCase {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
                 G1PrintGcDetailsPreprocessAction.match(logLine));
     }
+    
+    public void testLogLineTimesBlock() {
+        String logLine = " [Times: user=0.33 sys=0.04, real=0.17 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
+    
+    public void testLogLineTimesBlockWithSpaceAtEnd() {
+        String logLine = " [Times: user=0.33 sys=0.04, real=0.17 secs] ";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+    }
 }

@@ -28,7 +28,7 @@ public class TestG1ConcurrentEvent extends TestCase {
     }
 
     public void testRootRegionScanEnd() {
-        String logLine = "50.136: [GC concurrent-root-region-scan-end, 0.0346620]";
+        String logLine = "50.136: [GC concurrent-root-region-scan-end, 0.0346620 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".", G1ConcurrentEvent.match(logLine));
         G1ConcurrentEvent  event = new G1ConcurrentEvent (logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 50136, event.getTimestamp());
@@ -42,7 +42,7 @@ public class TestG1ConcurrentEvent extends TestCase {
     }
 
     public void testMarkEnd() {
-        String logLine = "50.655: [GC concurrent-mark-end, 0.5186330 sec]";
+        String logLine = "50.655: [GC concurrent-mark-end, 0.5186330 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".", G1ConcurrentEvent.match(logLine));
         G1ConcurrentEvent  event = new G1ConcurrentEvent (logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 50655, event.getTimestamp());
@@ -56,7 +56,7 @@ public class TestG1ConcurrentEvent extends TestCase {
     }
 
     public void testCleanupEnd() {
-        String logLine = "50.685: [GC concurrent-cleanup-end, 0.0001080]";
+        String logLine = "50.685: [GC concurrent-cleanup-end, 0.0001080 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".", G1ConcurrentEvent.match(logLine));
         G1ConcurrentEvent  event = new G1ConcurrentEvent (logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 50685, event.getTimestamp());

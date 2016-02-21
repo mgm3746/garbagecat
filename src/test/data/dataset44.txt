@@ -1,3 +1,5 @@
+2016-02-09T06:17:15.377-0500: 27744.139: [GC concurrent-root-region-scan-start]
+2016-02-09T06:17:15.619-0500: 27744.381: [GC pause (young)2016-02-09T06:17:15.732-0500: 27744.494: [GC concurrent-root-region-scan-end, 0.3550210 secs]
 2016-02-09T06:17:15.732-0500: 27744.494: [GC concurrent-mark-start]
 , 0.3349320 secs]
    [Root Region Scan Waiting: 112.3 ms]

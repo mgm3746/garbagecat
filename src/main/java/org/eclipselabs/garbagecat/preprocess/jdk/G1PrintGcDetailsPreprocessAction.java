@@ -303,7 +303,8 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
      * Regular expression for retained beginning G1_CONCURRENT collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(: )?((" + JdkRegEx.TIMESTAMP
-            + ": \\[GC concurrent-((mark-start)|(cleanup-end))(, " + JdkRegEx.DURATION + ")?\\]))$";
+            + ": \\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, " + JdkRegEx.DURATION
+            + ")?\\]))$";
 
     /**
      * Regular expression for retained beginning G1_REMARK collection.
@@ -356,7 +357,7 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained end.
      */
-    private static final String REGEX_RETAIN_END = "^" + JdkRegEx.TIMES_BLOCK + "$";
+    private static final String REGEX_RETAIN_END = "^" + JdkRegEx.TIMES_BLOCK + "( )?$";
 
     /**
      * Regular expressions for lines thrown away.
@@ -425,7 +426,7 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
-
+    
     /**
      * Log entry in the entangle log list to indicate the GC details block started with a non-concurrent event.
      * Inspection of logging has shown that concurrent events can become intermingled with the GC details logging. When
@@ -448,26 +449,31 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
      */
     public G1PrintGcDetailsPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntr,
             List<String> entangledLogLines) {
+        
         // Beginning logging
         if (logEntry.matches(REGEX_RETAIN_BEGINNING_FULL_GC) || logEntry.matches(REGEX_RETAIN_BEGINNING_CLEANUP)) {
             this.logEntry = logEntry;
-            entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
+            if(!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
+                entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
+            }
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)) {
-            // HHandle concurrent mixed with young collections. See datasets 47-48 and 51-52, 54.
+            // Handle concurrent mixed with young collections. See datasets 47-48 and 51-52, 54.
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(3));
+                entangledLogLines.add(matcher.group(3) + System.getProperty("line.separator"));
             }
             // Output beginning of young line
             this.logEntry = matcher.group(1);
-            entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
+            if(!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
+                entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
+            }
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)) {
             // Strip out any leading colon
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                logEntry = matcher.group(2);
+                logEntry = matcher.group(2) + System.getProperty("line.separator");
             }
             
             // Handle concurrent mixed with young collections. See datasets 47-48 and 51-52, 54.
@@ -477,21 +483,26 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
             } else {
                 this.logEntry = logEntry;
             }
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE)) {
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE)) {            
             // Strip out G1Ergonomics
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
+                logEntry = matcher.group(1);
+                this.logEntry = logEntry;
             }
-            entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
+            if(!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
+                entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
+            }
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_REMARK)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_REMARK);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1) + matcher.group(5);
             }
-            entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
+            if(!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
+                entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
+            }
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_MIXED)) {
             // Strip out G1Ergonomics
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_MIXED);
@@ -499,7 +510,9 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
+            if(!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
+                entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
+            }
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK)) {
             // Strip out G1Ergonomics
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK);
@@ -507,7 +520,9 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
+            if(!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
+                entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
+            }
             // Middle logging
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE);
@@ -596,7 +611,6 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
                 String logLine = iterator.next();
                 if (logLine != G1PrintGcDetailsPreprocessAction.BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT) {
                     this.logEntry = this.logEntry + logLine;
-                    this.logEntry = this.logEntry + System.getProperty("line.separator");
                 }
             }
             // Reset entangled log lines

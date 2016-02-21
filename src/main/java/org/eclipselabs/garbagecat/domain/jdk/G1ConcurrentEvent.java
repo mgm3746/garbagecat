@@ -94,7 +94,10 @@ public class G1ConcurrentEvent implements LogEvent, G1Collection {
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC concurrent.+$";
+            + ": \\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(\\])?(, " + JdkRegEx.DURATION
+            + ")?\\]( " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\))?"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    
     private static final Pattern pattern = Pattern.compile(REGEX);
     
     /**

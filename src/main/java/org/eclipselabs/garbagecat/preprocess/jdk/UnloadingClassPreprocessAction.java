@@ -81,7 +81,6 @@ public class UnloadingClassPreprocessAction implements PreprocessAction {
             } else {
                 // Newline
                 this.logEntry = matcher.group(1) + matcher.group(2) + System.getProperty("line.separator");
-                ;
             }
         }
     }
