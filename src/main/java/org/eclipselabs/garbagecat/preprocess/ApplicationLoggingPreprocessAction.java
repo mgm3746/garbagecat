@@ -12,7 +12,6 @@
  ******************************************************************************/
 package org.eclipselabs.garbagecat.preprocess;
 
-import org.eclipselabs.garbagecat.preprocess.jdk.PreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**

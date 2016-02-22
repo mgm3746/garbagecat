@@ -92,10 +92,10 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(\\(("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\) )?(" + JdkRegEx.TIMESTAMP + ": )?\\[ParNew: " + JdkRegEx.SIZE
-            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\))?( )?(" + JdkRegEx.TIMESTAMP + ": )?\\[ParNew: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     
     private static final Pattern pattern = Pattern.compile(ParNewEvent.REGEX);
     /**
@@ -157,16 +157,16 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             trigger = matcher.group(5);
-            young = Integer.parseInt(matcher.group(8));
-            youngEnd = Integer.parseInt(matcher.group(9));
-            youngAvailable = Integer.parseInt(matcher.group(10));
-            int totalBegin = Integer.parseInt(matcher.group(12));
+            young = Integer.parseInt(matcher.group(9));
+            youngEnd = Integer.parseInt(matcher.group(10));
+            youngAvailable = Integer.parseInt(matcher.group(11));
+            int totalBegin = Integer.parseInt(matcher.group(13));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(13));
+            int totalEnd = Integer.parseInt(matcher.group(14));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(14));
+            int totalAllocation = Integer.parseInt(matcher.group(15));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(16)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
         }
     }
 

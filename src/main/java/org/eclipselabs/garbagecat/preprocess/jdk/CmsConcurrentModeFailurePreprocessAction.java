@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.preprocess.jdk;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -52,8 +53,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 3070.289: [GC 3070.289: [ParNew: 207744K-&gt;207744K(242304K), 0.0000682 secs]3070.289: [CMS3081.621: [CMS-concurrent-mark: 11.907/12.958 secs] [Times: user=45.31 sys=3.93, real=12.96 secs]
- *  (concurrent mode failure): 6010121K-&gt;6014591K(6014592K), 79.0505229 secs] 6217865K-&gt;6028029K(6256896K), [CMS Perm : 206688K-&gt;206662K(262144K)], 79.0509595 secs] [Times: user=104.69 sys=3.63, real=79.05 secs]
+ * 3070.289: [GC 3070.289: [ParNew: 207744K->207744K(242304K), 0.0000682 secs]3070.289: [CMS3081.621: [CMS-concurrent-mark: 11.907/12.958 secs] [Times: user=45.31 sys=3.93, real=12.96 secs]
+ *  (concurrent mode failure): 6010121K->6014591K(6014592K), 79.0505229 secs] 6217865K->6028029K(6256896K), [CMS Perm : 206688K->206662K(262144K)], 79.0509595 secs] [Times: user=104.69 sys=3.63, real=79.05 secs]
  * </pre>
  * 
  * Preprocessed:
@@ -84,8 +85,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 88063.609: [GC 88063.610: [ParNew (promotion failed): 513856K-&gt;513856K(513856K), 4.0911197 secs]88067.701: [CMS88067.742: [CMS-concurrent-reset: 0.309/4.421 secs] [Times: user=9.62 sys=3.73, real=4.42 secs]
- * : 10612422K-&gt;4373474K(11911168K), 76.7523274 secs] 11075362K-&gt;4373474K(12425024K), [CMS Perm : 214530K-&gt;213777K(524288K)], 80.8440551 secs] [Times: user=80.01 sys=5.57, real=80.84 secs]
+ * 88063.609: [GC 88063.610: [ParNew (promotion failed): 513856K->513856K(513856K), 4.0911197 secs]88067.701: [CMS88067.742: [CMS-concurrent-reset: 0.309/4.421 secs] [Times: user=9.62 sys=3.73, real=4.42 secs]
+ * : 10612422K->4373474K(11911168K), 76.7523274 secs] 11075362K->4373474K(12425024K), [CMS Perm : 214530K->213777K(524288K)], 80.8440551 secs] [Times: user=80.01 sys=5.57, real=80.84 secs]
+ * </pre>
+ * 
+ * Preprocessed:
+ * 
+ * <pre>
+ * 88063.609: [GC 88063.610: [ParNew (promotion failed): 513856K->513856K(513856K), 4.0911197 secs]88067.701: [CMS88067.742: [CMS-concurrent-reset: 0.309/4.421 secs]: 10612422K->4373474K(11911168K), 76.7523274 secs] 11075362K->4373474K(12425024K), [CMS Perm : 214530K->213777K(524288K)], 80.8440551 secs] [Times: user=80.01 sys=5.57, real=80.84 secs]
  * </pre>
  * 
  * <p>
@@ -113,7 +120,7 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
      * Regular expression(s) defining the 1st logging line.
      */
     private static final String[] REGEX_LINE_BEGINNING = {
-    // Serial old
+            // Serial old
             "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(System\\) )?" + JdkRegEx.TIMESTAMP
                     + ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
                     + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): "

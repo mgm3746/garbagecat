@@ -68,7 +68,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 88063.609: [GC 88063.610: [ParNew (promotion failed): 513856K-&gt;513856K(513856K), 4.0911197 secs]88067.701: [CMS88067.742: [CMS-concurrent-reset: 0.309/4.421 secs]: 10612422K-&gt;4373474K(11911168K), 76.7523274 secs] 11075362K-&gt;4373474K(12425024K), [CMS Perm : 214530K-&gt;213777K(524288K)], 80.8440551 secs] [Times: user=80.01 sys=5.57, real=80.84 secs]
+ * 88063.609: [GC 88063.610: [ParNew (promotion failed): 513856K->513856K(513856K), 4.0911197 secs]88067.701: [CMS88067.742: [CMS-concurrent-reset: 0.309/4.421 secs]: 10612422K->4373474K(11911168K), 76.7523274 secs] 11075362K->4373474K(12425024K), [CMS Perm : 214530K->213777K(524288K)], 80.8440551 secs] [Times: user=80.01 sys=5.57, real=80.84 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

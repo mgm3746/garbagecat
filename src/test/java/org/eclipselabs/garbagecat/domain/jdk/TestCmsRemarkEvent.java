@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -46,4 +47,16 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 253103, event.getTimestamp());
         Assert.assertEquals("Duration not parsed correctly.", 85, event.getDuration());
     }
+    
+    public void testLogLineJdk8WithTriggerAndDatestamps() {
+        String logLine = "13.749: [GC (CMS Final Remark)[YG occupancy: 149636 K (153600 K)]13.749: [Rescan (parallel) , "
+                + "0.0216980 secs]13.771: [weak refs processing, 0.0005180 secs]13.772: "
+                + "[scrub string table, 0.0015820 secs] [1 CMS-remark: 217008K(341376K)] 366644K(494976K), 0.0239510 secs] "
+                + "[Times: user=0.18 sys=0.00, real=0.02 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".", CmsRemarkEvent.match(logLine));
+        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 13749, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        Assert.assertEquals("Duration not parsed correctly.", 23, event.getDuration());
+    } 
 }

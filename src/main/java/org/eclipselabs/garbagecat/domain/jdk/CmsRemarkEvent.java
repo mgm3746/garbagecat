@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -34,14 +35,27 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Standard format:
+ * </p>
+ * 
  * <pre>
  * 253.103: [GC[YG occupancy: 16172 K (149120 K)]253.103: [Rescan (parallel) , 0.0226730 secs]253.126: [weak refs processing, 0.0624566 secs] [1 CMS-remark: 4173470K(8218240K)] 4189643K(8367360K), 0.0857010 secs]
+ * </pre>
+ * 
+ * <p>
+ * 2) JDK8 after {@link org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction} with trigger, no
+ * space after trigger, and no space after "scrub symbol table":
+ * </p>
+ * 
+ * <pre>
+ * 13.749: [GC (CMS Final Remark)[YG occupancy: 149636 K (153600 K)]13.749: [Rescan (parallel) , 0.0216980 secs]13.771: [weak refs processing, 0.0005180 secs]13.772: [scrub string table, 0.0015820 secs] [1 CMS-remark: 217008K(341376K)] 366644K(494976K), 0.0239510 secs] [Times: user=0.18 sys=0.00, real=0.02 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class CmsRemarkEvent implements BlockingEvent, CmsCollection {
+public class CmsRemarkEvent implements BlockingEvent, CmsCollection, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -57,15 +71,22 @@ public class CmsRemarkEvent implements BlockingEvent, CmsCollection {
      * The time when the GC event happened in milliseconds after JVM startup.
      */
     private long timestamp;
+    
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
-            + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION
-            + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\] \\[1 CMS-remark: "
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
+            + ")\\))?\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.TIMESTAMP
+            + ": \\[scrub string table, " + JdkRegEx.DURATION + "\\])? \\[1 CMS-remark: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(CmsRemarkEvent.REGEX);
 
@@ -79,8 +100,9 @@ public class CmsRemarkEvent implements BlockingEvent, CmsCollection {
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            trigger = matcher.group(3);
             // The last duration is the total duration for the phase.
-            duration = JdkMath.convertSecsToMillis(matcher.group(12)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
         }
     }
 
@@ -111,6 +133,10 @@ public class CmsRemarkEvent implements BlockingEvent, CmsCollection {
 
     public String getName() {
         return JdkUtil.LogEventType.CMS_REMARK.toString();
+    }
+    
+    public String getTrigger() {
+        return trigger;
     }
 
     /**

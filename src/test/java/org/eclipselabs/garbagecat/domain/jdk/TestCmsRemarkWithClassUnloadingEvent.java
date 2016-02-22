@@ -12,11 +12,11 @@
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -82,5 +82,5 @@ public class TestCmsRemarkWithClassUnloadingEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 13758, event.getTimestamp());
         Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         Assert.assertEquals("Duration not parsed correctly.", 43, event.getDuration());
-    }    
+    }
 }

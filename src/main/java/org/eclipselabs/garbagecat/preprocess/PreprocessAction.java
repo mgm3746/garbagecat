@@ -10,7 +10,7 @@
  * Contributors:                                                              *
  *    Red Hat, Inc. - initial API and implementation                          *
  ******************************************************************************/
-package org.eclipselabs.garbagecat.preprocess.jdk;
+package org.eclipselabs.garbagecat.preprocess;
 
 /**
  * Base preprocessing action.

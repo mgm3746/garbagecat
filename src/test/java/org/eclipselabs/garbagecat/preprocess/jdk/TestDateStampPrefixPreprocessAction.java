@@ -94,4 +94,12 @@ public class TestDateStampPrefixPreprocessAction extends TestCase {
         String preprocessedLogLine = "20349.312: [GC pause (young)20349.349: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: 28333, predicted base time: 108.90 ms, remaining time: 891.10 ms, target pause time: 1000.00 ms]";
         Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
     }
+    
+    public void testG1LogLineDatestampCmsRemarkWithClassUnloadingJdk8() {
+        String logLine = "2016-02-18T17:23:09.738+0100: 13.749: [GC (CMS Final Remark)[YG occupancy: 149636 K (153600 K)]2016-02-18T17:23:09.738+0100: 13.749: [Rescan (parallel) , 0.0216980 secs]2016-02-18T17:23:09.760+0100: 13.771: [weak refs processing, 0.0005180 secs]2016-02-18T17:23:09.760+0100: 13.772: [scrub string table, 0.0015820 secs] [1 CMS-remark: 217008K(341376K)] 366644K(494976K), 0.0239510 secs] [Times: user=0.18 sys=0.00, real=0.02 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP_PREFIX.toString() + ".", DateStampPrefixPreprocessAction.match(logLine));
+        DateStampPrefixPreprocessAction preprocessAction = new DateStampPrefixPreprocessAction(logLine);
+        String preprocessedLogLine = "13.749: [GC (CMS Final Remark)[YG occupancy: 149636 K (153600 K)]13.749: [Rescan (parallel) , 0.0216980 secs]13.771: [weak refs processing, 0.0005180 secs]13.772: [scrub string table, 0.0015820 secs] [1 CMS-remark: 217008K(341376K)] 366644K(494976K), 0.0239510 secs] [Times: user=0.18 sys=0.00, real=0.02 secs]";
+        Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
+    }
 }

@@ -43,6 +43,7 @@ import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction;
+import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction;
@@ -220,7 +221,7 @@ public class GcManager {
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
-            } else if (PrintTenuringDistributionPreprocessAction.match(currentLogLine)) {
+            } else if (PrintTenuringDistributionPreprocessAction.match(currentLogLine, priorLogLine)) {
                 PrintTenuringDistributionPreprocessAction action = new PrintTenuringDistributionPreprocessAction(
                         currentLogLine);
                 if (action.getLogEntry() != null) {
@@ -246,6 +247,12 @@ public class GcManager {
             } else if (G1PrintGcDetailsPreprocessAction.match(currentLogLine)) {
                 G1PrintGcDetailsPreprocessAction action = new G1PrintGcDetailsPreprocessAction(priorLogLine,
                         currentLogLine, nextLogLine, entangledLogLines);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
+            } else if (CmsPreprocessAction.match(currentLogLine)) {
+                CmsPreprocessAction action = new CmsPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
+                        entangledLogLines);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }

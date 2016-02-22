@@ -979,7 +979,7 @@ public class TestJvmRun extends TestCase {
      * Test <code>G1PrintGcDetailsPreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
      * 
      */
-    public void testPreprocessingErgonomics() {
+    public void testG1PrintGcDetailsPreprocessActionG1YoungPauseWithG1ErgonomicsLogging6() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset57.txt");
         GcManager jvmManager = new GcManager();
@@ -991,5 +991,22 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_INITIAL_MARK));
         Assert.assertTrue(JdkUtil.LogEventType.G1_CONCURRENT.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.G1_CONCURRENT));
         Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE));        
+    }
+    
+    /**
+     * Test <code>CmsPreprocessAction</code> for mixed PAR_NEW and CMS_CONCURRENT.
+     * 
+     */
+    public void testCmsPreprocessActionParNewWithConcurrent() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset58.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.", jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
+        Assert.assertTrue(JdkUtil.LogEventType.CMS_CONCURRENT.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));        
     }
 }

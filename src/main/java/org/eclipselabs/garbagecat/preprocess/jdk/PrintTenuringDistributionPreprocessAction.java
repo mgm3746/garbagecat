@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.preprocess.jdk;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -121,6 +122,7 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
             "^ \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
                     + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
                     + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+    
     private static final Pattern PATTERN_END[] = new Pattern[REGEX_RETAIN_END.length];
 
     /**
@@ -193,9 +195,11 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
      * 
      * @param logLine
      *            The log line to test.
+     * @param priorLogLine
+     *            The last log entry processed.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
+    public static final boolean match(String logLine, String priorLogLine) {
         for (int i = 0; i < PATTERN_THROWAWAY.length; i++) {
             if (PATTERN_THROWAWAY[i].matcher(logLine).matches()) {
                 return true;
@@ -207,7 +211,8 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
             }
         }
         for (int i = 0; i < PATTERN_END.length; i++) {
-            if (PATTERN_END[i].matcher(logLine).matches()) {
+            // Shares same end line with CmsPreprocessAction
+            if (PATTERN_END[i].matcher(logLine).matches() && match(priorLogLine, null)) {
                 return true;
             }
         }
