@@ -72,9 +72,14 @@ public class Analysis {
     public static final String KEY_MIN_PERM_NOT_EQUAL_MAX_HEAP = "min.perm.not.equal.max.perm";   
     
     /**
-     * Property key for the G1_FULL_GC collector being invoked.
+     * Property key for a Throughput serial collector being invoked.
      */
-    public static final String KEY_G1_FULL_GC = "g1.full.gc";  
+    public static final String KEY_THROUGHPUT_SERIAL_GC = "throughput.serial.gc";  
+    
+    /**
+     * Property key for a G1 serial collector being invoked.
+     */
+    public static final String KEY_G1_SERIAL_GC = "g1.serial.gc";  
 
     /**
      * Make default constructor private so the class cannot be instantiated.

@@ -48,6 +48,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE));
         Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD));
         Assert.assertTrue(Analysis.KEY_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_APPLICATION_STOPPED_TIME_MISSING));
+        Assert.assertTrue(Analysis.KEY_THROUGHPUT_SERIAL_GC + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_THROUGHPUT_SERIAL_GC));
     }
 
     public void testSummaryStatsParNew() {

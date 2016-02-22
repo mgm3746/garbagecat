@@ -384,6 +384,11 @@ public class JvmRun {
         if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME) && getGcStoppedRatio() < 80) {
             analysisKeys.add(Analysis.KEY_GC_STOPPED_RATIO);
         }
+        
+        // 4) Check for throughput collector serial collector
+        if (eventTypes.contains(LogEventType.PARALLEL_SERIAL_OLD)) {
+            analysisKeys.add(Analysis.KEY_THROUGHPUT_SERIAL_GC);
+        }
     }
     
     /**

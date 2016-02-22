@@ -312,14 +312,14 @@ public class GcManager {
                     }
                     
                     // 3) G1 Full GC collector is being invoked for reasons other than explicit GC
-                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_G1_FULL_GC)) {
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_G1_SERIAL_GC)) {
                         if (event instanceof G1FullGCEvent) {
                             String trigger = ((TriggerData) event).getTrigger();
                             if (trigger == null || !trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_G1_FULL_GC);
+                                jvmDao.addAnalysisKey(Analysis.KEY_G1_SERIAL_GC);
                             }
                         }
-                    }                     
+                    } 
                 } else if (event instanceof ApplicationStoppedTimeEvent) {
                     jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
                 } else if (event instanceof HeaderCommandLineFlagsEvent) {
