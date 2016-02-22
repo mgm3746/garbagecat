@@ -385,9 +385,14 @@ public class JvmRun {
             analysisKeys.add(Analysis.KEY_GC_STOPPED_RATIO);
         }
         
-        // 4) Check for throughput collector serial collector
+        // 4) Check for throughput collector serial collection
         if (eventTypes.contains(LogEventType.PARALLEL_SERIAL_OLD)) {
             analysisKeys.add(Analysis.KEY_THROUGHPUT_SERIAL_GC);
+        }
+        
+        // 5) Check for CMS collector serial collection
+        if (eventTypes.contains(LogEventType.CMS_SERIAL_OLD)) {
+            analysisKeys.add(Analysis.KEY_CMS_SERIAL_GC);
         }
     }
     

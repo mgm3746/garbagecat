@@ -72,12 +72,17 @@ public class Analysis {
     public static final String KEY_MIN_PERM_NOT_EQUAL_MAX_HEAP = "min.perm.not.equal.max.perm";   
     
     /**
-     * Property key for a Throughput serial collector being invoked.
+     * Property key for the Throughput collector invoking a serial collection.
      */
     public static final String KEY_THROUGHPUT_SERIAL_GC = "throughput.serial.gc";  
     
     /**
-     * Property key for a G1 serial collector being invoked.
+     * Property key for the CMS collector invoking a serial collection.
+     */
+    public static final String KEY_CMS_SERIAL_GC = "cms.serial.gc";
+    
+    /**
+     * Property key for the G1 collector invoking a serial collection.
      */
     public static final String KEY_G1_SERIAL_GC = "g1.serial.gc";  
 

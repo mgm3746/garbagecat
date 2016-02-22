@@ -68,6 +68,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
         Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue(Analysis.KEY_CMS_SERIAL_GC + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_SERIAL_GC));
     }
     
     public void testLastTimestampNoEvents() {
