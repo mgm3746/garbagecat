@@ -1011,4 +1011,37 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
         Assert.assertTrue(JdkUtil.LogEventType.CMS_CONCURRENT.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));        
     }
+    
+    /**
+     * Test JVM Header parsing.
+     * 
+     */
+    public void testHeaders() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset59.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.", jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertEquals("Event type count not correct.", 3, jvmRun.getEventTypes().size());
+        Assert.assertTrue(JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " not identified.", jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS));               
+        Assert.assertTrue(JdkUtil.LogEventType.HEADER_MEMORY.toString() + " not identified.", jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY));
+        Assert.assertTrue(JdkUtil.LogEventType.HEADER_VERSION.toString() + " not identified.", jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION));
+        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_DISABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_DISABLED));
+    }
+    
+    /**
+     * Test analysis perm gen or metaspace size not set.
+     * 
+     */
+    public void testAnalysisPermMetaspaceNotSet() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset60.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_PERM_METASPACE_NOT_SET + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PERM_METASPACE_NOT_SET));
+    }
 }

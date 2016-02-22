@@ -35,12 +35,12 @@ public class Jvm {
      * The JVM options for the JVM run.
      */
     private String options;
-    
+
     /**
      * JVM version.
      */
     private String version;
-    
+
     /**
      * JVM memory information.
      */
@@ -60,49 +60,52 @@ public class Jvm {
     }
 
     /**
-     * @return The date and time the JVM was started.     
+     * @return The date and time the JVM was started.
      */
     public Date getStartDate() {
         return startDate;
     }
 
     /**
-     * @return The JVM options.     
+     * @return The JVM options.
      */
     public String getOptions() {
         return options;
-    }    
-    
+    }
+
     /**
-     * @param options The JVM options to set.
+     * @param options
+     *            The JVM options to set.
      */
     public void setOptions(String options) {
         this.options = options;
     }
 
     /**
-     * @return The JVM version information.     
+     * @return The JVM version information.
      */
     public String getVersion() {
         return version;
     }
-    
+
     /**
-     * @param version The JVM version information to set.
+     * @param version
+     *            The JVM version information to set.
      */
     public void setVersion(String version) {
         this.version = version;
     }
-    
+
     /**
-     * @return The JVM memory information.     
+     * @return The JVM memory information.
      */
     public String getMemory() {
         return memory;
     }
-    
+
     /**
-     * @param memory The JVM memory information to set.
+     * @param memory
+     *            The JVM memory information to set.
      */
     public void setMemory(String memory) {
         this.memory = memory;
@@ -137,6 +140,18 @@ public class Jvm {
             }
         }
         return option;
+    }
+    
+    /**
+     * Whether or not the option to disable explicit garbage collection (<code>-XX:+DisableExplicitGC</code>) is used.
+     * 
+     * @return True if -XX:+DisableExplicitGC option exists, false otherwise.
+     */
+    public boolean hasDisableExplicitGCOption() {
+        String regex = "-XX:\\+DisableExplicitGC";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(options);
+        return matcher.find();
     }
 
     /**
@@ -231,6 +246,28 @@ public class Jvm {
     }
 
     /**
+     * Minimum Metaspace. Specified with the <code>-XX:MetsspaceSize</code> option. For example:
+     * 
+     * <pre>
+     * -XX:MetaspaceSize=128M
+     * </pre>
+     * 
+     * @return The minimum permanent generation space, or null if not explicitly set.
+     */
+    public String getMinMetaspaceOption() {
+        String option = null;
+        if (options != null) {
+            String regex = "(-XX:MetaspaceSize=\\d{1,10}(m|M|g|G)?)";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(options);
+            if (matcher.find()) {
+                option = matcher.group(1);
+            }
+        }
+        return option;
+    }
+
+    /**
      * @return The minimum permanent generation space value, or null if not set.
      */
     public String getMinPermValue() {
@@ -238,7 +275,14 @@ public class Jvm {
     }
 
     /**
-     * Maximum permanent generation space. Specified with the <code>-XX:MaxPermSize</code> option. For example:
+     * @return The minimum Metaspace value, or null if not set.
+     */
+    public String getMinMetaspaceValue() {
+        return JdkUtil.getOptionValue(getMinMetaspaceOption());
+    }
+
+    /**
+     * Maximum permanent generation space (<code>-XX:MaxPermSize</code>). For example:
      * 
      * <pre>
      * -XX:MaxPermSize=128M
@@ -260,10 +304,39 @@ public class Jvm {
     }
 
     /**
+     * Maximum Metaspace (<code>-XX:MaxMetaspaceSize</code>). For example:
+     * 
+     * <pre>
+     * -XX:MaxMetaspaceSize=128M
+     * </pre>
+     * 
+     * @return The maximum Metaspace, or null if not explicitly set.
+     */
+    public String getMaxMetaspaceOption() {
+        String option = null;
+        if (options != null) {
+            String regex = "(-XX:MaxMetaspaceSize=\\d{1,10}(m|M|g|G)?)";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(options);
+            if (matcher.find()) {
+                option = matcher.group(1);
+            }
+        }
+        return option;
+    }
+
+    /**
      * @return The maximum permanent generation space value, or null if not set.
      */
     public String getMaxPermValue() {
         return JdkUtil.getOptionValue(getMaxPermOption());
+    }
+
+    /**
+     * @return The maximum Metsapce value, or null if not set.
+     */
+    public String getMaxMetaspaceValue() {
+        return JdkUtil.getOptionValue(getMaxMetaspaceOption());
     }
 
     /**
@@ -274,7 +347,19 @@ public class Jvm {
     public boolean isMinAndMaxPermSpaceEqual() {
         return (getMaxPermValue() == null && getMinPermValue() == null)
                 || (getMaxPermValue() == null && getMinPermValue() != null)
-                || (getMaxPermValue() != null && getMinPermValue() != null && getMaxPermValue().toUpperCase().equals(
-                        getMinPermValue().toUpperCase()));
+                || (getMaxPermValue() != null && getMinPermValue() != null
+                        && getMaxPermValue().toUpperCase().equals(getMinPermValue().toUpperCase()));
+    }
+
+    /**
+     * FIXME: Consider different units.
+     * 
+     * @return True if the minimum and maximum Metaspace are set equal.
+     */
+    public boolean isMinAndMaxMetaspaceEqual() {
+        return (getMaxMetaspaceValue() == null && getMinMetaspaceValue() == null)
+                || (getMaxMetaspaceValue() == null && getMinMetaspaceValue() != null)
+                || (getMaxMetaspaceValue() != null && getMinMetaspaceValue() != null
+                        && getMaxMetaspaceValue().toUpperCase().equals(getMinMetaspaceValue().toUpperCase()));
     }
 }

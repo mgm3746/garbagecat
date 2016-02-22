@@ -46,6 +46,11 @@ public class Analysis {
     public static final String KEY_EXPLICIT_GC_SERIAL = "explicit.gc.serial";
     
     /**
+     * Property key for explicit garbage collection disabled.
+     */
+    public static final String KEY_EXPLICIT_GC_DISABLED = "explicit.gc.disabled";
+    
+    /**
      * Property key for -XX:+PrintGCApplicationStoppedTime missing.
      */
     public static final String KEY_APPLICATION_STOPPED_TIME_MISSING = "application.stopped.time.missing";
@@ -67,9 +72,19 @@ public class Analysis {
     public static final String KEY_MIN_HEAP_NOT_EQUAL_MAX_HEAP = "min.heap.not.equal.max.heap"; 
     
     /**
-     * Property key for min perm/metaspace not equal to max perm/metaspace.
+     * Property key for perm gen or metaspace size not explicitly set.
      */
-    public static final String KEY_MIN_PERM_NOT_EQUAL_MAX_HEAP = "min.perm.not.equal.max.perm";   
+    public static final String KEY_PERM_METASPACE_NOT_SET = "perm.metaspace.not.set";  
+    
+    /**
+     * Property key for min perm not equal to max perm.
+     */
+    public static final String KEY_MIN_PERM_NOT_EQUAL_MAX_PERM = "min.perm.not.equal.max.perm";  
+    
+    /**
+     * Property key for metaspace not equal to max metaspace.
+     */
+    public static final String KEY_MIN_METASPACE_NOT_EQUAL_MAX_METASPACE = "min.metaspace.not.equal.max.metaspace";     
     
     /**
      * Property key for the Throughput collector invoking a serial collection.

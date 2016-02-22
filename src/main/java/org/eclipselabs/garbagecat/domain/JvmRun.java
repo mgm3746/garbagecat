@@ -413,7 +413,23 @@ public class JvmRun {
 
         // Check to see if min and max perm gen sizes are the same
         if (!jvm.isMinAndMaxPermSpaceEqual()) {
-            analysisKeys.add(Analysis.KEY_MIN_PERM_NOT_EQUAL_MAX_HEAP);
+            analysisKeys.add(Analysis.KEY_MIN_PERM_NOT_EQUAL_MAX_PERM);
+        }
+        
+        // Check to see if min and max metaspace sizes are the same
+        if (!jvm.isMinAndMaxMetaspaceEqual()) {
+            analysisKeys.add(Analysis.KEY_MIN_METASPACE_NOT_EQUAL_MAX_METASPACE);
+        }
+        
+        // Check to see if permanent generation or metaspace size explicitly set
+        if (jvm.getMinPermOption() == null && jvm.getMaxPermOption() == null && jvm.getMinMetaspaceOption() == null
+                && jvm.getMaxMetaspaceOption() == null) {
+            analysisKeys.add(Analysis.KEY_PERM_METASPACE_NOT_SET);
+        }
+        
+        // Check to see if thread stack size explicitly set
+        if (jvm.hasDisableExplicitGCOption()) {
+            analysisKeys.add(Analysis.KEY_EXPLICIT_GC_DISABLED);
         }
 
         // TODO: Check to see if explicit GC interval is disabled or set.
