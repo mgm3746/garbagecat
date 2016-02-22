@@ -12,8 +12,6 @@
  ******************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
-import java.util.List;
-
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 import junit.framework.Assert;
