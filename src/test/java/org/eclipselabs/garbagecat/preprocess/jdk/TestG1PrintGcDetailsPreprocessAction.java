@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
+import java.util.List;
+
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 import junit.framework.Assert;
@@ -480,6 +482,16 @@ public class TestG1PrintGcDetailsPreprocessAction extends TestCase {
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
                 G1PrintGcDetailsPreprocessAction.match(action.getLogEntry()));
+    }
+    
+    public void testLogLineErgonomics() {
+        String logLine = " 0.092: [G1Ergonomics (Heap Sizing) expand the heap, requested expansion amount: "
+                + "27917287424 bytes, attempted expansion amount: 27917287424 bytes]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString() + ".",
+                G1PrintGcDetailsPreprocessAction.match(logLine));
+        G1PrintGcDetailsPreprocessAction action = new G1PrintGcDetailsPreprocessAction(null, logLine, null, null);
+        Assert.assertNull("Log line not parsed correctly.", action.getLogEntry());
     }
     
     public void testLogLineErgonomicsMissingDatastamp() {
