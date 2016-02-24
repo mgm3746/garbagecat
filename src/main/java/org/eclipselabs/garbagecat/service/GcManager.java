@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.Main;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.Jvm;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.TriggerData;
@@ -55,6 +54,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.UnloadingClassPreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
 /**
  * <p>

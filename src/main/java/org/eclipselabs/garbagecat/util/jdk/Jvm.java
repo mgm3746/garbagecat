@@ -1,22 +1,16 @@
 /******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
+ * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
+ * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
+ * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
+ * initial API and implementation *
  ******************************************************************************/
-package org.eclipselabs.garbagecat.domain;
+package org.eclipselabs.garbagecat.util.jdk;
 
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.Constants;
 
 /**
  * JVM environment information.
@@ -128,30 +122,25 @@ public class Jvm {
      * @return The JVM thread stack size setting, or null if not explicitly set.
      */
     public String getThreadStackSizeOption() {
-        String option = null;
-        if (options != null) {
-            String regex1 = "-Xss\\d{1,4}(k|K|m|M)";
-            String regex2 = "-XX:ThreadStackSize=\\d{1,4}(k|K|m|M)?";
-            String regex = "((" + regex1 + ")|(" + regex2 + "))";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(options);
-            if (matcher.find()) {
-                option = matcher.group(1);
-            }
-        }
-        return option;
+        String regex = "(-X(ss|X:ThreadStackSize=)(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
+        return getJvmOption(regex);
     }
-    
+
+    /**
+     * @return The thread stack size value, or null if not set.
+     */
+    public String getThreadStackSizeValue() {
+        return JdkUtil.getOptionValue(getThreadStackSizeOption());
+    }
+
     /**
      * Whether or not the option to disable explicit garbage collection (<code>-XX:+DisableExplicitGC</code>) is used.
      * 
      * @return True if -XX:+DisableExplicitGC option exists, false otherwise.
      */
-    public boolean hasDisableExplicitGCOption() {
-        String regex = "-XX:\\+DisableExplicitGC";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(options);
-        return matcher.find();
+    public String getDisableExplicitGCOption() {
+        String regex = "(-XX:\\+DisableExplicitGC)";
+        return getJvmOption(regex);
     }
 
     /**
@@ -159,21 +148,14 @@ public class Jvm {
      * 
      * <pre>
      * -Xms1024m
+     * -XX:HeapSize=1234567890
      * </pre>
      * 
      * @return The minimum heap space, or null if not explicitly set.
      */
     public String getMinHeapOption() {
-        String option = null;
-        if (options != null) {
-            String regex = "((-Xms\\d{1,5}(m|M|g|G))|(-XX:InitialHeapSize=\\d{1,12}(m|M|g|G)?))";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(options);
-            if (matcher.find()) {
-                option = matcher.group(1);
-            }
-        }
-        return option;
+        String regex = "(-X(ms|X:InitialHeapSize=)(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
+        return getJvmOption(regex);
     }
 
     /**
@@ -188,22 +170,14 @@ public class Jvm {
      * 
      * <pre>
      * -Xmx1024m
-     * -XX:InitialHeapSize=1234567890
+     * -XX:MaxHeapSize=1234567890
      * </pre>
      * 
      * @return The maximum heap space, or null if not explicitly set.
      */
     public String getMaxHeapOption() {
-        String option = null;
-        if (options != null) {
-            String regex = "((-Xmx\\d{1,5}(m|M|g|G))|(-XX:MaxHeapSize=\\d{1,12}(m|M|g|G)?))";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(options);
-            if (matcher.find()) {
-                option = matcher.group(1);
-            }
-        }
-        return option;
+        String regex = "(-X(mx|X:MaxHeapSize=)(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
+        return getJvmOption(regex);
     }
 
     /**
@@ -214,7 +188,6 @@ public class Jvm {
     }
 
     /**
-     * FIXME: Consider different units.
      * 
      * @return True if the minimum and maximum heap space are set equal.
      */
@@ -233,16 +206,15 @@ public class Jvm {
      * @return The minimum permanent generation space, or null if not explicitly set.
      */
     public String getMinPermOption() {
-        String option = null;
-        if (options != null) {
-            String regex = "(-XX:PermSize=\\d{1,10}(m|M|g|G)?)";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(options);
-            if (matcher.find()) {
-                option = matcher.group(1);
-            }
-        }
-        return option;
+        String regex = "(-XX:PermSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * @return The minimum permanent generation space value, or null if not set.
+     */
+    public String getMinPermValue() {
+        return JdkUtil.getOptionValue(getMinPermOption());
     }
 
     /**
@@ -255,23 +227,8 @@ public class Jvm {
      * @return The minimum permanent generation space, or null if not explicitly set.
      */
     public String getMinMetaspaceOption() {
-        String option = null;
-        if (options != null) {
-            String regex = "(-XX:MetaspaceSize=\\d{1,10}(m|M|g|G)?)";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(options);
-            if (matcher.find()) {
-                option = matcher.group(1);
-            }
-        }
-        return option;
-    }
-
-    /**
-     * @return The minimum permanent generation space value, or null if not set.
-     */
-    public String getMinPermValue() {
-        return JdkUtil.getOptionValue(getMinPermOption());
+        String regex = "(-XX:MetaspaceSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
+        return getJvmOption(regex);
     }
 
     /**
@@ -291,16 +248,15 @@ public class Jvm {
      * @return The maximum permanent generation space, or null if not explicitly set.
      */
     public String getMaxPermOption() {
-        String option = null;
-        if (options != null) {
-            String regex = "(-XX:MaxPermSize=\\d{1,10}(m|M|g|G)?)";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(options);
-            if (matcher.find()) {
-                option = matcher.group(1);
-            }
-        }
-        return option;
+        String regex = "(-XX:MaxPermSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * @return The maximum permanent generation space value, or null if not set.
+     */
+    public String getMaxPermValue() {
+        return JdkUtil.getOptionValue(getMaxPermOption());
     }
 
     /**
@@ -313,34 +269,18 @@ public class Jvm {
      * @return The maximum Metaspace, or null if not explicitly set.
      */
     public String getMaxMetaspaceOption() {
-        String option = null;
-        if (options != null) {
-            String regex = "(-XX:MaxMetaspaceSize=\\d{1,10}(m|M|g|G)?)";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(options);
-            if (matcher.find()) {
-                option = matcher.group(1);
-            }
-        }
-        return option;
+        String regex = "(-XX:MaxMetaspaceSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
+        return getJvmOption(regex);
     }
 
     /**
-     * @return The maximum permanent generation space value, or null if not set.
-     */
-    public String getMaxPermValue() {
-        return JdkUtil.getOptionValue(getMaxPermOption());
-    }
-
-    /**
-     * @return The maximum Metsapce value, or null if not set.
+     * @return The maximum Metaspace value, or null if not set.
      */
     public String getMaxMetaspaceValue() {
         return JdkUtil.getOptionValue(getMaxMetaspaceOption());
     }
 
     /**
-     * FIXME: Consider different units.
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */
@@ -352,7 +292,6 @@ public class Jvm {
     }
 
     /**
-     * FIXME: Consider different units.
      * 
      * @return True if the minimum and maximum Metaspace are set equal.
      */
@@ -361,5 +300,36 @@ public class Jvm {
                 || (getMaxMetaspaceValue() == null && getMinMetaspaceValue() != null)
                 || (getMaxMetaspaceValue() != null && getMinMetaspaceValue() != null
                         && getMaxMetaspaceValue().toUpperCase().equals(getMinMetaspaceValue().toUpperCase()));
+    }
+
+    /**
+     * @param regex
+     *            The option regular expression.
+     * @return The JVM option, or null if not explicitly set.
+     */
+    public String getJvmOption(final String regex) {
+        String option = null;
+        if (options != null) {
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(options);
+            if (matcher.find()) {
+                option = matcher.group(1);
+            }
+        }
+        return option;
+    }
+
+    /**
+     * @return True if stack size >= 1024k, false otherwise.
+     */
+    public boolean hasLargeThreadStackSize() {
+        boolean hasLargeThreadStackSize = false;
+        
+        String threadStackSize = getThreadStackSizeValue();
+        if (threadStackSize != null && JdkUtil.convertSizeToBytes(threadStackSize) >= Constants.MEGABYTE.longValue()) {
+            hasLargeThreadStackSize = true;
+        }
+        
+        return hasLargeThreadStackSize;
     }
 }

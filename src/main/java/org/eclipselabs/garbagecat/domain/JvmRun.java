@@ -13,6 +13,7 @@ import java.util.List;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 /**
@@ -427,9 +428,14 @@ public class JvmRun {
             analysisKeys.add(Analysis.KEY_PERM_METASPACE_NOT_SET);
         }
         
-        // Check to see if thread stack size explicitly set
-        if (jvm.hasDisableExplicitGCOption()) {
+        // Check to see if explicit gc is disabled
+        if (jvm.getDisableExplicitGCOption() != null) {
             analysisKeys.add(Analysis.KEY_EXPLICIT_GC_DISABLED);
+        }
+        
+        // Check for large thread stack size
+        if (jvm.hasLargeThreadStackSize()) {
+            analysisKeys.add(Analysis.KEY_THREAD_STACK_SIZE_LARGE);
         }
 
         // TODO: Check to see if explicit GC interval is disabled or set.

@@ -64,6 +64,7 @@ import org.eclipselabs.garbagecat.domain.jdk.VerboseGcOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcYoungEvent;
 import org.eclipselabs.garbagecat.preprocess.ApplicationLoggingPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ThreadDumpPreprocessAction;
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 
 /**
@@ -639,7 +640,7 @@ public class JdkUtil {
     public static final String getOptionValue(String option) {
         String value = null;
         if (option != null) {
-            String regex = "^-[a-zA-Z:]+(=)?(\\d{1,12}(k|K|m|M|g|G)?)$";
+            String regex = "^-[a-zA-Z:]+(=)?(\\d{1,12}(" + JdkRegEx.OPTION_SIZE + ")?)$";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(option);
             if (matcher.find()) {
@@ -691,5 +692,55 @@ public class JdkUtil {
         }
         sizeG1 = sizeG1.setScale(0, RoundingMode.HALF_EVEN);
         return Integer.toString(sizeG1.intValue()) + unitsG1;
+    }
+    
+    /**
+     * Convert {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #OPTION_SIZE} to bytes.
+     * 
+     * @param size
+     *            The size in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #OPTION_SIZE} format (e.g. '128k').
+     * @return The size in bytes.
+     */
+    public static Long convertSizeToBytes(final String size) {
+
+        String regex = "(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?";
+
+        String value = null;
+        char units = 'b';
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(size);
+        if (matcher.find()) {
+            value = matcher.group(1);
+            if (matcher.group(2) != null) {
+                units = matcher.group(2).charAt(0);
+            }
+        }
+
+        BigDecimal bytes = new BigDecimal(value);
+
+        switch (units) {
+
+        case 'b':
+        case 'B':
+            // do nothing
+            break;
+        case 'k':
+        case 'K':
+            bytes = bytes.multiply(Constants.KILOBYTE);
+            break;
+        case 'm':
+        case 'M':
+            bytes = bytes.multiply(Constants.MEGABYTE);
+            break;
+        case 'g':
+        case 'G':
+            bytes = bytes.multiply(Constants.GIGABYTE);
+            break;
+        default:
+            throw new AssertionError("Unexpected units value: " + units);
+
+        }
+        return bytes.longValue();
     }
 }

@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 import junit.framework.Assert;
@@ -1055,5 +1056,17 @@ public class TestJvmRun extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);   
         jvmRun.doAnalysis();
         Assert.assertTrue("JVM options passed in are missing or have changed.", jvmRun.getJvm().getOptions().equals(options));
+    }
+    
+    /**
+     * Test passing JVM options on the command line.
+     * 
+     */
+    public void testAnalysisThreadStackSizeLarge() {
+        String options = "-o \"-Xss1024k\"";
+        GcManager jvmManager = new GcManager();       
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);   
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_THREAD_STACK_SIZE_LARGE + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_THREAD_STACK_SIZE_LARGE));
     }
 }

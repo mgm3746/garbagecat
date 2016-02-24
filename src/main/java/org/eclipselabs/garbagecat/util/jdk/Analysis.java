@@ -67,6 +67,11 @@ public class Analysis {
     public static final String KEY_THREAD_STACK_SIZE_NOT_SET = "thread.stack.size.not.set";  
     
     /**
+     * Property key for thread stack size is large.
+     */
+    public static final String KEY_THREAD_STACK_SIZE_LARGE = "thread.stack.size.large";     
+    
+    /**
      * Property key for min heap not equal to max heap.
      */
     public static final String KEY_MIN_HEAP_NOT_EQUAL_MAX_HEAP = "min.heap.not.equal.max.heap"; 

@@ -179,6 +179,16 @@ public class JdkRegEx {
      * CMS Final Remark trigger
      */
     public static final String TRIGGER_CMS_FINAL_REMARK = "CMS Final Remark";
+    
+    /**
+     * Units for JVM ptions that take a byte number.
+     * 
+     * For example:
+     * -Xss128k
+     * -Xmx2048m
+     * -Xms2G
+     */
+    public static final String OPTION_SIZE = "(b|B|k|K|m|M|g|G)";
 
     /**
      * Make default constructor private so the class cannot be instantiated.
