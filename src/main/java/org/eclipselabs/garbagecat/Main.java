@@ -216,14 +216,26 @@ public class Main {
         BufferedWriter bufferedWriter = null;
         try {
             fileWriter = new FileWriter(reportFile);
-            bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter = new BufferedWriter(fileWriter);            
+
+            // Bottlenecks
+            List<String> bottlenecks = jvmRun.getBottlenecks();
+            if (bottlenecks.size() > 0) {
+                bufferedWriter.write("========================================\n");
+                bufferedWriter.write("Throughput less than " + jvmRun.getThroughputThreshold() + "%\n");
+                bufferedWriter.write("----------------------------------------\n");
+                Iterator<String> iterator = bottlenecks.iterator();
+                while (iterator.hasNext()) {
+                    bufferedWriter.write(iterator.next() + "\n");
+                }
+            }
             
-            // Print JVM information
+            // JVM information
             if (jvmRun.getJvm().getVersion() != null || jvmRun.getJvm().getOptions() != null
                     || jvmRun.getJvm().getMemory() != null) {
                 bufferedWriter.write("========================================\n");
                 bufferedWriter.write("JVM:\n");
-                bufferedWriter.write("========================================\n");
+                bufferedWriter.write("----------------------------------------\n");
                 if (jvmRun.getJvm().getVersion() != null) {
                     bufferedWriter.write("Version: " + jvmRun.getJvm().getVersion() + "\n");
                 }
@@ -235,22 +247,12 @@ public class Main {
                 }
             }
 
-            // Print bottleneck information
-            List<String> bottlenecks = jvmRun.getBottlenecks();
-            if (bottlenecks.size() > 0) {
-                bufferedWriter.write("========================================\n");
-                bufferedWriter.write("Throughput less than " + jvmRun.getThroughputThreshold() + "%\n");
-                bufferedWriter.write("========================================\n");
-                Iterator<String> iterator = bottlenecks.iterator();
-                while (iterator.hasNext()) {
-                    bufferedWriter.write(iterator.next() + "\n");
-                }
-            }
-
-            // Print summary information
+            // Summary
             bufferedWriter.write("========================================\n");
             bufferedWriter.write("SUMMARY:\n");
-            bufferedWriter.write("========================================\n");
+            bufferedWriter.write("----------------------------------------\n");            
+            
+            //GC stats
             if (jvmRun.getBlockingEventCount() > 0) {
                 bufferedWriter.write("# GC Events: " + jvmRun.getBlockingEventCount() + "\n");
                 bufferedWriter.write("Event Types: ");
@@ -309,11 +311,11 @@ public class Main {
             }
             bufferedWriter.write("========================================\n");
 
-            // Print any analysis information
+            // Analysis
             List<String> analysisKeys = jvmRun.getAnalysisKeys();
             if (!analysisKeys.isEmpty()) {
                 bufferedWriter.write("ANALYSIS:\n");
-                bufferedWriter.write("========================================\n");
+                bufferedWriter.write("----------------------------------------\n");
 
                 Iterator<String> iterator = analysisKeys.iterator();
                 while (iterator.hasNext()) {
@@ -325,11 +327,11 @@ public class Main {
                 bufferedWriter.write("========================================\n");
             }
 
-            // Print any Unidentified log lines
+            // Unidentified log lines
             List<String> unidentifiedLogLines = jvmRun.getUnidentifiedLogLines();
             if (!unidentifiedLogLines.isEmpty()) {
                 bufferedWriter.write(unidentifiedLogLines.size() + " UNIDENTIFIED LOG LINE(S):\n");
-                bufferedWriter.write("========================================\n");
+                bufferedWriter.write("----------------------------------------\n");
 
                 Iterator<String> iterator = unidentifiedLogLines.iterator();
                 while (iterator.hasNext()) {

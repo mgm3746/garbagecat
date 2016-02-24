@@ -434,10 +434,12 @@ public class GcManager {
      *            The throughput threshold for bottleneck reporting.
      * @return The JVM run data.
      */
-    public JvmRun getJvmRun(Jvm jvm, int throughputThreshold) {
+    public JvmRun getJvmRun(Jvm jvm, int throughputThreshold) {        
         JvmRun jvmRun = new JvmRun(jvm, throughputThreshold);
         // Override any options passed in on command line
-        jvmRun.getJvm().setOptions(jvmDao.getOptions());
+        if (jvmDao.getOptions() != null) {
+            jvmRun.getJvm().setOptions(jvmDao.getOptions());
+        }
         jvmRun.getJvm().setMemory(jvmDao.getMemory());
         jvmRun.getJvm().setVersion(jvmDao.getVersion());
         jvmRun.setFirstTimestamp(jvmDao.getFirstTimestamp());

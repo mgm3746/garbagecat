@@ -1044,4 +1044,16 @@ public class TestJvmRun extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.KEY_PERM_METASPACE_NOT_SET + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PERM_METASPACE_NOT_SET));
     }
+    
+    /**
+     * Test passing JVM options on the command line.
+     * 
+     */
+    public void testJvmOptionsPassedInOnCommandLine() {
+        String options = "MGM was here!";
+        GcManager jvmManager = new GcManager();       
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);   
+        jvmRun.doAnalysis();
+        Assert.assertTrue("JVM options passed in are missing or have changed.", jvmRun.getJvm().getOptions().equals(options));
+    }
 }
