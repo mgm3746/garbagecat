@@ -292,17 +292,40 @@ public class TestJvm extends TestCase {
         Assert.assertEquals("Max permanent generation value incorrect.", "1G", jvm.getMaxPermValue());
     }
 
-    public void testIsMinAndMaxPermSpaceEqual() {
+    public void testIsMinAndMaxPermSpaceEqualDifferentCaseM() {
         Jvm jvm = new Jvm("-XX:PermSize=256m -XX:MaxPermSize=256M", null);
         Assert.assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
-        jvm = new Jvm("-Xms1G -Xmx2G -XX:PermSize=256m", null);
+    }
+    
+
+    public void testIsMinAndMaxPermSpaceEqualDifferentCaseG() {
+        Jvm jvm = new Jvm("-XX:PermSize=1G -XX:MaxPermSize=1g", null);
         Assert.assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
-        jvm = new Jvm("-Xms1G -Xmx2G", null);
+    }
+    
+    public void testIsMinAndMaxPermSpaceEqualMissingMin() {
+        Jvm jvm = new Jvm("-XX:MaxPermSize=256M", null);
+        Assert.assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxPermSpaceEqual());
+    }
+    
+    public void testIsMinAndMaxPermSpaceEqualDifferentUnitsMG() {
+        Jvm jvm = new Jvm("-XX:PermSize=2048m -XX:MaxPermSize=2g", null);
         Assert.assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
-        jvm = new Jvm("-XX:MaxPermSize=256M", null);
-        Assert.assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxPermSpaceEqual());
-        jvm = new Jvm("-XX:PermSize=128m -XX:MaxPermSize=256M", null);
-        Assert.assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxPermSpaceEqual());
+    }
+    
+    public void testIsMinAndMaxPermSpaceEqualDifferentUnitsKM() {
+        Jvm jvm = new Jvm("-XX:PermSize=1024K -XX:MaxPermSize=1m", null);
+        Assert.assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
+    }
+    
+    public void testIsMinAndMaxPermSpaceEqualDifferentUnitsNoneG() {
+        Jvm jvm = new Jvm("-XX:PermSize=1073741824 -XX:MaxPermSize=1G", null);
+        Assert.assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
+    }
+    
+    public void testIsMinAndMaxPermSpaceEqualDifferentUnitsBG() {
+        Jvm jvm = new Jvm("-XX:PermSize=1073741824b -XX:MaxPermSize=1G", null);
+        Assert.assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
     }
     
     public void testIsMinAndMaxPermSpaceEqualVerboseOptions() {
@@ -356,22 +379,28 @@ public class TestJvm extends TestCase {
 
     public void testIsMinAndMaxMetaspaceSpaceEqual() {
         Jvm jvm = new Jvm("-XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256M", null);
-        Assert.assertTrue("Min and max heap are equal.", jvm.isMinAndMaxMetaspaceEqual());
+        Assert.assertTrue("Min and max metaspace are equal.", jvm.isMinAndMaxMetaspaceEqual());
         jvm = new Jvm("-Xms1G -Xmx2G -XX:MetaspaceSize=256m", null);
-        Assert.assertTrue("Min and max heap are equal.", jvm.isMinAndMaxMetaspaceEqual());
+        Assert.assertFalse("Min and max metaspace are equal.", jvm.isMinAndMaxMetaspaceEqual());
         jvm = new Jvm("-Xms1G -Xmx2G", null);
-        Assert.assertTrue("Min and max heap are equal.", jvm.isMinAndMaxMetaspaceEqual());
+        Assert.assertTrue("Min and max metaspace are equal.", jvm.isMinAndMaxMetaspaceEqual());
         jvm = new Jvm("-XX:MaxMetaspaceSize=256M", null);
-        Assert.assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxMetaspaceEqual());
+        Assert.assertFalse("Min and max metaspace are not equal.", jvm.isMinAndMaxMetaspaceEqual());
+        jvm = new Jvm("-XX:MetaspaceSize=128k -XX:MaxMetaspaceSize=256K", null);
+        Assert.assertFalse("Min and max metaspace are not equal.", jvm.isMinAndMaxMetaspaceEqual());
         jvm = new Jvm("-XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256M", null);
-        Assert.assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxMetaspaceEqual());
+        Assert.assertFalse("Min and max metaspace are not equal.", jvm.isMinAndMaxMetaspaceEqual());
+        jvm = new Jvm("-XX:MetaspaceSize=2048k -XX:MaxMetaspaceSize=2M", null);
+        Assert.assertTrue("Min and max metaspace are equal.", jvm.isMinAndMaxMetaspaceEqual());
+        jvm = new Jvm("-XX:MetaspaceSize=1024m -XX:MaxMetaspaceSize=1g", null);
+        Assert.assertTrue("Min and max metaspace are equal.", jvm.isMinAndMaxMetaspaceEqual());
     }
     
     public void testIsMinAndMaxMetaspaceSpaceEqualVerboseOptions() {
         Jvm jvm = new Jvm("-XX:MaxMetaspaceSize=1234567890 -XX:MetaspaceSize=1234567890", null);
-        Assert.assertTrue("Min and max heap are equal.", jvm.isMinAndMaxMetaspaceEqual());
+        Assert.assertTrue("Min and max metaspace are equal.", jvm.isMinAndMaxMetaspaceEqual());
         jvm = new Jvm("-XX:MaxMetaspaceSize=1234567890 -XX:MetaspaceSize=1234567891", null);
-        Assert.assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxMetaspaceEqual());
+        Assert.assertFalse("Min and max metaspace are not equal.", jvm.isMinAndMaxMetaspaceEqual());
     }
     
     public void testDisableExplicitGc() {

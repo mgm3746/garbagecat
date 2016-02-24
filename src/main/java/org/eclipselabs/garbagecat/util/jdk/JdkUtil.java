@@ -701,7 +701,7 @@ public class JdkUtil {
      *            The size in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #OPTION_SIZE} format (e.g. '128k').
      * @return The size in bytes.
      */
-    public static Long convertSizeToBytes(final String size) {
+    public static long convertSizeToBytes(final String size) {
 
         String regex = "(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?";
 

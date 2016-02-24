@@ -127,7 +127,11 @@ public class Jvm {
     }
 
     /**
-     * @return The thread stack size value, or null if not set.
+     * @return The thread stack size value, or null if not set. For example:
+     * 
+     * <pre>
+     * 256K
+     * </pre>
      */
     public String getThreadStackSizeValue() {
         return JdkUtil.getOptionValue(getThreadStackSizeOption());
@@ -159,7 +163,11 @@ public class Jvm {
     }
 
     /**
-     * @return The minimum heap space value, or null if not set.
+     * @return The minimum heap space value, or null if not set. For example:
+     * 
+     * <pre>
+     * 2048M
+     * </pre>
      */
     public String getMinHeapValue() {
         return JdkUtil.getOptionValue(getMinHeapOption());
@@ -181,7 +189,11 @@ public class Jvm {
     }
 
     /**
-     * @return The maximum heap space value, or null if not set.
+     * @return The maximum heap space value, or null if not set. For example:
+     * 
+     * <pre>
+     * 2048M
+     * </pre>
      */
     public String getMaxHeapValue() {
         return JdkUtil.getOptionValue(getMaxHeapOption());
@@ -206,12 +218,16 @@ public class Jvm {
      * @return The minimum permanent generation space, or null if not explicitly set.
      */
     public String getMinPermOption() {
-        String regex = "(-XX:PermSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
+        String regex = "(-XX:PermSize=(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
         return getJvmOption(regex);
     }
 
     /**
-     * @return The minimum permanent generation space value, or null if not set.
+     * @return The minimum permanent generation space value, or null if not set. For example:
+     * 
+     * <pre>
+     * 128M
+     * </pre>
      */
     public String getMinPermValue() {
         return JdkUtil.getOptionValue(getMinPermOption());
@@ -232,7 +248,11 @@ public class Jvm {
     }
 
     /**
-     * @return The minimum Metaspace value, or null if not set.
+     * @return The minimum Metaspace value, or null if not set. For example:
+     * 
+     * <pre>
+     * 128M
+     * </pre>
      */
     public String getMinMetaspaceValue() {
         return JdkUtil.getOptionValue(getMinMetaspaceOption());
@@ -253,7 +273,11 @@ public class Jvm {
     }
 
     /**
-     * @return The maximum permanent generation space value, or null if not set.
+     * @return The maximum permanent generation space value, or null if not set. For example:
+     * 
+     * <pre>
+     * 128M
+     * </pre>
      */
     public String getMaxPermValue() {
         return JdkUtil.getOptionValue(getMaxPermOption());
@@ -274,7 +298,11 @@ public class Jvm {
     }
 
     /**
-     * @return The maximum Metaspace value, or null if not set.
+     * @return The maximum Metaspace value, or null if not set. For example:
+     * 
+     * <pre>
+     * 128M
+     * </pre>
      */
     public String getMaxMetaspaceValue() {
         return JdkUtil.getOptionValue(getMaxMetaspaceOption());
@@ -284,23 +312,21 @@ public class Jvm {
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */
-    public boolean isMinAndMaxPermSpaceEqual() {
-        return (getMaxPermValue() == null && getMinPermValue() == null)
-                || (getMaxPermValue() == null && getMinPermValue() != null)
-                || (getMaxPermValue() != null && getMinPermValue() != null
-                        && getMaxPermValue().toUpperCase().equals(getMinPermValue().toUpperCase()));
-    }
+   public boolean isMinAndMaxPermSpaceEqual() {
+       return (getMinPermValue() == null && getMaxPermValue() == null) || (getMinPermValue() != null
+               && getMaxPermValue() != null
+               && JdkUtil.convertSizeToBytes(getMinPermValue()) == JdkUtil.convertSizeToBytes(getMaxPermValue()));
+   }
 
     /**
      * 
      * @return True if the minimum and maximum Metaspace are set equal.
      */
-    public boolean isMinAndMaxMetaspaceEqual() {
-        return (getMaxMetaspaceValue() == null && getMinMetaspaceValue() == null)
-                || (getMaxMetaspaceValue() == null && getMinMetaspaceValue() != null)
-                || (getMaxMetaspaceValue() != null && getMinMetaspaceValue() != null
-                        && getMaxMetaspaceValue().toUpperCase().equals(getMinMetaspaceValue().toUpperCase()));
-    }
+   public boolean isMinAndMaxMetaspaceEqual() {
+       return (getMinMetaspaceValue() == null && getMaxMetaspaceValue() == null) || (getMinMetaspaceValue() != null
+               && getMaxMetaspaceValue() != null && JdkUtil.convertSizeToBytes(getMinMetaspaceValue()) == JdkUtil
+                       .convertSizeToBytes(getMaxMetaspaceValue()));
+   }
 
     /**
      * @param regex
