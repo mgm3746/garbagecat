@@ -110,6 +110,26 @@ public class Analysis {
      * Property key for the RMI Distributed Garbage Collection (DGC) not being managed.
      */
     public static final String KEY_RMI_DGC_NOT_MANAGED = "rmi.dgc.not.managed"; 
+    
+    /**
+     * Property key for -Dsun.rmi.dgc.client.gcInterval.redundant in combination with -XX:+DisableExplicitGC.
+     */
+    public static final String KEY_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT = "rmi.dgc.client.gcInterval.redundant"; 
+    
+    /**
+     * Property key for -Dsun.rmi.dgc.server.gcInterval.redundant in combination with -XX:+DisableExplicitGC.
+     */
+    public static final String KEY_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT = "rmi.dgc.server.gcInterval.redundant"; 
+    
+    /**
+     * Property key for small sun.rmi.dgc.client.gcInterval.
+     */
+    public static final String KEY_RMI_DGC_CLIENT_GCINTERVAL_SMALL = "rmi.dgc.client.gcInterval.small";  
+    
+    /**
+     * Property key for small sun.rmi.dgc.server.gcInterval.
+     */
+    public static final String KEY_RMI_DGC_SERVER_GCINTERVAL_SMALL = "rmi.dgc.server.gcInterval.small"; 
 
     /**
      * Make default constructor private so the class cannot be instantiated.

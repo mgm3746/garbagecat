@@ -449,6 +449,30 @@ public class JvmRun {
                 && jvm.getDisableExplicitGCOption() == null) {
             analysisKeys.add(Analysis.KEY_RMI_DGC_NOT_MANAGED);
         }
+        
+        // Check for setting DGC intervals when explicit GC is disabled.
+        if (jvm.getDisableExplicitGCOption() != null && jvm.getRmiDgcClientGcIntervalOption() != null) {
+            analysisKeys.add(Analysis.KEY_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT);
+        }
+        if (jvm.getDisableExplicitGCOption() != null && jvm.getRmiDgcServerGcIntervalOption() != null) {
+            analysisKeys.add(Analysis.KEY_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT);
+        }
+        
+        // Check for small DGC intervals.
+        if (jvm.getRmiDgcClientGcIntervalOption() != null) {
+            long rmiDgcClientGcInterval = new Long(jvm.getRmiDgcClientGcIntervalValue()).longValue();
+            if (rmiDgcClientGcInterval < 3600000) {
+                analysisKeys.add(Analysis.KEY_RMI_DGC_CLIENT_GCINTERVAL_SMALL);
+            }
+        }
+        if (jvm.getRmiDgcServerGcIntervalOption() != null) {
+            long rmiDgcServerGcInterval = new Long(jvm.getRmiDgcServerGcIntervalValue()).longValue();
+            if (rmiDgcServerGcInterval < 3600000) {
+                analysisKeys.add(Analysis.KEY_RMI_DGC_SERVER_GCINTERVAL_SMALL);
+            }
+        }
+        
+        
 
         // TODO: Check to see if explicit GC interval is disabled or set.
 

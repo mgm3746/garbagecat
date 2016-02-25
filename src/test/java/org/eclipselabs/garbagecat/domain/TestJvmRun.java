@@ -1060,7 +1060,6 @@ public class TestJvmRun extends TestCase {
     
     /**
      * Test passing JVM options on the command line.
-     * 
      */
     public void testAnalysisThreadStackSizeLarge() {
         String options = "-o \"-Xss1024k\"";
@@ -1068,5 +1067,52 @@ public class TestJvmRun extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);   
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.KEY_THREAD_STACK_SIZE_LARGE + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_THREAD_STACK_SIZE_LARGE));
+    }
+    
+    /**
+     * Test DGC not managed analysis.
+     */
+    public void testAnalysisDgcNotManaged() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);        
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_RMI_DGC_NOT_MANAGED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_RMI_DGC_NOT_MANAGED));
+    }
+    
+    /**
+     * Test DGC redundant options analysis.
+     */
+    public void testAnalysisDgcRedundantOptions() {
+        String jvmOptions = "-XX:+DisableExplicitGC -Dsun.rmi.dgc.client.gcInterval=14400000 -Dsun.rmi.dgc.server.gcInterval=24400000";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);        
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT));
+        Assert.assertTrue(Analysis.KEY_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT));
+    }
+    
+    /**
+     * Test analysis not small DGC intervals.
+     */
+    public void testAnalysisDgcNotSmallIntervals() {
+        String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);        
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertFalse(Analysis.KEY_RMI_DGC_CLIENT_GCINTERVAL_SMALL + " analysis identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_RMI_DGC_CLIENT_GCINTERVAL_SMALL));
+        Assert.assertFalse(Analysis.KEY_RMI_DGC_SERVER_GCINTERVAL_SMALL + " analysis identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_RMI_DGC_SERVER_GCINTERVAL_SMALL));
+    }
+    
+    /**
+     * Test analysis small DGC intervals
+     */
+    public void testAnalysisDgcSmallIntervals() {
+        String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=3599999 -Dsun.rmi.dgc.server.gcInterval=3599999";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);        
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);        
+        Assert.assertTrue(Analysis.KEY_RMI_DGC_CLIENT_GCINTERVAL_SMALL + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_RMI_DGC_CLIENT_GCINTERVAL_SMALL));
+        Assert.assertTrue(Analysis.KEY_RMI_DGC_SERVER_GCINTERVAL_SMALL + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_RMI_DGC_SERVER_GCINTERVAL_SMALL));
     }
 }

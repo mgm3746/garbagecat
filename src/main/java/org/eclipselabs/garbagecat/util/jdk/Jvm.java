@@ -373,7 +373,7 @@ public class Jvm {
     public boolean isMinAndMaxPermSpaceEqual() {
         return (getMinPermValue() == null && getMaxPermValue() == null) || (getMinPermValue() != null
                 && getMaxPermValue() != null
-                && JdkUtil.convertSizeToBytes(getMinPermValue()) == JdkUtil.convertSizeToBytes(getMaxPermValue()));
+                && JdkUtil.convertOptionSizeToBytes(getMinPermValue()) == JdkUtil.convertOptionSizeToBytes(getMaxPermValue()));
     }
 
     /**
@@ -382,8 +382,8 @@ public class Jvm {
      */
     public boolean isMinAndMaxMetaspaceEqual() {
         return (getMinMetaspaceValue() == null && getMaxMetaspaceValue() == null) || (getMinMetaspaceValue() != null
-                && getMaxMetaspaceValue() != null && JdkUtil.convertSizeToBytes(getMinMetaspaceValue()) == JdkUtil
-                        .convertSizeToBytes(getMaxMetaspaceValue()));
+                && getMaxMetaspaceValue() != null && JdkUtil.convertOptionSizeToBytes(getMinMetaspaceValue()) == JdkUtil
+                        .convertOptionSizeToBytes(getMaxMetaspaceValue()));
     }
 
     /**
@@ -410,7 +410,7 @@ public class Jvm {
         boolean hasLargeThreadStackSize = false;
 
         String threadStackSize = getThreadStackSizeValue();
-        if (threadStackSize != null && JdkUtil.convertSizeToBytes(threadStackSize) >= Constants.MEGABYTE.longValue()) {
+        if (threadStackSize != null && JdkUtil.convertOptionSizeToBytes(threadStackSize) >= Constants.MEGABYTE.longValue()) {
             hasLargeThreadStackSize = true;
         }
 
