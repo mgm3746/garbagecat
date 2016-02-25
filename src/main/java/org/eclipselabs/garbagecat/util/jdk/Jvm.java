@@ -356,16 +356,16 @@ public class Jvm {
 
     /**
      * @return The server Distributed Garbage Collection (DGC) interval value in (milliseconds), or null if not set.
-     * For example:
+     *         For example:
      * 
-     * <pre>
-     * 14400000
-     * </pre>
+     *         <pre>
+     *         14400000
+     *         </pre>
      */
     public String getRmiDgcServerGcIntervalValue() {
         return JdkUtil.getOptionValue(getRmiDgcServerGcIntervalOption());
     }
-    
+
     /**
      * The option to write out a heap dump when OutOfMemoryError. For example:
      * 
@@ -379,7 +379,7 @@ public class Jvm {
         String regex = "(-XX:+HeapDumpOnOutOfMemoryError)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * Instrumentation option. For example:
      * 
@@ -393,7 +393,7 @@ public class Jvm {
         String regex = "(-javaagent:[\\S]+)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option to disable background compilation of bytecode. For example:
      * 
@@ -407,7 +407,7 @@ public class Jvm {
         String regex = "(-Xbatch)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option to disable background compilation of bytecode. For example:
      * 
@@ -421,7 +421,7 @@ public class Jvm {
         String regex = "(-XX:-BackgroundCompilation)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option to enable compilation of bytecode on first invocation. For example:
      * 
@@ -435,7 +435,7 @@ public class Jvm {
         String regex = "(-Xcomp)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option to disable just in time (JIT) compilation. For example:
      * 
@@ -456,8 +456,8 @@ public class Jvm {
      */
     public boolean isMinAndMaxPermSpaceEqual() {
         return (getMinPermValue() == null && getMaxPermValue() == null) || (getMinPermValue() != null
-                && getMaxPermValue() != null
-                && JdkUtil.convertOptionSizeToBytes(getMinPermValue()) == JdkUtil.convertOptionSizeToBytes(getMaxPermValue()));
+                && getMaxPermValue() != null && JdkUtil.convertOptionSizeToBytes(getMinPermValue()) == JdkUtil
+                        .convertOptionSizeToBytes(getMaxPermValue()));
     }
 
     /**
@@ -494,7 +494,8 @@ public class Jvm {
         boolean hasLargeThreadStackSize = false;
 
         String threadStackSize = getThreadStackSizeValue();
-        if (threadStackSize != null && JdkUtil.convertOptionSizeToBytes(threadStackSize) >= Constants.MEGABYTE.longValue()) {
+        if (threadStackSize != null
+                && JdkUtil.convertOptionSizeToBytes(threadStackSize) >= Constants.MEGABYTE.longValue()) {
             hasLargeThreadStackSize = true;
         }
 
