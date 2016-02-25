@@ -140,6 +140,21 @@ public class Analysis {
      * Property key for instrumentation.
      */
     public static final String KEY_INSTRUMENTATION = "instrumentation";
+    
+    /**
+     * Property key for disabling compiling bytecode in the background.
+     */
+    public static final String KEY_BYTECODE_BACKGROUND_COMPILATION_DISABLED = "bytecode.background.compilation.disabled";
+    
+    /**
+     * Property key for precompiling bytecode.
+     */
+    public static final String KEY_BYTECODE_COMPILE_FIRST_INVOCATION = "bytecode.compile.first.invocation";
+    
+    /**
+     * Property key for bytecode compilation disabled.
+     */
+    public static final String KEY_BYTECODE_COMPILATION_DISABLED = "bytecode.compilation.disabled";          
 
     /**
      * Make default constructor private so the class cannot be instantiated.

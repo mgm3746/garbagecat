@@ -1128,7 +1128,7 @@ public class TestJvmRun extends TestCase {
     }
     
     /**
-     * Test analysis if instrumenation being used.
+     * Test analysis if instrumentation being used.
      */
     public void testAnalysisInstrumentation() {
         String jvmOptions = "Xss128k -Xms2048M -javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar -Xmx2048M";
@@ -1136,5 +1136,49 @@ public class TestJvmRun extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);        
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.KEY_INSTRUMENTATION + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_INSTRUMENTATION));
+    }
+    
+    /**
+     * Test analysis background compilation disabled.
+     */
+    public void testAnalysisBackgroundCompilationDisabled() {
+        String jvmOptions = "Xss128k -XX:-BackgroundCompilation -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);        
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_BYTECODE_BACKGROUND_COMPILATION_DISABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_BYTECODE_BACKGROUND_COMPILATION_DISABLED));
+    }
+    
+    /**
+     * Test analysis background compilation disabled.
+     */
+    public void testAnalysisBackgroundCompilationDisabledXBatch() {
+        String jvmOptions = "Xss128k -Xbatch -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);        
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_BYTECODE_BACKGROUND_COMPILATION_DISABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_BYTECODE_BACKGROUND_COMPILATION_DISABLED));
+    }
+    
+    /**
+     * Test analysis compilation on first invocation enabled.
+     */
+    public void testAnalysisCompilationOnFirstInvocation() {
+        String jvmOptions = "Xss128k -Xcomp-Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);        
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_BYTECODE_COMPILE_FIRST_INVOCATION + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_BYTECODE_COMPILE_FIRST_INVOCATION));
+    }
+    
+    /**
+     * Test analysis just in time (JIT) compiler disabled.
+     */
+    public void testAnalysisCompilationDisabled() {
+        String jvmOptions = "Xss128k -Xint -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);        
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_BYTECODE_COMPILATION_DISABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_BYTECODE_COMPILATION_DISABLED));
     }
 }

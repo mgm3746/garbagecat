@@ -423,4 +423,28 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Instrumentation option incorrect.", "-javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar", jvm.getInstrumentationOption());        
     }
+    
+    public void testXBatch() {
+        String jvmOptions = "-Xss128k -Xbatch -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-Xbatch option incorrect.", "-Xbatch", jvm.getXBatchOption());        
+    }
+    
+    public void testBackGroundCompilationDisabled() {
+        String jvmOptions = "-Xss128k -XX:-BackgroundCompilation -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:-BackgroundCompilation option incorrect.", "-XX:-BackgroundCompilation", jvm.getDisableBackgroundCompilationOption());        
+    }
+    
+    public void testXcomp() {
+        String jvmOptions = "-Xss128k -Xcomp -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-Xcomp option incorrect.", "-Xcomp", jvm.getXCompOption());        
+    }
+    
+    public void testXInt() {
+        String jvmOptions = "-Xss128k -Xint -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-Xint option incorrect.", "-Xint", jvm.getXIntOption());        
+    }
 }

@@ -367,8 +367,11 @@ public class Jvm {
     }
     
     /**
-     * Whether or not the option to write out a heap dump when OutOfMemoryError happens (
-     * <code>-XX:+HeapDumpOnOutOfMemoryError</code>).
+     * The option to write out a heap dump when OutOfMemoryError. For example:
+     * 
+     * <pre>
+     * -XX:+HeapDumpOnOutOfMemoryError
+     * </pre>
      * 
      * @return True if -XX:+HeapDumpOnOutOfMemoryError option exists, false otherwise.
      */
@@ -388,6 +391,62 @@ public class Jvm {
      */
     public String getInstrumentationOption() {
         String regex = "(-javaagent:[\\S]+)";
+        return getJvmOption(regex);
+    }
+    
+    /**
+     * The option to disable background compilation of bytecode. For example:
+     * 
+     * <pre>
+     * -Xbatch
+     * </pre>
+     * 
+     * @return True if -Xbatch option exists, false otherwise.
+     */
+    public String getXBatchOption() {
+        String regex = "(-Xbatch)";
+        return getJvmOption(regex);
+    }
+    
+    /**
+     * The option to disable background compilation of bytecode. For example:
+     * 
+     * <pre>
+     * -XX:-BackgroundCompilation
+     * </pre>
+     * 
+     * @return True if -XX:-BackgroundCompilation option exists, false otherwise.
+     */
+    public String getDisableBackgroundCompilationOption() {
+        String regex = "(-XX:-BackgroundCompilation)";
+        return getJvmOption(regex);
+    }
+    
+    /**
+     * The option to enable compilation of bytecode on first invocation. For example:
+     * 
+     * <pre>
+     * -Xcomp
+     * </pre>
+     * 
+     * @return True if -Xcomp option exists, false otherwise.
+     */
+    public String getXCompOption() {
+        String regex = "(-Xcomp)";
+        return getJvmOption(regex);
+    }
+    
+    /**
+     * The option to disable just in time (JIT) compilation. For example:
+     * 
+     * <pre>
+     * -Xint
+     * </pre>
+     * 
+     * @return True if -Xcomp option exists, false otherwise.
+     */
+    public String getXIntOption() {
+        String regex = "(-Xint)";
         return getJvmOption(regex);
     }
 
