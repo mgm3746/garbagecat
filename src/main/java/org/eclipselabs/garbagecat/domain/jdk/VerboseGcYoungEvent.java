@@ -34,8 +34,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Standard format:
+ * </p>
+ * 
  * <pre>
- * 2205570.508: [GC 1726387K-&gt;773247K(3097984K), 0.2318035 secs]
+ * 2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]
+ * </pre>
+ * 
+ * <p>
+ * 1) Missing beginning occupancy:
+ * </p>
+ * 
+ * <pre>
+ * 90.168: [GC 876593K(1851392K), 0.0701780 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -77,8 +89,9 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC (" + JdkRegEx.SIZE + "->)?" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
+    
     private static Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
 
     /**
@@ -89,12 +102,17 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            combinedBegin = Integer.parseInt(matcher.group(2));
-            combinedEnd = Integer.parseInt(matcher.group(3));
-            combinedAllocation = Integer.parseInt(matcher.group(4));
-            duration = JdkMath.convertSecsToMillis(matcher.group(5)).intValue();
+            if (matcher.group(2) != null) {
+                combinedBegin = Integer.parseInt(matcher.group(3));
+            } else {
+                // set it to the end
+                combinedBegin = Integer.parseInt(matcher.group(4));
+            }
+            combinedEnd = Integer.parseInt(matcher.group(4));
+            combinedAllocation = Integer.parseInt(matcher.group(5));
+            duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
         }
-    }// VerboseGcYoungEvent()
+    }
 
     /**
      * Alternate constructor. Create logging event from values.

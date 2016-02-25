@@ -39,4 +39,17 @@ public class TestVerboseGcYoungEvent extends TestCase {
         String logLine = "2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]        ";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".", VerboseGcYoungEvent.match(logLine));
     }
+    
+    public void testLogLineMissingBeginningOccupancy() {
+        String logLine = "90.168: [GC 876593K(1851392K), 0.0701780 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".", VerboseGcYoungEvent.match(logLine));
+        VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 90168, event.getTimestamp());
+        // We set beginging to end occupancy
+        Assert.assertEquals("Combined begin size not parsed correctly.", 876593, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 876593, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 1851392, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 70, event.getDuration());
+    }
 }
