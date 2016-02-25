@@ -130,6 +130,11 @@ public class Analysis {
      * Property key for small sun.rmi.dgc.server.gcInterval.
      */
     public static final String KEY_RMI_DGC_SERVER_GCINTERVAL_SMALL = "rmi.dgc.server.gcInterval.small"; 
+    
+    /**
+     * Property key for small sun.rmi.dgc.server.gcInterval.
+     */
+    public static final String KEY_HEAP_DUMP_ON_OOME_MISSING = "heap.dump.on.oome.missing";     
 
     /**
      * Make default constructor private so the class cannot be instantiated.

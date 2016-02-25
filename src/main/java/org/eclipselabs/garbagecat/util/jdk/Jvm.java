@@ -356,14 +356,25 @@ public class Jvm {
 
     /**
      * @return The server Distributed Garbage Collection (DGC) interval value in (milliseconds), or null if not set.
-     *         For example:
+     * For example:
      * 
-     *         <pre>
-     *         14400000
-     *         </pre>
+     * <pre>
+     * 14400000
+     * </pre>
      */
     public String getRmiDgcServerGcIntervalValue() {
         return JdkUtil.getOptionValue(getRmiDgcServerGcIntervalOption());
+    }
+    
+    /**
+     * Whether or not the option to write out a heap dump when OutOfMemoryError happens (
+     * <code>-XX:+HeapDumpOnOutOfMemoryError</code>).
+     * 
+     * @return True if -XX:+HeapDumpOnOutOfMemoryError option exists, false otherwise.
+     */
+    public String getHeapDumpOnOutOfMemoryErrorOption() {
+        String regex = "(-XX:+HeapDumpOnOutOfMemoryError)";
+        return getJvmOption(regex);
     }
 
     /**

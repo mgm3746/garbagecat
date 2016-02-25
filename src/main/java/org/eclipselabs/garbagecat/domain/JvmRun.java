@@ -472,11 +472,10 @@ public class JvmRun {
             }
         }
         
-        
-
-        // TODO: Check to see if explicit GC interval is disabled or set.
-
-        // TODO: If explicit GC interval is set, try disabling explicit GC.
+        // Check to see if heap dump on OOME missing
+        if (jvm.getHeapDumpOnOutOfMemoryErrorOption() == null) {
+            analysisKeys.add(Analysis.KEY_HEAP_DUMP_ON_OOME_MISSING);
+        }
 
         // TODO: Check for instrumentation.
 
