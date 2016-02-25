@@ -403,9 +403,9 @@ public class JvmRun {
         if (eventTypes.contains(LogEventType.CMS_SERIAL_OLD)) {
             analysisKeys.add(Analysis.KEY_SERIAL_GC_CMS);
         }
-        
+
         // 6) Check if explict GC should be handled concurrently
-        
+
     }
 
     /**
@@ -454,7 +454,7 @@ public class JvmRun {
                 && jvm.getDisableExplicitGCOption() == null) {
             analysisKeys.add(Analysis.KEY_RMI_DGC_NOT_MANAGED);
         }
-        
+
         // Check for setting DGC intervals when explicit GC is disabled.
         if (jvm.getDisableExplicitGCOption() != null && jvm.getRmiDgcClientGcIntervalOption() != null) {
             analysisKeys.add(Analysis.KEY_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT);
@@ -462,7 +462,7 @@ public class JvmRun {
         if (jvm.getDisableExplicitGCOption() != null && jvm.getRmiDgcServerGcIntervalOption() != null) {
             analysisKeys.add(Analysis.KEY_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT);
         }
-        
+
         // Check for small DGC intervals.
         if (jvm.getRmiDgcClientGcIntervalOption() != null) {
             long rmiDgcClientGcInterval = new Long(jvm.getRmiDgcClientGcIntervalValue()).longValue();
@@ -476,51 +476,52 @@ public class JvmRun {
                 analysisKeys.add(Analysis.KEY_RMI_DGC_SERVER_GCINTERVAL_SMALL);
             }
         }
-        
+
         // Check if explict gc should be handled concurrently.
         if ((isG1Collector(eventTypes) || isCmsCollector(eventTypes)) && jvm.getDisableExplicitGCOption() == null
                 && jvm.getExplicitGcInvokesConcurrentOption() == null) {
             analysisKeys.add(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT);
         }
-        
+
         // Specifying that explicit gc be collected concurrently makes no sense if explicit gc is disabled.
         if (jvm.getDisableExplicitGCOption() != null && jvm.getExplicitGcInvokesConcurrentOption() != null) {
             analysisKeys.add(Analysis.KEY_EXPLICIT_GC_DISABLED_CONCURRENT);
         }
-        
+
         // Check to see if heap dump on OOME disabled or missing.
         if (jvm.getHeapDumpOnOutOfMemoryErrorDisabledOption() != null) {
             analysisKeys.add(Analysis.KEY_HEAP_DUMP_ON_OOME_DISABLED);
         } else if (jvm.getHeapDumpOnOutOfMemoryErrorEnabledOption() == null) {
             analysisKeys.add(Analysis.KEY_HEAP_DUMP_ON_OOME_MISSING);
         }
-        
+
         // Check if instrumenation being used.
         if (jvm.getInstrumentationOption() != null) {
             analysisKeys.add(Analysis.KEY_INSTRUMENTATION);
         }
-        
+
         // Check if background compilation disabled.
         if (jvm.getXBatchOption() != null || jvm.getDisableBackgroundCompilationOption() != null) {
             analysisKeys.add(Analysis.KEY_BYTECODE_BACKGROUND_COMPILe_DISABLED);
         }
-        
+
         // Check if compilation being forced on first invocation.
         if (jvm.getXCompOption() != null) {
             analysisKeys.add(Analysis.KEY_BYTECODE_COMPILE_FIRST_INVOCATION);
         }
-        
+
         // Check if just in time (JIT) compilation disabled.
         if (jvm.getXIntOption() != null) {
             analysisKeys.add(Analysis.KEY_BYTECODE_COMPILE_DISABLED);
         }
-        
+
         // Check if command flags printed.
-        if (jvm.getPrintCommandLineFlagsOption() == null) {
+        if (jvm.getPrintCommandLineFlagsOption() == null
+                && !getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS)) {
             analysisKeys.add(Analysis.KEY_PRINT_COMMANDLINE_FLAGS);
         }
     }
-    
+
     /**
      * Determine if the JVM run used the G1 collector.
      * 
@@ -540,7 +541,7 @@ public class JvmRun {
         }
         return isG1Collector;
     }
-    
+
     /**
      * Determine if the JVM run used the CMS collector.
      * 
