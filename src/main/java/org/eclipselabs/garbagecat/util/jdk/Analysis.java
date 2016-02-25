@@ -49,6 +49,16 @@ public class Analysis {
      * Property key for explicit garbage collection disabled.
      */
     public static final String KEY_EXPLICIT_GC_DISABLED = "explicit.gc.disabled";
+    
+    /**
+     * Property key for explicit garbage collection disabled.
+     */
+    public static final String KEY_EXPLICIT_GC_NOT_CONCURRENT = "explicit.gc.not.concurrent";
+    
+    /**
+     * Property key for explicit garbage collection disabled and specifying concurrent collections.
+     */
+    public static final String KEY_EXPLICIT_GC_DISABLED_CONCURRENT = "explicit.gc.disabled.concurrent";
 
     /**
      * Property key for -XX:+PrintGCApplicationStoppedTime missing.
@@ -132,9 +142,14 @@ public class Analysis {
     public static final String KEY_RMI_DGC_SERVER_GCINTERVAL_SMALL = "rmi.dgc.server.gcInterval.small";
 
     /**
-     * Property key for small sun.rmi.dgc.server.gcInterval.
+     * Property key for heap dump on out of memory error option missing.
      */
     public static final String KEY_HEAP_DUMP_ON_OOME_MISSING = "heap.dump.on.oome.missing";
+    
+    /**
+     * Property key for heap dump on memory error option disabled.
+     */
+    public static final String KEY_HEAP_DUMP_ON_OOME_DISABLED = "heap.dump.on.oome.disabled";    
 
     /**
      * Property key for instrumentation.

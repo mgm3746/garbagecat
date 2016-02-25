@@ -367,6 +367,21 @@ public class Jvm {
     }
 
     /**
+     * The option to disable writing out a heap dump when OutOfMemoryError. For example:
+     * 
+     * <pre>
+     * -XX:-HeapDumpOnOutOfMemoryError
+     * </pre>
+     * 
+     * @return True if -XX:-HeapDumpOnOutOfMemoryError option exists, false otherwise.
+     */
+    public String getHeapDumpOnOutOfMemoryErrorDisabledOption() {
+        String regex = "(-XX:-HeapDumpOnOutOfMemoryError)";
+        return getJvmOption(regex);
+    }
+    
+
+    /**
      * The option to write out a heap dump when OutOfMemoryError. For example:
      * 
      * <pre>
@@ -375,8 +390,8 @@ public class Jvm {
      * 
      * @return True if -XX:+HeapDumpOnOutOfMemoryError option exists, false otherwise.
      */
-    public String getHeapDumpOnOutOfMemoryErrorOption() {
-        String regex = "(-XX:+HeapDumpOnOutOfMemoryError)";
+    public String getHeapDumpOnOutOfMemoryErrorEnabledOption() {
+        String regex = "(-XX:\\+HeapDumpOnOutOfMemoryError)";
         return getJvmOption(regex);
     }
 
@@ -447,6 +462,21 @@ public class Jvm {
      */
     public String getXIntOption() {
         String regex = "(-Xint)";
+        return getJvmOption(regex);
+    }
+    
+    /**
+     * The option to allow explict garbage collection to be handled concurrently by the CMS and G1 collectors. For
+     * example:
+     * 
+     * <pre>
+     * -XX:+ExplicitGCInvokesConcurrent
+     * </pre>
+     * 
+     * @return True if -XX:+ExplicitGCInvokesConcurrent option exists, false otherwise.
+     */
+    public String getExplicitGcInvokesConcurrentOption() {
+        String regex = "(-XX:\\+ExplicitGCInvokesConcurrent)";
         return getJvmOption(regex);
     }
 

@@ -14,11 +14,13 @@ package org.eclipselabs.garbagecat.domain;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
@@ -401,6 +403,9 @@ public class JvmRun {
         if (eventTypes.contains(LogEventType.CMS_SERIAL_OLD)) {
             analysisKeys.add(Analysis.KEY_SERIAL_GC_CMS);
         }
+        
+        // 6) Check if explict GC should be handled concurrently
+        
     }
 
     /**
@@ -472,8 +477,21 @@ public class JvmRun {
             }
         }
         
-        // Check to see if heap dump on OOME missing.
-        if (jvm.getHeapDumpOnOutOfMemoryErrorOption() == null) {
+        // Check if explict gc should be handled concurrently.
+        if ((isG1Collector(eventTypes) || isCmsCollector(eventTypes)) && jvm.getDisableExplicitGCOption() == null
+                && jvm.getExplicitGcInvokesConcurrentOption() == null) {
+            analysisKeys.add(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT);
+        }
+        
+        // Specifying that explicit gc be collected concurrently makes no sense if explicit gc is disabled.
+        if (jvm.getDisableExplicitGCOption() != null && jvm.getExplicitGcInvokesConcurrentOption() != null) {
+            analysisKeys.add(Analysis.KEY_EXPLICIT_GC_DISABLED_CONCURRENT);
+        }
+        
+        // Check to see if heap dump on OOME disabled or missing.
+        if (jvm.getHeapDumpOnOutOfMemoryErrorDisabledOption() != null) {
+            analysisKeys.add(Analysis.KEY_HEAP_DUMP_ON_OOME_DISABLED);
+        } else if (jvm.getHeapDumpOnOutOfMemoryErrorEnabledOption() == null) {
             analysisKeys.add(Analysis.KEY_HEAP_DUMP_ON_OOME_MISSING);
         }
         
@@ -496,5 +514,45 @@ public class JvmRun {
         if (jvm.getXIntOption() != null) {
             analysisKeys.add(Analysis.KEY_BYTECODE_COMPILe_DISABLED);
         }
+    }
+    
+    /**
+     * Determine if the JVM run used the G1 collector.
+     * 
+     * @param eventType
+     *            Log entry <code>LogEventType</code>.
+     * @return True if any <code>LogEventType</code> is G1, false otherwise.
+     */
+    public boolean isG1Collector(List<LogEventType> eventTypes) {
+        boolean isG1Collector = false;
+
+        Iterator<LogEventType> iterator = eventTypes.iterator();
+        while (iterator.hasNext()) {
+            if (JdkUtil.isG1LogEventType(iterator.next())) {
+                isG1Collector = true;
+                break;
+            }
+        }
+        return isG1Collector;
+    }
+    
+    /**
+     * Determine if the JVM run used the CMS collector.
+     * 
+     * @param eventType
+     *            Log entry <code>LogEventType</code>.
+     * @return True if any <code>LogEventType</code> is G1, false otherwise.
+     */
+    public boolean isCmsCollector(List<LogEventType> eventTypes) {
+        boolean isCmsCollector = false;
+
+        Iterator<LogEventType> iterator = eventTypes.iterator();
+        while (iterator.hasNext()) {
+            if (JdkUtil.isCmsLogEventType(iterator.next())) {
+                isCmsCollector = true;
+                break;
+            }
+        }
+        return isCmsCollector;
     }
 }

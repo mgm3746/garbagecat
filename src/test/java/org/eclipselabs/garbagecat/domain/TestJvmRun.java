@@ -13,14 +13,16 @@
 package org.eclipselabs.garbagecat.domain;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -1044,6 +1046,7 @@ public class TestJvmRun extends TestCase {
         jvmManager.store(preprocessedFile);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.KEY_PERM_METASPACE_NOT_SET + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PERM_METASPACE_NOT_SET));
+        Assert.assertFalse(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT));
     }
     
     /**
@@ -1180,5 +1183,57 @@ public class TestJvmRun extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);        
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.KEY_BYTECODE_COMPILe_DISABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_BYTECODE_COMPILe_DISABLED));
+    }
+    
+    /**
+     * Test analysis explicit GC not concurrent.
+     */
+    public void testAnalysisExplicitGcNotConcurrentG1() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.G1_FULL_GC);
+        jvmRun.setEventTypes(eventTypes);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT));
+    }
+    
+    /**
+     * Test analysis explicit GC not concurrent.
+     */
+    public void testAnalysisExplicitGcNotConcurrentCms() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.CMS_CONCURRENT);
+        jvmRun.setEventTypes(eventTypes);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT));
+    }
+    
+    /**
+     * Test analysis just in time (JIT) compiler disabled.
+     */
+    public void testAnalysisDisableExplictGcWithConcurrentHandling() {
+        String jvmOptions = "Xss128k -XX:+DisableExplicitGC -XX:+ExplicitGCInvokesConcurrent -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);        
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_DISABLED_CONCURRENT + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_DISABLED_CONCURRENT));
+    }
+    
+    /**
+     * Test analysis just in time (JIT) compiler disabled.
+     */
+    public void testAnalysisHeapDumpOnOutOfMemoryErrorDisabled() {
+        String jvmOptions = "Xss128k -XX:-HeapDumpOnOutOfMemoryError -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);        
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_HEAP_DUMP_ON_OOME_DISABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_HEAP_DUMP_ON_OOME_DISABLED));
     }
 }

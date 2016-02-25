@@ -81,7 +81,7 @@ public class JdkUtil {
      * Defined logging events.
      */
     public enum LogEventType {
-        SERIAL_OLD, SERIAL, PAR_NEW_CONCURRENT_MODE_FAILURE, PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA, 
+        SERIAL_OLD, SERIAL, PAR_NEW_CONCURRENT_MODE_FAILURE, PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA,
         //
         PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD, PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA,
         //
@@ -106,7 +106,7 @@ public class JdkUtil {
      * Defined preprocessing actions.
      */
     public enum PreprocessActionType {
-        APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, CMS_CONCURRENT_MODE_FAILURE, 
+        APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, CMS_CONCURRENT_MODE_FAILURE,
         //
         DATE_STAMP, DATE_STAMP_PREFIX, GC_TIME_LIMIT_EXCEEDED, PAR_NEW_CMS_CONCURRENT, PRINT_HEAP_AT_GC,
         //
@@ -349,7 +349,7 @@ public class JdkUtil {
             break;
         case HEADER_VERSION:
             event = new HeaderVersionEvent(logLine);
-            break;            
+            break;
         case UNKNOWN:
             event = new UnknownEvent(logLine);
             break;
@@ -693,7 +693,7 @@ public class JdkUtil {
         sizeG1 = sizeG1.setScale(0, RoundingMode.HALF_EVEN);
         return Integer.toString(sizeG1.intValue()) + unitsG1;
     }
-    
+
     /**
      * Convert {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #OPTION_SIZE} to bytes.
      * 
@@ -742,5 +742,55 @@ public class JdkUtil {
 
         }
         return bytes.longValue();
+    }
+
+    /**
+     * Identify the log line garbage collection event.
+     * 
+     * @param eventType
+     *            Log entry <code>LogEventType</code>.
+     * @return True if the <code>LogEventType</code> is G1, false otherwise.
+     */
+    public static final boolean isG1LogEventType(LogEventType eventType) {
+        boolean isG1 = false;
+
+        switch (eventType) {
+        case G1_YOUNG_PAUSE:
+        case G1_MIXED_PAUSE:
+        case G1_YOUNG_INITIAL_MARK:
+        case G1_REMARK:
+        case G1_CLEANUP:
+        case G1_FULL_GC:
+            isG1 = true;
+        default:
+            break;
+        }
+
+        return isG1;
+    }
+    
+    /**
+     * Identify the log line garbage collection event.
+     * 
+     * @param eventType
+     *            Log entry <code>LogEventType</code>.
+     * @return True if the <code>LogEventType</code> is CMS, false otherwise.
+     */
+    public static final boolean isCmsLogEventType(LogEventType eventType) {
+        boolean isCms = false;
+
+        switch (eventType) {
+        case CMS_CONCURRENT:
+        case CMS_SERIAL_OLD:
+        case CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE:
+        case CMS_INITIAL_MARK:
+        case CMS_REMARK:
+        case CMS_REMARK_WITH_CLASS_UNLOADING:            
+            isCms = true;
+        default:
+            break;
+        }
+
+        return isCms;
     }
 }
