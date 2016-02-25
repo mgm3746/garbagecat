@@ -1,8 +1,14 @@
 /******************************************************************************
- * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
- * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
- * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
- * initial API and implementation *
+ * Garbage Cat                                                                *
+ *                                                                            *
+ * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
+ * All rights reserved. This program and the accompanying materials           *
+ * are made available under the terms of the Eclipse Public License v1.0      *
+ * which accompanies this distribution, and is available at                   *
+ * http://www.eclipse.org/legal/epl-v10.html                                  *
+ *                                                                            *
+ * Contributors:                                                              *
+ *    Red Hat, Inc. - initial API and implementation                          *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
@@ -114,7 +120,7 @@ public class JvmRun {
      * Event types.
      */
     private List<LogEventType> eventTypes;
-    
+
     /**
      * Analysis property keys.
      */
@@ -366,11 +372,11 @@ public class JvmRun {
      * @return A <code>List</code> of analysis points based on the JVM options and data.
      */
     public void doAnalysis() {
-        
+
         if (jvm.getOptions() != null) {
             doJvmOptionsAnalysis();
         }
-        
+
         // 1) Check for partial log
         if (GcUtil.isPartialLog(firstTimestamp)) {
             analysisKeys.add(Analysis.KEY_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
@@ -385,23 +391,23 @@ public class JvmRun {
         if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME) && getGcStoppedRatio() < 80) {
             analysisKeys.add(Analysis.KEY_GC_STOPPED_RATIO);
         }
-        
+
         // 4) Check for throughput collector serial collection
         if (eventTypes.contains(LogEventType.PARALLEL_SERIAL_OLD)) {
             analysisKeys.add(Analysis.KEY_THROUGHPUT_SERIAL_GC);
         }
-        
+
         // 5) Check for CMS collector serial collection
         if (eventTypes.contains(LogEventType.CMS_SERIAL_OLD)) {
             analysisKeys.add(Analysis.KEY_CMS_SERIAL_GC);
         }
     }
-    
+
     /**
      * Do JVM options analysis.
      */
     private void doJvmOptionsAnalysis() {
-        
+
         // Check to see if thread stack size explicitly set
         if (jvm.getThreadStackSizeOption() == null) {
             analysisKeys.add(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET);
@@ -416,26 +422,32 @@ public class JvmRun {
         if (!jvm.isMinAndMaxPermSpaceEqual()) {
             analysisKeys.add(Analysis.KEY_MIN_PERM_NOT_EQUAL_MAX_PERM);
         }
-        
+
         // Check to see if min and max metaspace sizes are the same
         if (!jvm.isMinAndMaxMetaspaceEqual()) {
             analysisKeys.add(Analysis.KEY_MIN_METASPACE_NOT_EQUAL_MAX_METASPACE);
         }
-        
+
         // Check to see if permanent generation or metaspace size explicitly set
         if (jvm.getMinPermOption() == null && jvm.getMaxPermOption() == null && jvm.getMinMetaspaceOption() == null
                 && jvm.getMaxMetaspaceOption() == null) {
             analysisKeys.add(Analysis.KEY_PERM_METASPACE_NOT_SET);
         }
-        
+
         // Check to see if explicit gc is disabled
         if (jvm.getDisableExplicitGCOption() != null) {
             analysisKeys.add(Analysis.KEY_EXPLICIT_GC_DISABLED);
         }
-        
+
         // Check for large thread stack size
         if (jvm.hasLargeThreadStackSize()) {
             analysisKeys.add(Analysis.KEY_THREAD_STACK_SIZE_LARGE);
+        }
+
+        // Check if the RMI Distributed Garbage Collection (DGC) is managed.
+        if (jvm.getRmiDgcClientGcIntervalOption() == null && jvm.getRmiDgcServerGcIntervalOption() == null
+                && jvm.getDisableExplicitGCOption() == null) {
+            analysisKeys.add(Analysis.KEY_RMI_DGC_NOT_MANAGED);
         }
 
         // TODO: Check to see if explicit GC interval is disabled or set.

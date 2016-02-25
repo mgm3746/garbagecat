@@ -105,6 +105,11 @@ public class Analysis {
      * Property key for the G1 collector invoking a serial collection.
      */
     public static final String KEY_G1_SERIAL_GC = "g1.serial.gc";  
+    
+    /**
+     * Property key for the RMI Distributed Garbage Collection (DGC) not being managed.
+     */
+    public static final String KEY_RMI_DGC_NOT_MANAGED = "rmi.dgc.not.managed"; 
 
     /**
      * Make default constructor private so the class cannot be instantiated.

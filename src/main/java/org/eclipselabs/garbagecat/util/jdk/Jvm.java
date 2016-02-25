@@ -1,8 +1,14 @@
 /******************************************************************************
- * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
- * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
- * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
- * initial API and implementation *
+ * Garbage Cat                                                                *
+ *                                                                            *
+ * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
+ * All rights reserved. This program and the accompanying materials           *
+ * are made available under the terms of the Eclipse Public License v1.0      *
+ * which accompanies this distribution, and is available at                   *
+ * http://www.eclipse.org/legal/epl-v10.html                                  *
+ *                                                                            *
+ * Contributors:                                                              *
+ *    Red Hat, Inc. - initial API and implementation                          *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
@@ -129,9 +135,9 @@ public class Jvm {
     /**
      * @return The thread stack size value, or null if not set. For example:
      * 
-     * <pre>
+     *         <pre>
      * 256K
-     * </pre>
+     *         </pre>
      */
     public String getThreadStackSizeValue() {
         return JdkUtil.getOptionValue(getThreadStackSizeOption());
@@ -165,9 +171,9 @@ public class Jvm {
     /**
      * @return The minimum heap space value, or null if not set. For example:
      * 
-     * <pre>
+     *         <pre>
      * 2048M
-     * </pre>
+     *         </pre>
      */
     public String getMinHeapValue() {
         return JdkUtil.getOptionValue(getMinHeapOption());
@@ -191,9 +197,9 @@ public class Jvm {
     /**
      * @return The maximum heap space value, or null if not set. For example:
      * 
-     * <pre>
+     *         <pre>
      * 2048M
-     * </pre>
+     *         </pre>
      */
     public String getMaxHeapValue() {
         return JdkUtil.getOptionValue(getMaxHeapOption());
@@ -225,9 +231,9 @@ public class Jvm {
     /**
      * @return The minimum permanent generation space value, or null if not set. For example:
      * 
-     * <pre>
+     *         <pre>
      * 128M
-     * </pre>
+     *         </pre>
      */
     public String getMinPermValue() {
         return JdkUtil.getOptionValue(getMinPermOption());
@@ -250,9 +256,9 @@ public class Jvm {
     /**
      * @return The minimum Metaspace value, or null if not set. For example:
      * 
-     * <pre>
+     *         <pre>
      * 128M
-     * </pre>
+     *         </pre>
      */
     public String getMinMetaspaceValue() {
         return JdkUtil.getOptionValue(getMinMetaspaceOption());
@@ -275,9 +281,9 @@ public class Jvm {
     /**
      * @return The maximum permanent generation space value, or null if not set. For example:
      * 
-     * <pre>
+     *         <pre>
      * 128M
-     * </pre>
+     *         </pre>
      */
     public String getMaxPermValue() {
         return JdkUtil.getOptionValue(getMaxPermOption());
@@ -300,33 +306,85 @@ public class Jvm {
     /**
      * @return The maximum Metaspace value, or null if not set. For example:
      * 
-     * <pre>
+     *         <pre>
      * 128M
-     * </pre>
+     *         </pre>
      */
     public String getMaxMetaspaceValue() {
         return JdkUtil.getOptionValue(getMaxMetaspaceOption());
     }
 
     /**
+     * Client Distributed Garbage Collection (DGC) interval in milliseconds.
+     * 
+     * <pre>
+     * -Dsun.rmi.dgc.client.gcInterval=14400000
+     * </pre>
+     * 
+     * @return The client Distributed Garbage Collection (DGC), or null if not explicitly set.
+     */
+    public String getRmiDgcClientGcIntervalOption() {
+        String regex = "(-Dsun.rmi.dgc.client.gcInterval=(\\d{1,12}))";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * @return The client Distributed Garbage Collection (DGC) interval value in (milliseconds), or null if not set.
+     *         For example:
+     * 
+     *         <pre>
+     *         14400000
+     *         </pre>
+     */
+    public String getRmiDgcClientGcIntervalValue() {
+        return JdkUtil.getOptionValue(getRmiDgcClientGcIntervalOption());
+    }
+
+    /**
+     * Server Distributed Garbage Collection (DGC) interval in milliseconds.
+     * 
+     * <pre>
+     * -Dsun.rmi.dgc.server.gcInterval=14400000
+     * </pre>
+     * 
+     * @return The server Distributed Garbage Collection (DGC), or null if not explicitly set.
+     */
+    public String getRmiDgcServerGcIntervalOption() {
+        String regex = "(-Dsun.rmi.dgc.server.gcInterval=(\\d{1,12}))";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * @return The server Distributed Garbage Collection (DGC) interval value in (milliseconds), or null if not set.
+     *         For example:
+     * 
+     *         <pre>
+     *         14400000
+     *         </pre>
+     */
+    public String getRmiDgcServerGcIntervalValue() {
+        return JdkUtil.getOptionValue(getRmiDgcServerGcIntervalOption());
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */
-   public boolean isMinAndMaxPermSpaceEqual() {
-       return (getMinPermValue() == null && getMaxPermValue() == null) || (getMinPermValue() != null
-               && getMaxPermValue() != null
-               && JdkUtil.convertSizeToBytes(getMinPermValue()) == JdkUtil.convertSizeToBytes(getMaxPermValue()));
-   }
+    public boolean isMinAndMaxPermSpaceEqual() {
+        return (getMinPermValue() == null && getMaxPermValue() == null) || (getMinPermValue() != null
+                && getMaxPermValue() != null
+                && JdkUtil.convertSizeToBytes(getMinPermValue()) == JdkUtil.convertSizeToBytes(getMaxPermValue()));
+    }
 
     /**
      * 
      * @return True if the minimum and maximum Metaspace are set equal.
      */
-   public boolean isMinAndMaxMetaspaceEqual() {
-       return (getMinMetaspaceValue() == null && getMaxMetaspaceValue() == null) || (getMinMetaspaceValue() != null
-               && getMaxMetaspaceValue() != null && JdkUtil.convertSizeToBytes(getMinMetaspaceValue()) == JdkUtil
-                       .convertSizeToBytes(getMaxMetaspaceValue()));
-   }
+    public boolean isMinAndMaxMetaspaceEqual() {
+        return (getMinMetaspaceValue() == null && getMaxMetaspaceValue() == null) || (getMinMetaspaceValue() != null
+                && getMaxMetaspaceValue() != null && JdkUtil.convertSizeToBytes(getMinMetaspaceValue()) == JdkUtil
+                        .convertSizeToBytes(getMaxMetaspaceValue()));
+    }
 
     /**
      * @param regex
@@ -350,12 +408,12 @@ public class Jvm {
      */
     public boolean hasLargeThreadStackSize() {
         boolean hasLargeThreadStackSize = false;
-        
+
         String threadStackSize = getThreadStackSizeValue();
         if (threadStackSize != null && JdkUtil.convertSizeToBytes(threadStackSize) >= Constants.MEGABYTE.longValue()) {
             hasLargeThreadStackSize = true;
         }
-        
+
         return hasLargeThreadStackSize;
     }
 }

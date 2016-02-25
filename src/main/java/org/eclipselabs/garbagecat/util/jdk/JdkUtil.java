@@ -640,7 +640,7 @@ public class JdkUtil {
     public static final String getOptionValue(String option) {
         String value = null;
         if (option != null) {
-            String regex = "^-[a-zA-Z:]+(=)?(\\d{1,12}(" + JdkRegEx.OPTION_SIZE + ")?)$";
+            String regex = "^-[a-zA-Z:.]+(=)?(\\d{1,12}(" + JdkRegEx.OPTION_SIZE + ")?)$";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(option);
             if (matcher.find()) {

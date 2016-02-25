@@ -408,4 +408,13 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Disable explicit gc option incorrect.", "-XX:+DisableExplicitGC", jvm.getDisableExplicitGCOption());        
     }
+   
+    public void testSunRmiDgcServerGcIntervalValue() {
+        String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=14400000 -Dsun.rmi.dgc.server.gcInterval=24400000";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("sun.rmi.dgc.client.gcInterval option incorrect.", "-Dsun.rmi.dgc.client.gcInterval=14400000", jvm.getRmiDgcClientGcIntervalOption());
+        Assert.assertEquals("sun.rmi.dgc.client.gcInterval value incorrect.", "14400000", jvm.getRmiDgcClientGcIntervalValue()); 
+        Assert.assertEquals("sun.rmi.dgc.server.gcInterval option incorrect.", "-Dsun.rmi.dgc.server.gcInterval=24400000", jvm.getRmiDgcServerGcIntervalOption());
+        Assert.assertEquals("sun.rmi.dgc.server.gcInterval value incorrect.", "24400000", jvm.getRmiDgcServerGcIntervalValue());   
+    }
 }
