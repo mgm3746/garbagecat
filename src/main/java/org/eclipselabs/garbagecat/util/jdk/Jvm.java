@@ -479,6 +479,20 @@ public class Jvm {
         String regex = "(-XX:\\+ExplicitGCInvokesConcurrent)";
         return getJvmOption(regex);
     }
+    
+    /**
+     * The option to print out JVM command line options at the beginning of gc logging. For example:
+     * 
+     * <pre>
+     * -XX:+PrintCommandLineFlags
+     * </pre>
+     * 
+     * @return True if -XX:+PrintCommandLineFlags option exists, false otherwise.
+     */
+    public String getPrintCommandLineFlagsOption() {
+        String regex = "(-XX:\\+PrintCommandLineFlags)";
+        return getJvmOption(regex);
+    }
 
     /**
      * 

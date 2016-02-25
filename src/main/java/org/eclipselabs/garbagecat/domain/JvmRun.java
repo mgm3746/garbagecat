@@ -512,7 +512,12 @@ public class JvmRun {
         
         // Check if just in time (JIT) compilation disabled.
         if (jvm.getXIntOption() != null) {
-            analysisKeys.add(Analysis.KEY_BYTECODE_COMPILe_DISABLED);
+            analysisKeys.add(Analysis.KEY_BYTECODE_COMPILE_DISABLED);
+        }
+        
+        // Check if command flags printed.
+        if (jvm.getPrintCommandLineFlagsOption() == null) {
+            analysisKeys.add(Analysis.KEY_PRINT_COMMANDLINE_FLAGS);
         }
     }
     

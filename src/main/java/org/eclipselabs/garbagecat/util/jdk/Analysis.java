@@ -169,7 +169,12 @@ public class Analysis {
     /**
      * Property key for bytecode compilation disabled.
      */
-    public static final String KEY_BYTECODE_COMPILe_DISABLED = "bytecode.compile.disabled";
+    public static final String KEY_BYTECODE_COMPILE_DISABLED = "bytecode.compile.disabled";
+    
+    /**
+     * Property key for adding option to print command line flags at beginning of gc logging.
+     */
+    public static final String KEY_PRINT_COMMANDLINE_FLAGS = "print.commandline.flags";
 
     /**
      * Make default constructor private so the class cannot be instantiated.

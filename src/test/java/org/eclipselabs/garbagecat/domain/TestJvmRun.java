@@ -1182,7 +1182,7 @@ public class TestJvmRun extends TestCase {
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);        
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.KEY_BYTECODE_COMPILe_DISABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_BYTECODE_COMPILe_DISABLED));
+        Assert.assertTrue(Analysis.KEY_BYTECODE_COMPILE_DISABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_BYTECODE_COMPILE_DISABLED));
     }
     
     /**
@@ -1216,7 +1216,7 @@ public class TestJvmRun extends TestCase {
     }
     
     /**
-     * Test analysis just in time (JIT) compiler disabled.
+     * Test DisableExplicitGC in combination with ExplicitGCInvokesConcurrent.
      */
     public void testAnalysisDisableExplictGcWithConcurrentHandling() {
         String jvmOptions = "Xss128k -XX:+DisableExplicitGC -XX:+ExplicitGCInvokesConcurrent -Xms2048M";
@@ -1227,7 +1227,7 @@ public class TestJvmRun extends TestCase {
     }
     
     /**
-     * Test analysis just in time (JIT) compiler disabled.
+     * Test HeapDumpOnOutOfMemoryError disabled.
      */
     public void testAnalysisHeapDumpOnOutOfMemoryErrorDisabled() {
         String jvmOptions = "Xss128k -XX:-HeapDumpOnOutOfMemoryError -Xms2048M";
@@ -1235,5 +1235,29 @@ public class TestJvmRun extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);        
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.KEY_HEAP_DUMP_ON_OOME_DISABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_HEAP_DUMP_ON_OOME_DISABLED));
+    }
+    
+    /**
+     * Test PrintCommandLineFlags missing.
+     */
+    public void testAnalysisPrintCommandlineFlagsMissing() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);        
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_PRINT_COMMANDLINE_FLAGS + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_COMMANDLINE_FLAGS));       
+    }
+    
+    /**
+     * Test PrintCommandLineFlags missing.
+     */
+    public void testAnalysisPrintCommandlineFlagsNotMissing() {
+        String jvmOptions = "Xss128k -XX:+PrintCommandLineFlags Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.KEY_PRINT_COMMANDLINE_FLAGS + " analysis identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_COMMANDLINE_FLAGS));
     }
 }
