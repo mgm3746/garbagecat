@@ -312,11 +312,11 @@ public class GcManager {
                     }
                     
                     // 3) G1 Full GC collector is being invoked for reasons other than explicit GC
-                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_G1_SERIAL_GC)) {
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_G1)) {
                         if (event instanceof G1FullGCEvent) {
                             String trigger = ((TriggerData) event).getTrigger();
                             if (trigger == null || !trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_G1_SERIAL_GC);
+                                jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_G1);
                             }
                         }
                     } 

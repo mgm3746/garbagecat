@@ -394,12 +394,12 @@ public class JvmRun {
 
         // 4) Check for throughput collector serial collection
         if (eventTypes.contains(LogEventType.PARALLEL_SERIAL_OLD)) {
-            analysisKeys.add(Analysis.KEY_THROUGHPUT_SERIAL_GC);
+            analysisKeys.add(Analysis.KEY_SERIAL_GC_THROUGHPUT);
         }
 
         // 5) Check for CMS collector serial collection
         if (eventTypes.contains(LogEventType.CMS_SERIAL_OLD)) {
-            analysisKeys.add(Analysis.KEY_CMS_SERIAL_GC);
+            analysisKeys.add(Analysis.KEY_SERIAL_GC_CMS);
         }
     }
 
@@ -472,12 +472,15 @@ public class JvmRun {
             }
         }
         
-        // Check to see if heap dump on OOME missing
+        // Check to see if heap dump on OOME missing.
         if (jvm.getHeapDumpOnOutOfMemoryErrorOption() == null) {
             analysisKeys.add(Analysis.KEY_HEAP_DUMP_ON_OOME_MISSING);
         }
-
-        // TODO: Check for instrumentation.
+        
+        // Check if instrumenation being used.
+        if (jvm.getInstrumentationOption() != null) {
+            analysisKeys.add(Analysis.KEY_INSTRUMENTATION);
+        }
 
         // TODO: -Xbatch warning
     }

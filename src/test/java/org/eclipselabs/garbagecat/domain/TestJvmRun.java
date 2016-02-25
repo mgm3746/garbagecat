@@ -49,7 +49,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE));
         Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD));
         Assert.assertTrue(Analysis.KEY_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_APPLICATION_STOPPED_TIME_MISSING));
-        Assert.assertTrue(Analysis.KEY_THROUGHPUT_SERIAL_GC + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_THROUGHPUT_SERIAL_GC));
+        Assert.assertTrue(Analysis.KEY_SERIAL_GC_THROUGHPUT + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_THROUGHPUT));
     }
 
     public void testSummaryStatsParNew() {
@@ -69,7 +69,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
         Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
-        Assert.assertTrue(Analysis.KEY_CMS_SERIAL_GC + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_SERIAL_GC));
+        Assert.assertTrue(Analysis.KEY_SERIAL_GC_CMS + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_CMS));
     }
     
     public void testLastTimestampNoEvents() {
@@ -1117,7 +1117,7 @@ public class TestJvmRun extends TestCase {
     }
     
     /**
-     * Test if heap dump on OOME enabled.
+     * Test analysis if heap dump on OOME enabled.
      */
     public void testAnalysisHeapDumpOnOutOfMemoryError() {
         String jvmOptions = "MGM";
@@ -1125,5 +1125,16 @@ public class TestJvmRun extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);        
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.KEY_HEAP_DUMP_ON_OOME_MISSING + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_HEAP_DUMP_ON_OOME_MISSING));
+    }
+    
+    /**
+     * Test analysis if instrumenation being used.
+     */
+    public void testAnalysisInstrumentation() {
+        String jvmOptions = "Xss128k -Xms2048M -javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar -Xmx2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);        
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_INSTRUMENTATION + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_INSTRUMENTATION));
     }
 }

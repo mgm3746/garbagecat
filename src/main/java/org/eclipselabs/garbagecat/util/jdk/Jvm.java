@@ -376,6 +376,20 @@ public class Jvm {
         String regex = "(-XX:+HeapDumpOnOutOfMemoryError)";
         return getJvmOption(regex);
     }
+    
+    /**
+     * Instrumentation option. For example:
+     * 
+     * <pre>
+     * -javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar
+     * </pre>
+     * 
+     * @return True if instrumentation is being used, false otherwise.
+     */
+    public String getInstrumentationOption() {
+        String regex = "(-javaagent:[\\S]+)";
+        return getJvmOption(regex);
+    }
 
     /**
      * 

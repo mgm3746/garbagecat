@@ -417,4 +417,10 @@ public class TestJvm extends TestCase {
         Assert.assertEquals("sun.rmi.dgc.server.gcInterval option incorrect.", "-Dsun.rmi.dgc.server.gcInterval=24400000", jvm.getRmiDgcServerGcIntervalOption());
         Assert.assertEquals("sun.rmi.dgc.server.gcInterval value incorrect.", "24400000", jvm.getRmiDgcServerGcIntervalValue());   
     }
+    
+    public void testInstrumentation() {
+        String jvmOptions = "-Xss128k -Xms2048M -javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar -Xmx2048M -XX:MetaspaceSize=1G -XX:MaxMetaspaceSize=1G -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("Instrumentation option incorrect.", "-javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar", jvm.getInstrumentationOption());        
+    }
 }

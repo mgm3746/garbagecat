@@ -94,17 +94,17 @@ public class Analysis {
     /**
      * Property key for the Throughput collector invoking a serial collection.
      */
-    public static final String KEY_THROUGHPUT_SERIAL_GC = "throughput.serial.gc";  
+    public static final String KEY_SERIAL_GC_THROUGHPUT = "serial.gc.throughput";  
     
     /**
      * Property key for the CMS collector invoking a serial collection.
      */
-    public static final String KEY_CMS_SERIAL_GC = "cms.serial.gc";
+    public static final String KEY_SERIAL_GC_CMS = "serial.gc.cms";
     
     /**
      * Property key for the G1 collector invoking a serial collection.
      */
-    public static final String KEY_G1_SERIAL_GC = "g1.serial.gc";  
+    public static final String KEY_SERIAL_GC_G1 = "serial.gc.g1";  
     
     /**
      * Property key for the RMI Distributed Garbage Collection (DGC) not being managed.
@@ -134,7 +134,12 @@ public class Analysis {
     /**
      * Property key for small sun.rmi.dgc.server.gcInterval.
      */
-    public static final String KEY_HEAP_DUMP_ON_OOME_MISSING = "heap.dump.on.oome.missing";     
+    public static final String KEY_HEAP_DUMP_ON_OOME_MISSING = "heap.dump.on.oome.missing";  
+    
+    /**
+     * Property key for instrumentation.
+     */
+    public static final String KEY_INSTRUMENTATION = "instrumentation";
 
     /**
      * Make default constructor private so the class cannot be instantiated.
