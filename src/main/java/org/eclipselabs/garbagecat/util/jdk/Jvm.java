@@ -507,6 +507,34 @@ public class Jvm {
         String regex = "(-XX:\\+PrintGCDetails)";
         return getJvmOption(regex);
     }
+    
+    /**
+     * The option for the CMS young collector. For example:
+     * 
+     * <pre>
+     * -XX:+UseParNewGC
+     * </pre>
+     * 
+     * @return True if -XX:+UseParNewGC option exists, false otherwise.
+     */
+    public String getUseParNewGCOption() {
+        String regex = "(-XX:\\+UseParNewGC)";
+        return getJvmOption(regex);
+    }
+    
+    /**
+     * The option for the CMS old collector. For example:
+     * 
+     * <pre>
+     * -XX:+UseConcMarkSweepGC
+     * </pre>
+     * 
+     * @return True if -XX:+UseConcMarkSweepGC option exists, false otherwise.
+     */
+    public String getUseConcMarkSweepGCOption() {
+        String regex = "(-XX:\\+UseConcMarkSweepGC)";
+        return getJvmOption(regex);
+    }
 
     /**
      * 

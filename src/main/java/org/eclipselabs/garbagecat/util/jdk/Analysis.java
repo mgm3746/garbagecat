@@ -180,6 +180,11 @@ public class Analysis {
      * Property key for adding option to output details at gc needed for anaylysis.
      */
     public static final String KEY_PRINT_GC_DETAILS_MISSING = "print.gc.details.missing";
+    
+    /**
+     * Property key for adding option to output details at gc needed for anaylysis.
+     */
+    public static final String KEY_CMS_NEW_SERIAL_OLD = "cms.new.serial.old";    
 
     /**
      * Make default constructor private so the class cannot be instantiated.

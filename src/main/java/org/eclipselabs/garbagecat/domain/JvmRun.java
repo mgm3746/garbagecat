@@ -1,14 +1,8 @@
 /******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
+ * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
+ * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
+ * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
+ * initial API and implementation *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
@@ -403,6 +397,14 @@ public class JvmRun {
         if (eventTypes.contains(LogEventType.CMS_SERIAL_OLD)) {
             analysisKeys.add(Analysis.KEY_SERIAL_GC_CMS);
         }
+
+        // 6) Check if logging indicates gc details missing
+        if (!analysisKeys.contains(Analysis.KEY_PRINT_GC_DETAILS_MISSING)) {
+            if (getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)
+                    || getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG)) {
+                analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_MISSING);
+            }
+        }
     }
 
     /**
@@ -512,16 +514,20 @@ public class JvmRun {
             analysisKeys.add(Analysis.KEY_BYTECODE_COMPILE_DISABLED);
         }
 
-        // Check if command flags printed.
+        // Check for command line flags output.
         if (jvm.getPrintCommandLineFlagsOption() == null
                 && !getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS)) {
             analysisKeys.add(Analysis.KEY_PRINT_COMMANDLINE_FLAGS);
         }
-        
-        // Check if gc details missing
-        if (jvm.getPrintGCDetailsOption() == null || getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)
-                || getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG)) {
+
+        // Check if print gc details option missing
+        if (jvm.getPrintGCDetailsOption() == null) {
             analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_MISSING);
+        }
+        
+        // Check if CMS not being used for old collections
+        if (jvm.getUseParNewGCOption() != null && jvm.getUseConcMarkSweepGCOption() == null) {
+            analysisKeys.add(Analysis.KEY_CMS_NEW_SERIAL_OLD);
         }
     }
 

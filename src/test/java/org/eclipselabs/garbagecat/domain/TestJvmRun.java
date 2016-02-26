@@ -1284,4 +1284,28 @@ public class TestJvmRun extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertFalse(Analysis.KEY_PRINT_GC_DETAILS_MISSING + " analysis identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_DETAILS_MISSING));
     }
+    
+    /**
+     * Test CMS not being used to collect old generation.
+     */
+    public void testAnalysisCmsYoungSerialOld() {
+        String jvmOptions = "Xss128k -XX:+UseParNewGC Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_CMS_NEW_SERIAL_OLD + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_NEW_SERIAL_OLD));
+    }
+    
+    /**
+     * Test CMS not being used to collect old generation.
+     */
+    public void testAnalysisCmsYoungCmsOld() {
+        String jvmOptions = "Xss128k -XX:+UseParNewGC -XX:+UseConcMarkSweepGC  Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.KEY_CMS_NEW_SERIAL_OLD + " analysis identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_NEW_SERIAL_OLD));
+    }
 }
