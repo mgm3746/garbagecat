@@ -28,8 +28,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Young collection when only <code>-verbose:gc</code> JVM option specified. It does not appear to be possible to
- * determine the collector.
+ * Young collection when <code>-verbose:gc</code> used without <code>-XX:+PrintGCDetails</code>. It is not possible to
+ * determine the collector from the logging pattern, but it can be determined from
+ * {@link org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent} output.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -91,7 +92,7 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC (" + JdkRegEx.SIZE + "->)?" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
-    
+
     private static Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
 
     /**
