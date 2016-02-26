@@ -420,6 +420,15 @@ public class JvmRun {
                 analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_MISSING);
             }
         }
+        
+        // 8) Check if CMS handling Perm/Metaspace collections by collector analysis (if no jvm options available).
+        if (!analysisKeys.contains(Analysis.KEY_CMS_CLASSUNLOADING_MISSING)) {
+            if (getEventTypes().contains(LogEventType.CMS_REMARK)
+                    && !getEventTypes().contains(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING)) {
+                analysisKeys.add(Analysis.KEY_CMS_CLASSUNLOADING_MISSING);
+            }
+
+        }
     }
 
     /**

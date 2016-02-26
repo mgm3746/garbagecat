@@ -1343,7 +1343,7 @@ public class TestJvmRun extends TestCase {
     }
     
     /**
-     * Test CMS being used to collect old generation.
+     * Test CMS handling perm/metaspace collections.
      */
     public void testAnalysisCMSClassUnloadingEnabledMissingButNotCms() {
         String jvmOptions = "MGM";
@@ -1352,5 +1352,20 @@ public class TestJvmRun extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertFalse(Analysis.KEY_CMS_CLASSUNLOADING_MISSING + " analysis identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASSUNLOADING_MISSING));
+    }
+    
+    /**
+     * Test CMS handling perm/metaspace collections.
+     */
+    public void testAnalysisCMSClassUnloadingEnabledMissingCollector() {
+        String jvmOptions = null;
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.CMS_REMARK);
+        jvmRun.setEventTypes(eventTypes);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_CMS_CLASSUNLOADING_MISSING + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASSUNLOADING_MISSING));
     }
 }
