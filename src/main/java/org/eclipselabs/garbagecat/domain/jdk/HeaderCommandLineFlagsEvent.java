@@ -24,8 +24,25 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Flags header.
+ * Flags header the displays a combination of options passed to the JVM and options/settings triggered by the options
+ * passed in. It is not just the options passed to the JVM.
  * </p>
+ * 
+ * <p>
+ * For example, when I pass these options:
+ * </p>
+ * 
+ * <pre>
+ * -XX:+UseConcMarkSweepGC -verbose:gc-verbose:gc -Xloggc:gc.log.`date +%Y%m%d%H%M%S`
+ * </pre>
+ * 
+ * <p>
+ * I see this output:
+ * </p>
+ * 
+ * <pre>
+ * CommandLine flags: -XX:InitialHeapSize=257840832 -XX:MaxHeapSize=4125453312 -XX:MaxNewSize=697933824 -XX:MaxTenuringThreshold=6 -XX:OldPLABSize=16 -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseParNewGC
+ * </pre>
  * 
  * <h3>Example Logging</h3>
  * 
@@ -84,7 +101,7 @@ public class HeaderCommandLineFlagsEvent implements LogEvent {
     public static final boolean match(String logLine) {
         return pattern.matcher(logLine).matches();
     }
-    
+
     /**
      * @return JVM options.
      */
