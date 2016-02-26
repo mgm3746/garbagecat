@@ -501,31 +501,6 @@ public class JdkUtil {
     }
 
     /**
-     * Determine trigger type.
-     * 
-     * @param triggerTypeString
-     *            The trigger string.
-     * @return the trigger type.
-     */
-    public static final TriggerType determineTriggerType(String triggerTypeString) {
-        TriggerType triggerType = null;
-        if (triggerTypeString == null) {
-            triggerType = TriggerType.UNDEFINED;
-        } else {
-            if (triggerTypeString.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                triggerType = TriggerType.SYSTEM_GC;
-            } else if (triggerTypeString.matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD)) {
-                triggerType = TriggerType.METADATA_GC_THRESHOLD;
-            } else if (triggerTypeString.matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE)) {
-                triggerType = TriggerType.ALLOCATION_FAILURE;
-            } else {
-                triggerType = TriggerType.UNKNOWN;
-            }
-        }
-        return triggerType;
-    }
-
-    /**
      * Convert all log entry timestamps to a datestamp.
      * 
      * @param logEntry

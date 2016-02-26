@@ -145,7 +145,7 @@ public class JdkRegEx {
     public static final String TRIGGER_SYSTEM_GC = "System(.gc\\(\\))?";
     
     /**
-     * Metadata GC Threshold trigger
+     * Metadata GC Threshold trigger. When the Metaspace is resized.
      */
     public static final String TRIGGER_METADATA_GC_THRESHOLD = "Metadata GC Threshold";
 
