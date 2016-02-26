@@ -23,12 +23,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * G1_PRINT_GC_DETAILS
+ * G1
  * </p>
  *
  * <p>
  * Remove G1 collector verbose logging when <code>-XX:+UseG1GC</code> used in combination with
- * <code>-XX:+PrintGCDetails</code>. It is currently not being used for analysis.
+ * <code>-XX:+PrintGCDetails</code>. It is currently not being used for analysis. Other general G1 preprocessing.
  * </p>
  *
  * <h3>Example Logging</h3>
@@ -275,7 +275,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  *
  */
-public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
+public class G1PreprocessAction implements PreprocessAction {
 
     /**
      * Regular expression for retained beginning G1_YOUNG_PAUSE collection. Trigger can be before or after "(young)".
@@ -448,7 +448,7 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
      * @param entangledLogLines
      *            Log lines to be output out of order.
      */
-    public G1PrintGcDetailsPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntr,
+    public G1PreprocessAction(String priorLogEntry, String logEntry, String nextLogEntr,
             List<String> entangledLogLines) {
         
         // Beginning logging
@@ -563,7 +563,7 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
     }
 
     public String getName() {
-        return JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString();
+        return JdkUtil.PreprocessActionType.G1.toString();
     }
 
     /**
@@ -610,7 +610,7 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
             Iterator<String> iterator = entangledLogLines.iterator();
             while (iterator.hasNext()) {
                 String logLine = iterator.next();
-                if (logLine != G1PrintGcDetailsPreprocessAction.BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT) {
+                if (logLine != G1PreprocessAction.BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT) {
                     this.logEntry = this.logEntry + logLine;
                 }
             }

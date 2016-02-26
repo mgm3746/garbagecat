@@ -88,4 +88,24 @@ public class TestCmsSerialOldEvent extends TestCase {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 1504625L, event.getTimestamp());
     }
+    
+    public void testLogLineTriggerConcurrentModeFailure() {
+        String logLine = "44.684: [Full GC44.684: [CMS (concurrent mode failure): 1218548K->413373K(1465840K), "
+                + "1.3656970 secs] 1229657K->413373K(1581168K), [CMS Perm : 83805K->80520K(83968K)], 1.3659420 secs] "
+                + "[Times: user=1.33 sys=0.01, real=1.37 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".", CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
+        Assert.assertEquals("Time stamp not parsed correctly.", 44684, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 1229657 - 1218548, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 413373 - 413373, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 1581168 - 1465840, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 1218548, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 413373, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 1465840, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 83805, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 80520, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 83968, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 1365, event.getDuration());
+    }
 }

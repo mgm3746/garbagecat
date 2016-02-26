@@ -44,15 +44,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 5.980: [Full GC 5.980: [CMS: 5589K-&gt;5796K(122880K), 0.0889610 secs] 11695K-&gt;5796K(131072K), [CMS Perm : 13140K-&gt;13124K(131072K)], 0.0891270 secs]
+ * 5.980: [Full GC 5.980: [CMS: 5589K->5796K(122880K), 0.0889610 secs] 11695K->5796K(131072K), [CMS Perm : 13140K->13124K(131072K)], 0.0891270 secs]
  * </pre>
  * 
  * <p>
- * 2) JDK 1.6 format (Note "Full GC" vs. "Full GC (System)"):
+ * 2) JDK 1.6 format with trigger after "Full GC":
  * </p>
  * 
  * <pre>
- * 2.928: [Full GC (System) 2.929: [CMS: 0K-&gt;6501K(8218240K), 0.2525532 secs] 66502K-&gt;6501K(8367360K), [CMS Perm : 16640K-&gt;16623K(524288K)], 0.2527331 secs]
+ * 2.928: [Full GC (System) 2.929: [CMS: 0K->6501K(8218240K), 0.2525532 secs] 66502K->6501K(8367360K), [CMS Perm : 16640K->16623K(524288K)], 0.2527331 secs]
  * </pre>
  * 
  * <p>
@@ -62,13 +62,23 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <pre>
  * raw:
- * 2013-12-09T16:43:09.366+0000: 1504.625: [Full GC2013-12-09T16:43:09.366+0000: 1504.625: [CMS: 1172695K-&gt;840574K(1549164K), 3.7572507 secs] 1301420K-&gt;840574K(1855852K), [CMS Perm : 226817K-&gt;226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
+ * 2013-12-09T16:43:09.366+0000: 1504.625: [Full GC2013-12-09T16:43:09.366+0000: 1504.625: [CMS: 1172695K->840574K(1549164K), 3.7572507 secs] 1301420K->840574K(1855852K), [CMS Perm : 226817K->226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
  * 
  * </pre>
  * 
  * <pre>
  * preprocessed:
- * 1504.625: [Full GC1504.625: [CMS: 1172695K-&gt;840574K(1549164K), 3.7572507 secs] 1301420K-&gt;840574K(1855852K), [CMS Perm : 226817K-&gt;226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
+ * 1504.625: [Full GC1504.625: [CMS: 1172695K->840574K(1549164K), 3.7572507 secs] 1301420K->840574K(1855852K), [CMS Perm : 226817K->226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
+ * </pre>
+ * 
+ * <p>
+ * 4) After {@link org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction} with trigger after "CMS":
+ * </p>
+ * 
+ * <pre>
+ * raw:
+ * 2013-12-09T16:43:09.366+0000: 1504.625: [Full GC2013-12-09T16:43:09.366+0000: 1504.625: [CMS: 1172695K->840574K(1549164K), 3.7572507 secs] 1301420K->840574K(1855852K), [CMS Perm : 226817K->226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
+ * 
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -84,12 +94,12 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
     /**
      * Regular expressions defining the logging.
     */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\(("
-            + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\) )?" + JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_SYSTEM_GC
+            + ")\\) )?" + JdkRegEx.TIMESTAMP + ": \\[CMS( \\((" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + ")\\))?: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     
     private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
 
@@ -102,21 +112,27 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
-            super.setOldOccupancyInit(Integer.parseInt(matcher.group(7)));
-            super.setOldOccupancyEnd(Integer.parseInt(matcher.group(8)));
-            super.setOldSpace(Integer.parseInt(matcher.group(9)));
-            int totalBegin = Integer.parseInt(matcher.group(11));
+            super.setOldOccupancyInit(Integer.parseInt(matcher.group(9)));
+            super.setOldOccupancyEnd(Integer.parseInt(matcher.group(10)));
+            super.setOldSpace(Integer.parseInt(matcher.group(11)));
+            int totalBegin = Integer.parseInt(matcher.group(13));
             super.setYoungOccupancyInit(totalBegin - super.getOldOccupancyInit());
-            int totalEnd = Integer.parseInt(matcher.group(12));
+            int totalEnd = Integer.parseInt(matcher.group(14));
             super.setYoungOccupancyEnd(totalEnd - super.getOldOccupancyEnd());
-            int totalAllocation = Integer.parseInt(matcher.group(13));
+            int totalAllocation = Integer.parseInt(matcher.group(15));
             super.setYoungSpace(totalAllocation - super.getOldSpace());
-            super.setPermOccupancyInit(Integer.parseInt(matcher.group(14)));
-            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(15)));
-            super.setPermSpace(Integer.parseInt(matcher.group(16)));
-            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(18)).intValue());
-            if (matcher.group(4) != null){
+            super.setPermOccupancyInit(Integer.parseInt(matcher.group(16)));
+            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(17)));
+            super.setPermSpace(Integer.parseInt(matcher.group(18)));
+            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(20)).intValue());
+            if (matcher.group(4) != null && matcher.group(8) == null){
                 trigger = matcher.group(4);
+            }
+            if (matcher.group(4) == null && matcher.group(8) != null){
+                trigger = matcher.group(8);
+            }
+            if (matcher.group(4) != null && matcher.group(8) != null){
+                throw new IllegalArgumentException("Double triggers");
             }
         }
     }

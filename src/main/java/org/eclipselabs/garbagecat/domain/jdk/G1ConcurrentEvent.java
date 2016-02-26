@@ -69,7 +69,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 2) After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction}:
+ * 2) After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction}:
  * </p>
  * 
  * <pre>

@@ -45,7 +45,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreproc
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction;
+import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.GcTimeLimitExceededPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ParNewCmsConcurrentPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.PrintHeapAtGcPreprocessAction;
@@ -244,8 +244,8 @@ public class GcManager {
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
-            } else if (G1PrintGcDetailsPreprocessAction.match(currentLogLine)) {
-                G1PrintGcDetailsPreprocessAction action = new G1PrintGcDetailsPreprocessAction(priorLogLine,
+            } else if (G1PreprocessAction.match(currentLogLine)) {
+                G1PreprocessAction action = new G1PreprocessAction(priorLogLine,
                         currentLogLine, nextLogLine, entangledLogLines);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();

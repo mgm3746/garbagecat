@@ -53,7 +53,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 3) After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction}:
+ * 3) After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction}:
  * </p>
  * 
  * <pre>

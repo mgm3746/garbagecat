@@ -23,7 +23,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * Generall CMS preprocessing.
+ * General CMS preprocessing.
  * </p>
  *
  * <p>
@@ -36,6 +36,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 1) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} combined with {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent}:
  * </p>
  *
+ * <pre>
  * 46674.719: [GC (Allocation Failure)46674.719: [ParNew46674.749: [CMS-concurrent-abortable-preclean: 1.427/2.228 secs] [Times: user=1.56 sys=0.01, real=2.23 secs]
  * : 153599K->17023K(153600K), 0.0383370 secs] 229326K->114168K(494976K), 0.0384820 secs] [Times: user=0.15 sys=0.01, real=0.04 secs]
  * </pre>
@@ -48,6 +49,41 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 46674.719: [GC (Allocation Failure)46674.719: [ParNew: 153599K->17023K(153600K), 0.0383370 secs] 229326K->114168K(494976K), 0.0384820 secs] [Times: user=0.15 sys=0.01, real=0.04 secs]
  * 46674.749: [CMS-concurrent-abortable-preclean: 1.427/2.228 secs] [Times: user=1.56 sys=0.01, real=2.23 secs]
  * </pre>
+ * 
+ * <p>
+ * 2) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} combined with {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} without trigger:
+ * </p>
+ *
+ * <pre>
+ * 10.963: [GC10.963: [ParNew10.977: [CMS-concurrent-abortable-preclean: 0.088/0.197 secs] [Times: user=0.33 sys=0.05, real=0.20 secs]
+ * : 115327K->12800K(115328K), 0.0155930 secs] 349452K->251716K(404548K), 0.0156840 secs] [Times: user=0.02 sys=0.00, real=0.01 secs]
+ * </pre>
+ *
+ * <p>
+ * Preprocessed:
+ * </p>
+ *
+ * <pre>
+ * 10.963: [GC10.963: [ParNew: 115327K->12800K(115328K), 0.0155930 secs] 349452K->251716K(404548K), 0.0156840 secs] [Times: user=0.02 sys=0.00, real=0.01 secs]
+ * 10.977: [CMS-concurrent-abortable-preclean: 0.088/0.197 secs] [Times: user=0.33 sys=0.05, real=0.20 secs]
+ * </pre>
+ * 
+ * <p>
+ * 3) {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent} across 2 lines:
+ * </p>
+ * 
+ * <pre>
+ * 44.684: [Full GC44.684: [CMS44.877: [CMS-concurrent-mark: 1.508/2.428 secs] [Times: user=3.44 sys=0.49, real=2.42 secs]
+ * (concurrent mode failure): 1218548K->413373K(1465840K), 1.3656970 secs] 1229657K->413373K(1581168K), [CMS Perm : 83805K->80520K(83968K)], 1.3659420 secs] [Times: user=1.33 sys=0.01, real=1.37 secs]
+ * </pre>
+ *
+ * <p>
+ * Preprocessed:
+ * </p>
+ *
+ * <pre>
+ * 44.684: [Full GC44.684: [CMS (concurrent mode failure): 1218548K->413373K(1465840K), 1.3656970 secs] 1229657K->413373K(1581168K), [CMS Perm : 83805K->80520K(83968K)], 1.3659420 secs] [Times: user=1.33 sys=0.01, real=1.37 secs]
+ * 44.877: [CMS-concurrent-mark: 1.508/2.428 secs] [Times: user=3.44 sys=0.49, real=2.42 secs]
  *
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  *
@@ -57,17 +93,23 @@ public class CmsPreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained beginning PAR_NEW mixed with CMS_CONCURRENT collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[GC \\(Allocation Failure\\)" + JdkRegEx.TIMESTAMP + ": \\[ParNew)(" + JdkRegEx.TIMESTAMP
+    private static final String REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC( \\("
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))?" + JdkRegEx.TIMESTAMP + ": \\[ParNew)(" + JdkRegEx.TIMESTAMP
             + ": \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK
             + ")[ ]*$";
+    
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC"
+            + JdkRegEx.TIMESTAMP + ": \\[CMS)(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-mark: "
+            + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + ")[ ]*$";
 
     /**
      * Regular expression for retained end.
      */
-    private static final String REGEX_RETAIN_END = "^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX_RETAIN_END = "^( \\(" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\))?: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(, \\[CMS Perm : " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -95,10 +137,19 @@ public class CmsPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(4) + System.getProperty("line.separator"));
+                entangledLogLines.add(matcher.group(5) + System.getProperty("line.separator"));
             }
             // Output beginning of PAR_NEW line
             this.logEntry = matcher.group(1);            
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)) {
+            // CMS_SERIAL_OLD mixed with CMS_CONCURRENT
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                entangledLogLines.add(matcher.group(4) + System.getProperty("line.separator"));
+            }
+            // Output beginning of CMS_SERIAL_OLD line
+            this.logEntry = matcher.group(1);  
         } else if (logEntry.matches(REGEX_RETAIN_END)) {
             this.logEntry = logEntry + System.getProperty("line.separator");
             clearEntangledLines(entangledLogLines);
@@ -123,7 +174,8 @@ public class CmsPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT) || logLine.matches(REGEX_RETAIN_END);
+        return logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT) || logLine.matches(REGEX_RETAIN_END);
     }
 
     /**
