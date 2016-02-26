@@ -1016,7 +1016,7 @@ public class TestJvmRun extends TestCase {
     }
     
     /**
-     * Test <code>CmsPreprocessAction</code> for mixed CMS_SERIAL_OLD and CMS_CONCURRENT.
+     * Test <code>CmsPreprocessAction</code> for mixed CMS_SERIAL_OLD (concurrent mode failure) and CMS_CONCURRENT.
      * 
      */
     public void testCmsPreprocessActionCmsSerialOldWithConcurrent() {
@@ -1029,7 +1029,8 @@ public class TestJvmRun extends TestCase {
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.", jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
-        Assert.assertTrue(JdkUtil.LogEventType.CMS_CONCURRENT.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));        
+        Assert.assertTrue(JdkUtil.LogEventType.CMS_CONCURRENT.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE));
     }
     
     /**

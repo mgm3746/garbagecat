@@ -393,8 +393,9 @@ public class JvmRun {
             analysisKeys.add(Analysis.KEY_SERIAL_GC_THROUGHPUT);
         }
 
-        // 5) Check for CMS collector serial collection
-        if (eventTypes.contains(LogEventType.CMS_SERIAL_OLD)) {
+        // 5) Check for CMS collector serial collection not caused by concurrent mode failure
+        if (!analysisKeys.contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE)
+                && eventTypes.contains(LogEventType.CMS_SERIAL_OLD)) {
             analysisKeys.add(Analysis.KEY_SERIAL_GC_CMS);
         }
 
@@ -402,6 +403,20 @@ public class JvmRun {
         if (!analysisKeys.contains(Analysis.KEY_PRINT_GC_DETAILS_MISSING)) {
             if (getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)
                     || getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG)) {
+                analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_MISSING);
+            }
+        }
+        
+        // 7) Check for concurrent mode failure by logging event type. Going forward, this will be identified by a
+        // trigger, not a new logging event. This is needed to deal with legacy code that unfortunately created many
+        // unnecessary events instead of preparsing them into their component events.
+        if (!analysisKeys.contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE)) {
+            if (getEventTypes().contains(LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE)
+                    || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE)
+                    || getEventTypes().contains(LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA)
+                    || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE)
+                    || getEventTypes()
+                            .contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA)) {
                 analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_MISSING);
             }
         }

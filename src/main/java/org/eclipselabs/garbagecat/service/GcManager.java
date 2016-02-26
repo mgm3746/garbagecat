@@ -288,11 +288,11 @@ public class GcManager {
                     
                     // Analysis
 
-                    // 1) Explicit GC causing a serial collector to be invoked
+                    // 1) Trigger causing a serial collector to be invoked
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL)
                             && (event instanceof CmsSerialOldEvent || event instanceof G1FullGCEvent)) {
                         String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {                        
                             jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL);
                         }
                     } else {
@@ -319,7 +319,19 @@ public class GcManager {
                                 jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_G1);
                             }
                         }
-                    } 
+                    }
+                    
+                    // 4) CMS concurrent mode failure
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE)) {
+                        if (event instanceof CmsSerialOldEvent) {
+                            String trigger = ((TriggerData) event).getTrigger();
+                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE)) {
+                                jvmDao.addAnalysisKey(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE);
+                            }
+                        }
+                    }
+                    
+                    
                 } else if (event instanceof ApplicationStoppedTimeEvent) {
                     jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
                 } else if (event instanceof HeaderCommandLineFlagsEvent) {

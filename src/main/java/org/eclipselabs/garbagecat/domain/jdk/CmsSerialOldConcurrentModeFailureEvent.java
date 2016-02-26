@@ -73,7 +73,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 28282.075: [Full GC 28282.075 (concurrent mode failure): 1179601K-&gt;1179648K(1179648K), 10.7510650 secs] 1441361K-&gt;1180553K(1441600K), [CMS Perm : 71172K-&gt;71171K(262144K)], 10.7515460 secs]
+ * 28282.075: [Full GC 28282.075 (concurrent mode failure): 1179601K->1179648K(1179648K), 10.7510650 secs] 1441361K->1180553K(1441600K), [CMS Perm : 71172K->71171K(262144K)], 10.7515460 secs]
  * </pre>
  * 
  * <p>
@@ -81,7 +81,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 6942.991: [Full GC 6942.991: [CMS (concurrent mode failure): 907264K-&gt;907262K(907264K), 11.8579830 secs] 1506304K-&gt;1202006K(1506304K), [CMS Perm : 92801K-&gt;92800K(157352K)], 11.8585290 secs] [Times: user=11.80 sys=0.06, real=11.85 secs]
+ * 6942.991: [Full GC 6942.991: [CMS (concurrent mode failure): 907264K->907262K(907264K), 11.8579830 secs] 1506304K->1202006K(1506304K), [CMS Perm : 92801K->92800K(157352K)], 11.8585290 secs] [Times: user=11.80 sys=0.06, real=11.85 secs]
  * </pre>
  * 
  * <p>
@@ -91,7 +91,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 85238.030: [Full GC 85238.030: [CMS85238.672: [CMS-concurrent-mark: 0.666/0.686 secs] (concurrent mode failure): 439328K-&gt;439609K(4023936K), 2.7153820 secs] 448884K-&gt;439609K(4177280K), [CMS Perm : 262143K-&gt;262143K(262144K)], 2.7156150 secs] [Times: user=3.35 sys=0.00, real=2.72 secs]
+ * 85238.030: [Full GC 85238.030: [CMS85238.672: [CMS-concurrent-mark: 0.666/0.686 secs] (concurrent mode failure): 439328K->439609K(4023936K), 2.7153820 secs] 448884K->439609K(4177280K), [CMS Perm : 262143K->262143K(262144K)], 2.7156150 secs] [Times: user=3.35 sys=0.00, real=2.72 secs]
  * </pre>
  * 
  * <p>
@@ -100,7 +100,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 85217.903: [Full GC 85217.903: [CMS85217.919: [CMS-concurrent-abortable-preclean: 0.723/3.756 secs] (concurrent mode failure) (concurrent mode failure)[YG occupancy: 33620K (153344K)]85217.919: [Rescan (parallel) , 0.0116680 secs]85217.931: [weak refs processing, 0.0167100 secs]85217.948: [class unloading, 0.0571300 secs]85218.005: [scrub symbol &amp; string tables, 0.0291210 secs]: 423728K-&gt;423633K(4023936K), 0.5165330 secs] 457349K-&gt;457254K(4177280K), [CMS Perm : 260428K-&gt;260406K(262144K)], 0.5167600 secs] [Times: user=0.55 sys=0.01, real=0.52 secs]
+ * 85217.903: [Full GC 85217.903: [CMS85217.919: [CMS-concurrent-abortable-preclean: 0.723/3.756 secs] (concurrent mode failure) (concurrent mode failure)[YG occupancy: 33620K (153344K)]85217.919: [Rescan (parallel) , 0.0116680 secs]85217.931: [weak refs processing, 0.0167100 secs]85217.948: [class unloading, 0.0571300 secs]85218.005: [scrub symbol &amp; string tables, 0.0291210 secs]: 423728K->423633K(4023936K), 0.5165330 secs] 457349K->457254K(4177280K), [CMS Perm : 260428K->260406K(262144K)], 0.5167600 secs] [Times: user=0.55 sys=0.01, real=0.52 secs]
  * </pre>
  * 
  * <p>
@@ -110,7 +110,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 198.712: [Full GC 198.712: [CMS198.733: [CMS-concurrent-reset: 0.061/1.405 secs]: 14037K-&gt;31492K(1835008K), 0.7953140 secs] 210074K-&gt;31492K(2096960K), [CMS Perm : 27817K-&gt;27784K(131072K)], 0.7955670 secs]
+ * 198.712: [Full GC 198.712: [CMS198.733: [CMS-concurrent-reset: 0.061/1.405 secs]: 14037K->31492K(1835008K), 0.7953140 secs] 210074K->31492K(2096960K), [CMS Perm : 27817K->27784K(131072K)], 0.7955670 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
