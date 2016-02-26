@@ -1250,7 +1250,7 @@ public class TestJvmRun extends TestCase {
     }
     
     /**
-     * Test PrintCommandLineFlags missing.
+     * Test PrintCommandLineFlags not missing.
      */
     public void testAnalysisPrintCommandlineFlagsNotMissing() {
         String jvmOptions = "Xss128k -XX:+PrintCommandLineFlags Xms2048M";
@@ -1259,5 +1259,29 @@ public class TestJvmRun extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertFalse(Analysis.KEY_PRINT_COMMANDLINE_FLAGS + " analysis identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_COMMANDLINE_FLAGS));
+    }
+    
+    /**
+     * Test PrintGCDetails missing.
+     */
+    public void testAnalysisPrintGCDetailsMissing() {
+        String jvmOptions = "Xss128k Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_PRINT_GC_DETAILS_MISSING + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_DETAILS_MISSING));
+    }
+    
+    /**
+     * Test PrintGCDetails not missing.
+     */
+    public void testAnalysisPrintGCDetailsNotMissing() {
+        String jvmOptions = "Xss128k -XX:+PrintGCDetails Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.KEY_PRINT_GC_DETAILS_MISSING + " analysis identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_DETAILS_MISSING));
     }
 }

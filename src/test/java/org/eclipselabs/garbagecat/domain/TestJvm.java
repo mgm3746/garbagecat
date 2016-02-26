@@ -447,4 +447,22 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("-Xint option incorrect.", "-Xint", jvm.getXIntOption());        
     }
+    
+    public void testExplicitGCInvokesConcurrent() {
+        String jvmOptions = "-Xss128k -XX:+ExplicitGCInvokesConcurrent -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:+ExplicitGCInvokesConcurrent option incorrect.", "-XX:+ExplicitGCInvokesConcurrent", jvm.getExplicitGcInvokesConcurrentOption());        
+    }
+    
+    public void testPrintCommandLineFlags() {
+        String jvmOptions = "-Xss128k -XX:+PrintCommandLineFlags -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:+PrintCommandLineFlags option incorrect.", "-XX:+PrintCommandLineFlags", jvm.getPrintCommandLineFlagsOption());        
+    }
+    
+    public void testPrintGCDetails() {
+        String jvmOptions = "-Xss128k -XX:+PrintGCDetails -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:+PrintGCDetails option incorrect.", "-XX:+PrintGCDetails", jvm.getPrintGCDetailsOption());        
+    }    
 }

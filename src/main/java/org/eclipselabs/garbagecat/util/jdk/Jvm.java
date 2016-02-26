@@ -466,7 +466,7 @@ public class Jvm {
     }
     
     /**
-     * The option to allow explict garbage collection to be handled concurrently by the CMS and G1 collectors. For
+     * The option to allow explicit garbage collection to be handled concurrently by the CMS and G1 collectors. For
      * example:
      * 
      * <pre>
@@ -481,7 +481,7 @@ public class Jvm {
     }
     
     /**
-     * The option to print out JVM command line options at the beginning of gc logging. For example:
+     * The option to output JVM command line options at the beginning of gc logging. For example:
      * 
      * <pre>
      * -XX:+PrintCommandLineFlags
@@ -491,6 +491,20 @@ public class Jvm {
      */
     public String getPrintCommandLineFlagsOption() {
         String regex = "(-XX:\\+PrintCommandLineFlags)";
+        return getJvmOption(regex);
+    }
+    
+    /**
+     * The option to output details at gc. For example:
+     * 
+     * <pre>
+     * -XX:+PrintGCDetails
+     * </pre>
+     * 
+     * @return True if -XX:+PrintGCDetails option exists, false otherwise.
+     */
+    public String getPrintGCDetailsOption() {
+        String regex = "(-XX:\\+PrintGCDetails)";
         return getJvmOption(regex);
     }
 

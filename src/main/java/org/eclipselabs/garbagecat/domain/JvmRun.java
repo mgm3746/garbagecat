@@ -403,9 +403,6 @@ public class JvmRun {
         if (eventTypes.contains(LogEventType.CMS_SERIAL_OLD)) {
             analysisKeys.add(Analysis.KEY_SERIAL_GC_CMS);
         }
-
-        // 6) Check if explict GC should be handled concurrently
-
     }
 
     /**
@@ -519,6 +516,12 @@ public class JvmRun {
         if (jvm.getPrintCommandLineFlagsOption() == null
                 && !getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS)) {
             analysisKeys.add(Analysis.KEY_PRINT_COMMANDLINE_FLAGS);
+        }
+        
+        // Check if gc details missing
+        if (jvm.getPrintGCDetailsOption() == null || getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)
+                || getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG)) {
+            analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_MISSING);
         }
     }
 
