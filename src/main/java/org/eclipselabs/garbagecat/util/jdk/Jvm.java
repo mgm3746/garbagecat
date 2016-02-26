@@ -535,6 +535,20 @@ public class Jvm {
         String regex = "(-XX:\\+UseConcMarkSweepGC)";
         return getJvmOption(regex);
     }
+    
+    /**
+     * The option for allowing the CMS collector to collect Perm/Metaspace. For example:
+     * 
+     * <pre>
+     * -XX:+CMSClassUnloadingEnabled
+     * </pre>
+     * 
+     * @return True if -XX:+CMSClassUnloadingEnabled option exists, false otherwise.
+     */
+    public String getCMSClassUnloadingEnabled() {
+        String regex = "(-XX:\\+CMSClassUnloadingEnabled)";
+        return getJvmOption(regex);
+    }
 
     /**
      * 

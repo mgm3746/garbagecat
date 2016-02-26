@@ -476,5 +476,11 @@ public class TestJvm extends TestCase {
         String jvmOptions = "-Xss128k -XX:+UseConcMarkSweepGC -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("-XX:+UseConcMarkSweepGC option incorrect.", "-XX:+UseConcMarkSweepGC", jvm.getUseConcMarkSweepGCOption());        
-    }    
+    }   
+    
+    public void testCMSClassUnloadingEnabled() {
+        String jvmOptions = "-Xss128k -XX:+CMSClassUnloadingEnabled -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:+CMSClassUnloadingEnabled option incorrect.", "-XX:+CMSClassUnloadingEnabled", jvm.getCMSClassUnloadingEnabled());        
+    } 
 }

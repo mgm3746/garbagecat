@@ -190,6 +190,11 @@ public class Analysis {
      * Property key for concurrent mode failure.
      */
     public static final String KEY_CMS_CONCURRENT_MODE_FAILURE = "cms.concurrent.mode.failure";   
+    
+    /**
+     * Property key for concurrent mode failure.
+     */
+    public static final String KEY_CMS_CLASSUNLOADING_MISSING = "cms.classunloading.missing";  
 
     /**
      * Make default constructor private so the class cannot be instantiated.

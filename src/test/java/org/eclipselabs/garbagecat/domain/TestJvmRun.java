@@ -1316,7 +1316,7 @@ public class TestJvmRun extends TestCase {
     }
     
     /**
-     * Test CMS not being used to collect old generation.
+     * Test CMS being used to collect old generation.
      */
     public void testAnalysisCmsYoungCmsOld() {
         String jvmOptions = "Xss128k -XX:+UseParNewGC -XX:+UseConcMarkSweepGC  Xms2048M";
@@ -1325,5 +1325,32 @@ public class TestJvmRun extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertFalse(Analysis.KEY_CMS_NEW_SERIAL_OLD + " analysis identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_NEW_SERIAL_OLD));
+    }
+    
+    /**
+     * Test CMS being used to collect old generation.
+     */
+    public void testAnalysisCMSClassUnloadingEnabledMissing() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.CMS_CONCURRENT);
+        jvmRun.setEventTypes(eventTypes);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_CMS_CLASSUNLOADING_MISSING + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASSUNLOADING_MISSING));
+    }
+    
+    /**
+     * Test CMS being used to collect old generation.
+     */
+    public void testAnalysisCMSClassUnloadingEnabledMissingButNotCms() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.KEY_CMS_CLASSUNLOADING_MISSING + " analysis identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASSUNLOADING_MISSING));
     }
 }

@@ -544,6 +544,11 @@ public class JvmRun {
         if (jvm.getUseParNewGCOption() != null && jvm.getUseConcMarkSweepGCOption() == null) {
             analysisKeys.add(Analysis.KEY_CMS_NEW_SERIAL_OLD);
         }
+        
+        // Check if CMS handling Perm/Metaspace collections.
+        if ((isCmsCollector(eventTypes) && jvm.getCMSClassUnloadingEnabled() == null)) {
+            analysisKeys.add(Analysis.KEY_CMS_CLASSUNLOADING_MISSING);
+        }
     }
 
     /**
