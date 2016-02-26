@@ -785,7 +785,18 @@ public class JdkUtil {
         case CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE:
         case CMS_INITIAL_MARK:
         case CMS_REMARK:
-        case CMS_REMARK_WITH_CLASS_UNLOADING:            
+        case CMS_REMARK_WITH_CLASS_UNLOADING: 
+        case PAR_NEW:
+        case PAR_NEW_CMS_CONCURRENT:
+        case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD:
+        case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA:
+        case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE:
+        case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA:
+        case PAR_NEW_CONCURRENT_MODE_FAILURE:
+        case PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA:
+        case PAR_NEW_PROMOTION_FAILED:
+        case PAR_NEW_CMS_SERIAL_OLD:
+        case PAR_NEW_PROMOTION_FAILED_TRUNCATED:                        
             isCms = true;
         default:
             break;

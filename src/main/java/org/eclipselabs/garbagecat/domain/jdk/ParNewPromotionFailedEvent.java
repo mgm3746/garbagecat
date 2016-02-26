@@ -61,7 +61,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
-public class ParNewPromotionFailedEvent implements BlockingEvent {
+public class ParNewPromotionFailedEvent implements BlockingEvent , CmsCollection{
 
     /**
      * Regular expressions defining the logging.

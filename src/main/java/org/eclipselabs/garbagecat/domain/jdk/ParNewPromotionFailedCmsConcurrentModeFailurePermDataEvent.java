@@ -75,7 +75,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  */
 public class ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent implements BlockingEvent, OldCollection,
-        PermCollection, YoungData, OldData, PermData {
+        PermCollection, YoungData, OldData, PermData, CmsCollection {
 
     /**
      * Regular expressions defining the logging.

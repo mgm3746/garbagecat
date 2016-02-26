@@ -44,7 +44,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParNewCmsSerialOldEvent implements BlockingEvent, OldCollection, YoungData, OldData {
+public class ParNewCmsSerialOldEvent implements BlockingEvent, OldCollection, YoungData, OldData, CmsCollection {
 
     /**
      * Regular expressions defining the logging.

@@ -43,7 +43,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParNewCmsConcurrentEvent implements BlockingEvent, YoungCollection, YoungData, OldData {
+public class ParNewCmsConcurrentEvent implements BlockingEvent, YoungCollection, YoungData, OldData, CmsCollection {
 
     /**
      * Regular expressions defining the logging.

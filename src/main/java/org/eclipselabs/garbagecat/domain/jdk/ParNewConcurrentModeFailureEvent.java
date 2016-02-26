@@ -116,7 +116,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  */
 public class ParNewConcurrentModeFailureEvent implements BlockingEvent, OldCollection, PermCollection, YoungData,
-        OldData {
+        OldData, CmsCollection {
 
     /**
      * Regular expressions defining the logging.
