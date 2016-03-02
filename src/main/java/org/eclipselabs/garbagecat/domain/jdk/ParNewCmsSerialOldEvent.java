@@ -37,7 +37,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * 42782.086: [GC 42782.086: [ParNew: 254464K-&gt;7680K(254464K), 0.2853553 secs]42782.371: [Tenured: 1082057K-&gt;934941K(1082084K), 6.2719770 secs] 1310721K-&gt;934941K(1336548K), 6.5587770 secs]
+ * 42782.086: [GC 42782.086: [ParNew: 254464K->7680K(254464K), 0.2853553 secs]42782.371: [Tenured: 1082057K->934941K(1082084K), 6.2719770 secs] 1310721K->934941K(1336548K), 6.5587770 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

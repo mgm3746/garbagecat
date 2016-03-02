@@ -46,7 +46,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2746.109: [GC 2746.109: [ParNew (promotion failed): 242303K-&gt;242304K(242304K), 1.3009892 secs]2747.410: [CMS2755.518: [CMS-concurrent-mark: 11.734/13.504 secs] (concurrent mode failure): 5979868K-&gt;5968004K(6014592K), 78.3207206 secs] 6205857K-&gt;5968004K(6256896K), [CMS Perm : 207397K-&gt;207212K(262144K)], 79.6222096 secs]
+ * 2746.109: [GC 2746.109: [ParNew (promotion failed): 242303K->242304K(242304K), 1.3009892 secs]2747.410: [CMS2755.518: [CMS-concurrent-mark: 11.734/13.504 secs] (concurrent mode failure): 5979868K->5968004K(6014592K), 78.3207206 secs] 6205857K->5968004K(6256896K), [CMS Perm : 207397K->207212K(262144K)], 79.6222096 secs]
  * </pre>
  * 
  * <p>
@@ -58,7 +58,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 4555.706: [GC 4555.706: [ParNew (promotion failed): 1304576K-&gt;1304575K(1304576K), 4.5501949 secs]4560.256: [CMS CMS: abort preclean due to time 4562.921: [CMS-concurrent-abortable-preclean: 2.615/14.874 secs] (concurrent mode failure): 924455K-&gt;679155K(4886528K), 6.2285220 secs] 1973973K-&gt;679155K(6191104K), [CMS Perm : 198322K-&gt;198277K(524288K)] icms_dc=24 , 10.7789303 secs] [Times: user=9.49 sys=1.83, real=10.78 secs]
+ * 4555.706: [GC 4555.706: [ParNew (promotion failed): 1304576K->1304575K(1304576K), 4.5501949 secs]4560.256: [CMS CMS: abort preclean due to time 4562.921: [CMS-concurrent-abortable-preclean: 2.615/14.874 secs] (concurrent mode failure): 924455K->679155K(4886528K), 6.2285220 secs] 1973973K->679155K(6191104K), [CMS Perm : 198322K->198277K(524288K)] icms_dc=24 , 10.7789303 secs] [Times: user=9.49 sys=1.83, real=10.78 secs]
  * </pre>
  * 
  * <p>

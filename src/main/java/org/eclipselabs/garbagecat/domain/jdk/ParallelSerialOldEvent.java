@@ -44,7 +44,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 3.600: [Full GC [PSYoungGen: 5424K-&gt;0K(38208K)] [PSOldGen: 488K-&gt;5786K(87424K)] 5912K-&gt;5786K(125632K) [PSPermGen: 13092K-&gt;13094K(131072K)], 0.0699360 secs]
+ * 3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] [PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) [PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]
  * </pre>
  * 
  * <p>
@@ -52,7 +52,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 4.165: [Full GC (System) [PSYoungGen: 1784K-&gt;0K(12736K)] [PSOldGen: 1081K-&gt;2855K(116544K)] 2865K-&gt;2855K(129280K) [PSPermGen: 8600K-&gt;8600K(131072K)], 0.0427680 secs]
+ * 4.165: [Full GC (System) [PSYoungGen: 1784K->0K(12736K)] [PSOldGen: 1081K->2855K(116544K)] 2865K->2855K(129280K) [PSPermGen: 8600K->8600K(131072K)], 0.0427680 secs]
  * </pre>
  * 
  * TODO: Expand or extend {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent}.

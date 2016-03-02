@@ -54,7 +54,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2182.541: [Full GC [PSYoungGen: 1940K-&gt;0K(98560K)] [ParOldGen: 813929K-&gt;422305K(815616K)] 815869K-&gt;422305K(914176K) [PSPermGen: 81960K-&gt;81783K(164352K)], 2.4749181 secs]
+ * 2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] [ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) [PSPermGen: 81960K->81783K(164352K)], 2.4749181 secs]
  * </pre>
  * 
  * <p>
@@ -62,7 +62,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2.417: [Full GC (System) [PSYoungGen: 1788K-&gt;0K(12736K)] [ParOldGen: 1084K-&gt;2843K(116544K)] 2872K-&gt;2843K(129280K) [PSPermGen: 8602K-&gt;8593K(131072K)], 0.1028360 secs]
+ * 2.417: [Full GC (System) [PSYoungGen: 1788K->0K(12736K)] [ParOldGen: 1084K->2843K(116544K)] 2872K->2843K(129280K) [PSPermGen: 8602K->8593K(131072K)], 0.1028360 secs]
  * </pre>
  * 
  * <p>

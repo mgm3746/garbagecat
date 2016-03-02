@@ -79,7 +79,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * - locked &lt;0x94fa4fb0&gt; (a org.apache.tomcat.util.net.JIoEndpoint$Worker)
+ * - locked <0x94fa4fb0> (a org.apache.tomcat.util.net.JIoEndpoint$Worker)
  * </pre>
  * 
  * <p>

@@ -41,7 +41,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 19810.091: [GC [PSYoungGen: 27808K-&gt;632K(28032K)] 160183K-&gt;133159K(585088K), 0.0225213 secs]
+ * 19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] 160183K->133159K(585088K), 0.0225213 secs]
  * </pre>
  * 
  * <p>
@@ -49,7 +49,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 14112.691: [GC-- [PSYoungGen: 313864K-&gt;313864K(326656K)] 879670K-&gt;1012935K(1025728K), 0.9561947 secs]
+ * 14112.691: [GC-- [PSYoungGen: 313864K->313864K(326656K)] 879670K->1012935K(1025728K), 0.9561947 secs]
  * </pre>
  * 
  * <p>

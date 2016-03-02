@@ -77,7 +77,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 3070.289: [GC 3070.289: [ParNew: 207744K-&gt;207744K(242304K), 0.0000682 secs]3070.289: [CMS3081.621: [CMS-concurrent-mark: 11.907/12.958 secs] (concurrent mode failure): 6010121K-&gt;6014591K(6014592K), 79.0505229 secs] 6217865K-&gt;6028029K(6256896K), [CMS Perm : 206688K-&gt;206662K(262144K)], 79.0509595 secs] [Times: user=104.69 sys=3.63, real=79.05 secs]
+ * 3070.289: [GC 3070.289: [ParNew: 207744K->207744K(242304K), 0.0000682 secs]3070.289: [CMS3081.621: [CMS-concurrent-mark: 11.907/12.958 secs] (concurrent mode failure): 6010121K->6014591K(6014592K), 79.0505229 secs] 6217865K->6028029K(6256896K), [CMS Perm : 206688K->206662K(262144K)], 79.0509595 secs] [Times: user=104.69 sys=3.63, real=79.05 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

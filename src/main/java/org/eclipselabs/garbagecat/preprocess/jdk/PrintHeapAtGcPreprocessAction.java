@@ -43,7 +43,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *   to   space 704K,   0% used [0x00002aac0a950000, 0x00002aac0a950000, 0x00002aac0aa00000)
  *  concurrent mark-sweep generation total 3407872K, used 1640998K [0x00002aac0aab0000, 0x00002aacdaab0000, 0x00002aacdaab0000)
  *  concurrent-mark-sweep perm gen total 786432K, used 507386K [0x00002aacdaab0000, 0x00002aad0aab0000, 0x00002aad0aab0000)
- * 49830.934: [CMS: 1640998K-&gt;1616248K(3407872K), 11.0964500 secs] 1951125K-&gt;1616248K(4193600K), [CMS Perm : 507386K-&gt;499194K(786432K)]Heap after gc invocations=147:
+ * 49830.934: [CMS: 1640998K->1616248K(3407872K), 11.0964500 secs] 1951125K->1616248K(4193600K), [CMS Perm : 507386K->499194K(786432K)]Heap after gc invocations=147:
  *  par new generation   total 785728K, used 0K [0x00002aabdaab0000, 0x00002aac0aab0000, 0x00002aac0aab0000)
  *   eden space 785024K,   0% used [0x00002aabdaab0000, 0x00002aabdaab0000, 0x00002aac0a950000)
  *   from space 704K,   0% used [0x00002aac0aa00000, 0x00002aac0aa00000, 0x00002aac0aab0000)
@@ -59,7 +59,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 49830.933: [Full GC 49830.934: [CMS: 1640998K-&gt;1616248K(3407872K), 11.0964500 secs] 1951125K-&gt;1616248K(4193600K), [CMS Perm : 507386K-&gt;499194K(786432K)], 11.0980780 secs]
+ * 49830.933: [Full GC 49830.934: [CMS: 1640998K->1616248K(3407872K), 11.0964500 secs] 1951125K->1616248K(4193600K), [CMS Perm : 507386K->499194K(786432K)], 11.0980780 secs]
  * </pre>
  * 
  * <p>
@@ -74,8 +74,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *   to   space 192K,   0% used [0x90b60000, 0x90b60000, 0x90b90000)
  *  concurrent mark-sweep generation total 1179648K, used 1147900K [0x90b90000, 0xd8b90000, 0xd8b90000)
  *  concurrent-mark-sweep perm gen total 262144K, used 71227K [0xd8b90000, 0xe8b90000, 0xf0b90000)
- * 27067.966: [ParNew: 261760K-&gt;261760K(261952K), 0.0000160 secs]27067.966: [CMS27067.966: [CMS-concurrent-abortable-preclean: 2.272/29.793 secs]
- *  (concurrent mode failure): 1147900K-&gt;1155037K(1179648K), 7.3953900 secs] 1409660K-&gt;1155037K(1441600K)Heap after gc invocations=499:
+ * 27067.966: [ParNew: 261760K->261760K(261952K), 0.0000160 secs]27067.966: [CMS27067.966: [CMS-concurrent-abortable-preclean: 2.272/29.793 secs]
+ *  (concurrent mode failure): 1147900K->1155037K(1179648K), 7.3953900 secs] 1409660K->1155037K(1441600K)Heap after gc invocations=499:
  *  par new generation   total 261952K, used 0K [0x80b90000, 0x90b90000, 0x90b90000)
  *   eden space 261760K,   0% used [0x80b90000, 0x80b90000, 0x90b30000)
  *   from space 192K,   0% used [0x90b30000, 0x90b30000, 0x90b60000)
@@ -91,7 +91,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 27067.966: [GC 27067.966: [ParNew: 261760K-&gt;261760K(261952K), 0.0000160 secs]27067.966: [CMS27067.966: [CMS-concurrent-abortable-preclean: 2.272/29.793 secs] (concurrent mode failure): 1147900K-&gt;1155037K(1179648K), 7.3953900 secs] 1409660K-&gt;1155037K(1441600K), 7.3957620 secs]
+ * 27067.966: [GC 27067.966: [ParNew: 261760K->261760K(261952K), 0.0000160 secs]27067.966: [CMS27067.966: [CMS-concurrent-abortable-preclean: 2.272/29.793 secs] (concurrent mode failure): 1147900K->1155037K(1179648K), 7.3953900 secs] 1409660K->1155037K(1441600K), 7.3957620 secs]
  * </pre>
  * 
  * <p>
@@ -107,7 +107,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *  concurrent mark-sweep generation total 1179648K, used 1179601K [0x90b90000, 0xd8b90000, 0xd8b90000)
  *  concurrent-mark-sweep perm gen total 262144K, used 71172K [0xd8b90000, 0xe8b90000, 0xf0b90000)
  * 28282.075: [CMS28284.687: [CMS-concurrent-preclean: 3.706/3.706 secs]
- *  (concurrent mode failure): 1179601K-&gt;1179648K(1179648K), 10.7510650 secs] 1441361K-&gt;1180553K(1441600K), [CMS Perm : 71172K-&gt;71171K(262144K)]Heap after gc invocations=529:
+ *  (concurrent mode failure): 1179601K->1179648K(1179648K), 10.7510650 secs] 1441361K->1180553K(1441600K), [CMS Perm : 71172K->71171K(262144K)]Heap after gc invocations=529:
  *  par new generation   total 261952K, used 905K [0x80b90000, 0x90b90000, 0x90b90000)
  *   eden space 261760K,   0% used [0x80b90000, 0x80c727c0, 0x90b30000)
  *   from space 192K,   0% used [0x90b60000, 0x90b60000, 0x90b90000)
@@ -123,7 +123,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 28282.075: [Full GC 28282.075 (concurrent mode failure): 1179601K-&gt;1179648K(1179648K), 10.7510650 secs] 1441361K-&gt;1180553K(1441600K), [CMS Perm : 71172K-&gt;71171K(262144K)], 10.7515460 secs]
+ * 28282.075: [Full GC 28282.075 (concurrent mode failure): 1179601K->1179648K(1179648K), 10.7510650 secs] 1441361K->1180553K(1441600K), [CMS Perm : 71172K->71171K(262144K)], 10.7515460 secs]
  * </pre>
  * 
  * <p>
@@ -138,8 +138,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *   to   space 192K,   0% used [0x90b30000, 0x90b30000, 0x90b60000)
  *  concurrent mark-sweep generation total 1179648K, used 1160073K [0x90b90000, 0xd8b90000, 0xd8b90000)
  *  concurrent-mark-sweep perm gen total 262144K, used 71172K [0xd8b90000, 0xe8b90000, 0xf0b90000)
- * 28308.701: [ParNew (promotion failed): 261951K-&gt;261951K(261952K), 0.7470390 secs]28309.448: [CMS28312.544: [CMS-concurrent-mark: 5.114/5.863 secs]
- *  (concurrent mode failure): 1179212K-&gt;1179647K(1179648K), 10.7159890 secs] 1422025K-&gt;1183557K(1441600K)Heap after gc invocations=530:
+ * 28308.701: [ParNew (promotion failed): 261951K->261951K(261952K), 0.7470390 secs]28309.448: [CMS28312.544: [CMS-concurrent-mark: 5.114/5.863 secs]
+ *  (concurrent mode failure): 1179212K->1179647K(1179648K), 10.7159890 secs] 1422025K->1183557K(1441600K)Heap after gc invocations=530:
  *  par new generation   total 261952K, used 3909K [0x80b90000, 0x90b90000, 0x90b90000)
  *   eden space 261760K,   1% used [0x80b90000, 0x80f614f8, 0x90b30000)
  *   from space 192K,   0% used [0x90b60000, 0x90b60000, 0x90b90000)
@@ -155,7 +155,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 28308.701: [GC 28308.701: [ParNew (promotion failed): 261951K-&gt;261951K(261952K), 0.7470390 secs]28309.448: [CMS28312.544: [CMS-concurrent-mark: 5.114/5.863 secs] (concurrent mode failure): 1179212K-&gt;1179647K(1179648K), 10.7159890 secs] 1422025K-&gt;1183557K(1441600K), 11.4633890 secs]
+ * 28308.701: [GC 28308.701: [ParNew (promotion failed): 261951K->261951K(261952K), 0.7470390 secs]28309.448: [CMS28312.544: [CMS-concurrent-mark: 5.114/5.863 secs] (concurrent mode failure): 1179212K->1179647K(1179648K), 10.7159890 secs] 1422025K->1183557K(1441600K), 11.4633890 secs]
  * </pre>
  * 
  * <p>
@@ -170,7 +170,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *   to   space 18816K,   0% used [0xbb1f0000, 0xbb1f0000, 0xbc450000)
  *  concurrent mark-sweep generation total 860160K, used 0K [0xbc450000, 0xf0c50000, 0xf0c50000)
  *  concurrent-mark-sweep perm gen total 11392K, used 11291K [0xf0c50000, 0xf1770000, 0xf4c50000)
- * 2010-02-26T08:31:51.990-0600: [GC [ParNew: 150784K-&gt;4291K(169600K), 0.0246670 secs] 150784K-&gt;4291K(1029760K), 0.0247500 secs] [Times: user=0.06 sys=0.01, real=0.02 secs] 
+ * 2010-02-26T08:31:51.990-0600: [GC [ParNew: 150784K->4291K(169600K), 0.0246670 secs] 150784K->4291K(1029760K), 0.0247500 secs] [Times: user=0.06 sys=0.01, real=0.02 secs] 
  * Heap after GC invocations=1 (full 0):
  *  par new generation   total 169600K, used 4291K [0xb0c50000, 0xbc450000, 0xbc450000)
  *   eden space 150784K,   0% used [0xb0c50000, 0xb0c50000, 0xb9f90000)
@@ -186,7 +186,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 19.494: [ParNew: 308477K-&gt;25361K(309696K), 0.0911180 secs] 326271K-&gt;75121K(1014208K)Heap after gc invocations=4:
+ * 19.494: [ParNew: 308477K->25361K(309696K), 0.0911180 secs] 326271K->75121K(1014208K)Heap after gc invocations=4:
  *  par new generation   total 309696K, used 25361K [0x00002aab1aab0000, 0x00002aab2fab0000, 0x00002aab2fab0000)
  *   eden space 275328K,   0% used [0x00002aab1aab0000, 0x00002aab1aab0000, 0x00002aab2b790000)
  *   from space 34368K,  73% used [0x00002aab2b790000, 0x00002aab2d0544a8, 0x00002aab2d920000)

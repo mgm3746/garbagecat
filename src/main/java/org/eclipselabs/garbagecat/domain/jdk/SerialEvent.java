@@ -39,14 +39,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 7.798: [GC 7.798: [DefNew: 37172K-&gt;3631K(39296K), 0.0209300 secs] 41677K-&gt;10314K(126720K), 0.0210210 secs]
+ * 7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] 41677K->10314K(126720K), 0.0210210 secs]
  * </pre>
  * 
  * <p>
  * 2) With erroneous "Full":
  * 
  * <pre>
- * 142352.790: [Full GC 142352.790: [DefNew: 444956K-&gt;28315K(471872K), 0.0971099 secs] 1020658K-&gt;604017K(1520448K), 0.0972451 secs]
+ * 142352.790: [Full GC 142352.790: [DefNew: 444956K->28315K(471872K), 0.0971099 secs] 1020658K->604017K(1520448K), 0.0972451 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

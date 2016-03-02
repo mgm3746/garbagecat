@@ -55,7 +55,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * 395950.370: [GC 395950.370: [ParNew (promotion failed): 53094K-&gt;53606K(59008K), 0.0510880 secs]395950.421: [CMS: 664527K-&gt;317110K(1507328K), 2.9523520 secs] 697709K-&gt;317110K(1566336K), [CMS Perm : 83780K-&gt;83711K(131072K)], 3.0039040 secs]
+ * 395950.370: [GC 395950.370: [ParNew (promotion failed): 53094K->53606K(59008K), 0.0510880 secs]395950.421: [CMS: 664527K->317110K(1507328K), 2.9523520 secs] 697709K->317110K(1566336K), [CMS Perm : 83780K->83711K(131072K)], 3.0039040 secs]
  * </pre>
  * 
  * <p>
@@ -67,7 +67,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 4595.651: [GC 4595.651: [ParNew (promotion failed): 1304576K-&gt;1304576K(1304576K), 1.7740754 secs]4597.425: [CMS: 967034K-&gt;684015K(4886528K), 3.2678588 secs] 2022731K-&gt;684015K(6191104K), [CMS Perm : 201541K-&gt;201494K(524288K)] icms_dc=21 , 5.0421688 secs] [Times: user=5.54 sys=0.01, real=5.04 secs]
+ * 4595.651: [GC 4595.651: [ParNew (promotion failed): 1304576K->1304576K(1304576K), 1.7740754 secs]4597.425: [CMS: 967034K->684015K(4886528K), 3.2678588 secs] 2022731K->684015K(6191104K), [CMS Perm : 201541K->201494K(524288K)] icms_dc=21 , 5.0421688 secs] [Times: user=5.54 sys=0.01, real=5.04 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

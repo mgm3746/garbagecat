@@ -36,7 +36,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * 2210.281: [GC 2210.282: [ParNew2210.314: [CMS-concurrent-abortable-preclean: 0.043/0.144 secs]: 212981K-&gt;3156K(242304K), 0.0364435 secs] 4712182K-&gt;4502357K(4971420K), 0.0368807 secs]
+ * 2210.281: [GC 2210.282: [ParNew2210.314: [CMS-concurrent-abortable-preclean: 0.043/0.144 secs]: 212981K->3156K(242304K), 0.0364435 secs] 4712182K->4502357K(4971420K), 0.0368807 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

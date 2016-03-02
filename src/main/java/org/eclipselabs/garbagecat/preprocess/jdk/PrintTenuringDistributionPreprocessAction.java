@@ -40,7 +40,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * Desired survivor size 2228224 bytes, new threshold 1 (max 15)
  * - age   1:    3177664 bytes,    3177664 total
  * - age   2:    1278784 bytes,    4456448 total
- * : 36825K-&gt;4352K(39424K), 0.0224830 secs] 44983K-&gt;14441K(126848K), 0.0225800 secs]
+ * : 36825K->4352K(39424K), 0.0224830 secs] 44983K->14441K(126848K), 0.0225800 secs]
  * </pre>
  * 
  * <p>
@@ -48,7 +48,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 10.204: [GC 10.204: [DefNew: 36825K-&gt;4352K(39424K), 0.0224830 secs] 44983K-&gt;14441K(126848K), 0.0225800 secs]
+ * 10.204: [GC 10.204: [DefNew: 36825K->4352K(39424K), 0.0224830 secs] 44983K->14441K(126848K), 0.0225800 secs]
  * </pre>
  * 
  * <p>
@@ -63,8 +63,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * - age   2:   16401312 bytes,  108915000 total
  * - age   3:   19123776 bytes,  128038776 total
  * - age   4:    6178856 bytes,  134217632 total
- * : 917504K-&gt;917504K(917504K), 5.5887120 secs]877375.047: [CMS877378.691: [CMS-concurrent-mark: 5.714/11.380 secs] [Times: user=14.72 sys=4.81, real=11.38 secs]
- *  (concurrent mode failure): 1567700K-&gt;1571451K(1572864K), 14.6444240 secs] 2370842K-&gt;1694149K(2490368K), [CMS Perm : 46359K-&gt;46354K(77352K)], 20.2345470 secs] [Times: user=22.17 sys=4.56, real=20.23 secs]
+ * : 917504K->917504K(917504K), 5.5887120 secs]877375.047: [CMS877378.691: [CMS-concurrent-mark: 5.714/11.380 secs] [Times: user=14.72 sys=4.81, real=11.38 secs]
+ *  (concurrent mode failure): 1567700K->1571451K(1572864K), 14.6444240 secs] 2370842K->1694149K(2490368K), [CMS Perm : 46359K->46354K(77352K)], 20.2345470 secs] [Times: user=22.17 sys=4.56, real=20.23 secs]
  * </pre>
  * 
  * <p>
@@ -72,7 +72,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 877369.458: [GC 877369.459: [ParNew (promotion failed): 917504K-&gt;917504K(917504K), 5.5887120 secs]877375.047: [CMS877378.691: [CMS-concurrent-mark: 5.714/11.380 secs] (concurrent mode failure): 1567700K-&gt;1571451K(1572864K), 14.6444240 secs] 2370842K-&gt;1694149K(2490368K), [CMS Perm : 46359K-&gt;46354K(77352K)], 20.2345470 secs] [Times: user=22.17 sys=4.56, real=20.23 secs]
+ * 877369.458: [GC 877369.459: [ParNew (promotion failed): 917504K->917504K(917504K), 5.5887120 secs]877375.047: [CMS877378.691: [CMS-concurrent-mark: 5.714/11.380 secs] (concurrent mode failure): 1567700K->1571451K(1572864K), 14.6444240 secs] 2370842K->1694149K(2490368K), [CMS Perm : 46359K->46354K(77352K)], 20.2345470 secs] [Times: user=22.17 sys=4.56, real=20.23 secs]
  * </pre>
  * 
  * <p>

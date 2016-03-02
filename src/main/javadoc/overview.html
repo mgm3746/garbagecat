@@ -19,7 +19,7 @@
 -->
 </head>
 <body>
-<p>Garbage Cat parses Java garbage collection logging and provides
+<p>garbagecat parses Java garbage collection logging and provides
 analysis to support JVM tuning and troubleshooting for OpenJDK and Sun
 JDK. It differs from other tools in that it goes beyond the simple math
 of calculating statistics such as maximum pause time and throughput. It
@@ -36,7 +36,7 @@ Cat project</a>.</p>
 	<li>OpenJDK</li>
 	<li>Sun JDK 1.5 and higher</li>
 	<li>Best utilized with the following GC logging options:<br />
-	-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps
+	-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime
 	</li>
 </ul>
 <h2>Building</h2>
@@ -49,11 +49,11 @@ mvn javadoc:javadoc
 java -jar garbagecat-1.0.0.jar --help
 usage: garbagecat [OPTION]... [FILE]
  -h,--help                  help
- -o,--options &lt;arg&gt;         JVM options used during JVM run 
+ -o,--options <arg>         JVM options used during JVM run 
  -p,--preprocess            preprocessing flag
- -s,--startdatetime &lt;arg&gt;   JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS)
+ -s,--startdatetime <arg>   JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS)
                             for converting GC logging timestamps to datetime
- -t,--threshold &lt;arg&gt;       threshold (0-100) for throughput bottleneck
+ -t,--threshold <arg>       threshold (0-100) for throughput bottleneck
                             reporting
 </pre>
 <p>Notes:</p>
@@ -77,21 +77,21 @@ usage: garbagecat [OPTION]... [FILE]
 	Time). Throughput of 100 means no time spent doing GC (good).
 	Throughput of 0 means all time spent doing GC (bad).</li>
 	<li>A report called report.txt is created in the directory where
-	the Garbage Cat tool is run.</li>
+	the garbagecat tool is run.</li>
 </ol>
 <h2>Report</h2>
 <pre>
 ========================================
 Throughput less than 90% for PARALLEL_SCAVENGE
 ========================================
-18020.492: [GC [PSYoungGen: 161888K-&gt;1376K(166016K)] 949359K-&gt;789159K(1214592K), 0.0294550 secs]
-18020.680: [GC [PSYoungGen: 3431K-&gt;288K(159936K)] 791214K-&gt;788615K(1208512K), 0.0206630 secs]
+18020.492: [GC [PSYoungGen: 161888K->1376K(166016K)] 949359K->789159K(1214592K), 0.0294550 secs]
+18020.680: [GC [PSYoungGen: 3431K->288K(159936K)] 791214K->788615K(1208512K), 0.0206630 secs]
 ...
-36039.921: [GC [PSYoungGen: 165776K-&gt;8752K(166784K)] 1024637K-&gt;867893K(1215360K), 0.0340270 secs]
-36040.106: [GC [PSYoungGen: 39649K-&gt;1024K(167744K)] 898790K-&gt;861694K(1216320K), 0.0269690 secs]
+36039.921: [GC [PSYoungGen: 165776K->8752K(166784K)] 1024637K->867893K(1215360K), 0.0340270 secs]
+36040.106: [GC [PSYoungGen: 39649K->1024K(167744K)] 898790K->861694K(1216320K), 0.0269690 secs]
 ...
-191119.769: [GC [PSYoungGen: 195760K-&gt;6208K(197888K)] 1157602K-&gt;968330K(1246464K), 0.0333630 secs]
-191119.803: [GC [PSYoungGen: 6615K-&gt;96K(201984K)] 968738K-&gt;968480K(1250560K), 0.0289500 secs]
+191119.769: [GC [PSYoungGen: 195760K->6208K(197888K)] 1157602K->968330K(1246464K), 0.0333630 secs]
+191119.803: [GC [PSYoungGen: 6615K->96K(201984K)] 968738K->968480K(1250560K), 0.0289500 secs]
 ========================================
 SUMMARY:
 ========================================
@@ -155,7 +155,7 @@ Last Timestamp: 232465068 ms
 <ol>
 	<li>Run without any options: <br />
 	<pre>java -jar garbagecat-1.0.0.jar gc.log</pre></li>
-	<li>The bottom of the report shows Garbage Cat found 1000 (the
+	<li>The bottom of the report shows garbagecat found 1000 (the
 	maximum) unidentified lines:<br />
 	<pre>
 ...
@@ -169,7 +169,7 @@ Last Timestamp: 232465068 ms
   to   space 192K,   0% used [0x90b60000, 0x90b60000, 0x90b90000)
  concurrent mark-sweep generation total 262144K, used 0K [0x90b90000, 0xa0b90000, 0xd8b90000)
  concurrent-mark-sweep perm gen total 262144K, used 15186K [0xd8b90000, 0xe8b90000, 0xf0b90000)
-6.065: [CMS: 0K-&gt;8200K(262144K), 0.2010540 secs] 199028K-&gt;8200K(524096K), [CMS Perm : 15186K-&gt;15115K(262144K)]Heap after gc invocations=1:
+6.065: [CMS: 0K->8200K(262144K), 0.2010540 secs] 199028K->8200K(524096K), [CMS Perm : 15186K->15115K(262144K)]Heap after gc invocations=1:
  par new generation   total 261952K, used 0K [0x80b90000, 0x90b90000, 0x90b90000)
   eden space 261760K,   0% used [0x80b90000, 0x80b90000, 0x90b30000)
   from space 192K,   0% used [0x90b30000, 0x90b30000, 0x90b60000)
@@ -234,16 +234,16 @@ of the tool's functionality.</p>
 	</li>
 	<li>The new report shows many stretches where almost all time is
 	spent doing garbage collection. For example, this 70 second interval:<pre>
-2495490.528: [Full GC 2495490.528: [CMS (concurrent mode failure): 1179647K-&gt;1179648K(1179648K), 7.7971770 secs] 1441599K-&gt;1440481K(1441600K), [CMS Perm : 72831K-&gt;72830K(262144K)], 7.7974610 secs]
-2495498.338: [Full GC 2495498.338: [CMS (concurrent mode failure): 1179648K-&gt;1179648K(1179648K), 7.9398610 secs] 1441599K-&gt;1440455K(1441600K), [CMS Perm : 72832K-&gt;72832K(262144K)], 7.9401510 secs]
-2495506.293: [Full GC 2495506.293: [CMS (concurrent mode failure): 1179648K-&gt;1179648K(1179648K), 7.9886750 secs] 1441599K-&gt;1440570K(1441600K), [CMS Perm : 72834K-&gt;72833K(262144K)], 7.9889480 secs]
-2495514.300: [Full GC 2495514.301: [CMS (concurrent mode failure): 1179648K-&gt;1179647K(1179648K), 8.7149400 secs] 1441600K-&gt;1440451K(1441600K), [CMS Perm : 72839K-&gt;72831K(262144K)], 8.7153850 secs]
-2495523.446: [Full GC 2495523.446 (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 12.9441410 secs] 1441599K-&gt;1440523K(1441600K), [CMS Perm : 72832K-&gt;72831K(262144K)], 12.9444090 secs]
+2495490.528: [Full GC 2495490.528: [CMS (concurrent mode failure): 1179647K->1179648K(1179648K), 7.7971770 secs] 1441599K->1440481K(1441600K), [CMS Perm : 72831K->72830K(262144K)], 7.7974610 secs]
+2495498.338: [Full GC 2495498.338: [CMS (concurrent mode failure): 1179648K->1179648K(1179648K), 7.9398610 secs] 1441599K->1440455K(1441600K), [CMS Perm : 72832K->72832K(262144K)], 7.9401510 secs]
+2495506.293: [Full GC 2495506.293: [CMS (concurrent mode failure): 1179648K->1179648K(1179648K), 7.9886750 secs] 1441599K->1440570K(1441600K), [CMS Perm : 72834K->72833K(262144K)], 7.9889480 secs]
+2495514.300: [Full GC 2495514.301: [CMS (concurrent mode failure): 1179648K->1179647K(1179648K), 8.7149400 secs] 1441600K->1440451K(1441600K), [CMS Perm : 72839K->72831K(262144K)], 8.7153850 secs]
+2495523.446: [Full GC 2495523.446 (concurrent mode failure): 1179647K->1179647K(1179648K), 12.9441410 secs] 1441599K->1440523K(1441600K), [CMS Perm : 72832K->72831K(262144K)], 12.9444090 secs]
 ...
-2495536.400: [Full GC 2495536.400: [CMS (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 7.8316830 secs] 1441599K-&gt;1440330K(1441600K), [CMS Perm : 72831K-&gt;72824K(262144K)], 7.8319710 secs]
-2495544.248: [Full GC 2495544.249: [CMS (concurrent mode failure): 1179648K-&gt;1179647K(1179648K), 7.2906420 secs] 1441599K-&gt;1440451K(1441600K), [CMS Perm : 72835K-&gt;72827K(262144K)], 7.2910060 secs]
-2495551.565: [Full GC 2495551.565: [CMS (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 7.5929380 secs] 1441599K-&gt;1440526K(1441600K), [CMS Perm : 72844K-&gt;72834K(262144K)], 7.5933150 secs]
-2495559.638: [Full GC 2495559.638 (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 12.0032770 secs] 1441599K-&gt;1440585K(1441600K), [CMS Perm : 72841K-&gt;72832K(262144K)], 12.0035460 secs]
+2495536.400: [Full GC 2495536.400: [CMS (concurrent mode failure): 1179647K->1179647K(1179648K), 7.8316830 secs] 1441599K->1440330K(1441600K), [CMS Perm : 72831K->72824K(262144K)], 7.8319710 secs]
+2495544.248: [Full GC 2495544.249: [CMS (concurrent mode failure): 1179648K->1179647K(1179648K), 7.2906420 secs] 1441599K->1440451K(1441600K), [CMS Perm : 72835K->72827K(262144K)], 7.2910060 secs]
+2495551.565: [Full GC 2495551.565: [CMS (concurrent mode failure): 1179647K->1179647K(1179648K), 7.5929380 secs] 1441599K->1440526K(1441600K), [CMS Perm : 72844K->72834K(262144K)], 7.5933150 secs]
+2495559.638: [Full GC 2495559.638 (concurrent mode failure): 1179647K->1179647K(1179648K), 12.0032770 secs] 1441599K->1440585K(1441600K), [CMS Perm : 72841K->72832K(262144K)], 12.0035460 secs]
 	</pre></li>
 	<li>Suppose we want to get an idea of the use cases being executed
 	related to the above garbage collection. To do this, pass in the first
@@ -255,16 +255,16 @@ of the tool's functionality.</p>
 	<li>The report now displays the bottleneck lines with a date/time
 	that can be used to cross reference application and/or web access
 	logging:<pre>
-2009-10-14 08:02:13,871: [Full GC 2009-10-14 08:02:13,871: [CMS (concurrent mode failure): 1179647K-&gt;1179648K(1179648K), 7.7971770 secs] 1441599K-&gt;1440481K(1441600K), [CMS Perm : 72831K-&gt;72830K(262144K)], 7.7974610 secs]
-2009-10-14 08:02:21,681: [Full GC 2009-10-14 08:02:21,681: [CMS (concurrent mode failure): 1179648K-&gt;1179648K(1179648K), 7.9398610 secs] 1441599K-&gt;1440455K(1441600K), [CMS Perm : 72832K-&gt;72832K(262144K)], 7.9401510 secs]
-2009-10-14 08:02:29,636: [Full GC 2009-10-14 08:02:29,636: [CMS (concurrent mode failure): 1179648K-&gt;1179648K(1179648K), 7.9886750 secs] 1441599K-&gt;1440570K(1441600K), [CMS Perm : 72834K-&gt;72833K(262144K)], 7.9889480 secs]
-2009-10-14 08:02:37,643: [Full GC 2009-10-14 08:02:37,644: [CMS (concurrent mode failure): 1179648K-&gt;1179647K(1179648K), 8.7149400 secs] 1441600K-&gt;1440451K(1441600K), [CMS Perm : 72839K-&gt;72831K(262144K)], 8.7153850 secs]
-2009-10-14 08:02:46,789: [Full GC 2495523.446 (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 12.9441410 secs] 1441599K-&gt;1440523K(1441600K), [CMS Perm : 72832K-&gt;72831K(262144K)], 12.9444090 secs]
+2009-10-14 08:02:13,871: [Full GC 2009-10-14 08:02:13,871: [CMS (concurrent mode failure): 1179647K->1179648K(1179648K), 7.7971770 secs] 1441599K->1440481K(1441600K), [CMS Perm : 72831K->72830K(262144K)], 7.7974610 secs]
+2009-10-14 08:02:21,681: [Full GC 2009-10-14 08:02:21,681: [CMS (concurrent mode failure): 1179648K->1179648K(1179648K), 7.9398610 secs] 1441599K->1440455K(1441600K), [CMS Perm : 72832K->72832K(262144K)], 7.9401510 secs]
+2009-10-14 08:02:29,636: [Full GC 2009-10-14 08:02:29,636: [CMS (concurrent mode failure): 1179648K->1179648K(1179648K), 7.9886750 secs] 1441599K->1440570K(1441600K), [CMS Perm : 72834K->72833K(262144K)], 7.9889480 secs]
+2009-10-14 08:02:37,643: [Full GC 2009-10-14 08:02:37,644: [CMS (concurrent mode failure): 1179648K->1179647K(1179648K), 8.7149400 secs] 1441600K->1440451K(1441600K), [CMS Perm : 72839K->72831K(262144K)], 8.7153850 secs]
+2009-10-14 08:02:46,789: [Full GC 2495523.446 (concurrent mode failure): 1179647K->1179647K(1179648K), 12.9441410 secs] 1441599K->1440523K(1441600K), [CMS Perm : 72832K->72831K(262144K)], 12.9444090 secs]
 ...
-2009-10-14 08:02:59,743: [Full GC 2009-10-14 08:02:59,743: [CMS (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 7.8316830 secs] 1441599K-&gt;1440330K(1441600K), [CMS Perm : 72831K-&gt;72824K(262144K)], 7.8319710 secs]
-2009-10-14 08:03:07,591: [Full GC 2009-10-14 08:03:07,592: [CMS (concurrent mode failure): 1179648K-&gt;1179647K(1179648K), 7.2906420 secs] 1441599K-&gt;1440451K(1441600K), [CMS Perm : 72835K-&gt;72827K(262144K)], 7.2910060 secs]
-2009-10-14 08:03:14,908: [Full GC 2009-10-14 08:03:14,908: [CMS (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 7.5929380 secs] 1441599K-&gt;1440526K(1441600K), [CMS Perm : 72844K-&gt;72834K(262144K)], 7.5933150 secs]
-2009-10-14 08:03:22,981: [Full GC 2495559.638 (concurrent mode failure): 1179647K-&gt;1179647K(1179648K), 12.0032770 secs] 1441599K-&gt;1440585K(1441600K), [CMS Perm : 72841K-&gt;72832K(262144K)], 12.0035460 secs]
+2009-10-14 08:02:59,743: [Full GC 2009-10-14 08:02:59,743: [CMS (concurrent mode failure): 1179647K->1179647K(1179648K), 7.8316830 secs] 1441599K->1440330K(1441600K), [CMS Perm : 72831K->72824K(262144K)], 7.8319710 secs]
+2009-10-14 08:03:07,591: [Full GC 2009-10-14 08:03:07,592: [CMS (concurrent mode failure): 1179648K->1179647K(1179648K), 7.2906420 secs] 1441599K->1440451K(1441600K), [CMS Perm : 72835K->72827K(262144K)], 7.2910060 secs]
+2009-10-14 08:03:14,908: [Full GC 2009-10-14 08:03:14,908: [CMS (concurrent mode failure): 1179647K->1179647K(1179648K), 7.5929380 secs] 1441599K->1440526K(1441600K), [CMS Perm : 72844K->72834K(262144K)], 7.5933150 secs]
+2009-10-14 08:03:22,981: [Full GC 2495559.638 (concurrent mode failure): 1179647K->1179647K(1179648K), 12.0032770 secs] 1441599K->1440585K(1441600K), [CMS Perm : 72841K->72832K(262144K)], 12.0035460 secs]
 	</pre></li>
 </ol>
 <!-- Put @see and @since tags down here. -->

@@ -34,7 +34,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <pre>
  * 830048.804: [Full GC 830048.804: [CMS[Unloading class sun.reflect.GeneratedConstructorAccessor73]
  * [Unloading class sun.reflect.GeneratedConstructorAccessor70]
- * : 1572185K-&gt;1070163K(1572864K), 6.8812400 secs] 2489689K-&gt;1070163K(2490368K), [CMS Perm : 46357K-&gt;46348K(77352K)], 6.8821630 secs] [Times: user=6.87 sys=0.00, real=6.88 secs]
+ * : 1572185K->1070163K(1572864K), 6.8812400 secs] 2489689K->1070163K(2490368K), [CMS Perm : 46357K->46348K(77352K)], 6.8821630 secs] [Times: user=6.87 sys=0.00, real=6.88 secs]
  * </pre>
  * 
  * <p>
@@ -42,7 +42,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 830048.804: [Full GC 830048.804: [CMS: 1572185K-&gt;1070163K(1572864K), 6.8812400 secs] 2489689K-&gt;1070163K(2490368K), [CMS Perm : 46357K-&gt;46348K(77352K)], 6.8821630 secs] [Times: user=6.87 sys=0.00, real=6.88 secs]
+ * 830048.804: [Full GC 830048.804: [CMS: 1572185K->1070163K(1572864K), 6.8812400 secs] 2489689K->1070163K(2490368K), [CMS Perm : 46357K->46348K(77352K)], 6.8821630 secs] [Times: user=6.87 sys=0.00, real=6.88 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

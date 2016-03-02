@@ -36,7 +36,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * 2143132.151: [Full GC 1606823K-&gt;1409859K(2976064K), 12.0855599 secs]
+ * 2143132.151: [Full GC 1606823K->1409859K(2976064K), 12.0855599 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
