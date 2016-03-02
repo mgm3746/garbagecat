@@ -181,12 +181,12 @@ public class JdkRegEx {
     public static final String TRIGGER_CMS_FINAL_REMARK = "CMS Final Remark";
     
     /**
-     * CMS concurrent mode failuer trigger
+     * CMS concurrent mode failure trigger
      */
     public static final String TRIGGER_CONCURRENT_MODE_FAILURE = "concurrent mode failure";
     
     /**
-     * Units for JVM ptions that take a byte number.
+     * Units for JVM options that take a byte number.
      * 
      * For example:
      * -Xss128k

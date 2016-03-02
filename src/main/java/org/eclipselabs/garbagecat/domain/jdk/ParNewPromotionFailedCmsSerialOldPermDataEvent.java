@@ -54,6 +54,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Incremental mode:
+ * </p>
+ * 
  * <pre>
  * 395950.370: [GC 395950.370: [ParNew (promotion failed): 53094K->53606K(59008K), 0.0510880 secs]395950.421: [CMS: 664527K->317110K(1507328K), 2.9523520 secs] 697709K->317110K(1566336K), [CMS Perm : 83780K->83711K(131072K)], 3.0039040 secs]
  * </pre>
@@ -70,6 +74,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 4595.651: [GC 4595.651: [ParNew (promotion failed): 1304576K->1304576K(1304576K), 1.7740754 secs]4597.425: [CMS: 967034K->684015K(4886528K), 3.2678588 secs] 2022731K->684015K(6191104K), [CMS Perm : 201541K->201494K(524288K)] icms_dc=21 , 5.0421688 secs] [Times: user=5.54 sys=0.01, real=5.04 secs]
  * </pre>
  * 
+ * <p>
+ * 2) Not space after GC, not incremental mode:
+ * </p>
+ * 
+ * <pre>
+ * 108537.519: [GC108537.520: [ParNew (promotion failed): 1409215K->1426861K(1567616K), 0.4259330 secs]108537.946: [CMS: 13135135K->4554003K(16914880K), 14.7637760 secs] 14542753K->4554003K(18482496K), [CMS Perm : 227503K->226115K(378908K)], 15.1927120 secs] [Times: user=16.31 sys=0.21, real=15.19 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
@@ -79,7 +91,7 @@ public class ParNewPromotionFailedCmsSerialOldPermDataEvent implements BlockingE
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( )?" + JdkRegEx.TIMESTAMP
             + ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
@@ -156,20 +168,20 @@ public class ParNewPromotionFailedCmsSerialOldPermDataEvent implements BlockingE
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            old = Integer.parseInt(matcher.group(9));
-            oldEnd = Integer.parseInt(matcher.group(10));
-            oldAllocation = Integer.parseInt(matcher.group(11));
-            int totalBegin = Integer.parseInt(matcher.group(13));
+            old = Integer.parseInt(matcher.group(10));
+            oldEnd = Integer.parseInt(matcher.group(11));
+            oldAllocation = Integer.parseInt(matcher.group(12));
+            int totalBegin = Integer.parseInt(matcher.group(14));
             // Don't use ParNew values because those are presumably sbefore the promotion failure.
             young = totalBegin - old;
-            int totalEnd = Integer.parseInt(matcher.group(14));
+            int totalEnd = Integer.parseInt(matcher.group(15));
             youngEnd = totalEnd - oldEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(15));
+            int totalAllocation = Integer.parseInt(matcher.group(16));
             youngAvailable = totalAllocation - oldAllocation;
-            permGen = Integer.parseInt(matcher.group(16));
-            permGenEnd = Integer.parseInt(matcher.group(17));
-            permGenAllocation = Integer.parseInt(matcher.group(18));
-            duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
+            permGen = Integer.parseInt(matcher.group(17));
+            permGenEnd = Integer.parseInt(matcher.group(18));
+            permGenAllocation = Integer.parseInt(matcher.group(19));
+            duration = JdkMath.convertSecsToMillis(matcher.group(21)).intValue();
         }
     }
 

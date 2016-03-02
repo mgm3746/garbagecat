@@ -429,6 +429,14 @@ public class JvmRun {
             }
 
         }
+        
+        // 9) Check for CMS promotion failed by event type
+        if (getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED)
+                || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD)
+                || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA)
+                || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED)) {
+            analysisKeys.add(Analysis.KEY_CMS_PROMOTION_FAILED);
+        }
     }
 
     /**
