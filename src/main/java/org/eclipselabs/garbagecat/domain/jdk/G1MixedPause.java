@@ -60,7 +60,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 4)  After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction} with trigger:
+ * 4)  After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction} without trigger:
  * </p>
  * 
  * <pre>

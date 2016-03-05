@@ -59,8 +59,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Prior to JDK8 update 40:
+ * </p>
+ * 
  * <pre>
  * Total time for which application threads were stopped: 0.0968457 seconds
+ * </pre>
+ * 
+ * <p>
+ * 2) Stopping threads information added JDK8 update 40:
+ * <p>
+ * 
+ * <pre>
+ * 0.147: Total time for which application threads were stopped: 0.0000921 seconds, Stopping threads took: 0.0000190 seconds
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -87,7 +99,7 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": )?Total time for which application threads "
-            + "were stopped: (\\d{1,4}\\.\\d{7}) seconds[ ]*$";
+            + "were stopped: (\\d{1,4}\\.\\d{7}) seconds(, Stopping threads took: \\d{1,4}\\.\\d{7} seconds)?[ ]*$";
     /**
      * RegEx pattern.
      */

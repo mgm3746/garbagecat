@@ -43,4 +43,12 @@ public class TestApplicationStoppedTimeEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.",1977, event.getTimestamp());
         Assert.assertEquals("Duration not parsed correctly.", 205, event.getDuration());
     }
+    
+    public void testLogLineJdk8Update40() {
+        String logLine = "4.483: Total time for which application threads were stopped: 0.0018237 seconds, Stopping threads took: 0.0017499 seconds";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".", ApplicationStoppedTimeEvent.match(logLine));
+        ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.",4483, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 1823, event.getDuration());
+    }
 }

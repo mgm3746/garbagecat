@@ -84,6 +84,24 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <pre>
  * 44.684: [Full GC44.684: [CMS (concurrent mode failure): 1218548K->413373K(1465840K), 1.3656970 secs] 1229657K->413373K(1581168K), [CMS Perm : 83805K->80520K(83968K)], 1.3659420 secs] [Times: user=1.33 sys=0.01, real=1.37 secs]
  * 44.877: [CMS-concurrent-mark: 1.508/2.428 secs] [Times: user=3.44 sys=0.49, real=2.42 secs]
+ * 
+ * <p>
+ * 4) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} combined with {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} with trigger and space after trigger:
+ * </p>
+ *
+ * <pre>
+ * 45.574: [GC (Allocation Failure) 45.574: [ParNew45.670: [CMS-concurrent-abortable-preclean: 3.276/4.979 secs] [Times: user=7.75 sys=0.28, real=4.98 secs]
+ * : 619008K->36352K(619008K), 0.2165661 secs] 854952K->363754K(4157952K), 0.2168066 secs] [Times: user=0.30 sys=0.00, real=0.22 secs]
+ * </pre>
+ *
+ * <p>
+ * Preprocessed:
+ * </p>
+ *
+ * <pre>
+ * 45.574: [GC (Allocation Failure) 45.574: [ParNew: 619008K->36352K(619008K), 0.2165661 secs] 854952K->363754K(4157952K), 0.2168066 secs] [Times: user=0.30 sys=0.00, real=0.22 secs]
+ * 45.670: [CMS-concurrent-abortable-preclean: 3.276/4.979 secs] [Times: user=7.75 sys=0.28, real=4.98 secs]
+ * </pre>
  *
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  *
@@ -94,9 +112,9 @@ public class CmsPreprocessAction implements PreprocessAction {
      * Regular expression for retained beginning PAR_NEW mixed with CMS_CONCURRENT collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC( \\("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))?" + JdkRegEx.TIMESTAMP + ": \\[ParNew)(" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK
-            + ")[ ]*$";
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))?( )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew)("
+            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + ")[ ]*$";
     
     private static final String REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC"
             + JdkRegEx.TIMESTAMP + ": \\[CMS)(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-mark: "
@@ -137,7 +155,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(5) + System.getProperty("line.separator"));
+                entangledLogLines.add(matcher.group(6) + System.getProperty("line.separator"));
             }
             // Output beginning of PAR_NEW line
             this.logEntry = matcher.group(1);            

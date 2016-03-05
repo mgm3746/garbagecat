@@ -58,6 +58,13 @@ public class TestCmsPreprocessAction extends TestCase {
                 CmsPreprocessAction.match(logLine));
     }
     
+    public void testLogLineParNewTriggerMixedConcurrentJdk8() {
+        String logLine = "45.574: [GC (Allocation Failure) 45.574: [ParNew45.670: [CMS-concurrent-abortable-preclean: "
+                + "3.276/4.979 secs] [Times: user=7.75 sys=0.28, real=4.98 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine));
+    }
+    
     public void testLogLineCmsSerialOldMixedConcurrent() {
         String logLine = "44.684: [Full GC44.684: [CMS44.877: [CMS-concurrent-mark: 1.508/2.428 secs] "
                 + "[Times: user=3.44 sys=0.49, real=2.42 secs]";
