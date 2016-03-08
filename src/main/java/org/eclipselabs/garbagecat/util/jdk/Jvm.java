@@ -549,6 +549,48 @@ public class Jvm {
         String regex = "(-XX:\\+CMSClassUnloadingEnabled)";
         return getJvmOption(regex);
     }
+    
+    /**
+     * The option for outputting times for reference processing (weak, soft,JNI). For example:
+     * 
+     * <pre>
+     * -XX:+PrintReferenceGC
+     * </pre>
+     * 
+     * @return True if -XX:+PrintReferenceGC option exists, false otherwise.
+     */
+    public String getPrintReferenceGC() {
+        String regex = "(-XX:\\+PrintReferenceGC)";
+        return getJvmOption(regex);
+    }
+    
+    /**
+     * The option for printing trigger information. For example:
+     * 
+     * <pre>
+     * -XX:+PrintGCCause
+     * </pre>
+     * 
+     * @return True if -XX:+PrintGCCause option exists, false otherwise.
+     */
+    public String getPrintGCCause() {
+        String regex = "(-XX:\\+PrintGCCause)";
+        return getJvmOption(regex);
+    }
+    
+    /**
+     * The option for printing trigger information disabled. For example:
+     * 
+     * <pre>
+     * -XX:-PrintGCCause
+     * </pre>
+     * 
+     * @return True if -XX:-PrintGCCause option exists, false otherwise.
+     */
+    public String getPrintGCCauseDisabled() {
+        String regex = "(-XX:\\-PrintGCCause)";
+        return getJvmOption(regex);
+    }
 
     /**
      * 

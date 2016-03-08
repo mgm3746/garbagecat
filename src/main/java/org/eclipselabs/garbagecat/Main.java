@@ -1,8 +1,14 @@
 /******************************************************************************
- * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
- * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
- * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
- * initial API and implementation *
+ * Garbage Cat                                                                *
+ *                                                                            *
+ * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
+ * All rights reserved. This program and the accompanying materials           *
+ * are made available under the terms of the Eclipse Public License v1.0      *
+ * which accompanies this distribution, and is available at                   *
+ * http://www.eclipse.org/legal/epl-v10.html                                  *
+ *                                                                            *
+ * Contributors:                                                              *
+ *    Red Hat, Inc. - initial API and implementation                          *
  ******************************************************************************/
 package org.eclipselabs.garbagecat;
 
@@ -113,7 +119,7 @@ public class Main {
                 if (cmd.hasOption("threshold")) {
                     throughputThreshold = Integer.parseInt(cmd.getOptionValue('t'));
                 }
-                JvmRun jvmRun = jvmManager.getJvmRun(jvm, throughputThreshold);               
+                JvmRun jvmRun = jvmManager.getJvmRun(jvm, throughputThreshold);
                 createReport(jvmRun);
             }
         }
@@ -216,7 +222,7 @@ public class Main {
         BufferedWriter bufferedWriter = null;
         try {
             fileWriter = new FileWriter(reportFile);
-            bufferedWriter = new BufferedWriter(fileWriter);            
+            bufferedWriter = new BufferedWriter(fileWriter);
 
             // Bottlenecks
             List<String> bottlenecks = jvmRun.getBottlenecks();
@@ -229,7 +235,7 @@ public class Main {
                     bufferedWriter.write(iterator.next() + "\n");
                 }
             }
-            
+
             // JVM information
             if (jvmRun.getJvm().getVersion() != null || jvmRun.getJvm().getOptions() != null
                     || jvmRun.getJvm().getMemory() != null) {
@@ -250,9 +256,9 @@ public class Main {
             // Summary
             bufferedWriter.write("========================================\n");
             bufferedWriter.write("SUMMARY:\n");
-            bufferedWriter.write("----------------------------------------\n");            
-            
-            //GC stats
+            bufferedWriter.write("----------------------------------------\n");
+
+            // GC stats
             if (jvmRun.getBlockingEventCount() > 0) {
                 bufferedWriter.write("# GC Events: " + jvmRun.getBlockingEventCount() + "\n");
                 bufferedWriter.write("Event Types: ");

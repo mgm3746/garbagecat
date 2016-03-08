@@ -200,6 +200,21 @@ public class Analysis {
      * Property key for concurrent mode failure.
      */
     public static final String KEY_CMS_CLASSUNLOADING_MISSING = "cms.classunloading.missing";  
+    
+    /**
+     * Property key for -XX:+PrintReferenceGC.
+     */
+    public static final String KEY_PRINT_REFERENCE_GC_ENABLED = "print.reference.gc.enabled";
+    
+    /**
+     * Property key for -XX:+PrintGCCause.
+     */
+    public static final String KEY_PRINT_GC_CAUSE_MISSING = "print.gc.cause.missing";
+    
+    /**
+     * Property key for -XX:-PrintGCCause.
+     */
+    public static final String KEY_PRINT_GC_CAUSE_DISABLED = "print.gc.cause.disabled";         
 
     /**
      * Make default constructor private so the class cannot be instantiated.

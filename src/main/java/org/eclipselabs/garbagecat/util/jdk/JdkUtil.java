@@ -55,6 +55,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedTruncatedEvent
 import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.PrintReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialSerialOldEvent;
@@ -99,7 +100,7 @@ public class JdkUtil {
         //
         G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
         //
-        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION
+        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, PRINT_REFERENCE_GC
     };
 
     /**
@@ -217,6 +218,8 @@ public class JdkUtil {
             return LogEventType.HEADER_MEMORY;
         if (HeaderVersionEvent.match(logLine))
             return LogEventType.HEADER_VERSION;
+        if (PrintReferenceGcEvent.match(logLine))
+            return LogEventType.PRINT_REFERENCE_GC;
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -349,6 +352,9 @@ public class JdkUtil {
             break;
         case HEADER_VERSION:
             event = new HeaderVersionEvent(logLine);
+            break;
+        case PRINT_REFERENCE_GC:
+            event = new PrintReferenceGcEvent(logLine);
             break;
         case UNKNOWN:
             event = new UnknownEvent(logLine);

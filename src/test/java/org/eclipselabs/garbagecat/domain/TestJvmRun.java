@@ -1370,4 +1370,19 @@ public class TestJvmRun extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.KEY_CMS_CLASSUNLOADING_MISSING + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASSUNLOADING_MISSING));
     }
+    
+    /**
+     * Test if -XX:+PrintReferenceGC enabled.
+     */
+    public void testPrintReferenceGC() {
+        String jvmOptions = null;
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.PRINT_REFERENCE_GC);
+        jvmRun.setEventTypes(eventTypes);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED));
+    }
 }

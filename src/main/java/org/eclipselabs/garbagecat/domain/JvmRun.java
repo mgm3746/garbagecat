@@ -1,8 +1,14 @@
 /******************************************************************************
- * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
- * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
- * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
- * initial API and implementation *
+ * Garbage Cat                                                                *
+ *                                                                            *
+ * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
+ * All rights reserved. This program and the accompanying materials           *
+ * are made available under the terms of the Eclipse Public License v1.0      *
+ * which accompanies this distribution, and is available at                   *
+ * http://www.eclipse.org/legal/epl-v10.html                                  *
+ *                                                                            *
+ * Contributors:                                                              *
+ *    Red Hat, Inc. - initial API and implementation                          *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
@@ -121,6 +127,11 @@ public class JvmRun {
      * Analysis property keys.
      */
     private List<String> analysisKeys;
+    
+    /**
+     * Error property keys.
+     */
+    private List<String> errorKeys;
 
     /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
@@ -406,7 +417,7 @@ public class JvmRun {
                 analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_MISSING);
             }
         }
-        
+
         // 7) Check for concurrent mode failure by logging event type. Going forward, this will be identified by a
         // trigger, not a new logging event. This is needed to deal with legacy code that unfortunately created many
         // unnecessary events instead of preparsing them into their component events.
@@ -420,7 +431,7 @@ public class JvmRun {
                 analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_MISSING);
             }
         }
-        
+
         // 8) Check if CMS handling Perm/Metaspace collections by collector analysis (if no jvm options available).
         if (!analysisKeys.contains(Analysis.KEY_CMS_CLASSUNLOADING_MISSING)) {
             if (getEventTypes().contains(LogEventType.CMS_REMARK)
@@ -429,13 +440,22 @@ public class JvmRun {
             }
 
         }
-        
+
         // 9) Check for CMS promotion failed by event type
-        if (getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED)
-                || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD)
-                || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA)
-                || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED)) {
-            analysisKeys.add(Analysis.KEY_CMS_PROMOTION_FAILED);
+        if (!analysisKeys.contains(Analysis.KEY_CMS_PROMOTION_FAILED)) {
+            if (getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED)
+                    || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD)
+                    || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA)
+                    || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED)) {
+                analysisKeys.add(Analysis.KEY_CMS_PROMOTION_FAILED);
+            }
+        }
+
+        // 9) Check for -XX:+PrintReferenceGC by event type
+        if (!analysisKeys.contains(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED)) {
+            if (getEventTypes().contains(LogEventType.PRINT_REFERENCE_GC)) {
+                analysisKeys.add(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED);
+            }
         }
     }
 
@@ -556,15 +576,35 @@ public class JvmRun {
         if (jvm.getPrintGCDetailsOption() == null) {
             analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_MISSING);
         }
-        
+
         // Check if CMS not being used for old collections
         if (jvm.getUseParNewGCOption() != null && jvm.getUseConcMarkSweepGCOption() == null) {
             analysisKeys.add(Analysis.KEY_CMS_NEW_SERIAL_OLD);
         }
-        
+
         // Check if CMS handling Perm/Metaspace collections.
         if ((isCmsCollector(eventTypes) && jvm.getCMSClassUnloadingEnabled() == null)) {
             analysisKeys.add(Analysis.KEY_CMS_CLASSUNLOADING_MISSING);
+        }
+        
+        // Check for -XX:+PrintReferenceGC.
+        if (jvm.getPrintReferenceGC() == null) {
+            analysisKeys.add(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED);
+        }
+        
+        // Check for -XX:+PrintGCCause missing.
+        if (jvm.getPrintGCCause() == null) {
+            analysisKeys.add(Analysis.KEY_PRINT_GC_CAUSE_MISSING);
+        }
+        
+        // Check for -XX:-PrintGCCause.
+        if (jvm.getPrintGCCauseDisabled() == null) {
+            analysisKeys.add(Analysis.KEY_PRINT_GC_CAUSE_DISABLED);
+        }
+        
+        // Check for -XX:+PrintReferenceGC.
+        if (jvm.getPrintReferenceGC() != null) {
+            analysisKeys.add(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED);
         }
     }
 

@@ -483,4 +483,22 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("-XX:+CMSClassUnloadingEnabled option incorrect.", "-XX:+CMSClassUnloadingEnabled", jvm.getCMSClassUnloadingEnabled());        
     } 
+    
+    public void testPrintReferenceGC() {
+        String jvmOptions = "-Xss128k -XX:+PrintReferenceGC -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:+PrintReferenceGC option incorrect.", "-XX:+PrintReferenceGC", jvm.getPrintReferenceGC());        
+    }
+    
+    public void testPrintGCCause() {
+        String jvmOptions = "-Xss128k -XX:+PrintGCCause -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:+PrintGCCause option incorrect.", "-XX:+PrintGCCause", jvm.getPrintGCCause());        
+    }
+    
+    public void testPrintGCCauseDisabled() {
+        String jvmOptions = "-Xss128k -XX:-PrintGCCause -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:-PrintGCCause option incorrect.", "-XX:-PrintGCCause", jvm.getPrintGCCauseDisabled());        
+    }
 }
