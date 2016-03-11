@@ -1372,9 +1372,9 @@ public class TestJvmRun extends TestCase {
     }
     
     /**
-     * Test if -XX:+PrintReferenceGC enabled.
+     * Test if -XX:+PrintReferenceGC enabled by inspecting logging events.
      */
-    public void testPrintReferenceGC() {
+    public void testPrintReferenceGCByLogging() {
         String jvmOptions = null;
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -1382,6 +1382,18 @@ public class TestJvmRun extends TestCase {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.PRINT_REFERENCE_GC);
         jvmRun.setEventTypes(eventTypes);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED));
+    }
+    
+    /**
+     * Test if -XX:+PrintReferenceGC enabled by inspecting jvm options.
+     */
+    public void testPrintReferenceGCByOptions() {
+        String jvmOptions = "Xss128k -XX:+PrintReferenceGC  Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED));
     }

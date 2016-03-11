@@ -127,11 +127,6 @@ public class JvmRun {
      * Analysis property keys.
      */
     private List<String> analysisKeys;
-    
-    /**
-     * Error property keys.
-     */
-    private List<String> errorKeys;
 
     /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
@@ -588,7 +583,7 @@ public class JvmRun {
         }
         
         // Check for -XX:+PrintReferenceGC.
-        if (jvm.getPrintReferenceGC() == null) {
+        if (jvm.getPrintReferenceGC() != null) {
             analysisKeys.add(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED);
         }
         
@@ -597,14 +592,9 @@ public class JvmRun {
             analysisKeys.add(Analysis.KEY_PRINT_GC_CAUSE_MISSING);
         }
         
-        // Check for -XX:-PrintGCCause.
+        // Check for -XX:-PrintGCCause (PrintGCCause disabled).
         if (jvm.getPrintGCCauseDisabled() == null) {
             analysisKeys.add(Analysis.KEY_PRINT_GC_CAUSE_DISABLED);
-        }
-        
-        // Check for -XX:+PrintReferenceGC.
-        if (jvm.getPrintReferenceGC() != null) {
-            analysisKeys.add(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED);
         }
     }
 
