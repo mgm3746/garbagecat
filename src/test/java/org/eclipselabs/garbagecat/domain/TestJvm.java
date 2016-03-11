@@ -501,4 +501,30 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("-XX:-PrintGCCause option incorrect.", "-XX:-PrintGCCause", jvm.getPrintGCCauseDisabled());        
     }
+    
+    /**
+     * Test if JDK7 by inspecting version header.
+     */
+    public void testJDK7() {
+        String version = "Java HotSpot(TM) 64-Bit Server VM (24.91-b03) for windows-amd64 JRE (1.7.0_91-b15), built on Oct  2 2015 03:26:24 by \"java_re\" with unknown MS VC++:1600";        
+        Jvm jvm = new Jvm(null, null);
+        jvm.setVersion(version);
+        Assert.assertTrue("JDK7 not identified", jvm.isJDK7());
+    }
+    
+    /**
+     * Test if JDK7 by inspecting version header.
+     */
+    public void testNotJDK7() {
+        String version = "Java HotSpot(TM) 64-Bit Server VM (24.91-b03) for windows-amd64 JRE (1.8.0_91-b15), built on Oct  2 2015 03:26:24 by \"java_re\" with unknown MS VC++:1600";        
+        Jvm jvm = new Jvm(null, null);
+        jvm.setVersion(version);
+        Assert.assertFalse("JDK7 incorrectly identified", jvm.isJDK7());
+    }
+    
+    public void testTieredCompilation() {
+        String jvmOptions = "-Xss128k -XX:+TieredCompilation -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:+TieredCompilation option incorrect.", "-XX:+TieredCompilation", jvm.getTieredCompilation());        
+    }
 }

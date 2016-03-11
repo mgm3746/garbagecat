@@ -591,6 +591,20 @@ public class Jvm {
         String regex = "(-XX:\\-PrintGCCause)";
         return getJvmOption(regex);
     }
+    
+    /**
+     * The option for enabling tiered compilation. For example:
+     * 
+     * <pre>
+     * -XX:+TieredCompilation
+     * </pre>
+     * 
+     * @return True if -XX:+TieredCompilation option exists, false otherwise.
+     */
+    public String getTieredCompilation() {
+        String regex = "(-XX:\\+TieredCompilation)";
+        return getJvmOption(regex);
+    }
 
     /**
      * 
@@ -642,5 +656,16 @@ public class Jvm {
         }
 
         return hasLargeThreadStackSize;
+    }
+    
+    /**
+     * @return True if JDK7, false otherwise.
+     */
+    public boolean isJDK7() {
+        boolean isJDK7 = false;
+        if (version != null) {
+            isJDK7 = version.matches("^.+JRE \\(1\\.7.+$");
+        }
+        return isJDK7;
     }
 }

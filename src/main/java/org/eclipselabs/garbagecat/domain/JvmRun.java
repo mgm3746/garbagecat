@@ -596,6 +596,11 @@ public class JvmRun {
         if (jvm.getPrintGCCauseDisabled() == null) {
             analysisKeys.add(Analysis.KEY_PRINT_GC_CAUSE_DISABLED);
         }
+        
+        // Check for -XX:+TieredCompilation.
+        if (jvm.getThreadStackSizeValue() != null && jvm.isJDK7()) {
+            analysisKeys.add(Analysis.KEY_JDK7_TIERED_COMPILATION_ENABLED);
+        }
     }
 
     /**

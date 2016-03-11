@@ -214,7 +214,12 @@ public class Analysis {
     /**
      * Property key for -XX:-PrintGCCause.
      */
-    public static final String KEY_PRINT_GC_CAUSE_DISABLED = "print.gc.cause.disabled";         
+    public static final String KEY_PRINT_GC_CAUSE_DISABLED = "print.gc.cause.disabled";    
+    
+    /**
+     * Property key for -XX:+TieredCompilation, which has issues with JDK7.
+     */
+    public static final String KEY_JDK7_TIERED_COMPILATION_ENABLED = "jdk7.tiered.compilation.enabled"; 
 
     /**
      * Make default constructor private so the class cannot be instantiated.
