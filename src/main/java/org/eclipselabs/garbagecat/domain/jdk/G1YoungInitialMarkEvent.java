@@ -1,7 +1,7 @@
 /******************************************************************************
  * Garbage Cat                                                                *
  *                                                                            *
- * Copyright (c) 2008-2012 Red Hat, Inc.                                      *
+ * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
  * All rights reserved. This program and the accompanying materials           *
  * are made available under the terms of the Eclipse Public License v1.0      *
  * which accompanies this distribution, and is available at                   *
@@ -28,7 +28,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * G1 collector young generation initial marking. 
+ * G1 collector young generation initial marking.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -62,21 +62,28 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class G1YoungInitialMarkEvent implements BlockingEvent, CombinedData, TriggerData, G1Collection {
+
+    /**
+     * Regular expression for triggers associated with this logging event.
+     */
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC pause \\(young\\) \\(initial-mark\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\("
+            + TRIGGER + "\\) )?\\(young\\) \\(initial-mark\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
             + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-    
+
     /**
      * Regular expression preprocessed.
      */
-    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\) )?\\(young\\) \\(initial-mark\\)( \\(("
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?, " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_G1 + "->"
-            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-    
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(" + TRIGGER
+            + "\\) )?\\(young\\) \\(initial-mark\\)( \\(" + TRIGGER + "\\))?, " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)" + JdkRegEx.TIMES_BLOCK
+            + "?[ ]*$";
+
     /**
      * Pattern standard format.
      */
@@ -116,7 +123,7 @@ public class G1YoungInitialMarkEvent implements BlockingEvent, CombinedData, Tri
      * Available space in multiple generation (kilobytes).
      */
     private int combinedAvailable;
-    
+
     /**
      * The trigger for the GC event.
      */
@@ -131,10 +138,11 @@ public class G1YoungInitialMarkEvent implements BlockingEvent, CombinedData, Tri
         if (matcher.find()) {
             // standard format
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(14).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
-            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), matcher.group(18).charAt(0));
-            duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+            trigger = matcher.group(14);
+            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), matcher.group(18).charAt(0));
+            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(20).charAt(0));
+            duration = JdkMath.convertSecsToMillis(matcher.group(21)).intValue();
         } else {
             // preprocessed format
             matcher = patternPreprocessed.matcher(logEntry);
@@ -190,7 +198,7 @@ public class G1YoungInitialMarkEvent implements BlockingEvent, CombinedData, Tri
     public String getName() {
         return JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString();
     }
-    
+
     public String getTrigger() {
         return trigger;
     }
@@ -198,7 +206,8 @@ public class G1YoungInitialMarkEvent implements BlockingEvent, CombinedData, Tri
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
      * 
-     * @param logLine The log line to test.
+     * @param logLine
+     *            The log line to test.
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {

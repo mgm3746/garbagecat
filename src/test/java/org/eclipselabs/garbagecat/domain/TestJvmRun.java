@@ -1397,4 +1397,21 @@ public class TestJvmRun extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.", jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED));
     }
+    
+    /**
+     * Test <code>G1PreprocessAction</code> to ensure it does not falsely erroneously preprocess.
+     * 
+     */
+    public void testG1PreprocessActionG1CleanupG1InitialMark() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset62.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.", jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue(JdkUtil.LogEventType.G1_CLEANUP.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.G1_CLEANUP));
+        Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + " collector not identified.", jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_INITIAL_MARK));      
+    }
 }

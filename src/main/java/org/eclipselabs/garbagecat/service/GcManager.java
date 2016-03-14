@@ -244,7 +244,7 @@ public class GcManager {
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
-            } else if (G1PreprocessAction.match(currentLogLine)) {
+            } else if (G1PreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
                 G1PreprocessAction action = new G1PreprocessAction(priorLogLine,
                         currentLogLine, nextLogLine, entangledLogLines);
                 if (action.getLogEntry() != null) {

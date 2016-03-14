@@ -65,14 +65,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, G1Collection {
+    
+    /**
+     * Regular expression for triggers associated with this logging event.
+     */
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(("
-            + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\) )?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]( " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1
-            + "\\(" + JdkRegEx.SIZE_G1 + "\\))?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\("
+            + TRIGGER + "\\) )?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), "
+            + JdkRegEx.DURATION + "\\]( " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
+            + "\\))?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     
     private static final Pattern pattern = Pattern.compile(REGEX);
     /**

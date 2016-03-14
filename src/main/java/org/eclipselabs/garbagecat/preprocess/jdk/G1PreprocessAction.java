@@ -1,14 +1,8 @@
 /******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
+ * Garbage Cat                                                                * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
+ * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
+ * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
+ * initial API and implementation *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
@@ -420,14 +414,14 @@ public class G1PreprocessAction implements PreprocessAction {
             "^\\[GC concurrent.+$",
             //
             "^       Avg:.+$",
-            // Ergonomics. 
+            // Ergonomics.
             "^(:)?( )?(" + JdkRegEx.TIMESTAMP + ":  )?" + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+$" };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
-    
+
     /**
      * Log entry in the entangle log list to indicate the GC details block started with a non-concurrent event.
      * Inspection of logging has shown that concurrent events can become intermingled with the GC details logging. When
@@ -450,11 +444,11 @@ public class G1PreprocessAction implements PreprocessAction {
      */
     public G1PreprocessAction(String priorLogEntry, String logEntry, String nextLogEntr,
             List<String> entangledLogLines) {
-        
+
         // Beginning logging
         if (logEntry.matches(REGEX_RETAIN_BEGINNING_FULL_GC) || logEntry.matches(REGEX_RETAIN_BEGINNING_CLEANUP)) {
             this.logEntry = logEntry;
-            if(!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
+            if (!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
                 entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
             }
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)) {
@@ -466,7 +460,7 @@ public class G1PreprocessAction implements PreprocessAction {
             }
             // Output beginning of young line
             this.logEntry = matcher.group(1);
-            if(!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
+            if (!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
                 entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
             }
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)) {
@@ -476,7 +470,7 @@ public class G1PreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 logEntry = matcher.group(2) + System.getProperty("line.separator");
             }
-            
+
             // Handle concurrent mixed with young collections. See datasets 47-48 and 51-52, 54.
             if (entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
                 // save concurrent event to output at the end of the non-concurrent event
@@ -484,7 +478,7 @@ public class G1PreprocessAction implements PreprocessAction {
             } else {
                 this.logEntry = logEntry;
             }
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE)) {            
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE)) {
             // Strip out G1Ergonomics
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE);
             Matcher matcher = pattern.matcher(logEntry);
@@ -492,7 +486,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 logEntry = matcher.group(1);
                 this.logEntry = logEntry;
             }
-            if(!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
+            if (!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
                 entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
             }
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_REMARK)) {
@@ -501,7 +495,7 @@ public class G1PreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1) + matcher.group(5);
             }
-            if(!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
+            if (!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
                 entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
             }
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_MIXED)) {
@@ -511,7 +505,7 @@ public class G1PreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            if(!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
+            if (!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
                 entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
             }
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK)) {
@@ -521,7 +515,7 @@ public class G1PreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            if(!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
+            if (!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
                 entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);
             }
             // Middle logging
@@ -568,19 +562,22 @@ public class G1PreprocessAction implements PreprocessAction {
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
-     *
+     * 
      * @param logLine
      *            The log line to test.
      * @param priorLogLine
      *            The last log entry processed.
+     * @param nextLogLine
+     *            The next log entry processed.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
+    public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
         boolean match = false;
         if (logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_GC) || logLine.matches(REGEX_RETAIN_BEGINNING_REMARK)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_MIXED) || logLine.matches(REGEX_RETAIN_BEGINNING_CLEANUP)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_MIXED)
+                || (logLine.matches(REGEX_RETAIN_BEGINNING_CLEANUP) && nextLogLine.matches(REGEX_RETAIN_END))
                 || logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE) || logLine.matches(REGEX_RETAIN_MIDDLE_JDK8)
