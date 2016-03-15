@@ -28,7 +28,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Fullllection when <code>-verbose:gc</code> used without <code>-XX:+PrintGCDetails</code>. It is not possible to
+ * Full collection when <code>-verbose:gc</code> used without <code>-XX:+PrintGCDetails</code>. It is not possible to
  * determine the collector from the logging pattern, but it can be determined from
  * {@link org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent} output.
  * </p>
