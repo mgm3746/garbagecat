@@ -423,7 +423,7 @@ public class JvmRun {
                     || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE)
                     || getEventTypes()
                             .contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA)) {
-                analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_MISSING);
+                analysisKeys.add(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE);
             }
         }
 
