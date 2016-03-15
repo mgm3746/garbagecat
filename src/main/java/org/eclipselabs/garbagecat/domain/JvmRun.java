@@ -588,12 +588,12 @@ public class JvmRun {
         }
         
         // Check for -XX:+PrintGCCause missing.
-        if (jvm.getPrintGCCause() == null) {
+        if (jvm.getPrintGCCause() == null && jvm.isJDK7()) {
             analysisKeys.add(Analysis.KEY_PRINT_GC_CAUSE_MISSING);
         }
         
         // Check for -XX:-PrintGCCause (PrintGCCause disabled).
-        if (jvm.getPrintGCCauseDisabled() == null) {
+        if (jvm.getPrintGCCauseDisabled() != null) {
             analysisKeys.add(Analysis.KEY_PRINT_GC_CAUSE_DISABLED);
         }
         
