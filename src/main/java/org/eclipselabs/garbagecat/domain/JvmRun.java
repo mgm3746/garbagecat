@@ -601,6 +601,11 @@ public class JvmRun {
         if (jvm.getThreadStackSizeValue() != null && jvm.isJDK7()) {
             analysisKeys.add(Analysis.KEY_JDK7_TIERED_COMPILATION_ENABLED);
         }
+        
+        // Check for -XX:+PrintStringDeduplicationStatistics.
+        if (jvm.getPrintStringDeduplicationStatistics() != null) {
+            analysisKeys.add(Analysis.KEY_PRINT_STRING_DEDUP_STATS_ENABLED);
+        }
     }
 
     /**

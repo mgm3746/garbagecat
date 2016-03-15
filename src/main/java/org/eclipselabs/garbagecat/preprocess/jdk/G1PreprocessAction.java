@@ -1,8 +1,14 @@
 /******************************************************************************
- * Garbage Cat                                                                * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
- * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
- * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
- * initial API and implementation *
+ * Garbage Cat                                                                *
+ *                                                                            *
+ * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
+ * All rights reserved. This program and the accompanying materials           *
+ * are made available under the terms of the Eclipse Public License v1.0      *
+ * which accompanies this distribution, and is available at                   *
+ * http://www.eclipse.org/legal/epl-v10.html                                  *
+ *                                                                            *
+ * Contributors:                                                              *
+ *    Red Hat, Inc. - initial API and implementation                          *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
@@ -11,6 +17,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1YoungPause;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -274,25 +283,24 @@ public class G1PreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained beginning G1_YOUNG_PAUSE collection. Trigger can be before or after "(young)".
      */
-    private static final String REGEX_RETAIN_BEGINNING_YOUNG_PAUSE = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))? \\(young\\)( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE
-            + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, "
+    private static final String REGEX_RETAIN_BEGINNING_YOUNG_PAUSE = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\("
+            + G1YoungPause.TRIGGER + "\\))? \\(young\\)( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, "
             + JdkRegEx.DURATION + "\\])?)(( )?" + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+)?$";
 
     /**
      * Regular expression for retained beginning G1_YOUNG_INITIAL_MARK collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\))? \\(young\\) \\(initial-mark\\)(, "
+            + ": \\[GC pause( \\(" + G1YoungInitialMarkEvent.TRIGGER + "\\))? \\(young\\) \\(initial-mark\\)(, "
             + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+)?$";
 
     /**
      * Regular expression for retained beginning G1_FULL_GC collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_FULL_GC = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\("
-            + JdkRegEx.TRIGGER_SYSTEM_GC + "\\) )?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]$";
+            + G1FullGCEvent.TRIGGER + "\\) )?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
+            + "\\), " + JdkRegEx.DURATION + "\\]$";
 
     /**
      * Regular expression for retained beginning G1_CONCURRENT collection.
@@ -305,7 +313,9 @@ public class G1PreprocessAction implements PreprocessAction {
      * Regular expression for retained beginning G1_REMARK collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_REMARK = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC remark) "
-            + JdkRegEx.TIMESTAMP + ": \\[GC ref-proc, " + JdkRegEx.DURATION + "\\](, " + JdkRegEx.DURATION + "\\])$";
+            + JdkRegEx.TIMESTAMP + ": (\\[Finalize Marking, " + JdkRegEx.DURATION + "\\] " + JdkRegEx.TIMESTAMP
+            + ": )?\\[GC ref-proc, " + JdkRegEx.DURATION + "\\]( " + JdkRegEx.TIMESTAMP + ": \\[Unloading, "
+            + JdkRegEx.DURATION + "\\])?(, " + JdkRegEx.DURATION + "\\])$";
 
     /**
      * Regular expression for retained beginning G1_MIXED collection.
@@ -389,13 +399,22 @@ public class G1PreprocessAction implements PreprocessAction {
             //
             "^   \\[Code Root Fixup:.+$",
             //
+            "^   \\[Code Root Purge:.+$",
+            //
             "^   \\[Code Root Migration:.+$",
             //
             "^      \\[Code Root Marking \\(ms\\):.+$",
             //
             "^   \\[Clear CT:.+$",
+            // Other
             // JDK8 has 3 leading spaces
             "^   (   )?\\[Other:.+$",
+            //
+            "^      \\[Redirty Cards:.+$",
+            //
+            "^      \\[Humongous Register:.+$",
+            //
+            "^      \\[Humongous Reclaim:.+$",
             //
             "^      \\[Choose CSet:.+$",
             //
@@ -409,13 +428,57 @@ public class G1PreprocessAction implements PreprocessAction {
             //
             "^      \\[Mark Stack Scanning \\(ms\\):.+$",
             //
-            "^         \\[Termination Attempts :.+$",
+            "^         \\[Termination Attempts( )?:.+$",
             // Partial concurrent event. Maybe a logging bug?
             "^\\[GC concurrent.+$",
             //
             "^       Avg:.+$",
             // Ergonomics.
-            "^(:)?( )?(" + JdkRegEx.TIMESTAMP + ":  )?" + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+$" };
+            "^(:)?( )?(" + JdkRegEx.TIMESTAMP + ":  )?" + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+$",
+            // -XX:+PrintStringDeduplicationStatistics
+            "^   \\[String Dedup Fixup:.+$",
+            //
+            "^      \\[Queue Fixup \\(ms\\):.+$",
+            //
+            "^      \\[Table Fixup \\(ms\\):.+$",
+            //
+            "^   \\[Last Exec:.+$",
+            //
+            "^      \\[Inspected:.+$",
+            //
+            "^         \\[Skipped:.+$",
+            //
+            "^         \\[Hashed:.+$",
+            //
+            "^         \\[Known:.+$",
+            //
+            "^         \\[New:.+$",
+            //
+            "^      \\[Deduplicated:.+$",
+            //
+            "^         \\[Young:.+$",
+            //
+            "^         \\[Old:.+$",
+            //
+            "^   \\[Total Exec:.+$",
+            //
+            "^   \\[Table\\]$",
+            //
+            "^      \\[Memory Usage:.+$",
+            //
+            "^      \\[Size:.+$",
+            //
+            "^      \\[Entries:.+$",
+            //
+            "^      \\[Resize Count:.+$",
+            //
+            "^      \\[Rehash Count:.+$",
+            //
+            "^      \\[Age Threshold:.+$",
+            //
+            "^   \\[Queue\\]$",
+            //
+            "^      \\[Dropped:.+$" };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -493,7 +556,7 @@ public class G1PreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_REMARK);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1) + matcher.group(5);
+                this.logEntry = matcher.group(1) + matcher.group(11);
             }
             if (!entangledLogLines.contains(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT)) {
                 entangledLogLines.add(BLOCK_STARTED_WITH_NON_CONCURRENT_EVENT);

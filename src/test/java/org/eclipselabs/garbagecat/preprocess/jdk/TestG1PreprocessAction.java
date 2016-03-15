@@ -142,6 +142,13 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
     
+    public void testLogLineCodeRootPurge() {
+        String logLine = "   [Code Root Purge: 0.0 ms]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
     public void testLogLineCodeRootMigration() {
         String logLine = "   [Code Root Migration: 0.8 ms]";
         Assert.assertTrue(
@@ -229,6 +236,13 @@ public class TestG1PreprocessAction extends TestCase {
 
     public void testLogLineTerminationAttempts() {
         String logLine = "         [Termination Attempts : 1 1 1 1";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineTerminationAttemptsNoSpaceBeforeColon() {
+        String logLine = "         [Termination Attempts: Min: 274, Avg: 618.2, Max: 918, Diff: 644, Sum: 11127]";
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
                 G1PreprocessAction.match(logLine, null, null));
@@ -520,5 +534,187 @@ public class TestG1PreprocessAction extends TestCase {
         String nextLogLine = "2.443: [GC pause (GCLocker Initiated GC) (young) (initial-mark) 1061M->52M(110G), 0.0280096 secs]";
         Assert.assertFalse("Log line recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
                 G1PreprocessAction.match(logLine, null, nextLogLine));
+    }
+    
+    public void testLogLineStringDedupFixup() {
+        String logLine = "   [String Dedup Fixup: 1.6 ms, GC Workers: 18]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineStringDedupFixupQueueFixup() {
+        String logLine = "      [Queue Fixup (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineStringDedupFixupTableFixup() {
+        String logLine = "      [Table Fixup (ms): Min: 0.0, Avg: 0.1, Max: 1.3, Diff: 1.3, Sum: 1.3]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineRedirtyCards() {
+        String logLine = "      [Redirty Cards: 0.6 ms]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineHumongousRegister() {
+        String logLine = "      [Humongous Register: 0.1 ms]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineHumongousReclaim() {
+        String logLine = "      [Humongous Reclaim: 0.0 ms]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineRemarkWithFinalizeMarkingAndUnloading() {
+        String logLine = "5.745: [GC remark 5.746: [Finalize Marking, 0.0068506 secs] 5.752: [GC ref-proc, 0.0014064 secs] 5.754: [Unloading, 0.0057674 secs], 0.0157938 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineLastExec() {
+        String logLine = "   [Last Exec: 0.0118158 secs, Idle: 0.9330710 secs, Blocked: 0/0.0000000 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineInspected() {
+        String logLine = "      [Inspected:           10116]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineSkipped() {
+        String logLine = "         [Skipped:              0(  0.0%)]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineHashed() {
+        String logLine = "         [Hashed:            3088( 30.5%)]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineKnown() {
+        String logLine = "         [Known:             3404( 33.6%)]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineNew() {
+        String logLine = "         [New:               6712( 66.4%)    526.1K]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineDuplicated() {
+        String logLine = "      [Deduplicated:         3304( 49.2%)    197.2K( 37.5%)]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineYoung() {
+        String logLine = "         [Young:             3101( 93.9%)    173.8K( 88.1%)]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineOld() {
+        String logLine = "         [Old:                203(  6.1%)     23.4K( 11.9%)]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineTotalExec() {
+        String logLine = "   [Total Exec: 2/0.0281081 secs, Idle: 2/9.1631547 secs, Blocked: 2/0.0266213 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineTable() {
+        String logLine = "   [Table]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineMemoryUsage() {
+        String logLine = "      [Memory Usage: 745.2K]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineSize() {
+        String logLine = "      [Size: 16384, Min: 1024, Max: 16777216]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineEntries() {
+        String logLine = "      [Entries: 26334, Load: 160.7%, Cached: 0, Added: 26334, Removed: 0]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineResizeCount() {
+        String logLine = "      [Resize Count: 4, Shrink Threshold: 10922(66.7%), Grow Threshold: 32768(200.0%)]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineRehashCount() {
+        String logLine = "      [Rehash Count: 0, Rehash Threshold: 120, Hash Seed: 0x0]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineAgeThreshold() {
+        String logLine = "      [Age Threshold: 3]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineQueue() {
+        String logLine = "   [Queue]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+    
+    public void testLogLineDropped() {
+        String logLine = "      [Dropped: 0]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
     }
 }

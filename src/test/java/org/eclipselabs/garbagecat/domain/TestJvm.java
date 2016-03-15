@@ -527,4 +527,10 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("-XX:+TieredCompilation option incorrect.", "-XX:+TieredCompilation", jvm.getTieredCompilation());        
     }
+    
+    public void testPrintStringDeduplicationStatistics() {
+        String jvmOptions = "-Xss128k -XX:+PrintStringDeduplicationStatistics -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:+TieredCompilation option incorrect.", "-XX:+PrintStringDeduplicationStatistics", jvm.getPrintStringDeduplicationStatistics());        
+    }
 }

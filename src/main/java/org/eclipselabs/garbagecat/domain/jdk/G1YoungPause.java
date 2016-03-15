@@ -76,7 +76,7 @@ public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedDat
     /**
      * Regular expression for triggers associated with this logging event.
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
+    public static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
             + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")";
 
     /**

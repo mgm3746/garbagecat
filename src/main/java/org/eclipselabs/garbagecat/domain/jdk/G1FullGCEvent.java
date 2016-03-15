@@ -69,7 +69,7 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, 
     /**
      * Regular expression for triggers associated with this logging event.
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
+    public static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
 
     /**
      * Regular expressions defining the logging.

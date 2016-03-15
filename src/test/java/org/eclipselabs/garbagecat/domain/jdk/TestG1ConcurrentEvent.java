@@ -84,4 +84,11 @@ public class TestG1ConcurrentEvent extends TestCase {
         G1ConcurrentEvent  event = new G1ConcurrentEvent (logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 14974501, event.getTimestamp());
     }
+    
+    public void testLogLineStringDeduplication() {
+        String logLine = "8.556: [GC concurrent-string-deduplication, 906.5K->410.2K(496.3K), avg 54.8%, 0.0162924 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".", G1ConcurrentEvent.match(logLine));
+        G1ConcurrentEvent  event = new G1ConcurrentEvent (logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 8556, event.getTimestamp());
+    }
 }

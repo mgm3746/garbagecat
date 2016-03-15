@@ -49,12 +49,12 @@ public class Analysis {
      * Property key for explicit garbage collection disabled.
      */
     public static final String KEY_EXPLICIT_GC_DISABLED = "explicit.gc.disabled";
-    
+
     /**
      * Property key for explicit garbage collection disabled.
      */
     public static final String KEY_EXPLICIT_GC_NOT_CONCURRENT = "explicit.gc.not.concurrent";
-    
+
     /**
      * Property key for explicit garbage collection disabled and specifying concurrent collections.
      */
@@ -145,11 +145,11 @@ public class Analysis {
      * Property key for heap dump on out of memory error option missing.
      */
     public static final String KEY_HEAP_DUMP_ON_OOME_MISSING = "heap.dump.on.oome.missing";
-    
+
     /**
      * Property key for heap dump on memory error option disabled.
      */
-    public static final String KEY_HEAP_DUMP_ON_OOME_DISABLED = "heap.dump.on.oome.disabled";    
+    public static final String KEY_HEAP_DUMP_ON_OOME_DISABLED = "heap.dump.on.oome.disabled";
 
     /**
      * Property key for instrumentation.
@@ -170,56 +170,61 @@ public class Analysis {
      * Property key for bytecode compilation disabled.
      */
     public static final String KEY_BYTECODE_COMPILE_DISABLED = "bytecode.compile.disabled";
-    
+
     /**
      * Property key for adding option to output command line flags at beginning of gc logging.
      */
     public static final String KEY_PRINT_COMMANDLINE_FLAGS = "print.commandline.flags";
-    
+
     /**
      * Property key for adding option to output details at gc needed for anaylysis.
      */
     public static final String KEY_PRINT_GC_DETAILS_MISSING = "print.gc.details.missing";
-    
+
     /**
      * Property key for not specifying the cms be used for old collections.
      */
-    public static final String KEY_CMS_NEW_SERIAL_OLD = "cms.new.serial.old";    
-    
+    public static final String KEY_CMS_NEW_SERIAL_OLD = "cms.new.serial.old";
+
     /**
      * Property key for concurrent mode failure.
      */
-    public static final String KEY_CMS_CONCURRENT_MODE_FAILURE = "cms.concurrent.mode.failure";   
-    
+    public static final String KEY_CMS_CONCURRENT_MODE_FAILURE = "cms.concurrent.mode.failure";
+
     /**
      * Property key for promotion failed.
      */
-    public static final String KEY_CMS_PROMOTION_FAILED = "cms.promotion.failed";   
-    
+    public static final String KEY_CMS_PROMOTION_FAILED = "cms.promotion.failed";
+
     /**
      * Property key for concurrent mode failure.
      */
-    public static final String KEY_CMS_CLASSUNLOADING_MISSING = "cms.classunloading.missing";  
-    
+    public static final String KEY_CMS_CLASSUNLOADING_MISSING = "cms.classunloading.missing";
+
     /**
      * Property key for -XX:+PrintReferenceGC.
      */
     public static final String KEY_PRINT_REFERENCE_GC_ENABLED = "print.reference.gc.enabled";
-    
+
     /**
      * Property key for -XX:+PrintGCCause.
      */
     public static final String KEY_PRINT_GC_CAUSE_MISSING = "print.gc.cause.missing";
-    
+
     /**
      * Property key for -XX:-PrintGCCause.
      */
-    public static final String KEY_PRINT_GC_CAUSE_DISABLED = "print.gc.cause.disabled";    
-    
+    public static final String KEY_PRINT_GC_CAUSE_DISABLED = "print.gc.cause.disabled";
+
     /**
      * Property key for -XX:+TieredCompilation, which has issues with JDK7.
      */
-    public static final String KEY_JDK7_TIERED_COMPILATION_ENABLED = "jdk7.tiered.compilation.enabled"; 
+    public static final String KEY_JDK7_TIERED_COMPILATION_ENABLED = "jdk7.tiered.compilation.enabled";
+
+    /**
+     * Property key for -XX:+PrintStringDeduplicationStatistics.
+     */
+    public static final String KEY_PRINT_STRING_DEDUP_STATS_ENABLED = "print.string.dedup.stats.enabled";
 
     /**
      * Make default constructor private so the class cannot be instantiated.

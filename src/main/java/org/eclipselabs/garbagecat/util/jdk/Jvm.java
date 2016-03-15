@@ -605,6 +605,20 @@ public class Jvm {
         String regex = "(-XX:\\+TieredCompilation)";
         return getJvmOption(regex);
     }
+    
+    /**
+     * The option for string deduplication statistics. For example:
+     * 
+     * <pre>
+     * -XX:+PrintStringDeduplicationStatistics
+     * </pre>
+     * 
+     * @return True if -XX:+PrintStringDeduplicationStatistics option exists, false otherwise.
+     */
+    public String getPrintStringDeduplicationStatistics() {
+        String regex = "(-XX:\\+PrintStringDeduplicationStatistics)";
+        return getJvmOption(regex);
+    }
 
     /**
      * 

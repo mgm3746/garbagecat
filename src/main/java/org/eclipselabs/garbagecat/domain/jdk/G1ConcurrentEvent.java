@@ -78,11 +78,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * 3) With datestamp and "secs" after duration:
+ * </p>
  * 
  * <pre>
  * 2016-02-11T18:15:35.431-0500: 14974.501: [GC concurrent-cleanup-end, 0.0033880 secs]
  * </pre>
+ * 
+ * <p>
+ * 4) With string deduplication and G1 detail sizes (to one decimal):
  * </p>
+ * 
+ * <pre>
+ * 8.556: [GC concurrent-string-deduplication, 906.5K->410.2K(496.3K), avg 54.8%, 0.0162924 secs]
+ * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
@@ -94,12 +102,14 @@ public class G1ConcurrentEvent implements LogEvent, G1Collection {
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(\\])?(, " + JdkRegEx.DURATION
-            + ")?\\]( " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\))?"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-    
+            + ": \\[GC concurrent-(((root-region-scan|mark|cleanup)-(start|end|abort))"
+            + "|string-deduplication)(\\])?(,)?( " + JdkRegEx.DURATION + ")?(\\])?( " + JdkRegEx.SIZE_G1 + "->"
+            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\))?( " + JdkRegEx.SIZE_G1_DETAILS + "->"
+            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\))?(, avg " + JdkRegEx.PERCENT + ", "
+            + JdkRegEx.DURATION + "\\])?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+
     private static final Pattern pattern = Pattern.compile(REGEX);
-    
+
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -109,7 +119,6 @@ public class G1ConcurrentEvent implements LogEvent, G1Collection {
      * The time when the GC event happened in milliseconds after JVM startup.
      */
     private long timestamp;
-
 
     /**
      * Create detail logging event from log entry.

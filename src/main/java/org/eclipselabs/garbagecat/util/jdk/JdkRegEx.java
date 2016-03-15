@@ -135,6 +135,14 @@ public class JdkRegEx {
     public static final String BLANK_LINE = "^\\s+$";
     
     /**
+     * Percent.
+     * 
+     * For example:
+     * avg 54.8%
+     */
+    public static final String PERCENT = "\\d{1,3}\\.\\d%";
+    
+    /**
      * Trigger.
      */
     public static final String TRIGGER = "\\((.+?)\\)";
