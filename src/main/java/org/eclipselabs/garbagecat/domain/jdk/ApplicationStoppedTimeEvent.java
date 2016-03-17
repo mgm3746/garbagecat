@@ -1,8 +1,14 @@
 /******************************************************************************
- * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
- * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
- * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
- * initial API and implementation *
+ * Garbage Cat                                                                *
+ *                                                                            *
+ * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
+ * All rights reserved. This program and the accompanying materials           *
+ * are made available under the terms of the Eclipse Public License v1.0      *
+ * which accompanies this distribution, and is available at                   *
+ * http://www.eclipse.org/legal/epl-v10.html                                  *
+ *                                                                            *
+ * Contributors:                                                              *
+ *    Red Hat, Inc. - initial API and implementation                          *
  ******************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
@@ -99,7 +105,8 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": )?Total time for which application threads "
-            + "were stopped: (\\d{1,4}\\.\\d{7}) seconds(, Stopping threads took: \\d{1,4}\\.\\d{7} seconds)?[ ]*$";
+            + "were stopped: (\\d{1,4}[\\.\\,]\\d{7}) seconds"
+            + "(, Stopping threads took: \\d{1,4}[\\.\\,]\\d{7} seconds)?[ ]*$";
     /**
      * RegEx pattern.
      */
