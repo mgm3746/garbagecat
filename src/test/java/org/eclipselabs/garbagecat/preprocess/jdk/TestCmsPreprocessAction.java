@@ -79,4 +79,18 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
                 CmsPreprocessAction.match(logLine));
     }
+    
+    public void testLogLineParNewNoTriggerMixedConcurrentWithCommas() {
+        String logLine = "32552,602: [GC32552,602: [ParNew32552,610: [CMS-concurrent-abortable-preclean: 3,090/4,993 secs] "
+                + "[Times: user=3,17 sys=0,02, real=5,00 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine));
+    }
+    
+    public void testLogLineEndWithCommas() {
+        String logLine = ": 289024K->17642K(306688K), 0,0788160 secs] 4086255K->3814874K(12548864K), 0,0792920 secs] "
+                + "[Times: user=0,28 sys=0,00, real=0,08 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine));
+    }
 }

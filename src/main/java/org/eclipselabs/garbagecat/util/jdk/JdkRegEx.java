@@ -96,7 +96,7 @@ public class JdkRegEx {
      * 
      * For example: 2.272/29.793 secs
      */
-    public static final String DURATION_FRACTION = "(\\d{1,4}\\.\\d{3}\\/\\d{1,4}\\.\\d{3}) secs";
+    public static final String DURATION_FRACTION = "(\\d{1,4}[\\.\\,]\\d{3}\\/\\d{1,4}[\\.\\,]\\d{3}) secs";
 
     /**
      * Times data. I'm not really sure what JVM option(s) cause this to be output, but I see it added to the end of GC
