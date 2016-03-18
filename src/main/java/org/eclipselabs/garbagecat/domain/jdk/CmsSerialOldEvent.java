@@ -93,21 +93,21 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
 
     /**
      * Regular expressions defining the logging.
-    */
+     */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_SYSTEM_GC
             + ")\\) )?" + JdkRegEx.TIMESTAMP + ": \\[CMS( \\((" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + ")\\))?: "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE
             + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, "
             + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-    
+
     private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
 
     /**
      * Create CMS logging event from log entry.
      */
     public CmsSerialOldEvent(String logEntry) {
-        
+
         super.setLogEntry(logEntry);
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
@@ -125,13 +125,13 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
             super.setPermOccupancyEnd(Integer.parseInt(matcher.group(17)));
             super.setPermSpace(Integer.parseInt(matcher.group(18)));
             super.setDuration(JdkMath.convertSecsToMillis(matcher.group(20)).intValue());
-            if (matcher.group(4) != null && matcher.group(8) == null){
+            if (matcher.group(4) != null && matcher.group(8) == null) {
                 trigger = matcher.group(4);
             }
-            if (matcher.group(4) == null && matcher.group(8) != null){
+            if (matcher.group(4) == null && matcher.group(8) != null) {
                 trigger = matcher.group(8);
             }
-            if (matcher.group(4) != null && matcher.group(8) != null){
+            if (matcher.group(4) != null && matcher.group(8) != null) {
                 throw new IllegalArgumentException("Double triggers");
             }
         }
@@ -149,7 +149,7 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
         super.setTimestamp(timestamp);
         super.setDuration(duration);
     }
-    
+
     public String getName() {
         return JdkUtil.LogEventType.CMS_SERIAL_OLD.toString();
     }
@@ -157,7 +157,7 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
     public String getTrigger() {
         return trigger;
     }
-    
+
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
      * 

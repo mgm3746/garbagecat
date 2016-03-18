@@ -63,7 +63,7 @@ public class JdkMath {
         duration = duration.setScale(3, RoundingMode.HALF_EVEN);
         return duration;
     }
-    
+
     /**
      * Convert seconds to microseconds.
      * 
@@ -142,7 +142,7 @@ public class JdkMath {
         throughput = throughput.movePointRight(2);
         return throughput.intValue();
     }
-    
+
     /**
      * Calculate size in kilobytes.
      * 
@@ -163,5 +163,5 @@ public class JdkMath {
             break;
         }
         return kilobytes;
-    }  
+    }
 }

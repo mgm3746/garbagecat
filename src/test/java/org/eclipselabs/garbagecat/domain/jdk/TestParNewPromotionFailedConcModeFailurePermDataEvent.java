@@ -21,7 +21,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent extends TestCase {
+public class TestParNewPromotionFailedConcModeFailurePermDataEvent extends TestCase {
 
     public void testLogLineMark() {
         String logLine = "2746.109: [GC 2746.109: [ParNew (promotion failed): 242303K->242304K(242304K), "
@@ -30,9 +30,9 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent exte
                 + "6205857K->5968004K(6256896K), [CMS Perm : 207397K->207212K(262144K)], 79.6222096 secs]";
         Assert.assertTrue("Log line not recognized as "
                 + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent.match(logLine));
-        ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent event = 
-                new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(logLine);
+                ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine));
+        ParNewPromotionFailedConcModeFailurePermDataEvent event = new ParNewPromotionFailedConcModeFailurePermDataEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 2746109, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (6205857 - 5979868),
                 event.getYoungOccupancyInit());
@@ -55,9 +55,9 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent exte
                 + "172.8363482 secs] [Times: user=173.65 sys=0.91, real=172.84 secs]";
         Assert.assertTrue("Log line not recognized as "
                 + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent.match(logLine));
-        ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent event = 
-                new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(logLine);
+                ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine));
+        ParNewPromotionFailedConcModeFailurePermDataEvent event = new ParNewPromotionFailedConcModeFailurePermDataEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 5602812, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (12218490 - 12022816),
                 event.getYoungOccupancyInit());
@@ -81,9 +81,9 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent exte
                 + "[Times: user=120.78 sys=2.49, real=119.68 secs]";
         Assert.assertTrue("Log line not recognized as "
                 + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent.match(logLine));
-        ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent event = 
-                new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(logLine);
+                ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine));
+        ParNewPromotionFailedConcModeFailurePermDataEvent event = new ParNewPromotionFailedConcModeFailurePermDataEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 47101598, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (11808303 - 11581775),
                 event.getYoungOccupancyInit());
@@ -107,9 +107,9 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent exte
                 + "[Times: user=13.44 sys=0.79, real=11.47 secs]";
         Assert.assertTrue("Log line not recognized as "
                 + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent.match(logLine));
-        ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent event = 
-                new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(logLine);
+                ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine));
+        ParNewPromotionFailedConcModeFailurePermDataEvent event = new ParNewPromotionFailedConcModeFailurePermDataEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 891197444, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (2388791 - 1569173),
                 event.getYoungOccupancyInit());
@@ -133,9 +133,9 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent exte
                 + "[Times: user=9.49 sys=1.83, real=10.78 secs]";
         Assert.assertTrue("Log line not recognized as "
                 + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent.match(logLine));
-        ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent event = 
-                new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(logLine);
+                ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine));
+        ParNewPromotionFailedConcModeFailurePermDataEvent event = new ParNewPromotionFailedConcModeFailurePermDataEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 4555706, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (1973973 - 924455),
                 event.getYoungOccupancyInit());
@@ -158,9 +158,9 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent exte
                 + "[Times: user=98.05 sys=4.32, real=79.62 secs]";
         Assert.assertTrue("Log line not recognized as "
                 + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent.match(logLine));
-        ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent event = 
-                new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(logLine);
+                ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine));
+        ParNewPromotionFailedConcModeFailurePermDataEvent event = new ParNewPromotionFailedConcModeFailurePermDataEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 2746109, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (6205857 - 5979868),
                 event.getYoungOccupancyInit());
@@ -183,9 +183,9 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent exte
                 + "[Times: user=80.01 sys=5.57, real=80.84 secs]";
         Assert.assertTrue("Log line not recognized as "
                 + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent.match(logLine));
-        ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent event = 
-                new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(logLine);
+                ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine));
+        ParNewPromotionFailedConcModeFailurePermDataEvent event = new ParNewPromotionFailedConcModeFailurePermDataEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 88063609, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (11075362 - 10612422),
                 event.getYoungOccupancyInit());
@@ -207,6 +207,6 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent exte
                 + "6205857K->5968004K(6256896K), [CMS Perm : 207397K->207212K(262144K)], 79.6222096 secs]   ";
         Assert.assertTrue("Log line not recognized as "
                 + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent.match(logLine));
+                ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine));
     }
 }

@@ -329,8 +329,8 @@ public class Jvm {
     }
 
     /**
-     * @return The client Distributed Garbage Collection (DGC) interval value in (milliseconds), or null if not set.
-     *         For example:
+     * @return The client Distributed Garbage Collection (DGC) interval value in (milliseconds), or null if not set. For
+     *         example:
      * 
      *         <pre>
      *         14400000
@@ -355,8 +355,8 @@ public class Jvm {
     }
 
     /**
-     * @return The server Distributed Garbage Collection (DGC) interval value in (milliseconds), or null if not set.
-     *         For example:
+     * @return The server Distributed Garbage Collection (DGC) interval value in (milliseconds), or null if not set. For
+     *         example:
      * 
      *         <pre>
      *         14400000
@@ -379,7 +379,6 @@ public class Jvm {
         String regex = "(-XX:-HeapDumpOnOutOfMemoryError)";
         return getJvmOption(regex);
     }
-    
 
     /**
      * The option to write out a heap dump when OutOfMemoryError. For example:
@@ -464,7 +463,7 @@ public class Jvm {
         String regex = "(-Xint)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option to allow explicit garbage collection to be handled concurrently by the CMS and G1 collectors. For
      * example:
@@ -479,7 +478,7 @@ public class Jvm {
         String regex = "(-XX:\\+ExplicitGCInvokesConcurrent)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option to output JVM command line options at the beginning of gc logging. For example:
      * 
@@ -493,7 +492,7 @@ public class Jvm {
         String regex = "(-XX:\\+PrintCommandLineFlags)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option to output details at gc. For example:
      * 
@@ -507,7 +506,7 @@ public class Jvm {
         String regex = "(-XX:\\+PrintGCDetails)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option for the CMS young collector. For example:
      * 
@@ -521,7 +520,7 @@ public class Jvm {
         String regex = "(-XX:\\+UseParNewGC)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option for the CMS old collector. For example:
      * 
@@ -535,7 +534,7 @@ public class Jvm {
         String regex = "(-XX:\\+UseConcMarkSweepGC)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option for allowing the CMS collector to collect Perm/Metaspace. For example:
      * 
@@ -549,7 +548,7 @@ public class Jvm {
         String regex = "(-XX:\\+CMSClassUnloadingEnabled)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option for outputting times for reference processing (weak, soft,JNI). For example:
      * 
@@ -563,7 +562,7 @@ public class Jvm {
         String regex = "(-XX:\\+PrintReferenceGC)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option for printing trigger information. For example:
      * 
@@ -577,7 +576,7 @@ public class Jvm {
         String regex = "(-XX:\\+PrintGCCause)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option for printing trigger information disabled. For example:
      * 
@@ -591,7 +590,7 @@ public class Jvm {
         String regex = "(-XX:\\-PrintGCCause)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option for enabling tiered compilation. For example:
      * 
@@ -605,7 +604,7 @@ public class Jvm {
         String regex = "(-XX:\\+TieredCompilation)";
         return getJvmOption(regex);
     }
-    
+
     /**
      * The option for string deduplication statistics. For example:
      * 
@@ -671,7 +670,7 @@ public class Jvm {
 
         return hasLargeThreadStackSize;
     }
-    
+
     /**
      * @return True if JDK7, false otherwise.
      */

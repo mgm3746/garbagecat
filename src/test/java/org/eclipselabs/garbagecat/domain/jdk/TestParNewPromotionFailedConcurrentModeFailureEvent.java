@@ -21,7 +21,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestParNewPromotionFailedCmsConcurrentModeFailureEvent extends TestCase {
+public class TestParNewPromotionFailedConcurrentModeFailureEvent extends TestCase {
 
     public void testLogLine() {
         String logLine = "25281.015: [GC 25281.015: [ParNew (promotion failed): 261760K->261760K(261952K), "
@@ -30,9 +30,9 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailureEvent extends Test
         Assert.assertTrue(
                 "Log line not recognized as "
                         + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailureEvent.match(logLine));
-        ParNewPromotionFailedCmsConcurrentModeFailureEvent event = 
-                new ParNewPromotionFailedCmsConcurrentModeFailureEvent(logLine);
+                ParNewPromotionFailedConcurrentModeFailureEvent.match(logLine));
+        ParNewPromotionFailedConcurrentModeFailureEvent event = new ParNewPromotionFailedConcurrentModeFailureEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 25281015, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (1292923 - 1048384),
                 event.getYoungOccupancyInit());
@@ -52,9 +52,9 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailureEvent extends Test
         Assert.assertTrue(
                 "Log line not recognized as "
                         + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailureEvent.match(logLine));
-        ParNewPromotionFailedCmsConcurrentModeFailureEvent event = 
-                new ParNewPromotionFailedCmsConcurrentModeFailureEvent(logLine);
+                ParNewPromotionFailedConcurrentModeFailureEvent.match(logLine));
+        ParNewPromotionFailedConcurrentModeFailureEvent event = new ParNewPromotionFailedConcurrentModeFailureEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 233333318, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (1791073 - 1125100),
                 event.getYoungOccupancyInit());
@@ -74,9 +74,9 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailureEvent extends Test
         Assert.assertTrue(
                 "Log line not recognized as "
                         + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailureEvent.match(logLine));
-        ParNewPromotionFailedCmsConcurrentModeFailureEvent event = 
-                new ParNewPromotionFailedCmsConcurrentModeFailureEvent(logLine);
+                ParNewPromotionFailedConcurrentModeFailureEvent.match(logLine));
+        ParNewPromotionFailedConcurrentModeFailureEvent event = new ParNewPromotionFailedConcurrentModeFailureEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 3272568, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (2062255 - 1805342),
                 event.getYoungOccupancyInit());
@@ -96,9 +96,9 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailureEvent extends Test
         Assert.assertTrue(
                 "Log line not recognized as "
                         + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailureEvent.match(logLine));
-        ParNewPromotionFailedCmsConcurrentModeFailureEvent event = 
-                new ParNewPromotionFailedCmsConcurrentModeFailureEvent(logLine);
+                ParNewPromotionFailedConcurrentModeFailureEvent.match(logLine));
+        ParNewPromotionFailedConcurrentModeFailureEvent event = new ParNewPromotionFailedConcurrentModeFailureEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 25281015, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (1292923 - 1048384),
                 event.getYoungOccupancyInit());
@@ -117,6 +117,6 @@ public class TestParNewPromotionFailedCmsConcurrentModeFailureEvent extends Test
         Assert.assertTrue(
                 "Log line not recognized as "
                         + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
-                ParNewPromotionFailedCmsConcurrentModeFailureEvent.match(logLine));
+                ParNewPromotionFailedConcurrentModeFailureEvent.match(logLine));
     }
 }

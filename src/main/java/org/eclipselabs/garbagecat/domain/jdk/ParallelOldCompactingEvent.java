@@ -77,8 +77,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParallelOldCompactingEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData,
-        PermData, TriggerData {
+public class ParallelOldCompactingEvent
+        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -139,7 +139,7 @@ public class ParallelOldCompactingEvent implements BlockingEvent, OldCollection,
      * Space allocated to permanent generation (kilobytes).
      */
     private int permGenAllocation;
-    
+
     /**
      * The trigger for the GC event.
      */
@@ -244,7 +244,7 @@ public class ParallelOldCompactingEvent implements BlockingEvent, OldCollection,
     public int getPermSpace() {
         return permGenAllocation;
     }
-    
+
     public String getTrigger() {
         return trigger;
     }

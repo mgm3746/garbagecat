@@ -49,7 +49,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * Preprocessed:
  * </p>
  * 
- *<pre>
+ * <pre>
  * 3743.645: [Full GC [PSYoungGen: 419840K->415020K(839680K)] [PSOldGen: 5008922K->5008922K(5033984K)] 5428762K->5423942K(5873664K) [PSPermGen: 193275K->193275K(262144K)], 33.6887649 secs] [Times: user=33.68 sys=0.02, real=33.69 secs]
  * </pre>
  * 
@@ -79,11 +79,11 @@ public class GcTimeLimitExceededPreprocessAction implements PreprocessAction {
     /**
      * Regular expressions defining the 1st logging line.
      */
-    private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC \\[PSYoungGen: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] \\[(PS|Par)OldGen: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\)\\])(      |\t)GC time (would exceed|is exceeding) GCTimeLimit of 98%$";
+    private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC \\[PSYoungGen: " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] \\[(PS|Par)OldGen: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\])(      |\t)GC time (would exceed|is exceeding) GCTimeLimit of 98%$";
     private static final Pattern PATTERN1 = Pattern.compile(REGEX_LINE1);
 
     /**

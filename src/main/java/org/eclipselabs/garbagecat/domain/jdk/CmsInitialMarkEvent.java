@@ -68,7 +68,7 @@ public class CmsInitialMarkEvent implements BlockingEvent, TriggerData, CmsColle
      * The time when the GC event happened in milliseconds after JVM startup.
      */
     private long timestamp;
-    
+
     /**
      * The trigger for the GC event.
      */
@@ -123,7 +123,7 @@ public class CmsInitialMarkEvent implements BlockingEvent, TriggerData, CmsColle
     public String getName() {
         return JdkUtil.LogEventType.CMS_INITIAL_MARK.toString();
     }
-    
+
     public String getTrigger() {
         return trigger;
     }

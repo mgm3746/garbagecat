@@ -127,7 +127,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 4) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailureEvent}:
+ * 4) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcurrentModeFailureEvent}:
  * </p>
  * 
  * <pre>
@@ -179,7 +179,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *  concurrent mark-sweep generation total 860160K, used 0K [0xbc450000, 0xf0c50000, 0xf0c50000)
  *  concurrent-mark-sweep perm gen total 11392K, used 11291K [0xf0c50000, 0xf1770000, 0xf4c50000)
  * }
- *</pre>
+ * </pre>
  * 
  * <p>
  * 6) With Class Data Sharing (CDS) information:
@@ -231,11 +231,10 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
      */
     private static final String[] REGEX_RETAIN_BEGINNING = {
             "^([^{]+)?(\\{)?Heap (before|after) gc invocations=\\d{1,10}:$",
-            "^(" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->"
-                    + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-                    + ": \\[CMS" + JdkRegEx.TIMESTAMP
-                    + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset): " + JdkRegEx.DURATION_FRACTION
-                    + "\\])$",
+            "^(" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+                    + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS"
+                    + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset): "
+                    + JdkRegEx.DURATION_FRACTION + "\\])$",
             "^" + JdkRegEx.TIMESTAMP + ": \\[CMS" + JdkRegEx.TIMESTAMP
                     + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): " + JdkRegEx.DURATION_FRACTION
                     + "\\]$" };
@@ -275,9 +274,9 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
             "^  region size .+$",
             //
             "^  the space.+$" };
-    
+
     private static final Pattern PATTERN_THROWAWAY[] = new Pattern[REGEX_THROWAWAY.length];
-    
+
     static {
         for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++)
             PATTERN_BEGINNING[i] = Pattern.compile(REGEX_RETAIN_BEGINNING[i]);
@@ -315,7 +314,8 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
         if (!retainBeginning) {
             matcher = PATTERN_END.matcher(logEntry);
             if (matcher.find()) {
-                this.logEntry = logEntry + System.getProperty("line.separator");;
+                this.logEntry = logEntry + System.getProperty("line.separator");
+                ;
             }
         }
     }

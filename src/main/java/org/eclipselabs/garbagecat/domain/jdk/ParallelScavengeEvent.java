@@ -110,7 +110,7 @@ public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, Yo
      * Space allocated to old generation (kilobytes).
      */
     private int oldAllocation;
-    
+
     /**
      * The trigger for the GC event.
      */
@@ -200,7 +200,7 @@ public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, Yo
     public String getName() {
         return JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString();
     }
-    
+
     public String getTrigger() {
         return trigger;
     }

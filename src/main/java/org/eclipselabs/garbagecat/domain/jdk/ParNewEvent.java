@@ -96,7 +96,7 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, "
             + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-    
+
     private static final Pattern pattern = Pattern.compile(ParNewEvent.REGEX);
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -142,7 +142,7 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
      * Space allocated to old generation (kilobytes).
      */
     private int oldAllocation;
-    
+
     /**
      * The trigger for the GC event.
      */
@@ -222,7 +222,7 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
     public String getName() {
         return JdkUtil.LogEventType.PAR_NEW.toString();
     }
-    
+
     public String getTrigger() {
         return trigger;
     }

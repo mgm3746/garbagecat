@@ -130,11 +130,11 @@ public class ThreadDumpPreprocessAction implements PreprocessAction {
             "^  from space.*$", "^  to   space.*$", "^ concurrent mark-sweep generation total.*$",
             "^ concurrent-mark-sweep perm gen total.*$" };
     private static final Pattern PATTERN[] = new Pattern[REGEX.length];
+
     static {
         for (int i = 0; i < REGEX.length; i++)
             PATTERN[i] = Pattern.compile(REGEX[i]);
     }
-    
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

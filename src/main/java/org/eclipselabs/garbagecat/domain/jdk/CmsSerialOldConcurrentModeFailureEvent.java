@@ -60,7 +60,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <li>There is premature promotion from the young to the old generation, causing the old generation to fill up with
  * short-lived objects. The default value for <code>-XX:MaxTenuringThreshold</code> for the CMS collector is 0, meaning
  * that objects surviving a young collection are immediately promoted to the old generation. Add the following JVM
- * option to allow more time for objects to expire in the young generation: <code>-XX:MaxTenuringThreshold=32</code>.</li>
+ * option to allow more time for objects to expire in the young generation: <code>-XX:MaxTenuringThreshold=32</code>.
+ * </li>
  * <li>If the old generation has available space, the cause is likely fragmentation. Fragmentation can be avoided by
  * increasing the heap size.</li>
  * </ol>
@@ -116,8 +117,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class CmsSerialOldConcurrentModeFailureEvent implements BlockingEvent, OldCollection, PermCollection, YoungData,
-        OldData, PermData, CmsCollection {
+public class CmsSerialOldConcurrentModeFailureEvent
+        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData, CmsCollection {
 
     /**
      * Regular expressions defining the logging.
@@ -129,11 +130,11 @@ public class CmsSerialOldConcurrentModeFailureEvent implements BlockingEvent, Ol
             + "[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP
             + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
             + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[class unloading, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[scrub symbol & string tables, "
-            + JdkRegEx.DURATION + "\\])?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]"
-            + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION
+            + "\\])?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
+            + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     private static Pattern pattern = Pattern.compile(REGEX);
 
     /**

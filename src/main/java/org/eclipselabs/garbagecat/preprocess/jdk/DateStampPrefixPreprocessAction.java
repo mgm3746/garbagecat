@@ -62,7 +62,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <pre>
  * 13.086: [GC 13.086: [ParNew: 272640K->33532K(306688K), 0.0381419 secs] 272640K->33532K(1014528K), 0.0383306 secs] [Times: user=0.11 sys=0.02, real=0.04 secs]
- * </pre> 
+ * </pre>
  * 
  * <p>
  * 3) G1 Ergonomics logging:
@@ -76,7 +76,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <pre>
  * 12042.669: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: 250438, predicted base time: 229.38 ms, remaining time: 270.62 ms, target pause time: 500.00 ms]
- * </pre> 
+ * </pre>
  * 
  * <p>
  * 3) Double datestamp:
@@ -90,7 +90,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <pre>
  * 23934.242: [GC concurrent-root-region-scan-start]
- * </pre> 
+ * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
@@ -102,7 +102,7 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_LINE = "^" + JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.DATESTAMP + "(: )?)?(("
             + JdkRegEx.TIMESTAMP + ": )(:)?( )?)(" + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.DATESTAMP + ": )?(.*)$";
-    
+
     private static final Pattern PATTERN = Pattern.compile(REGEX_LINE);
 
     /**
@@ -118,15 +118,15 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
      */
     public DateStampPrefixPreprocessAction(String logEntry) {
         Pattern p = Pattern.compile(JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.DATESTAMP + "(: )?)?(("
-            + JdkRegEx.TIMESTAMP + ": )(:)?( )?)(" + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.DATESTAMP + ": )?");
+                + JdkRegEx.TIMESTAMP + ": )(:)?( )?)(" + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.DATESTAMP + ": )?");
         Matcher matcher = p.matcher(logEntry);
         StringBuffer sb = new StringBuffer();
-        while (matcher.find()){
+        while (matcher.find()) {
             matcher.appendReplacement(sb, matcher.group(26));
         }
         matcher.appendTail(sb);
         this.logEntry = sb.toString();
-        }
+    }
 
     public String getLogEntry() {
         return logEntry;

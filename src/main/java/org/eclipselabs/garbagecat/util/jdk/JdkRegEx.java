@@ -45,7 +45,7 @@ public class JdkRegEx {
      * For example: 27808K, 16172 K
      */
     public static final String SIZE = "(\\d{1,9})[ ]?K";
-    
+
     /**
      * Byte units identifier.
      */
@@ -60,7 +60,7 @@ public class JdkRegEx {
      * Megabyte units identifier.
      */
     public static final String MEGABYTES = "M";
-    
+
     /**
      * Gigabyte units identifier.
      */
@@ -73,11 +73,11 @@ public class JdkRegEx {
      * For example: 2128K, 30M, 30G
      */
     public static final String SIZE_G1 = "(\\d{1,8})([" + KILOBYTES + MEGABYTES + GIGABYTES + "])";
-    
+
     /**
-     * The size of memory in bytes (B), kilobytes (K), megabytes (M), or gigabytes (G) to one decimal place. See with
-     * G1 collector <code>-XX:+PrintGCDetails</code>. With the G1 collector units are not consistent line to line or
-     * even within a single logging line.
+     * The size of memory in bytes (B), kilobytes (K), megabytes (M), or gigabytes (G) to one decimal place. See with G1
+     * collector <code>-XX:+PrintGCDetails</code>. With the G1 collector units are not consistent line to line or even
+     * within a single logging line.
      * 
      * For example: 0.0B, 8192.0K, 28.0M, 30.0G
      */
@@ -110,11 +110,11 @@ public class JdkRegEx {
     /**
      * Data when the CMS collector is run in incremental mode with the <code>-XX:+CMSIncrementalMode</code> JVM option.
      * In this mode, the CMS collector does not hold the processor(s) for the entire long concurrent phases but
-     * periodically stops them and yields the processor back to other threads in the application. It divides the work
-     * to be done in concurrent phases into small chunks called duty cycles and schedules them between minor
-     * collections. This is very useful for applications that need low pause times and are run on machines with a small
-     * number of processors. The icms_dc value is the time in percentage that the concurrent work took between two
-     * young generation collections.
+     * periodically stops them and yields the processor back to other threads in the application. It divides the work to
+     * be done in concurrent phases into small chunks called duty cycles and schedules them between minor collections.
+     * This is very useful for applications that need low pause times and are run on machines with a small number of
+     * processors. The icms_dc value is the time in percentage that the concurrent work took between two young
+     * generation collections.
      * 
      * For example: icms_dc=70
      */
@@ -133,25 +133,24 @@ public class JdkRegEx {
      * Blank line.
      */
     public static final String BLANK_LINE = "^\\s+$";
-    
+
     /**
      * Percent.
      * 
-     * For example:
-     * avg 54.8%
+     * For example: avg 54.8%
      */
     public static final String PERCENT = "\\d{1,3}\\.\\d%";
-    
+
     /**
      * Trigger.
      */
     public static final String TRIGGER = "\\((.+?)\\)";
-    
+
     /**
      * System.gc() trigger. Explicit garbage collection invoked.
      */
     public static final String TRIGGER_SYSTEM_GC = "System(.gc\\(\\))?";
-    
+
     /**
      * Metadata GC Threshold trigger. When the Metaspace is resized.
      */
@@ -161,45 +160,42 @@ public class JdkRegEx {
      * Allocation Failure trigger.
      */
     public static final String TRIGGER_ALLOCATION_FAILURE = "Allocation Failure";
-    
+
     /**
      * To Space Exhausted trigger
      */
     public static final String TRIGGER_TO_SPACE_EXHAUSTED = "to-space exhausted";
-    
+
     /**
      * G1 Evacuation Pause trigger. Live objects are copied out of one region (evacuated) to another region to free
      * contiguous space. For both young and mixed collections.
      */
     public static final String TRIGGER_G1_EVACUATION_PAUSE = "G1 Evacuation Pause";
-    
+
     /**
-     * GCLocker Initiated GC trigger. 
+     * GCLocker Initiated GC trigger.
      */
     public static final String TRIGGER_GCLOCKER_INITIATED_GC = "GCLocker Initiated GC";
-    
+
     /**
      * CMS Initial Mark trigger
      */
     public static final String TRIGGER_CMS_INITIAL_MARK = "CMS Initial Mark";
-    
+
     /**
      * CMS Final Remark trigger
      */
     public static final String TRIGGER_CMS_FINAL_REMARK = "CMS Final Remark";
-    
+
     /**
      * CMS concurrent mode failure trigger
      */
     public static final String TRIGGER_CONCURRENT_MODE_FAILURE = "concurrent mode failure";
-    
+
     /**
      * Units for JVM options that take a byte number.
      * 
-     * For example:
-     * -Xss128k
-     * -Xmx2048m
-     * -Xms2G
+     * For example: -Xss128k -Xmx2048m -Xms2G
      */
     public static final String OPTION_SIZE = "(b|B|k|K|m|M|g|G)";
 

@@ -60,8 +60,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class ParNewPromotionFailedCmsConcurrentModeFailureEvent implements BlockingEvent, OldCollection,
-        PermCollection, YoungData, OldData, CmsCollection {
+public class ParNewPromotionFailedConcurrentModeFailureEvent
+        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, CmsCollection {
 
     /**
      * Regular expressions defining the logging.
@@ -124,7 +124,7 @@ public class ParNewPromotionFailedCmsConcurrentModeFailureEvent implements Block
     /**
      * Create ParNew detail logging event from log entry.
      */
-    public ParNewPromotionFailedCmsConcurrentModeFailureEvent(String logEntry) {
+    public ParNewPromotionFailedConcurrentModeFailureEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
@@ -149,7 +149,7 @@ public class ParNewPromotionFailedCmsConcurrentModeFailureEvent implements Block
      * @param timestamp
      * @param duration
      */
-    public ParNewPromotionFailedCmsConcurrentModeFailureEvent(String logEntry, long timestamp, int duration) {
+    public ParNewPromotionFailedConcurrentModeFailureEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;

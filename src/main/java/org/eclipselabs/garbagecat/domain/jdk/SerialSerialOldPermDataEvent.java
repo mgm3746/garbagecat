@@ -50,8 +50,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class SerialSerialOldPermDataEvent implements BlockingEvent, YoungCollection, OldCollection, PermCollection,
-        YoungData, OldData, PermData {
+public class SerialSerialOldPermDataEvent
+        implements BlockingEvent, YoungCollection, OldCollection, PermCollection, YoungData, OldData, PermData {
 
     /**
      * Regular expressions defining the logging.

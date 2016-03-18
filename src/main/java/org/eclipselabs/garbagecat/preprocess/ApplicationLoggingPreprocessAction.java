@@ -70,7 +70,7 @@ public class ApplicationLoggingPreprocessAction implements PreprocessAction {
      * Regular expressions defining the logging.
      */
     private static final String REGEX[] = {
-    // HH:MM:SS datestamp
+            // HH:MM:SS datestamp
             "^(\\d{4}-\\d{2}-\\d{2} )?\\d{2}:\\d{2}:\\d{2},\\d{3} (DEBUG|ERROR|FATAL|INFO|TRACE|WARN) .*$",
             // Exceptions, Errors
             "^(java|com|org).*(Exception|Error).*$",

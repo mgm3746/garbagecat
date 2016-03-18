@@ -57,7 +57,7 @@ public class G1RemarkEvent implements BlockingEvent, G1Collection {
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC remark, "
             + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-    
+
     private static final Pattern pattern = Pattern.compile(REGEX);
 
     /**

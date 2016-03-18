@@ -71,7 +71,7 @@ public class CmsRemarkEvent implements BlockingEvent, CmsCollection, TriggerData
      * The time when the GC event happened in milliseconds after JVM startup.
      */
     private long timestamp;
-    
+
     /**
      * The trigger for the GC event.
      */
@@ -134,7 +134,7 @@ public class CmsRemarkEvent implements BlockingEvent, CmsCollection, TriggerData
     public String getName() {
         return JdkUtil.LogEventType.CMS_REMARK.toString();
     }
-    
+
     public String getTrigger() {
         return trigger;
     }

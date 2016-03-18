@@ -57,8 +57,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollection, PermCollection, YoungData,
-        OldData, PermData {
+public class SerialOldEvent
+        implements BlockingEvent, YoungCollection, OldCollection, PermCollection, YoungData, OldData, PermData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -129,11 +129,11 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
             + "\\), \\[Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], "
             + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     private static Pattern pattern = Pattern.compile(SerialOldEvent.REGEX);
-    
+
     /**
      * Default constructor
      */
-    public SerialOldEvent() { 
+    public SerialOldEvent() {
     }
 
     /**
@@ -176,7 +176,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
 
     public String getLogEntry() {
         return logEntry;
-    }    
+    }
 
     protected void setLogEntry(String logEntry) {
         this.logEntry = logEntry;
@@ -184,7 +184,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
 
     public int getDuration() {
         return duration;
-    }    
+    }
 
     protected void setDuration(int duration) {
         this.duration = duration;
@@ -192,7 +192,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
 
     public long getTimestamp() {
         return timestamp;
-    }    
+    }
 
     protected void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
@@ -200,7 +200,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
 
     public int getYoungOccupancyInit() {
         return young;
-    }    
+    }
 
     protected void setYoungOccupancyInit(int young) {
         this.young = young;
@@ -209,7 +209,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
     public int getYoungOccupancyEnd() {
         return youngEnd;
     }
-    
+
     protected void setYoungOccupancyEnd(int youngEnd) {
         this.youngEnd = youngEnd;
     }
@@ -217,7 +217,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
     public int getYoungSpace() {
         return youngAvailable;
     }
-    
+
     protected void setYoungSpace(int youngAvailable) {
         this.youngAvailable = youngAvailable;
     }
@@ -225,7 +225,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
     public int getOldOccupancyInit() {
         return old;
     }
-    
+
     protected void setOldOccupancyInit(int old) {
         this.old = old;
     }
@@ -233,7 +233,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
     public int getOldOccupancyEnd() {
         return oldEnd;
     }
-    
+
     protected void setOldOccupancyEnd(int oldEnd) {
         this.oldEnd = oldEnd;
     }
@@ -241,7 +241,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
     public int getOldSpace() {
         return oldAllocation;
     }
-    
+
     protected void setOldSpace(int oldAllocation) {
         this.oldAllocation = oldAllocation;
     }
@@ -249,7 +249,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
     public int getPermOccupancyInit() {
         return permGen;
     }
-    
+
     protected void setPermOccupancyInit(int permGen) {
         this.permGen = permGen;
     }
@@ -257,7 +257,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
     public int getPermOccupancyEnd() {
         return permGenEnd;
     }
-    
+
     protected void setPermOccupancyEnd(int permGenEnd) {
         this.permGenEnd = permGenEnd;
     }
@@ -265,7 +265,7 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
     public int getPermSpace() {
         return permGenAllocation;
     }
-    
+
     protected void setPermSpace(int permGenAllocation) {
         this.permGenAllocation = permGenAllocation;
     }

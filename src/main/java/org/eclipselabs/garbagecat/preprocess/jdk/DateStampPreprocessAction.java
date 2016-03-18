@@ -97,7 +97,7 @@ public class DateStampPreprocessAction implements PreprocessAction {
             String logEntryMinusDateStamp = matcher.group(12);
             Date datestamp = GcUtil.parseDateStamp(matcher.group(1));
             long diff = GcUtil.dateDiff(jvmStartDate, datestamp);
-            this.logEntry = JdkMath.convertMillisToSecs(diff)+ ": " + logEntryMinusDateStamp;
+            this.logEntry = JdkMath.convertMillisToSecs(diff) + ": " + logEntryMinusDateStamp;
         }
     }
 

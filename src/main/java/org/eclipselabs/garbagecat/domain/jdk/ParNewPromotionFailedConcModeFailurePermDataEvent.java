@@ -74,21 +74,21 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent implements BlockingEvent, OldCollection,
-        PermCollection, YoungData, OldData, PermData, CmsCollection {
+public class ParNewPromotionFailedConcModeFailurePermDataEvent
+        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData, CmsCollection {
 
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
             + ": \\[ParNew \\(promotion failed\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS( CMS: abort preclean due to time )?(" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): " + JdkRegEx.DURATION_FRACTION
-            + "\\])?( \\(concurrent mode failure\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]"
-            + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS( CMS: abort preclean due to time )?("
+            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): "
+            + JdkRegEx.DURATION_FRACTION + "\\])?( \\(concurrent mode failure\\))?: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     private static Pattern pattern = Pattern.compile(REGEX);
 
     /**
@@ -154,7 +154,7 @@ public class ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent implemen
     /**
      * Create ParNew detail logging event from log entry.
      */
-    public ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(String logEntry) {
+    public ParNewPromotionFailedConcModeFailurePermDataEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
@@ -182,7 +182,7 @@ public class ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent implemen
      * @param timestamp
      * @param duration
      */
-    public ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(String logEntry, long timestamp, int duration) {
+    public ParNewPromotionFailedConcModeFailurePermDataEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;

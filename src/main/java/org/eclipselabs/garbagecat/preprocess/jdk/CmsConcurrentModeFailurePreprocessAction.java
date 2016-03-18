@@ -46,7 +46,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <pre>
  * 85217.903: [Full GC 85217.903: [CMS85217.919: [CMS-concurrent-abortable-preclean: 0.723/3.756 secs] (concurrent mode failure): 439328K->439609K(4023936K), 2.7153820 secs] 448884K->439609K(4177280K), [CMS Perm : 262143K->262143K(262144K)], 2.7156150 secs] [Times: user=3.35 sys=0.00, real=2.72 secs]
- *</pre>
+ * </pre>
  * 
  * <p>
  * 2) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent}:
@@ -80,7 +80,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 4) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent} with
+ * 4) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcModeFailurePermDataEvent} with
  * "concurrent mode failure" missing:
  * </p>
  * 
@@ -96,7 +96,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 5) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailureEvent} across 3 lines:
+ * 5) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcurrentModeFailureEvent} across 3 lines:
  * </p>
  * 
  * <pre>
@@ -127,15 +127,15 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
                     + JdkRegEx.DURATION_FRACTION + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
             // ParNew
             "^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(promotion failed\\))?: "
-                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
-                    + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
+                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+                    + JdkRegEx.TIMESTAMP + ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
                     + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): "
                     + JdkRegEx.DURATION_FRACTION + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
             // ParNew bailing out (splits the initial line into 2 lines)
             "^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(promotion failed\\))?: "
-                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
-                    + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS)bailing out to foreground collection"
-                    + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
+                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+                    + JdkRegEx.TIMESTAMP + ": \\[CMS)bailing out to foreground collection" + JdkRegEx.TIMES_BLOCK
+                    + "?[ ]*$",
             // Serial old bailing out first line when logging split across 3 lines (dataset14)
             "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.TIMESTAMP
                     + ": \\[CMS)bailing out to foreground collection" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
@@ -152,8 +152,7 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
     /**
      * Regular expression(s) defining the end logging line. In JDK 6 "failure" has been replaced with "interrupted".
      */
-    private static final String[] REGEX_LINE_END = {
-            "^ \\(concurrent mode (failure|interrupted)\\).+$",
+    private static final String[] REGEX_LINE_END = { "^ \\(concurrent mode (failure|interrupted)\\).+$",
             "^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
                     + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : "
                     + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION
@@ -166,7 +165,6 @@ public class CmsConcurrentModeFailurePreprocessAction implements PreprocessActio
         for (int i = 0; i < REGEX_LINE_END.length; i++)
             PATTERN_END[i] = Pattern.compile(REGEX_LINE_END[i]);
     }
-    
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

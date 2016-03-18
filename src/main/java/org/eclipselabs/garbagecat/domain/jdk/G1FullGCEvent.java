@@ -29,8 +29,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * G1 collector Full GC event. A serial (single-threaded) collector, which means it will take a very long time to
- * collect a large heap. If the G1 collector is running optimally, there will not be any G1 Full GC collections. G1
- * Full GCs happen when the PermGen/Metaspace fills up, when the old space fills up with humongous objects (allocated
+ * collect a large heap. If the G1 collector is running optimally, there will not be any G1 Full GC collections. G1 Full
+ * GCs happen when the PermGen/Metaspace fills up, when the old space fills up with humongous objects (allocated
  * directly in the old space), or when there are more allocations than the G1 can concurrently collect.
  * </p>
  * 
@@ -65,7 +65,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, G1Collection {
-    
+
     /**
      * Regular expression for triggers associated with this logging event.
      */
@@ -78,7 +78,7 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, 
             + TRIGGER + "\\) )?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), "
             + JdkRegEx.DURATION + "\\]( " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
             + "\\))?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-    
+
     private static final Pattern pattern = Pattern.compile(REGEX);
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -126,8 +126,7 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, 
             trigger = matcher.group(14);
             combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(17).charAt(0));
             combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)), matcher.group(19).charAt(0));
-            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(20)), 
-                    matcher.group(21).charAt(0));
+            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(20)), matcher.group(21).charAt(0));
             duration = JdkMath.convertSecsToMillis(matcher.group(22)).intValue();
         }
     }

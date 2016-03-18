@@ -52,8 +52,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 2) Underlying
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent} :
+ * 2) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcModeFailurePermDataEvent} :
  * </p>
  * 
  * <pre>
@@ -117,12 +116,12 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
     private static final String[] REGEX_RETAIN_END = {
             // Normal young collection
             "^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
-                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
-                    + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
+                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+                    + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
             "^ \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
-                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
-                    + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
-    
+                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+                    + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+
     private static final Pattern PATTERN_END[] = new Pattern[REGEX_RETAIN_END.length];
 
     /**
@@ -132,7 +131,7 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
             "^Desired survivor size \\d{1,11} bytes, new threshold \\d{1,2} \\(max \\d{1,2}\\)$",
             "^- age[ ]+\\d{1,2}:[ ]+\\d{1,11} bytes,[ ]+\\d{1,11} total$" };
     private static final Pattern PATTERN_THROWAWAY[] = new Pattern[REGEX_THROWAWAY.length];
-    
+
     static {
         for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++)
             PATTERN_BEGINNING[i] = Pattern.compile(REGEX_RETAIN_BEGINNING[i]);

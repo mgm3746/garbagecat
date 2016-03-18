@@ -26,8 +26,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Truncated {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailureEvent},
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent},
+ * Truncated {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcurrentModeFailureEvent},
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcModeFailurePermDataEvent},
  * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldEvent}, or
  * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldPermDataEvent}
  * </p>

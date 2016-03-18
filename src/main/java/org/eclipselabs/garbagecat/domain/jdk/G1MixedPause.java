@@ -52,7 +52,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 3)  After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction} with trigger:
+ * 3) After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction} with trigger:
  * </p>
  * 
  * <pre>
@@ -60,7 +60,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 4)  After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction} without trigger:
+ * 4) After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction} without trigger:
  * </p>
  * 
  * <pre>
@@ -72,7 +72,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData, G1Collection {
-    
+
     /**
      * Regular expression for triggers associated with this logging event.
      */
@@ -92,7 +92,7 @@ public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData, G
     private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(" + TRIGGER
             + "\\) )?\\(mixed\\)( \\(" + TRIGGER + "\\))?, " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_G1 + "->"
             + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-    
+
     /**
      * Pattern standard format.
      */
@@ -102,7 +102,7 @@ public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData, G
      * Pattern preprocessed.
      */
     private static final Pattern patternPreprocessed = Pattern.compile(REGEX_PREPROCESSED);
-    
+
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -132,7 +132,7 @@ public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData, G
      * Available space in multiple generation (kilobytes).
      */
     private int combinedAvailable;
-    
+
     /**
      * The trigger for the GC event.
      */
@@ -149,15 +149,14 @@ public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData, G
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(14).charAt(0));
             combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
-            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), 
-                    matcher.group(18).charAt(0));
+            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), matcher.group(18).charAt(0));
             duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
         } else {
             // preprocessed format
             matcher = patternPreprocessed.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                if(matcher.group(2) != null){
+                if (matcher.group(2) != null) {
                     trigger = matcher.group(3);
                 } else {
                     if (matcher.group(4) != null) {
@@ -213,7 +212,7 @@ public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData, G
     public String getName() {
         return JdkUtil.LogEventType.G1_MIXED_PAUSE.toString();
     }
-    
+
     public String getTrigger() {
         return trigger;
     }

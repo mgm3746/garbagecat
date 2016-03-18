@@ -66,11 +66,10 @@ public class G1CleanupEvent implements BlockingEvent, CombinedData, G1Collection
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC cleanup "
-            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-    
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup "
+            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION
+            + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+
     private static final Pattern pattern = Pattern.compile(REGEX);
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -112,8 +111,7 @@ public class G1CleanupEvent implements BlockingEvent, CombinedData, G1Collection
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(14).charAt(0));
             combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
-            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), 
-                    matcher.group(18).charAt(0));
+            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), matcher.group(18).charAt(0));
             duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
         }
     }

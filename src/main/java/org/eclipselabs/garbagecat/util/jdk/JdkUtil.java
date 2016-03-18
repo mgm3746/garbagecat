@@ -46,8 +46,8 @@ import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailureEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcurrentModeFailureEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcModeFailurePermDataEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldPermDataEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedEvent;
@@ -168,9 +168,9 @@ public class JdkUtil {
             return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA;
         if (ParNewPromotionFailedEvent.match(logLine))
             return LogEventType.PAR_NEW_PROMOTION_FAILED;
-        if (ParNewPromotionFailedCmsConcurrentModeFailureEvent.match(logLine))
+        if (ParNewPromotionFailedConcurrentModeFailureEvent.match(logLine))
             return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE;
-        if (ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent.match(logLine))
+        if (ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine))
             return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA;
         if (ParNewConcurrentModeFailureEvent.match(logLine))
             return LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE;
@@ -279,10 +279,10 @@ public class JdkUtil {
             event = new ParNewPromotionFailedEvent(logLine);
             break;
         case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE:
-            event = new ParNewPromotionFailedCmsConcurrentModeFailureEvent(logLine);
+            event = new ParNewPromotionFailedConcurrentModeFailureEvent(logLine);
             break;
         case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA:
-            event = new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(logLine);
+            event = new ParNewPromotionFailedConcModeFailurePermDataEvent(logLine);
             break;
         case PAR_NEW_CONCURRENT_MODE_FAILURE:
             event = new ParNewConcurrentModeFailureEvent(logLine);
@@ -422,10 +422,10 @@ public class JdkUtil {
             event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(logEntry, timestamp, duration);
             break;
         case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE:
-            event = new ParNewPromotionFailedCmsConcurrentModeFailureEvent(logEntry, timestamp, duration);
+            event = new ParNewPromotionFailedConcurrentModeFailureEvent(logEntry, timestamp, duration);
             break;
         case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA:
-            event = new ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent(logEntry, timestamp, duration);
+            event = new ParNewPromotionFailedConcModeFailurePermDataEvent(logEntry, timestamp, duration);
             break;
         case PAR_NEW_CONCURRENT_MODE_FAILURE:
             event = new ParNewConcurrentModeFailureEvent(logEntry, timestamp, duration);
@@ -564,8 +564,8 @@ public class JdkUtil {
      * 
      * @param logLine
      *            The log line.
-     * @return True if the log line is not related to garbage collection logging or can otherwise be discarded, false
-     *         if the log line should be retained.
+     * @return True if the log line is not related to garbage collection logging or can otherwise be discarded, false if
+     *         the log line should be retained.
      */
     public static final boolean discardLogLine(String logLine) {
         return ThreadDumpPreprocessAction.match(logLine) || ApplicationLoggingPreprocessAction.match(logLine)
@@ -580,8 +580,8 @@ public class JdkUtil {
      * @param priorEvent
      *            Previous garbage collection event.
      * @param throughputThreshold
-     *            Throughput threshold (percent of time spent not doing garbage collection for a given time interval)
-     *            to be considered a bottleneck. Whole number 0-100.
+     *            Throughput threshold (percent of time spent not doing garbage collection for a given time interval) to
+     *            be considered a bottleneck. Whole number 0-100.
      * @return True if the garbage collection event pause time meets the bottleneck definition.
      */
     public static final boolean isBottleneck(BlockingEvent gcEvent, BlockingEvent priorEvent, int throughputThreshold)
@@ -639,10 +639,8 @@ public class JdkUtil {
      *            The size in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1_DETAILS} format (e.g.
      *            '128.0').
      * @param units
-     *            The units in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1_DETAILS} format (e.g.
-     *            'G').
-     * @return The size block in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1} format (e.g.
-     *         '131072M').
+     *            The units in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1_DETAILS} format (e.g. 'G').
+     * @return The size block in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1} format (e.g. '131072M').
      */
     public static String convertSizeG1DetailsToSizeG1(final String size, final char units) {
 
@@ -749,7 +747,7 @@ public class JdkUtil {
 
         return isG1;
     }
-    
+
     /**
      * Identify the log line garbage collection event.
      * 
@@ -766,7 +764,7 @@ public class JdkUtil {
         case CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE:
         case CMS_INITIAL_MARK:
         case CMS_REMARK:
-        case CMS_REMARK_WITH_CLASS_UNLOADING: 
+        case CMS_REMARK_WITH_CLASS_UNLOADING:
         case PAR_NEW:
         case PAR_NEW_CMS_CONCURRENT:
         case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD:
@@ -777,7 +775,7 @@ public class JdkUtil {
         case PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA:
         case PAR_NEW_PROMOTION_FAILED:
         case PAR_NEW_CMS_SERIAL_OLD:
-        case PAR_NEW_PROMOTION_FAILED_TRUNCATED:                        
+        case PAR_NEW_PROMOTION_FAILED_TRUNCATED:
             isCms = true;
         default:
             break;

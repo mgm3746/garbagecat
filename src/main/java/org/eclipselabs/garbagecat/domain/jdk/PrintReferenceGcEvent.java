@@ -30,7 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <h3>Example Logging</h3>
-
+ * 
  * <pre>
  * 0.341: [GC (Allocation Failure) 0.344: [SoftReference, 0 refs, 0.0000327 secs]0.344: [WeakReference, 19 refs, 0.0000049 secs]0.344: [FinalReference, 296 refs, 0.0002385 secs]0.344: [PhantomReference, 0 refs, 0 refs, 0.0000033 secs]0.344: [JNI Weak Reference, 0.0000041 secs][PSYoungGen: 63488K->3151K(73728K)] 63488K->3159K(241664K), 0.0032820 secs] [Times: user=0.02 sys=0.00, real=0.00 secs]
  * </pre>
@@ -44,9 +44,8 @@ public class PrintReferenceGcEvent implements LogEvent {
      * Regular expression defining the logging.
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ":.+(Soft|Weak|Phantom)Reference.+$";
-    
-    private static final Pattern pattern = Pattern.compile(PrintReferenceGcEvent.REGEX);
 
+    private static final Pattern pattern = Pattern.compile(PrintReferenceGcEvent.REGEX);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

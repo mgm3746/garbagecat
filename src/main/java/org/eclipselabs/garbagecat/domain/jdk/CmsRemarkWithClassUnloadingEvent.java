@@ -85,7 +85,7 @@ public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent, TriggerD
 
     /**
      * Regular expressions defining the logging.
-     */ 
+     */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
             + ")\\) )?\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP
             + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP

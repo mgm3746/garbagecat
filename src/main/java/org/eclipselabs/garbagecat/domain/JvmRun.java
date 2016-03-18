@@ -581,27 +581,27 @@ public class JvmRun {
         if ((isCmsCollector(eventTypes) && jvm.getCMSClassUnloadingEnabled() == null)) {
             analysisKeys.add(Analysis.KEY_CMS_CLASSUNLOADING_MISSING);
         }
-        
+
         // Check for -XX:+PrintReferenceGC.
         if (jvm.getPrintReferenceGC() != null) {
             analysisKeys.add(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED);
         }
-        
+
         // Check for -XX:+PrintGCCause missing.
         if (jvm.getPrintGCCause() == null && jvm.isJDK7()) {
             analysisKeys.add(Analysis.KEY_PRINT_GC_CAUSE_MISSING);
         }
-        
+
         // Check for -XX:-PrintGCCause (PrintGCCause disabled).
         if (jvm.getPrintGCCauseDisabled() != null) {
             analysisKeys.add(Analysis.KEY_PRINT_GC_CAUSE_DISABLED);
         }
-        
+
         // Check for -XX:+TieredCompilation.
         if (jvm.getThreadStackSizeValue() != null && jvm.isJDK7()) {
             analysisKeys.add(Analysis.KEY_JDK7_TIERED_COMPILATION_ENABLED);
         }
-        
+
         // Check for -XX:+PrintStringDeduplicationStatistics.
         if (jvm.getPrintStringDeduplicationStatistics() != null) {
             analysisKeys.add(Analysis.KEY_PRINT_STRING_DEDUP_STATS_ENABLED);

@@ -107,7 +107,7 @@ public class GcManager {
 
             bufferedReader = new BufferedReader(new FileReader(logFile));
             bufferedWriter = new BufferedWriter(new FileWriter(preprocessFile));
-            
+
             // Used for detangling intermingled logging events that span multiple lines
             List<String> entangledLogLines = new ArrayList<String>();
 
@@ -163,8 +163,8 @@ public class GcManager {
      * Determine the preprocessed log entry given the current, previous, and next log lines.
      * 
      * The previous log line is needed to prevent preprocessing overlap where preprocessors have common patterns that
-     * are treated in different ways (e.g. removing vs. keeping matches, line break at end vs. no line break, etc.).
-     * For example, there is overlap between the <code>CmsConcurrentModeFailurePreprocessEvent</code> and the
+     * are treated in different ways (e.g. removing vs. keeping matches, line break at end vs. no line break, etc.). For
+     * example, there is overlap between the <code>CmsConcurrentModeFailurePreprocessEvent</code> and the
      * <code>PrintHeapAtGcPreprocessEvent</code>.
      * 
      * The next log line is needed to distinguish between truncated and split logging. A truncated log entry can look
@@ -245,8 +245,8 @@ public class GcManager {
                     preprocessedLogLine = action.getLogEntry();
                 }
             } else if (G1PreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
-                G1PreprocessAction action = new G1PreprocessAction(priorLogLine,
-                        currentLogLine, nextLogLine, entangledLogLines);
+                G1PreprocessAction action = new G1PreprocessAction(priorLogLine, currentLogLine, nextLogLine,
+                        entangledLogLines);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
@@ -285,14 +285,14 @@ public class GcManager {
                 LogEvent event = JdkUtil.parseLogLine(logLine);
                 if (event instanceof BlockingEvent) {
                     jvmDao.addBlockingEvent((BlockingEvent) event);
-                    
+
                     // Analysis
 
                     // 1) Trigger causing a serial collector to be invoked
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL)
                             && (event instanceof CmsSerialOldEvent || event instanceof G1FullGCEvent)) {
                         String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {                        
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
                             jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL);
                         }
                     } else {
@@ -310,7 +310,7 @@ public class GcManager {
                             }
                         }
                     }
-                    
+
                     // 3) G1 Full GC collector is being invoked for reasons other than explicit GC
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_G1)) {
                         if (event instanceof G1FullGCEvent) {
@@ -320,7 +320,7 @@ public class GcManager {
                             }
                         }
                     }
-                    
+
                     // 4) CMS concurrent mode failure
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE)) {
                         if (event instanceof CmsSerialOldEvent) {
@@ -330,8 +330,7 @@ public class GcManager {
                             }
                         }
                     }
-                    
-                    
+
                 } else if (event instanceof ApplicationStoppedTimeEvent) {
                     jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
                 } else if (event instanceof HeaderCommandLineFlagsEvent) {
@@ -446,7 +445,7 @@ public class GcManager {
      *            The throughput threshold for bottleneck reporting.
      * @return The JVM run data.
      */
-    public JvmRun getJvmRun(Jvm jvm, int throughputThreshold) {        
+    public JvmRun getJvmRun(Jvm jvm, int throughputThreshold) {
         JvmRun jvmRun = new JvmRun(jvm, throughputThreshold);
         // Override any options passed in on command line
         if (jvmDao.getOptions() != null) {
