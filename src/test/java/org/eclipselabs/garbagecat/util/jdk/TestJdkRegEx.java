@@ -1,15 +1,15 @@
-/******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
- ******************************************************************************/
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
 import junit.framework.Assert;
@@ -45,7 +45,8 @@ public class TestJdkRegEx extends TestCase {
 
     public void testTimestampLessThanOne() {
         String timestamp = ".123";
-        Assert.assertTrue("Timestamps less than one do not have a leading zero.", timestamp.matches(JdkRegEx.TIMESTAMP));
+        Assert.assertTrue("Timestamps less than one do not have a leading zero.",
+                timestamp.matches(JdkRegEx.TIMESTAMP));
     }
 
     public void testTimestampValid() {
@@ -127,7 +128,7 @@ public class TestJdkRegEx extends TestCase {
         String duration = "0.0225213 secs";
         Assert.assertTrue("'0.0225213 secs' is a valid duration.", duration.matches(JdkRegEx.DURATION));
     }
-    
+
     public void testDurationValid8() {
         String duration = "0.02252132 secs";
         Assert.assertTrue("'0.02252132 secs' is a valid duration.", duration.matches(JdkRegEx.DURATION));
@@ -170,29 +171,30 @@ public class TestJdkRegEx extends TestCase {
 
     public void testTimesBlock4Digits() {
         String timesBlock = " [Times: user=2889.80 sys=2.42, real=2891.01 secs]";
-        Assert.assertTrue("'" + timesBlock + "' " + "is a valid times block.", timesBlock.matches(JdkRegEx.TIMES_BLOCK));
+        Assert.assertTrue("'" + timesBlock + "' " + "is a valid times block.",
+                timesBlock.matches(JdkRegEx.TIMES_BLOCK));
     }
-    
+
     public void testSizeG1Bytes() {
         String size = "0.0B";
         Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_DETAILS));
     }
-    
+
     public void testSizeG1Kilobytes() {
         String size = "8192.0K";
         Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_DETAILS));
     }
-    
+
     public void testSizeG1Megabytes() {
         String size = "28.0M";
         Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_DETAILS));
     }
-    
+
     public void testSizeG1Gigaytes() {
         String size = "30.0G";
         Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_DETAILS));
     }
-    
+
     public void testPercent() {
         String percent = "54.8%";
         Assert.assertTrue("'" + percent + "' " + "not a valid percent.", percent.matches(JdkRegEx.PERCENT));

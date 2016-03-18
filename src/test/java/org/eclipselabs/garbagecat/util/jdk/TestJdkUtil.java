@@ -1,9 +1,15 @@
-/******************************************************************************
- * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
- * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
- * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
- * initial API and implementation *
- ******************************************************************************/
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
 import java.util.Calendar;
@@ -34,12 +40,12 @@ public class TestJdkUtil extends TestCase {
         calendar.set(Calendar.MILLISECOND, 12);
         String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
                 + "89399K->11655K(907328K), 0.0387074 secs]";
-        String logLineConverted = "1966-08-18 19:22:04,201: [GC 1966-08-18 19:22:04,202: [ParNew: 86199K->8454K(91712K), "
-                + "0.0375060 secs] 89399K->11655K(907328K), 0.0387074 secs]";
+        String logLineConverted = "1966-08-18 19:22:04,201: [GC 1966-08-18 19:22:04,202: "
+                + "[ParNew: 86199K->8454K(91712K), 0.0375060 secs] 89399K->11655K(907328K), 0.0387074 secs]";
         Assert.assertEquals("Timestamps not converted to date/time correctly", logLineConverted,
                 JdkUtil.convertLogEntryTimestampsToDateStamp(logLine, calendar.getTime()));
     }
-    
+
     public void testBottleneckDetectionWholeNumbers() {
 
         String logLine1 = "test1";
@@ -137,9 +143,12 @@ public class TestJdkUtil extends TestCase {
         Assert.assertEquals("Option value not correct.", "256k", JdkUtil.getOptionValue("-Xss256k"));
         Assert.assertEquals("Option value not correct.", "2G", JdkUtil.getOptionValue("-Xmx2G"));
         Assert.assertEquals("Option value not correct.", "128M", JdkUtil.getOptionValue("-XX:MaxPermSize=128M"));
-        Assert.assertEquals("Option value not correct.", "3865051136", JdkUtil.getOptionValue("-XX:InitialHeapSize=3865051136"));
-        Assert.assertEquals("Option value not correct.", "7730102272", JdkUtil.getOptionValue("-XX:MaxHeapSize=7730102272"));
-        Assert.assertEquals("Option value not correct.", "268435456", JdkUtil.getOptionValue("-XX:MaxPermSize=268435456"));
+        Assert.assertEquals("Option value not correct.", "3865051136",
+                JdkUtil.getOptionValue("-XX:InitialHeapSize=3865051136"));
+        Assert.assertEquals("Option value not correct.", "7730102272",
+                JdkUtil.getOptionValue("-XX:MaxHeapSize=7730102272"));
+        Assert.assertEquals("Option value not correct.", "268435456",
+                JdkUtil.getOptionValue("-XX:MaxPermSize=268435456"));
         Assert.assertEquals("Option value not correct.", "67108864", JdkUtil.getOptionValue("-XX:PermSize=67108864"));
         Assert.assertNull("Option value not correct.", JdkUtil.getOptionValue(null));
     }

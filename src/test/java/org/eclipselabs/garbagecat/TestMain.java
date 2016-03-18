@@ -1,3 +1,15 @@
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat;
 
 import java.lang.reflect.InvocationTargetException;
@@ -161,7 +173,8 @@ public class TestMain extends TestCase {
             Assert.fail("IllegalAccessException: " + e.getMessage());
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected IllegalArgumentException not thrown.", e.getTargetException() instanceof IllegalArgumentException);
+            Assert.assertTrue("Epected IllegalArgumentException not thrown.",
+                    e.getTargetException() instanceof IllegalArgumentException);
         }
     }
 
@@ -193,7 +206,8 @@ public class TestMain extends TestCase {
             Assert.fail("IllegalAccessException: " + e.getMessage());
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected IllegalArgumentException not thrown.", e.getTargetException() instanceof IllegalArgumentException);
+            Assert.assertTrue("Epected IllegalArgumentException not thrown.",
+                    e.getTargetException() instanceof IllegalArgumentException);
         }
     }
 
@@ -225,7 +239,8 @@ public class TestMain extends TestCase {
             Assert.fail("IllegalAccessException: " + e.getMessage());
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected IllegalArgumentException not thrown.", e.getTargetException() instanceof IllegalArgumentException);
+            Assert.assertTrue("Epected IllegalArgumentException not thrown.",
+                    e.getTargetException() instanceof IllegalArgumentException);
         }
     }
 
@@ -257,7 +272,8 @@ public class TestMain extends TestCase {
             Assert.fail("IllegalAccessException: " + e.getMessage());
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected IllegalArgumentException not thrown.", e.getTargetException() instanceof IllegalArgumentException);
+            Assert.assertTrue("Epected IllegalArgumentException not thrown.",
+                    e.getTargetException() instanceof IllegalArgumentException);
         }
     }
 

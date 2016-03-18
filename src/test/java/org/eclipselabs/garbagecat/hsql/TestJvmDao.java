@@ -1,15 +1,15 @@
-/******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
- ******************************************************************************/
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.hsql;
 
 import java.util.List;
@@ -26,7 +26,7 @@ import junit.framework.TestCase;
  * 
  */
 public class TestJvmDao extends TestCase {
-    
+
     public void testSameTimestampOrdering() {
         JvmDao jvmDao = new JvmDao();
         ParNewEvent event1 = new ParNewEvent("3010778.296: [GC 3010778.296: [ParNew: 337824K->32173K(368640K),"
@@ -46,5 +46,5 @@ public class TestJvmDao extends TestCase {
         List<BlockingEvent> events = jvmDao.getBlockingEvents();
         Assert.assertTrue(events.get(1) instanceof ParNewEvent);
         Assert.assertTrue(events.get(2) instanceof SerialOldEvent);
-    }   
+    }
 }

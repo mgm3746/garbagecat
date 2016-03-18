@@ -1,15 +1,15 @@
-/******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
- ******************************************************************************/
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import junit.framework.Assert;
@@ -24,8 +24,11 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class TestSerialOldEvent extends TestCase {
 
     public void testLogLine() {
-        String logLine = "187.159: [Full GC 187.160: " + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), " + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".", SerialOldEvent.match(logLine));
+        String logLine = "187.159: [Full GC 187.160: "
+                + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
+                + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".",
+                SerialOldEvent.match(logLine));
         SerialOldEvent event = new SerialOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 187159, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", 55042, event.getYoungOccupancyInit());
@@ -41,13 +44,19 @@ public class TestSerialOldEvent extends TestCase {
     }
 
     public void testLogLineWhitespaceAtEnd() {
-        String logLine = "187.159: [Full GC 187.160: " + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), " + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]       ";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".", SerialOldEvent.match(logLine));
+        String logLine = "187.159: [Full GC 187.160: "
+                + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
+                + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]       ";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".",
+                SerialOldEvent.match(logLine));
     }
 
     public void testLogLineJdk16() {
-        String logLine = "2.457: [Full GC (System) 2.457: " + "[Tenured: 1092K->2866K(116544K), 0.0489980 secs] 11012K->2866K(129664K), " + "[Perm : 8602K->8604K(131072K)], 0.0490880 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".", SerialOldEvent.match(logLine));
+        String logLine = "2.457: [Full GC (System) 2.457: "
+                + "[Tenured: 1092K->2866K(116544K), 0.0489980 secs] 11012K->2866K(129664K), "
+                + "[Perm : 8602K->8604K(131072K)], 0.0490880 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".",
+                SerialOldEvent.match(logLine));
         SerialOldEvent event = new SerialOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 2457, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", 9920, event.getYoungOccupancyInit());

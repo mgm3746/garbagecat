@@ -1,15 +1,15 @@
-/******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
- ******************************************************************************/
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -117,13 +117,14 @@ public class TestG1YoungPause extends TestCase {
                 G1YoungPause.match(logLine));
         G1YoungPause event = new G1YoungPause(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 5293, event.getTimestamp());
-        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));    
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
         Assert.assertEquals("Combined begin size not parsed correctly.", 424960, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 320512, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 31457280, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 17, event.getDuration());
     }
-    
+
     public void testLogLinePreprocessedGCLockerInitiatedGCWithTimesData() {
         String logLine = "5.293: [GC pause (GCLocker Initiated GC) (young), 0.0176868 secs] 415M->313M(30720M) "
                 + "[Times: user=0.01 sys=0.00, real=0.02 secs]";
@@ -131,7 +132,8 @@ public class TestG1YoungPause extends TestCase {
                 G1YoungPause.match(logLine));
         G1YoungPause event = new G1YoungPause(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 5293, event.getTimestamp());
-        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));    
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
         Assert.assertEquals("Combined begin size not parsed correctly.", 424960, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 320512, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 31457280, event.getCombinedSpace());
@@ -144,7 +146,7 @@ public class TestG1YoungPause extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
                 G1YoungPause.match(logLine));
     }
-    
+
     public void testLogLinePreprocessedToSpaceExhausted() {
         String logLine = "27997.968: [GC pause (young) (to-space exhausted), 0.1208740 secs] 19354M->18227M(26624M) "
                 + "[Times: user=0.41 sys=0.02, real=0.12 secs]";
@@ -152,7 +154,8 @@ public class TestG1YoungPause extends TestCase {
                 G1YoungPause.match(logLine));
         G1YoungPause event = new G1YoungPause(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 27997968, event.getTimestamp());
-        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED));    
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED));
         Assert.assertEquals("Combined begin size not parsed correctly.", 19818496, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 18664448, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 27262976, event.getCombinedSpace());

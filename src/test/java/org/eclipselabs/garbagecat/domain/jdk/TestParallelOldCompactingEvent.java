@@ -1,15 +1,15 @@
-/******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
- ******************************************************************************/
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import junit.framework.Assert;
@@ -25,9 +25,11 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class TestParallelOldCompactingEvent extends TestCase {
 
     public void testLogLine() {
-        String logLine = "2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] " + "[ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) "
+        String logLine = "2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] "
+                + "[ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) "
                 + "[PSPermGen: 81960K->81783K(164352K)], 2.4749181 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".", ParallelOldCompactingEvent.match(logLine));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
+                ParallelOldCompactingEvent.match(logLine));
         ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 2182541, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", 1940, event.getYoungOccupancyInit());
@@ -43,17 +45,23 @@ public class TestParallelOldCompactingEvent extends TestCase {
     }
 
     public void testLogLineWhiteSpaceAtEnd() {
-        String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] " + "[ParOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) " + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]  ";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".", ParallelOldCompactingEvent.match(logLine));
+        String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
+                + "[ParOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
+                + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]  ";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
+                ParallelOldCompactingEvent.match(logLine));
     }
 
     public void testLogLineJdk16() {
-        String logLine = "2.417: [Full GC (System) [PSYoungGen: 1788K->0K(12736K)] " + "[ParOldGen: 1084K->2843K(116544K)] 2872K->2843K(129280K) "
+        String logLine = "2.417: [Full GC (System) [PSYoungGen: 1788K->0K(12736K)] "
+                + "[ParOldGen: 1084K->2843K(116544K)] 2872K->2843K(129280K) "
                 + "[PSPermGen: 8602K->8593K(131072K)], 0.1028360 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".", ParallelOldCompactingEvent.match(logLine));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
+                ParallelOldCompactingEvent.match(logLine));
         ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 2417, event.getTimestamp());
-        Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.SYSTEM_GC.toString() + ".", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
+        Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.SYSTEM_GC.toString() + ".",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
         Assert.assertEquals("Young begin size not parsed correctly.", 1788, event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
         Assert.assertEquals("Young available size not parsed correctly.", 12736, event.getYoungSpace());
@@ -65,15 +73,17 @@ public class TestParallelOldCompactingEvent extends TestCase {
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 102, event.getDuration());
     }
-    
+
     public void testLogLineJdk8() {
         String logLine = "1.234: [Full GC (Metadata GC Threshold) [PSYoungGen: 17779K->0K(1835008K)] "
                 + "[ParOldGen: 16K->16894K(4194304K)] 17795K->16894K(6029312K), [Metaspace: 19114K->19114K(1067008K)], "
                 + "0.0352132 secs] [Times: user=0.09 sys=0.00, real=0.04 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".", ParallelOldCompactingEvent.match(logLine));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
+                ParallelOldCompactingEvent.match(logLine));
         ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 1234, event.getTimestamp());
-        Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.METADATA_GC_THRESHOLD.toString() + ".", event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
+        Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.METADATA_GC_THRESHOLD.toString() + ".",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
         Assert.assertEquals("Young begin size not parsed correctly.", 17779, event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
         Assert.assertEquals("Young available size not parsed correctly.", 1835008, event.getYoungSpace());

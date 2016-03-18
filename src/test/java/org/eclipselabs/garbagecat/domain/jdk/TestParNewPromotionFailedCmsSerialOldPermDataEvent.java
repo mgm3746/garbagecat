@@ -1,15 +1,15 @@
-/******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
- ******************************************************************************/
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import junit.framework.Assert;
@@ -24,11 +24,16 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class TestParNewPromotionFailedCmsSerialOldPermDataEvent extends TestCase {
 
     public void testLogLine() {
-        String logLine = "395950.370: [GC 395950.370: [ParNew (promotion failed): " + "53094K->53606K(59008K), 0.0510880 secs]395950.421: "
-                + "[CMS: 664527K->317110K(1507328K), 2.9523520 secs] 697709K->317110K(1566336K), " + "[CMS Perm : 83780K->83711K(131072K)], 3.0039040 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString() + ".", ParNewPromotionFailedCmsSerialOldPermDataEvent
-                .match(logLine));
-        ParNewPromotionFailedCmsSerialOldPermDataEvent event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(logLine);
+        String logLine = "395950.370: [GC 395950.370: [ParNew (promotion failed): "
+                + "53094K->53606K(59008K), 0.0510880 secs]395950.421: "
+                + "[CMS: 664527K->317110K(1507328K), 2.9523520 secs] 697709K->317110K(1566336K), "
+                + "[CMS Perm : 83780K->83711K(131072K)], 3.0039040 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString() + ".",
+                ParNewPromotionFailedCmsSerialOldPermDataEvent.match(logLine));
+        ParNewPromotionFailedCmsSerialOldPermDataEvent event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 395950370, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (697709 - 664527), event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", (317110 - 317110), event.getYoungOccupancyEnd());
@@ -43,13 +48,19 @@ public class TestParNewPromotionFailedCmsSerialOldPermDataEvent extends TestCase
     }
 
     public void testLogLineIncrementalMode() {
-        String logLine = "4595.651: [GC 4595.651: [ParNew (promotion failed): 1304576K->1304576K(1304576K), " + "1.7740754 secs]4597.425: [CMS: 967034K->684015K(4886528K), 3.2678588 secs] "
-                + "2022731K->684015K(6191104K), [CMS Perm : 201541K->201494K(524288K)] icms_dc=21 , " + "5.0421688 secs] [Times: user=5.54 sys=0.01, real=5.04 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString() + ".", ParNewPromotionFailedCmsSerialOldPermDataEvent
-                .match(logLine));
-        ParNewPromotionFailedCmsSerialOldPermDataEvent event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(logLine);
+        String logLine = "4595.651: [GC 4595.651: [ParNew (promotion failed): 1304576K->1304576K(1304576K), "
+                + "1.7740754 secs]4597.425: [CMS: 967034K->684015K(4886528K), 3.2678588 secs] "
+                + "2022731K->684015K(6191104K), [CMS Perm : 201541K->201494K(524288K)] icms_dc=21 , "
+                + "5.0421688 secs] [Times: user=5.54 sys=0.01, real=5.04 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString() + ".",
+                ParNewPromotionFailedCmsSerialOldPermDataEvent.match(logLine));
+        ParNewPromotionFailedCmsSerialOldPermDataEvent event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 4595651, event.getTimestamp());
-        Assert.assertEquals("Young begin size not parsed correctly.", (2022731 - 967034), event.getYoungOccupancyInit());
+        Assert.assertEquals("Young begin size not parsed correctly.", (2022731 - 967034),
+                event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", (684015 - 684015), event.getYoungOccupancyEnd());
         Assert.assertEquals("Young available size not parsed correctly.", (6191104 - 4886528), event.getYoungSpace());
         Assert.assertEquals("Old begin size not parsed correctly.", 967034, event.getOldOccupancyInit());
@@ -62,12 +73,17 @@ public class TestParNewPromotionFailedCmsSerialOldPermDataEvent extends TestCase
     }
 
     public void testLogLineWithTimesData() {
-        String logLine = "395950.370: [GC 395950.370: [ParNew (promotion failed): " + "53094K->53606K(59008K), 0.0510880 secs]395950.421: "
-                + "[CMS: 664527K->317110K(1507328K), 2.9523520 secs] 697709K->317110K(1566336K), " + "[CMS Perm : 83780K->83711K(131072K)], 3.0039040 secs] "
+        String logLine = "395950.370: [GC 395950.370: [ParNew (promotion failed): "
+                + "53094K->53606K(59008K), 0.0510880 secs]395950.421: "
+                + "[CMS: 664527K->317110K(1507328K), 2.9523520 secs] 697709K->317110K(1566336K), "
+                + "[CMS Perm : 83780K->83711K(131072K)], 3.0039040 secs] "
                 + "[Times: user=3.03 sys=0.00, real=3.01 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString() + ".", ParNewPromotionFailedCmsSerialOldPermDataEvent
-                .match(logLine));
-        ParNewPromotionFailedCmsSerialOldPermDataEvent event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(logLine);
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString() + ".",
+                ParNewPromotionFailedCmsSerialOldPermDataEvent.match(logLine));
+        ParNewPromotionFailedCmsSerialOldPermDataEvent event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 395950370, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", (697709 - 664527), event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", (317110 - 317110), event.getYoungOccupancyEnd());
@@ -82,22 +98,30 @@ public class TestParNewPromotionFailedCmsSerialOldPermDataEvent extends TestCase
     }
 
     public void testLogLineWhitespaceAtEnd() {
-        String logLine = "395950.370: [GC 395950.370: [ParNew (promotion failed): " + "53094K->53606K(59008K), 0.0510880 secs]395950.421: "
-                + "[CMS: 664527K->317110K(1507328K), 2.9523520 secs] 697709K->317110K(1566336K), " + "[CMS Perm : 83780K->83711K(131072K)], 3.0039040 secs] ";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString() + ".", ParNewPromotionFailedCmsSerialOldPermDataEvent
-                .match(logLine));
+        String logLine = "395950.370: [GC 395950.370: [ParNew (promotion failed): "
+                + "53094K->53606K(59008K), 0.0510880 secs]395950.421: "
+                + "[CMS: 664527K->317110K(1507328K), 2.9523520 secs] 697709K->317110K(1566336K), "
+                + "[CMS Perm : 83780K->83711K(131072K)], 3.0039040 secs] ";
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString() + ".",
+                ParNewPromotionFailedCmsSerialOldPermDataEvent.match(logLine));
     }
-    
+
     public void testLogLineNotIncrementalMode() {
         String logLine = "108537.519: [GC108537.520: [ParNew (promotion failed): 1409215K->1426861K(1567616K), "
                 + "0.4259330 secs]108537.946: [CMS: 13135135K->4554003K(16914880K), 14.7637760 secs] "
                 + "14542753K->4554003K(18482496K), [CMS Perm : 227503K->226115K(378908K)], 15.1927120 secs] "
                 + "[Times: user=16.31 sys=0.21, real=15.19 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString() + ".", ParNewPromotionFailedCmsSerialOldPermDataEvent
-                .match(logLine));
-        ParNewPromotionFailedCmsSerialOldPermDataEvent event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(logLine);
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString() + ".",
+                ParNewPromotionFailedCmsSerialOldPermDataEvent.match(logLine));
+        ParNewPromotionFailedCmsSerialOldPermDataEvent event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(
+                logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 108537519, event.getTimestamp());
-        Assert.assertEquals("Young begin size not parsed correctly.", (14542753 - 13135135), event.getYoungOccupancyInit());
+        Assert.assertEquals("Young begin size not parsed correctly.", (14542753 - 13135135),
+                event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", (4554003 - 4554003), event.getYoungOccupancyEnd());
         Assert.assertEquals("Young available size not parsed correctly.", (18482496 - 16914880), event.getYoungSpace());
         Assert.assertEquals("Old begin size not parsed correctly.", 13135135, event.getOldOccupancyInit());

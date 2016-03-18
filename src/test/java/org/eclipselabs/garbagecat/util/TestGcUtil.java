@@ -1,15 +1,15 @@
-/******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
- ******************************************************************************/
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util;
 
 import java.text.SimpleDateFormat;
@@ -27,7 +27,8 @@ public class TestGcUtil extends TestCase {
 
     public void testStartDateTime() {
         String startDateTime = "2009-09-18 00:00:08,172";
-        Assert.assertTrue("Start date/time not recognized as a valid format.", GcUtil.isValidStartDateTime(startDateTime));
+        Assert.assertTrue("Start date/time not recognized as a valid format.",
+                GcUtil.isValidStartDateTime(startDateTime));
     }
 
     public void testInvalidStartDateTime() {
@@ -83,7 +84,8 @@ public class TestGcUtil extends TestCase {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 0L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        Assert.assertEquals("Date calculated wrong.", "1966-08-18 19:21:44,012", formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
+        Assert.assertEquals("Date calculated wrong.", "1966-08-18 19:21:44,012",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
     }
 
     public void testAddingDateAndTimestamp10Ms() {
@@ -98,7 +100,8 @@ public class TestGcUtil extends TestCase {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 10L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        Assert.assertEquals("Date calculated wrong.", "1966-08-18 19:21:44,022", formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
+        Assert.assertEquals("Date calculated wrong.", "1966-08-18 19:21:44,022",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
     }
 
     public void testAddingDateAndTimestamp1Sec() {
@@ -113,7 +116,8 @@ public class TestGcUtil extends TestCase {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 1000L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        Assert.assertEquals("Date calculated wrong.", "1966-08-18 19:21:45,012", formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
+        Assert.assertEquals("Date calculated wrong.", "1966-08-18 19:21:45,012",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
     }
 
     public void testAddingDateAndTimestamp1Min() {
@@ -128,7 +132,8 @@ public class TestGcUtil extends TestCase {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 60000L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        Assert.assertEquals("Date calculated wrong.", "1966-08-18 19:22:44,012", formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
+        Assert.assertEquals("Date calculated wrong.", "1966-08-18 19:22:44,012",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
     }
 
     public void testAddingDateAndTimestamp1Hr() {
@@ -143,7 +148,8 @@ public class TestGcUtil extends TestCase {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 3600000L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        Assert.assertEquals("Date calculated wrong.", "1966-08-18 20:21:44,012", formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
+        Assert.assertEquals("Date calculated wrong.", "1966-08-18 20:21:44,012",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
     }
 
     public void testAddingDateAndTimestamp1Day() {
@@ -158,7 +164,8 @@ public class TestGcUtil extends TestCase {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 86400000L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        Assert.assertEquals("Date calculated wrong.", "1966-08-19 19:21:44,012", formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
+        Assert.assertEquals("Date calculated wrong.", "1966-08-19 19:21:44,012",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
     }
 
     public void testAddingDateAndTimestamp30Days() {
@@ -173,19 +180,23 @@ public class TestGcUtil extends TestCase {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 2592000000L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        Assert.assertEquals("Date calculated wrong.", "1966-09-17 19:21:44,012", formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
+        Assert.assertEquals("Date calculated wrong.", "1966-09-17 19:21:44,012",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)));
     }
 
     public void testAddingDateWith2DigitMonth() {
         String jvmStarted = "2009-11-01 02:30:52,917";
         long gcLogTimestamp = 353647157L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        Assert.assertEquals("Date calculated wrong.", "2009-11-05 04:45:00,074", formatter.format(GcUtil.getDatePlusTimestamp(GcUtil.parseStartDateTime(jvmStarted), gcLogTimestamp)));
+        Assert.assertEquals("Date calculated wrong.", "2009-11-05 04:45:00,074",
+                formatter.format(GcUtil.getDatePlusTimestamp(GcUtil.parseStartDateTime(jvmStarted), gcLogTimestamp)));
     }
 
     public void testGetPropertyValues() {
-        Assert.assertNotNull("Could not retrieve stack_thread_size.not_set.", GcUtil.getPropertyValue("analysis", "thread.stack.size.not.set"));
-        Assert.assertNotNull("Could not retrieve min.heap.not.equal.max.heap.", GcUtil.getPropertyValue("analysis", "min.heap.not.equal.max.heap"));
+        Assert.assertNotNull("Could not retrieve stack_thread_size.not_set.",
+                GcUtil.getPropertyValue("analysis", "thread.stack.size.not.set"));
+        Assert.assertNotNull("Could not retrieve min.heap.not.equal.max.heap.",
+                GcUtil.getPropertyValue("analysis", "min.heap.not.equal.max.heap"));
     }
 
     public void testConvertDateStampStringToDate() {

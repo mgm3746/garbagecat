@@ -1,9 +1,15 @@
-/******************************************************************************
- * Garbage Cat * * Copyright (c) 2008-2010 Red Hat, Inc. * All rights reserved. This program and the accompanying
- * materials * are made available under the terms of the Eclipse Public License v1.0 * which accompanies this
- * distribution, and is available at * http://www.eclipse.org/legal/epl-v10.html * * Contributors: * Red Hat, Inc. -
- * initial API and implementation *
- ******************************************************************************/
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
 import junit.framework.Assert;
@@ -291,7 +297,8 @@ public class TestPrintHeapAtGcPreprocessAction extends TestCase {
     }
 
     public void testG1GarbageFirstHeapLine() {
-        String logLine = " garbage-first heap   total 60416K, used 6685K [0x00007f9128c00000, 0x00007f912c700000, 0x00007f9162e00000";
+        String logLine = " garbage-first heap   total 60416K, used 6685K [0x00007f9128c00000, 0x00007f912c700000, "
+                + "0x00007f9162e00000";
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
                 PrintHeapAtGcPreprocessAction.match(logLine, null));
@@ -305,7 +312,8 @@ public class TestPrintHeapAtGcPreprocessAction extends TestCase {
     }
 
     public void testG1TheSpaceLine() {
-        String logLine = "  the space 20480K,  35% used [0x00007f9162e00000, 0x00007f9163526df0, 0x00007f9163526e00, 0x00007f9164200000)";
+        String logLine = "  the space 20480K,  35% used [0x00007f9162e00000, 0x00007f9163526df0, 0x00007f9163526e00, "
+                + "0x00007f9164200000)";
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
                 PrintHeapAtGcPreprocessAction.match(logLine, null));

@@ -1,15 +1,15 @@
-/******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
- ******************************************************************************/
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
 import junit.framework.Assert;
@@ -23,12 +23,14 @@ public class TestJdkMath extends TestCase {
 
     public void testConvertDurationToMillis() {
         String secs = "0.0225213";
-        Assert.assertEquals("Secs not converted to milliseconds properly.", 22, JdkMath.convertSecsToMillis(secs).intValue());
+        Assert.assertEquals("Secs not converted to milliseconds properly.", 22,
+                JdkMath.convertSecsToMillis(secs).intValue());
     }
 
     public void testConvertDurationDecimalCommaToMillis() {
         String secs = "0,0225213";
-        Assert.assertEquals("Secs not converted to milliseconds properly.", 22, JdkMath.convertSecsToMillis(secs).intValue());
+        Assert.assertEquals("Secs not converted to milliseconds properly.", 22,
+                JdkMath.convertSecsToMillis(secs).intValue());
     }
 
     /**
@@ -36,22 +38,26 @@ public class TestJdkMath extends TestCase {
      */
     public void testConvertDurationToMillisRoundUp() {
         String secs = "0.0975";
-        Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 97, JdkMath.convertSecsToMillis(secs).intValue());
+        Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 97,
+                JdkMath.convertSecsToMillis(secs).intValue());
     }
 
     public void testConvertDurationToMillisRoundDown() {
         String secs = "0.0985";
-        Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 98, JdkMath.convertSecsToMillis(secs).intValue());
+        Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 98,
+                JdkMath.convertSecsToMillis(secs).intValue());
     }
-    
+
     public void testConvertDurationToMicrosRoundUp() {
         String secs = "0.0968475";
-        Assert.assertEquals("Secs not converted to microseconds with expected rounding mode.", 96847, JdkMath.convertSecsToMicros(secs).intValue());
+        Assert.assertEquals("Secs not converted to microseconds with expected rounding mode.", 96847,
+                JdkMath.convertSecsToMicros(secs).intValue());
     }
 
     public void testConvertDurationToMicrosRoundDown() {
         String secs = "0.0968485";
-        Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 96848, JdkMath.convertSecsToMicros(secs).intValue());
+        Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 96848,
+                JdkMath.convertSecsToMicros(secs).intValue());
     }
 
     public void testThroughput() {
@@ -80,15 +86,16 @@ public class TestJdkMath extends TestCase {
 
     public void testConvertDurationMillisToSecs() {
         long duration = 123456;
-        Assert.assertEquals("Millis not converted to seconds with expected rounding mode.", "123.456", JdkMath.convertMillisToSecs(duration).toString());
+        Assert.assertEquals("Millis not converted to seconds with expected rounding mode.", "123.456",
+                JdkMath.convertMillisToSecs(duration).toString());
     }
-    
+
     public void testCalcKilobytesMegabytes() {
         int size = 1;
         char units = 'M';
         Assert.assertEquals("Megabytes not converted to kilobytes.", 1024, JdkMath.calcKilobytes(size, units));
     }
-    
+
     public void testCalcKilobytesGigabytes() {
         int size = 1;
         char units = 'G';

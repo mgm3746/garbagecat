@@ -1,15 +1,15 @@
-/******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
- ******************************************************************************/
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -50,7 +50,7 @@ public class TestG1FullGCEvent extends TestCase {
                 G1FullGCEvent.match(logLine));
         G1FullGCEvent event = new G1FullGCEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 105151, event.getTimestamp());
-        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC)); 
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
         Assert.assertEquals("Combined begin size not parsed correctly.", 5959680, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 1414144, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 31457280, event.getCombinedSpace());
@@ -63,7 +63,7 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
                 G1FullGCEvent.match(logLine));
     }
-    
+
     public void testLogLinePreprocessedWithNoTrigger() {
         String logLine = "27999.141: [Full GC 18G->4153M(26G), 10.1760410 secs] 19354M->4154M(26624M) "
                 + "[Times: user=13.12 sys=0.02, real=10.17 secs]";

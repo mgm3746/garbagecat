@@ -1,15 +1,15 @@
-/******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
- ******************************************************************************/
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Red Hat, Inc. - initial API and implementation                                                                  *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import junit.framework.Assert;
@@ -25,7 +25,8 @@ public class TestVerboseGcYoungEvent extends TestCase {
 
     public void testLogLine() {
         String logLine = "2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".", VerboseGcYoungEvent.match(logLine));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".",
+                VerboseGcYoungEvent.match(logLine));
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
         Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
         Assert.assertEquals("Time stamp not parsed correctly.", 2205570508L, event.getTimestamp());
@@ -37,12 +38,14 @@ public class TestVerboseGcYoungEvent extends TestCase {
 
     public void testLogLineWhitespaceAtEnd() {
         String logLine = "2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]        ";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".", VerboseGcYoungEvent.match(logLine));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".",
+                VerboseGcYoungEvent.match(logLine));
     }
-    
+
     public void testLogLineMissingBeginningOccupancy() {
         String logLine = "90.168: [GC 876593K(1851392K), 0.0701780 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".", VerboseGcYoungEvent.match(logLine));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".",
+                VerboseGcYoungEvent.match(logLine));
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
         Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
         Assert.assertEquals("Time stamp not parsed correctly.", 90168, event.getTimestamp());
