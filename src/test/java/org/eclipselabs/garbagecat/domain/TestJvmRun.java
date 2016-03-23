@@ -1534,4 +1534,20 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(Analysis.KEY_PRINT_STRING_DEDUP_STATS_ENABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_STRING_DEDUP_STATS_ENABLED));
     }
+    
+    /**
+     * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_FULL across 3 lines with details.
+     * 
+     */
+    public void testG1PreprocessActionG1Full3Lines() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset65.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
+    }
 }

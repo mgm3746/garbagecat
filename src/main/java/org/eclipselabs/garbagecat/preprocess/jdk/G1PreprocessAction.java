@@ -345,13 +345,14 @@ public class G1PreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\))\\]$";
 
     /**
-     * Regular expression for retained middle JDK8.
+     * Regular expression for retained middle.
      */
-    private static final String REGEX_RETAIN_MIDDLE_JDK8 = "^   \\[Eden: " + JdkRegEx.SIZE_G1_DETAILS + "\\("
+    private static final String REGEX_RETAIN_MIDDLE = "^   \\[Eden: " + JdkRegEx.SIZE_G1_DETAILS + "\\("
             + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS
             + "\\) Survivors: " + JdkRegEx.SIZE_G1_DETAILS + "->" + JdkRegEx.SIZE_G1_DETAILS + " Heap: "
             + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\("
-            + JdkRegEx.SIZE_G1_DETAILS + "\\)\\]$";
+            + JdkRegEx.SIZE_G1_DETAILS + "\\)\\](, \\[Perm: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
+            + JdkRegEx.SIZE_G1 + "\\)\\])?$";
 
     /**
      * Regular expression for retained middle duration.
@@ -588,8 +589,8 @@ public class G1PreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_JDK8)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_JDK8);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 // For now put logging in standard G1 form (K and M). If standard logging one day has B, G, or
@@ -643,7 +644,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 || (logLine.matches(REGEX_RETAIN_BEGINNING_CLEANUP) && nextLogLine.matches(REGEX_RETAIN_END))
                 || logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE) || logLine.matches(REGEX_RETAIN_MIDDLE_JDK8)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE) || logLine.matches(REGEX_RETAIN_MIDDLE)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_DURATION) || logLine.matches(REGEX_RETAIN_END)) {
             match = true;
         } else {
