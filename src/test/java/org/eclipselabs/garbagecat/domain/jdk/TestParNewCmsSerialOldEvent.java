@@ -64,4 +64,24 @@ public class TestParNewCmsSerialOldEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CMS_SERIAL_OLD.toString() + ".",
                 ParNewCmsSerialOldEvent.match(logLine));
     }
+
+    public void testLogLineWithPermData() {
+        String logLine = "6.102: [GC6.102: [ParNew: 19648K->2176K(19648K), 0.0184470 secs]6.121: "
+                + "[Tenured: 44849K->25946K(44864K), 0.2586250 secs] 60100K->25946K(64512K), "
+                + "[Perm : 43759K->43759K(262144K)], 0.2773070 secs] [Times: user=0.16 sys=0.01, real=0.28 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CMS_SERIAL_OLD.toString() + ".",
+                ParNewCmsSerialOldEvent.match(logLine));
+        ParNewCmsSerialOldEvent event = new ParNewCmsSerialOldEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 6102, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 19648, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 25946 - 25946, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 64512 - 44864, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 44849, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 25946, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 44864, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 43759, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 43759, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 277, event.getDuration());
+    }
 }
