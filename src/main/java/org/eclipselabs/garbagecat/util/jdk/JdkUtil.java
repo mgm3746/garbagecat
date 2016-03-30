@@ -41,15 +41,16 @@ import org.eclipselabs.garbagecat.domain.jdk.G1YoungPause;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
+import org.eclipselabs.garbagecat.domain.jdk.LogRotation;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcurrentModeFailureEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcModeFailurePermDataEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldPermDataEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcModeFailurePermDataEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcurrentModeFailureEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedTruncatedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
@@ -100,7 +101,7 @@ public class JdkUtil {
         //
         G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
         //
-        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, PRINT_REFERENCE_GC
+        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, PRINT_REFERENCE_GC, LOG_ROTATION
     };
 
     /**
@@ -220,6 +221,8 @@ public class JdkUtil {
             return LogEventType.HEADER_VERSION;
         if (PrintReferenceGcEvent.match(logLine))
             return LogEventType.PRINT_REFERENCE_GC;
+        if (LogRotation.match(logLine))
+            return LogEventType.LOG_ROTATION;
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -356,6 +359,9 @@ public class JdkUtil {
         case PRINT_REFERENCE_GC:
             event = new PrintReferenceGcEvent(logLine);
             break;
+        case LOG_ROTATION:
+            event = new LogRotation(logLine);
+            break;
         case UNKNOWN:
             event = new UnknownEvent(logLine);
             break;
@@ -491,7 +497,7 @@ public class JdkUtil {
                 || eventType == JdkUtil.LogEventType.APPLICATION_STOPPED_TIME
                 || eventType == JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS
                 || eventType == JdkUtil.LogEventType.HEADER_MEMORY || eventType == JdkUtil.LogEventType.HEADER_VERSION
-                || eventType == JdkUtil.LogEventType.UNKNOWN);
+                || eventType == JdkUtil.LogEventType.LOG_ROTATION || eventType == JdkUtil.LogEventType.UNKNOWN);
     }
 
     public static final LogEventType determineEventType(String eventTypeString) {
