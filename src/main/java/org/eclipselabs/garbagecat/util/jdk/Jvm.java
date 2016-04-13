@@ -373,7 +373,7 @@ public class Jvm {
      * -XX:-HeapDumpOnOutOfMemoryError
      * </pre>
      * 
-     * @return True if -XX:-HeapDumpOnOutOfMemoryError option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getHeapDumpOnOutOfMemoryErrorDisabledOption() {
         String regex = "(-XX:-HeapDumpOnOutOfMemoryError)";
@@ -387,7 +387,7 @@ public class Jvm {
      * -XX:+HeapDumpOnOutOfMemoryError
      * </pre>
      * 
-     * @return True if -XX:+HeapDumpOnOutOfMemoryError option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getHeapDumpOnOutOfMemoryErrorEnabledOption() {
         String regex = "(-XX:\\+HeapDumpOnOutOfMemoryError)";
@@ -395,16 +395,30 @@ public class Jvm {
     }
 
     /**
-     * Instrumentation option. For example:
+     * -javaagent instrumentation option. For example:
      * 
      * <pre>
      * -javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar
      * </pre>
      * 
-     * @return True if instrumentation is being used, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
-    public String getInstrumentationOption() {
+    public String getJavaagentOption() {
         String regex = "(-javaagent:[\\S]+)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * agentpath instrumentation option. For example:
+     * 
+     * <pre>
+     * -agentpath:/path/to/agent.so
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getAgentpathOption() {
+        String regex = "(-agentpath:[\\S]+)";
         return getJvmOption(regex);
     }
 
@@ -415,7 +429,7 @@ public class Jvm {
      * -Xbatch
      * </pre>
      * 
-     * @return True if -Xbatch option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getXBatchOption() {
         String regex = "(-Xbatch)";
@@ -429,7 +443,7 @@ public class Jvm {
      * -XX:-BackgroundCompilation
      * </pre>
      * 
-     * @return True if -XX:-BackgroundCompilation option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getDisableBackgroundCompilationOption() {
         String regex = "(-XX:-BackgroundCompilation)";
@@ -443,7 +457,7 @@ public class Jvm {
      * -Xcomp
      * </pre>
      * 
-     * @return True if -Xcomp option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getXCompOption() {
         String regex = "(-Xcomp)";
@@ -457,7 +471,7 @@ public class Jvm {
      * -Xint
      * </pre>
      * 
-     * @return True if -Xcomp option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getXIntOption() {
         String regex = "(-Xint)";
@@ -472,7 +486,7 @@ public class Jvm {
      * -XX:+ExplicitGCInvokesConcurrent
      * </pre>
      * 
-     * @return True if -XX:+ExplicitGCInvokesConcurrent option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getExplicitGcInvokesConcurrentOption() {
         String regex = "(-XX:\\+ExplicitGCInvokesConcurrent)";
@@ -486,7 +500,7 @@ public class Jvm {
      * -XX:+PrintCommandLineFlags
      * </pre>
      * 
-     * @return True if -XX:+PrintCommandLineFlags option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getPrintCommandLineFlagsOption() {
         String regex = "(-XX:\\+PrintCommandLineFlags)";
@@ -500,7 +514,7 @@ public class Jvm {
      * -XX:+PrintGCDetails
      * </pre>
      * 
-     * @return True if -XX:+PrintGCDetails option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getPrintGCDetailsOption() {
         String regex = "(-XX:\\+PrintGCDetails)";
@@ -514,7 +528,7 @@ public class Jvm {
      * -XX:+UseParNewGC
      * </pre>
      * 
-     * @return True if -XX:+UseParNewGC option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getUseParNewGCOption() {
         String regex = "(-XX:\\+UseParNewGC)";
@@ -528,7 +542,7 @@ public class Jvm {
      * -XX:+UseConcMarkSweepGC
      * </pre>
      * 
-     * @return True if -XX:+UseConcMarkSweepGC option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getUseConcMarkSweepGCOption() {
         String regex = "(-XX:\\+UseConcMarkSweepGC)";
@@ -542,7 +556,7 @@ public class Jvm {
      * -XX:+CMSClassUnloadingEnabled
      * </pre>
      * 
-     * @return True if -XX:+CMSClassUnloadingEnabled option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getCMSClassUnloadingEnabled() {
         String regex = "(-XX:\\+CMSClassUnloadingEnabled)";
@@ -556,7 +570,7 @@ public class Jvm {
      * -XX:+PrintReferenceGC
      * </pre>
      * 
-     * @return True if -XX:+PrintReferenceGC option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getPrintReferenceGC() {
         String regex = "(-XX:\\+PrintReferenceGC)";
@@ -570,7 +584,7 @@ public class Jvm {
      * -XX:+PrintGCCause
      * </pre>
      * 
-     * @return True if -XX:+PrintGCCause option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getPrintGCCause() {
         String regex = "(-XX:\\+PrintGCCause)";
@@ -584,7 +598,7 @@ public class Jvm {
      * -XX:-PrintGCCause
      * </pre>
      * 
-     * @return True if -XX:-PrintGCCause option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getPrintGCCauseDisabled() {
         String regex = "(-XX:\\-PrintGCCause)";
@@ -598,7 +612,7 @@ public class Jvm {
      * -XX:+TieredCompilation
      * </pre>
      * 
-     * @return True if -XX:+TieredCompilation option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getTieredCompilation() {
         String regex = "(-XX:\\+TieredCompilation)";
@@ -612,7 +626,7 @@ public class Jvm {
      * -XX:+PrintStringDeduplicationStatistics
      * </pre>
      * 
-     * @return True if -XX:+PrintStringDeduplicationStatistics option exists, false otherwise.
+     * @return the option if it exists, null otherwise.
      */
     public String getPrintStringDeduplicationStatistics() {
         String regex = "(-XX:\\+PrintStringDeduplicationStatistics)";

@@ -1215,6 +1215,18 @@ public class TestJvmRun extends TestCase {
     }
 
     /**
+     * Test analysis if native library being used.
+     */
+    public void testAnalysisNative() {
+        String jvmOptions = "Xss128k -Xms2048M -agentpath:/path/to/agent.so -Xmx2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_NATIVE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_NATIVE));
+    }
+
+    /**
      * Test analysis background compilation disabled.
      */
     public void testAnalysisBackgroundCompilationDisabled() {
@@ -1534,7 +1546,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(Analysis.KEY_PRINT_STRING_DEDUP_STATS_ENABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_STRING_DEDUP_STATS_ENABLED));
     }
-    
+
     /**
      * Test <code>G1PrintGcDetailsPreprocessAction</code> for G1_FULL across 3 lines with details.
      * 

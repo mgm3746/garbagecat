@@ -432,12 +432,19 @@ public class TestJvm extends TestCase {
                 jvm.getRmiDgcServerGcIntervalValue());
     }
 
-    public void testInstrumentation() {
+    public void testJavaagent() {
         String jvmOptions = "-Xss128k -Xms2048M -javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar -Xmx2048M "
                 + "-XX:MetaspaceSize=1G -XX:MaxMetaspaceSize=1G -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        Assert.assertEquals("Instrumentation option incorrect.",
-                "-javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar", jvm.getInstrumentationOption());
+        Assert.assertEquals("-javaagent option incorrect.", "-javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar",
+                jvm.getJavaagentOption());
+    }
+
+    public void testAgentpath() {
+        String jvmOptions = "-Xss128k -Xms2048M -agentpath:C:/agent/agent.dll -Xmx2048M "
+                + "-XX:MetaspaceSize=1G -XX:MaxMetaspaceSize=1G -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-agentpath option incorrect.", "-agentpath:C:/agent/agent.dll", jvm.getAgentpathOption());
     }
 
     public void testXBatch() {

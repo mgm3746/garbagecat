@@ -541,9 +541,14 @@ public class JvmRun {
             analysisKeys.add(Analysis.KEY_HEAP_DUMP_ON_OOME_MISSING);
         }
 
-        // Check if instrumenation being used.
-        if (jvm.getInstrumentationOption() != null) {
+        // Check if instrumentation being used.
+        if (jvm.getJavaagentOption() != null) {
             analysisKeys.add(Analysis.KEY_INSTRUMENTATION);
+        }
+        
+        // Check if native library being used.
+        if (jvm.getAgentpathOption() != null) {
+            analysisKeys.add(Analysis.KEY_NATIVE);
         }
 
         // Check if background compilation disabled.

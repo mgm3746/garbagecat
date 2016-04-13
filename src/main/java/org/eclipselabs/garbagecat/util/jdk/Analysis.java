@@ -155,6 +155,11 @@ public class Analysis {
      * Property key for instrumentation.
      */
     public static final String KEY_INSTRUMENTATION = "instrumentation";
+    
+    /**
+     * Property key for native library.
+     */
+    public static final String KEY_NATIVE = "native";
 
     /**
      * Property key for disabling compiling bytecode in the background.
