@@ -58,6 +58,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 13.758: [GC (CMS Final Remark) [YG occupancy: 235489 K (996800 K)]13.758: [Rescan (parallel) , 0.0268664 secs]13.785: [weak refs processing, 0.0000365 secs]13.785: [class unloading, 0.0058936 secs]13.791: [scrub symbol table, 0.0081277 secs]13.799: [scrub string table, 0.0007018 secs][1 CMS-remark: 0K(989632K)] 235489K(1986432K), 0.0430349 secs] [Times: user=0.36 sys=0.00, real=0.04 secs]
  * </pre>
  * 
+ * <p>
+ * 4) JDK7 with trigger with non-parallel rescan: "grey object" and "root" rescans:
+ * </p>
+ * 
+ * <pre>
+ * 7.294: [GC[YG occupancy: 42599 K (76672 K)]7.294: [Rescan (non-parallel) 7.294: [grey object rescan, 0.0049340 secs]7.299: [root rescan, 0.0230250 secs], 0.0280700 secs]7.322: [weak refs processing, 0.0001950 secs]7.322: [class unloading, 0.0034660 secs]7.326: [scrub symbol table, 0.0047330 secs]7.330: [scrub string table, 0.0006570 secs] [1 CMS-remark: 7720K(1249088K)] 50319K(1325760K), 0.0375310 secs] [Times: user=0.03 sys=0.01, real=0.03 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -88,13 +96,14 @@ public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent, TriggerD
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
             + ")\\) )?\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[class unloading, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": ((\\[scrub symbol & string tables, "
-            + JdkRegEx.DURATION + "\\])|(\\[scrub symbol table, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[scrub string table, " + JdkRegEx.DURATION + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + ": \\[Rescan \\((non-)?parallel\\) (" + JdkRegEx.TIMESTAMP + ": \\[grey object rescan, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[root rescan, " + JdkRegEx.DURATION + "\\])?, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMESTAMP + ": \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": ((\\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\])|(\\[scrub symbol table, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[scrub string table, " + JdkRegEx.DURATION
+            + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     private static Pattern pattern = Pattern.compile(CmsRemarkWithClassUnloadingEvent.REGEX);
 
     /**
@@ -109,7 +118,7 @@ public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent, TriggerD
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             trigger = matcher.group(3);
             // The last duration is the total duration for the phase.
-            duration = JdkMath.convertSecsToMillis(matcher.group(25)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(31)).intValue();
         }
     }
 
