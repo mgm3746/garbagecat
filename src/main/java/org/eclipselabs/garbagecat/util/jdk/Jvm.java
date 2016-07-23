@@ -522,6 +522,20 @@ public class Jvm {
     }
 
     /**
+     * The option to output details at gc disabled. For example:
+     * 
+     * <pre>
+     * -XX:-PrintGCDetails
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintGCDetailsDisabled() {
+        String regex = "(-XX:\\-PrintGCDetails)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * The option for the CMS young collector. For example:
      * 
      * <pre>

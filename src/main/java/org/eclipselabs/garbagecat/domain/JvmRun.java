@@ -523,7 +523,7 @@ public class JvmRun {
             }
         }
 
-        // Check if explict gc should be handled concurrently.
+        // Check if explicit gc should be handled concurrently.
         if ((isG1Collector(eventTypes) || isCmsCollector(eventTypes)) && jvm.getDisableExplicitGCOption() == null
                 && jvm.getExplicitGcInvokesConcurrentOption() == null) {
             analysisKeys.add(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT);
@@ -545,7 +545,7 @@ public class JvmRun {
         if (jvm.getJavaagentOption() != null) {
             analysisKeys.add(Analysis.KEY_INSTRUMENTATION);
         }
-        
+
         // Check if native library being used.
         if (jvm.getAgentpathOption() != null) {
             analysisKeys.add(Analysis.KEY_NATIVE);
@@ -572,9 +572,14 @@ public class JvmRun {
             analysisKeys.add(Analysis.KEY_PRINT_COMMANDLINE_FLAGS);
         }
 
-        // Check if print gc details option missing
-        if (jvm.getPrintGCDetailsOption() == null) {
-            analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_MISSING);
+        // Check if print gc details option disabled
+        if (jvm.getPrintGCDetailsDisabled() != null) {
+            analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_DISABLED);
+        } else {
+            // Check if print gc details option missing
+            if (jvm.getPrintGCDetailsOption() == null) {
+                analysisKeys.add(Analysis.KEY_PRINT_GC_DETAILS_MISSING);
+            }
         }
 
         // Check if CMS not being used for old collections

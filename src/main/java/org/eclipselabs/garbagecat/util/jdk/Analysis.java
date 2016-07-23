@@ -182,9 +182,14 @@ public class Analysis {
     public static final String KEY_PRINT_COMMANDLINE_FLAGS = "print.commandline.flags";
 
     /**
-     * Property key for adding option to output details at gc needed for anaylysis.
+     * Property key for adding option to output details at gc needed for analysis.
      */
     public static final String KEY_PRINT_GC_DETAILS_MISSING = "print.gc.details.missing";
+    
+    /**
+     * Property key for gc details option disabled.
+     */
+    public static final String KEY_PRINT_GC_DETAILS_DISABLED = "print.gc.details.disabled";
 
     /**
      * Property key for not specifying the cms be used for old collections.

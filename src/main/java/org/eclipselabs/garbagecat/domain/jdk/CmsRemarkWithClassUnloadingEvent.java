@@ -28,7 +28,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * A {@link org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent} with the <code>-XX:+CMSClassUnloadingEnabled</code>
- * JVM option enabled to allow perm gen collections. The concurrent low pause collector does not allow for class
+ * JVM option enabled to allow perm gen / metaspace collections. The concurrent low pause collector does not allow for class
  * unloading by default.
  * 
  * <h3>Example Logging</h3>

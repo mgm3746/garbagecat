@@ -1562,4 +1562,19 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
     }
+
+    /**
+     * Test if PrintGCDetails disabled with -XX:+PrintGCDetails.
+     */
+    public void testPrintGCDetailsDisabled() {
+        String jvmOptions = "Xss128k -XX:-PrintGCDetails Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_PRINT_GC_DETAILS_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_DETAILS_DISABLED));
+        Assert.assertFalse(Analysis.KEY_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_DETAILS_MISSING));
+    }
 }
