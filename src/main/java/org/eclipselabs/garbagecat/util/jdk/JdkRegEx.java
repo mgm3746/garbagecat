@@ -173,7 +173,9 @@ public class JdkRegEx {
     public static final String TRIGGER_G1_EVACUATION_PAUSE = "G1 Evacuation Pause";
 
     /**
-     * GCLocker Initiated GC trigger.
+     * GCLocker Initiated GC trigger. A GC initiated after the JNI critical region is released. This is caused when a GC
+     * is requested when a thread is in the JNI critical region. GC is blocked until all threads exit the JNI critical
+     * region.
      */
     public static final String TRIGGER_GCLOCKER_INITIATED_GC = "GCLocker Initiated GC";
 
