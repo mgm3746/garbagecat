@@ -1577,4 +1577,20 @@ public class TestJvmRun extends TestCase {
         Assert.assertFalse(Analysis.KEY_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_DETAILS_MISSING));
     }
+
+    /**
+     * Test <code>PrintTenuringDistributionPreprocessAction</code> with no space after "GC".
+     * 
+     */
+    public void testPrintTenuringDistributionPreprocessActionNoSpaceAfterGc() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset66.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+    }
 }

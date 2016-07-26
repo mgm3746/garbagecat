@@ -92,6 +92,25 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 10.392: [GC [PSYoungGen: 970752K->104301K(1456128K)] 970752K->104301K(3708928K), 0.1992940 secs] [Times: user=0.68 sys=0.05, real=0.20 secs]
  * </pre>
  * 
+ * <p>
+ * 4) No space after "GC" with datestamp:
+ * </p>
+ * 
+ * <pre>
+ * 2016-07-24T07:11:53.101-0400: 7.729: [GC2016-07-24T07:11:53.101-0400: 7.729: [ParNew
+ * Desired survivor size 67108864 bytes, new threshold 1 (max 15)
+ * - age   1:  108710016 bytes,  108710016 total
+ * : 889671K->121719K(917504K), 0.2231670 secs] 889671K->160630K(6160384K), 0.2232600 secs] [Times: user=0.36 sys=0.01, real=0.22 secs]
+ * </pre>
+ * 
+ * <p>
+ * Preprocessed:
+ * </p>
+ * 
+ * <pre>
+ * 7.729: [GC7.729: [ParNew: 889671K->121719K(917504K), 0.2231670 secs] 889671K->160630K(6160384K), 0.2232600 secs] [Times: user=0.36 sys=0.01, real=0.22 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -101,7 +120,7 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
      * Regular expressions for the beginning part of a line retained.
      */
     private static final String[] REGEX_RETAIN_BEGINNING = {
-            "^(" + JdkRegEx.TIMESTAMP + ": \\[GC( " + JdkRegEx.TIMESTAMP
+            "^(" + JdkRegEx.TIMESTAMP + ": \\[GC( )?(" + JdkRegEx.TIMESTAMP
                     + ": \\[(Def|Par)New)?( \\(promotion failed\\))?)$",
             // Concurrent mode failure. Treat it like a beginning line.
             "(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
