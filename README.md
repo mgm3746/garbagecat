@@ -83,13 +83,13 @@ Notes:
 ========================================
 Throughput less than 25%
 ========================================
-1735.401: [GC pause (G1 Evacuation Pause) (young), 0.0621580 secs] 14029M->13926M(30720M) [Times: user=0.27 sys=0.00, real=0.06 secs] 
-1735.537: [GC remark, 0.2534012 secs] [Times: user=0.34 sys=0.02, real=0.26 secs] 
-1735.792: [GC cleanup 13G->13G(30G), 0.0668881 secs] [Times: user=0.38 sys=0.00, real=0.06 secs] 
+1735.401: \[GC pause (G1 Evacuation Pause) (young), 0.0621580 secs] 14029M->13926M(30720M) [Times: user=0.27 sys=0.00, real=0.06 secs] 
+1735.537: \[GC remark, 0.2534012 secs] [Times: user=0.34 sys=0.02, real=0.26 secs] 
+1735.792: \[GC cleanup 13G->13G(30G), 0.0668881 secs] [Times: user=0.38 sys=0.00, real=0.06 secs] 
 ...
-2677.971: [GC pause (G1 Evacuation Pause) (young), 0.0622566 secs] 13926M->13824M(30720M) [Times: user=0.28 sys=0.00, real=0.06 secs] 
-2678.042: [GC remark, 0.3963506 secs] [Times: user=0.45 sys=0.00, real=0.39 secs] 
-2678.441: [GC cleanup 13G->13G(30G), 0.0828542 secs] [Times: user=0.47 sys=0.00, real=0.08 secs] 
+2677.971: \[GC pause (G1 Evacuation Pause) (young), 0.0622566 secs] 13926M->13824M(30720M) [Times: user=0.28 sys=0.00, real=0.06 secs] 
+2678.042: \[GC remark, 0.3963506 secs] [Times: user=0.45 sys=0.00, real=0.39 secs] 
+2678.441: \[GC cleanup 13G->13G(30G), 0.0828542 secs] [Times: user=0.47 sys=0.00, real=0.08 secs] 
 ========================================
 SUMMARY:
 ========================================
