@@ -31,7 +31,7 @@ public class TestMain extends TestCase {
             // Make private method accessible
             parseOptions.setAccessible(true);
             // Method arguments
-            String[] args = new String[9];
+            String[] args = new String[10];
             args[0] = "-h";
             args[1] = "-o";
             args[2] = "-Xmx2048m";
@@ -40,8 +40,9 @@ public class TestMain extends TestCase {
             args[5] = "2009-09-18 00:00:08,172";
             args[6] = "-t";
             args[7] = "80";
+            args[8] = "-r";
             // Instead of a file, use a location sure to exist.
-            args[8] = System.getProperty("user.dir");
+            args[9] = System.getProperty("user.dir");
             // Pass null object since parseOptions is static
             Object o = parseOptions.invoke(null, (Object) args);
             CommandLine cmd = (CommandLine) o;
@@ -51,6 +52,7 @@ public class TestMain extends TestCase {
             Assert.assertTrue("'-p' is a valid option", cmd.hasOption("p"));
             Assert.assertTrue("'-s' is a valid option", cmd.hasOption("s"));
             Assert.assertTrue("'-t' is a valid option", cmd.hasOption("t"));
+            Assert.assertTrue("'-r' is a valid option", cmd.hasOption("r"));
         } catch (ClassNotFoundException e) {
             Assert.fail(e.getMessage());
         } catch (SecurityException e) {
@@ -75,7 +77,7 @@ public class TestMain extends TestCase {
             // Make private method accessible
             parseOptions.setAccessible(true);
             // Method arguments
-            String[] args = new String[9];
+            String[] args = new String[10];
             args[0] = "--help";
             args[1] = "--options";
             args[2] = "-Xmx2048m";
@@ -84,8 +86,9 @@ public class TestMain extends TestCase {
             args[5] = "2009-09-18 00:00:08,172";
             args[6] = "--threshold";
             args[7] = "80";
+            args[8] = "--reorder";
             // Instead of a file, use a location sure to exist.
-            args[8] = System.getProperty("user.dir");
+            args[9] = System.getProperty("user.dir");
             // Pass null object since parseOptions is static
             Object o = parseOptions.invoke(null, (Object) args);
             CommandLine cmd = (CommandLine) o;
@@ -95,6 +98,7 @@ public class TestMain extends TestCase {
             Assert.assertTrue("'--preprocess' is a valid option", cmd.hasOption("preprocess"));
             Assert.assertTrue("'--startdatetime' is a valid option", cmd.hasOption("startdatetime"));
             Assert.assertTrue("'--threshold' is a valid option", cmd.hasOption("threshold"));
+            Assert.assertTrue("'--reorder' is a valid option", cmd.hasOption("reorder"));
         } catch (ClassNotFoundException e) {
             Assert.fail(e.getMessage());
         } catch (SecurityException e) {

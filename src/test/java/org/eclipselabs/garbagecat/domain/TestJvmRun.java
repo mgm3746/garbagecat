@@ -38,7 +38,7 @@ public class TestJvmRun extends TestCase {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset1.txt");
         GcManager jvmManager = new GcManager();
-        jvmManager.store(testFile);
+        jvmManager.store(testFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
 
         Assert.assertEquals("Max heap space not calculated correctly.", 1034624, jvmRun.getMaxHeapSpace());
@@ -63,7 +63,7 @@ public class TestJvmRun extends TestCase {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset2.txt");
         GcManager jvmManager = new GcManager();
-        jvmManager.store(testFile);
+        jvmManager.store(testFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
 
         Assert.assertEquals("Max heap space not calculated correctly.", 1048256, jvmRun.getMaxHeapSpace());
@@ -83,7 +83,7 @@ public class TestJvmRun extends TestCase {
 
     public void testLastTimestampNoEvents() {
         GcManager jvmManager = new GcManager();
-        jvmManager.store(null);
+        jvmManager.store(null, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Last timestamp not correct.", 0, jvmRun.getLastTimestamp());
     }
@@ -95,7 +95,7 @@ public class TestJvmRun extends TestCase {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset3.txt");
         GcManager jvmManager = new GcManager();
-        jvmManager.store(testFile);
+        jvmManager.store(testFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event count not correct.", 3, jvmRun.getEventTypes().size());
         Assert.assertEquals("Should not be any unidentified log lines.", 0, jvmRun.getUnidentifiedLogLines().size());
@@ -109,7 +109,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset5.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 3, jvmRun.getEventTypes().size());
         Assert.assertTrue(
@@ -129,7 +129,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset6.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
@@ -145,7 +145,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset7.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue(
@@ -162,7 +162,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset8.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue(
@@ -180,7 +180,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset21.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue(
@@ -198,7 +198,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset9.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
@@ -214,7 +214,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset28.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
@@ -229,7 +229,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset10.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue(
@@ -246,7 +246,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset11.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue(
@@ -263,7 +263,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset12.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as "
@@ -280,7 +280,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset13.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue(
@@ -297,7 +297,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset14.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue(
@@ -315,7 +315,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset15.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CMS_CONCURRENT.toString() + ".",
@@ -330,7 +330,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset16.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as "
@@ -348,7 +348,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset17.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL.toString() + ".",
@@ -364,7 +364,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset30.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
@@ -380,7 +380,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset18.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as "
@@ -398,7 +398,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset19.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
@@ -417,7 +417,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset27.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
@@ -432,7 +432,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset20.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
     }
@@ -446,7 +446,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset24.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
@@ -461,7 +461,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset22.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.TRUNCATED.toString() + ".",
@@ -479,7 +479,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset23.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
@@ -509,7 +509,7 @@ public class TestJvmRun extends TestCase {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         File preprocessedFile = jvmManager.preprocess(testFile, calendar.getTime());
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
@@ -532,7 +532,7 @@ public class TestJvmRun extends TestCase {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         File preprocessedFile = jvmManager.preprocess(testFile, calendar.getTime());
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
@@ -555,7 +555,7 @@ public class TestJvmRun extends TestCase {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         File preprocessedFile = jvmManager.preprocess(testFile, calendar.getTime());
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
@@ -571,7 +571,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset29.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue(
@@ -588,7 +588,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset32.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
@@ -604,7 +604,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset34.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
@@ -620,7 +620,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset35.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
@@ -636,7 +636,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset45.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
@@ -652,7 +652,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset36.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
@@ -676,7 +676,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset37.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
@@ -692,7 +692,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset43.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
@@ -708,7 +708,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset38.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".",
@@ -724,7 +724,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset39.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
@@ -740,7 +740,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset46.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
@@ -756,7 +756,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset40.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".",
@@ -769,7 +769,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset41.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Max heap space not calculated correctly.", 31457280, jvmRun.getMaxHeapSpace());
         Assert.assertEquals("Max heap occupancy not calculated correctly.", 140288, jvmRun.getMaxHeapOccupancy());
@@ -798,7 +798,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset42.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " information not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS));
@@ -819,7 +819,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset44.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
@@ -837,7 +837,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset47.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
@@ -855,7 +855,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset48.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
@@ -873,7 +873,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset49.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
@@ -889,7 +889,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset53.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
@@ -906,7 +906,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset50.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
@@ -922,7 +922,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset51.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
@@ -940,7 +940,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset52.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
@@ -958,7 +958,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset54.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
@@ -976,7 +976,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset55.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
@@ -994,7 +994,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset56.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.",
@@ -1014,7 +1014,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset57.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
@@ -1036,7 +1036,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset58.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
@@ -1056,7 +1056,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset61.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
@@ -1078,7 +1078,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset59.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
@@ -1102,7 +1102,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset60.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.KEY_PERM_METASPACE_NOT_SET + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PERM_METASPACE_NOT_SET));
@@ -1491,7 +1491,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset62.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
@@ -1511,7 +1511,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset63.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".",
@@ -1527,7 +1527,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset64.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
@@ -1556,7 +1556,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset65.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
@@ -1587,7 +1587,7 @@ public class TestJvmRun extends TestCase {
         File testFile = new File("src/test/data/dataset66.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile);
+        jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",

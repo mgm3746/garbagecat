@@ -28,6 +28,7 @@ import org.eclipselabs.garbagecat.Main;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
@@ -268,8 +269,10 @@ public class GcManager {
      * 
      * @param logFile
      *            The garbage collection log file.
+     * @param reorder
+     *            Whether or not to allow logging to be reordered by timestamp.
      */
-    public void store(File logFile) {
+    public void store(File logFile, boolean reorder) {
 
         if (logFile == null) {
             return;
@@ -280,10 +283,19 @@ public class GcManager {
         try {
             bufferedReader = new BufferedReader(new FileReader(logFile));
             String logLine = bufferedReader.readLine();
+            BlockingEvent priorEvent = null;
             while (logLine != null) {
                 // If event has no timestamp, use most recent blocking timestamp in database.
                 LogEvent event = JdkUtil.parseLogLine(logLine);
                 if (event instanceof BlockingEvent) {
+
+                    // Verify logging in correct order. If overridden, logging will be stored in database and reordered
+                    // by timestamp for analysis.
+                    if (!reorder && priorEvent != null && event.getTimestamp() < priorEvent.getTimestamp()) {
+                        System.out.println("prior event: " + priorEvent.getLogEntry());
+                        throw new TimeWarpException("Logging reversed: " + event.getLogEntry());
+                    }
+
                     jvmDao.addBlockingEvent((BlockingEvent) event);
 
                     // Analysis
@@ -330,6 +342,7 @@ public class GcManager {
                             }
                         }
                     }
+                    priorEvent = (BlockingEvent) event;
 
                 } else if (event instanceof ApplicationStoppedTimeEvent) {
                     jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);

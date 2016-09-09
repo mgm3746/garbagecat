@@ -64,6 +64,7 @@ public class Main {
         options.addOption("s", "startdatetime", true,
                 "JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS) for converting GC logging timestamps to datetime");
         options.addOption("t", "threshold", true, "threshold (0-100) for throughput bottleneck reporting");
+        options.addOption("r", "reorder", false, "reorder logging by timestamp");
     }
 
     /**
@@ -109,8 +110,14 @@ public class Main {
                     logFile = jvmManager.preprocess(logFile, jvmStartDate);
                 }
 
+                // Allow logging to be reordered?
+                boolean reorder = false;
+                if (cmd.hasOption("reorder")) {
+                    reorder = true;
+                }
+
                 // Store garbage collection logging in data store.
-                jvmManager.store(logFile);
+                jvmManager.store(logFile, reorder);
 
                 // Create report
                 Jvm jvm = new Jvm(jvmOptions, jvmStartDate);
