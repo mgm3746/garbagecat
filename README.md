@@ -61,6 +61,7 @@ usage: garbagecat [OPTION]... [FILE]
  -h,--help                  help
  -o,--options <arg>         JVM options used during JVM run 
  -p,--preprocess            preprocessing flag
+ -r,--reorder               reorder logging by timestamp
  -s,--startdatetime <arg>   JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS)
                             for converting GC logging timestamps to datetime
  -t,--threshold <arg>       threshold (0-100) for throughput bottleneck
