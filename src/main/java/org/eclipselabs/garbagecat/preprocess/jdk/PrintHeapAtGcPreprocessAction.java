@@ -221,6 +221,23 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *   region size 1024K, 6 young (6144K), 1 survivors (1024K)
  * </pre>
  * 
+ * <p>
+ * 9) JDK8 with "Metaspace" and "class space":
+ * </p>
+ * 
+ * <pre>
+ *  
+ * Heap
+ *  par new generation   total 1382400K, used 497192K [0x00000005c0000000, 0x000000061dc00000, 0x000000061dc00000)
+ *   eden space 1228800K,  36% used [0x00000005c0000000, 0x00000005db3f6d28, 0x000000060b000000)
+ *   from space 153600K,  33% used [0x0000000614600000, 0x00000006177932e8, 0x000000061dc00000)
+ *   to   space 153600K,   0% used [0x000000060b000000, 0x000000060b000000, 0x0000000614600000)
+ *  concurrent mark-sweep generation total 6852608K, used 800330K [0x000000061dc00000, 0x00000007c0000000, 0x00000007c0000000)
+ *  Metaspace       used 73096K, capacity 79546K, committed 79732K, reserved 1118208K
+ *   class space    used 8643K, capacity 10553K, committed 10632K, reserved 1048576K
+ * 
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -258,6 +275,9 @@ public class PrintHeapAtGcPreprocessAction implements PreprocessAction {
                     + JdkRegEx.SIZE + ".+$",
             //
             "^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$",
+            //
+            "^ (Metaspace| class space)[ ]+used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE + ", committed "
+                    + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
             //
             "^}$",
             //

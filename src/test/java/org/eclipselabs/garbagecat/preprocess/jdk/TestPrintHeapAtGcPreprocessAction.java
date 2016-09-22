@@ -318,4 +318,18 @@ public class TestPrintHeapAtGcPreprocessAction extends TestCase {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
                 PrintHeapAtGcPreprocessAction.match(logLine, null));
     }
+
+    public void testJDK8MetaspaceLine() {
+        String logLine = " Metaspace       used 73096K, capacity 79546K, committed 79732K, reserved 1118208K";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
+                PrintHeapAtGcPreprocessAction.match(logLine, null));
+    }
+
+    public void testJDK8ClassSpaceLine() {
+        String logLine = "  class space    used 8643K, capacity 10553K, committed 10632K, reserved 1048576K";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.PRINT_HEAP_AT_GC.toString() + ".",
+                PrintHeapAtGcPreprocessAction.match(logLine, null));
+    }
 }
