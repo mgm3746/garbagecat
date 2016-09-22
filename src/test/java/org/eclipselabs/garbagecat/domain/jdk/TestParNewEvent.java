@@ -131,4 +131,23 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old allocation size not parsed correctly.", (494976 - 153600), event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 30, event.getDuration());
     }
+
+    public void testLogGcLockerTrigger() {
+        String logLine = "2.480: [GC (GCLocker Initiated GC) 2.480: [ParNew: 1228800K->30695K(1382400K), "
+                + "0.0395910 secs] 1228800K->30695K(8235008K), 0.0397980 secs] "
+                + "[Times: user=0.23 sys=0.01, real=0.04 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                ParNewEvent.match(logLine));
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 2480, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
+        Assert.assertEquals("Young begin size not parsed correctly.", 1228800, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 30695, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 1382400, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", (1228800 - 1228800), event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", (30695 - 30695), event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", (8235008 - 1382400), event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 39, event.getDuration());
+    }
 }
