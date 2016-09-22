@@ -427,11 +427,12 @@ public class JvmRun {
             }
         }
 
-        // 8) Check if CMS handling Perm/Metaspace collections by collector analysis (if no jvm options available).
-        if (!analysisKeys.contains(Analysis.KEY_CMS_CLASSUNLOADING_MISSING)) {
+        // 8) Check if CMS handling Perm/Metaspace collections by collector analysis (if no jvm options available and
+        // class unloading has not already been detected).
+        if (!analysisKeys.contains(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED)) {
             if (getEventTypes().contains(LogEventType.CMS_REMARK)
                     && !getEventTypes().contains(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING)) {
-                analysisKeys.add(Analysis.KEY_CMS_CLASSUNLOADING_MISSING);
+                analysisKeys.add(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED);
             }
 
         }
@@ -588,8 +589,9 @@ public class JvmRun {
         }
 
         // Check if CMS handling Perm/Metaspace collections.
-        if ((isCmsCollector(eventTypes) && jvm.getCMSClassUnloadingEnabled() == null)) {
-            analysisKeys.add(Analysis.KEY_CMS_CLASSUNLOADING_MISSING);
+        if ((isCmsCollector(eventTypes) && !eventTypes.contains(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING)
+                && jvm.getCMSClassUnloadingEnabled() == null)) {
+            analysisKeys.add(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED);
         }
 
         // Check for -XX:+PrintReferenceGC.

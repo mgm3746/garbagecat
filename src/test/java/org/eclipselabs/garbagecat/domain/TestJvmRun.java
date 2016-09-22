@@ -1420,8 +1420,24 @@ public class TestJvmRun extends TestCase {
         eventTypes.add(LogEventType.CMS_CONCURRENT);
         jvmRun.setEventTypes(eventTypes);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_CMS_CLASSUNLOADING_MISSING + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASSUNLOADING_MISSING));
+        Assert.assertTrue(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED));
+    }
+
+    /**
+     * Test CMS handling perm/metaspace collections.
+     */
+    public void testAnalysisCMSClassUnloadingEnabledMissingButJDK8EnabledByDefault() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING);
+        jvmRun.setEventTypes(eventTypes);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED));
     }
 
     /**
@@ -1433,8 +1449,8 @@ public class TestJvmRun extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertFalse(Analysis.KEY_CMS_CLASSUNLOADING_MISSING + " analysis identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASSUNLOADING_MISSING));
+        Assert.assertFalse(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED));
     }
 
     /**
@@ -1449,8 +1465,8 @@ public class TestJvmRun extends TestCase {
         eventTypes.add(LogEventType.CMS_REMARK);
         jvmRun.setEventTypes(eventTypes);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_CMS_CLASSUNLOADING_MISSING + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASSUNLOADING_MISSING));
+        Assert.assertTrue(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED));
     }
 
     /**

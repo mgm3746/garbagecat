@@ -58,7 +58,7 @@ public class TestSerialEvent extends TestCase {
         Assert.assertEquals("Young available size not parsed correctly.", 76672, event.getYoungSpace());
         Assert.assertEquals("Old begin size not parsed correctly.", 68160 - 68160, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 11664 - 8512, event.getOldOccupancyEnd());
-        Assert.assertEquals("Old allocation size not parsed correctly.", 1325760 -76672, event.getOldSpace());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 1325760 - 76672, event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 53, event.getDuration());
     }
 }

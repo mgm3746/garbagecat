@@ -155,7 +155,7 @@ public class Analysis {
      * Property key for instrumentation.
      */
     public static final String KEY_INSTRUMENTATION = "instrumentation";
-    
+
     /**
      * Property key for native library.
      */
@@ -185,7 +185,7 @@ public class Analysis {
      * Property key for adding option to output details at gc needed for analysis.
      */
     public static final String KEY_PRINT_GC_DETAILS_MISSING = "print.gc.details.missing";
-    
+
     /**
      * Property key for gc details option disabled.
      */
@@ -207,9 +207,9 @@ public class Analysis {
     public static final String KEY_CMS_PROMOTION_FAILED = "cms.promotion.failed";
 
     /**
-     * Property key for concurrent mode failure.
+     * Property key for CMS collector not unloading classes.
      */
-    public static final String KEY_CMS_CLASSUNLOADING_MISSING = "cms.classunloading.missing";
+    public static final String KEY_CMS_CLASS_UNLOADING_DISABLED = "cms.class.unloading.disabled";
 
     /**
      * Property key for -XX:+PrintReferenceGC.
