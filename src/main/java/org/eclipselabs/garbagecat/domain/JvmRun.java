@@ -554,7 +554,7 @@ public class JvmRun {
 
         // Check if background compilation disabled.
         if (jvm.getXBatchOption() != null || jvm.getDisableBackgroundCompilationOption() != null) {
-            analysisKeys.add(Analysis.KEY_BYTECODE_BACKGROUND_COMPILe_DISABLED);
+            analysisKeys.add(Analysis.KEY_BYTECODE_BACKGROUND_COMPILE_DISABLED);
         }
 
         // Check if compilation being forced on first invocation.

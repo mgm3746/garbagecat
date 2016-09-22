@@ -164,7 +164,7 @@ public class Analysis {
     /**
      * Property key for disabling compiling bytecode in the background.
      */
-    public static final String KEY_BYTECODE_BACKGROUND_COMPILe_DISABLED = "bytecode.compile.background.disabled";
+    public static final String KEY_BYTECODE_BACKGROUND_COMPILE_DISABLED = "bytecode.compile.background.disabled";
 
     /**
      * Property key for precompiling bytecode.

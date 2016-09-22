@@ -1234,8 +1234,8 @@ public class TestJvmRun extends TestCase {
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.KEY_BYTECODE_BACKGROUND_COMPILe_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_BYTECODE_BACKGROUND_COMPILe_DISABLED));
+        Assert.assertTrue(Analysis.KEY_BYTECODE_BACKGROUND_COMPILE_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_BYTECODE_BACKGROUND_COMPILE_DISABLED));
     }
 
     /**
@@ -1246,8 +1246,8 @@ public class TestJvmRun extends TestCase {
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.KEY_BYTECODE_BACKGROUND_COMPILe_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_BYTECODE_BACKGROUND_COMPILe_DISABLED));
+        Assert.assertTrue(Analysis.KEY_BYTECODE_BACKGROUND_COMPILE_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_BYTECODE_BACKGROUND_COMPILE_DISABLED));
     }
 
     /**
