@@ -63,6 +63,14 @@ public class TestPrintTenuringDistributionPreprocessAction extends TestCase {
                 PrintTenuringDistributionPreprocessAction.match(logLine, priorLogLine));
     }
 
+    public void testParNewWithTriggerLine() {
+        String priorLogLine = null;
+        String logLine = "2.372: [GC (Allocation Failure) 2.372: [ParNew";
+        Assert.assertTrue("Log line not recognized as "
+                + JdkUtil.PreprocessActionType.PRINT_TENURING_DISTRIBUTION.toString() + ".",
+                PrintTenuringDistributionPreprocessAction.match(logLine, priorLogLine));
+    }
+
     public void testParNewPromotionFailedLine() {
         String priorLogLine = null;
         String logLine = "877369.458: [GC 877369.459: [ParNew (promotion failed)";
