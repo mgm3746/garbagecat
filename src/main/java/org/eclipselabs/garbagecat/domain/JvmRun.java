@@ -624,6 +624,11 @@ public class JvmRun {
                 && jvm.getCMSInitiatingOccupancyFraction() != null) {
             analysisKeys.add(Analysis.KEY_CMS_INC_MODE_INIT_OCCUP_FRACT_CONFLICT);
         }
+
+        // Check for biased locking disabled with -XX:-UseBiasedLocking.
+        if (jvm.getBiasedLockingDisabled() != null) {
+            analysisKeys.add(Analysis.KEY_BIASED_LOCKING_DISABLED);
+        }
     }
 
     /**

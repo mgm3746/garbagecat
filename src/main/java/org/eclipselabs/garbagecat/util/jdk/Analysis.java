@@ -248,6 +248,11 @@ public class Analysis {
     public static final String KEY_PRINT_STRING_DEDUP_STATS_ENABLED = "print.string.dedup.stats.enabled";
 
     /**
+     * Property key for biased locking disabled (-XX:-UseBiasedLocking).
+     */
+    public static final String KEY_BIASED_LOCKING_DISABLED = "biased.locking.disabled";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

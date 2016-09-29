@@ -663,6 +663,20 @@ public class Jvm {
     }
 
     /**
+     * The option for bias locking disabled. For example:
+     * 
+     * <pre>
+     * -XX:-UseBiasedLocking
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getBiasedLockingDisabled() {
+        String regex = "(-XX:\\-UseBiasedLocking)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

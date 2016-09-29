@@ -574,4 +574,11 @@ public class TestJvm extends TestCase {
         Assert.assertEquals("XX:CMSInitiatingOccupancyFraction option incorrect.",
                 "-XX:CMSInitiatingOccupancyFraction=70", jvm.getCMSInitiatingOccupancyFraction());
     }
+
+    public void testBiasedLockingDisabled() {
+        String jvmOptions = "-Xss128k -XX:-UseBiasedLocking -XX:+CMSParallelRemarkEnabled";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:-UseBiasedLocking option incorrect.", "-XX:-UseBiasedLocking",
+                jvm.getBiasedLockingDisabled());
+    }
 }

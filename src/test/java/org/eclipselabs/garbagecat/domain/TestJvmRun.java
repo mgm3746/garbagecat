@@ -1580,7 +1580,7 @@ public class TestJvmRun extends TestCase {
     }
 
     /**
-     * Test if PrintGCDetails disabled with -XX:+PrintGCDetails.
+     * Test if PrintGCDetails disabled with -XX:-PrintGCDetails.
      */
     public void testPrintGCDetailsDisabled() {
         String jvmOptions = "Xss128k -XX:-PrintGCDetails Xms2048M";
@@ -1642,5 +1642,18 @@ public class TestJvmRun extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_INCREMENTAL_MODE));
         Assert.assertTrue(Analysis.KEY_CMS_INC_MODE_INIT_OCCUP_FRACT_CONFLICT + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_INC_MODE_INIT_OCCUP_FRACT_CONFLICT));
+    }
+
+    /**
+     * Test if biased locking disabled with -XX:-UseBiasedLocking.
+     */
+    public void testBisasedLockingDisabled() {
+        String jvmOptions = "Xss128k -XX:-UseBiasedLocking Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_BIASED_LOCKING_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_BIASED_LOCKING_DISABLED));
     }
 }
