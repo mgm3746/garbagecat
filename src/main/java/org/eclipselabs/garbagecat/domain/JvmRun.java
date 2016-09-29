@@ -447,7 +447,7 @@ public class JvmRun {
             }
         }
 
-        // 9) Check for -XX:+PrintReferenceGC by event type
+        // 10) Check for -XX:+PrintReferenceGC by event type
         if (!analysisKeys.contains(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED)) {
             if (getEventTypes().contains(LogEventType.PRINT_REFERENCE_GC)) {
                 analysisKeys.add(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED);
@@ -617,6 +617,12 @@ public class JvmRun {
         // Check for -XX:+PrintStringDeduplicationStatistics.
         if (jvm.getPrintStringDeduplicationStatistics() != null) {
             analysisKeys.add(Analysis.KEY_PRINT_STRING_DEDUP_STATS_ENABLED);
+        }
+
+        // Check for incremental mode in combination with -XX:CMSInitiatingOccupancyFraction=<n>.
+        if (analysisKeys.contains(Analysis.KEY_CMS_INCREMENTAL_MODE)
+                && jvm.getCMSInitiatingOccupancyFraction() != null) {
+            analysisKeys.add(Analysis.KEY_CMS_INC_MODE_INIT_OCCUP_FRACT_CONFLICT);
         }
     }
 

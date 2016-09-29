@@ -149,6 +149,17 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
     private String trigger;
 
     /**
+     * Whether or not the collector is running in Incremental Mode (with the <code>-XX:+CMSIncrementalMode</code> JVM
+     * option). In this mode, the CMS collector does not hold the processor(s) for the entire long concurrent phases but
+     * periodically stops them and yields the processor back to other threads in the application. It divides the work to
+     * be done in concurrent phases into small chunks called duty cycles and schedules them between minor collections.
+     * This is very useful for applications that need low pause times and are run on machines with a small number of
+     * processors. The icms_dc value is the time in percentage that the concurrent work took between two young
+     * generation collections.
+     */
+    private boolean incrementalMode;
+
+    /**
      * Create ParNew detail logging event from log entry.
      */
     public ParNewEvent(String logEntry) {
@@ -167,6 +178,11 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
             int totalAllocation = Integer.parseInt(matcher.group(15));
             oldAllocation = totalAllocation - youngAvailable;
             duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
+            if (matcher.group(16) != null) {
+                incrementalMode = true;
+            } else {
+                incrementalMode = false;
+            }
         }
     }
 
@@ -225,6 +241,10 @@ public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, O
 
     public String getTrigger() {
         return trigger;
+    }
+
+    public boolean isIncrementalMode() {
+        return incrementalMode;
     }
 
     /**

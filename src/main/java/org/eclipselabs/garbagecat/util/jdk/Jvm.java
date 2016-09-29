@@ -648,6 +648,21 @@ public class Jvm {
     }
 
     /**
+     * The option for setting CMS initiating occupancy fraction, the tenured generation occupancy percentage that
+     * triggers a concurrent collection. For example:
+     * 
+     * <pre>
+     * -XX:CMSInitiatingOccupancyFraction=70
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCMSInitiatingOccupancyFraction() {
+        String regex = "(-XX:CMSInitiatingOccupancyFraction=\\d{1,3})";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

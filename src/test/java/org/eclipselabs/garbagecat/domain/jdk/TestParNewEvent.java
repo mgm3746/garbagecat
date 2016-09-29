@@ -38,6 +38,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old end size not parsed correctly.", 3201, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 815616, event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 38, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
     public void testLogLineWithTimesData() {
@@ -55,6 +56,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old end size not parsed correctly.", 3913030, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 8218240, event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 46, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
     public void testLogLineWithIcmsDcData() {
@@ -72,6 +74,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old end size not parsed correctly.", (364081 - 1006), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (1828480 - 59008), event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 22, event.getDuration());
+        Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
     public void testLogLineWhitespaceAtEnd() {
@@ -112,6 +115,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old end size not parsed correctly.", (11485 - 11485), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (1986432 - 996800), event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 19, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
     public void testLogJdk8NoSpaceAfterTrigger() {

@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain;
+package org.eclipselabs.garbagecat.util.jdk;
 
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
@@ -566,5 +566,12 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("-XX:+TieredCompilation option incorrect.", "-XX:+PrintStringDeduplicationStatistics",
                 jvm.getPrintStringDeduplicationStatistics());
+    }
+
+    public void testCMSInitiatingOccupancyFraction() {
+        String jvmOptions = "-Xss128k -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("XX:CMSInitiatingOccupancyFraction option incorrect.",
+                "-XX:CMSInitiatingOccupancyFraction=70", jvm.getCMSInitiatingOccupancyFraction());
     }
 }

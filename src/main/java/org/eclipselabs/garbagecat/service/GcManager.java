@@ -39,6 +39,7 @@ import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
@@ -342,6 +343,16 @@ public class GcManager {
                             }
                         }
                     }
+
+                    // 5) CMS incremental mode
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_INCREMENTAL_MODE)) {
+                        if (event instanceof ParNewEvent) {
+                            if (((ParNewEvent) event).isIncrementalMode()) {
+                                jvmDao.addAnalysisKey(Analysis.KEY_CMS_INCREMENTAL_MODE);
+                            }
+                        }
+                    }
+
                     priorEvent = (BlockingEvent) event;
 
                 } else if (event instanceof ApplicationStoppedTimeEvent) {

@@ -212,6 +212,17 @@ public class Analysis {
     public static final String KEY_CMS_CLASS_UNLOADING_DISABLED = "cms.class.unloading.disabled";
 
     /**
+     * Property key for CMS collector running in incremental mode.
+     */
+    public static final String KEY_CMS_INCREMENTAL_MODE = "cms.incremental.mode";
+
+    /**
+     * Property key for specifying both the CMS collector running in incremental mode and an initiating occupancy
+     * fraction.
+     */
+    public static final String KEY_CMS_INC_MODE_INIT_OCCUP_FRACT_CONFLICT = "cms.inc.mode.init.occup.fract.conflict";
+
+    /**
      * Property key for -XX:+PrintReferenceGC.
      */
     public static final String KEY_PRINT_REFERENCE_GC_ENABLED = "print.reference.gc.enabled";
