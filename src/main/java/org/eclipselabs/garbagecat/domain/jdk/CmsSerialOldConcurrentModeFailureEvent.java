@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermCollection;
 import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -85,56 +86,21 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 6942.991: [Full GC 6942.991: [CMS (concurrent mode failure): 907264K->907262K(907264K), 11.8579830 secs] 1506304K->1202006K(1506304K), [CMS Perm : 92801K->92800K(157352K)], 11.8585290 secs] [Times: user=11.80 sys=0.06, real=11.85 secs]
  * </pre>
  * 
- * <p>
- * 3) Logging combined as 1 line by
- * {@link org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction}. Balanced brackets with
- * additional CMS-concurrent block:
- * </p>
- * 
- * <pre>
- * 85238.030: [Full GC 85238.030: [CMS85238.672: [CMS-concurrent-mark: 0.666/0.686 secs] (concurrent mode failure): 439328K->439609K(4023936K), 2.7153820 secs] 448884K->439609K(4177280K), [CMS Perm : 262143K->262143K(262144K)], 2.7156150 secs] [Times: user=3.35 sys=0.00, real=2.72 secs]
- * </pre>
- * 
- * <p>
- * 4) Logging combined as 1 line by
- * {@link org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction} with detailed CMS events:
- * </p>
- * 
- * <pre>
- * 85217.903: [Full GC 85217.903: [CMS85217.919: [CMS-concurrent-abortable-preclean: 0.723/3.756 secs] (concurrent mode failure) (concurrent mode failure)[YG occupancy: 33620K (153344K)]85217.919: [Rescan (parallel) , 0.0116680 secs]85217.931: [weak refs processing, 0.0167100 secs]85217.948: [class unloading, 0.0571300 secs]85218.005: [scrub symbol &amp; string tables, 0.0291210 secs]: 423728K->423633K(4023936K), 0.5165330 secs] 457349K->457254K(4177280K), [CMS Perm : 260428K->260406K(262144K)], 0.5167600 secs] [Times: user=0.55 sys=0.01, real=0.52 secs]
- * </pre>
- * 
- * <p>
- * Split into 2 lines then combined as 1 line by
- * {@link org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction} with concurrent mode
- * failure missing:
- * </p>
- * 
- * <pre>
- * 198.712: [Full GC 198.712: [CMS198.733: [CMS-concurrent-reset: 0.061/1.405 secs]: 14037K->31492K(1835008K), 0.7953140 secs] 210074K->31492K(2096960K), [CMS Perm : 27817K->27784K(131072K)], 0.7955670 secs]
- * </pre>
- * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class CmsSerialOldConcurrentModeFailureEvent
-        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData, CmsCollection {
+public class CmsSerialOldConcurrentModeFailureEvent implements BlockingEvent, OldCollection, PermCollection, YoungData,
+        OldData, PermData, TriggerData, CmsCollection {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(System\\) )?" + JdkRegEx.TIMESTAMP
-            + "(: \\[CMS)?( CMS: abort preclean due to time )?(" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): " + JdkRegEx.DURATION_FRACTION
-            + "\\])?( \\(concurrent mode (failure|interrupted)\\))?( \\(concurrent mode failure\\)\\"
-            + "[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[class unloading, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION
-            + "\\])?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
-            + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.TIMESTAMP
+            + "(: \\[CMS)? \\(" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\): " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+
     private static Pattern pattern = Pattern.compile(REGEX);
 
     /**
@@ -198,6 +164,11 @@ public class CmsSerialOldConcurrentModeFailureEvent
     private int permGenAllocation;
 
     /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
+
+    /**
      * Create ParNew detail logging event from log entry.
      */
     public CmsSerialOldConcurrentModeFailureEvent(String logEntry) {
@@ -205,19 +176,20 @@ public class CmsSerialOldConcurrentModeFailureEvent
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            old = Integer.parseInt(matcher.group(23));
-            oldEnd = Integer.parseInt(matcher.group(24));
-            oldAllocation = Integer.parseInt(matcher.group(25));
-            int totalBegin = Integer.parseInt(matcher.group(27));
+            trigger = matcher.group(3);
+            old = Integer.parseInt(matcher.group(4));
+            oldEnd = Integer.parseInt(matcher.group(5));
+            oldAllocation = Integer.parseInt(matcher.group(6));
+            int totalBegin = Integer.parseInt(matcher.group(8));
             young = totalBegin - old;
-            int totalEnd = Integer.parseInt(matcher.group(28));
+            int totalEnd = Integer.parseInt(matcher.group(9));
             youngEnd = totalEnd - oldEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(29));
+            int totalAllocation = Integer.parseInt(matcher.group(10));
             youngAvailable = totalAllocation - oldAllocation;
-            permGen = Integer.parseInt(matcher.group(30));
-            permGenEnd = Integer.parseInt(matcher.group(31));
-            permGenAllocation = Integer.parseInt(matcher.group(32));
-            duration = JdkMath.convertSecsToMillis(matcher.group(34)).intValue();
+            permGen = Integer.parseInt(matcher.group(11));
+            permGenEnd = Integer.parseInt(matcher.group(12));
+            permGenAllocation = Integer.parseInt(matcher.group(13));
+            duration = JdkMath.convertSecsToMillis(matcher.group(14)).intValue();
         }
     }
 
@@ -284,6 +256,10 @@ public class CmsSerialOldConcurrentModeFailureEvent
 
     public int getPermSpace() {
         return permGenAllocation;
+    }
+
+    public String getTrigger() {
+        return trigger;
     }
 
     /**

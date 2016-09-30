@@ -12,10 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * @author James Livingston

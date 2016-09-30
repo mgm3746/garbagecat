@@ -12,8 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
 

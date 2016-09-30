@@ -12,10 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -140,6 +140,26 @@ public class TestParNewConcurrentModeFailureEvent extends TestCase {
         Assert.assertEquals("Old end size not parsed correctly.", 1078465, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 1179648, event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 7383, event.getDuration());
+    }
+
+    public void testLogLineBailing() {
+        String logLine = "1901.217: [GC 1901.217: [ParNew: 261760K->261760K(261952K), 0.0000570 secs]1901.217: "
+                + "[CMSJava HotSpot(TM) Server VM warning: bailing out to foreground collection (concurrent mode "
+                + "failure): 1794415K->909664K(1835008K), 124.5953890 secs] 2056175K->909664K(2096960K) "
+                + "icms_dc=100 , 124.5963320 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".",
+                ParNewConcurrentModeFailureEvent.match(logLine));
+        ParNewConcurrentModeFailureEvent event = new ParNewConcurrentModeFailureEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 1901217, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", (2056175 - 1794415),
+                event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", (909664 - 909664), event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", (2096960 - 1835008), event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 1794415, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 909664, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 1835008, event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 124596, event.getDuration());
     }
 
     public void testLogLineWhitespaceAtEnd() {

@@ -43,7 +43,6 @@ import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
@@ -209,9 +208,9 @@ public class GcManager {
             if (UnloadingClassPreprocessAction.match(currentLogLine)) {
                 UnloadingClassPreprocessAction action = new UnloadingClassPreprocessAction(currentLogLine, nextLogLine);
                 preprocessedLogLine = action.getLogEntry();
-            } else if (CmsConcurrentModeFailurePreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
-                CmsConcurrentModeFailurePreprocessAction action = new CmsConcurrentModeFailurePreprocessAction(
-                        currentLogLine);
+            } else if (CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
+                CmsPreprocessAction action = new CmsPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
+                        entangledLogLines);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
@@ -248,12 +247,6 @@ public class GcManager {
                 }
             } else if (G1PreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
                 G1PreprocessAction action = new G1PreprocessAction(priorLogLine, currentLogLine, nextLogLine,
-                        entangledLogLines);
-                if (action.getLogEntry() != null) {
-                    preprocessedLogLine = action.getLogEntry();
-                }
-            } else if (CmsPreprocessAction.match(currentLogLine)) {
-                CmsPreprocessAction action = new CmsPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                         entangledLogLines);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();

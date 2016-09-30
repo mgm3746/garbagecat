@@ -1,0 +1,2 @@
+2016-09-29T11:18:10.844-0700: 706.707: [Full GC (Allocation Failure) 2016-09-29T11:18:10.845-0700: 706.708: [CMS2016-09-29T11:18:13.273-0700: 709.137: [CMS-concurrent-mark: 3.381/5.028 secs] [Times: user=23.92 sys=3.02, real=5.03 secs]
+ (concurrent mode failure): 2655937K->2373842K(2658304K), 11.6746550 secs] 3973407K->2373842K(4040704K), [Metaspace: 72496K->72496K(1118208K)] icms_dc=77 , 11.6770830 secs] [Times: user=14.05 sys=0.02, real=11.68 secs]

@@ -124,11 +124,13 @@ public class ParNewConcurrentModeFailureEvent
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew: "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[CMS(" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): " + JdkRegEx.DURATION_FRACTION
-            + "\\])? \\(concurrent mode failure\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.TIMESTAMP
+            + ": \\[CMS(Java HotSpot\\(TM\\) Server VM warning: bailing out to foreground collection)?("
+            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): "
+            + JdkRegEx.DURATION_FRACTION + "\\])? \\(concurrent mode failure\\): " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     private static Pattern pattern = Pattern.compile(REGEX);
 
     /**
@@ -184,16 +186,16 @@ public class ParNewConcurrentModeFailureEvent
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            old = Integer.parseInt(matcher.group(12));
-            oldEnd = Integer.parseInt(matcher.group(13));
-            oldAllocation = Integer.parseInt(matcher.group(14));
-            int totalBegin = Integer.parseInt(matcher.group(16));
+            old = Integer.parseInt(matcher.group(13));
+            oldEnd = Integer.parseInt(matcher.group(14));
+            oldAllocation = Integer.parseInt(matcher.group(15));
+            int totalBegin = Integer.parseInt(matcher.group(17));
             young = totalBegin - old;
-            int totalEnd = Integer.parseInt(matcher.group(17));
+            int totalEnd = Integer.parseInt(matcher.group(18));
             youngEnd = totalEnd - oldEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(18));
+            int totalAllocation = Integer.parseInt(matcher.group(19));
             youngAvailable = totalAllocation - oldAllocation;
-            duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(21)).intValue();
         }
     }
 

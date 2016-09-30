@@ -95,11 +95,17 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_SYSTEM_GC
-            + ")\\) )?" + JdkRegEx.TIMESTAMP + ": \\[CMS( \\((" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + ")\\))?: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE
-            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\) )?" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS(bailing out to foreground collection)?( \\((" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE
+            + ")\\))?( \\(" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\)\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
+            + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION
+            + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMESTAMP + ": \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\])?: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION
+            + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
 
@@ -112,27 +118,24 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
-            super.setOldOccupancyInit(Integer.parseInt(matcher.group(9)));
-            super.setOldOccupancyEnd(Integer.parseInt(matcher.group(10)));
-            super.setOldSpace(Integer.parseInt(matcher.group(11)));
-            int totalBegin = Integer.parseInt(matcher.group(13));
+            super.setOldOccupancyInit(Integer.parseInt(matcher.group(21)));
+            super.setOldOccupancyEnd(Integer.parseInt(matcher.group(22)));
+            super.setOldSpace(Integer.parseInt(matcher.group(23)));
+            int totalBegin = Integer.parseInt(matcher.group(25));
             super.setYoungOccupancyInit(totalBegin - super.getOldOccupancyInit());
-            int totalEnd = Integer.parseInt(matcher.group(14));
+            int totalEnd = Integer.parseInt(matcher.group(26));
             super.setYoungOccupancyEnd(totalEnd - super.getOldOccupancyEnd());
-            int totalAllocation = Integer.parseInt(matcher.group(15));
+            int totalAllocation = Integer.parseInt(matcher.group(27));
             super.setYoungSpace(totalAllocation - super.getOldSpace());
-            super.setPermOccupancyInit(Integer.parseInt(matcher.group(16)));
-            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(17)));
-            super.setPermSpace(Integer.parseInt(matcher.group(18)));
-            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(20)).intValue());
-            if (matcher.group(4) != null && matcher.group(8) == null) {
+            super.setPermOccupancyInit(Integer.parseInt(matcher.group(29)));
+            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(30)));
+            super.setPermSpace(Integer.parseInt(matcher.group(31)));
+            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(33)).intValue());
+            if (matcher.group(9) != null) {
+                trigger = matcher.group(9);
+            } else {
+
                 trigger = matcher.group(4);
-            }
-            if (matcher.group(4) == null && matcher.group(8) != null) {
-                trigger = matcher.group(8);
-            }
-            if (matcher.group(4) != null && matcher.group(8) != null) {
-                throw new IllegalArgumentException("Double triggers");
             }
         }
     }

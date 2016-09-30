@@ -82,7 +82,8 @@ public class ParNewPromotionFailedConcModeFailurePermDataEvent
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
             + ": \\[ParNew \\(promotion failed\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS( CMS: abort preclean due to time )?("
+            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS( CMS: abort preclean due to time )?(bailing out to foreground collection)?("
             + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|reset|sweep): "
             + JdkRegEx.DURATION_FRACTION + "\\])?( \\(concurrent mode failure\\))?: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
@@ -159,19 +160,19 @@ public class ParNewPromotionFailedConcModeFailurePermDataEvent
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            old = Integer.parseInt(matcher.group(14));
-            oldEnd = Integer.parseInt(matcher.group(15));
-            oldAllocation = Integer.parseInt(matcher.group(16));
-            int totalBegin = Integer.parseInt(matcher.group(18));
+            old = Integer.parseInt(matcher.group(15));
+            oldEnd = Integer.parseInt(matcher.group(16));
+            oldAllocation = Integer.parseInt(matcher.group(17));
+            int totalBegin = Integer.parseInt(matcher.group(19));
             young = totalBegin - old;
-            int totalEnd = Integer.parseInt(matcher.group(19));
+            int totalEnd = Integer.parseInt(matcher.group(20));
             youngEnd = totalEnd - oldEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(20));
+            int totalAllocation = Integer.parseInt(matcher.group(21));
             youngAvailable = totalAllocation - oldAllocation;
-            permGen = Integer.parseInt(matcher.group(21));
-            permGenEnd = Integer.parseInt(matcher.group(22));
-            permGenAllocation = Integer.parseInt(matcher.group(23));
-            duration = JdkMath.convertSecsToMillis(matcher.group(25)).intValue();
+            permGen = Integer.parseInt(matcher.group(22));
+            permGenEnd = Integer.parseInt(matcher.group(23));
+            permGenAllocation = Integer.parseInt(matcher.group(24));
+            duration = JdkMath.convertSecsToMillis(matcher.group(26)).intValue();
         }
     }
 

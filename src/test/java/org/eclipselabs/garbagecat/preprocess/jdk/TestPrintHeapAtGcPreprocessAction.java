@@ -12,10 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

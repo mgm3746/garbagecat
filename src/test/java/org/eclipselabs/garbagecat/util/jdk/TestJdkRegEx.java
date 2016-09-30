@@ -12,10 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
+import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

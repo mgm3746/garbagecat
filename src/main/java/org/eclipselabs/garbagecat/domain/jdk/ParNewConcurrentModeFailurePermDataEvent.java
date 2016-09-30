@@ -73,12 +73,22 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <p>
- * Logging split into 2 lines then combined as 1 line by
- * {@link org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction} with CMS concurrent event:
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent} combined with
+ * {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} across 2 lines:
  * </p>
  * 
  * <pre>
- * 3070.289: [GC 3070.289: [ParNew: 207744K->207744K(242304K), 0.0000682 secs]3070.289: [CMS3081.621: [CMS-concurrent-mark: 11.907/12.958 secs] (concurrent mode failure): 6010121K->6014591K(6014592K), 79.0505229 secs] 6217865K->6028029K(6256896K), [CMS Perm : 206688K->206662K(262144K)], 79.0509595 secs] [Times: user=104.69 sys=3.63, real=79.05 secs]
+ * 3070.289: [GC 3070.289: [ParNew: 207744K->207744K(242304K), 0.0000682 secs]3070.289: [CMS3081.621: [CMS-concurrent-mark: 11.907/12.958 secs] [Times: user=45.31 sys=3.93, real=12.96 secs]
+ *  (concurrent mode failure): 6010121K->6014591K(6014592K), 79.0505229 secs] 6217865K->6028029K(6256896K), [CMS Perm : 206688K->206662K(262144K)], 79.0509595 secs] [Times: user=104.69 sys=3.63, real=79.05 secs]
+ * </pre>
+ * 
+ * <p>
+ * Preprocessed:
+ * </p>
+ * 
+ * <pre>
+ * 3070.289: [GC 3070.289: [ParNew: 207744K->207744K(242304K), 0.0000682 secs]3070.289: [CMS (concurrent mode failure): 6010121K->6014591K(6014592K), 79.0505229 secs] 6217865K->6028029K(6256896K), [CMS Perm : 206688K->206662K(262144K)], 79.0509595 secs] [Times: user=104.69 sys=3.63, real=79.05 secs]
+ * 3081.621: [CMS-concurrent-mark: 11.907/12.958 secs] [Times: user=45.31 sys=3.93, real=12.96 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -90,14 +100,15 @@ public class ParNewConcurrentModeFailurePermDataEvent
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): " + JdkRegEx.DURATION_FRACTION
-            + "\\] \\(concurrent mode failure\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]"
-            + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE
+            + "\\))? " + JdkRegEx.TIMESTAMP + ": \\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\](" + JdkRegEx.TIMESTAMP + ": \\[CMS)? \\("
+            + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+
     private static Pattern pattern = Pattern.compile(REGEX);
 
     /**
@@ -168,19 +179,19 @@ public class ParNewConcurrentModeFailurePermDataEvent
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            old = Integer.parseInt(matcher.group(12));
-            oldEnd = Integer.parseInt(matcher.group(13));
-            oldAllocation = Integer.parseInt(matcher.group(14));
-            int totalBegin = Integer.parseInt(matcher.group(16));
+            old = Integer.parseInt(matcher.group(10));
+            oldEnd = Integer.parseInt(matcher.group(11));
+            oldAllocation = Integer.parseInt(matcher.group(12));
+            int totalBegin = Integer.parseInt(matcher.group(14));
             young = totalBegin - old;
-            int totalEnd = Integer.parseInt(matcher.group(17));
+            int totalEnd = Integer.parseInt(matcher.group(15));
             youngEnd = totalEnd - oldEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(18));
+            int totalAllocation = Integer.parseInt(matcher.group(16));
             youngAvailable = totalAllocation - oldAllocation;
-            permGen = Integer.parseInt(matcher.group(19));
-            permGenEnd = Integer.parseInt(matcher.group(20));
-            permGenAllocation = Integer.parseInt(matcher.group(21));
-            duration = JdkMath.convertSecsToMillis(matcher.group(23)).intValue();
+            permGen = Integer.parseInt(matcher.group(18));
+            permGenEnd = Integer.parseInt(matcher.group(19));
+            permGenAllocation = Integer.parseInt(matcher.group(20));
+            duration = JdkMath.convertSecsToMillis(matcher.group(22)).intValue();
         }
     }
 

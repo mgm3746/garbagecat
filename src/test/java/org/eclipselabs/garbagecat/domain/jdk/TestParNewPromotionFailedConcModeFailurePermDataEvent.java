@@ -12,10 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -198,6 +198,30 @@ public class TestParNewPromotionFailedConcModeFailurePermDataEvent extends TestC
         Assert.assertEquals("Perm gen end size not parsed correctly.", 213777, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 524288, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 80844, event.getDuration());
+    }
+
+    public void testLogBailing() {
+        String logLine = "2137.769: [GC 2137.769: [ParNew (promotion failed): 242304K->242304K(242304K), "
+                + "8.4066690 secs]2146.176: [CMSbailing out to foreground collection (concurrent mode failure): "
+                + "9881423K->8643902K(10208896K), 118.8607193 secs] 10054907K->8643902K(10451200K), [CMS Perm : "
+                + "239295K->228582K(262144K)], 127.2678876 secs] [Times: user=137.35 sys=8.24, real=127.27 secs]";
+        Assert.assertTrue("Log line not recognized as "
+                + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
+                ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine));
+        ParNewPromotionFailedConcModeFailurePermDataEvent event = new ParNewPromotionFailedConcModeFailurePermDataEvent(
+                logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 2137769, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", (10054907 - 9881423),
+                event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", (8643902 - 8643902), event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", (10451200 - 10208896), event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 9881423, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 8643902, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 10208896, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 239295, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 228582, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 127267, event.getDuration());
     }
 
     public void testLogLineWhitespaceAtEnd() {

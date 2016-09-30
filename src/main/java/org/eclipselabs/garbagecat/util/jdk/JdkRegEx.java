@@ -195,6 +195,11 @@ public class JdkRegEx {
     public static final String TRIGGER_CONCURRENT_MODE_FAILURE = "concurrent mode failure";
 
     /**
+     * Promotion failed trigger
+     */
+    public static final String TRIGGER_PROMOTION_FAILED = "promotion failed";
+
+    /**
      * Units for JVM options that take a byte number.
      * 
      * For example: -Xss128k -Xmx2048m -Xms2G

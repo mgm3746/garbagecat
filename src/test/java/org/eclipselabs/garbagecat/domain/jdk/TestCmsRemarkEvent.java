@@ -12,11 +12,11 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

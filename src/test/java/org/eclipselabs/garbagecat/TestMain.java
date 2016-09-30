@@ -15,10 +15,10 @@ package org.eclipselabs.garbagecat;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.apache.commons.cli.CommandLine;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.apache.commons.cli.CommandLine;
 
 public class TestMain extends TestCase {
 
