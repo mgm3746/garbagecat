@@ -54,7 +54,10 @@ public class HeaderMemoryEvent implements LogEvent {
     private long timestamp;
 
     /**
-     * Create CommandLineFlags detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public HeaderMemoryEvent(String logEntry) {
         this.logEntry = logEntry;

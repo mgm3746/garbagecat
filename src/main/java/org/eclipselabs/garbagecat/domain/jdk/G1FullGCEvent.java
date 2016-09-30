@@ -42,7 +42,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 5060.152: [Full GC (System.gc()) 2270M->2038M(3398M), 5.8360430 secs]
+ * 5060.152: [Full GC (System.gc()) 2270M-&gt;2038M(3398M), 5.8360430 secs]
  * </pre>
  * 
  * <p>
@@ -50,7 +50,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2010-02-26T08:31:51.990-0600: [Full GC (System.gc()) 2270M->2038M(3398M), 5.8360430 secs]
+ * 2010-02-26T08:31:51.990-0600: [Full GC (System.gc()) 2270M-&gt;2038M(3398M), 5.8360430 secs]
  * </pre>
  * 
  * <p>
@@ -58,7 +58,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 105.151: [Full GC (System.gc()) 5820M->1381M(30G), 5.5390169 secs] 5820M->1382M(30720M) [Times: user=5.76 sys=1.00, real=5.53 secs]
+ * 105.151: [Full GC (System.gc()) 5820M-&gt;1381M(30G), 5.5390169 secs] 5820M-&gt;1382M(30720M) [Times: user=5.76 sys=1.00, real=5.53 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -117,7 +117,10 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, 
     private int combinedAvailable;
 
     /**
-     * Create detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public G1FullGCEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -136,8 +139,11 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, 
      * Alternate constructor. Create detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public G1FullGCEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

@@ -32,7 +32,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
- * <h4><{@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} on second line./h4>
+ * <h4>{@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} on second line.</h4>
  * 
  * <pre>
  * 1122748.949Application time: 0.0005210 seconds
@@ -46,7 +46,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 1122748.949: [CMS-concurrent-mark-start]
  * </pre>
  * 
- * <h4><{@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} on first line./h4>
+ * <h4>{@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} on first line.</h4>
  * 
  * <pre>
  * 408365.532: [CMS-concurrent-mark: 0.476/10.257 secs]Application time: 0.0576080 seconds
@@ -86,6 +86,9 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
 
     /**
      * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ApplicationConcurrentTimePreprocessAction(String logEntry) {
         Matcher matcher = PATTERN1.matcher(logEntry);

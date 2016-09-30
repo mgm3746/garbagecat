@@ -39,21 +39,21 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] 41677K->10314K(126720K), 0.0210210 secs]
+ * 7.798: [GC 7.798: [DefNew: 37172K-&gt;3631K(39296K), 0.0209300 secs] 41677K-&gt;10314K(126720K), 0.0210210 secs]
  * </pre>
  * 
  * <p>
  * 2) With erroneous "Full":
  * 
  * <pre>
- * 142352.790: [Full GC 142352.790: [DefNew: 444956K->28315K(471872K), 0.0971099 secs] 1020658K->604017K(1520448K), 0.0972451 secs]
+ * 142352.790: [Full GC 142352.790: [DefNew: 444956K-&gt;28315K(471872K), 0.0971099 secs] 1020658K-&gt;604017K(1520448K), 0.0972451 secs]
  * </pre>
  * 
  * <p>
  * 3) No space after "GC":
  * 
  * <pre>
- * 4.296: [GC4.296: [DefNew: 68160K->8512K(76672K), 0.0528470 secs] 68160K->11664K(1325760K), 0.0530640 secs] [Times: user=0.04 sys=0.00, real=0.05 secs]
+ * 4.296: [GC4.296: [DefNew: 68160K-&gt;8512K(76672K), 0.0528470 secs] 68160K-&gt;11664K(1325760K), 0.0530640 secs] [Times: user=0.04 sys=0.00, real=0.05 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -117,7 +117,9 @@ public class SerialEvent implements BlockingEvent, YoungCollection, YoungData, O
     private int oldAllocation;
 
     /**
-     * Create serial logging event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public SerialEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -141,8 +143,11 @@ public class SerialEvent implements BlockingEvent, YoungCollection, YoungData, O
      * Alternate constructor. Create serial logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public SerialEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

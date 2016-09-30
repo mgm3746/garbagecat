@@ -66,8 +66,8 @@ public class Analysis {
     public static final String KEY_APPLICATION_STOPPED_TIME_MISSING = "application.stopped.time.missing";
 
     /**
-     * Property key for the ratio of gc time vs. stopped time showing a significant amount of stopped time (>20%) is not
-     * GC related.
+     * Property key for the ratio of gc time vs. stopped time showing a significant amount of stopped time (&gt;20%) is
+     * not GC related.
      */
     public static final String KEY_GC_STOPPED_RATIO = "gc.stopped.ratio";
 

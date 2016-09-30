@@ -30,16 +30,16 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * A {@link org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent} with the <code>-XX:+CMSClassUnloadingEnabled</code>
  * JVM option enabled to allow perm gen / metaspace collections. The concurrent low pause collector does not allow for
  * class unloading by default.
+ * </p>
  * 
  * <h3>Example Logging</h3>
- * </p>
  * 
  * <p>
  * 1) JDK 1.6:
  * </p>
  * 
  * <pre>
- * 76694.727: [GC[YG occupancy: 80143 K (153344 K)]76694.727: [Rescan (parallel) , 0.0574180 secs]76694.785: [weak refs processing, 0.0170540 secs]76694.802: [class unloading, 0.0363010 secs]76694.838: [scrub symbol & string tables, 0.0276600 secs] [1 CMS-remark: 443542K(4023936K)] 523686K(4177280K), 0.1446880 secs]
+ * 76694.727: [GC[YG occupancy: 80143 K (153344 K)]76694.727: [Rescan (parallel) , 0.0574180 secs]76694.785: [weak refs processing, 0.0170540 secs]76694.802: [class unloading, 0.0363010 secs]76694.838: [scrub symbol &amp; string tables, 0.0276600 secs] [1 CMS-remark: 443542K(4023936K)] 523686K(4177280K), 0.1446880 secs]
  * </pre>
  * 
  * <p>
@@ -47,7 +47,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * 2) JDK 1.7 with "scrub symbol table" and "scrub string table" vs. "scrub symbol & string tables":
+ * 2) JDK 1.7 with "scrub symbol table" and "scrub string table" vs. "scrub symbol &amp; string tables":
  * </p>
  * 
  * <pre>
@@ -111,9 +111,10 @@ public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent, TriggerD
     private static Pattern pattern = Pattern.compile(CmsRemarkWithClassUnloadingEvent.REGEX);
 
     /**
-     * Create CMS Remark with class unloading logging event from log entry.
+     * Create event from log entry.
      * 
      * @param logEntry
+     *            The log entry for the event.
      */
     public CmsRemarkWithClassUnloadingEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -130,8 +131,11 @@ public class CmsRemarkWithClassUnloadingEvent implements BlockingEvent, TriggerD
      * Alternate constructor. Create CMS Remark with class unloading logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds
      */
     public CmsRemarkWithClassUnloadingEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

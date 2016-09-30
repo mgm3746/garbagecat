@@ -87,6 +87,9 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
 
     /**
      * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ApplicationStoppedTimePreprocessAction(String logEntry) {
         Matcher matcher = PATTERN1.matcher(logEntry);

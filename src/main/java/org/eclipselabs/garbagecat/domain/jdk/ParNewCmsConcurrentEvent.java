@@ -36,7 +36,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * 2210.281: [GC 2210.282: [ParNew2210.314: [CMS-concurrent-abortable-preclean: 0.043/0.144 secs]: 212981K->3156K(242304K), 0.0364435 secs] 4712182K->4502357K(4971420K), 0.0368807 secs]
+ * 2210.281: [GC 2210.282: [ParNew2210.314: [CMS-concurrent-abortable-preclean: 0.043/0.144 secs]: 212981K-&gt;3156K(242304K), 0.0364435 secs] 4712182K-&gt;4502357K(4971420K), 0.0368807 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -101,7 +101,10 @@ public class ParNewCmsConcurrentEvent implements BlockingEvent, YoungCollection,
     private int oldAllocation;
 
     /**
-     * Create ParNew detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ParNewCmsConcurrentEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -125,8 +128,11 @@ public class ParNewCmsConcurrentEvent implements BlockingEvent, YoungCollection,
      * Alternate constructor. Create ParNew detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public ParNewCmsConcurrentEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

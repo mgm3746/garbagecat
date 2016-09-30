@@ -43,7 +43,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * 3727.365: [GC 3727.365: [DefNew: 400314K->400314K(400384K), 0.0000550 secs]3727.365: [Tenured: 837793K->597490K(889536K), 44.7498530 secs] 1238107K->597490K(1289920K), [Perm : 54745K->54745K(54784K)], 44.7501880 secs] [Times: user=5.32 sys=0.33, real=44.75 secs]
+ * 3727.365: [GC 3727.365: [DefNew: 400314K-&gt;400314K(400384K), 0.0000550 secs]3727.365: [Tenured: 837793K-&gt;597490K(889536K), 44.7498530 secs] 1238107K-&gt;597490K(1289920K), [Perm : 54745K-&gt;54745K(54784K)], 44.7501880 secs] [Times: user=5.32 sys=0.33, real=44.75 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -125,7 +125,10 @@ public class SerialSerialOldPermDataEvent
     private int permGenAllocation;
 
     /**
-     * Create ParNew detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public SerialSerialOldPermDataEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -153,8 +156,11 @@ public class SerialSerialOldPermDataEvent
      * Alternate constructor. Create ParNew detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public SerialSerialOldPermDataEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

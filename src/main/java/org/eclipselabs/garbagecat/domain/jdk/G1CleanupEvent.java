@@ -38,7 +38,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 18.650: [GC cleanup 297M->236M(512M), 0.0014690 secs]
+ * 18.650: [GC cleanup 297M-&gt;236M(512M), 0.0014690 secs]
  * </pre>
  * 
  * <p>
@@ -46,7 +46,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2010-02-26T08:31:51.990-0600: [GC cleanup 297M->236M(512M), 0.0014690 secs]
+ * 2010-02-26T08:31:51.990-0600: [GC cleanup 297M-&gt;236M(512M), 0.0014690 secs]
  * </pre>
  * 
  * <p>
@@ -54,7 +54,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2010-02-26T08:31:51.990-0600: [GC cleanup 297M->236M(512M), 0.0014690 secs]
+ * 2010-02-26T08:31:51.990-0600: [GC cleanup 297M-&gt;236M(512M), 0.0014690 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -102,7 +102,10 @@ public class G1CleanupEvent implements BlockingEvent, CombinedData, G1Collection
     private int combinedAvailable;
 
     /**
-     * Create detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public G1CleanupEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -120,8 +123,11 @@ public class G1CleanupEvent implements BlockingEvent, CombinedData, G1Collection
      * Alternate constructor. Create detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public G1CleanupEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

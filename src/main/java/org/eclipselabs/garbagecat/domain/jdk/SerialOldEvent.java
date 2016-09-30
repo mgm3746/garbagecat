@@ -42,7 +42,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 187.159: [Full GC 187.160: [Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), [Perm : 49152K->49154K(49158K)], 0.6929258 secs]
+ * 187.159: [Full GC 187.160: [Tenured: 97171K-&gt;102832K(815616K), 0.6977443 secs] 152213K-&gt;102832K(907328K), [Perm : 49152K-&gt;49154K(49158K)], 0.6929258 secs]
  * </pre>
  * 
  * <p>
@@ -50,7 +50,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2.457: [Full GC (System) 2.457: [Tenured: 1092K->2866K(116544K), 0.0489980 secs] 11012K->2866K(129664K), [Perm : 8602K->8602K(131072K)], 0.0490880 secs]
+ * 2.457: [Full GC (System) 2.457: [Tenured: 1092K-&gt;2866K(116544K), 0.0489980 secs] 11012K-&gt;2866K(129664K), [Perm : 8602K-&gt;8602K(131072K)], 0.0490880 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -137,7 +137,9 @@ public class SerialOldEvent
     }
 
     /**
-     * Create serial old detail logging event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public SerialOldEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -165,8 +167,11 @@ public class SerialOldEvent
      * Alternate constructor. Create serial old detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public SerialOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

@@ -39,7 +39,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *
  * <pre>
  * 46674.719: [GC (Allocation Failure)46674.719: [ParNew46674.749: [CMS-concurrent-abortable-preclean: 1.427/2.228 secs] [Times: user=1.56 sys=0.01, real=2.23 secs]
- * : 153599K->17023K(153600K), 0.0383370 secs] 229326K->114168K(494976K), 0.0384820 secs] [Times: user=0.15 sys=0.01, real=0.04 secs]
+ * : 153599K-&gt;17023K(153600K), 0.0383370 secs] 229326K-&gt;114168K(494976K), 0.0384820 secs] [Times: user=0.15 sys=0.01, real=0.04 secs]
  * </pre>
  *
  * <p>
@@ -47,7 +47,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 46674.719: [GC (Allocation Failure)46674.719: [ParNew: 153599K->17023K(153600K), 0.0383370 secs] 229326K->114168K(494976K), 0.0384820 secs] [Times: user=0.15 sys=0.01, real=0.04 secs]
+ * 46674.719: [GC (Allocation Failure)46674.719: [ParNew: 153599K-&gt;17023K(153600K), 0.0383370 secs] 229326K-&gt;114168K(494976K), 0.0384820 secs] [Times: user=0.15 sys=0.01, real=0.04 secs]
  * 46674.749: [CMS-concurrent-abortable-preclean: 1.427/2.228 secs] [Times: user=1.56 sys=0.01, real=2.23 secs]
  * </pre>
  * 
@@ -58,7 +58,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *
  * <pre>
  * 10.963: [GC10.963: [ParNew10.977: [CMS-concurrent-abortable-preclean: 0.088/0.197 secs] [Times: user=0.33 sys=0.05, real=0.20 secs]
- * : 115327K->12800K(115328K), 0.0155930 secs] 349452K->251716K(404548K), 0.0156840 secs] [Times: user=0.02 sys=0.00, real=0.01 secs]
+ * : 115327K-&gt;12800K(115328K), 0.0155930 secs] 349452K-&gt;251716K(404548K), 0.0156840 secs] [Times: user=0.02 sys=0.00, real=0.01 secs]
  * </pre>
  *
  * <p>
@@ -66,17 +66,18 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 10.963: [GC10.963: [ParNew: 115327K->12800K(115328K), 0.0155930 secs] 349452K->251716K(404548K), 0.0156840 secs] [Times: user=0.02 sys=0.00, real=0.01 secs]
+ * 10.963: [GC10.963: [ParNew: 115327K-&gt;12800K(115328K), 0.0155930 secs] 349452K-&gt;251716K(404548K), 0.0156840 secs] [Times: user=0.02 sys=0.00, real=0.01 secs]
  * 10.977: [CMS-concurrent-abortable-preclean: 0.088/0.197 secs] [Times: user=0.33 sys=0.05, real=0.20 secs]
  * </pre>
  * 
  * <p>
- * 3) {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent} across 2 lines:
+ * 3) {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} with concurrent mode failure trigger across 2
+ * lines:
  * </p>
  * 
  * <pre>
  * 44.684: [Full GC44.684: [CMS44.877: [CMS-concurrent-mark: 1.508/2.428 secs] [Times: user=3.44 sys=0.49, real=2.42 secs]
- *  (concurrent mode failure): 1218548K->413373K(1465840K), 1.3656970 secs] 1229657K->413373K(1581168K), [CMS Perm : 83805K->80520K(83968K)], 1.3659420 secs] [Times: user=1.33 sys=0.01, real=1.37 secs]
+ *  (concurrent mode failure): 1218548K-&gt;413373K(1465840K), 1.3656970 secs] 1229657K-&gt;413373K(1581168K), [CMS Perm : 83805K-&gt;80520K(83968K)], 1.3659420 secs] [Times: user=1.33 sys=0.01, real=1.37 secs]
  * </pre>
  *
  * <p>
@@ -84,16 +85,18 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 44.684: [Full GC44.684: [CMS (concurrent mode failure): 1218548K->413373K(1465840K), 1.3656970 secs] 1229657K->413373K(1581168K), [CMS Perm : 83805K->80520K(83968K)], 1.3659420 secs] [Times: user=1.33 sys=0.01, real=1.37 secs]
+ * 44.684: [Full GC44.684: [CMS (concurrent mode failure): 1218548K-&gt;413373K(1465840K), 1.3656970 secs] 1229657K-&gt;413373K(1581168K), [CMS Perm : 83805K-&gt;80520K(83968K)], 1.3659420 secs] [Times: user=1.33 sys=0.01, real=1.37 secs]
  * 44.877: [CMS-concurrent-mark: 1.508/2.428 secs] [Times: user=3.44 sys=0.49, real=2.42 secs]
+ * </pre>
  * 
  * <p>
- * 4) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} combined with {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} with trigger and space after trigger:
+ * 4) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} combined with
+ * {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} with trigger and space after trigger:
  * </p>
  *
  * <pre>
  * 45.574: [GC (Allocation Failure) 45.574: [ParNew45.670: [CMS-concurrent-abortable-preclean: 3.276/4.979 secs] [Times: user=7.75 sys=0.28, real=4.98 secs]
- * : 619008K->36352K(619008K), 0.2165661 secs] 854952K->363754K(4157952K), 0.2168066 secs] [Times: user=0.30 sys=0.00, real=0.22 secs]
+ * : 619008K-&gt;36352K(619008K), 0.2165661 secs] 854952K-&gt;363754K(4157952K), 0.2168066 secs] [Times: user=0.30 sys=0.00, real=0.22 secs]
  * </pre>
  *
  * <p>
@@ -101,18 +104,18 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 45.574: [GC (Allocation Failure) 45.574: [ParNew: 619008K->36352K(619008K), 0.2165661 secs] 854952K->363754K(4157952K), 0.2168066 secs] [Times: user=0.30 sys=0.00, real=0.22 secs]
+ * 45.574: [GC (Allocation Failure) 45.574: [ParNew: 619008K-&gt;36352K(619008K), 0.2165661 secs] 854952K-&gt;363754K(4157952K), 0.2168066 secs] [Times: user=0.30 sys=0.00, real=0.22 secs]
  * 45.670: [CMS-concurrent-abortable-preclean: 3.276/4.979 secs] [Times: user=7.75 sys=0.28, real=4.98 secs]
  * </pre>
  * 
  * <p>
- * 5) JDK 8 {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent} combined with
- * {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} across 2 lines:
+ * 5) JDK 8 {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} with concurrent mode failure trigger
+ * combined with {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} across 2 lines:
  * </p>
  * 
  * <pre>
  * 706.707: [Full GC (Allocation Failure) 706.708: [CMS709.137: [CMS-concurrent-mark: 3.381/5.028 secs] [Times: user=23.92 sys=3.02, real=5.03 secs]
- *  (concurrent mode failure): 2655937K->2373842K(2658304K), 11.6746550 secs] 3973407K->2373842K(4040704K), [Metaspace: 72496K->72496K(1118208K)] icms_dc=77 , 11.6770830 secs] [Times: user=14.05 sys=0.02,
+ *  (concurrent mode failure): 2655937K-&gt;2373842K(2658304K), 11.6746550 secs] 3973407K-&gt;2373842K(4040704K), [Metaspace: 72496K-&gt;72496K(1118208K)] icms_dc=77 , 11.6770830 secs] [Times: user=14.05 sys=0.02,
  * </pre>
  *
  * <p>
@@ -120,7 +123,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 706.707: [Full GC (Allocation Failure) 706.708: [CMS (concurrent mode failure): 2655937K->2373842K(2658304K), 11.6746550 secs] 3973407K->2373842K(4040704K), [Metaspace: 72496K->72496K(1118208K)] icms_dc=77 , 11.6770830 secs] [Times: user=14.05 sys=0.02, real=11.68 secs]
+ * 706.707: [Full GC (Allocation Failure) 706.708: [CMS (concurrent mode failure): 2655937K-&gt;2373842K(2658304K), 11.6746550 secs] 3973407K-&gt;2373842K(4040704K), [Metaspace: 72496K-&gt;72496K(1118208K)] icms_dc=77 , 11.6770830 secs] [Times: user=14.05 sys=0.02, real=11.68 secs]
  * 709.137: [CMS-concurrent-mark: 3.381/5.028 secs] [Times: user=23.92 sys=3.02, real=5.03 secs]
  * </pre>
  * 
@@ -130,8 +133,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 719.519: [GC (Allocation Failure) 719.521: [ParNew: 1382400K->1382400K(1382400K), 0.0000470 secs]719.521: [CMS722.601: [CMS-concurrent-mark: 3.567/3.633 secs] [Times: user=10.91 sys=0.69, real=3.63 secs]
- *  (concurrent mode failure): 2542828K->2658278K(2658304K), 12.3447910 secs] 3925228K->2702358K(4040704K), [Metaspace: 72175K->72175K(1118208K)] icms_dc=100 , 12.3480570 secs] [Times: user=15.38 sys=0.02, real=12.35 secs]
+ * 719.519: [GC (Allocation Failure) 719.521: [ParNew: 1382400K-&gt;1382400K(1382400K), 0.0000470 secs]719.521: [CMS722.601: [CMS-concurrent-mark: 3.567/3.633 secs] [Times: user=10.91 sys=0.69, real=3.63 secs]
+ *  (concurrent mode failure): 2542828K-&gt;2658278K(2658304K), 12.3447910 secs] 3925228K-&gt;2702358K(4040704K), [Metaspace: 72175K-&gt;72175K(1118208K)] icms_dc=100 , 12.3480570 secs] [Times: user=15.38 sys=0.02, real=12.35 secs]
  * </pre>
  *
  * <p>
@@ -139,7 +142,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 719.519: [GC (Allocation Failure) 719.521: [ParNew: 1382400K->1382400K(1382400K), 0.0000470 secs] (concurrent mode failure): 2542828K->2658278K(2658304K), 12.3447910 secs] 3925228K->2702358K(4040704K), [Metaspace: 72175K->72175K(1118208K)] icms_dc=100 , 12.3480570 secs] [Times: user=15.38 sys=0.02, real=12.35 secs]
+ * 719.519: [GC (Allocation Failure) 719.521: [ParNew: 1382400K-&gt;1382400K(1382400K), 0.0000470 secs] (concurrent mode failure): 2542828K-&gt;2658278K(2658304K), 12.3447910 secs] 3925228K-&gt;2702358K(4040704K), [Metaspace: 72175K-&gt;72175K(1118208K)] icms_dc=100 , 12.3480570 secs] [Times: user=15.38 sys=0.02, real=12.35 secs]
  * 719.521: [CMS722.601: [CMS-concurrent-mark: 3.567/3.633 secs] [Times: user=10.91 sys=0.69, real=3.63 secs]
  * </pre>
  *

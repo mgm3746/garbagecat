@@ -48,7 +48,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * 144501.626: [GC 144501.627: [ParNew (promotion failed): 680066K->680066K(707840K), 3.7067346 secs] 1971073K->1981370K(2018560K), 3.7084059 secs]
+ * 144501.626: [GC 144501.627: [ParNew (promotion failed): 680066K-&gt;680066K(707840K), 3.7067346 secs] 1971073K-&gt;1981370K(2018560K), 3.7084059 secs]
  * </pre>
  * 
  * <p>
@@ -56,7 +56,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 159275.552: [GC 159275.552: [ParNew (promotion failed): 2007040K->2007040K(2007040K), 4.3393411 secs] 5167424K->5187429K(12394496K) icms_dc=7 , 4.3398519 secs] [Times: user=4.96 sys=1.91, real=4.34 secs]
+ * 159275.552: [GC 159275.552: [ParNew (promotion failed): 2007040K-&gt;2007040K(2007040K), 4.3393411 secs] 5167424K-&gt;5187429K(12394496K) icms_dc=7 , 4.3398519 secs] [Times: user=4.96 sys=1.91, real=4.34 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -88,7 +88,10 @@ public class ParNewPromotionFailedEvent implements BlockingEvent, CmsCollection 
     private long timestamp;
 
     /**
-     * Create ParNew detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ParNewPromotionFailedEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -103,8 +106,11 @@ public class ParNewPromotionFailedEvent implements BlockingEvent, CmsCollection 
      * Alternate constructor. Create ParNew detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public ParNewPromotionFailedEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

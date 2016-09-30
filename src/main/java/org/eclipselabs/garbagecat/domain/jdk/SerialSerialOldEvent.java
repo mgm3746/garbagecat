@@ -41,7 +41,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * 160.678: [GC 160.678: [DefNew: 450682K->450682K(471872K), 0.0000099 secs]160.678: [Tenured: 604639K->552856K(1048576K), 1.1178810 secs] 1055322K->552856K(1520448K), 1.1180562 secs]
+ * 160.678: [GC 160.678: [DefNew: 450682K-&gt;450682K(471872K), 0.0000099 secs]160.678: [Tenured: 604639K-&gt;552856K(1048576K), 1.1178810 secs] 1055322K-&gt;552856K(1520448K), 1.1180562 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -106,7 +106,10 @@ public class SerialSerialOldEvent implements BlockingEvent, YoungCollection, Old
     private int oldAllocation;
 
     /**
-     * Create ParNew detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public SerialSerialOldEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -131,8 +134,11 @@ public class SerialSerialOldEvent implements BlockingEvent, YoungCollection, Old
      * Alternate constructor. Create ParNew detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public SerialSerialOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

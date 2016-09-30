@@ -351,8 +351,9 @@ public class JvmRun {
     }
 
     /**
-     * Ratio of GC to Stopped Time as a percent rounded to the nearest integer. 100 means all stopped time spent doing
-     * GC. 0 means none of the stopped time was due to GC.
+     * 
+     * @return Ratio of GC to Stopped Time as a percent rounded to the nearest integer. 100 means all stopped time spent
+     *         doing GC. 0 means none of the stopped time was due to GC.
      */
     public long getGcStoppedRatio() {
         long gcStoppedRatio;
@@ -370,8 +371,6 @@ public class JvmRun {
 
     /**
      * Do analysis.
-     * 
-     * @return A <code>List</code> of analysis points based on the JVM options and data.
      */
     public void doAnalysis() {
 
@@ -413,12 +412,11 @@ public class JvmRun {
             }
         }
 
-        // 7) Check for concurrent mode failure by logging event type. Going forward, this will be identified by a
-        // trigger, not a new logging event. This is needed to deal with legacy code that unfortunately created many
-        // unnecessary events instead of preparsing them into their component events.
+        // 7) Check for concurrent mode failure by logging event type. This is needed to deal with legacy code that does
+        // not understand triggers and creates many unnecessary events instead of preparsing them into their component
+        // events and/or triggers.
         if (!analysisKeys.contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE)) {
-            if (getEventTypes().contains(LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE)
-                    || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE)
+            if (getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE)
                     || getEventTypes().contains(LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA)
                     || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE)
                     || getEventTypes()
@@ -634,7 +632,7 @@ public class JvmRun {
     /**
      * Determine if the JVM run used the G1 collector.
      * 
-     * @param eventType
+     * @param eventTypes
      *            Log entry <code>LogEventType</code>.
      * @return True if any <code>LogEventType</code> is G1, false otherwise.
      */
@@ -654,7 +652,7 @@ public class JvmRun {
     /**
      * Determine if the JVM run used the CMS collector.
      * 
-     * @param eventType
+     * @param eventTypes
      *            Log entry <code>LogEventType</code>.
      * @return True if any <code>LogEventType</code> is G1, false otherwise.
      */

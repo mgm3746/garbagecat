@@ -44,13 +44,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2010-02-26T09:32:12.486-0600: [GC [ParNew: 150784K->3817K(169600K), 0.0328800 secs] 150784K->3817K(1029760K), 0.0329790 secs] [Times: user=0.00 sys=0.00, real=0.03 secs]
+ * 2010-02-26T09:32:12.486-0600: [GC [ParNew: 150784K-&gt;3817K(169600K), 0.0328800 secs] 150784K-&gt;3817K(1029760K), 0.0329790 secs] [Times: user=0.00 sys=0.00, real=0.03 secs]
  * </pre>
  * 
  * Preprocessed:
  * 
  * <pre>
- * 142.973: [GC [ParNew: 150784K->3817K(169600K), 0.0328800 secs] 150784K->3817K(1029760K), 0.0329790 secs] [Times: user=0.00 sys=0.00, real=0.03 secs]
+ * 142.973: [GC [ParNew: 150784K-&gt;3817K(169600K), 0.0328800 secs] 150784K-&gt;3817K(1029760K), 0.0329790 secs] [Times: user=0.00 sys=0.00, real=0.03 secs]
  * </pre>
  * 
  * <p>

@@ -714,7 +714,7 @@ public class Jvm {
     }
 
     /**
-     * @return True if stack size >= 1024k, false otherwise.
+     * @return True if stack size &gt;= 1024k, false otherwise.
      */
     public boolean hasLargeThreadStackSize() {
         boolean hasLargeThreadStackSize = false;

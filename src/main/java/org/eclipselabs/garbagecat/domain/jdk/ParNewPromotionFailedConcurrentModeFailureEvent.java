@@ -44,17 +44,16 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 25281.015: [GC 25281.015: [ParNew (promotion failed): 261760K->261760K(261952K), 0.1785000 secs]25281.193: [CMS (concurrent mode failure): 1048384K->1015603K(1179648K), 7.6767910 secs] 1292923K->1015603K(1441600K), 7.8557660 secs]
+ * 25281.015: [GC 25281.015: [ParNew (promotion failed): 261760K-&gt;261760K(261952K), 0.1785000 secs]25281.193: [CMS (concurrent mode failure): 1048384K-&gt;1015603K(1179648K), 7.6767910 secs] 1292923K-&gt;1015603K(1441600K), 7.8557660 secs]
  * </pre>
  * 
  * <p>
  * 2) Split into 2 lines then combined as 1 line by
- * {@link org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction} with
- * CMS-concurrent-abortable-preclean:
+ * {@link org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction} with CMS-concurrent-abortable-preclean:
  * </p>
  * 
  * <pre>
- * 233333.318: [GC 233333.319: [ParNew (promotion failed): 673108K->673108K(707840K), 1.5366054 secs]233334.855: [CMS233334.856: [CMS-concurrent-abortable-preclean: 12.033/27.431 secs] (concurrent mode failure): 1125100K->1156809K(1310720K), 36.8003032 secs] 1791073K->1156809K(2018560K), 38.3378201 secs]
+ * 233333.318: [GC 233333.319: [ParNew (promotion failed): 673108K-&gt;673108K(707840K), 1.5366054 secs]233334.855: [CMS233334.856: [CMS-concurrent-abortable-preclean: 12.033/27.431 secs] (concurrent mode failure): 1125100K-&gt;1156809K(1310720K), 36.8003032 secs] 1791073K-&gt;1156809K(2018560K), 38.3378201 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -122,7 +121,10 @@ public class ParNewPromotionFailedConcurrentModeFailureEvent
     private int oldAllocation;
 
     /**
-     * Create ParNew detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ParNewPromotionFailedConcurrentModeFailureEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -146,8 +148,11 @@ public class ParNewPromotionFailedConcurrentModeFailureEvent
      * Alternate constructor. Create ParNew detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public ParNewPromotionFailedConcurrentModeFailureEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

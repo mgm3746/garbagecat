@@ -41,7 +41,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 3743.645: [Full GC [PSYoungGen: 419840K->415020K(839680K)] [PSOldGen: 5008922K->5008922K(5033984K)] 5428762K->5423942K(5873664K) [PSPermGen: 193275K->193275K(262144K)]      GC time would exceed GCTimeLimit of 98%
+ * 3743.645: [Full GC [PSYoungGen: 419840K-&gt;415020K(839680K)] [PSOldGen: 5008922K-&gt;5008922K(5033984K)] 5428762K-&gt;5423942K(5873664K) [PSPermGen: 193275K-&gt;193275K(262144K)]      GC time would exceed GCTimeLimit of 98%
  * , 33.6887649 secs] [Times: user=33.68 sys=0.02, real=33.69 secs]
  * </pre>
  * 
@@ -50,7 +50,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 3743.645: [Full GC [PSYoungGen: 419840K->415020K(839680K)] [PSOldGen: 5008922K->5008922K(5033984K)] 5428762K->5423942K(5873664K) [PSPermGen: 193275K->193275K(262144K)], 33.6887649 secs] [Times: user=33.68 sys=0.02, real=33.69 secs]
+ * 3743.645: [Full GC [PSYoungGen: 419840K-&gt;415020K(839680K)] [PSOldGen: 5008922K-&gt;5008922K(5033984K)] 5428762K-&gt;5423942K(5873664K) [PSPermGen: 193275K-&gt;193275K(262144K)], 33.6887649 secs] [Times: user=33.68 sys=0.02, real=33.69 secs]
  * </pre>
  * 
  * <p>
@@ -59,7 +59,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 3924.453: [Full GC [PSYoungGen: 419840K->418436K(839680K)] [PSOldGen: 5008601K->5008601K(5033984K)] 5428441K->5427038K(5873664K) [PSPermGen: 193278K->193278K(262144K)]      GC time is exceeding GCTimeLimit of 98%
+ * 3924.453: [Full GC [PSYoungGen: 419840K-&gt;418436K(839680K)] [PSOldGen: 5008601K-&gt;5008601K(5033984K)] 5428441K-&gt;5427038K(5873664K) [PSPermGen: 193278K-&gt;193278K(262144K)]      GC time is exceeding GCTimeLimit of 98%
  * </pre>
  * 
  * <p>
@@ -68,7 +68,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 52767.809: [Full GC [PSYoungGen: 109294K->94333K(184960K)] [ParOldGen: 1307971K->1307412K(1310720K)] 1417265K->1401746K(1495680K) [PSPermGen: 113654K->113646K(196608K)]        GC time is exceeding GCTimeLimit of 98%
+ * 52767.809: [Full GC [PSYoungGen: 109294K-&gt;94333K(184960K)] [ParOldGen: 1307971K-&gt;1307412K(1310720K)] 1417265K-&gt;1401746K(1495680K) [PSPermGen: 113654K-&gt;113646K(196608K)]        GC time is exceeding GCTimeLimit of 98%
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -99,6 +99,9 @@ public class GcTimeLimitExceededPreprocessAction implements PreprocessAction {
 
     /**
      * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public GcTimeLimitExceededPreprocessAction(String logEntry) {
         Matcher matcher = PATTERN1.matcher(logEntry);
@@ -127,8 +130,7 @@ public class GcTimeLimitExceededPreprocessAction implements PreprocessAction {
      * @param logLine
      *            The log line to test.
      * @param priorLogLine
-     *            The last log entry processed. Required due to sharing same duration line as
-     *            {@org.eclipselabs.garbagecat.preprocess.jdk.G1PrintGcDetailsPreprocessAction}.
+     *            The last log entry processed.
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine) {

@@ -41,12 +41,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <p>
- * Split into 2 lines then combined as 1 line by
- * {@link org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction} with CMS-concurrent-mark:
+ * Split into 2 lines then combined as 1 line by {@link org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction}
+ * with CMS-concurrent-mark:
  * </p>
  * 
  * <pre>
- * 2746.109: [GC 2746.109: [ParNew (promotion failed): 242303K->242304K(242304K), 1.3009892 secs]2747.410: [CMS2755.518: [CMS-concurrent-mark: 11.734/13.504 secs] (concurrent mode failure): 5979868K->5968004K(6014592K), 78.3207206 secs] 6205857K->5968004K(6256896K), [CMS Perm : 207397K->207212K(262144K)], 79.6222096 secs]
+ * 2746.109: [GC 2746.109: [ParNew (promotion failed): 242303K-&gt;242304K(242304K), 1.3009892 secs]2747.410: [CMS2755.518: [CMS-concurrent-mark: 11.734/13.504 secs] (concurrent mode failure): 5979868K-&gt;5968004K(6014592K), 78.3207206 secs] 6205857K-&gt;5968004K(6256896K), [CMS Perm : 207397K-&gt;207212K(262144K)], 79.6222096 secs]
  * </pre>
  * 
  * <p>
@@ -58,17 +58,16 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 4555.706: [GC 4555.706: [ParNew (promotion failed): 1304576K->1304575K(1304576K), 4.5501949 secs]4560.256: [CMS CMS: abort preclean due to time 4562.921: [CMS-concurrent-abortable-preclean: 2.615/14.874 secs] (concurrent mode failure): 924455K->679155K(4886528K), 6.2285220 secs] 1973973K->679155K(6191104K), [CMS Perm : 198322K->198277K(524288K)] icms_dc=24 , 10.7789303 secs] [Times: user=9.49 sys=1.83, real=10.78 secs]
+ * 4555.706: [GC 4555.706: [ParNew (promotion failed): 1304576K-&gt;1304575K(1304576K), 4.5501949 secs]4560.256: [CMS CMS: abort preclean due to time 4562.921: [CMS-concurrent-abortable-preclean: 2.615/14.874 secs] (concurrent mode failure): 924455K-&gt;679155K(4886528K), 6.2285220 secs] 1973973K-&gt;679155K(6191104K), [CMS Perm : 198322K-&gt;198277K(524288K)] icms_dc=24 , 10.7789303 secs] [Times: user=9.49 sys=1.83, real=10.78 secs]
  * </pre>
  * 
  * <p>
- * Split into 2 lines then combined as 1 line by
- * {@link org.eclipselabs.garbagecat.preprocess.jdk.CmsConcurrentModeFailurePreprocessAction} with concurrent mode
- * failure missing:
+ * Split into 2 lines then combined as 1 line by {@link org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction}
+ * with concurrent mode failure missing:
  * </p>
  * 
  * <pre>
- * 88063.609: [GC 88063.610: [ParNew (promotion failed): 513856K->513856K(513856K), 4.0911197 secs]88067.701: [CMS88067.742: [CMS-concurrent-reset: 0.309/4.421 secs]: 10612422K->4373474K(11911168K), 76.7523274 secs] 11075362K->4373474K(12425024K), [CMS Perm : 214530K->213777K(524288K)], 80.8440551 secs] [Times: user=80.01 sys=5.57, real=80.84 secs]
+ * 88063.609: [GC 88063.610: [ParNew (promotion failed): 513856K-&gt;513856K(513856K), 4.0911197 secs]88067.701: [CMS88067.742: [CMS-concurrent-reset: 0.309/4.421 secs]: 10612422K-&gt;4373474K(11911168K), 76.7523274 secs] 11075362K-&gt;4373474K(12425024K), [CMS Perm : 214530K-&gt;213777K(524288K)], 80.8440551 secs] [Times: user=80.01 sys=5.57, real=80.84 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -153,7 +152,10 @@ public class ParNewPromotionFailedConcModeFailurePermDataEvent
     private int permGenAllocation;
 
     /**
-     * Create ParNew detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ParNewPromotionFailedConcModeFailurePermDataEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -180,8 +182,11 @@ public class ParNewPromotionFailedConcModeFailurePermDataEvent
      * Alternate constructor. Create ParNew detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public ParNewPromotionFailedConcModeFailurePermDataEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

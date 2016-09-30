@@ -40,7 +40,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 1.305: [GC pause (mixed) 102M->24M(512M), 0.0254200 secs]
+ * 1.305: [GC pause (mixed) 102M-&gt;24M(512M), 0.0254200 secs]
  * </pre>
  * 
  * <p>
@@ -48,7 +48,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2010-02-26T08:31:51.990-0600: [GC pause (mixed) 102M->24M(512M), 0.0254200 secs]
+ * 2010-02-26T08:31:51.990-0600: [GC pause (mixed) 102M-&gt;24M(512M), 0.0254200 secs]
  * </pre>
  * 
  * <p>
@@ -56,7 +56,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs] 13210M->11571M(30720M) [Times: user=0.19 sys=0.00, real=0.05 secs]
+ * 2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs] 13210M-&gt;11571M(30720M) [Times: user=0.19 sys=0.00, real=0.05 secs]
  * </pre>
  * 
  * <p>
@@ -64,7 +64,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 3082.652: [GC pause (mixed), 0.0762060 secs] 12083M->9058M(26624M) [Times: user=0.30 sys=0.00, real=0.08 secs]
+ * 3082.652: [GC pause (mixed), 0.0762060 secs] 12083M-&gt;9058M(26624M) [Times: user=0.30 sys=0.00, real=0.08 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -139,7 +139,10 @@ public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData, G
     private String trigger;
 
     /**
-     * Create detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public G1MixedPause(String logEntry) {
         this.logEntry = logEntry;
@@ -176,8 +179,11 @@ public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData, G
      * Alternate constructor. Create detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public G1MixedPause(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

@@ -72,7 +72,10 @@ public class HeaderCommandLineFlagsEvent implements LogEvent {
     private long timestamp;
 
     /**
-     * Create CommandLineFlags detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public HeaderCommandLineFlagsEvent(String logEntry) {
         this.logEntry = logEntry;

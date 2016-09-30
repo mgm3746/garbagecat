@@ -33,8 +33,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <p>
- * 1) The beginning of a {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} or
- * {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent}.
+ * 1) The beginning of a {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent}.
  * </p>
  * 
  * <pre>
@@ -84,7 +83,10 @@ public class TruncatedEvent implements LogEvent {
     private long timestamp;
 
     /**
-     * Create ParNew detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public TruncatedEvent(String logEntry) {
         this.logEntry = logEntry;

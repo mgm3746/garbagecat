@@ -31,6 +31,7 @@ public class UnknownEvent implements LogEvent {
      * Default constructor.
      * 
      * @param logEntry
+     *            The log entry for the event.
      */
     public UnknownEvent(String logEntry) {
         super();

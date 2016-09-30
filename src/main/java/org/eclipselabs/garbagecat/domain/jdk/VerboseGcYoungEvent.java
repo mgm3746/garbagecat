@@ -40,7 +40,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]
+ * 2205570.508: [GC 1726387K-&gt;773247K(3097984K), 0.2318035 secs]
  * </pre>
  * 
  * <p>
@@ -96,7 +96,10 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
     private static Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
 
     /**
-     * Create serial old detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public VerboseGcYoungEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -119,8 +122,11 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
      * Alternate constructor. Create logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public VerboseGcYoungEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

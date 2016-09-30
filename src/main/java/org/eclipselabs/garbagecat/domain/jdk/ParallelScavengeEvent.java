@@ -41,7 +41,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] 160183K->133159K(585088K), 0.0225213 secs]
+ * 19810.091: [GC [PSYoungGen: 27808K-&gt;632K(28032K)] 160183K-&gt;133159K(585088K), 0.0225213 secs]
  * </pre>
  * 
  * <p>
@@ -49,7 +49,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 14112.691: [GC-- [PSYoungGen: 313864K->313864K(326656K)] 879670K->1012935K(1025728K), 0.9561947 secs]
+ * 14112.691: [GC-- [PSYoungGen: 313864K-&gt;313864K(326656K)] 879670K-&gt;1012935K(1025728K), 0.9561947 secs]
  * </pre>
  * 
  * <p>
@@ -57,7 +57,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 1.219: [GC (Metadata GC Threshold) [PSYoungGen: 1226834K->17779K(1835008K)] 1226834K->17795K(6029312K), 0.0144911 secs] [Times: user=0.04 sys=0.00, real=0.01 secs]
+ * 1.219: [GC (Metadata GC Threshold) [PSYoungGen: 1226834K-&gt;17779K(1835008K)] 1226834K-&gt;17795K(6029312K), 0.0144911 secs] [Times: user=0.04 sys=0.00, real=0.01 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -127,7 +127,10 @@ public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, Yo
     private static final Pattern pattern = Pattern.compile(ParallelScavengeEvent.REGEX);
 
     /**
-     * Create parallel scavenge logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ParallelScavengeEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -152,8 +155,11 @@ public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, Yo
      * Alternate constructor. Create parallel scavenge logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public ParallelScavengeEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

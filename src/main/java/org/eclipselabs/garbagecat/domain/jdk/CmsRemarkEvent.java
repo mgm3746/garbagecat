@@ -91,9 +91,10 @@ public class CmsRemarkEvent implements BlockingEvent, CmsCollection, TriggerData
     private static Pattern pattern = Pattern.compile(CmsRemarkEvent.REGEX);
 
     /**
-     * Create CMS Remark logging event from log entry.
+     * Create event from log entry.
      * 
      * @param logEntry
+     *            The log entry for the event.
      */
     public CmsRemarkEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -110,8 +111,11 @@ public class CmsRemarkEvent implements BlockingEvent, CmsCollection, TriggerData
      * Alternate constructor. Create CMS Remark logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public CmsRemarkEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

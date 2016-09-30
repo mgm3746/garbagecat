@@ -44,7 +44,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 5.980: [Full GC 5.980: [CMS: 5589K->5796K(122880K), 0.0889610 secs] 11695K->5796K(131072K), [CMS Perm : 13140K->13124K(131072K)], 0.0891270 secs]
+ * 5.980: [Full GC 5.980: [CMS: 5589K-&gt;5796K(122880K), 0.0889610 secs] 11695K-&gt;5796K(131072K), [CMS Perm : 13140K-&gt;13124K(131072K)], 0.0891270 secs]
  * </pre>
  * 
  * <p>
@@ -52,7 +52,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2.928: [Full GC (System) 2.929: [CMS: 0K->6501K(8218240K), 0.2525532 secs] 66502K->6501K(8367360K), [CMS Perm : 16640K->16623K(524288K)], 0.2527331 secs]
+ * 2.928: [Full GC (System) 2.929: [CMS: 0K-&gt;6501K(8218240K), 0.2525532 secs] 66502K-&gt;6501K(8367360K), [CMS Perm : 16640K-&gt;16623K(524288K)], 0.2527331 secs]
  * </pre>
  * 
  * <p>
@@ -62,13 +62,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <pre>
  * raw:
- * 2013-12-09T16:43:09.366+0000: 1504.625: [Full GC2013-12-09T16:43:09.366+0000: 1504.625: [CMS: 1172695K->840574K(1549164K), 3.7572507 secs] 1301420K->840574K(1855852K), [CMS Perm : 226817K->226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
+ * 2013-12-09T16:43:09.366+0000: 1504.625: [Full GC2013-12-09T16:43:09.366+0000: 1504.625: [CMS: 1172695K-&gt;840574K(1549164K), 3.7572507 secs] 1301420K-&gt;840574K(1855852K), [CMS Perm : 226817K-&gt;226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
  * 
  * </pre>
  * 
  * <pre>
  * preprocessed:
- * 1504.625: [Full GC1504.625: [CMS: 1172695K->840574K(1549164K), 3.7572507 secs] 1301420K->840574K(1855852K), [CMS Perm : 226817K->226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
+ * 1504.625: [Full GC1504.625: [CMS: 1172695K-&gt;840574K(1549164K), 3.7572507 secs] 1301420K-&gt;840574K(1855852K), [CMS Perm : 226817K-&gt;226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
  * </pre>
  * 
  * <p>
@@ -77,8 +77,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <pre>
  * raw:
- * 2013-12-09T16:43:09.366+0000: 1504.625: [Full GC2013-12-09T16:43:09.366+0000: 1504.625: [CMS: 1172695K->840574K(1549164K), 3.7572507 secs] 1301420K->840574K(1855852K), [CMS Perm : 226817K->226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
- * 
+ * 2013-12-09T16:43:09.366+0000: 1504.625: [Full GC2013-12-09T16:43:09.366+0000: 1504.625: [CMS: 1172695K-&gt;840574K(1549164K), 3.7572507 secs] 1301420K-&gt;840574K(1855852K), [CMS Perm : 226817K-&gt;226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -96,7 +95,7 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_SYSTEM_GC
             + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\) )?" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS(bailing out to foreground collection)?( \\((" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE
+            + "(: \\[CMS)?(bailing out to foreground collection)?( \\((" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE
             + ")\\))?( \\(" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\)\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
             + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION
             + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]"
@@ -110,7 +109,10 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
     private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
 
     /**
-     * Create CMS logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public CmsSerialOldEvent(String logEntry) {
 
@@ -118,25 +120,24 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
-            super.setOldOccupancyInit(Integer.parseInt(matcher.group(21)));
-            super.setOldOccupancyEnd(Integer.parseInt(matcher.group(22)));
-            super.setOldSpace(Integer.parseInt(matcher.group(23)));
-            int totalBegin = Integer.parseInt(matcher.group(25));
-            super.setYoungOccupancyInit(totalBegin - super.getOldOccupancyInit());
-            int totalEnd = Integer.parseInt(matcher.group(26));
-            super.setYoungOccupancyEnd(totalEnd - super.getOldOccupancyEnd());
-            int totalAllocation = Integer.parseInt(matcher.group(27));
-            super.setYoungSpace(totalAllocation - super.getOldSpace());
-            super.setPermOccupancyInit(Integer.parseInt(matcher.group(29)));
-            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(30)));
-            super.setPermSpace(Integer.parseInt(matcher.group(31)));
-            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(33)).intValue());
-            if (matcher.group(9) != null) {
-                trigger = matcher.group(9);
+            if (matcher.group(10) != null) {
+                trigger = matcher.group(10);
             } else {
-
                 trigger = matcher.group(4);
             }
+            super.setOldOccupancyInit(Integer.parseInt(matcher.group(22)));
+            super.setOldOccupancyEnd(Integer.parseInt(matcher.group(23)));
+            super.setOldSpace(Integer.parseInt(matcher.group(24)));
+            int totalBegin = Integer.parseInt(matcher.group(26));
+            super.setYoungOccupancyInit(totalBegin - super.getOldOccupancyInit());
+            int totalEnd = Integer.parseInt(matcher.group(27));
+            super.setYoungOccupancyEnd(totalEnd - super.getOldOccupancyEnd());
+            int totalAllocation = Integer.parseInt(matcher.group(28));
+            super.setYoungSpace(totalAllocation - super.getOldSpace());
+            super.setPermOccupancyInit(Integer.parseInt(matcher.group(30)));
+            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(31)));
+            super.setPermSpace(Integer.parseInt(matcher.group(32)));
+            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(34)).intValue());
         }
     }
 
@@ -144,8 +145,11 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
      * Alternate constructor. Create CMS logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public CmsSerialOldEvent(String logEntry, long timestamp, int duration) {
         super.setLogEntry(logEntry);

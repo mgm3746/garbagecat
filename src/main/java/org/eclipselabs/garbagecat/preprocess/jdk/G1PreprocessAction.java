@@ -65,7 +65,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *    [Clear CT:   0.0 ms]
  *    [Other:   0.1 ms]
  *       [Choose CSet:   0.0 ms]
- *    [ 8192K->2112K(59M)]
+ *    [ 8192K-&gt;2112K(59M)]
  *  [Times: user=0.01 sys=0.00, real=0.01 secs]
  * </pre>
  *
@@ -74,7 +74,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 0.304: [GC pause (young), 0.00376500 secs] 8192K->2112K(59M) [Times: user=0.01 sys=0.00, real=0.01 secs]
+ * 0.304: [GC pause (young), 0.00376500 secs] 8192K-&gt;2112K(59M) [Times: user=0.01 sys=0.00, real=0.01 secs]
  * </pre>
  * 
  * <p>
@@ -103,7 +103,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *       [Ref Proc: 7.9 ms]
  *       [Ref Enq: 0.1 ms]
  *       [Free CSet: 0.0 ms]
- *    [Eden: 128.0M(128.0M)->0.0B(112.0M) Survivors: 0.0B->16.0M Heap: 128.0M(30.0G)->24.9M(30.0G)]
+ *    [Eden: 128.0M(128.0M)-&gt;0.0B(112.0M) Survivors: 0.0B-&gt;16.0M Heap: 128.0M(30.0G)-&gt;24.9M(30.0G)]
  *  [Times: user=0.09 sys=0.02, real=0.03 secs]
  * </pre>
  *
@@ -112,7 +112,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 2.192: [GC pause (G1 Evacuation Pause) (young), 0.0209631 secs] 128.0M->24.9M(30.0G) [Times: user=0.09 sys=0.02, real=0.03 secs]
+ * 2.192: [GC pause (G1 Evacuation Pause) (young), 0.0209631 secs] 128.0M-&gt;24.9M(30.0G) [Times: user=0.09 sys=0.02, real=0.03 secs]
  * </pre>
  * 
  * <p>
@@ -142,7 +142,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *       [Ref Proc: 8.0 ms]
  *       [Ref Enq: 0.1 ms]
  *       [Free CSet: 0.0 ms]
- *    [Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: 415.0M(30.0G)->313.0M(30.0G)]
+ *    [Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 415.0M(30.0G)-&gt;313.0M(30.0G)]
  *  [Times: user=0.01 sys=0.00, real=0.02 secs]
  * </pre>
  *
@@ -151,7 +151,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 5.293: [GC pause (GCLocker Initiated GC) (young), 0.0176868 secs] 415M->313M(30720M) [Times: user=0.01 sys=0.00, real=0.02 secs]
+ * 5.293: [GC pause (GCLocker Initiated GC) (young), 0.0176868 secs] 415M-&gt;313M(30720M) [Times: user=0.01 sys=0.00, real=0.02 secs]
  * </pre>
  * 
  * <p>
@@ -203,8 +203,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *       [Ref Proc: 0.2 ms]
  *       [Ref Enq: 0.0 ms]
  *       [Free CSet: 1.9 ms]
- *    [Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: 12.9G(30.0G)->11.3G(30.0G)]
+ *    [Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 12.9G(30.0G)-&gt;11.3G(30.0G)]
  *  [Times: user=0.19 sys=0.00, real=0.05 secs]
+ * </pre>
  *
  * <p>
  * Preprocessed:
@@ -214,19 +215,21 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2971.469: [GC remark, 0.2274544 secs] [Times: user=0.22 sys=0.00, real=0.22 secs]
  * </pre>
  * 
+ * <p>
  * 6) JDK8 GC Cleanup:
  * </p>
  *
  * <pre>
- * 2972.698: [GC cleanup 13G->12G(30G), 0.0358748 secs]
+ * 2972.698: [GC cleanup 13G-&gt;12G(30G), 0.0358748 secs]
  *  [Times: user=0.19 sys=0.00, real=0.03 secs]
+ * </pre>
  *
  * <p>
  * Preprocessed:
  * </p>
  *
  * <pre>
- * 2972.698: [GC cleanup 13G->12G(30G), 0.0358748 secs] [Times: user=0.19 sys=0.00, real=0.03 secs]
+ * 2972.698: [GC cleanup 13G-&gt;12G(30G), 0.0358748 secs] [Times: user=0.19 sys=0.00, real=0.03 secs]
  * </pre>
  * 
  * <p>
@@ -234,8 +237,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 2016-02-09T06:21:30.379-0500: 27999.141: [Full GC 18G->4153M(26G), 10.1760410 secs]
- *    [Eden: 0.0B(1328.0M)->0.0B(15.6G) Survivors: 0.0B->0.0B Heap: 18.9G(26.0G)->4153.8M(26.0G)]
+ * 2016-02-09T06:21:30.379-0500: 27999.141: [Full GC 18G-&gt;4153M(26G), 10.1760410 secs]
+ *    [Eden: 0.0B(1328.0M)-&gt;0.0B(15.6G) Survivors: 0.0B-&gt;0.0B Heap: 18.9G(26.0G)-&gt;4153.8M(26.0G)]
  * </pre>
  *
  * <p>
@@ -506,7 +509,7 @@ public class G1PreprocessAction implements PreprocessAction {
      * @param entangledLogLines
      *            Log lines to be output out of order.
      */
-    public G1PreprocessAction(String priorLogEntry, String logEntry, String nextLogEntr,
+    public G1PreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
             List<String> entangledLogLines) {
 
         // Beginning logging

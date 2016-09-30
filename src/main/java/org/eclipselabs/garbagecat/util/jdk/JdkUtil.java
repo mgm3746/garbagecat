@@ -29,7 +29,6 @@ import org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkWithClassUnloadingEvent;
-import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1CleanupEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1ConcurrentEvent;
@@ -93,15 +92,15 @@ public class JdkUtil {
         //
         PAR_NEW_CMS_SERIAL_OLD, PARALLEL_SERIAL_OLD, PARALLEL_SCAVENGE, PARALLEL_OLD_COMPACTING, CMS_SERIAL_OLD,
         //
-        CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE, CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK,
+        CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK, CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME,
         //
-        CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD,
+        APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD, SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG,
         //
-        SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED,
+        VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED, G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT,
         //
-        G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
+        G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC, HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY,
         //
-        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, PRINT_REFERENCE_GC, LOG_ROTATION
+        HEADER_VERSION, PRINT_REFERENCE_GC, LOG_ROTATION
     };
 
     /**
@@ -155,8 +154,6 @@ public class JdkUtil {
             return LogEventType.SERIAL_OLD;
         if (CmsSerialOldEvent.match(logLine))
             return LogEventType.CMS_SERIAL_OLD;
-        if (CmsSerialOldConcurrentModeFailureEvent.match(logLine))
-            return LogEventType.CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE;
         if (CmsInitialMarkEvent.match(logLine))
             return LogEventType.CMS_INITIAL_MARK;
         if (CmsRemarkEvent.match(logLine))
@@ -259,9 +256,6 @@ public class JdkUtil {
             break;
         case CMS_SERIAL_OLD:
             event = new CmsSerialOldEvent(logLine);
-            break;
-        case CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE:
-            event = new CmsSerialOldConcurrentModeFailureEvent(logLine);
             break;
         case CMS_INITIAL_MARK:
             event = new CmsInitialMarkEvent(logLine);
@@ -409,9 +403,6 @@ public class JdkUtil {
         case CMS_SERIAL_OLD:
             event = new CmsSerialOldEvent(logEntry, timestamp, duration);
             break;
-        case CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE:
-            event = new CmsSerialOldConcurrentModeFailureEvent(logEntry, timestamp, duration);
-            break;
         case CMS_INITIAL_MARK:
             event = new CmsInitialMarkEvent(logEntry, timestamp, duration);
             break;
@@ -489,6 +480,7 @@ public class JdkUtil {
 
     /**
      * @param eventType
+     *            The event type to test.
      * @return true if the log event is blocking, false if it is concurrent or informational.
      */
     public static final boolean isBlocking(LogEventType eventType) {
@@ -638,15 +630,13 @@ public class JdkUtil {
     }
 
     /**
-     * Convert {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1_DETAILS} to
-     * {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1}.
+     * Convert SIZE_G1_DETAILS to SIZE_G1.
      * 
      * @param size
-     *            The size in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1_DETAILS} format (e.g.
-     *            '128.0').
+     *            The size (e.g. '128.0').
      * @param units
-     *            The units in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1_DETAILS} format (e.g. 'G').
-     * @return The size block in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #SIZE_G1} format (e.g. '131072M').
+     *            The units (e.g. 'G').
+     * @return The size block in G1 format (e.g. '131072M').
      */
     public static String convertSizeG1DetailsToSizeG1(final String size, final char units) {
 
@@ -680,10 +670,10 @@ public class JdkUtil {
     }
 
     /**
-     * Convert {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #OPTION_SIZE} to bytes.
+     * Convert JVM size option to bytes.
      * 
      * @param size
-     *            The size in {@value org.eclipselabs.garbagecat.util.jdk.JdkRegEx #OPTION_SIZE} format (e.g. '128k').
+     *            The size in various units (e.g. 'k').
      * @return The size in bytes.
      */
     public static long convertOptionSizeToBytes(final String size) {
@@ -767,7 +757,6 @@ public class JdkUtil {
         switch (eventType) {
         case CMS_CONCURRENT:
         case CMS_SERIAL_OLD:
-        case CMS_SERIAL_OLD_CONCURRENT_MODE_FAILURE:
         case CMS_INITIAL_MARK:
         case CMS_REMARK:
         case CMS_REMARK_WITH_CLASS_UNLOADING:

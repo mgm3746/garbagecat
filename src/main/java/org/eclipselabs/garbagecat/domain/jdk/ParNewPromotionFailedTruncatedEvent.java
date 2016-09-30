@@ -35,13 +35,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * 5881.424: [GC 5881.424: [ParNew (promotion failed): 153272K->152257K(153344K), 0.2143850 secs]5881.639: [CMS
+ * 5881.424: [GC 5881.424: [ParNew (promotion failed): 153272K-&gt;152257K(153344K), 0.2143850 secs]5881.639: [CMS
  * </pre>
  * 
  * With a {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} at the end:
  * 
  * <pre>
- * 36455.096: [GC 36455.096: [ParNew (promotion failed): 153344K->153344K(153344K), 0.6818450 secs]36455.778: [CMS36459.090: [CMS-concurrent-mark: 3.439/4.155 secs] [Times: user=8.27 sys=0.17, real=4.16 secs]
+ * 36455.096: [GC 36455.096: [ParNew (promotion failed): 153344K-&gt;153344K(153344K), 0.6818450 secs]36455.778: [CMS36459.090: [CMS-concurrent-mark: 3.439/4.155 secs] [Times: user=8.27 sys=0.17, real=4.16 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -73,7 +73,10 @@ public class ParNewPromotionFailedTruncatedEvent implements BlockingEvent, CmsCo
     private long timestamp;
 
     /**
-     * Create ParNew detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ParNewPromotionFailedTruncatedEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -88,8 +91,11 @@ public class ParNewPromotionFailedTruncatedEvent implements BlockingEvent, CmsCo
      * Alternate constructor. Create ParNew detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public ParNewPromotionFailedTruncatedEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

@@ -40,6 +40,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * Other JVM operations that require a safepoint:
+ * </p>
  * <ul>
  * <li>ThreadDump</li>
  * <li>HeapDumper</li>
@@ -51,7 +52,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <li>FindDeadlock</li>
  * <li>EnableBiasLocking</li>
  * </ul>
- * </p>
  * 
  * <h3>Example Logging</h3>
  * 
@@ -75,7 +75,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * 2) Stopping threads information added JDK8 update 40:
- * <p>
+ * </p>
  * 
  * <pre>
  * 0.147: Total time for which application threads were stopped: 0.0000921 seconds, Stopping threads took: 0.0000190 seconds
@@ -113,7 +113,10 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
     private static Pattern pattern = Pattern.compile(ApplicationStoppedTimeEvent.REGEX);
 
     /**
-     * Create application stopped time logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ApplicationStoppedTimeEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -130,8 +133,11 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
      * Alternate constructor. Create application stopped time event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in microseconds (rounded).
      */
     public ApplicationStoppedTimeEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

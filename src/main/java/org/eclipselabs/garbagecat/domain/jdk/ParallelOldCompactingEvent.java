@@ -54,7 +54,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] [ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) [PSPermGen: 81960K->81783K(164352K)], 2.4749181 secs]
+ * 2182.541: [Full GC [PSYoungGen: 1940K-&gt;0K(98560K)] [ParOldGen: 813929K-&gt;422305K(815616K)] 815869K-&gt;422305K(914176K) [PSPermGen: 81960K-&gt;81783K(164352K)], 2.4749181 secs]
  * </pre>
  * 
  * <p>
@@ -62,7 +62,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2.417: [Full GC (System) [PSYoungGen: 1788K->0K(12736K)] [ParOldGen: 1084K->2843K(116544K)] 2872K->2843K(129280K) [PSPermGen: 8602K->8593K(131072K)], 0.1028360 secs]
+ * 2.417: [Full GC (System) [PSYoungGen: 1788K-&gt;0K(12736K)] [ParOldGen: 1084K-&gt;2843K(116544K)] 2872K-&gt;2843K(129280K) [PSPermGen: 8602K-&gt;8593K(131072K)], 0.1028360 secs]
  * </pre>
  * 
  * <p>
@@ -70,7 +70,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 1.234: [Full GC (Metadata GC Threshold) [PSYoungGen: 17779K->0K(1835008K)] [ParOldGen: 16K->16894K(4194304K)] 17795K->16894K(6029312K), [Metaspace: 19114K->19114K(1067008K)], 0.0352132 secs] [Times: user=0.09 sys=0.00, real=0.04 secs]
+ * 1.234: [Full GC (Metadata GC Threshold) [PSYoungGen: 17779K-&gt;0K(1835008K)] [ParOldGen: 16K-&gt;16894K(4194304K)] 17795K-&gt;16894K(6029312K), [Metaspace: 19114K-&gt;19114K(1067008K)], 0.0352132 secs] [Times: user=0.09 sys=0.00, real=0.04 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -158,7 +158,10 @@ public class ParallelOldCompactingEvent
     private static Pattern pattern = Pattern.compile(ParallelOldCompactingEvent.REGEX);
 
     /**
-     * Create parallel old detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ParallelOldCompactingEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -184,8 +187,11 @@ public class ParallelOldCompactingEvent
      * Alternate constructor. Create parallel old detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public ParallelOldCompactingEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

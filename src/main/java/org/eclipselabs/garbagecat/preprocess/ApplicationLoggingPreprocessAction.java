@@ -89,7 +89,10 @@ public class ApplicationLoggingPreprocessAction implements PreprocessAction {
     private String logEntry;
 
     /**
-     * Create thread dump event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ApplicationLoggingPreprocessAction(String logEntry) {
         this.logEntry = logEntry;

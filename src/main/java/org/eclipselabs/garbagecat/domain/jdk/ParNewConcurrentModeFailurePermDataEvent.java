@@ -48,6 +48,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <p>
  * This happens because there is not enough space in the old generation to support the rate of promotion from the young
  * generation. Possible causes:
+ * </p>
  * <ol>
  * <li>The heap is too small.</li>
  * <li>There is a change in application behavior (e.g. a load increase) that causes the young promotion rate to exceed
@@ -68,7 +69,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <li>If the old generation has available space, the cause is likely fragmentation. Fragmentation can be avoided by
  * increasing the heap size.</li>
  * </ol>
- * </p>
  * 
  * <h3>Example Logging</h3>
  * 
@@ -78,8 +78,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 3070.289: [GC 3070.289: [ParNew: 207744K->207744K(242304K), 0.0000682 secs]3070.289: [CMS3081.621: [CMS-concurrent-mark: 11.907/12.958 secs] [Times: user=45.31 sys=3.93, real=12.96 secs]
- *  (concurrent mode failure): 6010121K->6014591K(6014592K), 79.0505229 secs] 6217865K->6028029K(6256896K), [CMS Perm : 206688K->206662K(262144K)], 79.0509595 secs] [Times: user=104.69 sys=3.63, real=79.05 secs]
+ * 3070.289: [GC 3070.289: [ParNew: 207744K-&gt;207744K(242304K), 0.0000682 secs]3070.289: [CMS3081.621: [CMS-concurrent-mark: 11.907/12.958 secs] [Times: user=45.31 sys=3.93, real=12.96 secs]
+ *  (concurrent mode failure): 6010121K-&gt;6014591K(6014592K), 79.0505229 secs] 6217865K-&gt;6028029K(6256896K), [CMS Perm : 206688K-&gt;206662K(262144K)], 79.0509595 secs] [Times: user=104.69 sys=3.63, real=79.05 secs]
  * </pre>
  * 
  * <p>
@@ -87,7 +87,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 3070.289: [GC 3070.289: [ParNew: 207744K->207744K(242304K), 0.0000682 secs]3070.289: [CMS (concurrent mode failure): 6010121K->6014591K(6014592K), 79.0505229 secs] 6217865K->6028029K(6256896K), [CMS Perm : 206688K->206662K(262144K)], 79.0509595 secs] [Times: user=104.69 sys=3.63, real=79.05 secs]
+ * 3070.289: [GC 3070.289: [ParNew: 207744K-&gt;207744K(242304K), 0.0000682 secs]3070.289: [CMS (concurrent mode failure): 6010121K-&gt;6014591K(6014592K), 79.0505229 secs] 6217865K-&gt;6028029K(6256896K), [CMS Perm : 206688K-&gt;206662K(262144K)], 79.0509595 secs] [Times: user=104.69 sys=3.63, real=79.05 secs]
  * 3081.621: [CMS-concurrent-mark: 11.907/12.958 secs] [Times: user=45.31 sys=3.93, real=12.96 secs]
  * </pre>
  * 
@@ -172,7 +172,10 @@ public class ParNewConcurrentModeFailurePermDataEvent
     private int permGenAllocation;
 
     /**
-     * Create ParNew detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ParNewConcurrentModeFailurePermDataEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -199,8 +202,11 @@ public class ParNewConcurrentModeFailurePermDataEvent
      * Alternate constructor. Create ParNew detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public ParNewConcurrentModeFailurePermDataEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

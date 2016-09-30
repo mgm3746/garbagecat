@@ -73,7 +73,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 27744.494: [GC concurrent-mark-start], 0.3349320 secs] 10854M->9765M(26624M) [Times: user=0.98 sys=0.00, real=0.33 secs]
+ * 27744.494: [GC concurrent-mark-start], 0.3349320 secs] 10854M-&gt;9765M(26624M) [Times: user=0.98 sys=0.00, real=0.33 secs]
  * </pre>
  * 
  * <p>
@@ -89,7 +89,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 8.556: [GC concurrent-string-deduplication, 906.5K->410.2K(496.3K), avg 54.8%, 0.0162924 secs]
+ * 8.556: [GC concurrent-string-deduplication, 906.5K-&gt;410.2K(496.3K), avg 54.8%, 0.0162924 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -121,7 +121,10 @@ public class G1ConcurrentEvent implements LogEvent, G1Collection {
     private long timestamp;
 
     /**
-     * Create detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public G1ConcurrentEvent(String logEntry) {
         this.logEntry = logEntry;

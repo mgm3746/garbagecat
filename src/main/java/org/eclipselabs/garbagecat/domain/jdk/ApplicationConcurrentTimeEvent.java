@@ -30,7 +30,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * This option is redundant, as the same information can be calculated from the GC logging timestamps and durations.
  * Therefore, advise against using it, as it adds overhead with no analysis value.
  * </p>
- * </p>
  * 
  * <h3>Example Logging</h3>
  * 

@@ -57,7 +57,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 1181.943: [GC 1181.943: [ParNew (promotion failed): 145542K->142287K(149120K), 0.1316193 secs]1182.075: [CMS: 6656483K->548489K(8218240K), 9.1244297 secs] 6797120K->548489K(8367360K), 9.2564476 secs]
+ * 1181.943: [GC 1181.943: [ParNew (promotion failed): 145542K-&gt;142287K(149120K), 0.1316193 secs]1182.075: [CMS: 6656483K-&gt;548489K(8218240K), 9.1244297 secs] 6797120K-&gt;548489K(8367360K), 9.2564476 secs]
  * </pre>
  * 
  * <p>
@@ -65,7 +65,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 3546.690: [GC 3546.691: [ParNew: 532480K->532480K(599040K), 0.0000400 secs]3546.691: [CMS: 887439K->893801K(907264K), 9.6413020 secs] 1419919K->893801K(1506304K), 9.6419180 secs]
+ * 3546.690: [GC 3546.691: [ParNew: 532480K-&gt;532480K(599040K), 0.0000400 secs]3546.691: [CMS: 887439K-&gt;893801K(907264K), 9.6413020 secs] 1419919K-&gt;893801K(1506304K), 9.6419180 secs]
  * </pre>
  * 
  * <p>
@@ -73,7 +73,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 289985.117: [GC 289985.117: [ParNew (promotion failed): 144192K->144192K(144192K), 0.1347360 secs]289985.252: [Tenured: 1281600K->978341K(1281600K), 3.6577930 secs] 1409528K->978341K(1425792K), 3.7930200 secs]
+ * 289985.117: [GC 289985.117: [ParNew (promotion failed): 144192K-&gt;144192K(144192K), 0.1347360 secs]289985.252: [Tenured: 1281600K-&gt;978341K(1281600K), 3.6577930 secs] 1409528K-&gt;978341K(1425792K), 3.7930200 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -139,7 +139,10 @@ public class ParNewPromotionFailedCmsSerialOldEvent
     private int oldAllocation;
 
     /**
-     * Create ParNew detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ParNewPromotionFailedCmsSerialOldEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -164,8 +167,11 @@ public class ParNewPromotionFailedCmsSerialOldEvent
      * Alternate constructor. Create ParNew detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public ParNewPromotionFailedCmsSerialOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

@@ -36,7 +36,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * 2143132.151: [Full GC 1606823K->1409859K(2976064K), 12.0855599 secs]
+ * 2143132.151: [Full GC 1606823K-&gt;1409859K(2976064K), 12.0855599 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -83,7 +83,10 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
     private static Pattern pattern = Pattern.compile(VerboseGcOldEvent.REGEX);
 
     /**
-     * Create serial old detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public VerboseGcOldEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -101,8 +104,11 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
      * Alternate constructor. Create logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public VerboseGcOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

@@ -87,7 +87,7 @@ public class JdkMath {
      * 
      * For example: Convert 987654321 987.654.
      * 
-     * @param millis
+     * @param micros
      *            Microseconds as a whole number.
      * @return Seconds rounded to 3 decimal places.
      */

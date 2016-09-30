@@ -76,7 +76,10 @@ public class G1RemarkEvent implements BlockingEvent, G1Collection {
     private long timestamp;
 
     /**
-     * Create detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public G1RemarkEvent(String logEntry) {
         this.logEntry = logEntry;
@@ -91,8 +94,11 @@ public class G1RemarkEvent implements BlockingEvent, G1Collection {
      * Alternate constructor. Create detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public G1RemarkEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

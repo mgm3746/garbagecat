@@ -79,7 +79,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * - locked <0x94fa4fb0> (a org.apache.tomcat.util.net.JIoEndpoint$Worker)
+ * - locked &lt;0x94fa4fb0&gt; (a org.apache.tomcat.util.net.JIoEndpoint$Worker)
  * </pre>
  * 
  * <p>
@@ -142,7 +142,10 @@ public class ThreadDumpPreprocessAction implements PreprocessAction {
     private String logEntry;
 
     /**
-     * Create thread dump event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public ThreadDumpPreprocessAction(String logEntry) {
         this.logEntry = logEntry;

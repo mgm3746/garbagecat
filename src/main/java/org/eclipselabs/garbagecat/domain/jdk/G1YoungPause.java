@@ -40,7 +40,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 1.305: [GC pause (young) 102M->24M(512M), 0.0254200 secs]
+ * 1.305: [GC pause (young) 102M-&gt;24M(512M), 0.0254200 secs]
  * </pre>
  * 
  * <p>
@@ -48,7 +48,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2010-02-26T08:31:51.990-0600: [GC pause (young) 102M->24M(512M), 0.0254200 secs]
+ * 2010-02-26T08:31:51.990-0600: [GC pause (young) 102M-&gt;24M(512M), 0.0254200 secs]
  * </pre>
  * 
  * <p>
@@ -56,7 +56,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 1.807: [GC pause (young), 0.00290200 secs] 29M->2589K(59M) [Times: user=0.01 sys=0.00, real=0.01 secs]
+ * 1.807: [GC pause (young), 0.00290200 secs] 29M-&gt;2589K(59M) [Times: user=0.01 sys=0.00, real=0.01 secs]
  * </pre>
  * 
  * <p>
@@ -64,7 +64,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 27997.968: [GC pause (young) (to-space exhausted), 0.1208740 secs] 19354M->18227M(26624M) [Times: user=0.41 sys=0.02, real=0.12 secs]
+ * 27997.968: [GC pause (young) (to-space exhausted), 0.1208740 secs] 19354M-&gt;18227M(26624M) [Times: user=0.41 sys=0.02, real=0.12 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -138,7 +138,10 @@ public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedDat
     private String trigger;
 
     /**
-     * Create detail logging event from log entry.
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
      */
     public G1YoungPause(String logEntry) {
         this.logEntry = logEntry;
@@ -175,8 +178,11 @@ public class G1YoungPause implements BlockingEvent, YoungCollection, CombinedDat
      * Alternate constructor. Create detail logging event from values.
      * 
      * @param logEntry
+     *            The log entry for the event.
      * @param timestamp
+     *            The time when the GC event happened in milliseconds after JVM startup.
      * @param duration
+     *            The elapsed clock time for the GC event in milliseconds.
      */
     public G1YoungPause(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
