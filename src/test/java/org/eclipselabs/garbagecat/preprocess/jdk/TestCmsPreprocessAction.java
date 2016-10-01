@@ -209,6 +209,37 @@ public class TestCmsPreprocessAction extends TestCase {
                 CmsPreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineParNewConcurrentModeFailurePermDataMixedConcurrentSweep() {
+        String logLine = "11202.526: [GC (Allocation Failure) 1202.528: [ParNew: 1355422K->1355422K(1382400K), "
+                + "0.0000500 secs]1202.528: [CMS1203.491: [CMS-concurrent-sweep: 1.009/1.060 secs] "
+                + "[Times: user=1.55 sys=0.12, real=1.06 secs]";
+        String nextLogLine = " (concurrent mode failure): 2656311K->2658289K(2658304K), 9.3575580 secs] "
+                + "4011734K->2725109K(4040704K), [Metaspace: 72111K->72111K(1118208K)], 9.3610080 secs] "
+                + "[Times: user=9.35 sys=0.01, real=9.36 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, null, nextLogLine));
+    }
+
+    public void testLogLineCmsSerialOldWithConcurrentModeFailureMixedConcurrentPreclean() {
+        String logLine = "1278.200: [Full GC (Allocation Failure) 1278.202: [CMS1280.173: "
+                + "[CMS-concurrent-preclean: 2.819/2.865 secs] [Times: user=6.97 sys=0.41, real=2.87 secs]";
+        String nextLogLine = " (concurrent mode failure): 2658303K->2658303K(2658304K), 9.1546180 secs] "
+                + "4040703K->2750110K(4040704K), [Metaspace: 72113K->72113K(1118208K)], 9.1581450 secs] "
+                + "[Times: user=9.15 sys=0.00, real=9.16 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, null, nextLogLine));
+    }
+
+    public void testLogLineCmsSerialOldWithConcurrentModeFailureMixedConcurrentSweep() {
+        String logLine = "2440.336: [Full GC (Allocation Failure) 2440.338: [CMS"
+                + "2440.542: [CMS-concurrent-sweep: 1.137/1.183 secs] [Times: user=5.33 sys=0.51, real=1.18 secs]";
+        String nextLogLine = " (concurrent mode failure): 2658304K->2658303K(2658304K), 9.4908960 secs] "
+                + "4040703K->2996946K(4040704K), [Metaspace: 72191K->72191K(1118208K)], 9.4942330 secs] "
+                + "[Times: user=9.49 sys=0.00, real=9.49 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, null, nextLogLine));
+    }
+
     /**
      * Test PAR_NEW mixed with CMS_CONCURRENT over 2 lines.
      * 

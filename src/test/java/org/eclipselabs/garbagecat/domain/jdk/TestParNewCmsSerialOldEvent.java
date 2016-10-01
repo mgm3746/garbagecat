@@ -84,4 +84,25 @@ public class TestParNewCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 277, event.getDuration());
     }
+
+    public void testLogLineJdk8() {
+        String logLine = "1817.644: [GC (Allocation Failure) 1817.646: [ParNew: 1382383K->1382383K(1382400K), "
+                + "0.0000530 secs]1817.646: [CMS: 2658303K->2658303K(2658304K), 8.7951430 secs] "
+                + "4040686K->2873414K(4040704K), [Metaspace: 72200K->72200K(1118208K)], 8.7986750 secs] "
+                + "[Times: user=8.79 sys=0.01, real=8.80 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CMS_SERIAL_OLD.toString() + ".",
+                ParNewCmsSerialOldEvent.match(logLine));
+        ParNewCmsSerialOldEvent event = new ParNewCmsSerialOldEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 1817644, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 1382383, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 2873414 - 2658303, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 4040704 - 2658304, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 2658303, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 2658303, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 2658304, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 72200, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 72200, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1118208, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 8798, event.getDuration());
+    }
 }

@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermCollection;
 import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -54,22 +55,37 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 6.102: [GC6.102: [ParNew: 19648K-&gt;2176K(19648K), 0.0184470 secs]6.121: [Tenured: 44849K-&gt;25946K(44864K), 0.2586250 secs] 60100K-&gt;25946K(64512K), [Perm : 43759K-&gt;43759K(262144K)], 0.2773070 secs] [Times: user=0.16 sys=0.01, real=0.28 secs]
  * </pre>
  * 
+ * <p>
+ * 3) JDK 1.8
+ * </p>
+ * 
+ * <pre>
+ * 1817.644: [GC (Allocation Failure) 1817.646: [ParNew: 1382383K-&gt;1382383K(1382400K), 0.0000530 secs]1817.646: [CMS: 2658303K-&gt;2658303K(2658304K), 8.7951430 secs] 4040686K-&gt;2873414K(4040704K), [Metaspace: 72200K-&gt;72200K(1118208K)], 8.7986750 secs] [Times: user=8.79 sys=0.01, real=8.80 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  * 
  */
-public class ParNewCmsSerialOldEvent
-        implements BlockingEvent, OldCollection, YoungData, OldData, CmsCollection, PermCollection, PermData {
+public class ParNewCmsSerialOldEvent implements BlockingEvent, OldCollection, YoungData, OldData, CmsCollection,
+        PermCollection, PermData, TriggerData {
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[Tenured: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)(, \\[Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( )?(\\(("
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\) )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew: " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[(Tenured|CMS): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)(, \\[(Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\])?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+
     private static Pattern pattern = Pattern.compile(ParNewCmsSerialOldEvent.REGEX);
 
     /**
@@ -143,22 +159,25 @@ public class ParNewCmsSerialOldEvent
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            young = Integer.parseInt(matcher.group(4));
-            old = Integer.parseInt(matcher.group(9));
-            oldEnd = Integer.parseInt(matcher.group(10));
-            oldAllocation = Integer.parseInt(matcher.group(11));
+            if (matcher.group(3) != null) {
+                trigger = matcher.group(4);
+            }
+            young = Integer.parseInt(matcher.group(6));
+            old = Integer.parseInt(matcher.group(12));
+            oldEnd = Integer.parseInt(matcher.group(13));
+            oldAllocation = Integer.parseInt(matcher.group(14));
             // Compute young end and young allocation after full GC
-            int totalEnd = Integer.parseInt(matcher.group(14));
+            int totalEnd = Integer.parseInt(matcher.group(17));
             youngEnd = totalEnd - oldEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(15));
+            int totalAllocation = Integer.parseInt(matcher.group(18));
             youngAvailable = totalAllocation - oldAllocation;
-            if (matcher.group(16) != null) {
-                permGen = Integer.parseInt(matcher.group(17));
-                permGenEnd = Integer.parseInt(matcher.group(18));
-                permGenAllocation = Integer.parseInt(matcher.group(19));
+            if (matcher.group(19) != null) {
+                permGen = Integer.parseInt(matcher.group(21));
+                permGenEnd = Integer.parseInt(matcher.group(22));
+                permGenAllocation = Integer.parseInt(matcher.group(23));
 
             }
-            duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(24)).intValue();
         }
     }
 
@@ -228,6 +247,10 @@ public class ParNewCmsSerialOldEvent
 
     public String getName() {
         return JdkUtil.LogEventType.PAR_NEW_CMS_SERIAL_OLD.toString();
+    }
+
+    public String getTrigger() {
+        return trigger;
     }
 
     /**

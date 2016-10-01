@@ -71,6 +71,30 @@ public class TestParNewConcurrentModeFailurePermDataEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 12348, event.getDuration());
     }
 
+    public void testLogLineConcurrentSweep() {
+        String logLine = "1202.526: [GC (Allocation Failure) 1202.528: [ParNew: 1355422K->1355422K(1382400K), "
+                + "0.0000500 secs]1202.528: [CMS (concurrent mode failure): 2656311K->2658289K(2658304K), "
+                + "9.3575580 secs] 4011734K->2725109K(4040704K), [Metaspace: 72111K->72111K(1118208K)], "
+                + "9.3610080 secs] [Times: user=9.35 sys=0.01, real=9.36 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
+                ParNewConcurrentModeFailurePermDataEvent.match(logLine));
+        ParNewConcurrentModeFailurePermDataEvent event = new ParNewConcurrentModeFailurePermDataEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 1202526, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", (4011734 - 2656311),
+                event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", (2725109 - 2658289), event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", (4040704 - 2658304), event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 2656311, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 2658289, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 2658304, event.getOldSpace());
+        Assert.assertEquals("Metaspace begin size not parsed correctly.", 72111, event.getPermOccupancyInit());
+        Assert.assertEquals("Metaspace end size not parsed correctly.", 72111, event.getPermOccupancyEnd());
+        Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1118208, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 9361, event.getDuration());
+    }
+
     public void testLogLineWhitespaceAtEnd() {
         String logLine = "3070.289: [GC 3070.289: [ParNew: 207744K->207744K(242304K), 0.0000682 secs]3070.289: "
                 + "[CMS (concurrent mode failure): 6010121K->6014591K(6014592K), 79.0505229 secs] "

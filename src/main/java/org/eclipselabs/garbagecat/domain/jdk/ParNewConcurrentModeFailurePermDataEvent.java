@@ -73,7 +73,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent} combined with
+ * 1) {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent} combined with
  * {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} across 2 lines:
  * </p>
  * 
@@ -89,6 +89,24 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <pre>
  * 3070.289: [GC 3070.289: [ParNew: 207744K-&gt;207744K(242304K), 0.0000682 secs]3070.289: [CMS (concurrent mode failure): 6010121K-&gt;6014591K(6014592K), 79.0505229 secs] 6217865K-&gt;6028029K(6256896K), [CMS Perm : 206688K-&gt;206662K(262144K)], 79.0509595 secs] [Times: user=104.69 sys=3.63, real=79.05 secs]
  * 3081.621: [CMS-concurrent-mark: 11.907/12.958 secs] [Times: user=45.31 sys=3.93, real=12.96 secs]
+ * </pre>
+ * 
+ * <p>
+ * 2) JDK8 with Metaspace:
+ * </p>
+ * 
+ * <pre>
+ * 1202.526: [GC (Allocation Failure) 1202.528: [ParNew: 1355422K-&gt;1355422K(1382400K), 0.0000500 secs]1202.528: [CMS1203.491: [CMS-concurrent-sweep: 1.009/1.060 secs] [Times: user=1.55 sys=0.12, real=1.06 secs]
+ *  (concurrent mode failure): 2656311K-&gt;2658289K(2658304K), 9.3575580 secs] 4011734K-&gt;2725109K(4040704K), [Metaspace: 72111K-&gt;72111K(1118208K)], 9.3610080 secs] [Times: user=9.35 sys=0.01, real=9.36 secs]
+ * </pre>
+ * 
+ * <p>
+ * Preprocessed:
+ * </p>
+ * 
+ * <pre>
+ * 1202.526: [GC (Allocation Failure) 1202.528: [ParNew: 1355422K-&gt;1355422K(1382400K), 0.0000500 secs]1202.528: [CMS (concurrent mode failure): 2656311K-&gt;2658289K(2658304K), 9.3575580 secs] 4011734K-&gt;2725109K(4040704K), [Metaspace: 72111K-&gt;72111K(1118208K)], 9.3610080 secs] [Times: user=9.35 sys=0.01, real=9.36 secs]
+ * 1203.491: [CMS-concurrent-sweep: 1.009/1.060 secs] [Times: user=1.55 sys=0.12, real=1.06 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

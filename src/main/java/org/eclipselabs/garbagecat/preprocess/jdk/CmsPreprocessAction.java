@@ -158,7 +158,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))?( )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\("
             + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS)?)("
-            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark): " + JdkRegEx.DURATION_FRACTION
+            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|sweep): " + JdkRegEx.DURATION_FRACTION
             + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
 
     /**
@@ -166,7 +166,7 @@ public class CmsPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
             + ": \\[Full GC( )?(\\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\) )?" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS)(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(mark|abortable-preclean): "
+            + ": \\[CMS)(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): "
             + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
 
     /**
