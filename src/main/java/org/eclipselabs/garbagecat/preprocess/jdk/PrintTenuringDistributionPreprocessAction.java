@@ -215,7 +215,7 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
                 }
             }
             if (retain) {
-                this.logEntry = logEntry + "\n";
+                this.logEntry = logEntry + System.getProperty("line.separator");
             }
         }
     }

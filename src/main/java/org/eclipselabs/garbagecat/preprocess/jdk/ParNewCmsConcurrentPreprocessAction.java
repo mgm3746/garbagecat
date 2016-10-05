@@ -84,7 +84,7 @@ public class ParNewCmsConcurrentPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
         } else {
-            this.logEntry = logEntry + "\n";
+            this.logEntry = logEntry + System.getProperty("line.separator");
         }
     }
 

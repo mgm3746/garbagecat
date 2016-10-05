@@ -107,7 +107,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
             }
         } else {
             // line2 logging
-            this.logEntry = logEntry + "\n";
+            this.logEntry = logEntry + System.getProperty("line.separator");
         }
     }
 

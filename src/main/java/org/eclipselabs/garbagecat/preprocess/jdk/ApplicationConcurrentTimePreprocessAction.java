@@ -96,7 +96,7 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
             this.logEntry = logEntry;
             // Split line1 logging apart
             if (matcher.group(6) != null) {
-                this.logEntry = matcher.group(6) + "\n";
+                this.logEntry = matcher.group(6) + System.getProperty("line.separator");
                 if (matcher.group(1) != null) {
                     this.logEntry = this.logEntry + matcher.group(1);
                 }
@@ -106,7 +106,7 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
             }
         } else {
             // line2 logging
-            this.logEntry = logEntry + "\n";
+            this.logEntry = logEntry + System.getProperty("line.separator");
         }
     }
 
