@@ -173,21 +173,6 @@ public class TestJvmRun extends TestCase {
     }
 
     /**
-     * Test preprocessing <code>GcTimeLimitExceededEvent</code> with underlying <code>ParallelSerialOldEvent</code>.
-     */
-    public void testSplitParallelSerialOldEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset9.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD));
-    }
-
-    /**
      * Test preprocessing <code>GcTimeLimitExceededEvent</code> with underlying <code>ParallelOldCompactingEvent</code>
      * .
      */
@@ -542,27 +527,6 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
-    }
-
-    /**
-     * Test preprocessing <code>ParNewConcurrentModeFailureEvent</code> split over 3 lines.
-     * 
-     */
-    public void testSplit3LinesParNewConcurrentModeFailureEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset29.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
     }
 
     /**

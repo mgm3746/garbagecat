@@ -12,7 +12,14 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.io.File;
+
+import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -169,5 +176,26 @@ public class TestParNewConcurrentModeFailureEvent extends TestCase {
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".",
                 ParNewConcurrentModeFailureEvent.match(logLine));
+    }
+
+    /**
+     * Test preprocessing <code>ParNewConcurrentModeFailureEvent</code> split over 3 lines.
+     * 
+     */
+    public void testSplit3LinesParNewConcurrentModeFailureEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset29.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
     }
 }
