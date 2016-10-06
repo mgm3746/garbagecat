@@ -48,7 +48,6 @@ import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.GcTimeLimitExceededPreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.ParNewCmsConcurrentPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.PrintHeapAtGcPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.PrintTenuringDistributionPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.UnloadingClassPreprocessAction;
@@ -225,11 +224,6 @@ public class GcManager {
             } else if (PrintTenuringDistributionPreprocessAction.match(currentLogLine, priorLogLine)) {
                 PrintTenuringDistributionPreprocessAction action = new PrintTenuringDistributionPreprocessAction(
                         currentLogLine);
-                if (action.getLogEntry() != null) {
-                    preprocessedLogLine = action.getLogEntry();
-                }
-            } else if (ParNewCmsConcurrentPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
-                ParNewCmsConcurrentPreprocessAction action = new ParNewCmsConcurrentPreprocessAction(currentLogLine);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
