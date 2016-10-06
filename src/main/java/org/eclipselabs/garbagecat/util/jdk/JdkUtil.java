@@ -41,7 +41,6 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.LogRotation;
-import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent;
@@ -88,9 +87,9 @@ public class JdkUtil {
         //
         PAR_NEW_PROMOTION_FAILED, PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE,
         //
-        PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA, PAR_NEW, PAR_NEW_CMS_CONCURRENT,
+        PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA, PAR_NEW, PAR_NEW_CMS_SERIAL_OLD,
         //
-        PAR_NEW_CMS_SERIAL_OLD, PARALLEL_SERIAL_OLD, PARALLEL_SCAVENGE, PARALLEL_OLD_COMPACTING, CMS_SERIAL_OLD,
+        PARALLEL_SERIAL_OLD, PARALLEL_SCAVENGE, PARALLEL_OLD_COMPACTING, CMS_SERIAL_OLD,
         //
         CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK, CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME,
         //
@@ -142,8 +141,6 @@ public class JdkUtil {
             return LogEventType.PARALLEL_SCAVENGE;
         if (ParNewEvent.match(logLine))
             return LogEventType.PAR_NEW;
-        if (ParNewCmsConcurrentEvent.match(logLine))
-            return LogEventType.PAR_NEW_CMS_CONCURRENT;
         if (ParallelSerialOldEvent.match(logLine))
             return LogEventType.PARALLEL_SERIAL_OLD;
         if (ParallelOldCompactingEvent.match(logLine))
@@ -239,9 +236,6 @@ public class JdkUtil {
             break;
         case PAR_NEW:
             event = new ParNewEvent(logLine);
-            break;
-        case PAR_NEW_CMS_CONCURRENT:
-            event = new ParNewCmsConcurrentEvent(logLine);
             break;
         case PARALLEL_SERIAL_OLD:
             event = new ParallelSerialOldEvent(logLine);
@@ -385,9 +379,6 @@ public class JdkUtil {
             break;
         case PAR_NEW:
             event = new ParNewEvent(logEntry, timestamp, duration);
-            break;
-        case PAR_NEW_CMS_CONCURRENT:
-            event = new ParNewCmsConcurrentEvent(logEntry, timestamp, duration);
             break;
         case PARALLEL_SERIAL_OLD:
             event = new ParallelSerialOldEvent(logEntry, timestamp, duration);
@@ -759,7 +750,6 @@ public class JdkUtil {
         case CMS_REMARK:
         case CMS_REMARK_WITH_CLASS_UNLOADING:
         case PAR_NEW:
-        case PAR_NEW_CMS_CONCURRENT:
         case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD:
         case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA:
         case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE:
