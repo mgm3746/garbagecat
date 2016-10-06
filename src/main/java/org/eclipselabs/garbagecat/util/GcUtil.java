@@ -142,8 +142,8 @@ public class GcUtil {
      * @return start <code>Date</code> + timestamp.
      */
     public static final Date getDatePlusTimestamp(Date start, long timestamp) {
-        long milis = start.getTime() + timestamp;
-        return new Date(milis);
+        long millis = start.getTime() + timestamp;
+        return new Date(millis);
     }// getDatePlusTimestamp()
 
     /**
