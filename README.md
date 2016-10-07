@@ -5,7 +5,7 @@ Parses Java garbage collection logging and provides analysis to support JVM tuni
 ## Supports ##
 
   * OpenJDK
-  * Sun JDK 1.5 and higher
+  * Sun/Oracle JDK 1.5 and higher
   * Best utilized with the following GC logging options:
 
 >-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime
