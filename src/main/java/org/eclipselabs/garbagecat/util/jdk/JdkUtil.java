@@ -117,7 +117,9 @@ public class JdkUtil {
     public enum TriggerType {
         SYSTEM_GC, METADATA_GC_THRESHOLD, ALLOCATION_FAILURE, UNDEFINED, UNKNOWN, TO_SPACE_EXHAUSTED,
         //
-        G1_EVACUATION_PAUSE, GCLOCATER_INITIATED_GC, CMS_INITIAL_MARK, CMS_FINAL_REMARK;
+        G1_EVACUATION_PAUSE, GCLOCATER_INITIATED_GC, CMS_INITIAL_MARK, CMS_FINAL_REMARK, CMS_CONCURRENT_MODE_FAILURE,
+        //
+        CMS_CONCURRENT_MODE_INTERRUPTED;
     };
 
     /**
@@ -491,6 +493,19 @@ public class JdkUtil {
             }
         }
         return logEventType;
+    }
+
+    /**
+     * Check to see if a log line includes any datestamps.
+     * 
+     * @param logLine
+     *            The log line.
+     * @return True if the log line includes a datestamp, false otherwise..
+     */
+    public static final boolean isLogLineWithDateStamp(String logLine) {
+        String regex = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
+        Pattern pattern = Pattern.compile(regex);
+        return pattern.matcher(logLine).matches();
     }
 
     /**

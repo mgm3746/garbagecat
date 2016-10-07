@@ -187,7 +187,7 @@ public class GcManager {
         String preprocessedLogLine = null;
         if (!JdkUtil.discardLogLine(currentLogLine)) {
             // First convert any datestamps to timestamps
-            if (DateStampPreprocessAction.match(currentLogLine)) {
+            if (JdkUtil.isLogLineWithDateStamp(currentLogLine)) {
                 // The datestamp prefixes or replaces the timestamp
                 if (DateStampPrefixPreprocessAction.match(currentLogLine)) {
                     // Datestamp + Timestamp combination => drop the timestamp
@@ -331,7 +331,17 @@ public class GcManager {
                         }
                     }
 
-                    // 5) CMS incremental mode
+                    // 5) CMS concurrent mode interrupted
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_INTERRUPTED)) {
+                        if (event instanceof CmsSerialOldEvent) {
+                            String trigger = ((TriggerData) event).getTrigger();
+                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED)) {
+                                jvmDao.addAnalysisKey(Analysis.KEY_CMS_CONCURRENT_MODE_INTERRUPTED);
+                            }
+                        }
+                    }
+
+                    // 6) CMS incremental mode
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_INCREMENTAL_MODE)) {
                         if (event instanceof ParNewEvent) {
                             if (((ParNewEvent) event).isIncrementalMode()) {

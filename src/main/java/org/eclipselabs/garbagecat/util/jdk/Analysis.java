@@ -202,6 +202,11 @@ public class Analysis {
     public static final String KEY_CMS_CONCURRENT_MODE_FAILURE = "cms.concurrent.mode.failure";
 
     /**
+     * Property key for concurrent mode interrupted.
+     */
+    public static final String KEY_CMS_CONCURRENT_MODE_INTERRUPTED = "cms.concurrent.mode.interrupted";
+
+    /**
      * Property key for promotion failed.
      */
     public static final String KEY_CMS_PROMOTION_FAILED = "cms.promotion.failed";

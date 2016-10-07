@@ -122,6 +122,29 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 1365, event.getDuration());
     }
 
+    public void testLogLineTriggerConcurrentModeInterrupted() {
+        String logLine = "85030.389: [Full GC 85030.390: [CMS (concurrent mode interrupted): "
+                + "861863K->904027K(1797568K), 42.9053262 secs] 1045947K->904027K(2047232K), "
+                + "[CMS Perm : 252246K->252202K(262144K)], 42.9070278 secs] "
+                + "[Times: user=43.11 sys=0.18, real=42.91 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED));
+        Assert.assertEquals("Time stamp not parsed correctly.", 85030389, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 1045947 - 861863, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 904027 - 904027, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 2047232 - 1797568, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 861863, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 904027, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 1797568, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 252246, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 252202, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 42907, event.getDuration());
+    }
+
     public void testLogLineBailing() {
         String logLine = "4300.825: [Full GC 4300.825: [CMSbailing out to foreground collection (concurrent mode "
                 + "failure): 6014591K->6014592K(6014592K), 79.9352305 secs] 6256895K->6147510K(6256896K), [CMS Perm "
@@ -144,7 +167,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 79935, event.getDuration());
     }
 
-    public void testLogLineIncrementatlModeMetaspace() {
+    public void testLogLineIncrementalModeMetaspace() {
         String logLine = "706.707: [Full GC (Allocation Failure) 706.708: [CMS (concurrent mode failure): "
                 + "2655937K->2373842K(2658304K), 11.6746550 secs] 3973407K->2373842K(4040704K), "
                 + "[Metaspace: 72496K->72496K(1118208K)] icms_dc=77 , 11.6770830 secs] "

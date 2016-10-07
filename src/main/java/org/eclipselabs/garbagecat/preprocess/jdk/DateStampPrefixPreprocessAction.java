@@ -98,10 +98,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class DateStampPrefixPreprocessAction implements PreprocessAction {
 
     /**
-     * Regular expressions defining the logging line.
+     * Regular expression defining date stamp prefix.
      */
-    private static final String REGEX_LINE = "^" + JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.DATESTAMP + "(: )?)?(("
-            + JdkRegEx.TIMESTAMP + ": )(:)?( )?)(" + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.DATESTAMP + ": )?(.*)$";
+    private static final String REGEX_DATESTAMP_PREFIX = JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.DATESTAMP
+            + "(: )?)?((" + JdkRegEx.TIMESTAMP + ": )(:)?( )?)(" + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.DATESTAMP
+            + ": )?";
+    /**
+     * Regular expression defining the logging line.
+     */
+    private static final String REGEX_LINE = "^(.*)" + REGEX_DATESTAMP_PREFIX + "(.*)$";
 
     private static final Pattern PATTERN = Pattern.compile(REGEX_LINE);
 
@@ -117,8 +122,7 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
      *            The log entry for the event.
      */
     public DateStampPrefixPreprocessAction(String logEntry) {
-        Pattern p = Pattern.compile(JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.DATESTAMP + "(: )?)?(("
-                + JdkRegEx.TIMESTAMP + ": )(:)?( )?)(" + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.DATESTAMP + ": )?");
+        Pattern p = Pattern.compile(REGEX_DATESTAMP_PREFIX);
         Matcher matcher = p.matcher(logEntry);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {

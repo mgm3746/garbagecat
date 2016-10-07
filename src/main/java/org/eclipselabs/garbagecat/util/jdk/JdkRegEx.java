@@ -190,9 +190,77 @@ public class JdkRegEx {
     public static final String TRIGGER_CMS_FINAL_REMARK = "CMS Final Remark";
 
     /**
-     * CMS concurrent mode failure trigger
+     * <p>
+     * CMS concurrent mode failure trigger.
+     * </p>
+     * 
+     * <p>
+     * The concurrent collection of the old generation did not finish before the old generation became full. There is
+     * not enough space in the old generation to support the rate of promotion from the young generation. The JVM
+     * initiates a full GC using a slow (single threaded) serial collector in an attempt to free space. The concurrent
+     * low pause collector measures the rate at which the the old generation is filling and the amount of time between
+     * collections and uses this historical data to calculate when to start the concurrent collection (plus adds some
+     * padding) so that it will finish just in time before the old generation becomes full.
+     * </p>
+     * 
+     * <p>
+     * Possible causes:
+     * </p>
+     * 
+     * <ol>
+     * <li>The heap is too small.</li>
+     * <li>There is a change in application behavior (e.g. a load increase) that causes the young promotion rate to
+     * exceed historical data. If this is the case, the concurrent mode failures will happen near the change in
+     * behavior, then after a few collections the CMS collector will adjust based on the new promotion rate. Performance
+     * will suffer for a short period until the CMS collector recalibrates. Use -XX:CMSInitiatingOccupancyFraction=NN
+     * (default 92) to handle changes in application behavior; however, the tradeoff is that there will be more
+     * collections.</li>
+     * <li>The application has large variances in object allocation rates, causing large variances in young generation
+     * promotion rates, leading to the CMS collector not being able to accurately predict the time between collections.
+     * Use -XX:CMSIncrementalSafetyFactor=NN (default 10) to start the concurrent collection NN% sooner than the
+     * calculated time.</li>
+     * <li>There is premature promotion from the young to the old generation, causing the old generation to fill up with
+     * short-lived objects. The default value for -XX:MaxTenuringThreshold for the CMS collector is 0, meaning that
+     * objects surviving a young collection are immediately promoted to the old generation. Use
+     * -XX:MaxTenuringThreshold=32 to allow more time for objects to expire in the young generation.</li>
+     * <li>If the old generation has available space, the cause is likely fragmentation. Fragmentation can be avoided by
+     * increasing the heap size.</li>
+     * <li>The Perm/Metaspace fills up during the CMS cycle. The CMS collector does not collect Perm/Metaspace by
+     * default. Add -XX:+CMSClassUnloadingEnabled to collect Perm/Metaspace in the CMS concurrent cycle. If the
+     * concurrent mode failure is not able to reclaim Perm/Metaspace, also increase the size. For example:
+     * -XX:PermSize=256M -XX:MaxPermSize=256M (Perm) or -XX:MetaspaceSize=256M -XX:MaxMetaspaceSize=256M (Metaspace).
+     * </li>
+     * </ol>
      */
     public static final String TRIGGER_CONCURRENT_MODE_FAILURE = "concurrent mode failure";
+
+    /**
+     * <p>
+     * CMS concurrent mode interrupted trigger.
+     * </p>
+     * 
+     * <p>
+     * Caused by the following user or serviceability requested gc.
+     * </p>
+     * 
+     * <p>
+     * User requested gc:
+     * </p>
+     * <ol>
+     * <li>System.gc()</li>
+     * <li>JVMTI ForceGarbageCollection</li>
+     * </ol>
+     * 
+     * <p>
+     * Serviceability requested gc:
+     * </p>
+     * <ol>
+     * <li>JVMTI ForceGarbageCollection</li>
+     * <li>Heap Inspection</li>
+     * <li>Heap Dump</li>
+     * </ol>
+     */
+    public static final String TRIGGER_CONCURRENT_MODE_INTERRUPTED = "concurrent mode interrupted";
 
     /**
      * Promotion failed trigger

@@ -208,4 +208,10 @@ public class TestJdkUtil extends TestCase {
         Assert.assertEquals("Bytes not converted to expected format.", "25M",
                 JdkUtil.convertSizeG1DetailsToSizeG1(size, units));
     }
+
+    public void testDateStampInMiddle() {
+        String logLine = "85030.389: [Full GC 85030.390: [CMS2012-06-20T12:29:58.094+0200: 85030.443: "
+                + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
+        Assert.assertTrue("Datestamp not found.", JdkUtil.isLogLineWithDateStamp(logLine));
+    }
 }

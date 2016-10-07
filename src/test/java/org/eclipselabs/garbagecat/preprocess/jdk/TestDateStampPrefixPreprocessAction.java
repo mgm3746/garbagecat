@@ -138,4 +138,16 @@ public class TestDateStampPrefixPreprocessAction extends TestCase {
                 + "0.0239510 secs] [Times: user=0.18 sys=0.00, real=0.02 secs]";
         Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
     }
+
+    public void testLogLineMixedTimeStampWithDateStamp() {
+        String logLine = "85030.389: [Full GC 85030.390: [CMS2012-06-20T12:29:58.094+0200: 85030.443: "
+                + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP_PREFIX.toString() + ".",
+                DateStampPrefixPreprocessAction.match(logLine));
+        DateStampPrefixPreprocessAction preprocessAction = new DateStampPrefixPreprocessAction(logLine);
+        String preprocessedLogLine = "85030.389: [Full GC 85030.390: [CMS85030.443: "
+                + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
+        Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
+    }
 }
