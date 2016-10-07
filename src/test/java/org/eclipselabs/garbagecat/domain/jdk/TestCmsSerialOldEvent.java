@@ -12,8 +12,16 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.io.File;
+
+import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -143,6 +151,49 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen end size not parsed correctly.", 252202, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 42907, event.getDuration());
+    }
+
+    public void testLogLineTriggerHeapInspectionInitiatedGc() {
+        String logLine = "2854.464: [Full GC (Heap Inspection Initiated GC) 2854.465: "
+                + "[CMS: 945496K->961540K(4755456K), 0.8503670 secs] 1432148K->961540K(6137856K), "
+                + "[Metaspace: 73362K->73362K(1118208K)], 0.8553350 secs] "
+                + "[Times: user=0.83 sys=0.03, real=0.86 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC));
+        Assert.assertEquals("Time stamp not parsed correctly.", 2854464, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 1432148 - 945496, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 961540 - 961540, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 6137856 - 4755456, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 945496, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 961540, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 4755456, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 73362, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 73362, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1118208, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 855, event.getDuration());
+    }
+
+    /**
+     * Test CMS_SERIAL_OLD heap inspection initiate gc trigger.
+     * 
+     */
+    public void testHeapInspectionInitiatedGcAnalysis() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset72.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_HEAP_INSPECTION_INITIATED_GC));
     }
 
     public void testLogLineBailing() {

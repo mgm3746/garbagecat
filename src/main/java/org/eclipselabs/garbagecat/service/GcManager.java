@@ -350,6 +350,16 @@ public class GcManager {
                         }
                     }
 
+                    // 7) Heap inspection initiated gc
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_HEAP_INSPECTION_INITIATED_GC)) {
+                        if (event instanceof TriggerData) {
+                            String trigger = ((TriggerData) event).getTrigger();
+                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC)) {
+                                jvmDao.addAnalysisKey(Analysis.KEY_HEAP_INSPECTION_INITIATED_GC);
+                            }
+                        }
+                    }
+
                     priorEvent = (BlockingEvent) event;
 
                 } else if (event instanceof ApplicationStoppedTimeEvent) {

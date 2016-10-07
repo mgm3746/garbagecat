@@ -268,6 +268,11 @@ public class JdkRegEx {
     public static final String TRIGGER_PROMOTION_FAILED = "promotion failed";
 
     /**
+     * Heap inspection initiated gc trigger
+     */
+    public static final String TRIGGER_HEAP_INSPECTION_INITIATED_GC = "Heap Inspection Initiated GC";
+
+    /**
      * Units for JVM options that take a byte number.
      * 
      * For example: -Xss128k -Xmx2048m -Xms2G

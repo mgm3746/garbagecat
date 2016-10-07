@@ -1,0 +1,1 @@
+2854.464: [Full GC (Heap Inspection Initiated GC) 2854.465: [CMS: 945496K->961540K(4755456K), 0.8503670 secs] 1432148K->961540K(6137856K), [Metaspace: 73362K->73362K(1118208K)], 0.8553350 secs] [Times: user=0.83 sys=0.03, real=0.86 secs]
