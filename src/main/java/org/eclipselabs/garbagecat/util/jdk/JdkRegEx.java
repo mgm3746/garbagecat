@@ -152,7 +152,8 @@ public class JdkRegEx {
     public static final String TRIGGER_SYSTEM_GC = "System(.gc\\(\\))?";
 
     /**
-     * Metadata GC Threshold trigger. When the Metaspace is resized.
+     * Metadata GC Threshold trigger. When the Metaspace is resized. The JVM has failed to allocate memory for something
+     * that should be stored in Metaspace and does a full collection before attempting to resize the Metaspace.
      */
     public static final String TRIGGER_METADATA_GC_THRESHOLD = "Metadata GC Threshold";
 
@@ -188,6 +189,22 @@ public class JdkRegEx {
      * CMS Final Remark trigger
      */
     public static final String TRIGGER_CMS_FINAL_REMARK = "CMS Final Remark";
+
+    /**
+     * CMS Final Remark trigger
+     */
+    public static final String TRIGGER_CLASS_HISTOGRAM = "Class Histogram";
+
+    /**
+     * Run after TRIGGER_METADATA_GC_THRESHOLD fails to resize the Metaspace. A full collection is run to clean up soft
+     * references and free Metaspace. If this fails to free space, OutOfMemoryError is thrown.
+     */
+    public static final String TRIGGER_LAST_DITCH_COLLECTION = "Last ditch collection";
+
+    /**
+     * JVM Tool Interface explicit GC trigger
+     */
+    public static final String TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION = "JvmtiEnv ForceGarbageCollection";
 
     /**
      * <p>
@@ -263,12 +280,12 @@ public class JdkRegEx {
     public static final String TRIGGER_CONCURRENT_MODE_INTERRUPTED = "concurrent mode interrupted";
 
     /**
-     * Promotion failed trigger
+     * Promotion failed trigger.
      */
     public static final String TRIGGER_PROMOTION_FAILED = "promotion failed";
 
     /**
-     * Heap inspection initiated gc trigger
+     * Heap inspection initiated gc trigger.
      */
     public static final String TRIGGER_HEAP_INSPECTION_INITIATED_GC = "Heap Inspection Initiated GC";
 

@@ -17,8 +17,11 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.PermCollection;
+import org.eclipselabs.garbagecat.domain.PermData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
+import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -58,29 +61,36 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 105.151: [Full GC (System.gc()) 5820M-&gt;1381M(30G), 5.5390169 secs] 5820M-&gt;1382M(30720M) [Times: user=5.76 sys=1.00, real=5.53 secs]
+ * 2.847: [GC pause (G1 Evacuation Pause) (young), 0.0414530 secs] [Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 136.9M(30.0G)-&gt;70.9M(30.0G)]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
  * 
  */
-public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, G1Collection, PermCollection {
+public class G1FullGCEvent implements BlockingEvent, YoungCollection, OldCollection, PermCollection, CombinedData,
+        PermData, G1Collection, TriggerData {
 
     /**
-     * Regular expression for triggers associated with this logging event.
+     * Regular expression standard format.
      */
-    public static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
-
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC \\((" + JdkRegEx.TRIGGER_SYSTEM_GC
+            + ")\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     /**
-     * Regular expressions defining the logging.
+     * Regular expression preprocessed with G1 details.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\("
-            + TRIGGER + "\\) )?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), "
-            + JdkRegEx.DURATION + "\\]( " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\))?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(("
+            + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION
+            + ")\\)[ ]{1,2})?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), "
+            + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->"
+            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\) Survivors: " + JdkRegEx.SIZE_G1_DETAILS
+            + "->" + JdkRegEx.SIZE_G1_DETAILS + " Heap: " + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS
+            + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)\\](, \\[(Perm|Metaspace): "
+            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\])?" + JdkRegEx.TIMES_BLOCK
+            + "?[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(REGEX);
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -97,24 +107,39 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, 
     private long timestamp;
 
     /**
-     * The trigger for the GC event.
-     */
-    private String trigger;
-
-    /**
-     * Young generation size (kilobytes) at beginning of GC event.
+     * Combined size (kilobytes) at beginning of GC event.
      */
     private int combined;
 
     /**
-     * Young generation size (kilobytes) at end of GC event.
+     * Combined size (kilobytes) at end of GC event.
      */
     private int combinedEnd;
 
     /**
-     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
+     * Combined available space (kilobytes).
      */
     private int combinedAvailable;
+
+    /**
+     * Permanent generation size (kilobytes) at beginning of GC event.
+     */
+    private int permGen;
+
+    /**
+     * Permanent generation size (kilobytes) at end of GC event.
+     */
+    private int permGenEnd;
+
+    /**
+     * Space allocated to permanent generation (kilobytes).
+     */
+    private int permGenAllocation;
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Create event from log entry.
@@ -124,14 +149,37 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, 
      */
     public G1FullGCEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
-        if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            trigger = matcher.group(14);
-            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(17).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)), matcher.group(19).charAt(0));
-            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(20)), matcher.group(21).charAt(0));
-            duration = JdkMath.convertSecsToMillis(matcher.group(22)).intValue();
+        if (logEntry.matches(REGEX)) {
+            Pattern pattern = Pattern.compile(REGEX);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                trigger = matcher.group(2);
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(5).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(7).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
+                        matcher.group(9).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(10)).intValue();
+            }
+        } else if (logEntry.matches(REGEX_PREPROCESSED)) {
+            Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                trigger = matcher.group(3);
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(6).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(8).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)),
+                        matcher.group(10).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(11)).intValue();
+                if (matcher.group(32) != null) {
+                    permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(34)), matcher.group(35).charAt(0));
+                    permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(36)),
+                            matcher.group(37).charAt(0));
+                    permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(38)),
+                            matcher.group(39).charAt(0));
+                }
+            }
         }
     }
 
@@ -155,12 +203,24 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, 
         return logEntry;
     }
 
+    protected void setLogEntry(String logEntry) {
+        this.logEntry = logEntry;
+    }
+
     public int getDuration() {
         return duration;
     }
 
+    protected void setDuration(int duration) {
+        this.duration = duration;
+    }
+
     public long getTimestamp() {
         return timestamp;
+    }
+
+    protected void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public int getCombinedOccupancyInit() {
@@ -173,6 +233,30 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, 
 
     public int getCombinedSpace() {
         return combinedAvailable;
+    }
+
+    public int getPermOccupancyInit() {
+        return permGen;
+    }
+
+    protected void setPermOccupancyInit(int permGen) {
+        this.permGen = permGen;
+    }
+
+    public int getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    protected void setPermOccupancyEnd(int permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    public int getPermSpace() {
+        return permGenAllocation;
+    }
+
+    protected void setPermSpace(int permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
     }
 
     public String getName() {
@@ -191,6 +275,6 @@ public class G1FullGCEvent implements BlockingEvent, TriggerData, CombinedData, 
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return logLine.matches(REGEX) || logLine.matches(REGEX_PREPROCESSED);
     }
 }

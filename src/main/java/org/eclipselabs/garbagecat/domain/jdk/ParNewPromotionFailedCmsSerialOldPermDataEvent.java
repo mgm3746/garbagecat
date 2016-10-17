@@ -82,6 +82,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 108537.519: [GC108537.520: [ParNew (promotion failed): 1409215K-&gt;1426861K(1567616K), 0.4259330 secs]108537.946: [CMS: 13135135K-&gt;4554003K(16914880K), 14.7637760 secs] 14542753K-&gt;4554003K(18482496K), [CMS Perm : 227503K-&gt;226115K(378908K)], 15.1927120 secs] [Times: user=16.31 sys=0.21, real=15.19 secs]
  * </pre>
  * 
+ * <p>
+ * 3) With <code>-XX:+PrintClassHistogram</code> after preprocessing:
+ * </p>
+ * 
+ * <pre>
+ * 182314.858: [GC 182314.859: [ParNew (promotion failed): 516864K-&gt;516864K(516864K), 2.0947428 secs]182316.954: [Class Histogram:, 41.3875632 secs]182358.342: [CMS: 3354568K-&gt;756393K(7331840K), 53.1398170 secs]182411.482: [Class Histogram, 11.0299920 secs] 3863904K-&gt;756393K(7848704K), [CMS Perm : 682507K-&gt;442221K(1048576K)], 107.6553710 secs] [Times: user=112.83 sys=0.28, real=107.66 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
@@ -93,11 +101,12 @@ public class ParNewPromotionFailedCmsSerialOldPermDataEvent
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( )?" + JdkRegEx.TIMESTAMP
             + ": \\[ParNew( \\(promotion failed\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\), " + JdkRegEx.DURATION + "\\](" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram: , " + JdkRegEx.DURATION
+            + "\\])?" + JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\](" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram, " + JdkRegEx.DURATION
+            + "\\])? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[CMS Perm : "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     private static Pattern pattern = Pattern.compile(ParNewPromotionFailedCmsSerialOldPermDataEvent.REGEX);
 
     /**
@@ -171,20 +180,20 @@ public class ParNewPromotionFailedCmsSerialOldPermDataEvent
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            old = Integer.parseInt(matcher.group(10));
-            oldEnd = Integer.parseInt(matcher.group(11));
-            oldAllocation = Integer.parseInt(matcher.group(12));
-            int totalBegin = Integer.parseInt(matcher.group(14));
-            // Don't use ParNew values because those are presumably sbefore the promotion failure.
+            old = Integer.parseInt(matcher.group(13));
+            oldEnd = Integer.parseInt(matcher.group(14));
+            oldAllocation = Integer.parseInt(matcher.group(15));
+            int totalBegin = Integer.parseInt(matcher.group(20));
+            // Don't use ParNew values because those are presumably before the promotion failure.
             young = totalBegin - old;
-            int totalEnd = Integer.parseInt(matcher.group(15));
+            int totalEnd = Integer.parseInt(matcher.group(21));
             youngEnd = totalEnd - oldEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(16));
+            int totalAllocation = Integer.parseInt(matcher.group(22));
             youngAvailable = totalAllocation - oldAllocation;
-            permGen = Integer.parseInt(matcher.group(17));
-            permGenEnd = Integer.parseInt(matcher.group(18));
-            permGenAllocation = Integer.parseInt(matcher.group(19));
-            duration = JdkMath.convertSecsToMillis(matcher.group(21)).intValue();
+            permGen = Integer.parseInt(matcher.group(23));
+            permGenEnd = Integer.parseInt(matcher.group(24));
+            permGenAllocation = Integer.parseInt(matcher.group(25));
+            duration = JdkMath.convertSecsToMillis(matcher.group(27)).intValue();
         }
     }
 

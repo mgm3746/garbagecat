@@ -79,7 +79,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 3) Double datestamp:
+ * 3) Double datestamp, space between:
  * </p>
  * 
  * <pre>
@@ -92,6 +92,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 23934.242: [GC concurrent-root-region-scan-start]
  * </pre>
  * 
+ * <p>
+ * 4) Double datestamp, no space between:
+ * </p>
+ * 
+ * <pre>
+ * 2016-10-12T09:53:31.818+02002016-10-12T09:53:31.818+0200: : 290.944: [GC concurrent-root-region-scan-start]
+ * </pre>
+ * 
+ * Preprocessed:
+ * 
+ * <pre>
+ * 290.944: [GC concurrent-root-region-scan-start]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -99,10 +113,12 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
 
     /**
      * Regular expression defining date stamp prefix.
+     * 
+     * 2016-10-12T11:56:49.415+0200: 7688.541: 2016-10-12T11:56:49.415+0200
      */
-    private static final String REGEX_DATESTAMP_PREFIX = JdkRegEx.DATESTAMP + "(:)? ( )?(" + JdkRegEx.DATESTAMP
-            + "(: )?)?((" + JdkRegEx.TIMESTAMP + ": )(:)?( )?)(" + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.DATESTAMP
-            + ": )?";
+    private static final String REGEX_DATESTAMP_PREFIX = JdkRegEx.DATESTAMP + "(:)?[ ]{0,2}(: )?(" + JdkRegEx.DATESTAMP
+            + "(: )?(: )?)?((" + JdkRegEx.TIMESTAMP + "(: )?)(:)?( )?)(" + JdkRegEx.TIMESTAMP + "(:)?[ ]{0,1})?("
+            + JdkRegEx.DATESTAMP + "(:)?[ ]{0,1})?";
     /**
      * Regular expression defining the logging line.
      */
@@ -126,7 +142,7 @@ public class DateStampPrefixPreprocessAction implements PreprocessAction {
         Matcher matcher = p.matcher(logEntry);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
-            matcher.appendReplacement(sb, matcher.group(26));
+            matcher.appendReplacement(sb, matcher.group(27));
         }
         matcher.appendTail(sb);
         this.logEntry = sb.toString();

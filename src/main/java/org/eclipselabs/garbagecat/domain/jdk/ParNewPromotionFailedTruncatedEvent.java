@@ -25,6 +25,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * PAR_NEW_PROMOTION_FAILED_TRUNCATED
  * </p>
  * 
+ * TODO: Roll this into ParNew?
+ * 
  * <p>
  * Truncated {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcurrentModeFailureEvent},
  * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcModeFailurePermDataEvent},
@@ -53,8 +55,10 @@ public class ParNewPromotionFailedTruncatedEvent implements BlockingEvent, CmsCo
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
             + ": \\[ParNew \\(promotion failed\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS(" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\])?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[(CMS)?(" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\])?("
+            + PrintClassHistogramEvent.REGEX_PREPROCESSED + ")?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+
     private static Pattern pattern = Pattern.compile(REGEX);
 
     /**

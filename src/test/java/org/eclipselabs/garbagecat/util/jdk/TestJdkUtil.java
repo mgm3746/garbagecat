@@ -214,4 +214,10 @@ public class TestJdkUtil extends TestCase {
                 + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
         Assert.assertTrue("Datestamp not found.", JdkUtil.isLogLineWithDateStamp(logLine));
     }
+
+    public void testDoubleDateStampOddFormat() {
+        String logLine = "2016-10-12T09:53:31.818+02002016-10-12T09:53:31.818+0200: : 290.944: "
+                + "[GC concurrent-root-region-scan-start]";
+        Assert.assertTrue("Datestamp not found.", JdkUtil.isLogLineWithDateStamp(logLine));
+    }
 }

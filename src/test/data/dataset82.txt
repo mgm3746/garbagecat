@@ -1,0 +1,25 @@
+2016-09-19T18:37:30.354+0100: 572264.304: [GC 572264.306: [ParNew (promotion failed)
+Desired survivor size 14391704 bytes, new threshold 5 (max 32)
+- age   1:   10129056 bytes,   10129056 total
+- age   2:    1599776 bytes,   11728832 total
+- age   3:    1631288 bytes,   13360120 total
+- age   4:     827376 bytes,   14187496 total
+- age   5:     771408 bytes,   14958904 total
+: 516864K->516864K(516864K), 1.4978605 secs]572265.804: [Class Histogram:
+32017:             1             16  org.jboss.as.controller.operations.common.SchemaLocationAddHandler
+32018:             1             16  sun.reflect.GeneratedMethodAccessor2444
+32019:             1             16  sun.reflect.GeneratedMethodAccessor1425
+Total      40482691     6500833128
+, 23.6901531 secs]
+572289.495: [CMS2016-09-19T18:38:10.734+0100: 572304.683: [CMS-concurrent-sweep: 17.692/44.143 secs] [Times: user=97.86 sys=1.85, real=44.14 secs]
+ (concurrent mode failure): 5350445K->891234K(7331840K), 59.8600601 secs]572349.355: [Class Histogram
+ num     #instances         #bytes  class name
+----------------------------------------------
+   1:       1697805      177499704  [C
+   2:        652065       99006064  <constMethodKlass>
+   3:        838400       94803520  [Ljava.lang.Object;
+30413:             1             16  sun.reflect.GeneratedConstructorAccessor695
+30414:             1             16  sun.reflect.GeneratedMethodAccessor1109
+Total      20261260     1355711784
+, 12.1674045 secs]
+ 5825751K->891234K(7848704K), [CMS Perm : 500357K->443269K(1048576K)], 97.2188825 secs] [Times: user=100.78 sys=0.18, real=97.22 secs]

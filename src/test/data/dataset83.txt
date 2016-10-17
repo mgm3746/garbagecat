@@ -1,0 +1,9 @@
+2016-09-13T03:40:14.349+0100: 29.839: [GC 36.226: [ParNew
+Desired survivor size 14391704 bytes, new threshold 1 (max 32)
+- age   1:   14471576 bytes,   14471576 total
+- age   2:    1499616 bytes,   15971192 total
+: 503700K->15616K(516864K), 0.2115259 secs] 503700K->23381K(7848704K), 0.2125976 secs] [Times: user=2.63 sys=0.26, real=6.60 secs]
+2016-09-13T03:40:36.906+0100: 52.397: [GC 52.397: [ParNew
+Desired survivor size 14391704 bytes, new threshold 16 (max 32)
+- age   1:   10016152 bytes,   10016152 total
+: 516864K->15158K(516864K), 0.1560405 secs] 524629K->39404K(7848704K), 0.1568911 secs] [Times: user=1.67 sys=0.13, real=0.16 secs]

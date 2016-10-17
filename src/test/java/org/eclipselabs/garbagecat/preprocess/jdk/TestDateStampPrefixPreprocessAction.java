@@ -150,4 +150,61 @@ public class TestDateStampPrefixPreprocessAction extends TestCase {
                 + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
         Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
     }
+
+    public void testLogLineDateStampDoubleColon() {
+        String logLine = "2016-10-12T09:53:31.818+0200: : 290.944: [GC concurrent-root-region-scan-start]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP_PREFIX.toString() + ".",
+                DateStampPrefixPreprocessAction.match(logLine));
+        DateStampPrefixPreprocessAction preprocessAction = new DateStampPrefixPreprocessAction(logLine);
+        String preprocessedLogLine = "290.944: [GC concurrent-root-region-scan-start]";
+        Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
+    }
+
+    public void testLogLineDoubleDateStampDoubleColon() {
+        String logLine = "2016-10-12T11:31:30.896+0200: 6170.0212016-10-12T11:31:30.896+0200: : [Full GC "
+                + "(Metadata GC Threshold) 6170.021: [GC concurrent-root-region-scan-start]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP_PREFIX.toString() + ".",
+                DateStampPrefixPreprocessAction.match(logLine));
+        DateStampPrefixPreprocessAction preprocessAction = new DateStampPrefixPreprocessAction(logLine);
+        String preprocessedLogLine = "6170.021: [Full GC (Metadata GC Threshold) "
+                + "6170.021: [GC concurrent-root-region-scan-start]";
+        Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
+    }
+
+    public void testLogLineDoubleDateStampNoSpaceBetweenDoubleColon() {
+        String logLine = "2016-10-12T09:53:31.818+02002016-10-12T09:53:31.818+0200: : "
+                + "290.944: [GC concurrent-root-region-scan-start]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP_PREFIX.toString() + ".",
+                DateStampPrefixPreprocessAction.match(logLine));
+        DateStampPrefixPreprocessAction preprocessAction = new DateStampPrefixPreprocessAction(logLine);
+        String preprocessedLogLine = "290.944: [GC concurrent-root-region-scan-start]";
+        Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
+    }
+
+    public void testLogLineDoubleDateStampDoubleTimeStampNoColonOrSpaceAfter2ndTimeStamp() {
+        String logLine = "2016-10-12T11:15:46.044+0200: 2016-10-12T11:15:46.044+0200: 5225.170: "
+                + "5225.170[Full GC (Metadata GC Threshold) : [GC concurrent-root-region-scan-start]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP_PREFIX.toString() + ".",
+                DateStampPrefixPreprocessAction.match(logLine));
+        DateStampPrefixPreprocessAction preprocessAction = new DateStampPrefixPreprocessAction(logLine);
+        String preprocessedLogLine = "5225.170: [Full GC (Metadata GC Threshold) : "
+                + "[GC concurrent-root-region-scan-start]";
+        Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
+    }
+
+    public void testLogLineDateStampTimeStampDateStampNoColon() {
+        String logLine = "2016-10-12T11:56:49.415+0200: 7688.541: 2016-10-12T11:56:49.415+0200"
+                + "[GC concurrent-root-region-scan-start]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP_PREFIX.toString() + ".",
+                DateStampPrefixPreprocessAction.match(logLine));
+        DateStampPrefixPreprocessAction preprocessAction = new DateStampPrefixPreprocessAction(logLine);
+        String preprocessedLogLine = "7688.541: [GC concurrent-root-region-scan-start]";
+        Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
+    }
+
 }

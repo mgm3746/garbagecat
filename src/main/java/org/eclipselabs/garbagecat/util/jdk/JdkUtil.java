@@ -59,7 +59,6 @@ import org.eclipselabs.garbagecat.domain.jdk.SerialEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialSerialOldPermDataEvent;
-import org.eclipselabs.garbagecat.domain.jdk.TruncatedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcYoungEvent;
 import org.eclipselabs.garbagecat.preprocess.ApplicationLoggingPreprocessAction;
@@ -95,11 +94,11 @@ public class JdkUtil {
         //
         APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD, SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG,
         //
-        VERBOSE_GC_OLD, TRUNCATED, PAR_NEW_PROMOTION_FAILED_TRUNCATED, G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT,
+        VERBOSE_GC_OLD, PAR_NEW_PROMOTION_FAILED_TRUNCATED, G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT,
         //
         G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC, HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY,
         //
-        HEADER_VERSION, PRINT_REFERENCE_GC, LOG_ROTATION
+        HEADER_VERSION, PRINT_REFERENCE_GC, LOG_ROTATION, CLASS_HISTOGRAM, PRINT_HEAP_AT_GC, CLASS_UNLOADING
     };
 
     /**
@@ -108,7 +107,7 @@ public class JdkUtil {
     public enum PreprocessActionType {
         APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, DATE_STAMP, DATE_STAMP_PREFIX,
         //
-        GC_TIME_LIMIT_EXCEEDED, PRINT_HEAP_AT_GC, PRINT_TENURING_DISTRIBUTION, THREAD_DUMP, UNLOADING_CLASS, G1, CMS
+        GC_TIME_LIMIT_EXCEEDED, PRINT_TENURING_DISTRIBUTION, THREAD_DUMP, G1, CMS, PARALLEL_SERIAL_OLD
     };
 
     /**
@@ -119,7 +118,7 @@ public class JdkUtil {
         //
         G1_EVACUATION_PAUSE, GCLOCATER_INITIATED_GC, CMS_INITIAL_MARK, CMS_FINAL_REMARK, CMS_CONCURRENT_MODE_FAILURE,
         //
-        CMS_CONCURRENT_MODE_INTERRUPTED;
+        CMS_CONCURRENT_MODE_INTERRUPTED, CLASS_HISTOGRAM, LAST_DITCH_COLLECTION, JVMTI_FORCED_GARBAGE_COLLECTION;
     };
 
     /**
@@ -189,8 +188,6 @@ public class JdkUtil {
             return LogEventType.VERBOSE_GC_YOUNG;
         if (VerboseGcOldEvent.match(logLine))
             return LogEventType.VERBOSE_GC_OLD;
-        if (TruncatedEvent.match(logLine))
-            return LogEventType.TRUNCATED;
         if (ParNewPromotionFailedTruncatedEvent.match(logLine))
             return LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED;
         if (G1YoungPause.match(logLine))
@@ -307,9 +304,6 @@ public class JdkUtil {
             break;
         case VERBOSE_GC_OLD:
             event = new VerboseGcOldEvent(logLine);
-            break;
-        case TRUNCATED:
-            event = new TruncatedEvent(logLine);
             break;
         case PAR_NEW_PROMOTION_FAILED_TRUNCATED:
             event = new ParNewPromotionFailedTruncatedEvent(logLine);

@@ -164,4 +164,39 @@ public class JdkMath {
         }
         return kilobytes;
     }
+
+    /**
+     * Convert SIZE_G1_DETAILS to kilobytes.
+     * 
+     * @param size
+     *            The size (e.g. '128.0').
+     * @param units
+     *            The units (e.g. 'G').
+     * @return The size in Kilobytes.
+     */
+    public static int convertSizeG1DetailsToKilobytes(final String size, final char units) {
+
+        BigDecimal kilobytes = new BigDecimal(size);
+        BigDecimal kilo = new BigDecimal("1024");
+
+        switch (units) {
+
+        case 'B':
+            kilobytes = kilobytes.divide(new BigDecimal("1024"));
+            break;
+        case 'K':
+            break;
+        case 'M':
+            kilobytes = kilobytes.multiply(kilo);
+            break;
+        case 'G':
+            kilobytes = (kilobytes.multiply(kilo)).multiply(kilo);
+            break;
+        default:
+            throw new AssertionError("Unexpected units value: " + units);
+
+        }
+        kilobytes = kilobytes.setScale(0, RoundingMode.HALF_EVEN);
+        return kilobytes.intValue();
+    }
 }

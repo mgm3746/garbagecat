@@ -677,6 +677,20 @@ public class Jvm {
     }
 
     /**
+     * The option for printing a class histogram when a thread dump is taken. For example:
+     * 
+     * <pre>
+     * -XX:+PrintClassHistogram
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintClassHistogramEnabled() {
+        String regex = "(-XX:\\+PrintClassHistogram)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

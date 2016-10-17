@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,16 +46,30 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 830048.804: [Full GC 830048.804: [CMS: 1572185K-&gt;1070163K(1572864K), 6.8812400 secs] 2489689K-&gt;1070163K(2490368K), [CMS Perm : 46357K-&gt;46348K(77352K)], 6.8821630 secs] [Times: user=6.87 sys=0.00, real=6.88 secs]
  * </pre>
  * 
+ * TODO: Replace this with ParallelSerialOldPreprocessorAction and make UnloadingClassEvent a throwaway event.
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnloadingClassPreprocessAction implements PreprocessAction {
+public class ParallelSerialOldPreprocessAction implements PreprocessAction {
 
     /**
-     * Regular expression defining the logging.
+     * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(.*)" + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
-    private static final Pattern PATTERN = Pattern.compile(REGEX);
+    private static final String REGEX_BEGINNING_UNLOADING_CLASS = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC)"
+            + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
+
+    /**
+     * Regular expression for retained end.
+     * 
+     * [PSYoungGen: 32064K->0K(819840K)] [PSOldGen: 355405K->387085K(699072K)] 387470K->387085K(1518912K) [PSPermGen:
+     * 115215K->115215K(238912K)], 1.5692400 secs]
+     */
+    private static final String REGEX_RETAIN_END = "^( \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION
+            + "\\])( )?$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -68,20 +83,27 @@ public class UnloadingClassPreprocessAction implements PreprocessAction {
      *            The log line.
      * @param nextLogEntry
      *            The next log line.
+     * @param context
+     *            Information to make preprocessing decisions.
      */
-    public UnloadingClassPreprocessAction(String logEntry, String nextLogEntry) {
-        Matcher matcher = PATTERN.matcher(logEntry);
-        if (matcher.find()) {
-            // Do not add a newline if the next line requires preprocessing or the next log line is
-            // an unknown logging event (in that case assume the logging is split).
-            if (nextLogEntry != null && (match(nextLogEntry)
-                    || JdkUtil.identifyEventType(nextLogEntry).equals(JdkUtil.LogEventType.UNKNOWN))) {
-                // No newline
-                this.logEntry = matcher.group(1) + matcher.group(2);
-            } else {
-                // Newline
-                this.logEntry = matcher.group(1) + matcher.group(2) + System.getProperty("line.separator");
+    public ParallelSerialOldPreprocessAction(String logEntry, String nextLogEntry, Set<String> context) {
+
+        // Beginning logging
+        if (logEntry.matches(REGEX_BEGINNING_UNLOADING_CLASS)) {
+            Pattern pattern = Pattern.compile(REGEX_BEGINNING_UNLOADING_CLASS);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
             }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_END)) {
+            // End of logging event
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_END);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         }
     }
 
@@ -90,7 +112,7 @@ public class UnloadingClassPreprocessAction implements PreprocessAction {
     }
 
     public String getName() {
-        return JdkUtil.PreprocessActionType.UNLOADING_CLASS.toString();
+        return JdkUtil.PreprocessActionType.PARALLEL_SERIAL_OLD.toString();
     }
 
     /**
@@ -101,7 +123,6 @@ public class UnloadingClassPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return PATTERN.matcher(logLine).matches();
+        return logLine.matches(REGEX_BEGINNING_UNLOADING_CLASS) || logLine.matches(REGEX_RETAIN_END);
     }
-
 }

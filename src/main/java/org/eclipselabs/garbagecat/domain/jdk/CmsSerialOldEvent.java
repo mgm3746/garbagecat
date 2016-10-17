@@ -95,17 +95,20 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_SYSTEM_GC
             + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC
-            + ")\\) )?" + JdkRegEx.TIMESTAMP + "(: \\[CMS)?(bailing out to foreground collection)?( \\(("
+            + ")\\) )?" + JdkRegEx.TIMESTAMP + ": \\[(CMS((bailing out to foreground collection)?( \\(("
             + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|" + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED
-            + ")\\))?( \\(" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\)\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
-            + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION
-            + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ")\\))?)?( \\(concurrent mode failure\\)\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE
+            + "\\)]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
             + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\])?: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION
-            + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)|(" + JdkRegEx.TRIGGER_CLASS_HISTOGRAM + "):)(, "
+            + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[Class Histogram, " + JdkRegEx.DURATION + "\\])? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
 
@@ -122,23 +125,40 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
         if (matcher.find()) {
             super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
             if (matcher.group(10) != null) {
-                trigger = matcher.group(10);
-            } else {
+                trigger = matcher.group(11);
+            } else if (matcher.group(3) != null) {
                 trigger = matcher.group(4);
+            } else if (matcher.group(7) != null) {
+                trigger = matcher.group(26);
             }
-            super.setOldOccupancyInit(Integer.parseInt(matcher.group(22)));
-            super.setOldOccupancyEnd(Integer.parseInt(matcher.group(23)));
-            super.setOldSpace(Integer.parseInt(matcher.group(24)));
-            int totalBegin = Integer.parseInt(matcher.group(26));
+            int totalBegin = Integer.parseInt(matcher.group(37));
+            int totalEnd = Integer.parseInt(matcher.group(38));
+            int totalAllocation = Integer.parseInt(matcher.group(39));
+            if (matcher.group(23) != null) {
+                super.setOldOccupancyInit(Integer.parseInt(matcher.group(23)));
+            } else {
+                // there is no old gen data, so the best we can do is set to total
+                super.setOldOccupancyInit(totalBegin);
+            }
+            if (matcher.group(24) != null) {
+                super.setOldOccupancyEnd(Integer.parseInt(matcher.group(24)));
+            } else {
+                // there is no old gen data, so the best we can do is set to total
+                super.setOldOccupancyEnd(totalEnd);
+            }
+            if (matcher.group(25) != null) {
+                super.setOldSpace(Integer.parseInt(matcher.group(25)));
+            } else {
+                // there is no old gen data, so the best we can do is set to total
+                super.setOldSpace(totalAllocation);
+            }
             super.setYoungOccupancyInit(totalBegin - super.getOldOccupancyInit());
-            int totalEnd = Integer.parseInt(matcher.group(27));
             super.setYoungOccupancyEnd(totalEnd - super.getOldOccupancyEnd());
-            int totalAllocation = Integer.parseInt(matcher.group(28));
             super.setYoungSpace(totalAllocation - super.getOldSpace());
-            super.setPermOccupancyInit(Integer.parseInt(matcher.group(30)));
-            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(31)));
-            super.setPermSpace(Integer.parseInt(matcher.group(32)));
-            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(34)).intValue());
+            super.setPermOccupancyInit(Integer.parseInt(matcher.group(41)));
+            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(42)));
+            super.setPermSpace(Integer.parseInt(matcher.group(43)));
+            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(45)).intValue());
         }
     }
 

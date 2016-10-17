@@ -12,6 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 import junit.framework.Assert;
@@ -21,27 +24,29 @@ import junit.framework.TestCase;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnloadingClassPreprocessAction extends TestCase {
+public class TestParallelSerialOldPreprocessAction extends TestCase {
 
-    public void testLogLine() {
+    public void testLogLineClassUnloading() {
         String logLine = "1187039.034: [Full GC"
                 + "[Unloading class sun.reflect.GeneratedSerializationConstructorAccessor13565]";
         String nextLogLine = null;
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNLOADING_CLASS.toString() + ".",
-                UnloadingClassPreprocessAction.match(logLine));
-        UnloadingClassPreprocessAction event = new UnloadingClassPreprocessAction(logLine, nextLogLine);
-        Assert.assertEquals("Log line not parsed correctly.",
-                "1187039.034: [Full GC" + System.getProperty("line.separator"), event.getLogEntry());
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.PARALLEL_SERIAL_OLD.toString() + ".",
+                ParallelSerialOldPreprocessAction.match(logLine));
+        ParallelSerialOldPreprocessAction event = new ParallelSerialOldPreprocessAction(logLine, nextLogLine, context);
+        Assert.assertEquals("Log line not parsed correctly.", "1187039.034: [Full GC", event.getLogEntry());
     }
 
-    public void testLogLineWithUnderline() {
-        String logLine = "33872.769: [Full GC[Unloading class CargoClaimCoverLetter_1234153487841_717989]";
+    public void testLogLineEnd() {
+        String logLine = " [PSYoungGen: 32064K->0K(819840K)] [PSOldGen: 355405K->387085K(699072K)] "
+                + "387470K->387085K(1518912K) [PSPermGen: 115215K->115215K(238912K)], 1.5692400 secs]";
         String nextLogLine = null;
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNLOADING_CLASS.toString() + ".",
-                UnloadingClassPreprocessAction.match(logLine));
-        UnloadingClassPreprocessAction event = new UnloadingClassPreprocessAction(logLine, nextLogLine);
-        Assert.assertEquals("Log line not parsed correctly.",
-                "33872.769: [Full GC" + System.getProperty("line.separator"), event.getLogEntry());
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.PARALLEL_SERIAL_OLD.toString() + ".",
+                ParallelSerialOldPreprocessAction.match(logLine));
+        ParallelSerialOldPreprocessAction event = new ParallelSerialOldPreprocessAction(logLine, nextLogLine, context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
-
 }

@@ -22,7 +22,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT
+ * PAR_NEW_PROMOTION_FAILED
  * </p>
  * 
  * <p>
@@ -47,12 +47,16 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Standard format:
+ * </p>
+ * 
  * <pre>
  * 144501.626: [GC 144501.627: [ParNew (promotion failed): 680066K-&gt;680066K(707840K), 3.7067346 secs] 1971073K-&gt;1981370K(2018560K), 3.7084059 secs]
  * </pre>
  * 
  * <p>
- * In incremental mode (<code>-XX:+CMSIncrementalMode</code>):
+ * 2) In incremental mode (<code>-XX:+CMSIncrementalMode</code>):
  * </p>
  * 
  * <pre>

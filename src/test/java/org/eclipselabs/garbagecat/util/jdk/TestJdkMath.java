@@ -102,4 +102,31 @@ public class TestJdkMath extends TestCase {
         Assert.assertEquals("Megabytes not converted to kilobytes.", 1048576, JdkMath.calcKilobytes(size, units));
     }
 
+    public void testConvertSizeG1DetailsToKilobytesB() {
+        String size = "102400";
+        char units = 'B';
+        Assert.assertEquals("G1 details not converted to kilobytes.", 100,
+                JdkMath.convertSizeG1DetailsToKilobytes(size, units));
+    }
+
+    public void testConvertSizeG1DetailsToKilobytesK() {
+        String size = "1234567";
+        char units = 'K';
+        Assert.assertEquals("G1 details not converted to kilobytes.", 1234567,
+                JdkMath.convertSizeG1DetailsToKilobytes(size, units));
+    }
+
+    public void testConvertSizeG1DetailsToKilobytesM() {
+        String size = "10";
+        char units = 'M';
+        Assert.assertEquals("G1 details not converted to kilobytes.", 10240,
+                JdkMath.convertSizeG1DetailsToKilobytes(size, units));
+    }
+
+    public void testConvertSizeG1DetailsToKilobytesG() {
+        String size = "100";
+        char units = 'G';
+        Assert.assertEquals("G1 details not converted to kilobytes.", 104857600,
+                JdkMath.convertSizeG1DetailsToKilobytes(size, units));
+    }
 }

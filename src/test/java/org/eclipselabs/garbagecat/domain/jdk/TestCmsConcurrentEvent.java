@@ -73,13 +73,6 @@ public class TestCmsConcurrentEvent extends TestCase {
                 CmsConcurrentEvent.match(logLine));
     }
 
-    public void testAbortPrecleanDueToTimeWithDateStamp() {
-        String logLine = " CMS: abort preclean due to time 2011-03-22T06:04:58.895-0700: 18937.361: "
-                + "[CMS-concurrent-abortable-preclean: 5.271/5.509 secs] [Times: user=7.73 sys=0.07, real=5.51 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
-                CmsConcurrentEvent.match(logLine));
-    }
-
     public void testSweepStart() {
         String logLine = "253.189: [CMS-concurrent-sweep-start]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
@@ -107,6 +100,13 @@ public class TestCmsConcurrentEvent extends TestCase {
     public void testPrecleanConcurrentModeFailure() {
         String logLine = "253.102: [CMS-concurrent-abortable-preclean: 0.083/0.214 secs] "
                 + "[Times: user=1.23 sys=0.02, real=0.21 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testPrecleanConcurrentMarkSweepWithCms() {
+        String logLine = "572289.495: [CMS572304.683: [CMS-concurrent-sweep: 17.692/44.143 secs] "
+                + "[Times: user=97.86 sys=1.85, real=44.14 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 CmsConcurrentEvent.match(logLine));
     }

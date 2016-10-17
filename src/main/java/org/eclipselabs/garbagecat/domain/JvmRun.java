@@ -627,6 +627,13 @@ public class JvmRun {
         if (jvm.getBiasedLockingDisabled() != null) {
             analysisKeys.add(Analysis.KEY_BIASED_LOCKING_DISABLED);
         }
+
+        // Check for print class histogram enabled with -XX:+PrintClassHistogram.
+        if (!analysisKeys.contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM)) {
+            if (jvm.getPrintClassHistogramEnabled() != null) {
+                analysisKeys.add(Analysis.KEY_PRINT_CLASS_HISTOGRAM);
+            }
+        }
     }
 
     /**

@@ -263,6 +263,23 @@ public class Analysis {
     public static final String KEY_HEAP_INSPECTION_INITIATED_GC = "heap.inspection.initiated.gc";
 
     /**
+     * Property key for printing a class histogram when a thread dump is initiated (-XX:+PrintClassHistogram).
+     */
+    public static final String KEY_PRINT_CLASS_HISTOGRAM = "print.class.histogram";
+
+    /**
+     * Property key for when the Metaspace is not able to be resized, and the JVM is doing full, serial collections
+     * attempting to free Metaspace before throwing OutOfMemoryError. The Metaspace is undersized, or there is a
+     * Metaspace leak.
+     */
+    public static final String KEY_METASPACE_ALLOCATION_FAILURE = "metaspace.allocation.failure";
+
+    /**
+     * Property key for JVM TI initiated gc.
+     */
+    public static final String KEY_EXPLICIT_GC_JVMTI = "explicit.gc.jvmti";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

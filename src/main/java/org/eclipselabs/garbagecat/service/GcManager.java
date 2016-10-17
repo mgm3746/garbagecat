@@ -21,8 +21,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipselabs.garbagecat.Main;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
@@ -32,6 +34,7 @@ import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsCollection;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collection;
@@ -40,7 +43,10 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
+import org.eclipselabs.garbagecat.domain.jdk.PrintClassHistogramEvent;
+import org.eclipselabs.garbagecat.domain.jdk.PrintHeatAtGcEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
+import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
@@ -48,9 +54,8 @@ import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.GcTimeLimitExceededPreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.PrintHeapAtGcPreprocessAction;
+import org.eclipselabs.garbagecat.preprocess.jdk.ParallelSerialOldPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.PrintTenuringDistributionPreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.UnloadingClassPreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -81,7 +86,7 @@ public class GcManager {
     }
 
     /**
-     * Remove extraneous information and format the log file for parsing.
+     * Preprocess log file. Remove extraneous information and format the log file for parsing.
      * 
      * @param logFile
      *            Raw garbage collection log file.
@@ -94,8 +99,6 @@ public class GcManager {
             throw new IllegalArgumentException("logFile == null!!");
 
         File preprocessFile = new File(logFile.getPath() + ".pp");
-
-        // Preprocess log file
 
         BufferedReader bufferedReader = null;
         BufferedWriter bufferedWriter = null;
@@ -110,26 +113,40 @@ public class GcManager {
 
             // Used for detangling intermingled logging events that span multiple lines
             List<String> entangledLogLines = new ArrayList<String>();
+            // Used to provide context for preprocessing decisions
+            Set<String> context = new HashSet<String>();
+
+            String priorLogEntry = System.getProperty("line.separator");
 
             String nextLogLine = bufferedReader.readLine();
             while (nextLogLine != null) {
-
                 preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
-                        entangledLogLines);
+                        entangledLogLines, context);
                 if (preprocessedLogLine != null) {
-                    bufferedWriter.write(preprocessedLogLine);
+                    if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
+                            && !priorLogEntry.matches(System.getProperty("line.separator"))) {
+                        bufferedWriter.write(System.getProperty("line.separator") + preprocessedLogLine);
+                    } else {
+                        bufferedWriter.write(preprocessedLogLine);
+                    }
+                    priorLogEntry = preprocessedLogLine;
                 }
 
                 priorLogLine = currentLogLine;
                 currentLogLine = nextLogLine;
                 nextLogLine = bufferedReader.readLine();
-            } // while()
+            }
 
             // Process last line
             preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
-                    entangledLogLines);
+                    entangledLogLines, context);
             if (preprocessedLogLine != null) {
-                bufferedWriter.write(preprocessedLogLine);
+                if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
+                        && !priorLogEntry.matches(System.getProperty("line.separator"))) {
+                    bufferedWriter.write(System.getProperty("line.separator") + preprocessedLogLine);
+                } else {
+                    bufferedWriter.write(preprocessedLogLine);
+                }
             }
 
         } catch (FileNotFoundException e) {
@@ -154,10 +171,10 @@ public class GcManager {
                     e.printStackTrace();
                 }
             }
-        } // finally
+        }
 
         return preprocessFile;
-    }// preprocess()
+    }
 
     /**
      * Determine the preprocessed log entry given the current, previous, and next log lines.
@@ -180,10 +197,12 @@ public class GcManager {
      *            The date and time the JVM was started.
      * @param entangledLogLines
      *            Log lines mixed in with other logging events.
-     * @return
+     * @param context
+     *            Information to make preprocessing decisions.
+     * @return The preprocessed log line, or null if it was thrown away.
      */
     private String getPreprocessedLogEntry(String currentLogLine, String priorLogLine, String nextLogLine,
-            Date jvmStartDate, List<String> entangledLogLines) {
+            Date jvmStartDate, List<String> entangledLogLines, Set<String> context) {
         String preprocessedLogLine = null;
         if (!JdkUtil.discardLogLine(currentLogLine)) {
             // First convert any datestamps to timestamps
@@ -197,30 +216,37 @@ public class GcManager {
                     // Datestamp only. Convert datestamp to timestamp.
                     if (jvmStartDate == null) {
                         throw new IllegalArgumentException(
-                                "JVM start datetime must be defined to do datestamp to timestamp conversion.");
+                                "JVM start datetime must be defined to do datestamp to timestamp conversion."
+                                        + currentLogLine);
                     }
                     DateStampPreprocessAction action = new DateStampPreprocessAction(currentLogLine, jvmStartDate);
                     currentLogLine = action.getLogEntry();
                 }
             }
             // Other preprocessing
-            if (UnloadingClassPreprocessAction.match(currentLogLine)) {
-                UnloadingClassPreprocessAction action = new UnloadingClassPreprocessAction(currentLogLine, nextLogLine);
-                preprocessedLogLine = action.getLogEntry();
-            } else if (CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
+            if (isThrowawayEvent(currentLogLine)) {
+                currentLogLine = null;
+            } else if (ParallelSerialOldPreprocessAction.match(currentLogLine)) {
+                ParallelSerialOldPreprocessAction action = new ParallelSerialOldPreprocessAction(currentLogLine,
+                        nextLogLine, context);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
+            } else if (CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)
+                    && !context.contains(G1PreprocessAction.TOKEN)) {
+                /*
+                 * ^^^ Verify not in the middle of G1 preprocessing. The following log line is common to both:
+                 * 
+                 * , 0.0209631 secs]
+                 */
                 CmsPreprocessAction action = new CmsPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
-                        entangledLogLines);
+                        entangledLogLines, context);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
             } else if (GcTimeLimitExceededPreprocessAction.match(currentLogLine, priorLogLine)) {
                 GcTimeLimitExceededPreprocessAction action = new GcTimeLimitExceededPreprocessAction(currentLogLine);
                 preprocessedLogLine = action.getLogEntry();
-            } else if (PrintHeapAtGcPreprocessAction.match(currentLogLine, priorLogLine)) {
-                PrintHeapAtGcPreprocessAction action = new PrintHeapAtGcPreprocessAction(currentLogLine);
-                if (action.getLogEntry() != null) {
-                    preprocessedLogLine = action.getLogEntry();
-                }
             } else if (PrintTenuringDistributionPreprocessAction.match(currentLogLine, priorLogLine)) {
                 PrintTenuringDistributionPreprocessAction action = new PrintTenuringDistributionPreprocessAction(
                         currentLogLine);
@@ -241,12 +267,13 @@ public class GcManager {
                 }
             } else if (G1PreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
                 G1PreprocessAction action = new G1PreprocessAction(priorLogLine, currentLogLine, nextLogLine,
-                        entangledLogLines);
+                        entangledLogLines, context);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
             } else {
-                preprocessedLogLine = currentLogLine + System.getProperty("line.separator");
+                preprocessedLogLine = currentLogLine;
+                context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             }
         }
         return preprocessedLogLine;
@@ -356,6 +383,37 @@ public class GcManager {
                             String trigger = ((TriggerData) event).getTrigger();
                             if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC)) {
                                 jvmDao.addAnalysisKey(Analysis.KEY_HEAP_INSPECTION_INITIATED_GC);
+                            }
+                        }
+                    }
+
+                    // 8) PrintClassHistogram
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM)) {
+                        if (event instanceof TriggerData) {
+                            String trigger = ((TriggerData) event).getTrigger();
+                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM)) {
+                                jvmDao.addAnalysisKey(Analysis.KEY_PRINT_CLASS_HISTOGRAM);
+                            }
+                        }
+                    }
+
+                    // 9) Metaspace allocation failure
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_METASPACE_ALLOCATION_FAILURE)) {
+                        if (event instanceof TriggerData) {
+                            String trigger = ((TriggerData) event).getTrigger();
+                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION)) {
+                                jvmDao.addAnalysisKey(Analysis.KEY_METASPACE_ALLOCATION_FAILURE);
+                            }
+                        }
+                    }
+
+                    // 10) JVM TI explicit gc
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_JVMTI)) {
+                        if (event instanceof TriggerData) {
+                            String trigger = ((TriggerData) event).getTrigger();
+                            if (trigger != null
+                                    && trigger.matches(JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION)) {
+                                jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_JVMTI);
                             }
                         }
                     }
@@ -503,5 +561,17 @@ public class GcManager {
         jvmRun.setBottlenecks(getBottlenecks(jvm, throughputThreshold));
         jvmRun.doAnalysis();
         return jvmRun;
+    }
+
+    /**
+     * Determine whether or not the logging line is essential for GC analysis.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return True if the logging event can be thrown away, false if it should be kept.
+     */
+    private boolean isThrowawayEvent(String logLine) {
+        return PrintHeatAtGcEvent.match(logLine) || PrintClassHistogramEvent.match(logLine)
+                || ClassUnloadingEvent.match(logLine);
     }
 }

@@ -78,7 +78,7 @@ public class CmsConcurrentEvent implements LogEvent, CmsCollection {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^( CMS: abort preclean due to time )?(" + JdkRegEx.DATESTAMP + ": )?"
+    private static final String REGEX = "^( CMS: abort preclean due to time )?(" + JdkRegEx.TIMESTAMP + ": \\[CMS)?"
             + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent.+$";
 
     /**

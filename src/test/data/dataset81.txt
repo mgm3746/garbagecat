@@ -1,0 +1,28 @@
+2016-09-13T06:54:06.773+0100: 11662.232: [Full GC 11662.233: [Class Histogram:
+ num     #instances         #bytes  class name
+----------------------------------------------
+   1:       9249662      876131272  [C
+   2:       8326648      266452736  java.lang.String
+   3:       1213019      240458680  <constMethodKlass>
+   4:       4149724      232421736  [Ljava.lang.Object;
+30833:             1             16  com.example.MyProfile$JaxbAccessor
+30834:             1             16  org.richfaces.bootstrap.ui.orderingList.OrderingListRenderer
+30835:             1             16  sun.reflect.GeneratedConstructorAccessor993
+30836:             1             16  sun.reflect.GeneratedConstructorAccessor612
+Total      67354575     4106800472
+, 38.6969442 secs]
+11700.930: [CMS: 2844387K->635365K(7331840K), 46.4488813 secs]11747.379: [Class Histogram
+ num     #instances         #bytes  class name
+----------------------------------------------
+   1:       1460472      136653088  [C
+   2:        593788       92065072  <constMethodKlass>
+   3:        593787       80766088  <methodKlass>
+   4:         65847       74291888  <constantPoolKlass>
+27718:             1             16  org.hibernate.type.ClassType
+27719:             1             16  com.google.common.collect.MapMakerInternalMap$2
+27720:             1             16  sun.reflect.GeneratedMethodAccessor1638
+27721:             1             16  ognl.ObjectMethodAccessor
+27722:             1             16  com.example.struts2.interceptor.LoggingInterceptor
+Total      16227637     1059670840
+, 9.7637786 secs]
+ 3198859K->635365K(7848704K), [CMS Perm : 851635K->408849K(1048576K)], 94.9116214 secs] [Times: user=94.88 sys=0.24, real=94.91 secs]

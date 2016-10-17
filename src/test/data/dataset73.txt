@@ -1,0 +1,26 @@
+2016-09-13T06:54:06.773+0100: 11662.232: [Full GC 11662.233: [Class Histogram:
+ num     #instances         #bytes  class name
+----------------------------------------------
+   1:       9249662      876131272  [C
+   2:       8326648      266452736  java.lang.String
+   3:       1213019      240458680  <constMethodKlass>
+   4:       4149724      232421736  [Ljava.lang.Object;
+   5:       5212385      208495400  javax.servlet.jsp.tagext.TagAttributeInfo
+   6:        240032      172154504  [B
+   7:         95162      170380136  <constantPoolKlass>
+   8:       1213018      164981504  <methodKlass>
+   9:         83490      112277136  <constantPoolCacheKlass>
+  10:       1426910       79906960  org.apache.jasper.compiler.Mark
+  11:         95161       75176720  <instanceKlassKlass>
+  12:        626801       56922584  [Ljava.util.HashMap$Entry;
+  13:       1774222       56775104  java.util.HashMap$Entry
+27714:             1             16  sun.reflect.GeneratedMethodAccessor1500
+27715:             1             16  sun.reflect.GeneratedConstructorAccessor644
+27716:             1             16  org.jboss.as.pojo.ParsedKernelDeploymentProcessor
+27717:             1             16  sun.reflect.GeneratedMethodAccessor1094
+27718:             1             16  org.hibernate.type.ClassType
+27719:             1             16  com.google.common.collect.MapMakerInternalMap$2
+27720:             1             16  sun.reflect.GeneratedMethodAccessor1638
+Total      16227637     1059670840
+, 9.7637786 secs]
+ 3198859K->635365K(7848704K), [CMS Perm : 851635K->408849K(1048576K)], 94.9116214 secs] [Times: user=94.88 sys=0.24, real=94.91 secs]

@@ -12,65 +12,59 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
-import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * TRUNCATED
+ * CLASS_UNLOADING
  * </p>
  * 
  * <p>
- * A garbage collection event where the logging has been truncated for some reason. It could be an indication the JVM is
- * under stress.
+ * Remove perm gen collection "Unloading class" logging. The perm gen is collected at the beginning of some old
+ * collections, resulting in the perm gen logging being intermingled with the old collection logging. For example:
+ * </p>
+ * 
+ * <p>
+ * Remove class unloading logging from the underlying garbage collection event. This data is currently not being used
+ * for any analysis.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
  * <p>
- * 1) The beginning of a {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent}.
+ * 1) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent}:
  * </p>
  * 
  * <pre>
- * 100.714: [Full GC 100.714: [CMS
+ * 65.343: [Full GC[Unloading class $Proxy111]
+ * [Unloading class $Proxy225]
+ * [Unloading class $Proxy481]
+ * [Unloading class $Proxy245]
+ *  [PSYoungGen: 32064K-&gt;0K(819840K)] [PSOldGen: 355405K-&gt;387085K(699072K)] 387470K-&gt;387085K(1518912K) [PSPermGen: 115215K-&gt;115215K(238912K)], 1.5692400 secs]
  * </pre>
  * 
  * <p>
- * 2) The beginning of a {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} followed by a
- * {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent}.
+ * Preprocessed:
  * </p>
  * 
  * <pre>
- * 9641.622: [GC 9641.622: [ParNew9641.696: [CMS-concurrent-abortable-preclean: 0.029/0.129 secs] [Times: user=0.25 sys=0.07, real=0.13 secs]
+ * 65.343: [Full GC [PSYoungGen: 32064K-&gt;0K(819840K)] [PSOldGen: 355405K-&gt;387085K(699072K)] 387470K-&gt;387085K(1518912K) [PSPermGen: 115215K-&gt;115215K(238912K)], 1.5692400 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TruncatedEvent implements LogEvent {
+public class ClassUnloadingEvent implements LogEvent {
 
     /**
-     * Regular expressions defining the logging.
+     * Regular expression defining the logging.
      */
-    private static final String[] REGEX = {
-            /*
-             * The beginning of a {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} or {@link
-             * org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldConcurrentModeFailureEvent}.
-             */
-            "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.TIMESTAMP + ": \\[CMS$",
-            /*
-             * The beginning of a {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} followed by a {@link
-             * org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent}.
-             */
-            "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[ParNew" + JdkRegEx.TIMESTAMP
-                    + ": \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION + "\\]"
-                    + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
-    private static Pattern pattern = Pattern.compile("^" + JdkRegEx.TIMESTAMP + ".*$");
+    private static final String REGEX = "^" + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
+    private static final Pattern PATTERN = Pattern.compile(REGEX);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -88,12 +82,9 @@ public class TruncatedEvent implements LogEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public TruncatedEvent(String logEntry) {
+    public ClassUnloadingEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
-        if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-        }
+        this.timestamp = 0L;
     }
 
     public String getLogEntry() {
@@ -101,7 +92,7 @@ public class TruncatedEvent implements LogEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.TRUNCATED.toString();
+        return JdkUtil.LogEventType.CLASS_UNLOADING.toString();
     }
 
     public long getTimestamp() {
@@ -116,14 +107,6 @@ public class TruncatedEvent implements LogEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        boolean isMatch = false;
-        for (int i = 0; i < REGEX.length; i++) {
-            if (logLine.matches(REGEX[i])) {
-                isMatch = true;
-                break;
-            }
-        }
-        return isMatch;
+        return PATTERN.matcher(logLine).matches();
     }
-
 }

@@ -119,13 +119,14 @@ public class ParNewConcurrentModeFailurePermDataEvent
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE
-            + "\\))? " + JdkRegEx.TIMESTAMP + ": \\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\](" + JdkRegEx.TIMESTAMP + ": \\[CMS)? \\("
-            + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\))? " + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]("
+            + PrintClassHistogramEvent.REGEX_PREPROCESSED + ")?(" + JdkRegEx.TIMESTAMP + ": \\[CMS)?( \\("
+            + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\](" + PrintClassHistogramEvent.REGEX_PREPROCESSED + ")? "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
@@ -200,19 +201,19 @@ public class ParNewConcurrentModeFailurePermDataEvent
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            old = Integer.parseInt(matcher.group(10));
-            oldEnd = Integer.parseInt(matcher.group(11));
-            oldAllocation = Integer.parseInt(matcher.group(12));
-            int totalBegin = Integer.parseInt(matcher.group(14));
+            old = Integer.parseInt(matcher.group(16));
+            oldEnd = Integer.parseInt(matcher.group(17));
+            oldAllocation = Integer.parseInt(matcher.group(18));
+            int totalBegin = Integer.parseInt(matcher.group(24));
             young = totalBegin - old;
-            int totalEnd = Integer.parseInt(matcher.group(15));
+            int totalEnd = Integer.parseInt(matcher.group(25));
             youngEnd = totalEnd - oldEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(16));
+            int totalAllocation = Integer.parseInt(matcher.group(26));
             youngAvailable = totalAllocation - oldAllocation;
-            permGen = Integer.parseInt(matcher.group(18));
-            permGenEnd = Integer.parseInt(matcher.group(19));
-            permGenAllocation = Integer.parseInt(matcher.group(20));
-            duration = JdkMath.convertSecsToMillis(matcher.group(22)).intValue();
+            permGen = Integer.parseInt(matcher.group(28));
+            permGenEnd = Integer.parseInt(matcher.group(29));
+            permGenAllocation = Integer.parseInt(matcher.group(30));
+            duration = JdkMath.convertSecsToMillis(matcher.group(32)).intValue();
         }
     }
 

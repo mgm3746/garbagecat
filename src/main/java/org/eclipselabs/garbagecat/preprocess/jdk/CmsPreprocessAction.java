@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.preprocess.jdk;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -149,6 +150,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  *
  */
+/**
+ * @author mmillson
+ *
+ */
 public class CmsPreprocessAction implements PreprocessAction {
 
     /**
@@ -162,6 +167,22 @@ public class CmsPreprocessAction implements PreprocessAction {
             + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
 
     /**
+     * Regular expression for beginning CMS_SERIAL_OLD collection.
+     */
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC "
+            + JdkRegEx.TIMESTAMP + ": \\[" + JdkRegEx.TRIGGER_CLASS_HISTOGRAM + ":)[ ]*$";
+
+    /**
+     * Regular expression for beginning PAR_NEW collection.
+     * 
+     * 29.839: [GC 36.226: [ParNew
+     * 
+     * 182314.858: [GC 182314.859: [ParNew (promotion failed)
+     */
+    private static final String REGEX_RETAIN_BEGINNING_PARNEW = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC "
+            + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?)[ ]*$";
+
+    /**
      * Regular expression for retained beginning CMS_SERIAL_OLD mixed with CMS_CONCURRENT collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
@@ -170,38 +191,119 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
 
     /**
-     * Regular expression for retained beginning CMS_SERIAL_OLD bailing outT collection.
+     * Regular expression for retained beginning CMS_SERIAL_OLD bailing out collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_SERIAL_BAILING = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC "
-            + JdkRegEx.TIMESTAMP + ": \\[CMSbailing out to foreground collection[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL_BAILING = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC "
+            + JdkRegEx.TIMESTAMP + ": \\[CMSbailing out to foreground collection)[ ]*$";
 
     /**
-     * Regular expression for retained beginning PAR_NEW bailing outT collection.
+     * Regular expression for retained beginning PrintHeapAtGC collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_PARNEW_BAILING = "^" + JdkRegEx.TIMESTAMP + ": \\[GC "
+    private static final String REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC = "^(" + JdkRegEx.TIMESTAMP
+            + ": \\[(Full )?GC )\\{Heap before gc invocations=\\d{1,10}:[ ]*$";
+
+    /**
+     * Regular expression for retained beginning PAR_NEW bailing out collection.
+     */
+    private static final String REGEX_RETAIN_BEGINNING_PARNEW_BAILING = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC "
             + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: " + JdkRegEx.SIZE
             + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS(Java HotSpot\\(TM\\) Server VM warning: )?bailing out to foreground collection[ ]*$";
+            + ": \\[CMS(Java HotSpot\\(TM\\) Server VM warning: )?bailing out to foreground collection)[ ]*$";
+
+    /**
+     * Regular expression for retained beginning concurrent mode failure.
+     */
+    private static final String REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE = "^( \\(concurrent mode failure\\): "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?)[ ]*$";
 
     /**
      * Middle line when logging is split over 3 lines (e.g. bailing).
+     * 
+     * 233307.273: [CMS-concurrent-mark: 16.547/16.547 secs]
      */
-    private static final String REGEX_RETAIN_MIDDLE_CONCURRENT = "^" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-mark: "
-            + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX_RETAIN_MIDDLE_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+
+    /**
+     * Middle line when mixed serial and concurrent logging (e.g. PrintHeapAtGC).
+     * 
+     * 28282.075: [CMS28284.687: [CMS-concurrent-preclean: 3.706/3.706 secs]
+     * 
+     * : 917504K->917504K(917504K), 5.5887120 secs]877375.047: [CMS877378.691: [CMS-concurrent-mark: 5.714/11.380 secs]
+     * [Times: user=14.72 sys=4.81, real=11.38 secs]
+     */
+    private static final String REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED = "^((: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS)(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark|sweep): "
+            + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+
+    /**
+     * Middle line when mixed PAR_NEW and concurrent logging (e.g. PrintHeapAtGC).
+     */
+    private static final String REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED = "^(" + JdkRegEx.TIMESTAMP
+            + ": \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS)("
+            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark): "
+            + JdkRegEx.DURATION_FRACTION + "\\])[ ]*$";
+
+    /**
+     * Middle line with PrintHeapAtGC.
+     */
+    private static final String REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC = "^((" + JdkRegEx.TIMESTAMP + ": \\[CMS)?( \\("
+            + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)(, \\[CMS Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)])?)Heap after gc invocations=\\d{1,10}:[ ]*$";
+
+    /**
+     * Middle line with PrintPrintClassHistogram
+     */
+    private static final String REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM = "^((" + JdkRegEx.TIMESTAMP + ": \\[CMS)?: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?)[ ]*$";
 
     /**
      * Regular expression for retained end.
+     * 
+     * (concurrent mode failure): 1125100K->1156809K(1310720K), 36.8003032 secs] 1791073K->1156809K(2018560K),
+     * 38.3378201 secs]
+     * 
+     * (concurrent mode interrupted): 861863K->904027K(1797568K), 42.9053262 secs] 1045947K->904027K(2047232K), [CMS
+     * Perm : 252246K->252202K(262144K)], 42.9070278 secs] [Times: user=43.11 sys=0.18, real=42.91 secs]
+     * 
+     * (concurrent mode failure) (concurrent mode failure)[YG occupancy: 33620K (153344K)]85217.919: [Rescan (parallel)
+     * , 0.0116680 secs]85217.931: [weak refs processing, 0.0167100 secs]85217.948: [class unloading, 0.0571300
+     * secs]85218.005: [scrub symbol & string tables, 0.0291210 secs]: 423728K->423633K(4023936K), 0.5165330 secs]
+     * 457349K->457254K(4177280K), [CMS Perm : 260428K->260406K(262144K)], 0.5167600 secs] [Times: user=0.55 sys=0.01,
+     * real=0.52 secs]
+     * 
+     * : 36825K->4352K(39424K), 0.0224830 secs] 44983K->14441K(126848K), 0.0225800 secs]
+     * 
      */
-    private static final String REGEX_RETAIN_END = "^( \\((" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|"
+    private static final String REGEX_RETAIN_END = "^(( \\((" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|"
             + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + ")\\))?( \\(" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE
             + "\\)\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP
             + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
             + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[class unloading, "
             + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION
-            + "\\])?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
-            + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(, \\[(CMS Perm |Metaspace): "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\])?(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
+            + "\\])? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)(, \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
+            + "?)[ ]*$";
+
+    /**
+     * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
+     * multiple lines. Check the TOKEN to see if in the middle of preprocessing an event that spans multiple lines.
+     */
+    private static final String REGEX_RETAIN_DURATION = "(, " + JdkRegEx.DURATION + "\\])[ ]*";
+
+    /**
+     * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
+     * context is necessary to detangle multi-line events where logging patterns are shared among preprocessors.
+     */
+    public static final String TOKEN = "CMS_PREPROCESS_ACTION_TOKEN";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -219,9 +321,11 @@ public class CmsPreprocessAction implements PreprocessAction {
      *            The next log line.
      * @param entangledLogLines
      *            Log lines to be output out of order.
+     * @param context
+     *            Information to make preprocessing decisions.
      */
     public CmsPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
-            List<String> entangledLogLines) {
+            List<String> entangledLogLines, Set<String> context) {
 
         // Beginning logging
         if (logEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT)) {
@@ -229,33 +333,134 @@ public class CmsPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(13) + System.getProperty("line.separator"));
+                entangledLogLines.add(matcher.group(13));
             }
             // Output beginning of PAR_NEW line
             this.logEntry = matcher.group(1);
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)) {
             // CMS_SERIAL_OLD mixed with CMS_CONCURRENT
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(6) + System.getProperty("line.separator"));
+                entangledLogLines.add(matcher.group(6));
             }
             // Output beginning of CMS_SERIAL_OLD line
             this.logEntry = matcher.group(1);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)
-                || logEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW_BAILING)) {
-            // do nothing
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_CONCURRENT)) {
-            // Save line to output at the end
-            entangledLogLines.add(logEntry);
-            if (priorLogEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)
-                    || priorLogEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW_BAILING)) {
-                this.logEntry = priorLogEntry;
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
 
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
             }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC)) {
+            // Remove PrintHeapAtGC output
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_BAILING);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW_BAILING)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_BAILING);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_CONCURRENT)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_CONCURRENT);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                if (!context.contains(TOKEN)) {
+                    // Output now
+                    this.logEntry = matcher.group(1);
+                } else {
+                    // Output later
+                    entangledLogLines.add(matcher.group(1));
+                }
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED)) {
+            // Output serial part, save concurrent to output later
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+                entangledLogLines.add(matcher.group(8));
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED)) {
+            // Output ParNew part, save concurrent to output later
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+                entangledLogLines.add(matcher.group(9));
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC)) {
+            // Remove PrintHeapAtGC output
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_DURATION)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_DURATION);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            // Sometimes this is the end of a logging event
+            if (entangledLogLines.size() > 0 && newLoggingEvent(nextLogEntry)) {
+                clearEntangledLines(entangledLogLines);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_END)) {
-            this.logEntry = logEntry + System.getProperty("line.separator");
+            // End of logging event
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_END);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
             clearEntangledLines(entangledLogLines);
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(TOKEN);
         }
     }
 
@@ -282,8 +487,16 @@ public class CmsPreprocessAction implements PreprocessAction {
         return (logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT) && nextLogLine.matches(REGEX_RETAIN_END))
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL) || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_BAILING)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_CONCURRENT) || logLine.matches(REGEX_RETAIN_END);
+                || logLine.matches(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_CONCURRENT)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC) || logLine.matches(REGEX_RETAIN_END)
+                || logLine.matches(REGEX_RETAIN_DURATION);
     }
 
     /**
@@ -299,10 +512,27 @@ public class CmsPreprocessAction implements PreprocessAction {
             Iterator<String> iterator = entangledLogLines.iterator();
             while (iterator.hasNext()) {
                 String logLine = iterator.next();
-                this.logEntry = this.logEntry + logLine;
+                this.logEntry = this.logEntry + System.getProperty("line.separator") + logLine;
             }
             // Reset entangled log lines
             entangledLogLines.clear();
         }
+    }
+
+    /**
+     * Convenience method to test if a log line is the start of a new logging event or a complete logging event (vs. the
+     * middle or end of a multi line logging event).
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return True if the line is the start of a new logging event or a complete logging event.
+     */
+    private boolean newLoggingEvent(String logLine) {
+        return (logLine == null || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT))
+                || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL) || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_BAILING)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC);
     }
 }

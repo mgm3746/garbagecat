@@ -54,7 +54,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2970.268: [GC pause (G1 Evacuation Pause) (young) (initial-mark), 0.0698627 secs] 13926M-&gt;13824M(30720M) [Times: user=0.28 sys=0.00, real=0.08 secs]
+ * 2970.268: [GC pause (G1 Evacuation Pause) (young) (initial-mark), 0.0698627 secs][Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 13.6G(30.0G)-&gt;13.5G(30.0G)] [Times: user=0.28 sys=0.00, real=0.08 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -64,35 +64,27 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class G1YoungInitialMarkEvent implements BlockingEvent, CombinedData, TriggerData, G1Collection {
 
     /**
-     * Regular expression for triggers associated with this logging event.
-     */
-    public static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
-    /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\("
-            + TRIGGER + "\\) )?\\(young\\) \\(initial-mark\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
+            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC
+            + ")\\) )?\\(young\\) \\(initial-mark\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
             + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * Regular expression preprocessed.
+     * 
+     * 27474.176: [GC pause (young) (initial-mark), 0.4234530 secs][Eden: 5376.0M(7680.0M)->0.0B(6944.0M) Survivors:
+     * 536.0M->568.0M Heap: 13.8G(26.0G)->8821.4M(26.0G)] [Times: user=1.66 sys=0.02, real=0.43 secs]
      */
-    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(" + TRIGGER
-            + "\\) )?\\(young\\) \\(initial-mark\\)( \\(" + TRIGGER + "\\))?, " + JdkRegEx.DURATION + "\\] "
-            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)" + JdkRegEx.TIMES_BLOCK
-            + "?[ ]*$";
-
-    /**
-     * Pattern standard format.
-     */
-    private static final Pattern pattern = Pattern.compile(REGEX);
-
-    /**
-     * Pattern preprocessed.
-     */
-    private static final Pattern patternPreprocessed = Pattern.compile(REGEX_PREPROCESSED);
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\(("
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: "
+            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\("
+            + JdkRegEx.SIZE_G1_DETAILS + "\\) Survivors: " + JdkRegEx.SIZE_G1_DETAILS + "->" + JdkRegEx.SIZE_G1_DETAILS
+            + " Heap: " + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->"
+            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -137,26 +129,35 @@ public class G1YoungInitialMarkEvent implements BlockingEvent, CombinedData, Tri
      */
     public G1YoungInitialMarkEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
-        if (matcher.find()) {
+        if (logEntry.matches(REGEX)) {
             // standard format
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            trigger = matcher.group(14);
-            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), matcher.group(18).charAt(0));
-            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(20).charAt(0));
-            duration = JdkMath.convertSecsToMillis(matcher.group(21)).intValue();
-        } else {
-            // preprocessed format
-            matcher = patternPreprocessed.matcher(logEntry);
+            Pattern pattern = Pattern.compile(REGEX);
+            Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                trigger = matcher.group(5);
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(8).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)), matcher.group(10).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)),
-                        matcher.group(12).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
+                trigger = matcher.group(3);
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(5).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(7).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
+                        matcher.group(9).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(10)).intValue();
+            }
+        } else if (logEntry.matches(REGEX_PREPROCESSED)) {
+            // preprocessed format
+            Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                if (matcher.group(3) != null) {
+                    trigger = matcher.group(3);
+                } else {
+                    trigger = matcher.group(6);
+                }
+                duration = JdkMath.convertSecsToMillis(matcher.group(7)).intValue();
+                combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(20), matcher.group(21).charAt(0));
+                combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(24), matcher.group(25).charAt(0));
+                combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(26),
+                        matcher.group(27).charAt(0));
             }
         }
     }

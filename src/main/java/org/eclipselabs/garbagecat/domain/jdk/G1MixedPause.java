@@ -56,7 +56,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs] 13210M-&gt;11571M(30720M) [Times: user=0.19 sys=0.00, real=0.05 secs]
+ * 2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs][Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 12.9G(30.0G)-&gt;11.3G(30.0G)] [Times: user=0.19 sys=0.00, real=0.05 secs]
  * </pre>
  * 
  * <p>
@@ -74,34 +74,21 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData, G1Collection {
 
     /**
-     * Regular expression for triggers associated with this logging event.
-     */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")";
-
-    /**
      * Regular expression standard format.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC pause \\(mixed\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause \\(mixed\\) " + JdkRegEx.SIZE_G1
+            + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * Regular expression preprocessed.
      */
-    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(" + TRIGGER
-            + "\\) )?\\(mixed\\)( \\(" + TRIGGER + "\\))?, " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_G1 + "->"
-            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-
-    /**
-     * Pattern standard format.
-     */
-    private static final Pattern pattern = Pattern.compile(REGEX);
-
-    /**
-     * Pattern preprocessed.
-     */
-    private static final Pattern patternPreprocessed = Pattern.compile(REGEX_PREPROCESSED);
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\(("
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\))? \\(mixed\\), " + JdkRegEx.DURATION + "\\]\\[Eden: "
+            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\("
+            + JdkRegEx.SIZE_G1_DETAILS + "\\) Survivors: " + JdkRegEx.SIZE_G1_DETAILS + "->" + JdkRegEx.SIZE_G1_DETAILS
+            + " Heap: " + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->"
+            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -146,31 +133,30 @@ public class G1MixedPause implements BlockingEvent, CombinedData, TriggerData, G
      */
     public G1MixedPause(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
-        if (matcher.find()) {
+        if (logEntry.matches(REGEX)) {
             // standard format
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(14).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
-            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), matcher.group(18).charAt(0));
-            duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
-        } else {
-            // preprocessed format
-            matcher = patternPreprocessed.matcher(logEntry);
+            Pattern pattern = Pattern.compile(REGEX);
+            Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                if (matcher.group(2) != null) {
-                    trigger = matcher.group(3);
-                } else {
-                    if (matcher.group(4) != null) {
-                        trigger = matcher.group(5);
-                    }
-                }
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(8).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)), matcher.group(10).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)),
-                        matcher.group(12).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(2)), matcher.group(3).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(5).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)),
+                        matcher.group(7).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(8)).intValue();
+            }
+        } else if (logEntry.matches(REGEX_PREPROCESSED)) {
+            // preprocessed format
+            Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                trigger = matcher.group(3);
+                duration = JdkMath.convertSecsToMillis(matcher.group(4)).intValue();
+                combined = JdkMath.convertSizeG1DetailsToKilobytes((matcher.group(17)), matcher.group(18).charAt(0));
+                combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes((matcher.group(21)), matcher.group(22).charAt(0));
+                combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes((matcher.group(23)),
+                        matcher.group(24).charAt(0));
             }
         }
     }

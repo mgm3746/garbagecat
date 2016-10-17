@@ -20,8 +20,8 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -100,10 +100,12 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 1118, event.getDuration());
     }
 
-    public void testLogLineAfterPreprocessing() {
+    public void testLogLineAfterPreprocessingNoSpaceAfterFullGC() {
         String logLine = "1504.625: [Full GC1504.625: [CMS: 1172695K->840574K(1549164K), 3.7572507 secs] "
                 + "1301420K->840574K(1855852K), [CMS Perm : 226817K->226813K(376168K)], "
                 + "3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 1504625L, event.getTimestamp());
     }
@@ -176,26 +178,6 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 855, event.getDuration());
     }
 
-    /**
-     * Test CMS_SERIAL_OLD heap inspection initiate gc trigger.
-     * 
-     */
-    public void testHeapInspectionInitiatedGcAnalysis() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset72.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.",
-                jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
-        Assert.assertTrue(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_HEAP_INSPECTION_INITIATED_GC));
-    }
-
     public void testLogLineBailing() {
         String logLine = "4300.825: [Full GC 4300.825: [CMSbailing out to foreground collection (concurrent mode "
                 + "failure): 6014591K->6014592K(6014592K), 79.9352305 secs] 6256895K->6147510K(6256896K), [CMS Perm "
@@ -223,6 +205,7 @@ public class TestCmsSerialOldEvent extends TestCase {
                 + "2655937K->2373842K(2658304K), 11.6746550 secs] 3973407K->2373842K(4040704K), "
                 + "[Metaspace: 72496K->72496K(1118208K)] icms_dc=77 , 11.6770830 secs] "
                 + "[Times: user=14.05 sys=0.02, real=11.68 secs]";
+
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
                 CmsSerialOldEvent.match(logLine));
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
@@ -239,5 +222,49 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen end size not parsed correctly.", 72496, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1118208, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 11677, event.getDuration());
+    }
+
+    public void testLogLinePreprocessedClassHistogramTrigger() {
+        String logLine = "11662.232: [Full GC 11662.233: [Class Histogram:, 38.6969442 secs]11700.930: "
+                + "[CMS: 2844387K->635365K(7331840K), 46.4488813 secs]11747.379: [Class Histogram, 9.7637786 secs] "
+                + "3198859K->635365K(7848704K), [CMS Perm : 851635K->408849K(1048576K)], 94.9116214 secs] "
+                + "[Times: user=94.88 sys=0.24, real=94.91 secs]";
+
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM));
+        Assert.assertEquals("Time stamp not parsed correctly.", 11662232, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 0, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 0, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 3198859, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 635365, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 7848704, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 851635, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 408849, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1048576, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 94911, event.getDuration());
+    }
+
+    /**
+     * Test CMS_SERIAL_OLD heap inspection initiate gc trigger.
+     * 
+     */
+    public void testHeapInspectionInitiatedGcAnalysis() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset72.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_HEAP_INSPECTION_INITIATED_GC));
     }
 }
