@@ -114,4 +114,17 @@ public class TestCmsRemarkWithClassUnloadingEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 7294, event.getTimestamp());
         Assert.assertEquals("Duration not parsed correctly.", 37, event.getDuration());
     }
+
+    public void testLogLineJdk8NonInitialGcYgBlock() {
+        String logLine = "4.578: [Rescan (parallel) , 0.0185521 secs]4.597: [weak refs processing, 0.0008993 secs]"
+                + "4.598: [class unloading, 0.0046742 secs]4.603: [scrub symbol table, 0.0044444 secs]"
+                + "4.607: [scrub string table, 0.0005670 secs][1 CMS-remark: 6569K(4023936K)] 16685K(4177280K), "
+                + "0.1025102 secs] [Times: user=0.17 sys=0.01, real=0.10 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING.toString() + ".",
+                CmsRemarkWithClassUnloadingEvent.match(logLine));
+        CmsRemarkWithClassUnloadingEvent event = new CmsRemarkWithClassUnloadingEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 4578, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 102, event.getDuration());
+    }
 }
