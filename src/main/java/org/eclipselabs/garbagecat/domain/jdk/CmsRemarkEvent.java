@@ -52,6 +52,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 13.749: [GC (CMS Final Remark)[YG occupancy: 149636 K (153600 K)]13.749: [Rescan (parallel) , 0.0216980 secs]13.771: [weak refs processing, 0.0005180 secs]13.772: [scrub string table, 0.0015820 secs] [1 CMS-remark: 217008K(341376K)] 366644K(494976K), 0.0239510 secs] [Times: user=0.18 sys=0.00, real=0.02 secs]
  * </pre>
  * 
+ * <p>
+ * 3) JDK8 with PAR_NEW ending.
+ * </p>
+ * 
+ * <pre>
+ * 4.506: [GC (CMS Final Remark) [YG occupancy: 100369 K (153344 K)]4.506: [GC (CMS Final Remark) 4.506: [ParNew: 100369K-&gt;10116K(153344K), 0.0724021 secs] 100369K-&gt;16685K(4177280K), 0.0724907 secs] [Times: user=0.13 sys=0.01, real=0.07 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -88,7 +96,15 @@ public class CmsRemarkEvent implements BlockingEvent, CmsCollection, TriggerData
             + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
             + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
-    private static Pattern pattern = Pattern.compile(CmsRemarkEvent.REGEX);
+    /**
+     * Regular expression for JDK8 logging with {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} ending.
+     */
+    private static final String REGEX_PARNEW = "^" + JdkRegEx.TIMESTAMP + ": \\[GC \\(("
+            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\) \\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE
+            + "\\)]" + JdkRegEx.TIMESTAMP + ": \\[GC \\(CMS Final Remark\\) " + JdkRegEx.TIMESTAMP + ": \\[ParNew: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * Create event from log entry.
@@ -98,12 +114,25 @@ public class CmsRemarkEvent implements BlockingEvent, CmsCollection, TriggerData
      */
     public CmsRemarkEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
-        if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(3);
-            // The last duration is the total duration for the phase.
-            duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
+
+        if (logEntry.matches(REGEX)) {
+            Pattern pattern = Pattern.compile(REGEX);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                trigger = matcher.group(3);
+                // The last duration is the total duration for the phase.
+                duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
+            }
+        } else if (logEntry.matches(REGEX_PARNEW)) {
+            Pattern pattern = Pattern.compile(REGEX_PARNEW);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                trigger = matcher.group(2);
+                // The last duration is the total duration for the phase.
+                duration = JdkMath.convertSecsToMillis(matcher.group(10)).intValue();
+            }
         }
     }
 
@@ -151,6 +180,6 @@ public class CmsRemarkEvent implements BlockingEvent, CmsCollection, TriggerData
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return logLine.matches(REGEX) || logLine.matches(REGEX_PARNEW);
     }
 }
