@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 import junit.framework.Assert;
@@ -31,6 +32,7 @@ public class TestSerialOldEvent extends TestCase {
                 SerialOldEvent.match(logLine));
         SerialOldEvent event = new SerialOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 187159, event.getTimestamp());
+        Assert.assertEquals("Trigger not parsed correctly.", null, event.getTrigger());
         Assert.assertEquals("Young begin size not parsed correctly.", 55042, event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
         Assert.assertEquals("Young available size not parsed correctly.", 91712, event.getYoungSpace());
@@ -51,7 +53,7 @@ public class TestSerialOldEvent extends TestCase {
                 SerialOldEvent.match(logLine));
     }
 
-    public void testLogLineJdk16() {
+    public void testLogLineJdk16WithTrigger() {
         String logLine = "2.457: [Full GC (System) 2.457: "
                 + "[Tenured: 1092K->2866K(116544K), 0.0489980 secs] 11012K->2866K(129664K), "
                 + "[Perm : 8602K->8604K(131072K)], 0.0490880 secs]";
@@ -59,6 +61,7 @@ public class TestSerialOldEvent extends TestCase {
                 SerialOldEvent.match(logLine));
         SerialOldEvent event = new SerialOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 2457, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
         Assert.assertEquals("Young begin size not parsed correctly.", 9920, event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
         Assert.assertEquals("Young available size not parsed correctly.", 13120, event.getYoungSpace());

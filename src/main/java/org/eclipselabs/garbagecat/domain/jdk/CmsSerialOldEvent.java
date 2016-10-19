@@ -15,7 +15,6 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -83,32 +82,63 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, CmsCollection {
+public class CmsSerialOldEvent extends SerialOldEvent implements CmsCollection {
 
     /**
-     * The trigger for the GC event.
+     * Trigger(s) regular expression(s).
      */
-    private String trigger;
+    public static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE
+            + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|"
+            + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + ")";
+
+    /**
+     * Regular expression for wrapped CMS_REMARK block in some events.
+     */
+    public static final String REMARK_BLOCK = "\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]"
+            + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[class unloading, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION
+            + "\\]";
+
+    /**
+     * Regular expression for CMS block in some events.
+     */
+    public static final String CMS_BLOCK = JdkRegEx.TIMESTAMP + ": \\[CMS(bailing out to foreground collection)?( \\("
+            + TRIGGER + "\\))?( \\(" + TRIGGER + "\\))?(" + REMARK_BLOCK + ")?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]";
+
+    /**
+     * Regular expression for CLASS_HISTOGRAM block in some events.
+     */
+    private static final String CLASS_HISTOGRAM_BLOCK = "(" + JdkRegEx.TIMESTAMP + ": )?\\[Class Histogram(:)?, "
+            + JdkRegEx.DURATION + "\\]";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_SYSTEM_GC
-            + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC
-            + ")\\) )?" + JdkRegEx.TIMESTAMP + ": \\[(CMS((bailing out to foreground collection)?( \\(("
-            + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|" + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED
-            + ")\\))?)?( \\(concurrent mode failure\\)\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE
-            + "\\)]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\])?: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)|(" + JdkRegEx.TRIGGER_CLASS_HISTOGRAM + "):)(, "
-            + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[Class Histogram, " + JdkRegEx.DURATION + "\\])? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\(" + TRIGGER + "\\) )?("
+            + CLASS_HISTOGRAM_BLOCK + ")?(" + CMS_BLOCK + ")?(" + CLASS_HISTOGRAM_BLOCK + ")? " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION
+            + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+
+    /*
+     * private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\((" +
+     * JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" +
+     * JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + ")\\) )?" + JdkRegEx.TIMESTAMP +
+     * ": \\[(CMS((bailing out to foreground collection)?( \\((" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|" +
+     * JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + ")\\))?)?( \\(concurrent mode failure\\)\\[YG occupancy: " +
+     * JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " +
+     * JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" +
+     * JdkRegEx.TIMESTAMP + ": \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP +
+     * ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\])?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE +
+     * "\\(" + JdkRegEx.SIZE + "\\)|(" + JdkRegEx.TRIGGER_CLASS_HISTOGRAM + "):)(, " + JdkRegEx.DURATION + "\\])?(" +
+     * JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " +
+     * JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram, " + JdkRegEx.DURATION + "\\])? " +
+     * JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE
+     * + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION +
+     * "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+     */
 
     private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
 
@@ -124,41 +154,33 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
-            if (matcher.group(10) != null) {
-                trigger = matcher.group(11);
-            } else if (matcher.group(3) != null) {
-                trigger = matcher.group(4);
-            } else if (matcher.group(7) != null) {
-                trigger = matcher.group(26);
+            if (matcher.group(15) != null) {
+                // if > 1 triggers, use the last one
+                super.setTrigger(matcher.group(15));
+            } else if (matcher.group(6) != null || matcher.group(35) != null) {
+                super.setTrigger(JdkRegEx.TRIGGER_CLASS_HISTOGRAM);
+            } else if (matcher.group(4) != null) {
+                super.setTrigger(matcher.group(4));
             }
-            int totalBegin = Integer.parseInt(matcher.group(37));
-            int totalEnd = Integer.parseInt(matcher.group(38));
-            int totalAllocation = Integer.parseInt(matcher.group(39));
-            if (matcher.group(23) != null) {
-                super.setOldOccupancyInit(Integer.parseInt(matcher.group(23)));
-            } else {
-                // there is no old gen data, so the best we can do is set to total
-                super.setOldOccupancyInit(totalBegin);
+
+            int totalBegin = Integer.parseInt(matcher.group(40));
+            int totalEnd = Integer.parseInt(matcher.group(41));
+            int totalAllocation = Integer.parseInt(matcher.group(42));
+
+            // Only CMS block has old data
+            if (matcher.group(11) != null) {
+                super.setOldOccupancyInit(Integer.parseInt(matcher.group(31)));
+                super.setOldOccupancyEnd(Integer.parseInt(matcher.group(32)));
+                super.setOldSpace(Integer.parseInt(matcher.group(33)));
+                super.setYoungOccupancyInit(totalBegin - super.getOldOccupancyInit());
+                super.setYoungOccupancyEnd(totalEnd - super.getOldOccupancyEnd());
+                super.setYoungSpace(totalAllocation - super.getOldSpace());
             }
-            if (matcher.group(24) != null) {
-                super.setOldOccupancyEnd(Integer.parseInt(matcher.group(24)));
-            } else {
-                // there is no old gen data, so the best we can do is set to total
-                super.setOldOccupancyEnd(totalEnd);
-            }
-            if (matcher.group(25) != null) {
-                super.setOldSpace(Integer.parseInt(matcher.group(25)));
-            } else {
-                // there is no old gen data, so the best we can do is set to total
-                super.setOldSpace(totalAllocation);
-            }
-            super.setYoungOccupancyInit(totalBegin - super.getOldOccupancyInit());
-            super.setYoungOccupancyEnd(totalEnd - super.getOldOccupancyEnd());
-            super.setYoungSpace(totalAllocation - super.getOldSpace());
-            super.setPermOccupancyInit(Integer.parseInt(matcher.group(41)));
-            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(42)));
-            super.setPermSpace(Integer.parseInt(matcher.group(43)));
-            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(45)).intValue());
+
+            super.setPermOccupancyInit(Integer.parseInt(matcher.group(44)));
+            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(45)));
+            super.setPermSpace(Integer.parseInt(matcher.group(46)));
+            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(48)).intValue());
         }
     }
 
@@ -180,10 +202,6 @@ public class CmsSerialOldEvent extends SerialOldEvent implements TriggerData, Cm
 
     public String getName() {
         return JdkUtil.LogEventType.CMS_SERIAL_OLD.toString();
-    }
-
-    public String getTrigger() {
-        return trigger;
     }
 
     /**

@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermCollection;
 import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -57,8 +58,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class SerialOldEvent
-        implements BlockingEvent, YoungCollection, OldCollection, PermCollection, YoungData, OldData, PermData {
+public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollection, PermCollection, YoungData,
+        OldData, PermData, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -121,9 +122,19 @@ public class SerialOldEvent
     private int permGenAllocation;
 
     /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
+
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    public static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
+
+    /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full GC|Full GC \\(System\\)) "
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\(" + TRIGGER + "\\))? "
             + JdkRegEx.TIMESTAMP + ": \\[Tenured: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), \\[Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], "
@@ -147,20 +158,23 @@ public class SerialOldEvent
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            old = Integer.parseInt(matcher.group(4));
-            oldEnd = Integer.parseInt(matcher.group(5));
-            oldAllocation = Integer.parseInt(matcher.group(6));
-            int totalBegin = Integer.parseInt(matcher.group(8));
+            if (matcher.group(4) != null) {
+                trigger = matcher.group(4);
+            }
+            old = Integer.parseInt(matcher.group(7));
+            oldEnd = Integer.parseInt(matcher.group(8));
+            oldAllocation = Integer.parseInt(matcher.group(9));
+            int totalBegin = Integer.parseInt(matcher.group(11));
             young = totalBegin - getOldOccupancyInit();
-            int totalEnd = Integer.parseInt(matcher.group(9));
+            int totalEnd = Integer.parseInt(matcher.group(12));
             youngEnd = totalEnd - getOldOccupancyEnd();
-            int totalAllocation = Integer.parseInt(matcher.group(10));
+            int totalAllocation = Integer.parseInt(matcher.group(13));
             youngAvailable = totalAllocation - getOldSpace();
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Integer.parseInt(matcher.group(11));
-            permGenEnd = Integer.parseInt(matcher.group(12));
-            permGenAllocation = Integer.parseInt(matcher.group(13));
-            duration = JdkMath.convertSecsToMillis(matcher.group(14)).intValue();
+            permGen = Integer.parseInt(matcher.group(14));
+            permGenEnd = Integer.parseInt(matcher.group(15));
+            permGenAllocation = Integer.parseInt(matcher.group(16));
+            duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
         }
     }
 
@@ -278,6 +292,14 @@ public class SerialOldEvent
 
     public String getName() {
         return JdkUtil.LogEventType.SERIAL_OLD.toString();
+    }
+
+    public String getTrigger() {
+        return trigger;
+    }
+
+    protected void setTrigger(String trigger) {
+        this.trigger = trigger;
     }
 
     /**

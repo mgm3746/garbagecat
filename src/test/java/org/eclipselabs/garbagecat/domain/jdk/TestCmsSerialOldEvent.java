@@ -60,7 +60,7 @@ public class TestCmsSerialOldEvent extends TestCase {
                 CmsSerialOldEvent.match(logLine));
     }
 
-    public void testLogLineJdk16() {
+    public void testLogLineJdk16WithTrigger() {
         String logLine = "2.425: [Full GC (System) 2.425: "
                 + "[CMS: 1231K->2846K(114688K), 0.0827010 secs] 8793K->2846K(129472K), "
                 + "[CMS Perm : 8602K->8593K(131072K)], 0.0828090 secs]";
@@ -224,7 +224,57 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 11677, event.getDuration());
     }
 
-    public void testLogLinePreprocessedClassHistogramTrigger() {
+    public void testLogLinePreprocessedClassHistogramWithoutOldData() {
+        String logLine = "11662.232: [Full GC 11662.233: [Class Histogram:, 9.7637786 secs] "
+                + "3198859K->635365K(7848704K), [CMS Perm : 851635K->408849K(1048576K)], 94.9116214 secs] "
+                + "[Times: user=94.88 sys=0.24, real=94.91 secs]";
+
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM));
+        Assert.assertEquals("Time stamp not parsed correctly.", 11662232, event.getTimestamp());
+        // 0 ==> No data.
+        Assert.assertEquals("Young begin size not parsed correctly.", 0, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 0, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 0, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 0, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 0, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 851635, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 408849, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1048576, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 94911, event.getDuration());
+    }
+
+    public void testLogLinePreprocessedConcurrentModeFailureRemarkBlock() {
+        String logLine = "85217.903: [Full GC 85217.903: [CMS (concurrent mode failure) (concurrent mode failure)"
+                + "[YG occupancy: 33620K (153344K)]85217.919: [Rescan (parallel) , 0.0116680 secs]85217.931: "
+                + "[weak refs processing, 0.0167100 secs]85217.948: [class unloading, 0.0571300 secs]85218.005: "
+                + "[scrub symbol & string tables, 0.0291210 secs]: 423728K->423633K(4023936K), 0.5165330 secs] "
+                + "457349K->457254K(4177280K), [CMS Perm : 260428K->260406K(262144K)], 0.5167600 secs] "
+                + "[Times: user=0.55 sys=0.01, real=0.52 secs]";
+
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
+        Assert.assertEquals("Time stamp not parsed correctly.", 85217903, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 457349 - 423728, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 457254 - 423633, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 4177280 - 4023936, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 423728, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 423633, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 4023936, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 260428, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 260406, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 516, event.getDuration());
+    }
+
+    public void testLogLinePreprocessedClassHistogramWithOldData() {
         String logLine = "11662.232: [Full GC 11662.233: [Class Histogram:, 38.6969442 secs]11700.930: "
                 + "[CMS: 2844387K->635365K(7331840K), 46.4488813 secs]11747.379: [Class Histogram, 9.7637786 secs] "
                 + "3198859K->635365K(7848704K), [CMS Perm : 851635K->408849K(1048576K)], 94.9116214 secs] "
@@ -236,12 +286,12 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM));
         Assert.assertEquals("Time stamp not parsed correctly.", 11662232, event.getTimestamp());
-        Assert.assertEquals("Young begin size not parsed correctly.", 0, event.getYoungOccupancyInit());
-        Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
-        Assert.assertEquals("Young available size not parsed correctly.", 0, event.getYoungSpace());
-        Assert.assertEquals("Old begin size not parsed correctly.", 3198859, event.getOldOccupancyInit());
+        Assert.assertEquals("Young begin size not parsed correctly.", 3198859 - 2844387, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 635365 - 635365, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 7848704 - 7331840, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 2844387, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 635365, event.getOldOccupancyEnd());
-        Assert.assertEquals("Old allocation size not parsed correctly.", 7848704, event.getOldSpace());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 7331840, event.getOldSpace());
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 851635, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 408849, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1048576, event.getPermSpace());
