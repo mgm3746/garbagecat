@@ -38,7 +38,7 @@ git clone https://github.com/mgm3746/garbagecat.git
 Build it:
 ```
 cd garbagecat
-mvn clean
+mvn clean (rebuilding)
 mvn assembly:assembly
 mvn javadoc:javadoc
 ```
