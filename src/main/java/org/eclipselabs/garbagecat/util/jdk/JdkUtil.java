@@ -25,6 +25,7 @@ import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationConcurrentTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
@@ -54,6 +55,8 @@ import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedTruncatedEvent
 import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.PrintClassHistogramEvent;
+import org.eclipselabs.garbagecat.domain.jdk.PrintHeapAtGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.PrintReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
@@ -94,9 +97,9 @@ public class JdkUtil {
         //
         G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
         //
-        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, PRINT_REFERENCE_GC, LOG_ROTATION, CLASS_HISTOGRAM,
+        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, PRINT_REFERENCE_GC, LOG_ROTATION,
         //
-        PRINT_HEAP_AT_GC, CLASS_UNLOADING
+        PRINT_CLASS_HISTOGRAM, PRINT_HEAP_AT_GC, CLASS_UNLOADING
     };
 
     /**
@@ -208,6 +211,12 @@ public class JdkUtil {
             return LogEventType.PRINT_REFERENCE_GC;
         if (LogRotation.match(logLine))
             return LogEventType.LOG_ROTATION;
+        if (ClassUnloadingEvent.match(logLine))
+            return LogEventType.CLASS_UNLOADING;
+        if (PrintHeapAtGcEvent.match(logLine))
+            return LogEventType.PRINT_HEAP_AT_GC;
+        if (PrintClassHistogramEvent.match(logLine))
+            return LogEventType.PRINT_CLASS_HISTOGRAM;
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -331,6 +340,15 @@ public class JdkUtil {
             break;
         case LOG_ROTATION:
             event = new LogRotation(logLine);
+            break;
+        case CLASS_UNLOADING:
+            event = new ClassUnloadingEvent(logLine);
+            break;
+        case PRINT_HEAP_AT_GC:
+            event = new PrintHeapAtGcEvent(logLine);
+            break;
+        case PRINT_CLASS_HISTOGRAM:
+            event = new PrintClassHistogramEvent(logLine);
             break;
         case UNKNOWN:
             event = new UnknownEvent(logLine);

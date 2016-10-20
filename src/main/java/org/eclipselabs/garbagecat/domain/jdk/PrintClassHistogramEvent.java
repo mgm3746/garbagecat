@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -59,7 +59,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class PrintClassHistogramEvent implements LogEvent {
+public class PrintClassHistogramEvent implements ThrowAwayEvent {
 
     /**
      * Regular expression for cruft left after class histogram preprocessing.
@@ -114,7 +114,7 @@ public class PrintClassHistogramEvent implements LogEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.CLASS_HISTOGRAM.toString();
+        return JdkUtil.LogEventType.PRINT_CLASS_HISTOGRAM.toString();
     }
 
     public long getTimestamp() {

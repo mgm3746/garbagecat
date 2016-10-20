@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -238,7 +238,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class PrintHeatAtGcEvent implements LogEvent {
+public class PrintHeapAtGcEvent implements ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
@@ -288,7 +288,7 @@ public class PrintHeatAtGcEvent implements LogEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public PrintHeatAtGcEvent(String logEntry) {
+    public PrintHeapAtGcEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
     }

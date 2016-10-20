@@ -14,7 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -58,7 +58,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ClassUnloadingEvent implements LogEvent {
+public class ClassUnloadingEvent implements ThrowAwayEvent {
 
     /**
      * Regular expression defining the logging.

@@ -30,11 +30,11 @@ import org.eclipselabs.garbagecat.Main;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsCollection;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collection;
@@ -43,8 +43,6 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
-import org.eclipselabs.garbagecat.domain.jdk.PrintClassHistogramEvent;
-import org.eclipselabs.garbagecat.domain.jdk.PrintHeatAtGcEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
@@ -571,7 +569,7 @@ public class GcManager {
      * @return True if the logging event can be thrown away, false if it should be kept.
      */
     private boolean isThrowawayEvent(String logLine) {
-        return PrintHeatAtGcEvent.match(logLine) || PrintClassHistogramEvent.match(logLine)
-                || ClassUnloadingEvent.match(logLine);
+        LogEvent event = JdkUtil.parseLogLine(logLine);
+        return event instanceof ThrowAwayEvent;
     }
 }
