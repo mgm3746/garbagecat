@@ -87,14 +87,14 @@ public class CmsSerialOldEvent extends SerialOldEvent implements CmsCollection {
     /**
      * Trigger(s) regular expression(s).
      */
-    public static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE
             + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|"
             + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + ")";
 
     /**
      * Regular expression for wrapped CMS_REMARK block in some events.
      */
-    public static final String REMARK_BLOCK = "\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]"
+    private static final String REMARK_BLOCK = "\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]"
             + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
             + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[class unloading, "
             + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION
@@ -103,7 +103,7 @@ public class CmsSerialOldEvent extends SerialOldEvent implements CmsCollection {
     /**
      * Regular expression for CMS block in some events.
      */
-    public static final String CMS_BLOCK = JdkRegEx.TIMESTAMP + ": \\[CMS(bailing out to foreground collection)?( \\("
+    private static final String CMS_BLOCK = JdkRegEx.TIMESTAMP + ": \\[CMS(bailing out to foreground collection)?( \\("
             + TRIGGER + "\\))?( \\(" + TRIGGER + "\\))?(" + REMARK_BLOCK + ")?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]";
 
@@ -121,24 +121,6 @@ public class CmsSerialOldEvent extends SerialOldEvent implements CmsCollection {
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION
             + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-
-    /*
-     * private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\((" +
-     * JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" +
-     * JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + ")\\) )?" + JdkRegEx.TIMESTAMP +
-     * ": \\[(CMS((bailing out to foreground collection)?( \\((" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|" +
-     * JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + ")\\))?)?( \\(concurrent mode failure\\)\\[YG occupancy: " +
-     * JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " +
-     * JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" +
-     * JdkRegEx.TIMESTAMP + ": \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP +
-     * ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\])?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE +
-     * "\\(" + JdkRegEx.SIZE + "\\)|(" + JdkRegEx.TRIGGER_CLASS_HISTOGRAM + "):)(, " + JdkRegEx.DURATION + "\\])?(" +
-     * JdkRegEx.TIMESTAMP + ": \\[CMS: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " +
-     * JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram, " + JdkRegEx.DURATION + "\\])? " +
-     * JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE
-     * + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION +
-     * "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-     */
 
     private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
 
