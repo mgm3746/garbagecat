@@ -47,11 +47,26 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 2) JDK 1.6 format (Note "Full GC" vs. "Full GC (System)"):
+ * 2) JDK 1.6 with trigger:
  * </p>
  * 
  * <pre>
  * 2.457: [Full GC (System) 2.457: [Tenured: 1092K-&gt;2866K(116544K), 0.0489980 secs] 11012K-&gt;2866K(129664K), [Perm : 8602K-&gt;8602K(131072K)], 0.0490880 secs]
+ * </pre>
+ * 
+ * <p>
+ * 3) Combined {@link org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent} and
+ * {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent} with permanent generation data.
+ * 
+ * <p>
+ * It looks like this is a result of the young generation guarantee. The young generation fills up to where it exceeds
+ * the old generation free space, so a full collection is triggered to free up old space.
+ * </p>
+ * 
+ * <h3>Example Logging</h3>
+ * 
+ * <pre>
+ * 3727.365: [GC 3727.365: [DefNew: 400314K-&gt;400314K(400384K), 0.0000550 secs]3727.365: [Tenured: 837793K-&gt;597490K(889536K), 44.7498530 secs] 1238107K-&gt;597490K(1289920K), [Perm : 54745K-&gt;54745K(54784K)], 44.7501880 secs] [Times: user=5.32 sys=0.33, real=44.75 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -129,16 +144,22 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
     /**
      * Trigger(s) regular expression(s).
      */
-    public static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
+
+    /**
+     * Regular expression for SERIAL_NEW block in some events.
+     */
+    public static final String SERIAL_NEW_BLOCK = JdkRegEx.TIMESTAMP + ": \\[DefNew: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\(" + TRIGGER + "\\))? "
-            + JdkRegEx.TIMESTAMP + ": \\[Tenured: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), \\[Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( \\(" + TRIGGER + "\\))?( "
+            + SERIAL_NEW_BLOCK + ")?( )?" + JdkRegEx.TIMESTAMP + ": \\[Tenured: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\), \\[Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\], " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(SerialOldEvent.REGEX);
 
@@ -161,20 +182,20 @@ public class SerialOldEvent implements BlockingEvent, YoungCollection, OldCollec
             if (matcher.group(4) != null) {
                 trigger = matcher.group(4);
             }
-            old = Integer.parseInt(matcher.group(7));
-            oldEnd = Integer.parseInt(matcher.group(8));
-            oldAllocation = Integer.parseInt(matcher.group(9));
-            int totalBegin = Integer.parseInt(matcher.group(11));
+            old = Integer.parseInt(matcher.group(14));
+            oldEnd = Integer.parseInt(matcher.group(15));
+            oldAllocation = Integer.parseInt(matcher.group(16));
+            int totalBegin = Integer.parseInt(matcher.group(18));
             young = totalBegin - getOldOccupancyInit();
-            int totalEnd = Integer.parseInt(matcher.group(12));
+            int totalEnd = Integer.parseInt(matcher.group(19));
             youngEnd = totalEnd - getOldOccupancyEnd();
-            int totalAllocation = Integer.parseInt(matcher.group(13));
+            int totalAllocation = Integer.parseInt(matcher.group(20));
             youngAvailable = totalAllocation - getOldSpace();
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Integer.parseInt(matcher.group(14));
-            permGenEnd = Integer.parseInt(matcher.group(15));
-            permGenAllocation = Integer.parseInt(matcher.group(16));
-            duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
+            permGen = Integer.parseInt(matcher.group(21));
+            permGenEnd = Integer.parseInt(matcher.group(22));
+            permGenAllocation = Integer.parseInt(matcher.group(23));
+            duration = JdkMath.convertSecsToMillis(matcher.group(24)).intValue();
         }
     }
 

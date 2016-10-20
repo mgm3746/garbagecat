@@ -179,7 +179,7 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * 182314.858: [GC 182314.859: [ParNew (promotion failed)
      */
-    private static final String REGEX_RETAIN_BEGINNING_PARNEW = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC "
+    private static final String REGEX_RETAIN_BEGINNING_PARNEW = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC( )?"
             + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?)[ ]*$";
 
     /**

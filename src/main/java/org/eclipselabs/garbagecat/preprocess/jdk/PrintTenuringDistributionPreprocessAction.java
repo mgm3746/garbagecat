@@ -32,7 +32,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <p>
- * 1) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.SerialEvent}:
+ * 1) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent}:
  * </p>
  * 
  * <pre>

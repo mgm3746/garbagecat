@@ -55,10 +55,8 @@ import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.PrintReferenceGcEvent;
-import org.eclipselabs.garbagecat.domain.jdk.SerialEvent;
+import org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
-import org.eclipselabs.garbagecat.domain.jdk.SerialSerialOldEvent;
-import org.eclipselabs.garbagecat.domain.jdk.SerialSerialOldPermDataEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcYoungEvent;
 import org.eclipselabs.garbagecat.preprocess.ApplicationLoggingPreprocessAction;
@@ -80,7 +78,7 @@ public class JdkUtil {
      * Defined logging events.
      */
     public enum LogEventType {
-        SERIAL_OLD, SERIAL, PAR_NEW_CONCURRENT_MODE_FAILURE, PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA,
+        SERIAL_OLD, SERIAL_NEW, PAR_NEW_CONCURRENT_MODE_FAILURE, PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA,
         //
         PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD, PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA,
         //
@@ -92,13 +90,13 @@ public class JdkUtil {
         //
         CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK, CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME,
         //
-        APPLICATION_STOPPED_TIME, UNKNOWN, SERIAL_SERIAL_OLD, SERIAL_SERIAL_OLD_PERM_DATA, VERBOSE_GC_YOUNG,
+        APPLICATION_STOPPED_TIME, UNKNOWN, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, PAR_NEW_PROMOTION_FAILED_TRUNCATED,
         //
-        VERBOSE_GC_OLD, PAR_NEW_PROMOTION_FAILED_TRUNCATED, G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT,
+        G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
         //
-        G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC, HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY,
+        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, PRINT_REFERENCE_GC, LOG_ROTATION, CLASS_HISTOGRAM,
         //
-        HEADER_VERSION, PRINT_REFERENCE_GC, LOG_ROTATION, CLASS_HISTOGRAM, PRINT_HEAP_AT_GC, CLASS_UNLOADING
+        PRINT_HEAP_AT_GC, CLASS_UNLOADING
     };
 
     /**
@@ -172,12 +170,8 @@ public class JdkUtil {
             return LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA;
         if (ParNewCmsSerialOldEvent.match(logLine))
             return LogEventType.PAR_NEW_CMS_SERIAL_OLD;
-        if (SerialEvent.match(logLine))
-            return LogEventType.SERIAL;
-        if (SerialSerialOldEvent.match(logLine))
-            return LogEventType.SERIAL_SERIAL_OLD;
-        if (SerialSerialOldPermDataEvent.match(logLine))
-            return LogEventType.SERIAL_SERIAL_OLD_PERM_DATA;
+        if (SerialNewEvent.match(logLine))
+            return LogEventType.SERIAL_NEW;
         if (CmsConcurrentEvent.match(logLine))
             return LogEventType.CMS_CONCURRENT;
         if (ApplicationConcurrentTimeEvent.match(logLine))
@@ -281,14 +275,8 @@ public class JdkUtil {
         case PAR_NEW_CMS_SERIAL_OLD:
             event = new ParNewCmsSerialOldEvent(logLine);
             break;
-        case SERIAL:
-            event = new SerialEvent(logLine);
-            break;
-        case SERIAL_SERIAL_OLD:
-            event = new SerialSerialOldEvent(logLine);
-            break;
-        case SERIAL_SERIAL_OLD_PERM_DATA:
-            event = new SerialSerialOldPermDataEvent(logLine);
+        case SERIAL_NEW:
+            event = new SerialNewEvent(logLine);
             break;
         case CMS_CONCURRENT:
             event = new CmsConcurrentEvent();
@@ -421,14 +409,8 @@ public class JdkUtil {
         case PAR_NEW_CMS_SERIAL_OLD:
             event = new ParNewCmsSerialOldEvent(logEntry, timestamp, duration);
             break;
-        case SERIAL:
-            event = new SerialEvent(logEntry, timestamp, duration);
-            break;
-        case SERIAL_SERIAL_OLD:
-            event = new SerialSerialOldEvent(logEntry, timestamp, duration);
-            break;
-        case SERIAL_SERIAL_OLD_PERM_DATA:
-            event = new SerialSerialOldPermDataEvent(logEntry, timestamp, duration);
+        case SERIAL_NEW:
+            event = new SerialNewEvent(logEntry, timestamp, duration);
             break;
         case VERBOSE_GC_YOUNG:
             event = new VerboseGcYoungEvent(logEntry, timestamp, duration);

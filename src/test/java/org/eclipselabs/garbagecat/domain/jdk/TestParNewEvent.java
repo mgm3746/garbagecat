@@ -105,7 +105,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 13086L, event.getTimestamp());
     }
 
-    public void testLogJdk8WithTrigger() {
+    public void testLogLineJdk8WithTrigger() {
         String logLine = "6.703: [GC (Allocation Failure) 6.703: [ParNew: 886080K->11485K(996800K), 0.0193349 secs] "
                 + "886080K->11485K(1986432K), 0.0198375 secs] [Times: user=0.09 sys=0.01, real=0.02 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
@@ -124,7 +124,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
-    public void testLogJdk8NoSpaceAfterTrigger() {
+    public void testLogLineJdk8NoSpaceAfterTrigger() {
         String logLine = "1.948: [GC (Allocation Failure)1.948: [ParNew: 136576K->17023K(153600K), 0.0303800 secs] "
                 + "136576K->19515K(494976K), 0.0305360 secs] [Times: user=0.10 sys=0.01, real=0.03 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
@@ -142,7 +142,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 30, event.getDuration());
     }
 
-    public void testLogGcLockerTrigger() {
+    public void testLogLineGcLockerTrigger() {
         String logLine = "2.480: [GC (GCLocker Initiated GC) 2.480: [ParNew: 1228800K->30695K(1382400K), "
                 + "0.0395910 secs] 1228800K->30695K(8235008K), 0.0397980 secs] "
                 + "[Times: user=0.23 sys=0.01, real=0.04 secs]";

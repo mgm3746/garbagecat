@@ -92,7 +92,7 @@ public class CmsSerialOldEvent extends SerialOldEvent implements CmsCollection {
             + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + ")";
 
     /**
-     * Regular expression for wrapped CMS_REMARK block in some events.
+     * Regular expression for CMS_REMARK block in some events.
      */
     private static final String REMARK_BLOCK = "\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]"
             + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP

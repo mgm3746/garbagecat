@@ -16,7 +16,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
@@ -26,39 +25,51 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * SERIAL_SERIAL_OLD
+ * SERIAL_NEW
  * </p>
  * 
  * <p>
- * Combined {@link org.eclipselabs.garbagecat.domain.jdk.SerialEvent} and
- * {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent}.
- * 
- * <p>
- * It looks like this is a result of the young generation guarantee. The young generation fills up to where it exceeds
- * the old generation free space, so a full collection is triggered to free up old space.
+ * Young generation collector used when <code>-XX:+UseSerialGC</code> JVM option specified.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Standard format:
+ * </p>
+ * 
  * <pre>
- * 160.678: [GC 160.678: [DefNew: 450682K-&gt;450682K(471872K), 0.0000099 secs]160.678: [Tenured: 604639K-&gt;552856K(1048576K), 1.1178810 secs] 1055322K-&gt;552856K(1520448K), 1.1180562 secs]
+ * 7.798: [GC 7.798: [DefNew: 37172K-&gt;3631K(39296K), 0.0209300 secs] 41677K-&gt;10314K(126720K), 0.0210210 secs]
+ * </pre>
+ * 
+ * <p>
+ * 2) With erroneous "Full":
+ * 
+ * <pre>
+ * 142352.790: [Full GC 142352.790: [DefNew: 444956K-&gt;28315K(471872K), 0.0971099 secs] 1020658K-&gt;604017K(1520448K), 0.0972451 secs]
+ * </pre>
+ * 
+ * <p>
+ * 3) No space after "GC":
+ * 
+ * <pre>
+ * 4.296: [GC4.296: [DefNew: 68160K-&gt;8512K(76672K), 0.0528470 secs] 68160K-&gt;11664K(1325760K), 0.0530640 secs] [Times: user=0.04 sys=0.00, real=0.05 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  * 
  */
-public class SerialSerialOldEvent implements BlockingEvent, YoungCollection, OldCollection, YoungData, OldData {
+public class SerialNewEvent implements BlockingEvent, YoungCollection, YoungData, OldData {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP + ": \\[DefNew: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[Tenured: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-    private static Pattern pattern = Pattern.compile(SerialSerialOldEvent.REGEX);
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?" + JdkRegEx.TIMESTAMP
+            + ": \\[DefNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final Pattern pattern = Pattern.compile(SerialNewEvent.REGEX);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -106,32 +117,30 @@ public class SerialSerialOldEvent implements BlockingEvent, YoungCollection, Old
     private int oldAllocation;
 
     /**
-     * Create event from log entry.
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public SerialSerialOldEvent(String logEntry) {
+    public SerialNewEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            old = Integer.parseInt(matcher.group(8));
-            oldEnd = Integer.parseInt(matcher.group(9));
-            oldAllocation = Integer.parseInt(matcher.group(10));
-            // Compute young sizes on the major collection, not the initial young collection
-            int totalBegin = Integer.parseInt(matcher.group(12));
-            young = totalBegin - old;
-            int totalEnd = Integer.parseInt(matcher.group(13));
-            youngEnd = totalEnd - oldEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(14));
-            youngAvailable = totalAllocation - oldAllocation;
-            duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
+            young = Integer.parseInt(matcher.group(5));
+            youngEnd = Integer.parseInt(matcher.group(6));
+            youngAvailable = Integer.parseInt(matcher.group(7));
+            int totalBegin = Integer.parseInt(matcher.group(9));
+            old = totalBegin - young;
+            int totalEnd = Integer.parseInt(matcher.group(10));
+            oldEnd = totalEnd - youngEnd;
+            int totalAllocation = Integer.parseInt(matcher.group(11));
+            oldAllocation = totalAllocation - youngAvailable;
+            duration = JdkMath.convertSecsToMillis(matcher.group(12)).intValue();
         }
     }
 
     /**
-     * Alternate constructor. Create ParNew detail logging event from values.
+     * Alternate constructor. Create serial logging event from values.
      * 
      * @param logEntry
      *            The log entry for the event.
@@ -140,7 +149,7 @@ public class SerialSerialOldEvent implements BlockingEvent, YoungCollection, Old
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */
-    public SerialSerialOldEvent(String logEntry, long timestamp, int duration) {
+    public SerialNewEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
@@ -183,7 +192,7 @@ public class SerialSerialOldEvent implements BlockingEvent, YoungCollection, Old
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.SERIAL_SERIAL_OLD.toString();
+        return JdkUtil.LogEventType.SERIAL_NEW.toString();
     }
 
     public int getPermGen() {

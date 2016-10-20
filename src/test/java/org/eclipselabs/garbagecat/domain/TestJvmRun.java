@@ -206,22 +206,6 @@ public class TestJvmRun extends TestCase {
 
     /**
      * Test preprocessing <code>PrintTenuringDistributionPreprocessAction</code> with underlying
-     * <code>SerialEvent</code>.
-     */
-    public void testSplitSerialEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset17.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL));
-    }
-
-    /**
-     * Test preprocessing <code>PrintTenuringDistributionPreprocessAction</code> with underlying
      * <code>ParallelScavengeEvent</code>.
      */
     public void testSplitParallelScavengeEventLogging() {
