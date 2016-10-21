@@ -121,9 +121,9 @@ public class ParNewConcurrentModeFailurePermDataEvent
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE
             + "\\))? " + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]("
-            + PrintClassHistogramEvent.REGEX_PREPROCESSED + ")?(" + JdkRegEx.TIMESTAMP + ": \\[CMS)?( \\("
+            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?(" + JdkRegEx.TIMESTAMP + ": \\[CMS)?( \\("
             + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\](" + PrintClassHistogramEvent.REGEX_PREPROCESSED + ")? "
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")? "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, "
             + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";

@@ -677,7 +677,7 @@ public class Jvm {
     }
 
     /**
-     * The option for printing a class histogram when a thread dump is taken. For example:
+     * The option for printing a class histogram when a thread dump is taken:
      * 
      * <pre>
      * -XX:+PrintClassHistogram
@@ -687,6 +687,20 @@ public class Jvm {
      */
     public String getPrintClassHistogramEnabled() {
         String regex = "(-XX:\\+PrintClassHistogram)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for printing application concurrent time:
+     * 
+     * <pre>
+     * -XX:+PrintGCApplicationConcurrentTime
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintGcApplicationConcurrentTime() {
+        String regex = "(-XX:\\+PrintGCApplicationConcurrentTime)";
         return getJvmOption(regex);
     }
 

@@ -238,7 +238,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class PrintHeapAtGcEvent implements ThrowAwayEvent {
+public class HeapAtGcEvent implements ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
@@ -288,7 +288,7 @@ public class PrintHeapAtGcEvent implements ThrowAwayEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public PrintHeapAtGcEvent(String logEntry) {
+    public HeapAtGcEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
     }
@@ -298,7 +298,7 @@ public class PrintHeapAtGcEvent implements ThrowAwayEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.PRINT_HEAP_AT_GC.toString();
+        return JdkUtil.LogEventType.HEAP_AT_GC.toString();
     }
 
     public long getTimestamp() {

@@ -451,6 +451,13 @@ public class JvmRun {
                 analysisKeys.add(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED);
             }
         }
+
+        // 11) Check for print application concurrent time.
+        if (!analysisKeys.contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
+            if (getEventTypes().contains(LogEventType.APPLICATION_CONCURRENT_TIME)) {
+                analysisKeys.add(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME);
+            }
+        }
     }
 
     /**
@@ -632,6 +639,13 @@ public class JvmRun {
         if (!analysisKeys.contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM)) {
             if (jvm.getPrintClassHistogramEnabled() != null) {
                 analysisKeys.add(Analysis.KEY_PRINT_CLASS_HISTOGRAM);
+            }
+        }
+
+        // Check for print class histogram enabled with -XX:+PrintGCApplicationConcurrentTime
+        if (!analysisKeys.contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
+            if (jvm.getPrintGcApplicationConcurrentTime() != null) {
+                analysisKeys.add(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME);
             }
         }
     }

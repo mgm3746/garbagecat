@@ -579,4 +579,11 @@ public class TestJvm extends TestCase {
         Assert.assertEquals("-XX:-UseBiasedLocking option incorrect.", "-XX:-UseBiasedLocking",
                 jvm.getBiasedLockingDisabled());
     }
+
+    public void testPrintApplicationConcurrentTime() {
+        String jvmOptions = "-Xss128k -XX:+PrintGCApplicationConcurrentTime -XX:+CMSParallelRemarkEnabled";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:-PrintGCApplicationConcurrentTime option incorrect.",
+                "-XX:+PrintGCApplicationConcurrentTime", jvm.getPrintGcApplicationConcurrentTime());
+    }
 }

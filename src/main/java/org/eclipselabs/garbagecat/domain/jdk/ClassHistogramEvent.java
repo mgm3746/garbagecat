@@ -59,7 +59,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class PrintClassHistogramEvent implements ThrowAwayEvent {
+public class ClassHistogramEvent implements ThrowAwayEvent {
 
     /**
      * Regular expression for cruft left after class histogram preprocessing.
@@ -104,7 +104,7 @@ public class PrintClassHistogramEvent implements ThrowAwayEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public PrintClassHistogramEvent(String logEntry) {
+    public ClassHistogramEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
     }
@@ -114,7 +114,7 @@ public class PrintClassHistogramEvent implements ThrowAwayEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.PRINT_CLASS_HISTOGRAM.toString();
+        return JdkUtil.LogEventType.CLASS_HISTOGRAM.toString();
     }
 
     public long getTimestamp() {

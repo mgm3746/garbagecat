@@ -57,7 +57,7 @@ public class ParNewPromotionFailedTruncatedEvent implements BlockingEvent, CmsCo
             + ": \\[ParNew \\(promotion failed\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[(CMS)?(" + JdkRegEx.TIMESTAMP
             + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\])?("
-            + PrintClassHistogramEvent.REGEX_PREPROCESSED + ")?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 

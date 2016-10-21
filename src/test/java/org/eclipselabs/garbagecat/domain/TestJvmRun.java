@@ -98,7 +98,19 @@ public class TestJvmRun extends TestCase {
         jvmManager.store(testFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event count not correct.", 3, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertEquals("Should not be any unidentified log lines.", 0, jvmRun.getUnidentifiedLogLines().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
+        Assert.assertTrue(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME));
     }
 
     /**
@@ -237,6 +249,8 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
+        Assert.assertTrue(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME));
     }
 
     /**
@@ -254,7 +268,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
     }
 
@@ -265,7 +279,15 @@ public class TestJvmRun extends TestCase {
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+        Assert.assertTrue(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME));
+
     }
 
     /**
@@ -721,7 +743,7 @@ public class TestJvmRun extends TestCase {
      * Test PrintCommandLineFlags not missing.
      */
     public void testAnalysisPrintCommandlineFlagsNotMissing() {
-        String jvmOptions = "Xss128k -XX:+PrintCommandLineFlags Xms2048M";
+        String jvmOptions = "Xss128k -XX:+PrintCommandLineFlags -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -734,7 +756,7 @@ public class TestJvmRun extends TestCase {
      * Test PrintGCDetails missing.
      */
     public void testAnalysisPrintGCDetailsMissing() {
-        String jvmOptions = "Xss128k Xms2048M";
+        String jvmOptions = "Xss128k -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -747,7 +769,7 @@ public class TestJvmRun extends TestCase {
      * Test PrintGCDetails not missing.
      */
     public void testAnalysisPrintGCDetailsNotMissing() {
-        String jvmOptions = "Xss128k -XX:+PrintGCDetails Xms2048M";
+        String jvmOptions = "Xss128k -XX:+PrintGCDetails -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -760,7 +782,7 @@ public class TestJvmRun extends TestCase {
      * Test CMS not being used to collect old generation.
      */
     public void testAnalysisCmsYoungSerialOld() {
-        String jvmOptions = "Xss128k -XX:+UseParNewGC Xms2048M";
+        String jvmOptions = "Xss128k -XX:+UseParNewGC -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -773,7 +795,7 @@ public class TestJvmRun extends TestCase {
      * Test CMS being used to collect old generation.
      */
     public void testAnalysisCmsYoungCmsOld() {
-        String jvmOptions = "Xss128k -XX:+UseParNewGC -XX:+UseConcMarkSweepGC  Xms2048M";
+        String jvmOptions = "Xss128k -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -863,7 +885,7 @@ public class TestJvmRun extends TestCase {
      * Test if -XX:+PrintReferenceGC enabled by inspecting jvm options.
      */
     public void testPrintReferenceGCByOptions() {
-        String jvmOptions = "Xss128k -XX:+PrintReferenceGC  Xms2048M";
+        String jvmOptions = "Xss128k -XX:+PrintReferenceGC -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -876,7 +898,7 @@ public class TestJvmRun extends TestCase {
      * Test if -XX:+PrintStringDeduplicationStatistics enabled by inspecting jvm options.
      */
     public void testPrintStringDeduplicationStatistics() {
-        String jvmOptions = "Xss128k -XX:+PrintStringDeduplicationStatistics  Xms2048M";
+        String jvmOptions = "Xss128k -XX:+PrintStringDeduplicationStatistics -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -889,7 +911,7 @@ public class TestJvmRun extends TestCase {
      * Test if PrintGCDetails disabled with -XX:-PrintGCDetails.
      */
     public void testPrintGCDetailsDisabled() {
-        String jvmOptions = "Xss128k -XX:-PrintGCDetails Xms2048M";
+        String jvmOptions = "Xss128k -XX:-PrintGCDetails -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -922,7 +944,7 @@ public class TestJvmRun extends TestCase {
     public void testCmsIncrementalModeAnalysis() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset68.txt");
-        String jvmOptions = "Xss128k -XX:+CMSIncrementalMode -XX:CMSInitiatingOccupancyFraction=70 Xms2048M";
+        String jvmOptions = "Xss128k -XX:+CMSIncrementalMode -XX:CMSInitiatingOccupancyFraction=70 -Xms2048M";
         Jvm jvm = new Jvm(jvmOptions, null);
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
@@ -938,7 +960,7 @@ public class TestJvmRun extends TestCase {
      * Test if biased locking disabled with -XX:-UseBiasedLocking.
      */
     public void testBisasedLockingDisabled() {
-        String jvmOptions = "Xss128k -XX:-UseBiasedLocking Xms2048M";
+        String jvmOptions = "Xss128k -XX:-UseBiasedLocking -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -951,12 +973,25 @@ public class TestJvmRun extends TestCase {
      * Test if biased locking disabled with -XX:-UseBiasedLocking.
      */
     public void testPrintClassHistogramEnabled() {
-        String jvmOptions = "Xss128k -XX:+PrintClassHistogram Xms2048M";
+        String jvmOptions = "Xss128k -XX:+PrintClassHistogram -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.KEY_PRINT_CLASS_HISTOGRAM + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM));
+    }
+
+    /**
+     * Test if biased locking disabled with -XX:-UseBiasedLocking.
+     */
+    public void testPrintApplicationConcurrentTime() {
+        String jvmOptions = "Xss128k -XX:+PrintGCApplicationConcurrentTime -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME));
     }
 }

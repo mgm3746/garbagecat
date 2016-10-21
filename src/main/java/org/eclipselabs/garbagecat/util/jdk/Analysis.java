@@ -280,6 +280,11 @@ public class Analysis {
     public static final String KEY_EXPLICIT_GC_JVMTI = "explicit.gc.jvmti";
 
     /**
+     * Property key for printing application concurrent time (-XX:+PrintGCApplicationConcurrentTime).
+     */
+    public static final String KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME = "print.gc.application.concurrent.time";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {
