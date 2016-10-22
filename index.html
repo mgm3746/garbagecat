@@ -31,14 +31,14 @@
         <h1>
 <a id="garbagecat" class="anchor" href="#garbagecat" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>garbagecat</h1>
 
-<p>Parses Java garbage collection logging and provides analysis to support JVM tuning and troubleshooting for OpenJDK and Sun JDK. It differs from other tools in that it goes beyond the simple math of calculating statistics such as maximum pause time and throughput. It adds context to these numbers by identifying the associated collector or collector phase, which allows for much deeper insight and analysis. This is especially relevant to collectors such as the Concurrent Mark Sweep collector that have multiple concurrent and stop-the-world phases.</p>
+<p>Parses Java garbage collection logging and provides analysis to support JVM tuning and troubleshooting for OpenJDK and Sun/Oracle JDK. It differs from other tools in that it goes beyond the simple math of calculating statistics such as maximum pause time and throughput. It adds context to these numbers by identifying the associated collector or collector phase, which allows for much deeper insight and analysis. This is especially relevant to collectors such as the Concurrent Mark Sweep collector that have multiple concurrent and stop-the-world phases.</p>
 
 <h2>
 <a id="supports" class="anchor" href="#supports" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supports</h2>
 
 <ul>
 <li>OpenJDK</li>
-<li>Sun JDK 1.5 and higher</li>
+<li>Sun/Oracle JDK 1.5 and higher</li>
 <li>Best utilized with the following GC logging options:</li>
 </ul>
 
@@ -74,6 +74,7 @@ export PATH M2_HOME
 <p>Build it:</p>
 
 <pre><code>cd garbagecat
+mvn clean (rebuildinging)
 mvn assembly:assembly
 mvn javadoc:javadoc
 </code></pre>
@@ -98,6 +99,7 @@ usage: garbagecat [OPTION]... [FILE]
  -h,--help                  help
  -o,--options &lt;arg&gt;         JVM options used during JVM run 
  -p,--preprocess            preprocessing flag
+ -r,--reorder               reorder logging by timestamp
  -s,--startdatetime &lt;arg&gt;   JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS)
                             for converting GC logging timestamps to datetime
  -t,--threshold &lt;arg&gt;       threshold (0-100) for throughput bottleneck
