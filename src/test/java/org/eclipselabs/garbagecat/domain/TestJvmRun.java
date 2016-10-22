@@ -150,9 +150,15 @@ public class TestJvmRun extends TestCase {
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING));
+        Assert.assertTrue(Analysis.KEY_GC_OVERHEAD_LIMIT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_GC_OVERHEAD_LIMIT));
+        Assert.assertTrue(Analysis.KEY_GC_OVERHEAD_LIMIT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_GC_OVERHEAD_LIMIT));
     }
 
     /**
@@ -288,22 +294,6 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME));
 
-    }
-
-    /**
-     * Test preprocessing <code>UnloadingClassPreprocessAction</code> with underlying
-     * <code>ParallelSerialOldEvent</code>.
-     */
-    public void testUnloadingClassPreprocessActionParallelSerialOldEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset24.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD));
     }
 
     /**

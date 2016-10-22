@@ -13,6 +13,8 @@
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
@@ -423,6 +425,19 @@ public class TestCmsPreprocessAction extends TestCase {
                 CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
     }
 
+    public void testLogLineClassUnloading() {
+        String logLine = "1187039.034: [Full GC"
+                + "[Unloading class sun.reflect.GeneratedSerializationConstructorAccessor13565]";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.PARALLEL_SERIAL_OLD.toString() + ".",
+                ParallelSerialOldPreprocessAction.match(logLine));
+        ParallelSerialOldPreprocessAction event = new ParallelSerialOldPreprocessAction(null, logLine, nextLogLine,
+                null, context);
+        Assert.assertEquals("Log line not parsed correctly.", "1187039.034: [Full GC", event.getLogEntry());
+    }
+
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */
@@ -436,6 +451,8 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue(Analysis.KEY_PRINT_HEAP_AT_GC + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_HEAP_AT_GC));
     }
 
     /**
@@ -456,6 +473,8 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(Analysis.KEY_PRINT_HEAP_AT_GC + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_HEAP_AT_GC));
     }
 
     /**
@@ -475,6 +494,8 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(Analysis.KEY_PRINT_HEAP_AT_GC + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_HEAP_AT_GC));
     }
 
     /**
@@ -580,6 +601,8 @@ public class TestCmsPreprocessAction extends TestCase {
                         .contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(Analysis.KEY_PRINT_HEAP_AT_GC + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_HEAP_AT_GC));
     }
 
     /**
@@ -783,5 +806,7 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+        Assert.assertTrue(Analysis.KEY_PRINT_HEAP_AT_GC + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_HEAP_AT_GC));
     }
 }

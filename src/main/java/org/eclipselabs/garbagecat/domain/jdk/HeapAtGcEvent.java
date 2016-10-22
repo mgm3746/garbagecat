@@ -18,7 +18,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * CLASS_UNLOADING
+ * HEAP_AT_GC
  * </p>
  * 
  * <p>

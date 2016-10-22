@@ -285,6 +285,21 @@ public class Analysis {
     public static final String KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME = "print.gc.application.concurrent.time";
 
     /**
+     * Property key for printing additional heap data (-XX:+PrintHeapAtGC).
+     */
+    public static final String KEY_PRINT_HEAP_AT_GC = "print.heap.at.gc";
+
+    /**
+     * Property key for outputting class unloading information (-XX:+TraceClassUnloading).
+     */
+    public static final String KEY_TRACE_CLASS_UNLOADING = "trace.class.unloading";
+
+    /**
+     * Property key for the garbage collection overhead limit being reached.
+     */
+    public static final String KEY_GC_OVERHEAD_LIMIT = "trace.class.unloading";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

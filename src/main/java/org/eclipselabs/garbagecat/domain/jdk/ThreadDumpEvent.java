@@ -10,11 +10,11 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.preprocess.jdk;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -103,7 +103,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ThreadDumpPreprocessAction implements PreprocessAction {
+public class ThreadDumpEvent implements ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
@@ -142,12 +142,17 @@ public class ThreadDumpPreprocessAction implements PreprocessAction {
     private String logEntry;
 
     /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
+
+    /**
      * Create event from log entry.
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public ThreadDumpPreprocessAction(String logEntry) {
+    public ThreadDumpEvent(String logEntry) {
         this.logEntry = logEntry;
     }
 
@@ -156,7 +161,11 @@ public class ThreadDumpPreprocessAction implements PreprocessAction {
     }
 
     public String getName() {
-        return JdkUtil.PreprocessActionType.THREAD_DUMP.toString();
+        return JdkUtil.LogEventType.THREAD_DUMP.toString();
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 
     /**

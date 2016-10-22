@@ -24,13 +24,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Remove perm gen collection "Unloading class" logging. The perm gen is collected at the beginning of some old
- * collections, resulting in the perm gen logging being intermingled with the old collection logging. For example:
- * </p>
- * 
- * <p>
- * Remove class unloading logging from the underlying garbage collection event. This data is currently not being used
- * for any analysis.
+ * Perm gen/Metasapce collection "Unloading class" logging enabled with <code>-XX:+TraceClassUnloading</code>. The perm
+ * gen is collected at the beginning of some old collections, resulting in the perm gen / metaspace logging being
+ * intermingled with the old collection logging. This data is currently not being used for analysis.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -63,7 +59,7 @@ public class ClassUnloadingEvent implements ThrowAwayEvent {
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
+    private static final String REGEX = "^( )?" + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
     private static final Pattern PATTERN = Pattern.compile(REGEX);
 
     /**

@@ -12,7 +12,15 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.io.File;
+
+import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -33,5 +41,31 @@ public class TestClassUnloadingEvent extends TestCase {
         String logLine = "[Unloading class MyClass_1234153487841_717989]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".",
                 ClassUnloadingEvent.match(logLine));
+    }
+
+    public void testLogLinWithBeginningSpace() {
+        String logLine = " [Unloading class $Proxy225]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".",
+                ClassUnloadingEvent.match(logLine));
+    }
+
+    /**
+     * Test preparsing.
+     * 
+     */
+    public void testTraceClassUnloadingPreprocessing() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset84.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD));
+        Assert.assertTrue(Analysis.KEY_TRACE_CLASS_UNLOADING + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_TRACE_CLASS_UNLOADING));
     }
 }

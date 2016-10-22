@@ -12,81 +12,52 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import java.util.regex.Pattern;
+
+import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * CLASS_HISTOGRAM
+ * GC_OVERHEAD_LIMIT
  * </p>
  * 
  * <p>
- * Logging enabled with the <code>-XX:+PrintClassHistogram</code> option used to determine the objects in a heap and how
- * much space they are consuming. The output is triggered manually with a thread dump.
- * </p>
- * 
- * <p>
- * This is generally not a useful option for the following reasons:
- * </p>
- * 
- * <ul>
- * <li>It is a heavyweight option. It forces a full collection and can output tens of thousands of logging lines.</li>
- * <li>A class histogram has limited usefulness troubleshooting memory leaks compared to a full heap dump.</li>
- * </ul>
- * 
- * <p>
- * Generally memory leaks are investigated by getting a heap dump, but there are use cases where this option can be
- * useful.
+ * Garbage collection overhead limit being reached. This happens when 98% of the total time is spent in garbage
+ * collection and less than 2% of the heap is recovered. This feature is a throttle to prevent applications from running
+ * for an extended period of time while making little or no progress because the heap is too small. If desired, this
+ * feature can be disabled with the <code>-XX:-UseGCOverheadLimit</code> option.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) With "would exceed":
+ * </p>
+ * 
  * <pre>
- * 2016-09-13T06:54:06.773+0100: 11662.232: [Full GC 11662.233: [Class Histogram:
- *  num     #instances         #bytes  class name
- * ----------------------------------------------
- *    1:       5249662      476131272  [C
- *    2:       4326648      166452736  java.lang.String
- *    3:       1213019      140458680  &lt;constMethodKlass&gt;
- *    4:       1149724      132421736  [Ljava.lang.Object;
- *    5:       2212385      108495400  javax.servlet.jsp.tagext.TagAttributeInfo
- * ...
- * 27722:             1             16  com.example.MyClass
- * Total      16227637     1059670840
+ * GC time would exceed GCTimeLimit of 98%
+ * </pre>
+ * 
+ * <p>
+ * 2) With "is exceeding":
+ * </p>
+ * 
+ * <pre>
+ * GC time is exceeding GCTimeLimit of 98%
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ClassHistogramEvent implements ThrowAwayEvent {
+public class GcOverheadLimitEvent implements LogEvent {
 
     /**
-     * Regular expression for cruft left after class histogram preprocessing.
+     * Regular expression defining the logging.
      */
-    public static final String REGEX_PREPROCESSED = JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?, "
-            + JdkRegEx.DURATION + "\\]";
+    private static final String REGEX = "^GC time (would exceed|is exceeding) GCTimeLimit of 98%$";
 
-    /**
-     * Regular expressions defining the logging.
-     */
-    private static final String[] REGEX = {
-            /*
-             * Column names
-             */
-            "^ num     #instances         #bytes  class name$",
-            /*
-             * Header divider
-             */
-            "^----------------------------------------------$",
-            /*
-             * Instance data
-             */
-            "^[ ]{0,3}\\d{1,5}:[ ]{7,13}\\d{1,9}[ ]{5,13}\\d{1,10}[ ]{2}[a-zA-Z0-9<>\\[\\$\\._;]+$",
-            /*
-             * Footer
-             */
-            "^Total( ){6}\\d{1,10}( ){5}\\d{1,10}$" };
+    private static final Pattern PATTERN = Pattern.compile(REGEX);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -104,7 +75,7 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public ClassHistogramEvent(String logEntry) {
+    public GcOverheadLimitEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
     }
@@ -114,7 +85,7 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.CLASS_HISTOGRAM.toString();
+        return JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString();
     }
 
     public long getTimestamp() {
@@ -129,13 +100,6 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        boolean isMatch = false;
-        for (int i = 0; i < REGEX.length; i++) {
-            if (logLine.matches(REGEX[i])) {
-                isMatch = true;
-                break;
-            }
-        }
-        return isMatch;
+        return PATTERN.matcher(logLine).matches();
     }
 }

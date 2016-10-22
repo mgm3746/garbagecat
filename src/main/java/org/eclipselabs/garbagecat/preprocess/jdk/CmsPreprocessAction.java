@@ -146,6 +146,25 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 719.519: [GC (Allocation Failure) 719.521: [ParNew: 1382400K-&gt;1382400K(1382400K), 0.0000470 secs] (concurrent mode failure): 2542828K-&gt;2658278K(2658304K), 12.3447910 secs] 3925228K-&gt;2702358K(4040704K), [Metaspace: 72175K-&gt;72175K(1118208K)] icms_dc=100 , 12.3480570 secs] [Times: user=15.38 sys=0.02, real=12.35 secs]
  * 719.521: [CMS722.601: [CMS-concurrent-mark: 3.567/3.633 secs] [Times: user=10.91 sys=0.69, real=3.63 secs]
  * </pre>
+ * 
+ * <p>
+ * 7) {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} with
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent}:
+ * </p>
+ * 
+ * <pre>
+ * 830048.804: [Full GC 830048.804: [CMS[Unloading class sun.reflect.GeneratedConstructorAccessor73]
+ * [Unloading class sun.reflect.GeneratedConstructorAccessor70]
+ * : 1572185K-&gt;1070163K(1572864K), 6.8812400 secs] 2489689K-&gt;1070163K(2490368K), [CMS Perm : 46357K-&gt;46348K(77352K)], 6.8821630 secs] [Times: user=6.87 sys=0.00, real=6.88 secs]
+ * </pre>
+ * 
+ * <p>
+ * Preprocessed:
+ * </p>
+ * 
+ * <pre>
+ * 830048.804: [Full GC 830048.804: [CMS: 1572185K-&gt;1070163K(1572864K), 6.8812400 secs] 2489689K-&gt;1070163K(2490368K), [CMS Perm : 46357K-&gt;46348K(77352K)], 6.8821630 secs] [Times: user=6.87 sys=0.00, real=6.88 secs]
+ * </pre>
  *
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  *
@@ -195,6 +214,20 @@ public class CmsPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_SERIAL_BAILING = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC "
             + JdkRegEx.TIMESTAMP + ": \\[CMSbailing out to foreground collection)[ ]*$";
+
+    /**
+     * Regular expression for retained CMS_SERIAL_OLD with -XX:+UseGCOverheadLimit at end.
+     * 
+     * 3743.645: [Full GC [PSYoungGen: 419840K->415020K(839680K)] [PSOldGen: 5008922K->5008922K(5033984K)]
+     * 5428762K->5423942K(5873664K) [PSPermGen: 193275K->193275K(262144K)] GC time would exceed GCTimeLimit of 98%
+     * 
+     */
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED = "^(" + JdkRegEx.TIMESTAMP
+            + ": \\[Full GC \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\] \\[(PS|Par)OldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\])(      |\t)GC time (would exceed|is exceeding) GCTimeLimit of 98%$";
 
     /**
      * Regular expression for retained beginning PrintHeapAtGC collection.
@@ -338,6 +371,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             // Output beginning of PAR_NEW line
             this.logEntry = matcher.group(1);
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)) {
             // CMS_SERIAL_OLD mixed with CMS_CONCURRENT
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
@@ -348,6 +382,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             // Output beginning of CMS_SERIAL_OLD line
             this.logEntry = matcher.group(1);
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
 
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL);
@@ -356,6 +391,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW);
             Matcher matcher = pattern.matcher(logEntry);
@@ -363,6 +399,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC)) {
             // Remove PrintHeapAtGC output
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC);
@@ -371,8 +408,17 @@ public class CmsPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_BAILING);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
@@ -451,7 +497,8 @@ public class CmsPreprocessAction implements PreprocessAction {
                 clearEntangledLines(entangledLogLines);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if (logEntry.matches(REGEX_RETAIN_END)) {
+        } else if (logEntry.matches(REGEX_RETAIN_END)
+                && !priorLogEntry.matches(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM)) {
             // End of logging event
             Pattern pattern = Pattern.compile(REGEX_RETAIN_END);
             Matcher matcher = pattern.matcher(logEntry);
@@ -487,6 +534,7 @@ public class CmsPreprocessAction implements PreprocessAction {
         return (logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT) && nextLogLine.matches(REGEX_RETAIN_END))
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL) || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_BAILING)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC)
@@ -500,6 +548,8 @@ public class CmsPreprocessAction implements PreprocessAction {
     }
 
     /**
+     * TODO: Move to superclass.
+     * 
      * Convenience method to write out any saved log lines.
      * 
      * @param entangledLogLines
@@ -507,7 +557,7 @@ public class CmsPreprocessAction implements PreprocessAction {
      * @return
      */
     private final void clearEntangledLines(List<String> entangledLogLines) {
-        if (entangledLogLines.size() > 0) {
+        if (entangledLogLines != null && entangledLogLines.size() > 0) {
             // Output any entangled log lines
             Iterator<String> iterator = entangledLogLines.iterator();
             while (iterator.hasNext()) {

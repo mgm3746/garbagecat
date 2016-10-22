@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.preprocess;
+package org.eclipselabs.garbagecat.domain;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -64,7 +64,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ApplicationLoggingPreprocessAction implements PreprocessAction {
+public class ApplicationLoggingEvent implements ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
@@ -89,12 +89,17 @@ public class ApplicationLoggingPreprocessAction implements PreprocessAction {
     private String logEntry;
 
     /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
+
+    /**
      * Create event from log entry.
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public ApplicationLoggingPreprocessAction(String logEntry) {
+    public ApplicationLoggingEvent(String logEntry) {
         this.logEntry = logEntry;
     }
 
@@ -103,7 +108,11 @@ public class ApplicationLoggingPreprocessAction implements PreprocessAction {
     }
 
     public String getName() {
-        return JdkUtil.PreprocessActionType.APPLICATION_LOGGING.toString();
+        return JdkUtil.LogEventType.APPLICATION_LOGGING.toString();
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 
     /**

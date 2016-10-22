@@ -10,14 +10,28 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain;
+package org.eclipselabs.garbagecat.domain.jdk;
+
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
- * Logging events that are not essential for GC analysis and can be ignored (or discarded during preprocessing).
- * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public interface ThrowAwayEvent extends LogEvent {
+public class TestGcOverheadLimitEvent extends TestCase {
 
+    public void testLineWouldExceed() {
+        String logLine = "GC time would exceed GCTimeLimit of 98%";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + ".",
+                GcOverheadLimitEvent.match(logLine));
+    }
+
+    public void testLineIsExceeding() {
+        String logLine = "GC time is exceeding GCTimeLimit of 98%";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + ".",
+                GcOverheadLimitEvent.match(logLine));
+    }
 }

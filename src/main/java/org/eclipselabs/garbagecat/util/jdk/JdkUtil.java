@@ -19,6 +19,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
+import org.eclipselabs.garbagecat.domain.BlankLineEvent;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
@@ -39,6 +41,7 @@ import org.eclipselabs.garbagecat.domain.jdk.G1MixedPause;
 import org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungPause;
+import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
@@ -60,10 +63,9 @@ import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.PrintReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcYoungEvent;
-import org.eclipselabs.garbagecat.preprocess.ApplicationLoggingPreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.ThreadDumpPreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 
@@ -99,16 +101,16 @@ public class JdkUtil {
         //
         HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, PRINT_REFERENCE_GC, LOG_ROTATION,
         //
-        CLASS_HISTOGRAM, HEAP_AT_GC, CLASS_UNLOADING
+        CLASS_HISTOGRAM, HEAP_AT_GC, CLASS_UNLOADING, APPLICATION_LOGGING, THREAD_DUMP, BLANK_LINE, GC_OVERHEAD_LIMIT
     };
 
     /**
      * Defined preprocessing actions.
      */
     public enum PreprocessActionType {
-        APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, DATE_STAMP, DATE_STAMP_PREFIX,
+        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, DATE_STAMP, DATE_STAMP_PREFIX,
         //
-        GC_TIME_LIMIT_EXCEEDED, PRINT_TENURING_DISTRIBUTION, THREAD_DUMP, G1, CMS, PARALLEL_SERIAL_OLD
+        PRINT_TENURING_DISTRIBUTION, G1, CMS, PARALLEL_SERIAL_OLD
     };
 
     /**
@@ -217,6 +219,14 @@ public class JdkUtil {
             return LogEventType.HEAP_AT_GC;
         if (ClassHistogramEvent.match(logLine))
             return LogEventType.CLASS_HISTOGRAM;
+        if (ApplicationLoggingEvent.match(logLine))
+            return LogEventType.APPLICATION_LOGGING;
+        if (ThreadDumpEvent.match(logLine))
+            return LogEventType.THREAD_DUMP;
+        if (BlankLineEvent.match(logLine))
+            return LogEventType.BLANK_LINE;
+        if (GcOverheadLimitEvent.match(logLine))
+            return LogEventType.GC_OVERHEAD_LIMIT;
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -349,6 +359,18 @@ public class JdkUtil {
             break;
         case CLASS_HISTOGRAM:
             event = new ClassHistogramEvent(logLine);
+            break;
+        case APPLICATION_LOGGING:
+            event = new ApplicationLoggingEvent(logLine);
+            break;
+        case THREAD_DUMP:
+            event = new ThreadDumpEvent(logLine);
+            break;
+        case BLANK_LINE:
+            event = new BlankLineEvent(logLine);
+            break;
+        case GC_OVERHEAD_LIMIT:
+            event = new GcOverheadLimitEvent(logLine);
             break;
         case UNKNOWN:
             event = new UnknownEvent(logLine);
@@ -553,19 +575,6 @@ public class JdkUtil {
         }
         matcher.appendTail(sb);
         return sb.toString();
-    }
-
-    /**
-     * Check to see if a log line should be discarded or kept for analysis.
-     * 
-     * @param logLine
-     *            The log line.
-     * @return True if the log line is not related to garbage collection logging or can otherwise be discarded, false if
-     *         the log line should be retained.
-     */
-    public static final boolean discardLogLine(String logLine) {
-        return ThreadDumpPreprocessAction.match(logLine) || ApplicationLoggingPreprocessAction.match(logLine)
-                || logLine.length() == 0 || logLine.matches(JdkRegEx.BLANK_LINE);
     }
 
     /**

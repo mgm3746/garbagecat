@@ -560,6 +560,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CLEANUP)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CLEANUP);
             Matcher matcher = pattern.matcher(logEntry);
@@ -567,6 +568,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)) {
             // Handle concurrent mixed with young collections. See datasets 47-48 and 51-52, 54.
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
@@ -614,6 +616,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 }
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE)) {
             // Strip out G1Ergonomics
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE);
@@ -630,6 +633,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1) + matcher.group(11);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_MIXED)) {
             // Strip out G1Ergonomics
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_MIXED);
@@ -638,6 +642,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK)) {
             // Strip out G1Ergonomics
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK);
@@ -646,6 +651,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE);
             Matcher matcher = pattern.matcher(logEntry);
@@ -653,6 +659,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_FULL)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_FULL);
             Matcher matcher = pattern.matcher(logEntry);
@@ -740,7 +747,7 @@ public class G1PreprocessAction implements PreprocessAction {
      * @return
      */
     private final void clearEntangledLines(List<String> entangledLogLines) {
-        if (entangledLogLines.size() > 0) {
+        if (entangledLogLines != null && entangledLogLines.size() > 0) {
             // Output any entangled log lines
             Iterator<String> iterator = entangledLogLines.iterator();
             while (iterator.hasNext()) {
