@@ -110,7 +110,7 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
     /**
      * RegEx pattern.
      */
-    private static Pattern pattern = Pattern.compile(ApplicationStoppedTimeEvent.REGEX);
+    private static Pattern pattern = Pattern.compile(REGEX);
 
     /**
      * Create event from log entry.

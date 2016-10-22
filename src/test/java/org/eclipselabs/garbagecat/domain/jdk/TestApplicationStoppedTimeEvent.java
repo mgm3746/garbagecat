@@ -26,7 +26,7 @@ public class TestApplicationStoppedTimeEvent extends TestCase {
     public void testLogLine() {
         String logLine = "Total time for which application threads were stopped: 0.0968457 seconds";
         Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
                 ApplicationStoppedTimeEvent.match(logLine));
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 0, event.getTimestamp());
@@ -36,7 +36,7 @@ public class TestApplicationStoppedTimeEvent extends TestCase {
     public void testLogLineWithSpacesAtEnd() {
         String logLine = "Total time for which application threads were stopped: 0.0968457 seconds  ";
         Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
                 ApplicationStoppedTimeEvent.match(logLine));
     }
 
@@ -54,7 +54,7 @@ public class TestApplicationStoppedTimeEvent extends TestCase {
         String logLine = "4.483: Total time for which application threads were stopped: 0.0018237 seconds, Stopping "
                 + "threads took: 0.0017499 seconds";
         Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
                 ApplicationStoppedTimeEvent.match(logLine));
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 4483, event.getTimestamp());
@@ -64,7 +64,7 @@ public class TestApplicationStoppedTimeEvent extends TestCase {
     public void testLogLineWithCommas() {
         String logLine = "1,065: Total time for which application threads were stopped: 0,0001610 seconds";
         Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
                 ApplicationStoppedTimeEvent.match(logLine));
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 1065, event.getTimestamp());
