@@ -648,6 +648,13 @@ public class JvmRun {
                 analysisKeys.add(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME);
             }
         }
+
+        // Check for trace class unloading enabled with -XX:+TraceClassUnloading
+        if (!analysisKeys.contains(Analysis.KEY_TRACE_CLASS_UNLOADING)) {
+            if (jvm.getTraceClassUnloading() != null) {
+                analysisKeys.add(Analysis.KEY_TRACE_CLASS_UNLOADING);
+            }
+        }
     }
 
     /**

@@ -705,6 +705,20 @@ public class Jvm {
     }
 
     /**
+     * The option for trace class unloading output:
+     * 
+     * <pre>
+     * -XX:+TraceClassUnloading
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getTraceClassUnloading() {
+        String regex = "(-XX:\\+TraceClassUnloading)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */
