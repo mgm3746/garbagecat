@@ -37,6 +37,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * event for now.
  * </p>
  * 
+ * <p>
+ * Uses "PSOldGen" vs. {@link org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent} "ParOldGen".
+ * 
  * <h3>Example Logging</h3>
  * 
  * <p>
@@ -61,8 +64,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParallelSerialOldEvent
-        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData, TriggerData {
+public class ParallelSerialOldEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData,
+        PermData, TriggerData, ParallelCollection {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -130,10 +133,15 @@ public class ParallelSerialOldEvent
     private String trigger;
 
     /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
+
+    /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (" + JdkRegEx.TRIGGER
-            + " )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(" + TRIGGER
+            + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
@@ -155,17 +163,17 @@ public class ParallelSerialOldEvent
             if (matcher.group(3) != null) {
                 trigger = matcher.group(3);
             }
-            young = Integer.parseInt(matcher.group(4));
-            youngEnd = Integer.parseInt(matcher.group(5));
-            youngAvailable = Integer.parseInt(matcher.group(6));
-            old = Integer.parseInt(matcher.group(7));
-            oldEnd = Integer.parseInt(matcher.group(8));
-            oldAllocation = Integer.parseInt(matcher.group(9));
+            young = Integer.parseInt(matcher.group(5));
+            youngEnd = Integer.parseInt(matcher.group(6));
+            youngAvailable = Integer.parseInt(matcher.group(7));
+            old = Integer.parseInt(matcher.group(8));
+            oldEnd = Integer.parseInt(matcher.group(9));
+            oldAllocation = Integer.parseInt(matcher.group(10));
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Integer.parseInt(matcher.group(13));
-            permGenEnd = Integer.parseInt(matcher.group(14));
-            permGenAllocation = Integer.parseInt(matcher.group(15));
-            duration = JdkMath.convertSecsToMillis(matcher.group(16)).intValue();
+            permGen = Integer.parseInt(matcher.group(14));
+            permGenEnd = Integer.parseInt(matcher.group(15));
+            permGenAllocation = Integer.parseInt(matcher.group(16));
+            duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
         }
     }
 

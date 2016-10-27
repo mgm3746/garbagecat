@@ -144,7 +144,7 @@ public class JdkRegEx {
     /**
      * Trigger.
      */
-    public static final String TRIGGER = "\\((.+?)\\)";
+    //public static final String TRIGGER = "\\((.+?)\\)";
 
     /**
      * System.gc() trigger. Explicit garbage collection invoked.

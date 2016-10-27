@@ -54,8 +54,8 @@ public class TestJvmRun extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD));
         Assert.assertTrue(Analysis.KEY_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_APPLICATION_STOPPED_TIME_MISSING));
-        Assert.assertTrue(Analysis.KEY_SERIAL_GC_THROUGHPUT + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_THROUGHPUT));
+        Assert.assertTrue(Analysis.KEY_SERIAL_GC_PARALLEL + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_PARALLEL));
     }
 
     public void testSummaryStatsParNew() {
@@ -451,8 +451,10 @@ public class TestJvmRun extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE));
         Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD));
-        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_UNNECESSARY + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_UNNECESSARY));
+        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_SERIAL_PARALLEL + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_PARALLEL));
+        Assert.assertFalse(Analysis.KEY_SERIAL_GC_PARALLEL + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_PARALLEL));
     }
 
     /**

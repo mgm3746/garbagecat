@@ -32,9 +32,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * New throughput collector introduced in JDK 5 update 6 and significantly enhanced in JDK 6. Enabled with the
- * <code>-XX:+UseParallelOldGC</code> JVM option. I have seen reports saying this is enabled by default in JDK 6, but I
- * don't see that reflected in the logging, so I don't think that is true.
+ * New throughput multi-threaded collector introduced in JDK 5 update 6 and significantly enhanced in JDK 6. Enabled
+ * with the <code>-XX:+UseParallelOldGC</code> JVM option.
  * </p>
  * 
  * <p>
@@ -46,6 +45,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * Performing full collections in parallel results in lower garbage collection overhead and better application
  * performance, particularly for applications with large heaps running on multiprocessor hardware.
  * </p>
+ * 
+ * <p>
+ * Uses "ParOldGen" vs. {@link org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent} "PSOldGen".
  * 
  * <h3>Example Logging</h3>
  * 
@@ -77,8 +79,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParallelOldCompactingEvent
-        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData, TriggerData {
+public class ParallelOldCompactingEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData,
+        PermData, TriggerData, ParallelCollection {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -146,10 +148,16 @@ public class ParallelOldCompactingEvent
     private String trigger;
 
     /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
+
+    /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (" + JdkRegEx.TRIGGER
-            + " )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(" + TRIGGER
+            + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\)\\] \\[ParOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(,)? \\[(PSPermGen|Metaspace): "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
@@ -169,17 +177,17 @@ public class ParallelOldCompactingEvent
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             trigger = matcher.group(3);
-            young = Integer.parseInt(matcher.group(4));
-            youngEnd = Integer.parseInt(matcher.group(5));
-            youngAvailable = Integer.parseInt(matcher.group(6));
-            old = Integer.parseInt(matcher.group(7));
-            oldEnd = Integer.parseInt(matcher.group(8));
-            oldAllocation = Integer.parseInt(matcher.group(9));
+            young = Integer.parseInt(matcher.group(5));
+            youngEnd = Integer.parseInt(matcher.group(6));
+            youngAvailable = Integer.parseInt(matcher.group(7));
+            old = Integer.parseInt(matcher.group(8));
+            oldEnd = Integer.parseInt(matcher.group(9));
+            oldAllocation = Integer.parseInt(matcher.group(10));
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Integer.parseInt(matcher.group(15));
-            permGenEnd = Integer.parseInt(matcher.group(16));
-            permGenAllocation = Integer.parseInt(matcher.group(17));
-            duration = JdkMath.convertSecsToMillis(matcher.group(18)).intValue();
+            permGen = Integer.parseInt(matcher.group(16));
+            permGenEnd = Integer.parseInt(matcher.group(17));
+            permGenAllocation = Integer.parseInt(matcher.group(18));
+            duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
         }
     }
 

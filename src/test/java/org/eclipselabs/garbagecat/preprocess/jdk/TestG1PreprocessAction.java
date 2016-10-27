@@ -810,14 +810,10 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
-        Assert.assertTrue(JdkUtil.TriggerType.SYSTEM_GC.toString() + " trigger not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL));
-        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_SERIAL + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL));
-        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_UNECESSARY_CMS_G1 + " analysis incorrectly identified.",
-                !jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_UNECESSARY_CMS_G1));
-        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_UNNECESSARY + " analysis incorrectly identified.",
-                !jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_UNNECESSARY));
+        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_SERIAL_G1 + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_G1));
+        Assert.assertFalse(Analysis.KEY_SERIAL_GC_G1 + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_G1));
     }
 
     /**

@@ -31,19 +31,29 @@ public class Analysis {
     public static final String KEY_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED = "first.timestamp.threshold.exceeded";
 
     /**
-     * Property key for explicit gc with concurrent collectors (CMS, G1).
+     * Property key for explicit garbage collection invoking the PARALLELL_OLD_COMPACTING collector.
      */
-    public static final String KEY_EXPLICIT_GC_UNECESSARY_CMS_G1 = "explicit.gc.unnecessary.cms.g1";
+    public static final String KEY_EXPLICIT_GC_PARALLEL = "explicit.gc.parallel";
 
     /**
-     * Property key for explicit gc with non concurrent collectors (Serial, ParallelSerial).
-     */
-    public static final String KEY_EXPLICIT_GC_UNNECESSARY = "explicit.gc.unnecessary";
-
-    /**
-     * Property key for explicit garbage collection by a serial collector.
+     * Property key for explicit garbage collection invoking the SERIAL_OLD collector.
      */
     public static final String KEY_EXPLICIT_GC_SERIAL = "explicit.gc.serial";
+
+    /**
+     * Property key for explicit garbage collection invoking the CMS_SERIAL_OLD collector.
+     */
+    public static final String KEY_EXPLICIT_GC_SERIAL_CMS = "explicit.gc.serial.cms";
+
+    /**
+     * Property key for explicit garbage collection invoking the G1_FULL_GC collector.
+     */
+    public static final String KEY_EXPLICIT_GC_SERIAL_G1 = "explicit.gc.serial.g1";
+
+    /**
+     * Property key for explicit garbage collection invoking the PARALLEL_SERIAL_OLD collector.
+     */
+    public static final String KEY_EXPLICIT_GC_SERIAL_PARALLEL = "explicit.gc.serial.parallel";
 
     /**
      * Property key for explicit garbage collection disabled.
@@ -102,19 +112,25 @@ public class Analysis {
     public static final String KEY_MIN_METASPACE_NOT_EQUAL_MAX_METASPACE = "min.metaspace.not.equal.max.metaspace";
 
     /**
-     * Property key for the Throughput collector invoking a serial collection.
+     * Property key for the SERIAL_OLD collector being invoked for reasons other than explicit gc.
      */
-    public static final String KEY_SERIAL_GC_THROUGHPUT = "serial.gc.throughput";
+    public static final String KEY_SERIAL_GC = "serial.gc";
 
     /**
-     * Property key for the CMS collector invoking a serial collection.
+     * Property key for the CMS collector invoking a serial collection for reasons other than explicit gc.
      */
     public static final String KEY_SERIAL_GC_CMS = "serial.gc.cms";
 
     /**
-     * Property key for the G1 collector invoking a serial collection.
+     * Property key for the G1 collector invoking a serial collection for reasons other than explicit gc.
      */
     public static final String KEY_SERIAL_GC_G1 = "serial.gc.g1";
+
+    /**
+     * Property key for the Parallel (Throughput) collector invoking a serial collection for reasons other than explicit
+     * gc.
+     */
+    public static final String KEY_SERIAL_GC_PARALLEL = "serial.gc.parallel";
 
     /**
      * Property key for the RMI Distributed Garbage Collection (DGC) not being managed.

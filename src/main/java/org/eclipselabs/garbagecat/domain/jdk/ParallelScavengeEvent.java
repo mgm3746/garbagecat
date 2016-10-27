@@ -64,7 +64,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParallelScavengeEvent implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData {
+public class ParallelScavengeEvent
+        implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData, ParallelCollection {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

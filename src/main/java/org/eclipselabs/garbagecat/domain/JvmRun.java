@@ -393,18 +393,7 @@ public class JvmRun {
             analysisKeys.add(Analysis.KEY_GC_STOPPED_RATIO);
         }
 
-        // 4) Check for throughput collector serial collection
-        if (eventTypes.contains(LogEventType.PARALLEL_SERIAL_OLD)) {
-            analysisKeys.add(Analysis.KEY_SERIAL_GC_THROUGHPUT);
-        }
-
-        // 5) Check for CMS collector serial collection not caused by concurrent mode failure
-        if (!analysisKeys.contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE)
-                && eventTypes.contains(LogEventType.CMS_SERIAL_OLD)) {
-            analysisKeys.add(Analysis.KEY_SERIAL_GC_CMS);
-        }
-
-        // 6) Check if logging indicates gc details missing
+        // 4) Check if logging indicates gc details missing
         if (!analysisKeys.contains(Analysis.KEY_PRINT_GC_DETAILS_MISSING)) {
             if (getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)
                     || getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG)) {
@@ -412,7 +401,7 @@ public class JvmRun {
             }
         }
 
-        // 7) Check for concurrent mode failure by logging event type. This is needed to deal with legacy code that does
+        // 5) Check for concurrent mode failure by logging event type. This is needed to deal with legacy code that does
         // not understand triggers and creates many unnecessary events instead of preparsing them into their component
         // events and/or triggers.
         if (!analysisKeys.contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE)) {
@@ -425,7 +414,7 @@ public class JvmRun {
             }
         }
 
-        // 8) Check if CMS handling Perm/Metaspace collections by collector analysis (if no jvm options available and
+        // 6) Check if CMS handling Perm/Metaspace collections by collector analysis (if no jvm options available and
         // class unloading has not already been detected).
         if (!analysisKeys.contains(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED)) {
             if (getEventTypes().contains(LogEventType.CMS_REMARK)
@@ -435,7 +424,7 @@ public class JvmRun {
 
         }
 
-        // 9) Check for CMS promotion failed by event type
+        // 7) Check for CMS promotion failed by event type
         if (!analysisKeys.contains(Analysis.KEY_CMS_PROMOTION_FAILED)) {
             if (getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED)
                     || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD)
@@ -445,14 +434,14 @@ public class JvmRun {
             }
         }
 
-        // 10) Check for -XX:+PrintReferenceGC by event type
+        // 8) Check for -XX:+PrintReferenceGC by event type
         if (!analysisKeys.contains(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED)) {
             if (getEventTypes().contains(LogEventType.PRINT_REFERENCE_GC)) {
                 analysisKeys.add(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED);
             }
         }
 
-        // 11) Check for print application concurrent time.
+        // 9) Check for print application concurrent time.
         if (!analysisKeys.contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
             if (getEventTypes().contains(LogEventType.APPLICATION_CONCURRENT_TIME)) {
                 analysisKeys.add(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME);
