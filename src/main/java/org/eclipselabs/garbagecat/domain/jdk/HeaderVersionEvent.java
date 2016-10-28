@@ -19,11 +19,11 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * HEADER_MEMORY
+ * HEADER_VERSION
  * </p>
  * 
  * <p>
- * Memory header.
+ * Version header.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -53,7 +53,8 @@ public class HeaderVersionEvent implements LogEvent {
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(Java HotSpot\\(TM\\)|OpenJDK) .+$";
-    private static Pattern pattern = Pattern.compile(HeaderVersionEvent.REGEX);
+
+    private static Pattern pattern = Pattern.compile(REGEX);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

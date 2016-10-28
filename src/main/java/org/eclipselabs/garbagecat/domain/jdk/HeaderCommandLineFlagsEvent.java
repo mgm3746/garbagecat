@@ -59,6 +59,7 @@ public class HeaderCommandLineFlagsEvent implements LogEvent {
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(CommandLine flags: )(.+)$";
+
     private static Pattern pattern = Pattern.compile(HeaderCommandLineFlagsEvent.REGEX);
 
     /**

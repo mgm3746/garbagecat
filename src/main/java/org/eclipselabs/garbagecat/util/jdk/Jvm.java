@@ -780,4 +780,15 @@ public class Jvm {
         }
         return isJDK7;
     }
+
+    /**
+     * @return True if 64 bit, false otherwise.
+     */
+    public boolean is64Bit() {
+        boolean is64Bit = false;
+        if (version != null) {
+            is64Bit = version.matches("^.+64-Bit.+$");
+        }
+        return is64Bit;
+    }
 }

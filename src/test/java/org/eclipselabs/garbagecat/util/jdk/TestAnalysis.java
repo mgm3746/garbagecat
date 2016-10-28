@@ -28,6 +28,24 @@ import junit.framework.TestCase;
  */
 public class TestAnalysis extends TestCase {
 
+    public void testHeaderLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset42.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " information not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS));
+        Assert.assertTrue(JdkUtil.LogEventType.HEADER_MEMORY.toString() + " information not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY));
+        Assert.assertTrue(JdkUtil.LogEventType.HEADER_VERSION.toString() + " information not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION));
+        // Usually no reason to set the thread stack size on 64 bit.
+        Assert.assertFalse(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET));
+    }
+
     /**
      * Test CMS_SERIAL_OLD caused by <code>Analysis.KEY_EXPLICIT_GC_SERIAL</code> does not return
      * <code>Analysis.KEY_SERIAL_GC_CMS</code>.
@@ -73,5 +91,16 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_PARALLEL));
         Assert.assertFalse(Analysis.KEY_SERIAL_GC_PARALLEL + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_PARALLEL));
+    }
+
+    public void testThreadStackSizeAnalysis32Bit() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset87.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET));
     }
 }

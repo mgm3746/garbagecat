@@ -455,7 +455,7 @@ public class JvmRun {
     private void doJvmOptionsAnalysis() {
 
         // Check to see if thread stack size explicitly set
-        if (jvm.getThreadStackSizeOption() == null) {
+        if (jvm.getThreadStackSizeOption() == null && !jvm.is64Bit()) {
             analysisKeys.add(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET);
         }
 
@@ -486,7 +486,7 @@ public class JvmRun {
         }
 
         // Check for large thread stack size
-        if (jvm.hasLargeThreadStackSize()) {
+        if (jvm.hasLargeThreadStackSize() && !jvm.is64Bit()) {
             analysisKeys.add(Analysis.KEY_THREAD_STACK_SIZE_LARGE);
         }
 

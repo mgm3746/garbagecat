@@ -586,4 +586,24 @@ public class TestJvm extends TestCase {
         Assert.assertEquals("-XX:-PrintGCApplicationConcurrentTime option incorrect.",
                 "-XX:+PrintGCApplicationConcurrentTime", jvm.getPrintGcApplicationConcurrentTime());
     }
+
+    public void testIs64Bit() {
+        String jvmOptions = "-Xss128k -XX:+PrintGCApplicationConcurrentTime -XX:+CMSParallelRemarkEnabled";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        String version = "Version: Java HotSpot(TM) 64-Bit Server VM (25.65-b01) for linux-amd64 "
+                + "JRE (1.8.0_65-b17), built on Oct  6 2015 17:16:12 by \"java_re\" with gcc 4.3.0 20080428 "
+                + "(Red Hat 4.3.0-8)";
+        jvm.setVersion(version);
+        Assert.assertTrue("Jvm not identified as 64-bit.", jvm.is64Bit());
+    }
+
+    public void testIsNot64Bit() {
+        String jvmOptions = "-Xss128k -XX:+PrintGCApplicationConcurrentTime -XX:+CMSParallelRemarkEnabled";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        String version = "Version: Java HotSpot(TM) 32-Bit Server VM (25.65-b01) for linux-amd64 "
+                + "JRE (1.8.0_65-b17), built on Oct  6 2015 17:16:12 by \"java_re\" with gcc 4.3.0 20080428 "
+                + "(Red Hat 4.3.0-8)";
+        jvm.setVersion(version);
+        Assert.assertFalse("Jvm incorrectly not identified as 64-bit.", jvm.is64Bit());
+    }
 }

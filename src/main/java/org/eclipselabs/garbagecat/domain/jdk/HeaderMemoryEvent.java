@@ -41,7 +41,8 @@ public class HeaderMemoryEvent implements LogEvent {
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^Memory: .+$";
-    private static Pattern pattern = Pattern.compile(HeaderMemoryEvent.REGEX);
+
+    private static Pattern pattern = Pattern.compile(REGEX);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

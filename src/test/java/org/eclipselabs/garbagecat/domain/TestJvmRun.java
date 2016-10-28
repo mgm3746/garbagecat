@@ -418,23 +418,6 @@ public class TestJvmRun extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_GC_STOPPED_RATIO));
     }
 
-    public void testHeaderLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset42.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " information not identified.",
-                jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS));
-        Assert.assertTrue(JdkUtil.LogEventType.HEADER_MEMORY.toString() + " information not identified.",
-                jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY));
-        Assert.assertTrue(JdkUtil.LogEventType.HEADER_VERSION.toString() + " information not identified.",
-                jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION));
-        Assert.assertTrue(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET));
-    }
-
     /**
      * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
      * 
