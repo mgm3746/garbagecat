@@ -60,7 +60,8 @@ mvn -U -fn clean install
 java -jar garbagecat-2.0.0.jar --help
 usage: garbagecat [OPTION]... [FILE]
  -h,--help                  help
- -o,--options <arg>         JVM options used during JVM run 
+ -j,--jvmoptions <arg>      JVM options used during JVM run 
+ -o,--output <arg>          output file name (default report.txt)
  -p,--preprocess            preprocessing flag
  -r,--reorder               reorder logging by timestamp
  -s,--startdatetime <arg>   JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS)
