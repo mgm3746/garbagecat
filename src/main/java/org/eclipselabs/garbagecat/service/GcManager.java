@@ -489,21 +489,11 @@ public class GcManager {
             // Process final batches
             jvmDao.processBlockingBatch();
             jvmDao.processStoppedTimeBatch();
-        } catch (
-
-        FileNotFoundException e)
-
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (
-
-        IOException e)
-
-        {
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally
-
-        {
+        } finally {
             // Close streams
             if (bufferedReader != null) {
                 try {
@@ -513,7 +503,6 @@ public class GcManager {
                 }
             }
         }
-
     }
 
     /**
