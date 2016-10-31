@@ -58,13 +58,19 @@ public class Main {
     static {
         // Declare command line options
         options = new Options();
-        options.addOption("h", "help", false, "help");
-        options.addOption("o", "options", true, "JVM options used during JVM run");
-        options.addOption("p", "preprocess", false, "preprocessing flag");
-        options.addOption("s", "startdatetime", true,
+        options.addOption(Constants.OPTION_HELP_SHORT, Constants.OPTION_HELP_LONG, false, "help");
+        options.addOption(Constants.OPTION_JVMOPTIONS_SHORT, Constants.OPTION_JVMOPTIONS_LONG, true,
+                "JVM options used during JVM run");
+        options.addOption(Constants.OPTION_PREPROCESS_SHORT, Constants.OPTION_PREPROCESS_LONG, false,
+                "preprocessing flag");
+        options.addOption(Constants.OPTION_STARTDATETIME_SHORT, Constants.OPTION_STARTDATETIME_LONG, true,
                 "JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS) for converting GC logging timestamps to datetime");
-        options.addOption("t", "threshold", true, "threshold (0-100) for throughput bottleneck reporting");
-        options.addOption("r", "reorder", false, "reorder logging by timestamp");
+        options.addOption(Constants.OPTION_THRESHOLD_SHORT, Constants.OPTION_THRESHOLD_LONG, true,
+                "threshold (0-100) for throughput bottleneck reporting");
+        options.addOption(Constants.OPTION_REORDER_SHORT, Constants.OPTION_REORDER_LONG, false,
+                "reorder logging by timestamp");
+        options.addOption(Constants.OPTION_OUTPUT_SHORT, Constants.OPTION_OUTPUT_LONG, true,
+                "output file name (default " + Constants.OUTPUT_FILE_NAME + ")");
     }
 
     /**
@@ -77,18 +83,18 @@ public class Main {
         CommandLine cmd = parseOptions(args);
 
         if (cmd != null) {
-            if (cmd.hasOption("help")) {
+            if (cmd.hasOption(Constants.OPTION_HELP_LONG)) {
                 usage(options);
             } else {
 
                 // Determine JVM environment information.
                 Date jvmStartDate = null;
-                if (cmd.hasOption("startdatetime")) {
-                    jvmStartDate = GcUtil.parseStartDateTime(cmd.getOptionValue('s'));
+                if (cmd.hasOption(Constants.OPTION_STARTDATETIME_LONG)) {
+                    jvmStartDate = GcUtil.parseStartDateTime(cmd.getOptionValue(Constants.OPTION_STARTDATETIME_SHORT));
                 }
                 String jvmOptions = null;
-                if (cmd.hasOption("options")) {
-                    jvmOptions = cmd.getOptionValue('o');
+                if (cmd.hasOption(Constants.OPTION_JVMOPTIONS_LONG)) {
+                    jvmOptions = cmd.getOptionValue(Constants.OPTION_JVMOPTIONS_SHORT);
                 }
 
                 String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
@@ -97,7 +103,7 @@ public class Main {
                 GcManager jvmManager = new GcManager();
 
                 // Do preprocessing
-                if (cmd.hasOption("preprocess")) {
+                if (cmd.hasOption(Constants.OPTION_PREPROCESS_LONG)) {
                     /*
                      * Requiring the JVM start date/time for preprocessing is a hack to handle datestamps. When
                      * garbagecat was started there was no <code>-XX:+PrintGCDateStamps</code> option. When it was
@@ -112,7 +118,7 @@ public class Main {
 
                 // Allow logging to be reordered?
                 boolean reorder = false;
-                if (cmd.hasOption("reorder")) {
+                if (cmd.hasOption(Constants.OPTION_REORDER_LONG)) {
                     reorder = true;
                 }
 
@@ -123,11 +129,17 @@ public class Main {
                 Jvm jvm = new Jvm(jvmOptions, jvmStartDate);
                 // Determine report options
                 int throughputThreshold = Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
-                if (cmd.hasOption("threshold")) {
-                    throughputThreshold = Integer.parseInt(cmd.getOptionValue('t'));
+                if (cmd.hasOption(Constants.OPTION_THRESHOLD_LONG)) {
+                    throughputThreshold = Integer.parseInt(cmd.getOptionValue(Constants.OPTION_THRESHOLD_SHORT));
                 }
                 JvmRun jvmRun = jvmManager.getJvmRun(jvm, throughputThreshold);
-                createReport(jvmRun);
+                String outputFileName;
+                if (cmd.hasOption(Constants.OPTION_OUTPUT_LONG)) {
+                    outputFileName = cmd.getOptionValue(Constants.OPTION_OUTPUT_SHORT);
+                } else {
+                    outputFileName = Constants.OUTPUT_FILE_NAME;
+                }
+                createReport(jvmRun, outputFileName);
             }
         }
     }
@@ -142,16 +154,20 @@ public class Main {
         CommandLine cmd = null;
         try {
             // Allow user to just specify help.
-            if (args.length == 1 && (args[0].equals("-h") || args[0].equals("--help"))) {
+            if (args.length == 1 && (args[0].equals("-" + Constants.OPTION_HELP_SHORT)
+                    || args[0].equals("--" + Constants.OPTION_HELP_LONG))) {
                 usage(options);
             } else {
                 cmd = parser.parse(options, args);
                 validateOptions(cmd);
             }
-        } catch (ParseException pe) {
+        } catch (
+
+        ParseException pe) {
             usage(options);
         }
         return cmd;
+
     }
 
     /**
@@ -189,9 +205,9 @@ public class Main {
             throw new IllegalArgumentException("Log file does not exist.");
         }
         // threshold
-        if (cmd.hasOption("threshold")) {
+        if (cmd.hasOption(Constants.OPTION_THRESHOLD_LONG)) {
             String thresholdRegEx = "^\\d{1,3}$";
-            String thresholdOptionValue = cmd.getOptionValue('t');
+            String thresholdOptionValue = cmd.getOptionValue(Constants.OPTION_THRESHOLD_SHORT);
             Pattern pattern = Pattern.compile(thresholdRegEx);
             Matcher matcher = pattern.matcher(thresholdOptionValue);
             if (!matcher.find()) {
@@ -200,8 +216,8 @@ public class Main {
             }
         }
         // startdatetime
-        if (cmd.hasOption("startdatetime")) {
-            String startdatetimeOptionValue = cmd.getOptionValue('s');
+        if (cmd.hasOption(Constants.OPTION_STARTDATETIME_LONG)) {
+            String startdatetimeOptionValue = cmd.getOptionValue(Constants.OPTION_STARTDATETIME_SHORT);
             Pattern pattern = Pattern.compile(GcUtil.START_DATE_TIME_REGEX);
             Matcher matcher = pattern.matcher(startdatetimeOptionValue);
             if (!matcher.find()) {
@@ -222,9 +238,12 @@ public class Main {
      * 
      * @param jvmRun
      *            JVM run data.
+     * @param reportFileName
+     *            Output report file name.
+     * 
      */
-    public static void createReport(JvmRun jvmRun) {
-        File reportFile = new File("report.txt");
+    public static void createReport(JvmRun jvmRun, String reportFileName) {
+        File reportFile = new File(reportFileName);
         FileWriter fileWriter = null;
         BufferedWriter bufferedWriter = null;
         try {

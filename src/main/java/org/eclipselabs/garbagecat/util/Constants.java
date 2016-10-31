@@ -51,6 +51,81 @@ public class Constants {
     public static final BigDecimal GIGABYTE = new BigDecimal("1073741824");
 
     /**
+     * Help command line short option.
+     */
+    public static final String OPTION_HELP_SHORT = "h";
+
+    /**
+     * Help command line long option.
+     */
+    public static final String OPTION_HELP_LONG = "help";
+
+    /**
+     * JVM options command line short option.
+     */
+    public static final String OPTION_JVMOPTIONS_SHORT = "j";
+
+    /**
+     * JVM options command line long option.
+     */
+    public static final String OPTION_JVMOPTIONS_LONG = "jvmoptions";
+
+    /**
+     * Preprocess command line short option.
+     */
+    public static final String OPTION_PREPROCESS_SHORT = "p";
+
+    /**
+     * Preprocess command line long option.
+     */
+    public static final String OPTION_PREPROCESS_LONG = "preprocess";
+
+    /**
+     * JVM start datetime command line short option.
+     */
+    public static final String OPTION_STARTDATETIME_SHORT = "s";
+
+    /**
+     * JVM start datetime command line long option.
+     */
+    public static final String OPTION_STARTDATETIME_LONG = "startdatetime";
+
+    /**
+     * Threshold command line short option.
+     */
+    public static final String OPTION_THRESHOLD_SHORT = "t";
+
+    /**
+     * Threshold command line long option.
+     */
+    public static final String OPTION_THRESHOLD_LONG = "threshold";
+
+    /**
+     * Reorder command line short option.
+     */
+    public static final String OPTION_REORDER_SHORT = "r";
+
+    /**
+     * Reorder command line long option.
+     */
+    public static final String OPTION_REORDER_LONG = "reorder";
+
+    /**
+     * Output (name of report file) command line short option.
+     */
+    public static final String OPTION_OUTPUT_SHORT = "o";
+
+    /**
+     * Output (name of report file) command line long option.
+     */
+    public static final String OPTION_OUTPUT_LONG = "output";
+
+    /**
+     * Default output file name.
+     */
+    public static final String OUTPUT_FILE_NAME = "report.txt";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Constants() {

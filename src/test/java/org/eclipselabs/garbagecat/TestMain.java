@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.commons.cli.CommandLine;
+import org.eclipselabs.garbagecat.util.Constants;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -31,9 +32,9 @@ public class TestMain extends TestCase {
             // Make private method accessible
             parseOptions.setAccessible(true);
             // Method arguments
-            String[] args = new String[10];
+            String[] args = new String[12];
             args[0] = "-h";
-            args[1] = "-o";
+            args[1] = "-j";
             args[2] = "-Xmx2048m";
             args[3] = "-p";
             args[4] = "-s";
@@ -41,18 +42,28 @@ public class TestMain extends TestCase {
             args[6] = "-t";
             args[7] = "80";
             args[8] = "-r";
+            args[9] = "-o";
+            args[10] = "12345678.txt";
             // Instead of a file, use a location sure to exist.
-            args[9] = System.getProperty("user.dir");
+            args[11] = System.getProperty("user.dir");
             // Pass null object since parseOptions is static
             Object o = parseOptions.invoke(null, (Object) args);
             CommandLine cmd = (CommandLine) o;
             Assert.assertNotNull(cmd);
-            Assert.assertTrue("'-h' is a valid option", cmd.hasOption("h"));
-            Assert.assertTrue("'-o' is a valid option", cmd.hasOption("o"));
-            Assert.assertTrue("'-p' is a valid option", cmd.hasOption("p"));
-            Assert.assertTrue("'-s' is a valid option", cmd.hasOption("s"));
-            Assert.assertTrue("'-t' is a valid option", cmd.hasOption("t"));
-            Assert.assertTrue("'-r' is a valid option", cmd.hasOption("r"));
+            Assert.assertTrue("'-" + Constants.OPTION_HELP_SHORT + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_HELP_SHORT));
+            Assert.assertTrue("'-" + Constants.OPTION_JVMOPTIONS_SHORT + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_JVMOPTIONS_SHORT));
+            Assert.assertTrue("'-" + Constants.OPTION_PREPROCESS_SHORT + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_PREPROCESS_SHORT));
+            Assert.assertTrue("'-" + Constants.OPTION_STARTDATETIME_SHORT + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_STARTDATETIME_SHORT));
+            Assert.assertTrue("'-" + Constants.OPTION_THRESHOLD_SHORT + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_THRESHOLD_SHORT));
+            Assert.assertTrue("'-" + Constants.OPTION_REORDER_SHORT + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_REORDER_SHORT));
+            Assert.assertTrue("'-" + Constants.OPTION_OUTPUT_SHORT + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_OUTPUT_SHORT));
         } catch (ClassNotFoundException e) {
             Assert.fail(e.getMessage());
         } catch (SecurityException e) {
@@ -77,9 +88,9 @@ public class TestMain extends TestCase {
             // Make private method accessible
             parseOptions.setAccessible(true);
             // Method arguments
-            String[] args = new String[10];
+            String[] args = new String[12];
             args[0] = "--help";
-            args[1] = "--options";
+            args[1] = "--jvmoptions";
             args[2] = "-Xmx2048m";
             args[3] = "--preprocess";
             args[4] = "--startdatetime";
@@ -87,18 +98,28 @@ public class TestMain extends TestCase {
             args[6] = "--threshold";
             args[7] = "80";
             args[8] = "--reorder";
+            args[9] = "--output";
+            args[10] = "12345678.txt";
             // Instead of a file, use a location sure to exist.
-            args[9] = System.getProperty("user.dir");
+            args[11] = System.getProperty("user.dir");
             // Pass null object since parseOptions is static
             Object o = parseOptions.invoke(null, (Object) args);
             CommandLine cmd = (CommandLine) o;
             Assert.assertNotNull(cmd);
-            Assert.assertTrue("'--help' is a valid option", cmd.hasOption("help"));
-            Assert.assertTrue("'--options' is a valid option", cmd.hasOption("options"));
-            Assert.assertTrue("'--preprocess' is a valid option", cmd.hasOption("preprocess"));
-            Assert.assertTrue("'--startdatetime' is a valid option", cmd.hasOption("startdatetime"));
-            Assert.assertTrue("'--threshold' is a valid option", cmd.hasOption("threshold"));
-            Assert.assertTrue("'--reorder' is a valid option", cmd.hasOption("reorder"));
+            Assert.assertTrue("'-" + Constants.OPTION_HELP_LONG + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_HELP_LONG));
+            Assert.assertTrue("'-" + Constants.OPTION_JVMOPTIONS_LONG + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_JVMOPTIONS_LONG));
+            Assert.assertTrue("'-" + Constants.OPTION_PREPROCESS_LONG + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_PREPROCESS_LONG));
+            Assert.assertTrue("'-" + Constants.OPTION_STARTDATETIME_LONG + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_STARTDATETIME_LONG));
+            Assert.assertTrue("'-" + Constants.OPTION_THRESHOLD_LONG + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_THRESHOLD_LONG));
+            Assert.assertTrue("'-" + Constants.OPTION_REORDER_LONG + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_REORDER_LONG));
+            Assert.assertTrue("'-" + Constants.OPTION_OUTPUT_LONG + "' is a valid option",
+                    cmd.hasOption(Constants.OPTION_OUTPUT_LONG));
         } catch (ClassNotFoundException e) {
             Assert.fail(e.getMessage());
         } catch (SecurityException e) {
