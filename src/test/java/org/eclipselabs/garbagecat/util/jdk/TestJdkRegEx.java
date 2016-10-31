@@ -199,4 +199,9 @@ public class TestJdkRegEx extends TestCase {
         String percent = "54.8%";
         Assert.assertTrue("'" + percent + "' " + "not a valid percent.", percent.matches(JdkRegEx.PERCENT));
     }
+
+    public void testDateTime() {
+        String datetime = "2016-10-18 01:50:54";
+        Assert.assertTrue("'" + datetime + "' " + "not a valid datetime.", datetime.matches(JdkRegEx.DATETIME));
+    }
 }

@@ -41,6 +41,7 @@ import org.eclipselabs.garbagecat.domain.jdk.G1MixedPause;
 import org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungPause;
+import org.eclipselabs.garbagecat.domain.jdk.GcLogFileEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
@@ -101,7 +102,9 @@ public class JdkUtil {
         //
         HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, PRINT_REFERENCE_GC, LOG_ROTATION,
         //
-        CLASS_HISTOGRAM, HEAP_AT_GC, CLASS_UNLOADING, APPLICATION_LOGGING, THREAD_DUMP, BLANK_LINE, GC_OVERHEAD_LIMIT
+        CLASS_HISTOGRAM, HEAP_AT_GC, CLASS_UNLOADING, APPLICATION_LOGGING, THREAD_DUMP, BLANK_LINE, GC_OVERHEAD_LIMIT,
+        //
+        GC_LOG_FILE
     };
 
     /**
@@ -223,6 +226,8 @@ public class JdkUtil {
             return LogEventType.APPLICATION_LOGGING;
         if (ThreadDumpEvent.match(logLine))
             return LogEventType.THREAD_DUMP;
+        if (GcLogFileEvent.match(logLine))
+            return LogEventType.GC_LOG_FILE;
         if (BlankLineEvent.match(logLine))
             return LogEventType.BLANK_LINE;
         if (GcOverheadLimitEvent.match(logLine))
@@ -365,6 +370,9 @@ public class JdkUtil {
             break;
         case THREAD_DUMP:
             event = new ThreadDumpEvent(logLine);
+            break;
+        case GC_LOG_FILE:
+            event = new GcLogFileEvent(logLine);
             break;
         case BLANK_LINE:
             event = new BlankLineEvent(logLine);

@@ -25,7 +25,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 /**
  * <p>
  * PARALLEL_SERIAL_0LD
- * <p>
+ * </p>
  * 
  * <p>
  * General PARALLEL_SERIAL_0LD preprocessing.

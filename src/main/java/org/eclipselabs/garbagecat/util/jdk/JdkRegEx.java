@@ -40,6 +40,15 @@ public class JdkRegEx {
             + "(\\d{4}))";
 
     /**
+     * Datetime.
+     * 
+     * For example:
+     * 
+     * 2016-10-18 01:50:54
+     */
+    public static final String DATETIME = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}";
+
+    /**
      * The size of memory in kilobytes. Sometimes there is a space between the number and the "K" units.
      * 
      * For example: 27808K, 16172 K
@@ -144,7 +153,7 @@ public class JdkRegEx {
     /**
      * Trigger.
      */
-    //public static final String TRIGGER = "\\((.+?)\\)";
+    // public static final String TRIGGER = "\\((.+?)\\)";
 
     /**
      * System.gc() trigger. Explicit garbage collection invoked.
