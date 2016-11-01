@@ -21,6 +21,7 @@ import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
@@ -656,6 +657,9 @@ public class TestJvmRun extends TestCase {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.G1_FULL_GC);
         jvmRun.setEventTypes(eventTypes);
+        List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
+        collectorFamilies.add(CollectorFamily.G1);
+        jvmRun.setCollectorFamiles(collectorFamilies);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT));
@@ -672,6 +676,9 @@ public class TestJvmRun extends TestCase {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.CMS_CONCURRENT);
         jvmRun.setEventTypes(eventTypes);
+        List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
+        collectorFamilies.add(CollectorFamily.CMS);
+        jvmRun.setCollectorFamiles(collectorFamilies);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT));
@@ -790,6 +797,9 @@ public class TestJvmRun extends TestCase {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.CMS_CONCURRENT);
         jvmRun.setEventTypes(eventTypes);
+        List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
+        collectorFamilies.add(CollectorFamily.CMS);
+        jvmRun.setCollectorFamiles(collectorFamilies);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED));

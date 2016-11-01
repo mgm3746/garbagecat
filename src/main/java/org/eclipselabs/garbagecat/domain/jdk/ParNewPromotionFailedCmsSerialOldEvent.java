@@ -79,8 +79,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class ParNewPromotionFailedCmsSerialOldEvent
-        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, CmsCollection {
+public class ParNewPromotionFailedCmsSerialOldEvent extends CmsCollector
+        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData {
 
     /**
      * Regular expressions defining the logging.

@@ -67,8 +67,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParNewCmsSerialOldEvent implements BlockingEvent, OldCollection, YoungData, OldData, CmsCollection,
-        PermCollection, PermData, TriggerData {
+public class ParNewCmsSerialOldEvent extends CmsCollector
+        implements BlockingEvent, OldCollection, YoungData, OldData, PermCollection, PermData, TriggerData {
 
     /**
      * The trigger for the GC event.

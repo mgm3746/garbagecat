@@ -29,6 +29,7 @@ import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 /**
@@ -79,6 +80,11 @@ public class JvmDao {
      * Analysis property keys.
      */
     private List<String> analysisKeys;
+
+    /**
+     * Collector families for JVM run.
+     */
+    List<CollectorFamily> collectorFamilies;
 
     /**
      * Logging lines that do not match any known GC events.
@@ -162,6 +168,7 @@ public class JvmDao {
         }
 
         eventTypes = new ArrayList<LogEventType>();
+        collectorFamilies = new ArrayList<CollectorFamily>();
         analysisKeys = new ArrayList<String>();
         unidentifiedLogLines = new ArrayList<String>();
         blockingBatch = new ArrayList<BlockingEvent>();
@@ -184,6 +191,10 @@ public class JvmDao {
         if (!analysisKeys.contains(analysisKey)) {
             analysisKeys.add(analysisKey);
         }
+    }
+
+    public List<CollectorFamily> getCollectorFamilies() {
+        return collectorFamilies;
     }
 
     public void addBlockingEvent(BlockingEvent event) {

@@ -112,8 +112,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class ParNewConcurrentModeFailurePermDataEvent
-        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData, CmsCollection {
+public class ParNewConcurrentModeFailurePermDataEvent extends CmsCollector
+        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData {
 
     /**
      * Regular expressions defining the logging.

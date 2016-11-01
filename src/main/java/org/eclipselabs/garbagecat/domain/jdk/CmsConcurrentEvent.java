@@ -73,7 +73,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class CmsConcurrentEvent implements LogEvent, CmsCollection {
+public class CmsConcurrentEvent extends CmsCollector implements LogEvent {
 
     /**
      * Regular expressions defining the logging.

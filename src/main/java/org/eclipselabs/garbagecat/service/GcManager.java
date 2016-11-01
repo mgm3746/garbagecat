@@ -30,6 +30,7 @@ import org.eclipselabs.garbagecat.Main;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.TriggerData;
@@ -38,7 +39,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
-import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
+import org.eclipselabs.garbagecat.domain.jdk.CollectorEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
@@ -47,7 +48,6 @@ import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
-import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
@@ -61,6 +61,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.PrintTenuringDistributionPrepro
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
 /**
@@ -332,61 +333,78 @@ public class GcManager {
 
                     // Analysis
 
-                    // 1) Serial collections
-                    if (event instanceof CmsSerialOldEvent) {
+                    // 1) Explicit GC
+                    if (event instanceof TriggerData) {
                         String trigger = ((TriggerData) event).getTrigger();
                         if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_CMS)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL_CMS);
-                            }
-                        } else {
-                            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_CMS)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_CMS);
-                            }
-                        }
-                    } else if (event instanceof ParallelSerialOldEvent) {
-                        String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_PARALLEL)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL_PARALLEL);
-                            }
-                        } else {
-                            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_PARALLEL)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_PARALLEL);
-                            }
-                        }
-                    } else if (event instanceof SerialOldEvent) {
-                        String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL);
-                            }
-                        } else {
-                            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC);
-                            }
-                        }
-                    } else if (event instanceof ParallelOldCompactingEvent) {
-                        String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_PARALLEL)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_PARALLEL);
-                            }
-                        }
-                    } else if (event instanceof G1FullGCEvent) {
-                        String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_G1)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL_G1);
-                            }
-                        } else {
-                            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_G1)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_G1);
+                            CollectorFamily collectorFamily = ((CollectorEvent) event).getCollectorFamily();
+
+                            switch (collectorFamily) {
+                            case G1:
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_G1)) {
+                                    jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL_G1);
+                                }
+                                break;
+                            case CMS:
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_CMS)) {
+                                    jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL_CMS);
+                                }
+                                break;
+                            case PARALLEL:
+                                if (event instanceof ParallelSerialOldEvent) {
+                                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_PARALLEL)) {
+                                        jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL_PARALLEL);
+                                    }
+                                } else if (event instanceof ParallelOldCompactingEvent) {
+                                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_PARALLEL)) {
+                                        jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_PARALLEL);
+                                    }
+                                }
+                                break;
+                            case SERIAL:
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL)) {
+                                    jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL);
+                                }
+                                break;
                             }
                         }
                     }
 
-                    // 2) CMS concurrent mode failure
+                    // 2) Serial collections not caused by explicit GC
+                    if (event instanceof SerialCollection) {
+                        String trigger = null;
+                        if (event instanceof TriggerData) {
+                            trigger = ((TriggerData) event).getTrigger();
+                        }
+                        CollectorFamily collectorFamily = ((CollectorEvent) event).getCollectorFamily();
+
+                        if (trigger == null || !trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
+                            switch (collectorFamily) {
+                            case G1:
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_G1)) {
+                                    jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_G1);
+                                }
+                                break;
+                            case CMS:
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_CMS)) {
+                                    jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_CMS);
+                                }
+                                break;
+                            case PARALLEL:
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_PARALLEL)) {
+                                    jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_PARALLEL);
+                                }
+                                break;
+                            case SERIAL:
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC)) {
+                                    jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC);
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    // 3) CMS concurrent mode failure
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE)) {
                         if (event instanceof CmsSerialOldEvent) {
                             String trigger = ((TriggerData) event).getTrigger();
@@ -396,7 +414,7 @@ public class GcManager {
                         }
                     }
 
-                    // 3) CMS concurrent mode interrupted
+                    // 4) CMS concurrent mode interrupted
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_INTERRUPTED)) {
                         if (event instanceof CmsSerialOldEvent) {
                             String trigger = ((TriggerData) event).getTrigger();
@@ -406,7 +424,7 @@ public class GcManager {
                         }
                     }
 
-                    // 4) CMS incremental mode
+                    // 5) CMS incremental mode
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_INCREMENTAL_MODE)) {
                         if (event instanceof ParNewEvent) {
                             if (((ParNewEvent) event).isIncrementalMode()) {
@@ -415,7 +433,7 @@ public class GcManager {
                         }
                     }
 
-                    // 5) Heap inspection initiated gc
+                    // 6) Heap inspection initiated gc
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_HEAP_INSPECTION_INITIATED_GC)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
@@ -425,7 +443,7 @@ public class GcManager {
                         }
                     }
 
-                    // 6) PrintClassHistogram
+                    // 7) PrintClassHistogram
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
@@ -435,7 +453,7 @@ public class GcManager {
                         }
                     }
 
-                    // 7) Metaspace allocation failure
+                    // 8) Metaspace allocation failure
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_METASPACE_ALLOCATION_FAILURE)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
@@ -445,7 +463,7 @@ public class GcManager {
                         }
                     }
 
-                    // 8) JVM TI explicit gc
+                    // 9) JVM TI explicit gc
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_JVMTI)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
@@ -483,6 +501,14 @@ public class GcManager {
                     eventTypes.add(eventType);
                 }
 
+                // Populate collector type list.
+                if (event instanceof CollectorEvent) {
+                    List<JdkUtil.CollectorFamily> collectorFamilies = jvmDao.getCollectorFamilies();
+                    if (!collectorFamilies.contains(((CollectorEvent) event).getCollectorFamily())) {
+                        collectorFamilies.add(((CollectorEvent) event).getCollectorFamily());
+                    }
+                }
+
                 logLine = bufferedReader.readLine();
             }
 
@@ -503,6 +529,7 @@ public class GcManager {
                 }
             }
         }
+
     }
 
     /**
@@ -598,6 +625,7 @@ public class GcManager {
         jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
         jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
         jvmRun.setEventTypes(jvmDao.getEventTypes());
+        jvmRun.setCollectorFamiles(jvmDao.getCollectorFamilies());
         jvmRun.setAnalysisKeys(jvmDao.getAnalysisKeys());
         jvmRun.setBottlenecks(getBottlenecks(jvm, throughputThreshold));
         jvmRun.doAnalysis();

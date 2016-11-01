@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.PermCollection;
 import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -68,8 +69,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1FullGCEvent implements BlockingEvent, YoungCollection, OldCollection, PermCollection, CombinedData,
-        PermData, G1Collection, TriggerData {
+public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCollection, OldCollection, PermCollection,
+        CombinedData, PermData, TriggerData, SerialCollection {
 
     /**
      * Regular expression standard format.

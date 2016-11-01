@@ -15,6 +15,15 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.OldCollection;
+import org.eclipselabs.garbagecat.domain.OldData;
+import org.eclipselabs.garbagecat.domain.PermCollection;
+import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.SerialCollection;
+import org.eclipselabs.garbagecat.domain.TriggerData;
+import org.eclipselabs.garbagecat.domain.YoungCollection;
+import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -57,7 +66,73 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParallelSerialOldEvent extends SerialOldEvent implements ParallelCollection {
+public class ParallelSerialOldEvent extends ParallelCollector implements BlockingEvent, YoungCollection, OldCollection,
+        PermCollection, YoungData, OldData, PermData, TriggerData, SerialCollection {
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * The elapsed clock time for the GC event in milliseconds (rounded).
+     */
+    private int duration;
+
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
+
+    /**
+     * Young generation size (kilobytes) at beginning of GC event.
+     */
+    private int young;
+
+    /**
+     * Young generation size (kilobytes) at end of GC event.
+     */
+    private int youngEnd;
+
+    /**
+     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
+     */
+    private int youngAvailable;
+
+    /**
+     * Old generation size (kilobytes) at beginning of GC event.
+     */
+    private int old;
+
+    /**
+     * Old generation size (kilobytes) at end of GC event.
+     */
+    private int oldEnd;
+
+    /**
+     * Space allocated to old generation (kilobytes).
+     */
+    private int oldAllocation;
+
+    /**
+     * Permanent generation size (kilobytes) at beginning of GC event.
+     */
+    private int permGen;
+
+    /**
+     * Permanent generation size (kilobytes) at end of GC event.
+     */
+    private int permGenEnd;
+
+    /**
+     * Space allocated to permanent generation (kilobytes).
+     */
+    private int permGenAllocation;
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Trigger(s) regular expression(s).
@@ -83,27 +158,27 @@ public class ParallelSerialOldEvent extends SerialOldEvent implements ParallelCo
      *            The log entry for the event.
      */
     public ParallelSerialOldEvent(String logEntry) {
-        super.setLogEntry(logEntry);
+        this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
+            this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
 
             if (matcher.group(3) != null) {
-                super.setTrigger(matcher.group(3));
+                this.trigger = matcher.group(3);
             }
-            super.setYoungOccupancyInit(Integer.parseInt(matcher.group(5)));
-            super.setYoungOccupancyEnd(Integer.parseInt(matcher.group(6)));
-            super.setYoungSpace(Integer.parseInt(matcher.group(7)));
+            this.young = Integer.parseInt(matcher.group(5));
+            this.youngEnd = Integer.parseInt(matcher.group(6));
+            this.youngAvailable = Integer.parseInt(matcher.group(7));
 
-            super.setOldOccupancyInit(Integer.parseInt(matcher.group(8)));
-            super.setOldOccupancyEnd(Integer.parseInt(matcher.group(9)));
-            super.setOldSpace(Integer.parseInt(matcher.group(10)));
+            this.old = Integer.parseInt(matcher.group(8));
+            this.oldEnd = Integer.parseInt(matcher.group(9));
+            this.oldAllocation = Integer.parseInt(matcher.group(10));
 
-            super.setPermOccupancyInit(Integer.parseInt(matcher.group(14)));
-            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(15)));
-            super.setPermSpace(Integer.parseInt(matcher.group(16)));
+            this.permGen = Integer.parseInt(matcher.group(14));
+            this.permGenEnd = Integer.parseInt(matcher.group(15));
+            this.permGenAllocation = Integer.parseInt(matcher.group(16));
 
-            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(17)).intValue());
+            this.duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
         }
     }
 
@@ -118,13 +193,117 @@ public class ParallelSerialOldEvent extends SerialOldEvent implements ParallelCo
      *            The elapsed clock time for the GC event in milliseconds.
      */
     public ParallelSerialOldEvent(String logEntry, long timestamp, int duration) {
-        super.setLogEntry(logEntry);
-        super.setTimestamp(timestamp);
-        super.setDuration(duration);
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
+
+    public String getLogEntry() {
+        return logEntry;
+    }
+
+    protected void setLogEntry(String logEntry) {
+        this.logEntry = logEntry;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    protected void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    protected void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public int getYoungOccupancyInit() {
+        return young;
+    }
+
+    protected void setYoungOccupancyInit(int young) {
+        this.young = young;
+    }
+
+    public int getYoungOccupancyEnd() {
+        return youngEnd;
+    }
+
+    protected void setYoungOccupancyEnd(int youngEnd) {
+        this.youngEnd = youngEnd;
+    }
+
+    public int getYoungSpace() {
+        return youngAvailable;
+    }
+
+    protected void setYoungSpace(int youngAvailable) {
+        this.youngAvailable = youngAvailable;
+    }
+
+    public int getOldOccupancyInit() {
+        return old;
+    }
+
+    protected void setOldOccupancyInit(int old) {
+        this.old = old;
+    }
+
+    public int getOldOccupancyEnd() {
+        return oldEnd;
+    }
+
+    protected void setOldOccupancyEnd(int oldEnd) {
+        this.oldEnd = oldEnd;
+    }
+
+    public int getOldSpace() {
+        return oldAllocation;
+    }
+
+    protected void setOldSpace(int oldAllocation) {
+        this.oldAllocation = oldAllocation;
+    }
+
+    public int getPermOccupancyInit() {
+        return permGen;
+    }
+
+    protected void setPermOccupancyInit(int permGen) {
+        this.permGen = permGen;
+    }
+
+    public int getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    protected void setPermOccupancyEnd(int permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    public int getPermSpace() {
+        return permGenAllocation;
+    }
+
+    protected void setPermSpace(int permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString();
+    }
+
+    public String getTrigger() {
+        return trigger;
+    }
+
+    protected void setTrigger(String trigger) {
+        this.trigger = trigger;
     }
 
     /**

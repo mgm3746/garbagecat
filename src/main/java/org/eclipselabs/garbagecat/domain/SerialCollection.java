@@ -10,14 +10,14 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain;
 
 /**
- * G1 collection.
+ * Serial (single-threaded) collection.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public interface CmsCollection {
+public interface SerialCollection {
 
 }

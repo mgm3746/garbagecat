@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
+import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -60,7 +61,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class SerialNewEvent implements BlockingEvent, YoungCollection, YoungData, OldData {
+public class SerialNewEvent extends SerialCollector
+        implements BlockingEvent, YoungCollection, YoungData, OldData, SerialCollection {
 
     /**
      * Regular expressions defining the logging.

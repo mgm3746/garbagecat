@@ -15,6 +15,15 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.OldCollection;
+import org.eclipselabs.garbagecat.domain.OldData;
+import org.eclipselabs.garbagecat.domain.PermCollection;
+import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.SerialCollection;
+import org.eclipselabs.garbagecat.domain.TriggerData;
+import org.eclipselabs.garbagecat.domain.YoungCollection;
+import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -82,7 +91,73 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class CmsSerialOldEvent extends SerialOldEvent implements CmsCollection {
+public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, YoungCollection, OldCollection,
+        PermCollection, YoungData, OldData, PermData, TriggerData, SerialCollection {
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * The elapsed clock time for the GC event in milliseconds (rounded).
+     */
+    private int duration;
+
+    /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
+
+    /**
+     * Young generation size (kilobytes) at beginning of GC event.
+     */
+    private int young;
+
+    /**
+     * Young generation size (kilobytes) at end of GC event.
+     */
+    private int youngEnd;
+
+    /**
+     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
+     */
+    private int youngAvailable;
+
+    /**
+     * Old generation size (kilobytes) at beginning of GC event.
+     */
+    private int old;
+
+    /**
+     * Old generation size (kilobytes) at end of GC event.
+     */
+    private int oldEnd;
+
+    /**
+     * Space allocated to old generation (kilobytes).
+     */
+    private int oldAllocation;
+
+    /**
+     * Permanent generation size (kilobytes) at beginning of GC event.
+     */
+    private int permGen;
+
+    /**
+     * Permanent generation size (kilobytes) at end of GC event.
+     */
+    private int permGenEnd;
+
+    /**
+     * Space allocated to permanent generation (kilobytes).
+     */
+    private int permGenAllocation;
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Trigger(s) regular expression(s).
@@ -132,17 +207,17 @@ public class CmsSerialOldEvent extends SerialOldEvent implements CmsCollection {
      */
     public CmsSerialOldEvent(String logEntry) {
 
-        super.setLogEntry(logEntry);
+        this.setLogEntry(logEntry);
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
+            this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             if (matcher.group(15) != null) {
                 // if > 1 triggers, use the last one
-                super.setTrigger(matcher.group(15));
+                this.trigger = matcher.group(15);
             } else if (matcher.group(6) != null || matcher.group(35) != null) {
-                super.setTrigger(JdkRegEx.TRIGGER_CLASS_HISTOGRAM);
+                this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
             } else if (matcher.group(4) != null) {
-                super.setTrigger(matcher.group(4));
+                this.trigger = matcher.group(4);
             }
 
             int totalBegin = Integer.parseInt(matcher.group(40));
@@ -151,18 +226,18 @@ public class CmsSerialOldEvent extends SerialOldEvent implements CmsCollection {
 
             // Only CMS block has old data
             if (matcher.group(11) != null) {
-                super.setOldOccupancyInit(Integer.parseInt(matcher.group(31)));
-                super.setOldOccupancyEnd(Integer.parseInt(matcher.group(32)));
-                super.setOldSpace(Integer.parseInt(matcher.group(33)));
-                super.setYoungOccupancyInit(totalBegin - super.getOldOccupancyInit());
-                super.setYoungOccupancyEnd(totalEnd - super.getOldOccupancyEnd());
-                super.setYoungSpace(totalAllocation - super.getOldSpace());
+                this.old = Integer.parseInt(matcher.group(31));
+                this.oldEnd = Integer.parseInt(matcher.group(32));
+                this.oldAllocation = Integer.parseInt(matcher.group(33));
+                this.young = totalBegin - this.old;
+                this.youngEnd = totalEnd - this.oldEnd;
+                this.youngAvailable = totalAllocation - this.oldAllocation;
             }
 
-            super.setPermOccupancyInit(Integer.parseInt(matcher.group(44)));
-            super.setPermOccupancyEnd(Integer.parseInt(matcher.group(45)));
-            super.setPermSpace(Integer.parseInt(matcher.group(46)));
-            super.setDuration(JdkMath.convertSecsToMillis(matcher.group(48)).intValue());
+            this.permGen = Integer.parseInt(matcher.group(44));
+            this.permGenEnd = Integer.parseInt(matcher.group(45));
+            this.permGenAllocation = Integer.parseInt(matcher.group(46));
+            this.duration = JdkMath.convertSecsToMillis(matcher.group(48)).intValue();
         }
     }
 
@@ -177,13 +252,117 @@ public class CmsSerialOldEvent extends SerialOldEvent implements CmsCollection {
      *            The elapsed clock time for the GC event in milliseconds.
      */
     public CmsSerialOldEvent(String logEntry, long timestamp, int duration) {
-        super.setLogEntry(logEntry);
-        super.setTimestamp(timestamp);
-        super.setDuration(duration);
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
+
+    public String getLogEntry() {
+        return logEntry;
+    }
+
+    protected void setLogEntry(String logEntry) {
+        this.logEntry = logEntry;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    protected void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    protected void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public int getYoungOccupancyInit() {
+        return young;
+    }
+
+    protected void setYoungOccupancyInit(int young) {
+        this.young = young;
+    }
+
+    public int getYoungOccupancyEnd() {
+        return youngEnd;
+    }
+
+    protected void setYoungOccupancyEnd(int youngEnd) {
+        this.youngEnd = youngEnd;
+    }
+
+    public int getYoungSpace() {
+        return youngAvailable;
+    }
+
+    protected void setYoungSpace(int youngAvailable) {
+        this.youngAvailable = youngAvailable;
+    }
+
+    public int getOldOccupancyInit() {
+        return old;
+    }
+
+    protected void setOldOccupancyInit(int old) {
+        this.old = old;
+    }
+
+    public int getOldOccupancyEnd() {
+        return oldEnd;
+    }
+
+    protected void setOldOccupancyEnd(int oldEnd) {
+        this.oldEnd = oldEnd;
+    }
+
+    public int getOldSpace() {
+        return oldAllocation;
+    }
+
+    protected void setOldSpace(int oldAllocation) {
+        this.oldAllocation = oldAllocation;
+    }
+
+    public int getPermOccupancyInit() {
+        return permGen;
+    }
+
+    protected void setPermOccupancyInit(int permGen) {
+        this.permGen = permGen;
+    }
+
+    public int getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    protected void setPermOccupancyEnd(int permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    public int getPermSpace() {
+        return permGenAllocation;
+    }
+
+    protected void setPermSpace(int permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.CMS_SERIAL_OLD.toString();
+    }
+
+    public String getTrigger() {
+        return trigger;
+    }
+
+    protected void setTrigger(String trigger) {
+        this.trigger = trigger;
     }
 
     /**

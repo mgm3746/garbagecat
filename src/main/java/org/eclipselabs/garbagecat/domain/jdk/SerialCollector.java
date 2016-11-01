@@ -12,12 +12,18 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
+
 /**
- * G1 collection.
+ * Serial collector.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public interface G1Collection {
+public class SerialCollector extends CollectorEvent {
 
+    @Override
+    public CollectorFamily getCollectorFamily() {
+        return CollectorFamily.SERIAL;
+    }
 }

@@ -61,7 +61,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1YoungInitialMarkEvent implements BlockingEvent, CombinedData, TriggerData, G1Collection {
+public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEvent, CombinedData, TriggerData {
 
     /**
      * Regular expressions defining the logging.

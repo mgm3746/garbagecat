@@ -96,7 +96,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1ConcurrentEvent implements LogEvent, G1Collection {
+public class G1ConcurrentEvent extends G1Collector implements LogEvent {
 
     /**
      * Regular expressions defining the logging.

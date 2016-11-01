@@ -86,7 +86,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParNewEvent implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData, CmsCollection {
+public class ParNewEvent extends CmsCollector
+        implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData {
 
     /**
      * Regular expressions defining the logging.

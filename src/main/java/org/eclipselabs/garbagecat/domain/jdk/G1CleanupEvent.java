@@ -61,7 +61,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1CleanupEvent implements BlockingEvent, CombinedData, G1Collection {
+public class G1CleanupEvent extends G1Collector implements BlockingEvent, CombinedData {
 
     /**
      * Regular expressions defining the logging.

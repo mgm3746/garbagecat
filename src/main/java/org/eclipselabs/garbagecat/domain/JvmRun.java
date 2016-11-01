@@ -14,13 +14,12 @@ package org.eclipselabs.garbagecat.domain;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
@@ -127,6 +126,11 @@ public class JvmRun {
      * Analysis property keys.
      */
     private List<String> analysisKeys;
+
+    /**
+     * Collector families.
+     */
+    private List<CollectorFamily> collectorFamilies;
 
     /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
@@ -291,6 +295,10 @@ public class JvmRun {
 
     public void setAnalysisKeys(List<String> analysisKeys) {
         this.analysisKeys = analysisKeys;
+    }
+
+    public void setCollectorFamiles(List<CollectorFamily> collectorFamilies) {
+        this.collectorFamilies = collectorFamilies;
     }
 
     /*
@@ -519,8 +527,8 @@ public class JvmRun {
         }
 
         // Check if explicit gc should be handled concurrently.
-        if ((isG1Collector(eventTypes) || isCmsCollector(eventTypes)) && jvm.getDisableExplicitGCOption() == null
-                && jvm.getExplicitGcInvokesConcurrentOption() == null) {
+        if ((collectorFamilies.contains(CollectorFamily.CMS) || collectorFamilies.contains(CollectorFamily.G1))
+                && jvm.getDisableExplicitGCOption() == null && jvm.getExplicitGcInvokesConcurrentOption() == null) {
             analysisKeys.add(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT);
         }
 
@@ -583,7 +591,8 @@ public class JvmRun {
         }
 
         // Check if CMS handling Perm/Metaspace collections.
-        if ((isCmsCollector(eventTypes) && !eventTypes.contains(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING)
+        if ((collectorFamilies.contains(CollectorFamily.CMS)
+                && !eventTypes.contains(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING)
                 && jvm.getCMSClassUnloadingEnabled() == null)) {
             analysisKeys.add(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED);
         }
@@ -644,45 +653,5 @@ public class JvmRun {
                 analysisKeys.add(Analysis.KEY_TRACE_CLASS_UNLOADING);
             }
         }
-    }
-
-    /**
-     * Determine if the JVM run used the G1 collector.
-     * 
-     * @param eventTypes
-     *            Log entry <code>LogEventType</code>.
-     * @return True if any <code>LogEventType</code> is G1, false otherwise.
-     */
-    public boolean isG1Collector(List<LogEventType> eventTypes) {
-        boolean isG1Collector = false;
-
-        Iterator<LogEventType> iterator = eventTypes.iterator();
-        while (iterator.hasNext()) {
-            if (JdkUtil.isG1LogEventType(iterator.next())) {
-                isG1Collector = true;
-                break;
-            }
-        }
-        return isG1Collector;
-    }
-
-    /**
-     * Determine if the JVM run used the CMS collector.
-     * 
-     * @param eventTypes
-     *            Log entry <code>LogEventType</code>.
-     * @return True if any <code>LogEventType</code> is G1, false otherwise.
-     */
-    public boolean isCmsCollector(List<LogEventType> eventTypes) {
-        boolean isCmsCollector = false;
-
-        Iterator<LogEventType> iterator = eventTypes.iterator();
-        while (iterator.hasNext()) {
-            if (JdkUtil.isCmsLogEventType(iterator.next())) {
-                isCmsCollector = true;
-                break;
-            }
-        }
-        return isCmsCollector;
     }
 }

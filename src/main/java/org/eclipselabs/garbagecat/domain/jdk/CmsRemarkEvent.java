@@ -63,7 +63,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class CmsRemarkEvent implements BlockingEvent, CmsCollection, TriggerData {
+public class CmsRemarkEvent extends CmsCollector implements BlockingEvent, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

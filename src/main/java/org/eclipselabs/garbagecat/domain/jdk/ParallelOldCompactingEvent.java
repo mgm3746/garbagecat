@@ -79,8 +79,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParallelOldCompactingEvent implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData,
-        PermData, TriggerData, ParallelCollection {
+public class ParallelOldCompactingEvent extends ParallelCollector
+        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
