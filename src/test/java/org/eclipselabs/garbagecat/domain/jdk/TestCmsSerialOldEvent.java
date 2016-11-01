@@ -320,6 +320,28 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 234, event.getDuration());
     }
 
+    public void testLogLineTriggerLastDitchCollection() {
+        String logLine = "262372.130: [Full GC (Last ditch collection) 262372.130: [CMS: 49512K->49392K(1756416K), "
+                + "0.2102326 secs] 49512K->49392K(2063104K), [Metaspace: 256586K->256586K(1230848K)], 0.2108635 secs] "
+                + "[Times: user=0.20 sys=0.00, real=0.21 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION));
+        Assert.assertEquals("Time stamp not parsed correctly.", 262372130, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 49512 - 49512, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 49392 - 49392, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 2063104 - 1756416, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 49512, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 49392, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 1756416, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 256586, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 256586, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1230848, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 210, event.getDuration());
+    }
+
     /**
      * Test CMS_SERIAL_OLD heap inspection initiate gc trigger.
      * 
