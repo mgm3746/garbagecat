@@ -132,4 +132,22 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old allocation size not parsed correctly.", 4019712 - 1223168, event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 65, event.getDuration());
     }
+
+    public void testLastDitchCollectionTrigger() {
+        String logLine = "372405.495: [GC (Last ditch collection) [PSYoungGen: 0K->0K(1569280K)] "
+                + "773083K->773083K(6287872K), 0.2217060 secs] [Times: user=0.76 sys=0.00, real=0.22 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
+                ParallelScavengeEvent.match(logLine));
+        ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 372405495, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION));
+        Assert.assertEquals("Young begin size not parsed correctly.", 0, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 1569280, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 773083 - 0, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 773083 - 0, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 6287872 - 1569280, event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 221, event.getDuration());
+    }
 }
