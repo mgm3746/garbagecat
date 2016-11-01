@@ -164,7 +164,7 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE
             + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|"
-            + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + ")";
+            + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")";
 
     /**
      * Regular expression for CMS_REMARK block in some events.

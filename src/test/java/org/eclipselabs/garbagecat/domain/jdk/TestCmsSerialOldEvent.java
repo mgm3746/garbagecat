@@ -298,6 +298,28 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 94911, event.getDuration());
     }
 
+    public void testLogLineTriggerMetadataGcThreshold() {
+        String logLine = "262371.895: [Full GC (Metadata GC Threshold) 262371.895: [CMS: 42863K->49512K(1756416K), "
+                + "0.2337314 secs] 176820K->49512K(2063104K), [Metaspace: 256586K->256586K(1230848K)], "
+                + "0.2343092 secs] [Times: user=0.23 sys=0.00, real=0.23 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
+        Assert.assertEquals("Time stamp not parsed correctly.", 262371895, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 176820 - 42863, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 49512 - 49512, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 2063104 - 1756416, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 42863, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 49512, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 1756416, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 256586, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 256586, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1230848, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 234, event.getDuration());
+    }
+
     /**
      * Test CMS_SERIAL_OLD heap inspection initiate gc trigger.
      * 
