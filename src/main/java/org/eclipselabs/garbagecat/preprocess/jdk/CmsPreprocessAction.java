@@ -333,6 +333,15 @@ public class CmsPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_DURATION = "(, " + JdkRegEx.DURATION + "\\])[ ]*";
 
     /**
+     * Regular expression for PAR_NEW with extraneous prefix.
+     */
+    private static final String REGEX_RETAIN_PAR_NEW = "^(" + JdkRegEx.TIMESTAMP + ": \\[ParNew" + JdkRegEx.TIMESTAMP
+            + ": \\[ParNew)(" + JdkRegEx.TIMESTAMP + ": \\[GC \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\) "
+            + JdkRegEx.TIMESTAMP + ": \\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+
+    /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
      * context is necessary to detangle multi-line events where logging patterns are shared among preprocessors.
      */
@@ -508,6 +517,14 @@ public class CmsPreprocessAction implements PreprocessAction {
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_PAR_NEW)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_PAR_NEW);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(4);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         }
     }
 
@@ -544,7 +561,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                 || logLine.matches(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC) || logLine.matches(REGEX_RETAIN_END)
-                || logLine.matches(REGEX_RETAIN_DURATION);
+                || logLine.matches(REGEX_RETAIN_DURATION) || logLine.matches(REGEX_RETAIN_PAR_NEW);
     }
 
     /**
