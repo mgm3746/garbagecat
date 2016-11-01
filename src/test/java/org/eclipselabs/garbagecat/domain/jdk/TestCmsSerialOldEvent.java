@@ -342,6 +342,29 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 210, event.getDuration());
     }
 
+    public void testLogLineTriggerJvmtiEnvForceGarbageCollectionWithConcurrentModeInterrupted() {
+        String logLine = "262372.344: [Full GC (JvmtiEnv ForceGarbageCollection) 262372.344: [CMS "
+                + "(concurrent mode interrupted): 49392K->48780K(1756416K), 0.2620228 secs] "
+                + "49392K->48780K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.2624794 secs] "
+                + "[Times: user=0.26 sys=0.00, real=0.27 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED));
+        Assert.assertEquals("Time stamp not parsed correctly.", 262372344, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 49392 - 49392, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 48780 - 48780, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 2063104 - 1756416, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 49392, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 48780, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 1756416, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 256552, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 256552, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1230848, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 262, event.getDuration());
+    }
+
     /**
      * Test CMS_SERIAL_OLD heap inspection initiate gc trigger.
      * 
@@ -358,7 +381,27 @@ public class TestCmsSerialOldEvent extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
-        Assert.assertTrue(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
+        Assert.assertTrue(Analysis.KEY_HEAP_INSPECTION_INITIATED_GC + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_HEAP_INSPECTION_INITIATED_GC));
+    }
+
+    /**
+     * Test CMS_SERIAL_OLD heap inspection initiate gc trigger.
+     * 
+     */
+    public void testLogLineTriggerHeapDumpedInitiatedGc() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset92.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue(Analysis.KEY_HEAP_DUMP_INITIATED_GC + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_HEAP_DUMP_INITIATED_GC));
     }
 }

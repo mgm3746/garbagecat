@@ -433,7 +433,17 @@ public class GcManager {
                         }
                     }
 
-                    // 6) Heap inspection initiated gc
+                    // 6) Heap dump initiated gc
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_HEAP_DUMP_INITIATED_GC)) {
+                        if (event instanceof TriggerData) {
+                            String trigger = ((TriggerData) event).getTrigger();
+                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC)) {
+                                jvmDao.addAnalysisKey(Analysis.KEY_HEAP_DUMP_INITIATED_GC);
+                            }
+                        }
+                    }
+
+                    // 7) Heap inspection initiated gc
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_HEAP_INSPECTION_INITIATED_GC)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
@@ -443,7 +453,7 @@ public class GcManager {
                         }
                     }
 
-                    // 7) PrintClassHistogram
+                    // 8) PrintClassHistogram
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
@@ -453,7 +463,7 @@ public class GcManager {
                         }
                     }
 
-                    // 8) Metaspace allocation failure
+                    // 9) Metaspace allocation failure
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_METASPACE_ALLOCATION_FAILURE)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
@@ -463,7 +473,7 @@ public class GcManager {
                         }
                     }
 
-                    // 9) JVM TI explicit gc
+                    // 10) JVM TI explicit gc
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_JVMTI)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();

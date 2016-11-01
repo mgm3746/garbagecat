@@ -13,7 +13,9 @@
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipselabs.garbagecat.domain.JvmRun;
@@ -442,6 +444,34 @@ public class TestCmsPreprocessAction extends TestCase {
                 event.getLogEntry());
     }
 
+    public void testLogLineBeginningSerialConcurrentWithJvmtiEnvForceGarbageCollectionTrigger() {
+        String priorLogLine = "";
+        String logLine = "262372.344: [Full GC (JvmtiEnv ForceGarbageCollection) 262372.344: [CMS262372.426: "
+                + "[CMS-concurrent-mark: 0.082/0.083 secs] [Times: user=0.08 sys=0.00, real=0.09 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "262372.344: [Full GC (JvmtiEnv ForceGarbageCollection) 262372.344: [CMS", event.getLogEntry());
+    }
+
+    public void testLogLineBeginningSerialConcurrentWithMetadataGcThreshold() {
+        String priorLogLine = "";
+        String logLine = "262375.122: [Full GC (Metadata GC Threshold) 262375.122: [CMS262375.200: "
+                + "[CMS-concurrent-mark: 0.082/0.082 secs] [Times: user=0.08 sys=0.00, real=0.08 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "262375.122: [Full GC (Metadata GC Threshold) 262375.122: [CMS", event.getLogEntry());
+    }
+
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */
@@ -827,5 +857,49 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertTrue("Log line not recognized as " + LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
+    }
+
+    /**
+     * Test preprocessing CMS_SERIAL_OLD with JvmtiEnv ForceGarbageCollection and concurrent mode interrupted.
+     * 
+     */
+    public void testCmsSerialOldTriggerJvmtiEnvForceGarbageCollectionWithConcurrentModeInterrupted() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset90.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertFalse(LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(Analysis.KEY_CMS_CONCURRENT_MODE_INTERRUPTED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_INTERRUPTED));
+    }
+
+    /**
+     * Test preprocessing CMS_SERIAL_OLD with Metadata GC Threshold and concurrent mode interrupted.
+     * 
+     */
+    public void testCmsSerialOldTriggerMetadataGcThresholdWithConcurrentModeInterrupted() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset91.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertFalse(LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE));
     }
 }

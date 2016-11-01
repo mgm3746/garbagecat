@@ -274,6 +274,11 @@ public class Analysis {
     public static final String KEY_BIASED_LOCKING_DISABLED = "biased.locking.disabled";
 
     /**
+     * Property key for heap dump initiated gc.
+     */
+    public static final String KEY_HEAP_DUMP_INITIATED_GC = "heap.dump.initiated.gc";
+
+    /**
      * Property key for heap inspection initiated gc.
      */
     public static final String KEY_HEAP_INSPECTION_INITIATED_GC = "heap.inspection.initiated.gc";

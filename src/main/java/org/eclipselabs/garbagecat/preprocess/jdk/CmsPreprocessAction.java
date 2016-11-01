@@ -205,9 +205,11 @@ public class CmsPreprocessAction implements PreprocessAction {
      * Regular expression for retained beginning CMS_SERIAL_OLD mixed with CMS_CONCURRENT collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[Full GC( )?(\\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\) )?" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS)(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): "
-            + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+            + ": \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+            + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD
+            + ")\\) )?" + JdkRegEx.TIMESTAMP + ": \\[CMS)(" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
 
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD bailing out collection.
@@ -386,7 +388,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(6));
+                entangledLogLines.add(matcher.group(7));
             }
             // Output beginning of CMS_SERIAL_OLD line
             this.logEntry = matcher.group(1);
