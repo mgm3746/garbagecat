@@ -293,8 +293,6 @@ public class Main {
             bufferedWriter
                     .write("# GC Events: " + jvmRun.getBlockingEventCount() + System.getProperty("line.separator"));
             if (jvmRun.getBlockingEventCount() > 0) {
-                bufferedWriter
-                        .write("# GC Events: " + jvmRun.getBlockingEventCount() + System.getProperty("line.separator"));
                 bufferedWriter.write("Event Types: ");
                 List<LogEventType> eventTypes = jvmRun.getEventTypes();
                 Iterator<LogEventType> iterator = eventTypes.iterator();
