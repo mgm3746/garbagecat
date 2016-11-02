@@ -185,19 +185,14 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
             + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]";
 
     /**
-     * Regular expression for CLASS_HISTOGRAM block in some events.
-     */
-    private static final String CLASS_HISTOGRAM_BLOCK = "(" + JdkRegEx.TIMESTAMP + ": )?\\[Class Histogram(:)?, "
-            + JdkRegEx.DURATION + "\\]";
-
-    /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\(" + TRIGGER + "\\) )?("
-            + CLASS_HISTOGRAM_BLOCK + ")?(" + CMS_BLOCK + ")?(" + CLASS_HISTOGRAM_BLOCK + ")? " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION
-            + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?(" + CMS_BLOCK + ")?("
+            + ClassHistogramEvent.REGEX_PREPROCESSED + ")? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
 
@@ -213,33 +208,33 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            if (matcher.group(15) != null) {
+            if (matcher.group(17) != null) {
                 // if > 1 triggers, use the last one
-                this.trigger = matcher.group(15);
-            } else if (matcher.group(6) != null || matcher.group(35) != null) {
+                this.trigger = matcher.group(17);
+            } else if (matcher.group(6) != null || matcher.group(37) != null) {
                 this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
             } else if (matcher.group(4) != null) {
                 this.trigger = matcher.group(4);
             }
 
-            int totalBegin = Integer.parseInt(matcher.group(40));
-            int totalEnd = Integer.parseInt(matcher.group(41));
-            int totalAllocation = Integer.parseInt(matcher.group(42));
+            int totalBegin = Integer.parseInt(matcher.group(44));
+            int totalEnd = Integer.parseInt(matcher.group(45));
+            int totalAllocation = Integer.parseInt(matcher.group(46));
 
             // Only CMS block has old data
-            if (matcher.group(11) != null) {
-                this.old = Integer.parseInt(matcher.group(31));
-                this.oldEnd = Integer.parseInt(matcher.group(32));
-                this.oldAllocation = Integer.parseInt(matcher.group(33));
+            if (matcher.group(13) != null) {
+                this.old = Integer.parseInt(matcher.group(33));
+                this.oldEnd = Integer.parseInt(matcher.group(34));
+                this.oldAllocation = Integer.parseInt(matcher.group(35));
                 this.young = totalBegin - this.old;
                 this.youngEnd = totalEnd - this.oldEnd;
                 this.youngAvailable = totalAllocation - this.oldAllocation;
             }
 
-            this.permGen = Integer.parseInt(matcher.group(44));
-            this.permGenEnd = Integer.parseInt(matcher.group(45));
-            this.permGenAllocation = Integer.parseInt(matcher.group(46));
-            this.duration = JdkMath.convertSecsToMillis(matcher.group(48)).intValue();
+            this.permGen = Integer.parseInt(matcher.group(48));
+            this.permGenEnd = Integer.parseInt(matcher.group(49));
+            this.permGenAllocation = Integer.parseInt(matcher.group(50));
+            this.duration = JdkMath.convertSecsToMillis(matcher.group(52)).intValue();
         }
     }
 

@@ -311,6 +311,18 @@ public class G1PreprocessAction implements PreprocessAction {
             + JdkRegEx.DURATION + "\\])[ ]*$";
 
     /**
+     * Regular expression for retained beginning G1_FULL_GC with PRINT_CLASS_HISTOGRAM collection.
+     */
+    private static final String REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM = "^(" + JdkRegEx.TIMESTAMP
+            + ": \\[Full GC" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram \\(before full gc\\):)[ ]*$";
+
+    /**
+     * Regular expression for retained beginning PRINT_CLASS_HISTOGRAM collection.
+     */
+    private static final String REGEX_RETAIN_BEGINNING_CLASS_HISTOGRAM = "^(" + JdkRegEx.TIMESTAMP
+            + ": \\[Class Histogram \\(after full gc\\):)[ ]*$";
+
+    /**
      * Regular expression for retained beginning G1_CONCURRENT collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(: )?((" + JdkRegEx.TIMESTAMP
@@ -561,6 +573,22 @@ public class G1PreprocessAction implements PreprocessAction {
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CLASS_HISTOGRAM)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CLASS_HISTOGRAM);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CLEANUP)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CLEANUP);
             Matcher matcher = pattern.matcher(logEntry);
@@ -717,8 +745,10 @@ public class G1PreprocessAction implements PreprocessAction {
         boolean match = false;
         if (logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_GC) || logLine.matches(REGEX_RETAIN_BEGINNING_REMARK)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_MIXED)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_GC)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_CLASS_HISTOGRAM)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_REMARK) || logLine.matches(REGEX_RETAIN_BEGINNING_MIXED)
                 || (logLine.matches(REGEX_RETAIN_BEGINNING_CLEANUP) && nextLogLine.matches(REGEX_RETAIN_END))
                 || logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)

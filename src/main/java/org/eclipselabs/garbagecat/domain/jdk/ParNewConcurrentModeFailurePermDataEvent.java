@@ -201,19 +201,19 @@ public class ParNewConcurrentModeFailurePermDataEvent extends CmsCollector
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            old = Integer.parseInt(matcher.group(16));
-            oldEnd = Integer.parseInt(matcher.group(17));
-            oldAllocation = Integer.parseInt(matcher.group(18));
-            int totalBegin = Integer.parseInt(matcher.group(24));
+            old = Integer.parseInt(matcher.group(19));
+            oldEnd = Integer.parseInt(matcher.group(20));
+            oldAllocation = Integer.parseInt(matcher.group(21));
+            int totalBegin = Integer.parseInt(matcher.group(30));
             young = totalBegin - old;
-            int totalEnd = Integer.parseInt(matcher.group(25));
+            int totalEnd = Integer.parseInt(matcher.group(31));
             youngEnd = totalEnd - oldEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(26));
+            int totalAllocation = Integer.parseInt(matcher.group(32));
             youngAvailable = totalAllocation - oldAllocation;
-            permGen = Integer.parseInt(matcher.group(28));
-            permGenEnd = Integer.parseInt(matcher.group(29));
-            permGenAllocation = Integer.parseInt(matcher.group(30));
-            duration = JdkMath.convertSecsToMillis(matcher.group(32)).intValue();
+            permGen = Integer.parseInt(matcher.group(34));
+            permGenEnd = Integer.parseInt(matcher.group(35));
+            permGenAllocation = Integer.parseInt(matcher.group(36));
+            duration = JdkMath.convertSecsToMillis(matcher.group(38)).intValue();
         }
     }
 

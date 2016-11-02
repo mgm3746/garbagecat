@@ -76,4 +76,30 @@ public class TestClassHistogramEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
                 ClassHistogramEvent.match(logLine));
     }
+
+    public void test6DigitLineNumberLine() {
+        String logLine = "100000:             1             16  com.msh.rules.regimensearch.Rule_regimen"
+                + "SearchRule_841_a1deb60c00004d67b538438881011c7aDefaultConsequenceInvoker";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
+                ClassHistogramEvent.match(logLine));
+    }
+
+    public void test65SpacesBeforeInstancesLine() {
+        String logLine = "   1:      98460990     7018731456  [I";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
+                ClassHistogramEvent.match(logLine));
+    }
+
+    public void testTotal11DigitBytesLine() {
+        String logLine = "Total     159091427    12666890520";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
+                ClassHistogramEvent.match(logLine));
+    }
+
+    public void testG1PreprocessedLine() {
+        String logLine = "49709.036: [Class Histogram (after full gc):, 2.4232900 secs] "
+                + "[Times: user=29.91 sys=0.08, real=22.24 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
+                ClassHistogramEvent.match(logLine));
+    }
 }

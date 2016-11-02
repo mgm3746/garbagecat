@@ -64,8 +64,8 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
     /**
      * Regular expression for cruft left after class histogram preprocessing.
      */
-    public static final String REGEX_PREPROCESSED = JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?, "
-            + JdkRegEx.DURATION + "\\]";
+    public static final String REGEX_PREPROCESSED = "(" + JdkRegEx.TIMESTAMP
+            + ": )?\\[Class Histogram( \\((before|after) full gc\\))?(:)?, " + JdkRegEx.DURATION + "\\]";
 
     /**
      * Regular expressions defining the logging.
@@ -82,11 +82,15 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
             /*
              * Instance data
              */
-            "^[ ]{0,3}\\d{1,5}:[ ]{7,13}\\d{1,9}[ ]{5,13}\\d{1,10}[ ]{2}[a-zA-Z0-9<>\\[\\$\\._;]+$",
+            "^[ ]{0,3}\\d{1,6}:[ ]{6,13}\\d{1,9}[ ]{5,13}\\d{1,10}[ ]{2}[a-zA-Z0-9<>\\[\\$\\._;]+$",
             /*
              * Footer
              */
-            "^Total( ){6}\\d{1,10}( ){5}\\d{1,10}$" };
+            "^Total[ ]{5,6}\\d{1,10}[ ]{4,5}\\d{1,11}$",
+            /*
+             * Preprocessed block as a single line
+             */
+            "^" + REGEX_PREPROCESSED + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

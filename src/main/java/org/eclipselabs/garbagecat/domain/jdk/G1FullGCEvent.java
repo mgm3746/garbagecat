@@ -81,14 +81,15 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
     /**
      * Regular expression preprocessed with G1 details.
      */
-    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(("
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC[ ]{0,1}(\\(("
             + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
             + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION
-            + ")\\)[ ]{1,2})?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), "
-            + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->"
-            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\) Survivors: " + JdkRegEx.SIZE_G1_DETAILS
-            + "->" + JdkRegEx.SIZE_G1_DETAILS + " Heap: " + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS
-            + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)\\](, \\[(Perm|Metaspace): "
+            + ")\\)[ ]{1,2}|" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + JdkRegEx.SIZE_G1 + "->"
+            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]\\[Eden: "
+            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\("
+            + JdkRegEx.SIZE_G1_DETAILS + "\\) Survivors: " + JdkRegEx.SIZE_G1_DETAILS + "->" + JdkRegEx.SIZE_G1_DETAILS
+            + " Heap: " + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->"
+            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)\\](, \\[(Perm|Metaspace): "
             + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\])?" + JdkRegEx.TIMES_BLOCK
             + "?[ ]*$";
 
@@ -167,18 +168,22 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                trigger = matcher.group(3);
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(6).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(8).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)),
-                        matcher.group(10).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(11)).intValue();
-                if (matcher.group(32) != null) {
-                    permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(34)), matcher.group(35).charAt(0));
-                    permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(36)),
-                            matcher.group(37).charAt(0));
-                    permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(38)),
-                            matcher.group(39).charAt(0));
+                if (matcher.group(3) != null) {
+                    trigger = matcher.group(3);
+                } else if (matcher.group(2) != null) {
+                    trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
+                }
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)), matcher.group(12).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(14).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)),
+                        matcher.group(16).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
+                if (matcher.group(38) != null) {
+                    permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(40)), matcher.group(41).charAt(0));
+                    permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(42)),
+                            matcher.group(43).charAt(0));
+                    permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(44)),
+                            matcher.group(45).charAt(0));
                 }
             }
         }

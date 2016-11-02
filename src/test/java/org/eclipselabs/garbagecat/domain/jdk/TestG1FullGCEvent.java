@@ -137,4 +137,24 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1511424, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 3895, event.getDuration());
     }
+
+    public void testLogLinePreprocessedClassHistogram() {
+        String logLine = "49689.217: [Full GC49689.217: [Class Histogram (before full gc):, 8.8690440 secs]"
+                + "11G->2270M(12G), 19.8185620 secs][Eden: 0.0B(612.0M)->0.0B(7372.0M) Survivors: 0.0B->0.0B "
+                + "Heap: 11.1G(12.0G)->2270.1M(12.0G)], [Perm: 730823K->730823K(2097152K)]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
+                G1FullGCEvent.match(logLine));
+        G1FullGCEvent event = new G1FullGCEvent(logLine);
+        Assert.assertEquals("Trigger not parsed correctly.", JdkRegEx.TRIGGER_CLASS_HISTOGRAM, event.getTrigger());
+        Assert.assertEquals("Time stamp not parsed correctly.", 49689217, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 11 * 1024 * 1024,
+                event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 2270 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 12 * 1024 * 1024,
+                event.getCombinedSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 730823, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 730823, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 2097152, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 19818, event.getDuration());
+    }
 }
