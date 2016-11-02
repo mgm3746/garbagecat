@@ -1377,5 +1377,8 @@ public class TestG1PreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CLASS_HISTOGRAM));
         Assert.assertTrue(Analysis.KEY_PRINT_CLASS_HISTOGRAM + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM));
+        // G1_FULL is caused by CLASS_HISTOGRAM
+        Assert.assertFalse(Analysis.KEY_SERIAL_GC_G1 + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_G1));
     }
 }

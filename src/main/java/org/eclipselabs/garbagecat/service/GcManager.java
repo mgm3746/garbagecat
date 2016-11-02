@@ -378,7 +378,8 @@ public class GcManager {
                         }
                         CollectorFamily collectorFamily = ((GcEvent) event).getCollectorFamily();
 
-                        if (trigger == null || !trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
+                        if (trigger == null || (!trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)
+                                && !trigger.matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM))) {
                             switch (collectorFamily) {
                             case G1:
                                 if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_G1)) {
