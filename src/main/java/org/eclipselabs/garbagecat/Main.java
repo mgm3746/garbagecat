@@ -34,6 +34,7 @@ import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
@@ -299,10 +300,7 @@ public class Main {
                 while (iterator.hasNext()) {
                     LogEventType eventType = iterator.next();
                     // Don't report header or unknown events
-                    if (!eventType.equals(LogEventType.HEADER_COMMAND_LINE_FLAGS)
-                            && !eventType.equals(LogEventType.HEADER_MEMORY)
-                            && !eventType.equals(LogEventType.HEADER_VERSION)
-                            && !eventType.equals(LogEventType.UNKNOWN)) {
+                    if (JdkUtil.isReportable(eventType)) {
                         if (!firstEvent) {
                             bufferedWriter.write(", ");
                         }

@@ -740,4 +740,28 @@ public class JdkUtil {
         }
         return bytes.longValue();
     }
+
+    /**
+     * @param eventType
+     *            The event type to test.
+     * @return true if the log event is should be included in the report event list, false otherwise.
+     */
+    public static final boolean isReportable(LogEventType eventType) {
+
+        boolean reportable = true;
+
+        switch (eventType) {
+        case HEADER_COMMAND_LINE_FLAGS:
+        case HEADER_MEMORY:
+        case HEADER_VERSION:
+        case LOG_ROTATION:
+        case UNKNOWN:
+            reportable = false;
+            break;
+        default:
+            break;
+        }
+
+        return reportable;
+    }
 }
