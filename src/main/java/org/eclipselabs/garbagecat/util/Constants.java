@@ -36,6 +36,11 @@ public class Constants {
     public static final int DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD = 90;
 
     /**
+     * The ratio of GC time vs. Stopped time for reporting excessive Stopped time.
+     */
+    public static final int GC_STOPPED_RATIO_THRESHOLD = 80;
+
+    /**
      * kilobyte
      */
     public static final BigDecimal KILOBYTE = new BigDecimal("1024");

@@ -397,7 +397,9 @@ public class JvmRun {
         }
 
         // 3) Check for significant stopped time unrelated to GC
-        if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME) && getGcStoppedRatio() < 80) {
+        if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
+                && getGcStoppedRatio() < Constants.GC_STOPPED_RATIO_THRESHOLD
+                && getStoppedTimeThroughput() != getGcThroughput()) {
             analysisKeys.add(Analysis.KEY_GC_STOPPED_RATIO);
         }
 

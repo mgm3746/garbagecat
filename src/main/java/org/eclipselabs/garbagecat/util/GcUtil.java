@@ -144,7 +144,7 @@ public class GcUtil {
     public static final Date getDatePlusTimestamp(Date start, long timestamp) {
         long millis = start.getTime() + timestamp;
         return new Date(millis);
-    }// getDatePlusTimestamp()
+    }
 
     /**
      * Calculate the number of whole days (24 hour periods) for a given number of milliseconds
@@ -195,6 +195,5 @@ public class GcUtil {
      */
     public static final long dateDiff(Date start, Date end) {
         return end.getTime() - start.getTime();
-    }// dateDiff()
-
-}// GcUtil
+    }
+}
