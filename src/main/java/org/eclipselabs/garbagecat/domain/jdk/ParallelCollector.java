@@ -20,7 +20,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ParallelCollector extends CollectorEvent {
+public class ParallelCollector extends GcEvent {
 
     @Override
     public CollectorFamily getCollectorFamily() {

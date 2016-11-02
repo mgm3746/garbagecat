@@ -16,13 +16,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 
 /**
  * <p>
- * Garbage collector event.
+ * Garbage collection event.
  * </p>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public abstract class CollectorEvent {
+public abstract class GcEvent {
 
     /**
      * @return The collector family.

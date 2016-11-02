@@ -39,7 +39,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
-import org.eclipselabs.garbagecat.domain.jdk.CollectorEvent;
+import org.eclipselabs.garbagecat.domain.jdk.GcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
@@ -337,7 +337,7 @@ public class GcManager {
                     if (event instanceof TriggerData) {
                         String trigger = ((TriggerData) event).getTrigger();
                         if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                            CollectorFamily collectorFamily = ((CollectorEvent) event).getCollectorFamily();
+                            CollectorFamily collectorFamily = ((GcEvent) event).getCollectorFamily();
 
                             switch (collectorFamily) {
                             case G1:
@@ -376,7 +376,7 @@ public class GcManager {
                         if (event instanceof TriggerData) {
                             trigger = ((TriggerData) event).getTrigger();
                         }
-                        CollectorFamily collectorFamily = ((CollectorEvent) event).getCollectorFamily();
+                        CollectorFamily collectorFamily = ((GcEvent) event).getCollectorFamily();
 
                         if (trigger == null || !trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
                             switch (collectorFamily) {
@@ -512,10 +512,10 @@ public class GcManager {
                 }
 
                 // Populate collector type list.
-                if (event instanceof CollectorEvent) {
+                if (event instanceof GcEvent) {
                     List<JdkUtil.CollectorFamily> collectorFamilies = jvmDao.getCollectorFamilies();
-                    if (!collectorFamilies.contains(((CollectorEvent) event).getCollectorFamily())) {
-                        collectorFamilies.add(((CollectorEvent) event).getCollectorFamily());
+                    if (!collectorFamilies.contains(((GcEvent) event).getCollectorFamily())) {
+                        collectorFamilies.add(((GcEvent) event).getCollectorFamily());
                     }
                 }
 
@@ -620,8 +620,8 @@ public class GcManager {
         }
         jvmRun.getJvm().setMemory(jvmDao.getMemory());
         jvmRun.getJvm().setVersion(jvmDao.getVersion());
-        jvmRun.setFirstTimestamp(jvmDao.getFirstTimestamp());
-        jvmRun.setLastTimestamp(jvmDao.getLastGcTimestamp());
+        jvmRun.setFirstGcTimestamp(jvmDao.getFirstGcTimestamp());
+        jvmRun.setLastGcTimestamp(jvmDao.getLastGcTimestamp());
         jvmRun.setMaxHeapSpace(jvmDao.getMaxHeapSpace());
         jvmRun.setMaxHeapOccupancy(jvmDao.getMaxHeapOccupancy());
         jvmRun.setMaxPermSpace(jvmDao.getMaxPermSpace());
@@ -630,9 +630,12 @@ public class GcManager {
         jvmRun.setTotalGcPause(jvmDao.getTotalGcPause());
         jvmRun.setBlockingEventCount(jvmDao.getBlockingEventCount());
         jvmRun.setLastGcDuration(jvmDao.getLastGcDuration());
+        jvmRun.setFirstStoppedTimestamp(jvmDao.getFirstStoppedTimestamp());
+        jvmRun.setLastStoppedTimestamp(jvmDao.getLastStoppedTimestamp());
         jvmRun.setMaxStoppedTime(jvmDao.getMaxStoppedTime());
         jvmRun.setTotalStoppedTime(jvmDao.getTotalStoppedTime());
         jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
+        jvmRun.setLastStoppedDuration(jvmDao.getLastStoppedDuration());
         jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
         jvmRun.setEventTypes(jvmDao.getEventTypes());
         jvmRun.setCollectorFamiles(jvmDao.getCollectorFamilies());

@@ -290,6 +290,8 @@ public class Main {
             bufferedWriter.write("----------------------------------------" + System.getProperty("line.separator"));
 
             // GC stats
+            bufferedWriter
+                    .write("# GC Events: " + jvmRun.getBlockingEventCount() + System.getProperty("line.separator"));
             if (jvmRun.getBlockingEventCount() > 0) {
                 bufferedWriter
                         .write("# GC Events: " + jvmRun.getBlockingEventCount() + System.getProperty("line.separator"));
@@ -299,7 +301,7 @@ public class Main {
                 boolean firstEvent = true;
                 while (iterator.hasNext()) {
                     LogEventType eventType = iterator.next();
-                    // Don't report header or unknown events
+                    // Only report GC events
                     if (JdkUtil.isReportable(eventType)) {
                         if (!firstEvent) {
                             bufferedWriter.write(", ");
@@ -332,32 +334,36 @@ public class Main {
                 // GC total pause time
                 bufferedWriter.write(
                         "GC Total Pause: " + jvmRun.getTotalGcPause() + " ms" + System.getProperty("line.separator"));
-                if (jvmRun.getStoppedTimeEventCount() > 0) {
-                    // Stopped time events
-                    bufferedWriter.write("# Stopped Time Events: " + jvmRun.getStoppedTimeEventCount()
-                            + System.getProperty("line.separator"));
-                    // Stopped time throughput
-                    bufferedWriter.write("Stopped Time Throughput: " + jvmRun.getStoppedTimeThroughput() + "%"
-                            + System.getProperty("line.separator"));
-                    // Max stopped time
-                    bufferedWriter.write("Stopped Time Max Pause: " + jvmRun.getMaxStoppedTime() + " ms"
-                            + System.getProperty("line.separator"));
-                    // Total stopped time
-                    bufferedWriter.write("Stopped Time Total: " + jvmRun.getTotalStoppedTime() + " ms"
-                            + System.getProperty("line.separator"));
-                    // Ratio of GC vs. stopped time. 100 means all stopped time due to GC.
+            }
+            // Stopped time events
+            bufferedWriter.write("# Stopped Time Events: " + jvmRun.getStoppedTimeEventCount()
+                    + System.getProperty("line.separator"));
+            if (jvmRun.getStoppedTimeEventCount() > 0) {
+                // Stopped time throughput
+                bufferedWriter.write("Stopped Time Throughput: " + jvmRun.getStoppedTimeThroughput() + "%"
+                        + System.getProperty("line.separator"));
+                // Max stopped time
+                bufferedWriter.write("Stopped Time Max Pause: " + jvmRun.getMaxStoppedTime() + " ms"
+                        + System.getProperty("line.separator"));
+                // Total stopped time
+                bufferedWriter.write("Stopped Time Total: " + jvmRun.getTotalStoppedTime() + " ms"
+                        + System.getProperty("line.separator"));
+                // Ratio of GC vs. stopped time. 100 means all stopped time due to GC.
+                if (jvmRun.getBlockingEventCount() > 0) {
                     bufferedWriter.write("GC/Stopped Ratio: " + jvmRun.getGcStoppedRatio() + "%"
                             + System.getProperty("line.separator"));
                 }
+            }
+            // First/last timestamps
+            if (jvmRun.getBlockingEventCount() > 0 || jvmRun.getStoppedTimeEventCount() > 0) {
                 // First Timestamp
                 bufferedWriter.write("First Timestamp: " + jvmRun.getFirstTimestamp() + " ms"
                         + System.getProperty("line.separator"));
                 // Last Timestamp
                 bufferedWriter.write(
                         "Last Timestamp: " + jvmRun.getLastTimestamp() + " ms" + System.getProperty("line.separator"));
-            } else {
-                bufferedWriter.write("ERROR: No GC events found." + System.getProperty("line.separator"));
             }
+
             bufferedWriter.write("========================================" + System.getProperty("line.separator"));
 
             // Analysis

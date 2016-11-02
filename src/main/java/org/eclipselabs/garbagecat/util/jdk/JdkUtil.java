@@ -751,6 +751,7 @@ public class JdkUtil {
         boolean reportable = true;
 
         switch (eventType) {
+        case APPLICATION_STOPPED_TIME:
         case HEADER_COMMAND_LINE_FLAGS:
         case HEADER_MEMORY:
         case HEADER_VERSION:

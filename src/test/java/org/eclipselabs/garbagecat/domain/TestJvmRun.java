@@ -86,7 +86,7 @@ public class TestJvmRun extends TestCase {
         GcManager jvmManager = new GcManager();
         jvmManager.store(null, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Last timestamp not correct.", 0, jvmRun.getLastTimestamp());
+        Assert.assertEquals("Last timestamp not correct.", 0, jvmRun.getLastGcTimestamp());
     }
 
     /**
@@ -403,7 +403,9 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("Max perm gen space not calculated correctly.", 0, jvmRun.getMaxPermSpace());
         Assert.assertEquals("Max perm gen occupancy not calculated correctly.", 0, jvmRun.getMaxPermOccupancy());
         Assert.assertEquals("Total GC pause time not calculated correctly.", 61, jvmRun.getTotalGcPause());
-        Assert.assertEquals("GC last timestamp not calculated correctly.", 2847, jvmRun.getLastTimestamp());
+        Assert.assertEquals("GC first timestamp not calculated correctly.", 2192, jvmRun.getFirstGcTimestamp());
+        Assert.assertEquals("GC last timestamp not calculated correctly.", 2847, jvmRun.getLastGcTimestamp());
+        Assert.assertEquals("GC last duration not calculated correctly.", 41, jvmRun.getLastGcDuration());
         Assert.assertEquals("GC throughput not calculated correctly.", 98, jvmRun.getGcThroughput());
         Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.",
@@ -413,7 +415,12 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("Stopped Time event count not correct.", 6, jvmRun.getStoppedTimeEventCount());
         Assert.assertEquals("Max stopped time not calculated correctly.", 1000, jvmRun.getMaxStoppedTime());
         Assert.assertEquals("Total stopped time not calculated correctly.", 1064, jvmRun.getTotalStoppedTime());
-        Assert.assertEquals("Stopped time throughput not calculated correctly.", 63, jvmRun.getStoppedTimeThroughput());
+        Assert.assertEquals("Stopped first timestamp not calculated correctly.", 964,
+                jvmRun.getFirstStoppedTimestamp());
+        Assert.assertEquals("Stopped last timestamp not calculated correctly.", 3884, jvmRun.getLastStoppedTimestamp());
+        Assert.assertEquals("Stopped last duration not calculated correctly.", 1000688,
+                jvmRun.getLastStoppedDuration());
+        Assert.assertEquals("Stopped time throughput not calculated correctly.", 78, jvmRun.getStoppedTimeThroughput());
         Assert.assertEquals("GC/Stopped ratio not calculated correctly.", 6, jvmRun.getGcStoppedRatio());
         Assert.assertTrue(Analysis.KEY_GC_STOPPED_RATIO + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_GC_STOPPED_RATIO));

@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
+import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
@@ -75,12 +76,12 @@ public class JvmRun {
     /**
      * Time of the first blocking event, in milliseconds after JVM startup.
      */
-    private long firstTimestamp;
+    private long firstGcTimestamp;
 
     /**
      * Time of the last blocking event, in milliseconds after JVM startup.
      */
-    private long lastTimestamp;
+    private long lastGcTimestamp;
 
     /**
      * Duration of the last blocking event (milliseconds). Required to compute throughput for very short JVM runs.
@@ -101,6 +102,21 @@ public class JvmRun {
      * Total stopped time duration (milliseconds).
      */
     private int totalStoppedTime;
+
+    /**
+     * Time of the first stopped event, in milliseconds after JVM startup.
+     */
+    private long firstStoppedTimestamp;
+
+    /**
+     * Time of the last stopped event, in milliseconds after JVM startup.
+     */
+    private long lastStoppedTimestamp;
+
+    /**
+     * Duration of the last stopped event (microseconds). Required to compute throughput for very short JVM runs.
+     */
+    private long lastStoppedDuration;
 
     /**
      * Total number of {@link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent}.
@@ -209,20 +225,20 @@ public class JvmRun {
         this.totalGcPause = totalGcPause;
     }
 
-    public long getFirstTimestamp() {
-        return firstTimestamp;
+    public long getFirstGcTimestamp() {
+        return firstGcTimestamp;
     }
 
-    public void setFirstTimestamp(long firstTimestamp) {
-        this.firstTimestamp = firstTimestamp;
+    public void setFirstGcTimestamp(long firstGcTimestamp) {
+        this.firstGcTimestamp = firstGcTimestamp;
     }
 
-    public long getLastTimestamp() {
-        return lastTimestamp;
+    public long getLastGcTimestamp() {
+        return lastGcTimestamp;
     }
 
-    public void setLastTimestamp(long lastTimestamp) {
-        this.lastTimestamp = lastTimestamp;
+    public void setLastGcTimestamp(long lastGcTimestamp) {
+        this.lastGcTimestamp = lastGcTimestamp;
     }
 
     public long getLastGcDuration() {
@@ -239,6 +255,30 @@ public class JvmRun {
 
     public void setBlockingEventCount(int blockingEventCount) {
         this.blockingEventCount = blockingEventCount;
+    }
+
+    public long getFirstStoppedTimestamp() {
+        return firstStoppedTimestamp;
+    }
+
+    public void setFirstStoppedTimestamp(long firstStoppedTimestamp) {
+        this.firstStoppedTimestamp = firstStoppedTimestamp;
+    }
+
+    public long getLastStoppedTimestamp() {
+        return lastStoppedTimestamp;
+    }
+
+    public void setLastStoppedTimestamp(long lastStoppedTimestamp) {
+        this.lastStoppedTimestamp = lastStoppedTimestamp;
+    }
+
+    public long getLastStoppedDuration() {
+        return lastStoppedDuration;
+    }
+
+    public void setLastStoppedDuration(long lastStoppedDuration) {
+        this.lastStoppedDuration = lastStoppedDuration;
     }
 
     public int getStoppedTimeEventCount() {
@@ -309,13 +349,13 @@ public class JvmRun {
         long gcThroughput;
         if (blockingEventCount > 0) {
             long timeTotal;
-            if (lastTimestamp > firstTimestamp && firstTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
+            if (lastGcTimestamp > firstGcTimestamp && firstGcTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
                 // Partial log. Use the timestamp of the first GC event, not 0, in order to determine
                 // throughput more accurately.
-                timeTotal = lastTimestamp + new Long(lastGcDuration).longValue() - firstTimestamp;
+                timeTotal = lastGcTimestamp + new Long(lastGcDuration).longValue() - firstGcTimestamp;
             } else {
                 // Complete log or a log with only 1 event.
-                timeTotal = lastTimestamp + new Long(lastGcDuration).longValue();
+                timeTotal = lastGcTimestamp + new Long(lastGcDuration).longValue();
             }
             long timeNotGc = timeTotal - new Long(totalGcPause).longValue();
             BigDecimal throughput = new BigDecimal(timeNotGc);
@@ -338,13 +378,15 @@ public class JvmRun {
         long stoppedTimeThroughput;
         if (stoppedTimeEventCount > 0) {
             long timeTotal;
-            if (lastTimestamp > firstTimestamp && firstTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
-                // Partial log. Use the timestamp of the first GC event, not 0, in order to determine
+            if (lastStoppedTimestamp > firstStoppedTimestamp
+                    && firstStoppedTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
+                // Partial log. Use the timestamp of the first stopped event, not 0, in order to determine
                 // throughput more accurately.
-                timeTotal = lastTimestamp + new Long(lastGcDuration).longValue() - firstTimestamp;
+                timeTotal = lastStoppedTimestamp + JdkMath.convertMicrosToMillis(lastStoppedDuration).longValue()
+                        - firstStoppedTimestamp;
             } else {
                 // Complete log or a log with only 1 event.
-                timeTotal = lastTimestamp + new Long(lastGcDuration).longValue();
+                timeTotal = lastStoppedTimestamp + JdkMath.convertMicrosToMillis(lastStoppedDuration).longValue();
             }
             long timeNotGc = timeTotal - new Long(totalStoppedTime).longValue();
             BigDecimal throughput = new BigDecimal(timeNotGc);
@@ -387,7 +429,7 @@ public class JvmRun {
         }
 
         // 1) Check for partial log
-        if (GcUtil.isPartialLog(firstTimestamp)) {
+        if (GcUtil.isPartialLog(firstGcTimestamp)) {
             analysisKeys.add(Analysis.KEY_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
         }
 
@@ -660,5 +702,25 @@ public class JvmRun {
         if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSize() == null) {
             analysisKeys.add(Analysis.KEY_COMPRESSED_CLASS_SPACE_NOT_SET);
         }
+    }
+
+    /**
+     * @return Time of the first gc or stopped event, in milliseconds after JVM startup.
+     */
+    public long getFirstTimestamp() {
+        long firstTimeStamp;
+        if (Math.min(firstGcTimestamp, firstStoppedTimestamp) == 0) {
+            firstTimeStamp = Math.max(firstGcTimestamp, firstStoppedTimestamp);
+        } else {
+            firstTimeStamp = Math.min(firstGcTimestamp, firstStoppedTimestamp);
+        }
+        return firstTimeStamp;
+    }
+
+    /**
+     * @return Time of the lsst gc or stopped event, in milliseconds after JVM startup.
+     */
+    public long getLastTimestamp() {
+        return Math.max(lastGcTimestamp, lastStoppedTimestamp);
     }
 }
