@@ -719,6 +719,34 @@ public class Jvm {
     }
 
     /**
+     * The option for enabling compressed class pointers.
+     * 
+     * <pre>
+     * -XX:+UseCompressedClassPointers
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseCompressedClassPointersEnabled() {
+        String regex = "(-XX:\\+UseCompressedClassPointers)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for setting CompressedClassSpaceSize.
+     * 
+     * <pre>
+     * -XX:CompressedClassSpaceSize=768m
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCompressedClassSpaceSize() {
+        String regex = "(-XX:CompressedClassSpaceSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

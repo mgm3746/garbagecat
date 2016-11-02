@@ -653,5 +653,10 @@ public class JvmRun {
                 analysisKeys.add(Analysis.KEY_TRACE_CLASS_UNLOADING);
             }
         }
+
+        // Check for CompressedClassPointers enabled without setting CompressedClassSpaceSize
+        if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSize() == null) {
+            analysisKeys.add(Analysis.KEY_COMPRESSED_CLASS_SPACE_NOT_SET);
+        }
     }
 }

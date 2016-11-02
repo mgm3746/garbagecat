@@ -606,4 +606,19 @@ public class TestJvm extends TestCase {
         jvm.setVersion(version);
         Assert.assertFalse("Jvm incorrectly not identified as 64-bit.", jvm.is64Bit());
     }
+
+    public void testUseCompressedClassPointers() {
+        String jvmOptions = "-Xss128k -XX:+UseCompressedClassPointers -XX:+UseCompressedOops "
+                + "-XX:+PrintGCApplicationConcurrentTime -XX:+CMSParallelRemarkEnabled";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("UseCompressedClassPointers not enabled.", jvm.getUseCompressedClassPointersEnabled());
+    }
+
+    public void testCompressedClassSpaceSize() {
+        String jvmOptions = "-Xss128k -XX:MetaspaceSize=1280 -XX:MaxMetaspaceSize=1280m "
+                + "-XX:CompressedClassSpaceSize=768m -XX:+PrintGCApplicationConcurrentTime "
+                + "-XX:+CMSParallelRemarkEnabled";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("CompressedClassSpaceSize not found.", jvm.getCompressedClassSpaceSize());
+    }
 }

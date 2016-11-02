@@ -321,6 +321,11 @@ public class Analysis {
     public static final String KEY_GC_OVERHEAD_LIMIT = "trace.class.unloading";
 
     /**
+     * Property key for the garbage collection overhead limit being reached.
+     */
+    public static final String KEY_COMPRESSED_CLASS_SPACE_NOT_SET = "compressed.class.space.size.not.set";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {
