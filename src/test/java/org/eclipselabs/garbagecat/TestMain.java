@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 import org.eclipselabs.garbagecat.util.Constants;
 
 import junit.framework.Assert;
@@ -152,7 +153,7 @@ public class TestMain extends TestCase {
             // Pass null object since parseOptions is static
             Object o = parseOptions.invoke(null, (Object) args);
             CommandLine cmd = (CommandLine) o;
-            // An nrecognized option throws an <code>UnrecognizedOptionException</code>, which is
+            // An unrecognized option throws an <code>UnrecognizedOptionException</code>, which is
             // caught and the usage line output.
             Assert.assertNull("An invalid option was accepted.", cmd);
         } catch (ClassNotFoundException e) {
@@ -166,7 +167,8 @@ public class TestMain extends TestCase {
         } catch (IllegalAccessException e) {
             Assert.fail("IllegalAccessException: " + e.getMessage());
         } catch (InvocationTargetException e) {
-            Assert.fail("InvocationTargetException: " + e.getMessage());
+            // Anything the invoked method throws is wrapped by InvocationTargetException.
+            Assert.assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
         }
     }
 
@@ -185,7 +187,7 @@ public class TestMain extends TestCase {
             args[2] = System.getProperty("user.dir");
             // Pass null object since parseOptions is static
             parseOptions.invoke(null, (Object) args);
-            Assert.fail("Should have raised an InvocationTargetException with an underlying IllegalArgumentException");
+            Assert.fail("Should have raised an InvocationTargetException with an underlying PareseException");
         } catch (ClassNotFoundException e) {
             Assert.fail(e.getMessage());
         } catch (SecurityException e) {
@@ -198,8 +200,7 @@ public class TestMain extends TestCase {
             Assert.fail("IllegalAccessException: " + e.getMessage());
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected IllegalArgumentException not thrown.",
-                    e.getTargetException() instanceof IllegalArgumentException);
+            Assert.assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
         }
     }
 
@@ -231,8 +232,7 @@ public class TestMain extends TestCase {
             Assert.fail("IllegalAccessException: " + e.getMessage());
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected IllegalArgumentException not thrown.",
-                    e.getTargetException() instanceof IllegalArgumentException);
+            Assert.assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
         }
     }
 
@@ -264,8 +264,7 @@ public class TestMain extends TestCase {
             Assert.fail("IllegalAccessException: " + e.getMessage());
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected IllegalArgumentException not thrown.",
-                    e.getTargetException() instanceof IllegalArgumentException);
+            Assert.assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
         }
     }
 
@@ -297,8 +296,7 @@ public class TestMain extends TestCase {
             Assert.fail("IllegalAccessException: " + e.getMessage());
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected IllegalArgumentException not thrown.",
-                    e.getTargetException() instanceof IllegalArgumentException);
+            Assert.assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
         }
     }
 

@@ -81,7 +81,14 @@ public class Main {
      */
     public static void main(String[] args) {
 
-        CommandLine cmd = parseOptions(args);
+        CommandLine cmd = null;
+
+        try {
+            cmd = parseOptions(args);
+        } catch (ParseException pe) {
+            System.out.println(pe.getMessage());
+            usage(options);
+        }
 
         if (cmd != null) {
             if (cmd.hasOption(Constants.OPTION_HELP_LONG)) {
@@ -150,25 +157,18 @@ public class Main {
      * 
      * @return
      */
-    private static final CommandLine parseOptions(String[] args) {
+    private static final CommandLine parseOptions(String[] args) throws ParseException {
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = null;
-        try {
-            // Allow user to just specify help.
-            if (args.length == 1 && (args[0].equals("-" + Constants.OPTION_HELP_SHORT)
-                    || args[0].equals("--" + Constants.OPTION_HELP_LONG))) {
-                usage(options);
-            } else {
-                cmd = parser.parse(options, args);
-                validateOptions(cmd);
-            }
-        } catch (
-
-        ParseException pe) {
+        // Allow user to just specify help.
+        if (args.length == 1 && (args[0].equals("-" + Constants.OPTION_HELP_SHORT)
+                || args[0].equals("--" + Constants.OPTION_HELP_LONG))) {
             usage(options);
+        } else {
+            cmd = parser.parse(options, args);
+            validateOptions(cmd);
         }
         return cmd;
-
     }
 
     /**
@@ -188,10 +188,10 @@ public class Main {
      * @param cmd
      *            The command line options.
      */
-    public static void validateOptions(CommandLine cmd) {
+    public static void validateOptions(CommandLine cmd) throws ParseException {
         // Ensure log file specified.
         if (cmd.getArgList().size() == 0) {
-            throw new IllegalArgumentException("Log file not specified.");
+            throw new ParseException("Missing log file");
         }
         String logFileName = null;
         if (cmd.getArgList().size() > 0) {
@@ -199,11 +199,11 @@ public class Main {
         }
         // Ensure gc log file exists.
         if (logFileName == null) {
-            throw new IllegalArgumentException("Log file not specified.");
+            throw new ParseException("Missing log file not");
         }
         File logFile = new File(logFileName);
         if (!logFile.exists()) {
-            throw new IllegalArgumentException("Log file does not exist.");
+            throw new ParseException("Invalid log file: '" + logFileName + "'");
         }
         // threshold
         if (cmd.hasOption(Constants.OPTION_THRESHOLD_LONG)) {
@@ -212,8 +212,7 @@ public class Main {
             Pattern pattern = Pattern.compile(thresholdRegEx);
             Matcher matcher = pattern.matcher(thresholdOptionValue);
             if (!matcher.find()) {
-                throw new IllegalArgumentException(
-                        "'" + thresholdOptionValue + "' is not a valid threshold: " + thresholdRegEx);
+                throw new ParseException("Invalid threshold: '" + thresholdOptionValue + "'");
             }
         }
         // startdatetime
@@ -222,14 +221,7 @@ public class Main {
             Pattern pattern = Pattern.compile(GcUtil.START_DATE_TIME_REGEX);
             Matcher matcher = pattern.matcher(startdatetimeOptionValue);
             if (!matcher.find()) {
-                throw new IllegalArgumentException("'" + startdatetimeOptionValue + "' is not a valid startdatetime: "
-                        + GcUtil.START_DATE_TIME_REGEX);
-            }
-        }
-        // JVM options
-        if (cmd.hasOption("options")) {
-            if (cmd.getOptionValue('o') == null) {
-                throw new IllegalArgumentException("JVM options not specified.");
+                throw new ParseException("Invalid startdatetime: '" + startdatetimeOptionValue + "'");
             }
         }
     }
