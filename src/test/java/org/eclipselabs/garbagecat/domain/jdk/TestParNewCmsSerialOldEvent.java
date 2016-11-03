@@ -105,4 +105,12 @@ public class TestParNewCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1118208, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 8798, event.getDuration());
     }
+
+    public void testIsBlocking() {
+        String logLine = "42782.086: [GC 42782.086: [ParNew: 254464K->7680K(254464K), 0.2853553 secs]"
+                + "42782.371: [Tenured: 1082057K->934941K(1082084K), 6.2719770 secs] "
+                + "1310721K->934941K(1336548K), 6.5587770 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW_CMS_SERIAL_OLD.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

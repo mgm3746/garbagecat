@@ -28,4 +28,10 @@ public class TestHeaderMemoryEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEADER_MEMORY.toString() + ".",
                 HeaderMemoryEvent.match(logLine));
     }
+
+    public void testNotBlocking() {
+        String logLine = "Memory: 4k page, physical 65806300k(58281908k free), swap 16777212k(16777212k free)";
+        Assert.assertFalse(JdkUtil.LogEventType.HEADER_MEMORY.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

@@ -73,4 +73,12 @@ public class TestParallelSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 42, event.getDuration());
     }
+
+    public void testIsBlocking() {
+        String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
+                + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
+                + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

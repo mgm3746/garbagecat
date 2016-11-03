@@ -42,4 +42,10 @@ public class TestG1RemarkEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".",
                 G1RemarkEvent.match(logLine));
     }
+
+    public void testIsBlocking() {
+        String logLine = "106.129: [GC remark, 0.0450170 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.G1_REMARK.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

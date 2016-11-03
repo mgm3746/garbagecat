@@ -56,4 +56,12 @@ public class TestParNewPromotionFailedTruncatedEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 36455096, event.getTimestamp());
         Assert.assertEquals("Duration not parsed correctly.", 681, event.getDuration());
     }
+
+    public void testIsBlocking() {
+        String logLine = "5881.424: [GC 5881.424: [ParNew (promotion failed): 153272K->152257K(153344K), "
+                + "0.2143850 secs]5881.639: [CMS";
+        Assert.assertTrue(
+                JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

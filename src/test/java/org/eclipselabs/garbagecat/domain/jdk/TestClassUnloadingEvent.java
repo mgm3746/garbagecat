@@ -49,6 +49,12 @@ public class TestClassUnloadingEvent extends TestCase {
                 ClassUnloadingEvent.match(logLine));
     }
 
+    public void testNotBlocking() {
+        String logLine = " [Unloading class $Proxy225]";
+        Assert.assertFalse(JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     /**
      * Test preparsing.
      * 

@@ -72,7 +72,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1YoungPause extends G1Collector implements BlockingEvent, YoungCollection, CombinedData, TriggerData {
+public class G1YoungPauseEvent extends G1Collector
+        implements BlockingEvent, YoungCollection, CombinedData, TriggerData {
 
     /**
      * Regular expression standard format.
@@ -161,7 +162,7 @@ public class G1YoungPause extends G1Collector implements BlockingEvent, YoungCol
      * @param logEntry
      *            The log entry for the event.
      */
-    public G1YoungPause(String logEntry) {
+    public G1YoungPauseEvent(String logEntry) {
         this.logEntry = logEntry;
         if (logEntry.matches(REGEX)) {
             Pattern pattern = Pattern.compile(REGEX);
@@ -216,7 +217,7 @@ public class G1YoungPause extends G1Collector implements BlockingEvent, YoungCol
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */
-    public G1YoungPause(String logEntry, long timestamp, int duration) {
+    public G1YoungPauseEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;

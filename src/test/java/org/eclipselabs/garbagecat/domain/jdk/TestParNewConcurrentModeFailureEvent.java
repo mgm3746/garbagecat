@@ -178,6 +178,15 @@ public class TestParNewConcurrentModeFailureEvent extends TestCase {
                 ParNewConcurrentModeFailureEvent.match(logLine));
     }
 
+    public void testIsBlocking() {
+        String logLine = "26683.209: [GC 26683.210: [ParNew: 261760K->261760K(261952K), "
+                + "0.0000130 secs]26683.210: [CMS (concurrent mode failure): 1141548K->1078465K(1179648K), "
+                + "7.3835370 secs] 1403308K->1078465K(1441600K), 7.3838390 secs]";
+        Assert.assertTrue(
+                JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     /**
      * Test preprocessing <code>ParNewConcurrentModeFailureEvent</code> split over 3 lines.
      * 

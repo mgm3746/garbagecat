@@ -110,4 +110,13 @@ public class TestParNewPromotionFailedCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Old allocation size not parsed correctly.", 1281600, event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 3793, event.getDuration());
     }
+
+    public void testIsBlocking() {
+        String logLine = "1181.943: [GC 1181.943: [ParNew (promotion failed): "
+                + "145542K->142287K(149120K), 0.1316193 secs]1182.075: "
+                + "[CMS: 6656483K->548489K(8218240K), 9.1244297 secs] "
+                + "6797120K->548489K(8367360K), 9.2564476 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD.toString()
+                + " not indentified as blocking.", JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

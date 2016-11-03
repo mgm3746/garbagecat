@@ -119,4 +119,12 @@ public class TestParNewPromotionFailedConcurrentModeFailureEvent extends TestCas
                         + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
                 ParNewPromotionFailedConcurrentModeFailureEvent.match(logLine));
     }
+
+    public void testIsBlocking() {
+        String logLine = "25281.015: [GC 25281.015: [ParNew (promotion failed): 261760K->261760K(261952K), "
+                + "0.1785000 secs]25281.193: [CMS (concurrent mode failure): 1048384K->1015603K(1179648K), "
+                + "7.6767910 secs] 1292923K->1015603K(1441600K), 7.8557660 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString()
+                + " not indentified as blocking.", JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

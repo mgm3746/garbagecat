@@ -12,37 +12,42 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import java.util.regex.Pattern;
-
-import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * LOG_ROTATION
+ * GC_LOG_FILE
  * </p>
  * 
  * <p>
- * Log rotation.
+ * Logging that indicates where a gc log file is created.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * 2016-03-24 10:28:33 GC log file has reached the maximum size. Saved as /path/to/gc.log.0
+ * 2016-09-29 07:13:12 GC log file created /path/to/gc.log
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class LogRotation implements LogEvent {
+public class LogFileEvent implements ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} GC log file has reached the maximum "
-            + "size.+$";
-    private static Pattern pattern = Pattern.compile(LogRotation.REGEX);
+    private static final String[] REGEX = {
+            /*
+             * Log file created
+             */
+            "^" + JdkRegEx.DATETIME + " GC log file created.+$",
+            /*
+             * Log file rotation
+             */
+            "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} GC log file has reached the maximum " + "size.+$" };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -60,7 +65,7 @@ public class LogRotation implements LogEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public LogRotation(String logEntry) {
+    public LogFileEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
     }
@@ -70,7 +75,7 @@ public class LogRotation implements LogEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.LOG_ROTATION.toString();
+        return JdkUtil.LogEventType.LOG_FILE.toString();
     }
 
     public long getTimestamp() {
@@ -85,6 +90,13 @@ public class LogRotation implements LogEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        boolean isMatch = false;
+        for (int i = 0; i < REGEX.length; i++) {
+            if (logLine.matches(REGEX[i])) {
+                isMatch = true;
+                break;
+            }
+        }
+        return isMatch;
     }
 }

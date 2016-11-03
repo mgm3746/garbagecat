@@ -365,6 +365,15 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 262, event.getDuration());
     }
 
+    public void testIsBlocking() {
+        String logLine = "262372.344: [Full GC (JvmtiEnv ForceGarbageCollection) 262372.344: [CMS "
+                + "(concurrent mode interrupted): 49392K->48780K(1756416K), 0.2620228 secs] "
+                + "49392K->48780K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.2624794 secs] "
+                + "[Times: user=0.26 sys=0.00, real=0.27 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     /**
      * Test CMS_SERIAL_OLD heap inspection initiate gc trigger.
      * 

@@ -154,4 +154,10 @@ public class TestG1YoungInitialMarkEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 5120 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 52, event.getDuration());
     }
+
+    public void testIsBlocking() {
+        String logLine = "1244.357: [GC pause (young) (initial-mark) 847M->599M(970M), 0.0566840 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

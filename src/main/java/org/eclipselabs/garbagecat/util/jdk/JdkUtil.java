@@ -37,17 +37,16 @@ import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1CleanupEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1ConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
-import org.eclipselabs.garbagecat.domain.jdk.G1MixedPause;
+import org.eclipselabs.garbagecat.domain.jdk.G1MixedPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
-import org.eclipselabs.garbagecat.domain.jdk.G1YoungPause;
-import org.eclipselabs.garbagecat.domain.jdk.GcLogFileEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
-import org.eclipselabs.garbagecat.domain.jdk.LogRotation;
+import org.eclipselabs.garbagecat.domain.jdk.LogFileEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent;
@@ -100,11 +99,9 @@ public class JdkUtil {
         //
         G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
         //
-        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, PRINT_REFERENCE_GC, LOG_ROTATION,
+        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, PRINT_REFERENCE_GC, CLASS_HISTOGRAM, HEAP_AT_GC,
         //
-        CLASS_HISTOGRAM, HEAP_AT_GC, CLASS_UNLOADING, APPLICATION_LOGGING, THREAD_DUMP, BLANK_LINE, GC_OVERHEAD_LIMIT,
-        //
-        GC_LOG_FILE
+        CLASS_UNLOADING, APPLICATION_LOGGING, THREAD_DUMP, BLANK_LINE, GC_OVERHEAD_LIMIT, LOG_FILE
     };
 
     /**
@@ -199,9 +196,9 @@ public class JdkUtil {
             return LogEventType.VERBOSE_GC_OLD;
         if (ParNewPromotionFailedTruncatedEvent.match(logLine))
             return LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED;
-        if (G1YoungPause.match(logLine))
+        if (G1YoungPauseEvent.match(logLine))
             return LogEventType.G1_YOUNG_PAUSE;
-        if (G1MixedPause.match(logLine))
+        if (G1MixedPauseEvent.match(logLine))
             return LogEventType.G1_MIXED_PAUSE;
         if (G1ConcurrentEvent.match(logLine))
             return LogEventType.G1_CONCURRENT;
@@ -221,8 +218,6 @@ public class JdkUtil {
             return LogEventType.HEADER_VERSION;
         if (PrintReferenceGcEvent.match(logLine))
             return LogEventType.PRINT_REFERENCE_GC;
-        if (LogRotation.match(logLine))
-            return LogEventType.LOG_ROTATION;
         if (ClassUnloadingEvent.match(logLine))
             return LogEventType.CLASS_UNLOADING;
         if (HeapAtGcEvent.match(logLine))
@@ -233,8 +228,8 @@ public class JdkUtil {
             return LogEventType.APPLICATION_LOGGING;
         if (ThreadDumpEvent.match(logLine))
             return LogEventType.THREAD_DUMP;
-        if (GcLogFileEvent.match(logLine))
-            return LogEventType.GC_LOG_FILE;
+        if (LogFileEvent.match(logLine))
+            return LogEventType.LOG_FILE;
         if (BlankLineEvent.match(logLine))
             return LogEventType.BLANK_LINE;
         if (GcOverheadLimitEvent.match(logLine))
@@ -328,10 +323,10 @@ public class JdkUtil {
             event = new ParNewPromotionFailedTruncatedEvent(logLine);
             break;
         case G1_YOUNG_PAUSE:
-            event = new G1YoungPause(logLine);
+            event = new G1YoungPauseEvent(logLine);
             break;
         case G1_MIXED_PAUSE:
-            event = new G1MixedPause(logLine);
+            event = new G1MixedPauseEvent(logLine);
             break;
         case G1_CONCURRENT:
             event = new G1ConcurrentEvent(logLine);
@@ -360,9 +355,6 @@ public class JdkUtil {
         case PRINT_REFERENCE_GC:
             event = new PrintReferenceGcEvent(logLine);
             break;
-        case LOG_ROTATION:
-            event = new LogRotation(logLine);
-            break;
         case CLASS_UNLOADING:
             event = new ClassUnloadingEvent(logLine);
             break;
@@ -378,8 +370,8 @@ public class JdkUtil {
         case THREAD_DUMP:
             event = new ThreadDumpEvent(logLine);
             break;
-        case GC_LOG_FILE:
-            event = new GcLogFileEvent(logLine);
+        case LOG_FILE:
+            event = new LogFileEvent(logLine);
             break;
         case BLANK_LINE:
             event = new BlankLineEvent(logLine);
@@ -477,10 +469,10 @@ public class JdkUtil {
             event = new ParNewPromotionFailedTruncatedEvent(logEntry, timestamp, duration);
             break;
         case G1_YOUNG_PAUSE:
-            event = new G1YoungPause(logEntry, timestamp, duration);
+            event = new G1YoungPauseEvent(logEntry, timestamp, duration);
             break;
         case G1_MIXED_PAUSE:
-            event = new G1MixedPause(logEntry, timestamp, duration);
+            event = new G1MixedPauseEvent(logEntry, timestamp, duration);
             break;
         case G1_YOUNG_INITIAL_MARK:
             event = new G1YoungInitialMarkEvent(logEntry, timestamp, duration);
@@ -506,12 +498,31 @@ public class JdkUtil {
      * @return true if the log event is blocking, false if it is concurrent or informational.
      */
     public static final boolean isBlocking(LogEventType eventType) {
-        return !(eventType == JdkUtil.LogEventType.CMS_CONCURRENT || eventType == JdkUtil.LogEventType.G1_CONCURRENT
-                || eventType == JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME
-                || eventType == JdkUtil.LogEventType.APPLICATION_STOPPED_TIME
-                || eventType == JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS
-                || eventType == JdkUtil.LogEventType.HEADER_MEMORY || eventType == JdkUtil.LogEventType.HEADER_VERSION
-                || eventType == JdkUtil.LogEventType.LOG_ROTATION || eventType == JdkUtil.LogEventType.UNKNOWN);
+
+        boolean isBlocking = true;
+
+        switch (eventType) {
+        case APPLICATION_CONCURRENT_TIME:
+        case APPLICATION_STOPPED_TIME:
+        case CLASS_HISTOGRAM:
+        case CLASS_UNLOADING:
+        case CMS_CONCURRENT:
+        case GC_OVERHEAD_LIMIT:
+        case G1_CONCURRENT:
+        case HEADER_COMMAND_LINE_FLAGS:
+        case HEADER_MEMORY:
+        case HEADER_VERSION:
+        case HEAP_AT_GC:
+        case LOG_FILE:
+        case PRINT_REFERENCE_GC:
+        case THREAD_DUMP:
+        case UNKNOWN:
+            isBlocking = false;
+        default:
+            break;
+        }
+
+        return isBlocking;
     }
 
     public static final LogEventType determineEventType(String eventTypeString) {
@@ -756,7 +767,7 @@ public class JdkUtil {
         case HEADER_COMMAND_LINE_FLAGS:
         case HEADER_MEMORY:
         case HEADER_VERSION:
-        case LOG_ROTATION:
+        case LOG_FILE:
         case UNKNOWN:
             reportable = false;
             break;

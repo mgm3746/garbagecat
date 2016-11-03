@@ -106,4 +106,10 @@ public class TestG1ConcurrentEvent extends TestCase {
         G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 8556, event.getTimestamp());
     }
+
+    public void testNotBlocking() {
+        String logLine = "50.101: [GC concurrent-root-region-scan-start]";
+        Assert.assertFalse(JdkUtil.LogEventType.G1_CONCURRENT.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

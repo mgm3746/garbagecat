@@ -219,4 +219,10 @@ public class TestThreadDumpEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".",
                 ThreadDumpEvent.match(logLine));
     }
+
+    public void testNotBlocking() {
+        String logLine = "Full thread dump Java HotSpot(TM) Server VM (11.0-b16 mixed mode):";
+        Assert.assertFalse(JdkUtil.LogEventType.THREAD_DUMP.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

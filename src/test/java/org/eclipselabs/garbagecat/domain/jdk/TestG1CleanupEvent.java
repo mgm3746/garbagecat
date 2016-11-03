@@ -52,4 +52,10 @@ public class TestG1CleanupEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 31457280, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 35, event.getDuration());
     }
+
+    public void testIsBlocking() {
+        String logLine = "2972.698: [GC cleanup 13G->12G(30G), 0.0358748 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.G1_CLEANUP.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

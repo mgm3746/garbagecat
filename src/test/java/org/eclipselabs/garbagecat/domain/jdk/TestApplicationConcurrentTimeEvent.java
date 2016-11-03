@@ -36,4 +36,11 @@ public class TestApplicationConcurrentTimeEvent extends TestCase {
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
                 ApplicationConcurrentTimeEvent.match(logLine));
     }
+
+    public void testNotBlocking() {
+        String logLine = "Application time: 130.5284640 seconds   ";
+        Assert.assertFalse(
+                JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

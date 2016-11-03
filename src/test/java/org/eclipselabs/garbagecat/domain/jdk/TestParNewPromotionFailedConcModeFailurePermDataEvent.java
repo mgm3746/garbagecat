@@ -233,4 +233,13 @@ public class TestParNewPromotionFailedConcModeFailurePermDataEvent extends TestC
                 + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
                 ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine));
     }
+
+    public void testIsBlocking() {
+        String logLine = "2746.109: [GC 2746.109: [ParNew (promotion failed): 242303K->242304K(242304K), "
+                + "1.3009892 secs]2747.410: [CMS2755.518: [CMS-concurrent-mark: 11.734/13.504 secs] "
+                + "(concurrent mode failure): 5979868K->5968004K(6014592K), 78.3207206 secs] "
+                + "6205857K->5968004K(6256896K), [CMS Perm : 207397K->207212K(262144K)], 79.6222096 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString()
+                + " not indentified as blocking.", JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

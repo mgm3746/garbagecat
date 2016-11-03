@@ -94,8 +94,11 @@ public class TestSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 44750, event.getDuration());
     }
 
-    public void testMgm() {
-        String logLine = "3727.365: [DefNew: 400314K->400314K(400384K), 0.0000550 secs]";
-        Assert.assertTrue("Error.", logLine.matches(SerialOldEvent.SERIAL_NEW_BLOCK));
+    public void testIsBlocking() {
+        String logLine = "187.159: [Full GC 187.160: "
+                + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
+                + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.SERIAL_OLD.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 }

@@ -44,4 +44,17 @@ public class TestHeaderCommandLineFlagsEvent extends TestCase {
                 + "-XX:+UseParNewGC";
         Assert.assertEquals("Flags not parsed correctly.", jvmOptions, event.getJvmOptions());
     }
+
+    public void testNotBlocking() {
+        String logLine = "CommandLine flags: -XX:+CMSClassUnloadingEnabled -XX:CMSInitiatingOccupancyFraction=75 "
+                + "-XX:+CMSScavengeBeforeRemark -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "
+                + "-XX:GCLogFileSize=8388608 -XX:InitialHeapSize=13958643712 -XX:MaxHeapSize=13958643712 "
+                + "-XX:MaxPermSize=402653184 -XX:MaxTenuringThreshold=6 -XX:NewRatio=2 -XX:NumberOfGCLogFiles=8 "
+                + "-XX:OldPLABSize=16 -XX:PermSize=402653184 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails "
+                + "-XX:+PrintGCTimeStamps -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseGCLogFileRotation "
+                + "-XX:+UseParNewGC";
+        Assert.assertFalse(
+                JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

@@ -36,4 +36,11 @@ public class TestHeaderVersionEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEADER_VERSION.toString() + ".",
                 HeaderVersionEvent.match(logLine));
     }
+
+    public void testNotBlocking() {
+        String logLine = "Java HotSpot(TM) 64-Bit Server VM (24.85-b08) for linux-amd64 JRE (1.7.0_85-b34), built on "
+                + "Sep 29 2015 08:44:21 by \"java_re\" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)";
+        Assert.assertFalse(JdkUtil.LogEventType.HEADER_VERSION.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

@@ -41,4 +41,10 @@ public class TestVerboseGcOldEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".",
                 VerboseGcOldEvent.match(logLine));
     }
+
+    public void testIsBlocking() {
+        String logLine = "2143132.151: [Full GC 1606823K->1409859K(2976064K), 12.0855599 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

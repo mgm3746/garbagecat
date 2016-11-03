@@ -118,4 +118,12 @@ public class TestParallelOldCompactingEvent extends TestCase {
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 4194304, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 1970, event.getDuration());
     }
+
+    public void testIsBlocking() {
+        String logLine = "2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] "
+                + "[ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) "
+                + "[PSPermGen: 81960K->81783K(164352K)], 2.4749181 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

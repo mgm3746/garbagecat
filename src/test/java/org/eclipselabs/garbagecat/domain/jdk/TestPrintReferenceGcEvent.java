@@ -45,4 +45,14 @@ public class TestPrintReferenceGcEvent extends TestCase {
         PrintReferenceGcEvent event = new PrintReferenceGcEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 6698, event.getTimestamp());
     }
+
+    public void testNotBlocking() {
+        String logLine = "0.341: [GC (Allocation Failure) 0.344: [SoftReference, 0 refs, 0.0000327 secs]0.344: "
+                + "[WeakReference, 19 refs, 0.0000049 secs]0.344: [FinalReference, 296 refs, 0.0002385 secs]0.344: "
+                + "[PhantomReference, 0 refs, 0 refs, 0.0000033 secs]0.344: [JNI Weak Reference, 0.0000041 secs]"
+                + "[PSYoungGen: 63488K->3151K(73728K)] 63488K->3159K(241664K), 0.0032820 secs] "
+                + "[Times: user=0.02 sys=0.00, real=0.00 secs]";
+        Assert.assertFalse(JdkUtil.LogEventType.PRINT_REFERENCE_GC.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

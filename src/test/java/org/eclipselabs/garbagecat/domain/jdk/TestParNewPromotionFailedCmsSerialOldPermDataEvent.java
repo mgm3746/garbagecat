@@ -158,4 +158,13 @@ public class TestParNewPromotionFailedCmsSerialOldPermDataEvent extends TestCase
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1048576, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 107655, event.getDuration());
     }
+
+    public void testIsBlocking() {
+        String logLine = "395950.370: [GC 395950.370: [ParNew (promotion failed): "
+                + "53094K->53606K(59008K), 0.0510880 secs]395950.421: "
+                + "[CMS: 664527K->317110K(1507328K), 2.9523520 secs] 697709K->317110K(1566336K), "
+                + "[CMS Perm : 83780K->83711K(131072K)], 3.0039040 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA.toString()
+                + " not indentified as blocking.", JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

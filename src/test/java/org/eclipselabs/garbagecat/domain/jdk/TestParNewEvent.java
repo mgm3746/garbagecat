@@ -161,6 +161,13 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 39, event.getDuration());
     }
 
+    public void testIsBlocking() {
+        String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
+                + "89399K->11655K(907328K), 0.0387074 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     /**
      * Test preprocessing a split <code>ParNewCmsConcurrentEvent</code> that does not include the
      * "concurrent mode failure" text.

@@ -34,4 +34,10 @@ public class TestGcOverheadLimitEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + ".",
                 GcOverheadLimitEvent.match(logLine));
     }
+
+    public void testNotBlocking() {
+        String logLine = "GC time would exceed GCTimeLimit of 98%";
+        Assert.assertFalse(JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

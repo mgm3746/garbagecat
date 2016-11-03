@@ -218,4 +218,10 @@ public class TestHeapAtGcEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".",
                 HeapAtGcEvent.match(logLine));
     }
+
+    public void testNotBlocking() {
+        String logLine = "{Heap before gc invocations=1:";
+        Assert.assertFalse(JdkUtil.LogEventType.HEAP_AT_GC.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

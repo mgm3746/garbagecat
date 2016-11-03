@@ -150,4 +150,11 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old allocation size not parsed correctly.", 6287872 - 1569280, event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 221, event.getDuration());
     }
+
+    public void testIsBlocking() {
+        String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
+                + "160183K->133159K(585088K), 0.0225213 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

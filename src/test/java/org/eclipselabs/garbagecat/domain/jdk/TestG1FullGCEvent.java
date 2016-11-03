@@ -157,4 +157,10 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 2097152, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 19818, event.getDuration());
     }
+
+    public void testIsBlocking() {
+        String logLine = "1302.524: [Full GC (System.gc()) 653M->586M(979M), 1.6364900 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.G1_FULL_GC.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

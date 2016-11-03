@@ -26,18 +26,32 @@ import junit.framework.TestCase;
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
-public class TestGcLogFileEvent extends TestCase {
+public class TestLogFileEvent extends TestCase {
 
-    public void testLogLine() {
+    public void testLogLineCreated() {
         String logLine = "2016-10-18 01:50:54 GC log file created /path/to/gc.log";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_LOG_FILE.toString() + ".",
-                GcLogFileEvent.match(logLine));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.LOG_FILE.toString() + ".",
+                LogFileEvent.match(logLine));
+    }
+
+    public void testLogLineRotations() {
+        String logLine = "2016-03-24 10:28:33 GC log file has reached the maximum size. "
+                + "Saved as /path/to/gc.log.0";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.LOG_FILE.toString() + ".",
+                LogFileEvent.match(logLine));
+    }
+
+    public void testNotBlocking() {
+        String logLine = "2016-03-24 10:28:33 GC log file has reached the maximum size. "
+                + "Saved as /path/to/gc.log.0";
+        Assert.assertFalse(JdkUtil.LogEventType.LOG_FILE.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
     /**
-     * Test log file parsing throws event away.
+     * Test preparsing throws event away.
      */
-    public void testLogFile() {
+    public void testPreparsing() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset88.txt");
         GcManager jvmManager = new GcManager();

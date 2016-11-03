@@ -55,4 +55,10 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Combined allocation size not parsed correctly.", 1851392, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 70, event.getDuration());
     }
+
+    public void testIsBlocking() {
+        String logLine = "2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

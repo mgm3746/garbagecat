@@ -60,4 +60,11 @@ public class TestCmsInitialMarkEvent extends TestCase {
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK));
         Assert.assertEquals("Duration not parsed correctly.", 15, event.getDuration());
     }
+
+    public void testIsBlocking() {
+        String logLine = "8.722: [GC (CMS Initial Mark) [1 CMS-initial-mark: 0K(989632K)] 187663K(1986432K), "
+                + "0.0157899 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 }

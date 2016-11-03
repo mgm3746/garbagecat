@@ -71,7 +71,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1MixedPause extends G1Collector implements BlockingEvent, CombinedData, TriggerData {
+public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, CombinedData, TriggerData {
 
     /**
      * Regular expression standard format.
@@ -131,7 +131,7 @@ public class G1MixedPause extends G1Collector implements BlockingEvent, Combined
      * @param logEntry
      *            The log entry for the event.
      */
-    public G1MixedPause(String logEntry) {
+    public G1MixedPauseEvent(String logEntry) {
         this.logEntry = logEntry;
         if (logEntry.matches(REGEX)) {
             // standard format
@@ -171,7 +171,7 @@ public class G1MixedPause extends G1Collector implements BlockingEvent, Combined
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */
-    public G1MixedPause(String logEntry, long timestamp, int duration) {
+    public G1MixedPauseEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
