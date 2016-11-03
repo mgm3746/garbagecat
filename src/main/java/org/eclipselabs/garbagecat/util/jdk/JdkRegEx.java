@@ -216,6 +216,11 @@ public class JdkRegEx {
     public static final String TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION = "JvmtiEnv ForceGarbageCollection";
 
     /**
+     * Ergonomics trigger
+     */
+    public static final String TRIGGER_ERGONOMICS = "Ergonomics";
+
+    /**
      * <p>
      * CMS concurrent mode failure trigger.
      * </p>
