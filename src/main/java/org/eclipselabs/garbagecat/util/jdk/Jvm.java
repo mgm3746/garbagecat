@@ -747,6 +747,20 @@ public class Jvm {
     }
 
     /**
+     * The option for outputting statistics for the CMS FreeListSpace.
+     * 
+     * <pre>
+     * -XX:PrintFLSStatistics=1
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintFLStatistics() {
+        String regex = "(-XX:PrintFLSStatistics=(\\d))";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

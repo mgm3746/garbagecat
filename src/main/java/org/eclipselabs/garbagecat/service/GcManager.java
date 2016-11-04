@@ -39,6 +39,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
@@ -243,6 +244,11 @@ public class GcManager {
             if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM)) {
                 if (ClassHistogramEvent.match(currentLogLine)) {
                     jvmDao.getAnalysisKeys().add(Analysis.KEY_PRINT_CLASS_HISTOGRAM);
+                }
+            }
+            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_FLS_STATISTICS)) {
+                if (FlsStatisticsEvent.match(currentLogLine)) {
+                    jvmDao.getAnalysisKeys().add(Analysis.KEY_PRINT_FLS_STATISTICS);
                 }
             }
             currentLogLine = null;

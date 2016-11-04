@@ -326,6 +326,11 @@ public class Analysis {
     public static final String KEY_COMPRESSED_CLASS_SPACE_NOT_SET = "compressed.class.space.size.not.set";
 
     /**
+     * Property key for CMS Free List Space statistics being output.
+     */
+    public static final String KEY_PRINT_FLS_STATISTICS = "print.fls.statistics";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

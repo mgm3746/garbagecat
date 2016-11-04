@@ -34,6 +34,7 @@ import org.eclipselabs.garbagecat.domain.jdk.CmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkWithClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1CleanupEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1ConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
@@ -60,7 +61,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedTruncatedEvent
 import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
-import org.eclipselabs.garbagecat.domain.jdk.PrintReferenceGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent;
@@ -99,9 +100,9 @@ public class JdkUtil {
         //
         G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
         //
-        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, PRINT_REFERENCE_GC, CLASS_HISTOGRAM, HEAP_AT_GC,
+        HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, REFERENCE_GC, CLASS_HISTOGRAM, HEAP_AT_GC,
         //
-        CLASS_UNLOADING, APPLICATION_LOGGING, THREAD_DUMP, BLANK_LINE, GC_OVERHEAD_LIMIT, LOG_FILE
+        CLASS_UNLOADING, APPLICATION_LOGGING, THREAD_DUMP, BLANK_LINE, GC_OVERHEAD_LIMIT, LOG_FILE, FLS_STATISTICS
     };
 
     /**
@@ -218,8 +219,8 @@ public class JdkUtil {
             return LogEventType.HEADER_MEMORY;
         if (HeaderVersionEvent.match(logLine))
             return LogEventType.HEADER_VERSION;
-        if (PrintReferenceGcEvent.match(logLine))
-            return LogEventType.PRINT_REFERENCE_GC;
+        if (ReferenceGcEvent.match(logLine))
+            return LogEventType.REFERENCE_GC;
         if (ClassUnloadingEvent.match(logLine))
             return LogEventType.CLASS_UNLOADING;
         if (HeapAtGcEvent.match(logLine))
@@ -236,6 +237,8 @@ public class JdkUtil {
             return LogEventType.BLANK_LINE;
         if (GcOverheadLimitEvent.match(logLine))
             return LogEventType.GC_OVERHEAD_LIMIT;
+        if (FlsStatisticsEvent.match(logLine))
+            return LogEventType.FLS_STATISTICS;
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -252,23 +255,26 @@ public class JdkUtil {
         LogEventType eventType = identifyEventType(logLine);
         LogEvent event = null;
         switch (eventType) {
-        case PARALLEL_SCAVENGE:
-            event = new ParallelScavengeEvent(logLine);
+        case APPLICATION_CONCURRENT_TIME:
+            event = new ApplicationConcurrentTimeEvent();
             break;
-        case PAR_NEW:
-            event = new ParNewEvent(logLine);
+        case APPLICATION_LOGGING:
+            event = new ApplicationLoggingEvent(logLine);
             break;
-        case PARALLEL_SERIAL_OLD:
-            event = new ParallelSerialOldEvent(logLine);
+        case APPLICATION_STOPPED_TIME:
+            event = new ApplicationStoppedTimeEvent(logLine);
             break;
-        case PARALLEL_OLD_COMPACTING:
-            event = new ParallelOldCompactingEvent(logLine);
+        case BLANK_LINE:
+            event = new BlankLineEvent(logLine);
             break;
-        case SERIAL_OLD:
-            event = new SerialOldEvent(logLine);
+        case CLASS_HISTOGRAM:
+            event = new ClassHistogramEvent(logLine);
             break;
-        case CMS_SERIAL_OLD:
-            event = new CmsSerialOldEvent(logLine);
+        case CLASS_UNLOADING:
+            event = new ClassUnloadingEvent(logLine);
+            break;
+        case CMS_CONCURRENT:
+            event = new CmsConcurrentEvent();
             break;
         case CMS_INITIAL_MARK:
             event = new CmsInitialMarkEvent(logLine);
@@ -279,71 +285,32 @@ public class JdkUtil {
         case CMS_REMARK_WITH_CLASS_UNLOADING:
             event = new CmsRemarkWithClassUnloadingEvent(logLine);
             break;
-        case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD:
-            event = new ParNewPromotionFailedCmsSerialOldEvent(logLine);
+        case CMS_SERIAL_OLD:
+            event = new CmsSerialOldEvent(logLine);
             break;
-        case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA:
-            event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(logLine);
-            break;
-        case PAR_NEW_PROMOTION_FAILED:
-            event = new ParNewPromotionFailedEvent(logLine);
-            break;
-        case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE:
-            event = new ParNewPromotionFailedConcurrentModeFailureEvent(logLine);
-            break;
-        case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA:
-            event = new ParNewPromotionFailedConcModeFailurePermDataEvent(logLine);
-            break;
-        case PAR_NEW_CONCURRENT_MODE_FAILURE:
-            event = new ParNewConcurrentModeFailureEvent(logLine);
-            break;
-        case PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA:
-            event = new ParNewConcurrentModeFailurePermDataEvent(logLine);
-            break;
-        case PAR_NEW_CMS_SERIAL_OLD:
-            event = new ParNewCmsSerialOldEvent(logLine);
-            break;
-        case SERIAL_NEW:
-            event = new SerialNewEvent(logLine);
-            break;
-        case CMS_CONCURRENT:
-            event = new CmsConcurrentEvent();
-            break;
-        case APPLICATION_CONCURRENT_TIME:
-            event = new ApplicationConcurrentTimeEvent();
-            break;
-        case APPLICATION_STOPPED_TIME:
-            event = new ApplicationStoppedTimeEvent(logLine);
-            break;
-        case VERBOSE_GC_YOUNG:
-            event = new VerboseGcYoungEvent(logLine);
-            break;
-        case VERBOSE_GC_OLD:
-            event = new VerboseGcOldEvent(logLine);
-            break;
-        case PAR_NEW_PROMOTION_FAILED_TRUNCATED:
-            event = new ParNewPromotionFailedTruncatedEvent(logLine);
-            break;
-        case G1_YOUNG_PAUSE:
-            event = new G1YoungPauseEvent(logLine);
-            break;
-        case G1_MIXED_PAUSE:
-            event = new G1MixedPauseEvent(logLine);
-            break;
-        case G1_CONCURRENT:
-            event = new G1ConcurrentEvent(logLine);
-            break;
-        case G1_YOUNG_INITIAL_MARK:
-            event = new G1YoungInitialMarkEvent(logLine);
-            break;
-        case G1_REMARK:
-            event = new G1RemarkEvent(logLine);
+        case FLS_STATISTICS:
+            event = new FlsStatisticsEvent(logLine);
             break;
         case G1_CLEANUP:
             event = new G1CleanupEvent(logLine);
             break;
+        case G1_CONCURRENT:
+            event = new G1ConcurrentEvent(logLine);
+            break;
         case G1_FULL_GC:
             event = new G1FullGCEvent(logLine);
+            break;
+        case G1_MIXED_PAUSE:
+            event = new G1MixedPauseEvent(logLine);
+            break;
+        case G1_REMARK:
+            event = new G1RemarkEvent(logLine);
+            break;
+        case G1_YOUNG_INITIAL_MARK:
+            event = new G1YoungInitialMarkEvent(logLine);
+            break;
+        case G1_YOUNG_PAUSE:
+            event = new G1YoungPauseEvent(logLine);
             break;
         case HEADER_COMMAND_LINE_FLAGS:
             event = new HeaderCommandLineFlagsEvent(logLine);
@@ -354,35 +321,74 @@ public class JdkUtil {
         case HEADER_VERSION:
             event = new HeaderVersionEvent(logLine);
             break;
-        case PRINT_REFERENCE_GC:
-            event = new PrintReferenceGcEvent(logLine);
-            break;
-        case CLASS_UNLOADING:
-            event = new ClassUnloadingEvent(logLine);
-            break;
         case HEAP_AT_GC:
             event = new HeapAtGcEvent(logLine);
-            break;
-        case CLASS_HISTOGRAM:
-            event = new ClassHistogramEvent(logLine);
-            break;
-        case APPLICATION_LOGGING:
-            event = new ApplicationLoggingEvent(logLine);
-            break;
-        case THREAD_DUMP:
-            event = new ThreadDumpEvent(logLine);
-            break;
-        case LOG_FILE:
-            event = new LogFileEvent(logLine);
-            break;
-        case BLANK_LINE:
-            event = new BlankLineEvent(logLine);
             break;
         case GC_OVERHEAD_LIMIT:
             event = new GcOverheadLimitEvent(logLine);
             break;
+        case LOG_FILE:
+            event = new LogFileEvent(logLine);
+            break;
+        case PARALLEL_OLD_COMPACTING:
+            event = new ParallelOldCompactingEvent(logLine);
+            break;
+        case PARALLEL_SCAVENGE:
+            event = new ParallelScavengeEvent(logLine);
+            break;
+        case PARALLEL_SERIAL_OLD:
+            event = new ParallelSerialOldEvent(logLine);
+            break;
+        case PAR_NEW:
+            event = new ParNewEvent(logLine);
+            break;
+        case PAR_NEW_CMS_SERIAL_OLD:
+            event = new ParNewCmsSerialOldEvent(logLine);
+            break;
+        case PAR_NEW_CONCURRENT_MODE_FAILURE:
+            event = new ParNewConcurrentModeFailureEvent(logLine);
+            break;
+        case PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA:
+            event = new ParNewConcurrentModeFailurePermDataEvent(logLine);
+            break;
+        case PAR_NEW_PROMOTION_FAILED:
+            event = new ParNewPromotionFailedEvent(logLine);
+            break;
+        case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE:
+            event = new ParNewPromotionFailedConcurrentModeFailureEvent(logLine);
+            break;
+        case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA:
+            event = new ParNewPromotionFailedConcModeFailurePermDataEvent(logLine);
+            break;
+        case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD:
+            event = new ParNewPromotionFailedCmsSerialOldEvent(logLine);
+            break;
+        case PAR_NEW_PROMOTION_FAILED_TRUNCATED:
+            event = new ParNewPromotionFailedTruncatedEvent(logLine);
+            break;
+        case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA:
+            event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(logLine);
+            break;
+        case REFERENCE_GC:
+            event = new ReferenceGcEvent(logLine);
+            break;
+        case SERIAL_NEW:
+            event = new SerialNewEvent(logLine);
+            break;
+        case SERIAL_OLD:
+            event = new SerialOldEvent(logLine);
+            break;
+        case THREAD_DUMP:
+            event = new ThreadDumpEvent(logLine);
+            break;
         case UNKNOWN:
             event = new UnknownEvent(logLine);
+            break;
+        case VERBOSE_GC_OLD:
+            event = new VerboseGcOldEvent(logLine);
+            break;
+        case VERBOSE_GC_YOUNG:
+            event = new VerboseGcYoungEvent(logLine);
             break;
         default:
             throw new AssertionError("Unexpected event type value: " + eventType);
@@ -509,6 +515,7 @@ public class JdkUtil {
         case CLASS_HISTOGRAM:
         case CLASS_UNLOADING:
         case CMS_CONCURRENT:
+        case FLS_STATISTICS:
         case GC_OVERHEAD_LIMIT:
         case G1_CONCURRENT:
         case HEADER_COMMAND_LINE_FLAGS:
@@ -516,7 +523,7 @@ public class JdkUtil {
         case HEADER_VERSION:
         case HEAP_AT_GC:
         case LOG_FILE:
-        case PRINT_REFERENCE_GC:
+        case REFERENCE_GC:
         case THREAD_DUMP:
         case UNKNOWN:
             isBlocking = false;
@@ -766,6 +773,7 @@ public class JdkUtil {
         switch (eventType) {
         case APPLICATION_STOPPED_TIME:
         case CLASS_HISTOGRAM:
+        case FLS_STATISTICS:
         case HEADER_COMMAND_LINE_FLAGS:
         case HEADER_MEMORY:
         case HEADER_VERSION:

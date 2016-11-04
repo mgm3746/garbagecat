@@ -28,6 +28,84 @@ import junit.framework.TestCase;
  */
 public class TestAnalysis extends TestCase {
 
+    /**
+     * Test if biased locking disabled with -XX:-UseBiasedLocking.
+     */
+    public void testBisasedLockingDisabled() {
+        String jvmOptions = "Xss128k -XX:-UseBiasedLocking -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_BIASED_LOCKING_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_BIASED_LOCKING_DISABLED));
+    }
+
+    /**
+     * Test if biased locking disabled with -XX:-UseBiasedLocking.
+     */
+    public void testPrintClassHistogramEnabled() {
+        String jvmOptions = "Xss128k -XX:+PrintClassHistogram -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_PRINT_CLASS_HISTOGRAM + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM));
+    }
+
+    /**
+     * Test if biased locking disabled with -XX:-UseBiasedLocking.
+     */
+    public void testPrintApplicationConcurrentTime() {
+        String jvmOptions = "Xss128k -XX:+PrintGCApplicationConcurrentTime -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME));
+    }
+
+    /**
+     * Test for -XX:+TraceClassUnloading.
+     */
+    public void testTraceClassUnloading() {
+        String jvmOptions = "Xss128k -XX:+TraceClassUnloading -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_TRACE_CLASS_UNLOADING + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_TRACE_CLASS_UNLOADING));
+    }
+
+    /**
+     * Test for -XX:CompressedClassSpaceSize.
+     */
+    public void testCompressedClassSpaceSize() {
+        String jvmOptions = "Xss128k -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_COMPRESSED_CLASS_SPACE_NOT_SET + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_COMPRESSED_CLASS_SPACE_NOT_SET));
+    }
+
+    /**
+     * Test for -XX:CompressedClassSpaceSize.
+     */
+    public void testPrintFlsStatistics() {
+        String jvmOptions = "Xss128k -XX:PrintFLSStatistics=1 -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_PRINT_FLS_STATISTICS + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_FLS_STATISTICS));
+    }
+
     public void testHeaderLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset42.txt");
@@ -102,70 +180,5 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET));
-    }
-
-    /**
-     * Test if biased locking disabled with -XX:-UseBiasedLocking.
-     */
-    public void testBisasedLockingDisabled() {
-        String jvmOptions = "Xss128k -XX:-UseBiasedLocking -Xms2048M";
-        GcManager jvmManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_BIASED_LOCKING_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_BIASED_LOCKING_DISABLED));
-    }
-
-    /**
-     * Test if biased locking disabled with -XX:-UseBiasedLocking.
-     */
-    public void testPrintClassHistogramEnabled() {
-        String jvmOptions = "Xss128k -XX:+PrintClassHistogram -Xms2048M";
-        GcManager jvmManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_PRINT_CLASS_HISTOGRAM + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM));
-    }
-
-    /**
-     * Test if biased locking disabled with -XX:-UseBiasedLocking.
-     */
-    public void testPrintApplicationConcurrentTime() {
-        String jvmOptions = "Xss128k -XX:+PrintGCApplicationConcurrentTime -Xms2048M";
-        GcManager jvmManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME));
-    }
-
-    /**
-     * Test for -XX:+TraceClassUnloading.
-     */
-    public void testTraceClassUnloading() {
-        String jvmOptions = "Xss128k -XX:+TraceClassUnloading -Xms2048M";
-        GcManager jvmManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_TRACE_CLASS_UNLOADING + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_TRACE_CLASS_UNLOADING));
-    }
-
-    /**
-     * Test for -XX:CompressedClassSpaceSize.
-     */
-    public void testCompressedClassSpaceSize() {
-        String jvmOptions = "Xss128k -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -Xms2048M";
-        GcManager jvmManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_COMPRESSED_CLASS_SPACE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_COMPRESSED_CLASS_SPACE_NOT_SET));
     }
 }

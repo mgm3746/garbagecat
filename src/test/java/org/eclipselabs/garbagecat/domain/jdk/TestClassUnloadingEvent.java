@@ -43,7 +43,7 @@ public class TestClassUnloadingEvent extends TestCase {
                 ClassUnloadingEvent.match(logLine));
     }
 
-    public void testLogLinWithBeginningSpace() {
+    public void testLogLineWithBeginningSpace() {
         String logLine = " [Unloading class $Proxy225]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".",
                 ClassUnloadingEvent.match(logLine));

@@ -186,6 +186,14 @@ public class CmsPreprocessAction implements PreprocessAction {
             + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
 
     /**
+     * Regular expression for retained beginning PAR_NEW mixed with FLS_STATISTICS.
+     * 
+     * 1.118: [GC Before GC:
+     */
+    private static final String REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS = "^(" + JdkRegEx.TIMESTAMP
+            + ": \\[GC )(Before GC:)$";
+
+    /**
      * Regular expression for beginning CMS_SERIAL_OLD collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_SERIAL = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC "
@@ -283,6 +291,15 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.DURATION_FRACTION + "\\])[ ]*$";
 
     /**
+     * Middle line PAR_NEW with FLS_STATISTICS
+     * 
+     * 1.118: [ParNew: 377487K->8426K(5505024K), 0.0535260 secs] 377487K->8426K(43253760K)After GC:
+     */
+    private static final String REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS = "^(" + JdkRegEx.TIMESTAMP + ": \\[ParNew: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))(After GC:)$";
+
+    /**
      * Middle line with PrintHeapAtGC.
      */
     private static final String REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC = "^((" + JdkRegEx.TIMESTAMP + ": \\[CMS)?( \\("
@@ -332,7 +349,8 @@ public class CmsPreprocessAction implements PreprocessAction {
      * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
      * multiple lines. Check the TOKEN to see if in the middle of preprocessing an event that spans multiple lines.
      */
-    private static final String REGEX_RETAIN_DURATION = "(, " + JdkRegEx.DURATION + "\\])[ ]*";
+    private static final String REGEX_RETAIN_DURATION = "(, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
+            + "?)[ ]*";
 
     /**
      * Regular expression for PAR_NEW with extraneous prefix.
@@ -381,6 +399,16 @@ public class CmsPreprocessAction implements PreprocessAction {
             }
             // Output beginning of PAR_NEW line
             this.logEntry = matcher.group(1);
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS)) {
+            // Par_NEW mixed with FLS_STATISTICS
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                // Output beginning of PAR_NEW line
+                this.logEntry = matcher.group(1);
+            }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)) {
@@ -475,6 +503,14 @@ public class CmsPreprocessAction implements PreprocessAction {
                 entangledLogLines.add(matcher.group(9));
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS)) {
+            // Output ParNew par
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC)) {
             // Remove PrintHeapAtGC output
             Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC);
@@ -551,6 +587,7 @@ public class CmsPreprocessAction implements PreprocessAction {
      */
     public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
         return (logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT) && nextLogLine.matches(REGEX_RETAIN_END))
+                || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED)
@@ -562,6 +599,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                 || logLine.matches(REGEX_RETAIN_MIDDLE_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC) || logLine.matches(REGEX_RETAIN_END)
                 || logLine.matches(REGEX_RETAIN_DURATION) || logLine.matches(REGEX_RETAIN_PAR_NEW);
     }
@@ -598,6 +636,7 @@ public class CmsPreprocessAction implements PreprocessAction {
      */
     private boolean newLoggingEvent(String logLine) {
         return (logLine == null || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT))
+                || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL) || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW)

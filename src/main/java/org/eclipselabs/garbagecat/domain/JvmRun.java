@@ -488,7 +488,7 @@ public class JvmRun {
 
         // 8) Check for -XX:+PrintReferenceGC by event type
         if (!analysisKeys.contains(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED)) {
-            if (getEventTypes().contains(LogEventType.PRINT_REFERENCE_GC)) {
+            if (getEventTypes().contains(LogEventType.REFERENCE_GC)) {
                 analysisKeys.add(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED);
             }
         }
@@ -701,6 +701,11 @@ public class JvmRun {
         // Check for CompressedClassPointers enabled without setting CompressedClassSpaceSize
         if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSize() == null) {
             analysisKeys.add(Analysis.KEY_COMPRESSED_CLASS_SPACE_NOT_SET);
+        }
+
+        // Check for PrintFLSStatistics option is being used
+        if (jvm.getPrintFLStatistics() != null) {
+            analysisKeys.add(Analysis.KEY_PRINT_FLS_STATISTICS);
         }
     }
 

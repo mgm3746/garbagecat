@@ -94,6 +94,16 @@ public class JdkRegEx {
             + "])";
 
     /**
+     * The size of memory in bytes. No units.
+     */
+    public static final String SIZE_BYTES = "(\\d{1,11})";
+
+    /**
+     * A memory address.
+     */
+    public static final String ADDRESS = "(0x[0-9a-f]{16})";
+
+    /**
      * The duration of the event in seconds with 7-8 decimal places.
      * 
      * For example: 0.0225213 secs, 0.00376500 secs

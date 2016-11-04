@@ -1,0 +1,31 @@
+2016-11-02T06:22:25.610-0400: 1.118: [GC Before GC:
+Statistics for BinaryTreeDictionary:
+------------------------------------
+Total Free Space: 536870912
+Max   Chunk Size: 536870912
+Number of Blocks: 1
+Av.  Block  Size: 536870912
+Tree      Height: 1
+Before GC:
+Statistics for BinaryTreeDictionary:
+------------------------------------
+Total Free Space: 0
+Max   Chunk Size: 0
+Number of Blocks: 0
+Tree      Height: 0
+1.118: [ParNew: 377487K->8426K(5505024K), 0.0535260 secs] 377487K->8426K(43253760K)After GC:
+Statistics for BinaryTreeDictionary:
+------------------------------------
+Total Free Space: 536854528
+Max   Chunk Size: 536854528
+Number of Blocks: 1
+Av.  Block  Size: 536854528
+Tree      Height: 1
+After GC:
+Statistics for BinaryTreeDictionary:
+------------------------------------
+Total Free Space: 0
+Max   Chunk Size: 0
+Number of Blocks: 0
+Tree      Height: 0
+, 0.0536040 secs] [Times: user=0.89 sys=0.01, real=0.06 secs]
