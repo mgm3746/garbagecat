@@ -269,8 +269,7 @@ public class JdkRegEx {
      * <li>The Perm/Metaspace fills up during the CMS cycle. The CMS collector does not collect Perm/Metaspace by
      * default. Add -XX:+CMSClassUnloadingEnabled to collect Perm/Metaspace in the CMS concurrent cycle. If the
      * concurrent mode failure is not able to reclaim Perm/Metaspace, also increase the size. For example:
-     * -XX:PermSize=256M -XX:MaxPermSize=256M (Perm) or -XX:MetaspaceSize=256M -XX:MaxMetaspaceSize=256M (Metaspace).
-     * </li>
+     * -XX:PermSize=256M -XX:MaxPermSize=256M (Perm) or -XX:MetaspaceSize=2G -XX:MaxMetaspaceSize=2G (Metaspace).</li>
      * </ol>
      */
     public static final String TRIGGER_CONCURRENT_MODE_FAILURE = "concurrent mode failure";
