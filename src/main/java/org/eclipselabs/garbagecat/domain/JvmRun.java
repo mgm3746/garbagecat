@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
@@ -527,9 +528,24 @@ public class JvmRun {
         }
 
         // Check to see if permanent generation or metaspace size explicitly set
-        if (jvm.getMinPermOption() == null && jvm.getMaxPermOption() == null && jvm.getMinMetaspaceOption() == null
-                && jvm.getMaxMetaspaceOption() == null) {
-            analysisKeys.add(Analysis.KEY_PERM_METASPACE_NOT_SET);
+        switch (JdkUtil.getJdkNumberFromVersionString(jvm.getVersion())) {
+        case 5:
+        case 6:
+        case 7:
+            if (jvm.getMinPermOption() == null && jvm.getMaxPermOption() == null) {
+                analysisKeys.add(Analysis.KEY_PERM_SIZE_NOT_SET);
+            }
+            break;
+        case 8:
+            if (jvm.getMinMetaspaceOption() == null && jvm.getMaxMetaspaceOption() == null) {
+                analysisKeys.add(Analysis.KEY_METASPACE_SIZE_NOT_SET);
+            }
+            break;
+        default:
+            if (jvm.getMinPermOption() == null && jvm.getMaxPermOption() == null && jvm.getMinMetaspaceOption() == null
+                    && jvm.getMaxMetaspaceOption() == null) {
+                analysisKeys.add(Analysis.KEY_PERM_METASPACE_SIZE_NOT_SET);
+            }
         }
 
         // Check to see if explicit gc is disabled

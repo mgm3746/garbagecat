@@ -787,4 +787,32 @@ public class JdkUtil {
 
         return reportable;
     }
+
+    /**
+     * Convert JVM version string to JDK version.
+     * 
+     * @param versionString
+     *            The version string (e.g. 'Java HotSpot(TM) 64-Bit Server VM (25.73-b02) for linux-amd64 JRE
+     *            (1.8.0_73-b02), built on Jan 29 2016 17:39:45 by "java_re" with gcc 4.3.0 20080428 (Red Hat
+     *            4.3.0-8)').
+     * @return The JDK version (e.g. '8'), or `0` if it could not be determined.
+     */
+    public static int getJdkNumberFromVersionString(final String versionString) {
+
+        String regex = "(1\\.([5|6|7|8|9])\\.0)";
+
+        int version = 0;
+
+        if (versionString != null) {
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(versionString);
+            if (matcher.find()) {
+                if (matcher.group(2) != null) {
+                    version = Integer.parseInt(matcher.group(2));
+                }
+            }
+        }
+
+        return version;
+    }
 }

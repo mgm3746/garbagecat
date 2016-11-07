@@ -99,7 +99,17 @@ public class Analysis {
     /**
      * Property key for perm gen or metaspace size not explicitly set.
      */
-    public static final String KEY_PERM_METASPACE_NOT_SET = "perm.metaspace.not.set";
+    public static final String KEY_PERM_METASPACE_SIZE_NOT_SET = "perm.metaspace.size.not.set";
+
+    /**
+     * Property key for perm gen not explicitly set.
+     */
+    public static final String KEY_PERM_SIZE_NOT_SET = "perm.size.not.set";
+
+    /**
+     * Property key for metaspace size not explicitly set.
+     */
+    public static final String KEY_METASPACE_SIZE_NOT_SET = "metaspace.size.not.set";
 
     /**
      * Property key for min perm not equal to max perm.

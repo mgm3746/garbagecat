@@ -483,8 +483,8 @@ public class TestJvmRun extends TestCase {
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.KEY_PERM_METASPACE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PERM_METASPACE_NOT_SET));
+        Assert.assertTrue(Analysis.KEY_PERM_SIZE_NOT_SET + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PERM_SIZE_NOT_SET));
         Assert.assertFalse(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_NOT_CONCURRENT));
     }

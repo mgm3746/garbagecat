@@ -301,18 +301,18 @@ public class Main {
                     }
                 }
                 bufferedWriter.write(System.getProperty("line.separator"));
-                // Max heap space.
-                bufferedWriter.write(
-                        "Max Heap Space: " + jvmRun.getMaxHeapSpace() + "K" + System.getProperty("line.separator"));
                 // Max heap occupancy.
                 bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K"
                         + System.getProperty("line.separator"));
+                // Max heap space.
+                bufferedWriter.write(
+                        "Max Heap Space: " + jvmRun.getMaxHeapSpace() + "K" + System.getProperty("line.separator"));
                 if (jvmRun.getMaxPermSpace() > 0) {
-                    // Max perm space.
-                    bufferedWriter.write("Max Perm/Metaspace Space: " + jvmRun.getMaxPermSpace() + "K"
-                            + System.getProperty("line.separator"));
                     // Max perm occupancy.
                     bufferedWriter.write("Max Perm/Metaspace Occupancy: " + jvmRun.getMaxPermOccupancy() + "K"
+                            + System.getProperty("line.separator"));
+                    // Max perm space.
+                    bufferedWriter.write("Max Perm/Metaspace Space: " + jvmRun.getMaxPermSpace() + "K"
                             + System.getProperty("line.separator"));
                 }
                 // GC throughput
@@ -325,9 +325,6 @@ public class Main {
                 bufferedWriter.write(
                         "GC Total Pause: " + jvmRun.getTotalGcPause() + " ms" + System.getProperty("line.separator"));
             }
-            // Stopped time events
-            bufferedWriter.write("# Stopped Time Events: " + jvmRun.getStoppedTimeEventCount()
-                    + System.getProperty("line.separator"));
             if (jvmRun.getStoppedTimeEventCount() > 0) {
                 // Stopped time throughput
                 bufferedWriter.write("Stopped Time Throughput: " + jvmRun.getStoppedTimeThroughput() + "%"

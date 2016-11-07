@@ -106,6 +106,19 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_FLS_STATISTICS));
     }
 
+    /**
+     * Test for -XX:CompressedClassSpaceSize.
+     */
+    public void testPermMetatspaceNotSet() {
+        String jvmOptions = "Xss128k -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_PERM_METASPACE_SIZE_NOT_SET + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PERM_METASPACE_SIZE_NOT_SET));
+    }
+
     public void testHeaderLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset42.txt");
@@ -180,5 +193,16 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET));
+    }
+
+    public void testMetaspaceSizeNotSet() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset95.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_METASPACE_SIZE_NOT_SET + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_METASPACE_SIZE_NOT_SET));
     }
 }

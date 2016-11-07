@@ -220,4 +220,16 @@ public class TestJdkUtil extends TestCase {
                 + "[GC concurrent-root-region-scan-start]";
         Assert.assertTrue("Datestamp not found.", JdkUtil.isLogLineWithDateStamp(logLine));
     }
+
+    public void testJdkVersion7() {
+        String version = "Java HotSpot(TM) 64-Bit Server VM (24.80-b11) for linux-amd64 JRE (1.7.0_80-b15), "
+                + "built on Apr 10 2015 19:53:14 by \"java_re\" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)";
+        Assert.assertEquals("JDK version not correct.", 7, JdkUtil.getJdkNumberFromVersionString(version));
+    }
+
+    public void testJdkVersion8() {
+        String version = "Java HotSpot(TM) 64-Bit Server VM (25.73-b02) for linux-amd64 JRE (1.8.0_73-b02), "
+                + "built on Jan 29 2016 17:39:45 by \"java_re\" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)";
+        Assert.assertEquals("JDK version not correct.", 8, JdkUtil.getJdkNumberFromVersionString(version));
+    }
 }
