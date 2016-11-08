@@ -30,6 +30,13 @@ import junit.framework.TestCase;
  */
 public class TestParNewEvent extends TestCase {
 
+    public void testIsBlocking() {
+        String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
+                + "89399K->11655K(907328K), 0.0387074 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testLogLine() {
         String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
                 + "89399K->11655K(907328K), 0.0387074 secs]";
@@ -161,11 +168,21 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 39, event.getDuration());
     }
 
-    public void testIsBlocking() {
-        String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
-                + "89399K->11655K(907328K), 0.0387074 secs]";
-        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    public void testLogLineCmsScavengeBeforeRemark() {
+        String logLine = "7236.341: [GC[YG occupancy: 1388745 K (4128768 K)]7236.341: [GC7236.341: [ParNew: "
+                + "1388745K->458752K(4128768K), 0.5246295 secs] 2977822K->2161212K(13172736K), 0.5248785 secs] "
+                + "[Times: user=0.92 sys=0.03, real=0.51 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                ParNewEvent.match(logLine));
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 7236341, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 1388745, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 458752, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 4128768, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", (2977822 - 1388745), event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", (2161212 - 458752), event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", (13172736 - 4128768), event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 524, event.getDuration());
     }
 
     /**

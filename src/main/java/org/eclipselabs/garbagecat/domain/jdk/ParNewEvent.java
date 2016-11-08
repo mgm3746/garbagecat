@@ -82,6 +82,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 6.703: [GC (Allocation Failure) 6.703: [ParNew: 886080K-&gt;11485K(996800K), 0.0193349 secs] 886080K-&gt;11485K(1986432K), 0.0198375 secs] [Times: user=0.09 sys=0.01, real=0.02 secs]
  * </pre>
  * 
+ * <p>
+ * 6) With -XX:+CMSScavengeBeforeRemark:
+ * </p>
+ * 
+ * <pre>
+ * 7236.341: [GC[YG occupancy: 1388745 K (4128768 K)]7236.341: [GC7236.341: [ParNew: 1388745K-&gt;458752K(4128768K), 0.5246295 secs] 2977822K-&gt;2161212K(13172736K), 0.5248785 secs] [Times: user=0.92 sys=0.03, real=0.51 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  * 
@@ -92,7 +100,8 @@ public class ParNewEvent extends CmsCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(\\(("
+    private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
+            + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(\\(("
             + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\))?( )?("
             + JdkRegEx.TIMESTAMP + ": )?\\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
@@ -170,19 +179,19 @@ public class ParNewEvent extends CmsCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(5);
-            young = Integer.parseInt(matcher.group(9));
-            youngEnd = Integer.parseInt(matcher.group(10));
-            youngAvailable = Integer.parseInt(matcher.group(11));
-            int totalBegin = Integer.parseInt(matcher.group(13));
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(5)).longValue();
+            trigger = matcher.group(9);
+            young = Integer.parseInt(matcher.group(13));
+            youngEnd = Integer.parseInt(matcher.group(14));
+            youngAvailable = Integer.parseInt(matcher.group(15));
+            int totalBegin = Integer.parseInt(matcher.group(17));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(14));
+            int totalEnd = Integer.parseInt(matcher.group(18));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(15));
+            int totalAllocation = Integer.parseInt(matcher.group(19));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
-            if (matcher.group(16) != null) {
+            duration = JdkMath.convertSecsToMillis(matcher.group(21)).intValue();
+            if (matcher.group(20) != null) {
                 incrementalMode = true;
             } else {
                 incrementalMode = false;
