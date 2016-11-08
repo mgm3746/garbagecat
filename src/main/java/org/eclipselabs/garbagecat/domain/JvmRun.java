@@ -20,7 +20,6 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
@@ -528,7 +527,7 @@ public class JvmRun {
         }
 
         // Check to see if permanent generation or metaspace size explicitly set
-        switch (JdkUtil.getJdkNumberFromVersionString(jvm.getVersion())) {
+        switch (jvm.JdkNumber()) {
         case 5:
         case 6:
         case 7:
@@ -663,7 +662,7 @@ public class JvmRun {
         }
 
         // Check for -XX:+PrintGCCause missing.
-        if (jvm.getPrintGCCause() == null && jvm.isJDK7()) {
+        if (jvm.getPrintGCCause() == null && jvm.JdkNumber() == 7) {
             analysisKeys.add(Analysis.KEY_PRINT_GC_CAUSE_MISSING);
         }
 
@@ -673,7 +672,7 @@ public class JvmRun {
         }
 
         // Check for -XX:+TieredCompilation.
-        if (jvm.getThreadStackSizeValue() != null && jvm.isJDK7()) {
+        if (jvm.getTieredCompilation() != null && jvm.JdkNumber() == 7) {
             analysisKeys.add(Analysis.KEY_JDK7_TIERED_COMPILATION_ENABLED);
         }
 

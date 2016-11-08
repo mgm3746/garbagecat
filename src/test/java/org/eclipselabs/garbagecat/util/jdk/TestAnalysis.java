@@ -119,6 +119,22 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PERM_METASPACE_SIZE_NOT_SET));
     }
 
+    /**
+     * Test for -XX:CompressedClassSpaceSize.
+     */
+    public void testTieredCompilation() {
+        String jvmOptions = "Xss128k -XX:+TieredCompilation -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        String version = "Java HotSpot(TM) 64-Bit Server VM (24.91-b03) for windows-amd64 JRE (1.7.0_91-b15), built on "
+                + "Oct  2 2015 03:26:24 by \"java_re\" with unknown MS VC++:1600";
+        jvmRun.getJvm().setVersion(version);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_JDK7_TIERED_COMPILATION_ENABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_JDK7_TIERED_COMPILATION_ENABLED));
+    }
+
     public void testHeaderLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset42.txt");

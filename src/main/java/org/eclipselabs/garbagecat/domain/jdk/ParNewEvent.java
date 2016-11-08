@@ -98,14 +98,20 @@ public class ParNewEvent extends CmsCollector
         implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData {
 
     /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
+
+    /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
-            + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(\\(("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\))?( )?("
-            + JdkRegEx.TIMESTAMP + ": )?\\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(\\(" + TRIGGER + "\\))?( )?("
+            + JdkRegEx.TIMESTAMP + ": )?\\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(ParNewEvent.REGEX);
     /**
@@ -181,17 +187,17 @@ public class ParNewEvent extends CmsCollector
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(5)).longValue();
             trigger = matcher.group(9);
-            young = Integer.parseInt(matcher.group(13));
-            youngEnd = Integer.parseInt(matcher.group(14));
-            youngAvailable = Integer.parseInt(matcher.group(15));
-            int totalBegin = Integer.parseInt(matcher.group(17));
+            young = Integer.parseInt(matcher.group(14));
+            youngEnd = Integer.parseInt(matcher.group(15));
+            youngAvailable = Integer.parseInt(matcher.group(16));
+            int totalBegin = Integer.parseInt(matcher.group(18));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(18));
+            int totalEnd = Integer.parseInt(matcher.group(19));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(19));
+            int totalAllocation = Integer.parseInt(matcher.group(20));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(21)).intValue();
-            if (matcher.group(20) != null) {
+            duration = JdkMath.convertSecsToMillis(matcher.group(22)).intValue();
+            if (matcher.group(21) != null) {
                 incrementalMode = true;
             } else {
                 incrementalMode = false;

@@ -42,6 +42,7 @@ import org.eclipselabs.garbagecat.domain.jdk.G1MixedPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungPauseEvent;
+import org.eclipselabs.garbagecat.domain.jdk.GcLockerEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
@@ -102,7 +103,9 @@ public class JdkUtil {
         //
         HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, REFERENCE_GC, CLASS_HISTOGRAM, HEAP_AT_GC,
         //
-        CLASS_UNLOADING, APPLICATION_LOGGING, THREAD_DUMP, BLANK_LINE, GC_OVERHEAD_LIMIT, LOG_FILE, FLS_STATISTICS
+        CLASS_UNLOADING, APPLICATION_LOGGING, THREAD_DUMP, BLANK_LINE, GC_OVERHEAD_LIMIT, LOG_FILE, FLS_STATISTICS,
+        //
+        GC_LOCKER
     };
 
     /**
@@ -239,6 +242,8 @@ public class JdkUtil {
             return LogEventType.GC_OVERHEAD_LIMIT;
         if (FlsStatisticsEvent.match(logLine))
             return LogEventType.FLS_STATISTICS;
+        if (GcLockerEvent.match(logLine))
+            return LogEventType.GC_LOCKER;
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -311,6 +316,9 @@ public class JdkUtil {
             break;
         case G1_YOUNG_PAUSE:
             event = new G1YoungPauseEvent(logLine);
+            break;
+        case GC_LOCKER:
+            event = new GcLockerEvent(logLine);
             break;
         case HEADER_COMMAND_LINE_FLAGS:
             event = new HeaderCommandLineFlagsEvent(logLine);
@@ -516,6 +524,7 @@ public class JdkUtil {
         case CLASS_UNLOADING:
         case CMS_CONCURRENT:
         case FLS_STATISTICS:
+        case GC_LOCKER:
         case GC_OVERHEAD_LIMIT:
         case G1_CONCURRENT:
         case HEADER_COMMAND_LINE_FLAGS:
@@ -786,33 +795,5 @@ public class JdkUtil {
         }
 
         return reportable;
-    }
-
-    /**
-     * Convert JVM version string to JDK version.
-     * 
-     * @param versionString
-     *            The version string (e.g. 'Java HotSpot(TM) 64-Bit Server VM (25.73-b02) for linux-amd64 JRE
-     *            (1.8.0_73-b02), built on Jan 29 2016 17:39:45 by "java_re" with gcc 4.3.0 20080428 (Red Hat
-     *            4.3.0-8)').
-     * @return The JDK version (e.g. '8'), or `0` if it could not be determined.
-     */
-    public static int getJdkNumberFromVersionString(final String versionString) {
-
-        String regex = "(1\\.([5|6|7|8|9])\\.0)";
-
-        int version = 0;
-
-        if (versionString != null) {
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(versionString);
-            if (matcher.find()) {
-                if (matcher.group(2) != null) {
-                    version = Integer.parseInt(matcher.group(2));
-                }
-            }
-        }
-
-        return version;
     }
 }

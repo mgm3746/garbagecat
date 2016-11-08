@@ -813,14 +813,21 @@ public class Jvm {
     }
 
     /**
-     * @return True if JDK7, false otherwise.
+     * @return The JDK version (e.g. '8'), or `0` if it could not be determined.
      */
-    public boolean isJDK7() {
-        boolean isJDK7 = false;
+    public int JdkNumber() {
+        String regex = "^.+JRE \\(1\\.(5|6|7|8|9).+$";
+        int number = 0;
         if (version != null) {
-            isJDK7 = version.matches("^.+JRE \\(1\\.7.+$");
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(version);
+            if (matcher.find()) {
+                if (matcher.group(1) != null) {
+                    number = Integer.parseInt(matcher.group(1));
+                }
+            }
         }
-        return isJDK7;
+        return number;
     }
 
     /**

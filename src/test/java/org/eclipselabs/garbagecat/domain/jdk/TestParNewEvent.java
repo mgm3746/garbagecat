@@ -185,6 +185,23 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 524, event.getDuration());
     }
 
+    public void testLogLinePromotionFailed() {
+        String logLine = "393747.603: [GC393747.603: [ParNew (promotion failed): 476295K->476295K(4128768K), "
+                + "0.5193071 secs] 7385012K->7555732K(13172736K), 0.5196411 secs] "
+                + "[Times: user=0.92 sys=0.00, real=0.55 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                ParNewEvent.match(logLine));
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 393747603, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 476295, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 476295, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 4128768, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", (7385012 - 476295), event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", (7555732 - 476295), event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", (13172736 - 4128768), event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 519, event.getDuration());
+    }
+
     /**
      * Test preprocessing a split <code>ParNewCmsConcurrentEvent</code> that does not include the
      * "concurrent mode failure" text.
