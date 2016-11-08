@@ -307,8 +307,8 @@ public class G1PreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_FULL_GC = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(("
             + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|"
             + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD
-            + ")\\)[ ]{1,2})?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), "
-            + JdkRegEx.DURATION + "\\])[ ]*$";
+            + ")\\)[ ]{1,2})?" + JdkRegEx.SIZE_G1_WHOLE + "->" + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE
+            + "\\), " + JdkRegEx.DURATION + "\\])[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_FULL_GC with PRINT_CLASS_HISTOGRAM collection.
@@ -348,8 +348,8 @@ public class G1PreprocessAction implements PreprocessAction {
      * Regular expression for retained beginning G1_CLEANUP collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_CLEANUP = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup "
-            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION
-            + "\\])[ ]*$";
+            + JdkRegEx.SIZE_G1_WHOLE + "->" + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\), "
+            + JdkRegEx.DURATION + "\\])[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_YOUNG_PAUSE mixed with G1_CONCURRENT collection.
@@ -374,8 +374,8 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * [ 29M->2589K(59M)]
      */
-    private static final String REGEX_RETAIN_MIDDLE_YOUNG_PAUSE = "^   (\\[ " + JdkRegEx.SIZE_G1 + "->"
-            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\])[ ]*$";
+    private static final String REGEX_RETAIN_MIDDLE_YOUNG_PAUSE = "^   (\\[ " + JdkRegEx.SIZE_G1_WHOLE + "->"
+            + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\)\\])[ ]*$";
 
     /**
      * Regular expression for retained middle G1_FULL_GC collection.
@@ -386,21 +386,26 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * 1831M->1213M(5120M), 5.1353878 secs]
      */
-    private static final String REGEX_RETAIN_MIDDLE_FULL = "^ (" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\])[ ]*$";
+    private static final String REGEX_RETAIN_MIDDLE_FULL = "^ (" + JdkRegEx.SIZE_G1_WHOLE + "->"
+            + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\), " + JdkRegEx.DURATION + "\\])[ ]*$";
 
     /**
      * Regular expression for retained middle.
      * 
      * [Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: 136.9M(30.0G)->70.9M(30.0G)]
      * 
+     * [Eden: 4096M(4096M)->0B(3528M) Survivors: 0B->568M Heap: 4096M(16384M)->567M(16384M)]
+     * 
      */
-    private static final String REGEX_RETAIN_MIDDLE = "^   (\\[Eden: " + JdkRegEx.SIZE_G1_DETAILS + "\\("
-            + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS
-            + "\\) Survivors: " + JdkRegEx.SIZE_G1_DETAILS + "->" + JdkRegEx.SIZE_G1_DETAILS + " Heap: "
-            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\("
-            + JdkRegEx.SIZE_G1_DETAILS + "\\)\\](, \\[(Perm|Metaspace): " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1
-            + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\])?)[ ]*$";
+    private static final String REGEX_RETAIN_MIDDLE = "^   (\\[Eden: (" + JdkRegEx.SIZE_G1_WHOLE + "|"
+            + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\)->("
+            + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE + "|"
+            + JdkRegEx.SIZE_G1_DECIMAL + ")\\) Survivors: (" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL
+            + ")->(" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ") Heap: (" + JdkRegEx.SIZE_G1_WHOLE
+            + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL
+            + ")\\)->(" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE
+            + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\)\\](, \\[(Perm|Metaspace): " + JdkRegEx.SIZE_G1_WHOLE + "->"
+            + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\)\\])?)[ ]*$";
 
     /**
      * Regular expression for retained middle duration.
@@ -426,7 +431,7 @@ public class G1PreprocessAction implements PreprocessAction {
             //
             "^   \\[Parallel Time:.+$",
             // JDK8 does not have "Time"
-            "^      \\[GC Worker Start( Time)? \\(ms\\):.+$",
+            "^      \\[GC Worker( (Start|End|Other|Total))?( Time)? \\(ms\\):.+$",
             //
             "^      \\[Ext Root Scanning \\(ms\\):.+$",
             //
@@ -441,12 +446,6 @@ public class G1PreprocessAction implements PreprocessAction {
             "^      \\[Object Copy \\(ms\\):.+$",
             //
             "^      \\[Termination \\(ms\\):.+$",
-            //
-            "^      \\[GC Worker Other \\(ms\\):.+$",
-            //
-            "^      \\[GC Worker Total \\(ms\\):.+$",
-            // JDK8 does not have "Time"
-            "^      \\[GC Worker End( Time)? \\(ms\\):.+$",
             //
             "^      \\[Code Root Scanning \\(ms\\):.+$",
             //

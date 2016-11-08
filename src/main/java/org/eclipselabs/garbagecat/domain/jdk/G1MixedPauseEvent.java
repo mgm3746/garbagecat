@@ -76,8 +76,8 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Com
     /**
      * Regular expression standard format.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause \\(mixed\\) " + JdkRegEx.SIZE_G1
-            + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]"
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause \\(mixed\\) " + JdkRegEx.SIZE_G1_WHOLE
+            + "->" + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\), " + JdkRegEx.DURATION + "\\]"
             + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
@@ -85,10 +85,10 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Com
      */
     private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\))? \\(mixed\\), " + JdkRegEx.DURATION + "\\]\\[Eden: "
-            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\("
-            + JdkRegEx.SIZE_G1_DETAILS + "\\) Survivors: " + JdkRegEx.SIZE_G1_DETAILS + "->" + JdkRegEx.SIZE_G1_DETAILS
-            + " Heap: " + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->"
-            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)->" + JdkRegEx.SIZE_G1_DECIMAL + "\\("
+            + JdkRegEx.SIZE_G1_DECIMAL + "\\) Survivors: " + JdkRegEx.SIZE_G1_DECIMAL + "->" + JdkRegEx.SIZE_G1_DECIMAL
+            + " Heap: " + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)->"
+            + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

@@ -23,6 +23,13 @@ import junit.framework.TestCase;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
 public class TestG1YoungPauseEvent extends TestCase {
+
+    public void testIsBlocking() {
+        String logLine = "1113.145: [GC pause (young) 849M->583M(968M), 0.0392710 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testYoungPause() {
         String logLine = "1113.145: [GC pause (young) 849M->583M(968M), 0.0392710 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
@@ -127,9 +134,18 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 275, event.getDuration());
     }
 
-    public void testIsBlocking() {
-        String logLine = "1113.145: [GC pause (young) 849M->583M(968M), 0.0392710 secs]";
-        Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    public void testLogLinePreprocessedNoSizeDetails() {
+        String logLine = "785,047: [GC pause (young), 0,73936800 secs][Eden: 4096M(4096M)->0B(3528M) "
+                + "Survivors: 0B->568M Heap: 4096M(16384M)->567M(16384M)] [Times: user=4,42 sys=0,38, real=0,74 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                G1YoungPauseEvent.match(logLine));
+        G1YoungPauseEvent event = new G1YoungPauseEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger() == null);
+        Assert.assertEquals("Time stamp not parsed correctly.", 785047, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 4096 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 567 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 16384 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 739, event.getDuration());
     }
+
 }

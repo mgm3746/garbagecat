@@ -54,6 +54,13 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineGcWorker() {
+        String logLine = "      [GC Worker (ms):  387,2  387,4  386,2  385,9  386,1  386,2  386,9  386,4  386,4  "
+                + "386,8  386,1  385,2  386,1";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
     public void testLogLineGcWorkerStart() {
         String logLine = "      [GC Worker Start Time (ms):  807.5  807.8  807.8  810.1]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
@@ -649,6 +656,12 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineSpaceNoDetailsWithoutPerm() {
+        String logLine = "   [Eden: 4096M(4096M)->0B(3528M) Survivors: 0B->568M Heap: 4096M(16384M)->567M(16384M)]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
     public void testLogLineG1FullCombinedConcurrentRootRegionScanStart() {
         String logLine = "88.123: [Full GC (Metadata GC Threshold) 88.123: [GC concurrent-root-region-scan-start]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
@@ -759,6 +772,18 @@ public class TestG1PreprocessAction extends TestCase {
         G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
         Assert.assertEquals("Log line not parsed correctly.", "49709.036: [Class Histogram (after full gc):",
                 event.getLogEntry());
+    }
+
+    public void testLogLineYoungPause() {
+        String priorLogLine = "";
+        String logLine = "785,047: [GC pause (young), 0,73936800 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
 
     /**
@@ -1380,5 +1405,23 @@ public class TestG1PreprocessAction extends TestCase {
         // G1_FULL is caused by CLASS_HISTOGRAM
         Assert.assertFalse(Analysis.KEY_SERIAL_GC_G1 + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_G1));
+    }
+
+    /**
+     * Test preprocessing G1_YOUNG_PAUSE with no size details (whole number units).
+     * 
+     */
+    public void testG1YoungPauseNoSizeDetails() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset97.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
     }
 }

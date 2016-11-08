@@ -81,8 +81,8 @@ public class G1YoungPauseEvent extends G1Collector
      * 1.234: [GC pause (young) 102M-&gt;24M(512M), 0.0254200 secs]
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\) )?\\(young\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1
-            + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]";
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\) )?\\(young\\) " + JdkRegEx.SIZE_G1_WHOLE + "->"
+            + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\), " + JdkRegEx.DURATION + "\\]";
 
     /**
      * Regular expression preprocessed with G1 details.
@@ -105,21 +105,24 @@ public class G1YoungPauseEvent extends G1Collector
     private static final String REGEX_PREPROCESSED_DETAILS = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC
             + ")\\) )?\\(young\\)( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?, " + JdkRegEx.DURATION
-            + "\\]\\[Eden: " + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->"
-            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\) Survivors: " + JdkRegEx.SIZE_G1_DETAILS
-            + "->" + JdkRegEx.SIZE_G1_DETAILS + " Heap: " + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS
-            + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)\\]" + JdkRegEx.TIMES_BLOCK
-            + "?[ ]*$";
+            + "\\]\\[Eden: (" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\(("
+            + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\)->(" + JdkRegEx.SIZE_G1_WHOLE + "|"
+            + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL
+            + ")\\) Survivors: (" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")->("
+            + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ") Heap: (" + JdkRegEx.SIZE_G1_WHOLE + "|"
+            + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\)->("
+            + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE + "|"
+            + JdkRegEx.SIZE_G1_DECIMAL + ")\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
-     * Regular expression preprocessed with G1 sizes.
+     * Regular expression preprocessed, no details.
      * 
      * 0.807: [GC pause (young), 0.00290200 secs][ 29M-&gt;2589K(59M)] [Times: user=0.01 sys=0.00, real=0.01 secs]
      * 
      */
-    private static final String REGEX_PREPROCESSED_SIZES = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause \\(young\\), "
-            + JdkRegEx.DURATION + "\\]\\[ " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause \\(young\\), "
+            + JdkRegEx.DURATION + "\\]\\[ " + JdkRegEx.SIZE_G1_WHOLE + "->" + JdkRegEx.SIZE_G1_WHOLE + "\\("
+            + JdkRegEx.SIZE_G1_WHOLE + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -188,13 +191,34 @@ public class G1YoungPauseEvent extends G1Collector
                     trigger = matcher.group(5);
                 }
                 duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
-                combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(19), matcher.group(20).charAt(0));
-                combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(23), matcher.group(24).charAt(0));
-                combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(25),
-                        matcher.group(26).charAt(0));
+                if (matcher.group(40) != null) {
+                    // SIZE_G1_DECIMAL
+                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(40), matcher.group(41).charAt(0));
+                } else {
+                    // SIZE_G1_WHOLE
+                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(38), matcher.group(39).charAt(0));
+                }
+                if (matcher.group(50) != null) {
+                    // SIZE_G1_DECIMAL
+                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(50),
+                            matcher.group(51).charAt(0));
+                } else {
+                    // SIZE_G1_WHOLE
+                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(48),
+                            matcher.group(49).charAt(0));
+                }
+                if (matcher.group(55) != null) {
+                    // SIZE_G1_DECIMAL
+                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(55),
+                            matcher.group(56).charAt(0));
+                } else {
+                    // SIZE_G1_WHOLE
+                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(53),
+                            matcher.group(54).charAt(0));
+                }
             }
-        } else if (logEntry.matches(REGEX_PREPROCESSED_SIZES)) {
-            Pattern pattern = Pattern.compile(REGEX_PREPROCESSED_SIZES);
+        } else if (logEntry.matches(REGEX_PREPROCESSED)) {
+            Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
@@ -264,6 +288,6 @@ public class G1YoungPauseEvent extends G1Collector
      */
     public static final boolean match(String logLine) {
         return logLine.matches(REGEX) || logLine.matches(REGEX_PREPROCESSED_DETAILS)
-                || logLine.matches(REGEX_PREPROCESSED_SIZES);
+                || logLine.matches(REGEX_PREPROCESSED);
     }
 }

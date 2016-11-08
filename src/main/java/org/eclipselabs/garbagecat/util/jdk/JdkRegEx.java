@@ -81,7 +81,7 @@ public class JdkRegEx {
      * 
      * For example: 2128K, 30M, 30G
      */
-    public static final String SIZE_G1 = "(\\d{1,8})([" + KILOBYTES + MEGABYTES + GIGABYTES + "])";
+    public static final String SIZE_G1_WHOLE = "(\\d{1,8})([" + BYTES + KILOBYTES + MEGABYTES + GIGABYTES + "])";
 
     /**
      * The size of memory in bytes (B), kilobytes (K), megabytes (M), or gigabytes (G) to one decimal place. See with G1
@@ -90,7 +90,7 @@ public class JdkRegEx {
      * 
      * For example: 0.0B, 8192.0K, 28.0M, 30.0G
      */
-    public static final String SIZE_G1_DETAILS = "(\\d{1,8}\\.\\d)([" + BYTES + KILOBYTES + MEGABYTES + GIGABYTES
+    public static final String SIZE_G1_DECIMAL = "(\\d{1,8}\\.\\d)([" + BYTES + KILOBYTES + MEGABYTES + GIGABYTES
             + "])";
 
     /**
