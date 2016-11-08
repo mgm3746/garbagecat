@@ -490,6 +490,56 @@ public class TestJvmRun extends TestCase {
     }
 
     /**
+     * Test <code>PrintTenuringDistributionPreprocessAction</code> with no space after "GC".
+     * 
+     */
+    public void testPrintTenuringDistributionPreprocessActionNoSpaceAfterGc() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset66.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+    }
+
+    /**
+     * Test identifying <code>ParNewEvent</code> running in incremental mode.
+     */
+    public void testCmsIncrementalModeAnalysis() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset68.txt");
+        String jvmOptions = "Xss128k -XX:+CMSIncrementalMode -XX:CMSInitiatingOccupancyFraction=70 -Xms2048M";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_CMS_INCREMENTAL_MODE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_INCREMENTAL_MODE));
+        Assert.assertTrue(Analysis.KEY_CMS_INC_MODE_INIT_OCCUP_FRACT_CONFLICT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_INC_MODE_INIT_OCCUP_FRACT_CONFLICT));
+    }
+
+    /**
+     * Test application stopped time w/o timestamps.
+     */
+    public void testApplicationStoppedTimeNoTimestamps() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset96.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Stopped time total not correct.", 1830, jvmRun.getTotalStoppedTime());
+        Assert.assertEquals("First GC timestamp not correct.", 16517, jvmRun.getFirstGcTimestamp());
+        Assert.assertEquals("Lsst GC timestamp not correct.", 31432, jvmRun.getLastGcTimestamp());
+        Assert.assertEquals("Stopped time throughput not correct.", 94, jvmRun.getStoppedTimeThroughput());
+    }
+
+    /**
      * Test passing JVM options on the command line.
      * 
      */
@@ -912,39 +962,5 @@ public class TestJvmRun extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_DETAILS_DISABLED));
         Assert.assertFalse(Analysis.KEY_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_DETAILS_MISSING));
-    }
-
-    /**
-     * Test <code>PrintTenuringDistributionPreprocessAction</code> with no space after "GC".
-     * 
-     */
-    public void testPrintTenuringDistributionPreprocessActionNoSpaceAfterGc() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset66.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
-    }
-
-    /**
-     * Test identifying <code>ParNewEvent</code> running in incremental mode.
-     */
-    public void testCmsIncrementalModeAnalysis() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset68.txt");
-        String jvmOptions = "Xss128k -XX:+CMSIncrementalMode -XX:CMSInitiatingOccupancyFraction=70 -Xms2048M";
-        Jvm jvm = new Jvm(jvmOptions, null);
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.KEY_CMS_INCREMENTAL_MODE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_INCREMENTAL_MODE));
-        Assert.assertTrue(Analysis.KEY_CMS_INC_MODE_INIT_OCCUP_FRACT_CONFLICT + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_INC_MODE_INIT_OCCUP_FRACT_CONFLICT));
     }
 }

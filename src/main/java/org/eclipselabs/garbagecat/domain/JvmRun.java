@@ -388,6 +388,18 @@ public class JvmRun {
                 // Complete log or a log with only 1 event.
                 timeTotal = lastStoppedTimestamp + JdkMath.convertMicrosToMillis(lastStoppedDuration).longValue();
             }
+            if (timeTotal == 0) {
+                // Use GC timestamps
+                if (lastGcTimestamp > firstGcTimestamp
+                        && firstGcTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
+                    // Partial log. Use the timestamp of the first GC event, not 0, in order to determine
+                    // throughput more accurately.
+                    timeTotal = lastGcTimestamp + new Long(lastGcDuration).longValue() - firstGcTimestamp;
+                } else {
+                    // Complete log or a log with only 1 event.
+                    timeTotal = lastGcTimestamp + new Long(lastGcDuration).longValue();
+                }
+            }
             long timeNotGc = timeTotal - new Long(totalStoppedTime).longValue();
             BigDecimal throughput = new BigDecimal(timeNotGc);
             throughput = throughput.divide(new BigDecimal(timeTotal), 2, RoundingMode.HALF_EVEN);
