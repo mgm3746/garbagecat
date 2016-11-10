@@ -835,22 +835,6 @@ public class TestG1PreprocessAction extends TestCase {
     }
 
     /**
-     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE with TO_SPACE_EXHAUSTED trigger.
-     * 
-     */
-    public void testG1PreprocessActionToSpaceExhaustedLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset45.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
-    }
-
-    /**
      * Test <code>G1PreprocessAction</code> for G1_FULL_GC.
      * 
      */
@@ -935,22 +919,6 @@ public class TestG1PreprocessAction extends TestCase {
     }
 
     /**
-     * Test <code>G1PreprocessAction</code> for G1_MIXED_PAUSE with no trigger.
-     * 
-     */
-    public void testG1PreprocessActionMixedPauseNoTriggerLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset46.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_MIXED_PAUSE));
-    }
-
-    /**
      * Test <code>G1PreprocessAction</code> for G1_CLEANUP.
      * 
      */
@@ -982,6 +950,40 @@ public class TestG1PreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CONCURRENT));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE with TO_SPACE_EXHAUSTED trigger.
+     * 
+     */
+    public void testG1PreprocessActionToSpaceExhaustedLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset45.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+        Assert.assertTrue(Analysis.KEY_G1_EVACUATION_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_G1_EVACUATION_FAILURE));
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_MIXED_PAUSE with no trigger.
+     * 
+     */
+    public void testG1PreprocessActionMixedPauseNoTriggerLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset46.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_MIXED_PAUSE));
     }
 
     /**
@@ -1037,22 +1039,6 @@ public class TestG1PreprocessAction extends TestCase {
     }
 
     /**
-     * Test <code>G1PreprocessAction</code> for G1_YOUNG_INITIAL_MARK with ergonomics.
-     * 
-     */
-    public void testG1PreprocessActionG1YoungInitialMarkWithTriggerAndG1ErgonomicsLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset53.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK));
-    }
-
-    /**
      * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE with TRIGGER_TO_SPACE_EXHAUSTED with ergonomics.
      * 
      */
@@ -1066,6 +1052,8 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+        Assert.assertTrue(Analysis.KEY_G1_EVACUATION_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_G1_EVACUATION_FAILURE));
     }
 
     /**
@@ -1102,6 +1090,24 @@ public class TestG1PreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CONCURRENT));
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_YOUNG_INITIAL_MARK with ergonomics.
+     * 
+     */
+    public void testG1PreprocessActionG1YoungInitialMarkWithTriggerAndG1ErgonomicsLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset53.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK));
+        Assert.assertTrue(Analysis.KEY_G1_EVACUATION_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_G1_EVACUATION_FAILURE));
     }
 
     /**
