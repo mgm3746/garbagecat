@@ -92,6 +92,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 8.556: [GC concurrent-string-deduplication, 906.5K-&gt;410.2K(496.3K), avg 54.8%, 0.0162924 secs]
  * </pre>
  * 
+ * <p>
+ * 5) Double timestamp:
+ * </p>
+ * 
+ * <pre>
+ * 23743.632: 23743.632: [GC concurrent-root-region-scan-start]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
  * 
@@ -101,7 +109,7 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+    private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC concurrent-(((root-region-scan|mark|cleanup)-(start|end|abort))"
             + "|string-deduplication)(\\])?(,)?( " + JdkRegEx.DURATION + ")?(\\])?( " + JdkRegEx.SIZE_G1_WHOLE + "->"
             + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\))?( " + JdkRegEx.SIZE_G1_DECIMAL + "->"
@@ -131,7 +139,7 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent {
 
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(3)).longValue();
         }
     }
 
