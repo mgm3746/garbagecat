@@ -74,11 +74,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 2) Stopping threads information added JDK8 update 40:
+ * 2) JDK8 update 40 with the time (out of the total stopped time) waiting for the threads to arrive at a safepoint (
+ * "Stopping threads took"):
  * </p>
  * 
  * <pre>
  * 0.147: Total time for which application threads were stopped: 0.0000921 seconds, Stopping threads took: 0.0000190 seconds
+ * </pre>
+ * 
+ * <p>
+ * 3) With negative stopped time. A bug?
+ * </p>
+ * 
+ * <pre>
+ * 51185.692: Total time for which application threads were stopped: -0.0005950 seconds, Stopping threads took: 0.0003310 seconds
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -104,8 +113,8 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": )?Total time for which application threads "
-            + "were stopped: (\\d{1,4}[\\.\\,]\\d{7}) seconds"
+    private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.TIMESTAMP
+            + ": )?Total time for which application threads " + "were stopped: ((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds"
             + "(, Stopping threads took: \\d{1,4}[\\.\\,]\\d{7} seconds)?[ ]*$";
     /**
      * RegEx pattern.
@@ -125,7 +134,7 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
             if (matcher.group(2) != null) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(2)).longValue();
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(3)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(5)).intValue();
         }
     }
 
