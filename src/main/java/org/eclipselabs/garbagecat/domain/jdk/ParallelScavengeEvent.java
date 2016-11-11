@@ -122,7 +122,8 @@ public class ParallelScavengeEvent extends ParallelCollector
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
             + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + ")";
+            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
 
     /**
      * Regular expressions defining the logging.
@@ -146,16 +147,16 @@ public class ParallelScavengeEvent extends ParallelCollector
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             trigger = matcher.group(4);
-            young = Integer.parseInt(matcher.group(5));
-            youngEnd = Integer.parseInt(matcher.group(6));
-            youngAvailable = Integer.parseInt(matcher.group(7));
-            int totalBegin = Integer.parseInt(matcher.group(8));
+            young = Integer.parseInt(matcher.group(6));
+            youngEnd = Integer.parseInt(matcher.group(7));
+            youngAvailable = Integer.parseInt(matcher.group(8));
+            int totalBegin = Integer.parseInt(matcher.group(9));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(9));
+            int totalEnd = Integer.parseInt(matcher.group(10));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(10));
+            int totalAllocation = Integer.parseInt(matcher.group(11));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(11)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(12)).intValue();
         }
     }
 

@@ -24,6 +24,13 @@ import junit.framework.TestCase;
  */
 public class TestParallelScavengeEvent extends TestCase {
 
+    public void testIsBlocking() {
+        String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
+                + "160183K->133159K(585088K), 0.0225213 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testLogLine() {
         String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
                 + "160183K->133159K(585088K), 0.0225213 secs]";
@@ -151,10 +158,40 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 221, event.getDuration());
     }
 
-    public void testIsBlocking() {
-        String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
-                + "160183K->133159K(585088K), 0.0225213 secs]";
-        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    public void testHeapInspectionInitiatedGcTrigger() {
+        String logLine = "285196.842: [GC (Heap Inspection Initiated GC) [PSYoungGen: 1475708K->47669K(1514496K)] "
+                + "4407360K->2982516K(6233088K), 0.2635940 secs] [Times: user=0.86 sys=0.00, real=0.27 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
+                ParallelScavengeEvent.match(logLine));
+        ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 285196842, event.getTimestamp());
+        Assert.assertTrue(
+                "Trigger not recognized as " + JdkUtil.TriggerType.HEAP_INSPECTION_INITIATED_GC.toString() + ".",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC));
+        Assert.assertEquals("Young begin size not parsed correctly.", 1475708, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 47669, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 1514496, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 4407360 - 1475708, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 2982516 - 47669, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 6233088 - 1514496, event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 263, event.getDuration());
+    }
+
+    public void testSystemGcTrigger() {
+        String logLine = "180069.616: [GC (System.gc()) [PSYoungGen: 553672K->22188K(1472512K)] "
+                + "2900456K->2372732K(6191104K), 0.1668270 secs] [Times: user=0.58 sys=0.00, real=0.17 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
+                ParallelScavengeEvent.match(logLine));
+        ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 180069616, event.getTimestamp());
+        Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.SYSTEM_GC.toString() + ".",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
+        Assert.assertEquals("Young begin size not parsed correctly.", 553672, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 22188, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 1472512, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 2900456 - 553672, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 2372732 - 22188, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 6191104 - 1472512, event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 166, event.getDuration());
     }
 }
