@@ -80,7 +80,7 @@ public class G1YoungPauseEvent extends G1Collector
      * 
      * 1.234: [GC pause (young) 102M-&gt;24M(512M), 0.0254200 secs]
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\) )?\\(young\\) " + JdkRegEx.SIZE_G1_WHOLE + "->"
             + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\), " + JdkRegEx.DURATION + "\\]";
 
@@ -171,12 +171,12 @@ public class G1YoungPauseEvent extends G1Collector
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), matcher.group(18).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)),
-                        matcher.group(20).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(21)).intValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(5).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(7).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
+                        matcher.group(9).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(10)).intValue();
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED_DETAILS)) {
             Pattern pattern = Pattern.compile(REGEX_PREPROCESSED_DETAILS);

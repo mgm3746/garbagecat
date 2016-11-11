@@ -66,9 +66,9 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Combin
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup "
-            + JdkRegEx.SIZE_G1_WHOLE + "->" + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\), "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup " + JdkRegEx.SIZE_G1_WHOLE + "->"
+            + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
     /**
@@ -111,11 +111,11 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Combin
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(14).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
-            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), matcher.group(18).charAt(0));
-            duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(2)), matcher.group(3).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(5).charAt(0));
+            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(7).charAt(0));
+            duration = JdkMath.convertSecsToMillis(matcher.group(8)).intValue();
         }
     }
 
