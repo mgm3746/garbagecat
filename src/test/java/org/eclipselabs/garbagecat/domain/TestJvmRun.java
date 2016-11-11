@@ -543,6 +543,37 @@ public class TestJvmRun extends TestCase {
     }
 
     /**
+     * Test summary stats for a partial log file (1st timestamp > Constants.FIRST_TIMESTAMP_THRESHOLD). Same data as
+     * dataset41.txt with 1000 seconds added to each timestamp.
+     */
+    public void testSummaryStatsPartialLog() {
+
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset98.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertEquals("GC pause total not correct.", 61, jvmRun.getTotalGcPause());
+        Assert.assertEquals("GC first timestamp not correct.", 1002192, jvmRun.getFirstGcTimestamp());
+        Assert.assertEquals("GC last timestamp not correct.", 1002847, jvmRun.getLastGcTimestamp());
+        Assert.assertEquals("GC last duration not correct.", 41, jvmRun.getLastGcDuration());
+        Assert.assertEquals("Stopped Time event count not correct.", 6, jvmRun.getStoppedTimeEventCount());
+        Assert.assertEquals("Stopped time total not correct.", 1064, jvmRun.getTotalStoppedTime());
+        Assert.assertEquals("Stopped first timestamp not correct.", 1000964, jvmRun.getFirstStoppedTimestamp());
+        Assert.assertEquals("Stopped last timestamp not correct.", 1003884, jvmRun.getLastStoppedTimestamp());
+        Assert.assertEquals("Stopped last duration not correct.", 1000688, jvmRun.getLastStoppedDuration());
+        Assert.assertEquals("JVM first timestamp not correct.", 1000964, jvmRun.getFirstTimestamp());
+        Assert.assertEquals("JVM last timestamp not correct.", 1003884, jvmRun.getLastTimestamp());
+        Assert.assertEquals("JVM run duration not correct.", 3920, jvmRun.getJvmRunDuration());
+        Assert.assertEquals("GC throughput not correct.", 98, jvmRun.getGcThroughput());
+        Assert.assertEquals("Stopped time throughput not correct.", 73, jvmRun.getStoppedTimeThroughput());
+        Assert.assertTrue(Analysis.KEY_GC_STOPPED_RATIO + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_GC_STOPPED_RATIO));
+    }
+
+    /**
      * Test passing JVM options on the command line.
      * 
      */
