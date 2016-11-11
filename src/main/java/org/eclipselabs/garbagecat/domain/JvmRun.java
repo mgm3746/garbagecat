@@ -348,18 +348,9 @@ public class JvmRun {
     public long getGcThroughput() {
         long gcThroughput;
         if (blockingEventCount > 0) {
-            long timeTotal;
-            if (lastGcTimestamp > firstGcTimestamp && firstGcTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
-                // Partial log. Use the timestamp of the first GC event, not 0, in order to determine
-                // throughput more accurately.
-                timeTotal = lastGcTimestamp + new Long(lastGcDuration).longValue() - firstGcTimestamp;
-            } else {
-                // Complete log or a log with only 1 event.
-                timeTotal = lastGcTimestamp + new Long(lastGcDuration).longValue();
-            }
-            long timeNotGc = timeTotal - new Long(totalGcPause).longValue();
+            long timeNotGc = getJvmRunDuration() - new Long(totalGcPause).longValue();
             BigDecimal throughput = new BigDecimal(timeNotGc);
-            throughput = throughput.divide(new BigDecimal(timeTotal), 2, RoundingMode.HALF_EVEN);
+            throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, RoundingMode.HALF_EVEN);
             throughput = throughput.movePointRight(2);
             gcThroughput = throughput.longValue();
 
@@ -375,37 +366,14 @@ public class JvmRun {
      * stopped time.
      */
     public long getStoppedTimeThroughput() {
+
         long stoppedTimeThroughput;
         if (stoppedTimeEventCount > 0) {
-            long timeTotal;
-            if (lastStoppedTimestamp > firstStoppedTimestamp
-                    && firstStoppedTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
-                // Partial log. Use the timestamp of the first stopped event, not 0, in order to determine
-                // throughput more accurately.
-                timeTotal = lastStoppedTimestamp + JdkMath.convertMicrosToMillis(lastStoppedDuration).longValue()
-                        - firstStoppedTimestamp;
-            } else {
-                // Complete log or a log with only 1 event.
-                timeTotal = lastStoppedTimestamp + JdkMath.convertMicrosToMillis(lastStoppedDuration).longValue();
-            }
-            if (timeTotal == 0) {
-                // Use GC timestamps
-                if (lastGcTimestamp > firstGcTimestamp
-                        && firstGcTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
-                    // Partial log. Use the timestamp of the first GC event, not 0, in order to determine
-                    // throughput more accurately.
-                    timeTotal = lastGcTimestamp + new Long(lastGcDuration).longValue() - firstGcTimestamp;
-                } else {
-                    // Complete log or a log with only 1 event.
-                    timeTotal = lastGcTimestamp + new Long(lastGcDuration).longValue();
-                }
-            }
-            long timeNotGc = timeTotal - new Long(totalStoppedTime).longValue();
-            BigDecimal throughput = new BigDecimal(timeNotGc);
-            throughput = throughput.divide(new BigDecimal(timeTotal), 2, RoundingMode.HALF_EVEN);
+            long timeNotStopped = getJvmRunDuration() - new Long(totalStoppedTime).longValue();
+            BigDecimal throughput = new BigDecimal(timeNotStopped);
+            throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, RoundingMode.HALF_EVEN);
             throughput = throughput.movePointRight(2);
             stoppedTimeThroughput = throughput.longValue();
-
         } else {
             stoppedTimeThroughput = 100L;
         }
@@ -424,7 +392,6 @@ public class JvmRun {
             ratio = ratio.divide(new BigDecimal(totalStoppedTime), 2, RoundingMode.HALF_EVEN);
             ratio = ratio.movePointRight(2);
             gcStoppedRatio = ratio.longValue();
-
         } else {
             gcStoppedRatio = 100L;
         }
@@ -750,9 +717,31 @@ public class JvmRun {
     }
 
     /**
-     * @return Time of the lsst gc or stopped event, in milliseconds after JVM startup.
+     * @return Time of the last gc or stopped event, in milliseconds after JVM startup.
      */
     public long getLastTimestamp() {
         return Math.max(lastGcTimestamp, lastStoppedTimestamp);
+    }
+
+    /**
+     * @return JVM run duration (milliseconds).
+     */
+    public long getJvmRunDuration() {
+
+        long start = 0;
+        if (getFirstTimestamp() > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
+            // partial log
+            start = getFirstTimestamp();
+        }
+
+        long end = 0;
+        // Use either last gc or last timestamp and add duration of gc/stop
+        if (lastStoppedTimestamp > lastGcTimestamp) {
+            end = lastStoppedTimestamp + JdkMath.convertMicrosToMillis(lastStoppedDuration).longValue();
+        } else {
+            end = lastGcTimestamp + new Long(lastGcDuration).longValue();
+        }
+
+        return end - start;
     }
 }

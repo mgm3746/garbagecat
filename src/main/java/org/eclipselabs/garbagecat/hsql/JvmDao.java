@@ -1065,7 +1065,7 @@ public class JvmDao {
     /**
      * The total stopped time event pause time.
      * 
-     * @return total pause duration (microseconds).
+     * @return total pause duration (milliseconds).
      */
     public synchronized int getTotalStoppedTime() {
         int totalStoppedTime = 0;

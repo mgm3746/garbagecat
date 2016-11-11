@@ -89,7 +89,7 @@ public class JdkMath {
      * 
      * @param micros
      *            Microseconds as a whole number.
-     * @return Seconds rounded to 3 decimal places.
+     * @return Milliseconds rounded to 3 decimal places.
      */
     public static BigDecimal convertMicrosToMillis(long micros) {
         BigDecimal duration = new BigDecimal(micros);

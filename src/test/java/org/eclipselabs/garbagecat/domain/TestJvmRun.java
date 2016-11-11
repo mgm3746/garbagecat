@@ -397,31 +397,25 @@ public class TestJvmRun extends TestCase {
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Max heap space not calculated correctly.", 31457280, jvmRun.getMaxHeapSpace());
-        Assert.assertEquals("Max heap occupancy not calculated correctly.", 140186, jvmRun.getMaxHeapOccupancy());
-        Assert.assertEquals("Max GC pause not calculated correctly.", 41, jvmRun.getMaxGcPause());
-        Assert.assertEquals("Max perm gen space not calculated correctly.", 0, jvmRun.getMaxPermSpace());
-        Assert.assertEquals("Max perm gen occupancy not calculated correctly.", 0, jvmRun.getMaxPermOccupancy());
-        Assert.assertEquals("Total GC pause time not calculated correctly.", 61, jvmRun.getTotalGcPause());
-        Assert.assertEquals("GC first timestamp not calculated correctly.", 2192, jvmRun.getFirstGcTimestamp());
-        Assert.assertEquals("GC last timestamp not calculated correctly.", 2847, jvmRun.getLastGcTimestamp());
-        Assert.assertEquals("GC last duration not calculated correctly.", 41, jvmRun.getLastGcDuration());
-        Assert.assertEquals("GC throughput not calculated correctly.", 98, jvmRun.getGcThroughput());
-        Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE));
         Assert.assertTrue(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME));
+        Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertEquals("GC pause total not correct.", 61, jvmRun.getTotalGcPause());
+        Assert.assertEquals("GC first timestamp not correct.", 2192, jvmRun.getFirstGcTimestamp());
+        Assert.assertEquals("GC last timestamp not correct.", 2847, jvmRun.getLastGcTimestamp());
+        Assert.assertEquals("GC last duration not correct.", 41, jvmRun.getLastGcDuration());
         Assert.assertEquals("Stopped Time event count not correct.", 6, jvmRun.getStoppedTimeEventCount());
-        Assert.assertEquals("Max stopped time not calculated correctly.", 1000, jvmRun.getMaxStoppedTime());
-        Assert.assertEquals("Total stopped time not calculated correctly.", 1064, jvmRun.getTotalStoppedTime());
-        Assert.assertEquals("Stopped first timestamp not calculated correctly.", 964,
-                jvmRun.getFirstStoppedTimestamp());
-        Assert.assertEquals("Stopped last timestamp not calculated correctly.", 3884, jvmRun.getLastStoppedTimestamp());
-        Assert.assertEquals("Stopped last duration not calculated correctly.", 1000688,
-                jvmRun.getLastStoppedDuration());
-        Assert.assertEquals("Stopped time throughput not calculated correctly.", 78, jvmRun.getStoppedTimeThroughput());
-        Assert.assertEquals("GC/Stopped ratio not calculated correctly.", 6, jvmRun.getGcStoppedRatio());
+        Assert.assertEquals("Stopped time total not correct.", 1064, jvmRun.getTotalStoppedTime());
+        Assert.assertEquals("Stopped first timestamp not correct.", 964, jvmRun.getFirstStoppedTimestamp());
+        Assert.assertEquals("Stopped last timestamp not correct.", 3884, jvmRun.getLastStoppedTimestamp());
+        Assert.assertEquals("Stopped last duration not correct.", 1000688, jvmRun.getLastStoppedDuration());
+        Assert.assertEquals("JVM first timestamp not correct.", 964, jvmRun.getFirstTimestamp());
+        Assert.assertEquals("JVM last timestamp not correct.", 3884, jvmRun.getLastTimestamp());
+        Assert.assertEquals("JVM run duration not correct.", 4884, jvmRun.getJvmRunDuration());
+        Assert.assertEquals("GC throughput not correct.", 99, jvmRun.getGcThroughput());
+        Assert.assertEquals("Stopped time throughput not correct.", 78, jvmRun.getStoppedTimeThroughput());
         Assert.assertTrue(Analysis.KEY_GC_STOPPED_RATIO + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_GC_STOPPED_RATIO));
     }
@@ -533,9 +527,18 @@ public class TestJvmRun extends TestCase {
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("GC pause total not correct.", 2096, jvmRun.getTotalGcPause());
+        Assert.assertEquals("GC first timestamp not correct.", 16517, jvmRun.getFirstGcTimestamp());
+        Assert.assertEquals("GC last timestamp not correct.", 31432, jvmRun.getLastGcTimestamp());
+        Assert.assertEquals("GC last duration not correct.", 271, jvmRun.getLastGcDuration());
         Assert.assertEquals("Stopped time total not correct.", 1830, jvmRun.getTotalStoppedTime());
-        Assert.assertEquals("First GC timestamp not correct.", 16517, jvmRun.getFirstGcTimestamp());
-        Assert.assertEquals("Lsst GC timestamp not correct.", 31432, jvmRun.getLastGcTimestamp());
+        Assert.assertEquals("Stopped first timestamp not correct.", 0, jvmRun.getFirstStoppedTimestamp());
+        Assert.assertEquals("Stopped last timestamp not correct.", 0, jvmRun.getLastStoppedTimestamp());
+        Assert.assertEquals("Stopped last duration not correct.", 50, jvmRun.getLastStoppedDuration());
+        Assert.assertEquals("JVM first timestamp not correct.", 16517, jvmRun.getFirstTimestamp());
+        Assert.assertEquals("JVM last timestamp not correct.", 31432, jvmRun.getLastTimestamp());
+        Assert.assertEquals("JVM run duration not correct.", 31703, jvmRun.getJvmRunDuration());
+        Assert.assertEquals("GC throughput not correct.", 93, jvmRun.getGcThroughput());
         Assert.assertEquals("Stopped time throughput not correct.", 94, jvmRun.getStoppedTimeThroughput());
     }
 
