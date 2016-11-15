@@ -183,11 +183,11 @@ public class JdkRegEx {
 
     /**
      * <p>
-     * To Space Exhausted trigger. A G1_YOUNG_PAUSE collection cannot happen due to "to-space exhausted". There is not
-     * enough free space in the heap for survived and/or promoted objects, and the heap cannot be expanded. This is a
-     * very expensive operation. Sometimes the collector's ergonomics can resolve the issue by dynamically re-sizing
-     * heap regions. If it cannot, it invokes a G1_FULL_GC in an attempt to reclaim enough space to continue. All of the
-     * following are possible resolutions:
+     * To Space Exhausted trigger. A G1_YOUNG_PAUSE, G1_MIXED_PAUSE, or G1_YOUNG_INITIAL_MARK collection cannot happen
+     * due to "to-space exhausted". There is not enough free space in the heap for survived and/or promoted objects, and
+     * the heap cannot be expanded. This is a very expensive operation. Sometimes the collector's ergonomics can resolve
+     * the issue by dynamically re-sizing heap regions. If it cannot, it invokes a G1_FULL_GC in an attempt to reclaim
+     * enough space to continue. All of the following are possible resolutions:
      * </p>
      * 
      * <ol>

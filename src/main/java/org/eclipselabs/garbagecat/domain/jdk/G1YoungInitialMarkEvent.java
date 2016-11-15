@@ -28,7 +28,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * G1 collector young generation initial marking.
+ * G1 collector young generation initial marking. Piggybacks a G1_YOUNG_PAUSE collection.
  * </p>
  * 
  * <h3>Example Logging</h3>
