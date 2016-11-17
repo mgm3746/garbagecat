@@ -137,8 +137,7 @@ public class Analysis {
     public static final String KEY_SERIAL_GC_G1 = "serial.gc.g1";
 
     /**
-     * Property key for the Parallel (Throughput) collector invoking a serial collection for reasons other than explicit
-     * gc.
+     * Property key for the Parallel (Throughput) PARALLEL_SERIAL_OLD (single-threaded) collector.
      */
     public static final String KEY_SERIAL_GC_PARALLEL = "serial.gc.parallel";
 

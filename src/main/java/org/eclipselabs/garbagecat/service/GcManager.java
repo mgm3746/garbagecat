@@ -361,6 +361,9 @@ public class GcManager {
                                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_PARALLEL)) {
                                         jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL_PARALLEL);
                                     }
+                                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_PARALLEL)) {
+                                        jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_PARALLEL);
+                                    }
                                 } else if (event instanceof ParallelOldCompactingEvent) {
                                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_PARALLEL)) {
                                         jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_PARALLEL);

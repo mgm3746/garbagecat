@@ -438,7 +438,7 @@ public class TestJvmRun extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD));
         Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_SERIAL_PARALLEL + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_PARALLEL));
-        Assert.assertFalse(Analysis.KEY_SERIAL_GC_PARALLEL + " analysis incorrectly identified.",
+        Assert.assertTrue(Analysis.KEY_SERIAL_GC_PARALLEL + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_PARALLEL));
     }
 
