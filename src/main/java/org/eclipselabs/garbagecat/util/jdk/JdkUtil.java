@@ -65,6 +65,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcYoungEvent;
@@ -105,16 +106,14 @@ public class JdkUtil {
         //
         CLASS_UNLOADING, APPLICATION_LOGGING, THREAD_DUMP, BLANK_LINE, GC_OVERHEAD_LIMIT, LOG_FILE, FLS_STATISTICS,
         //
-        GC_LOCKER
+        GC_LOCKER, TENURING_DISTRIBUTION
     };
 
     /**
      * Defined preprocessing actions.
      */
     public enum PreprocessActionType {
-        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, DATE_STAMP, DATE_STAMP_PREFIX,
-        //
-        PRINT_TENURING_DISTRIBUTION, G1, CMS, PARALLEL_SERIAL_OLD
+        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, DATE_STAMP, DATE_STAMP_PREFIX, G1, CMS, PARALLEL, SERIAL
     };
 
     /**
@@ -228,6 +227,8 @@ public class JdkUtil {
             return LogEventType.CLASS_UNLOADING;
         if (HeapAtGcEvent.match(logLine))
             return LogEventType.HEAP_AT_GC;
+        if (TenuringDistributionEvent.match(logLine))
+            return LogEventType.TENURING_DISTRIBUTION;
         if (ClassHistogramEvent.match(logLine))
             return LogEventType.CLASS_HISTOGRAM;
         if (ApplicationLoggingEvent.match(logLine))
@@ -386,6 +387,9 @@ public class JdkUtil {
         case SERIAL_OLD:
             event = new SerialOldEvent(logLine);
             break;
+        case TENURING_DISTRIBUTION:
+            event = new TenuringDistributionEvent(logLine);
+            break;
         case THREAD_DUMP:
             event = new ThreadDumpEvent(logLine);
             break;
@@ -534,6 +538,7 @@ public class JdkUtil {
         case LOG_FILE:
         case REFERENCE_GC:
         case THREAD_DUMP:
+        case TENURING_DISTRIBUTION:
         case UNKNOWN:
             isBlocking = false;
         default:

@@ -10,23 +10,18 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.preprocess.jdk;
+package org.eclipselabs.garbagecat.domain.jdk;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * PRINT_TENURING_DISTRIBUTION
+ * TENURING_DISTRIBUTION
  * </p>
  * 
  * <p>
- * Remove <code>-XX:+PrintTenuringDistribution</code> logging from the underlying garbage collection event. This data is
- * currently not being used for any analysis.
+ * <code>-XX:+PrintTenuringDistribution</code> logging. This data is currently not being used for any analysis.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -134,51 +129,16 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class PrintTenuringDistributionPreprocessAction implements PreprocessAction {
+public class TenuringDistributionEvent implements ThrowAwayEvent {
 
     /**
-     * Regular expressions for the beginning part of a line retained.
+     * Regular expressions defining the logging.
      */
-    private static final String[] REGEX_RETAIN_BEGINNING = {
-            "^(" + JdkRegEx.TIMESTAMP + ": \\[GC( )?(\\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\) )?("
-                    + JdkRegEx.TIMESTAMP + ": \\[(Def|Par)New)?( \\(promotion failed\\))?)$",
-            // Concurrent mode failure. Treat it like a beginning line.
-            "(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-                    + JdkRegEx.TIMESTAMP + ": \\[CMS( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
-                    + ": \\[CMS-concurrent-(abortable-preclean|mark|preclean|sweep): " + JdkRegEx.DURATION_FRACTION
-                    + "\\])" + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
-    private static final Pattern PATTERN_BEGINNING[] = new Pattern[REGEX_RETAIN_BEGINNING.length];
-
-    /**
-     * Regular expression for the end part of a line retained.
-     */
-    private static final String[] REGEX_RETAIN_END = {
-            // Normal young collection
-            "^: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
-                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-                    + JdkRegEx.TIMES_BLOCK + "?[ ]*$",
-            "^ \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
-                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-                    + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
-
-    private static final Pattern PATTERN_END[] = new Pattern[REGEX_RETAIN_END.length];
-
-    /**
-     * Regular expressions for lines or parts of lines thrown away.
-     */
-    private static final String[] REGEX_THROWAWAY = {
+    private static final String[] REGEX = {
+            //
             "^Desired survivor size \\d{1,11} bytes, new threshold \\d{1,2} \\(max \\d{1,2}\\)$",
+            //
             "^- age[ ]+\\d{1,2}:[ ]+\\d{1,11} bytes,[ ]+\\d{1,11} total$" };
-    private static final Pattern PATTERN_THROWAWAY[] = new Pattern[REGEX_THROWAWAY.length];
-
-    static {
-        for (int i = 0; i < REGEX_RETAIN_BEGINNING.length; i++)
-            PATTERN_BEGINNING[i] = Pattern.compile(REGEX_RETAIN_BEGINNING[i]);
-        for (int i = 0; i < REGEX_RETAIN_END.length; i++)
-            PATTERN_END[i] = Pattern.compile(REGEX_RETAIN_END[i]);
-        for (int i = 0; i < REGEX_THROWAWAY.length; i++)
-            PATTERN_THROWAWAY[i] = Pattern.compile(REGEX_THROWAWAY[i]);
-    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -186,38 +146,19 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
     private String logEntry;
 
     /**
+     * The time when the GC event happened in milliseconds after JVM startup.
+     */
+    private long timestamp;
+
+    /**
      * Create event from log entry.
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public PrintTenuringDistributionPreprocessAction(String logEntry) {
-        // Handle split logging. Keep parts of log lines needed for
-        // re-composing.
-        Matcher matcher;
-        // Check to see if beginning of line should be retained.
-        boolean retainBeginning = false;
-        for (int i = 0; i < PATTERN_BEGINNING.length; i++) {
-            matcher = PATTERN_BEGINNING[i].matcher(logEntry);
-            if (matcher.find() && matcher.group(1) != null) {
-                // Retain beginning of line.
-                this.logEntry = matcher.group(1);
-                retainBeginning = true;
-            }
-        }
-        // Check to see if end of line should be retained.
-        if (!retainBeginning) {
-            boolean retain = false;
-            for (int i = 0; i < PATTERN_END.length; i++) {
-                if (PATTERN_END[i].matcher(logEntry).matches()) {
-                    retain = true;
-                    break;
-                }
-            }
-            if (retain) {
-                this.logEntry = logEntry + System.getProperty("line.separator");
-            }
-        }
+    public TenuringDistributionEvent(String logEntry) {
+        this.logEntry = logEntry;
+        this.timestamp = 0L;
     }
 
     public String getLogEntry() {
@@ -225,7 +166,11 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
     }
 
     public String getName() {
-        return JdkUtil.PreprocessActionType.PRINT_TENURING_DISTRIBUTION.toString();
+        return JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString();
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 
     /**
@@ -233,27 +178,16 @@ public class PrintTenuringDistributionPreprocessAction implements PreprocessActi
      * 
      * @param logLine
      *            The log line to test.
-     * @param priorLogLine
-     *            The last log entry processed.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine, String priorLogLine) {
-        for (int i = 0; i < PATTERN_THROWAWAY.length; i++) {
-            if (PATTERN_THROWAWAY[i].matcher(logLine).matches()) {
-                return true;
+    public static final boolean match(String logLine) {
+        boolean isMatch = false;
+        for (int i = 0; i < REGEX.length; i++) {
+            if (logLine.matches(REGEX[i])) {
+                isMatch = true;
+                break;
             }
         }
-        for (int i = 0; i < PATTERN_BEGINNING.length; i++) {
-            if (PATTERN_BEGINNING[i].matcher(logLine).matches()) {
-                return true;
-            }
-        }
-        for (int i = 0; i < PATTERN_END.length; i++) {
-            // Shares same end line with CmsPreprocessAction
-            if (PATTERN_END[i].matcher(logLine).matches() && match(priorLogLine, null)) {
-                return true;
-            }
-        }
-        return false;
+        return isMatch;
     }
 }

@@ -24,7 +24,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * G1
+ * G1 preprocessing.
  * </p>
  *
  * <p>

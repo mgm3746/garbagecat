@@ -345,6 +345,11 @@ public class Analysis {
     public static final String KEY_G1_EVACUATION_FAILURE = "g1.evacuation.failure";
 
     /**
+     * Property key for outputting tenuring distribution information (-XX:+PrintTenuringDistribution).
+     */
+    public static final String KEY_PRINT_TENURING_DISTRIBUTION = "print.tenuring.distribution";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

@@ -621,4 +621,11 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertNotNull("CompressedClassSpaceSize not found.", jvm.getCompressedClassSpaceSize());
     }
+
+    public void testPrintTenuringDistribution() {
+        String jvmOptions = "-Xss128k -XX:+PrintTenuringDistribution -XX:MaxMetaspaceSize=1280m";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:+PrintTenuringDistribution option incorrect.", "-XX:+PrintTenuringDistribution",
+                jvm.getPrintTenuringDistribution());
+    }
 }

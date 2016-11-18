@@ -24,7 +24,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * General CMS preprocessing.
+ * CMS preprocessing.
  * </p>
  *
  * <p>

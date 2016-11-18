@@ -12,13 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import java.io.File;
-
-import org.eclipselabs.garbagecat.domain.JvmRun;
-import org.eclipselabs.garbagecat.service.GcManager;
-import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -73,21 +67,5 @@ public class TestSerialNewEvent extends TestCase {
                 + "41677K->10314K(126720K), 0.0210210 secs]";
         Assert.assertTrue(JdkUtil.LogEventType.SERIAL_NEW.toString() + " not indentified as blocking.",
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
-    }
-
-    /**
-     * Test preprocessing <code>PrintTenuringDistributionPreprocessAction</code> with underlying
-     * <code>SerialEvent</code>.
-     */
-    public void testSplitSerialEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset17.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL_NEW));
     }
 }

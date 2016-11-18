@@ -22,8 +22,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Remove <code>-XX:+PrintHeapAtGC</code> logging from the underlying garbage collection event. This data is currently
- * not being used for any analysis.
+ * <code>-XX:+PrintHeapAtGC</code> logging. This data is currently not being used for any analysis.
  * </p>
  * 
  * <h3>Example Logging</h3>

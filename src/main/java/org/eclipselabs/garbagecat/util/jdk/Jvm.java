@@ -761,6 +761,20 @@ public class Jvm {
     }
 
     /**
+     * The option for outputting tenuring distribution information.
+     * 
+     * <pre>
+     * -XX:+PrintTenuringDistribution
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintTenuringDistribution() {
+        String regex = "(-XX:\\+PrintTenuringDistribution)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

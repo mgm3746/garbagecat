@@ -49,6 +49,7 @@ import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
@@ -57,8 +58,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.ParallelSerialOldPreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.PrintTenuringDistributionPreprocessAction;
+import org.eclipselabs.garbagecat.preprocess.jdk.ParallelPreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -251,17 +251,21 @@ public class GcManager {
                     jvmDao.getAnalysisKeys().add(Analysis.KEY_PRINT_FLS_STATISTICS);
                 }
             }
+            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_TENURING_DISTRIBUTION)) {
+                if (TenuringDistributionEvent.match(currentLogLine)) {
+                    jvmDao.getAnalysisKeys().add(Analysis.KEY_PRINT_TENURING_DISTRIBUTION);
+                }
+            }
             currentLogLine = null;
-        } else if (ParallelSerialOldPreprocessAction.match(currentLogLine)
-                && !context.contains(CmsPreprocessAction.TOKEN) && !context.contains(G1PreprocessAction.TOKEN)) {
-            ParallelSerialOldPreprocessAction action = new ParallelSerialOldPreprocessAction(priorLogLine,
-                    currentLogLine, nextLogLine, entangledLogLines, context);
+        } else if (ParallelPreprocessAction.match(currentLogLine) && !context.contains(CmsPreprocessAction.TOKEN)
+                && !context.contains(G1PreprocessAction.TOKEN)) {
+            ParallelPreprocessAction action = new ParallelPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
+                    entangledLogLines, context);
             if (action.getLogEntry() != null) {
                 preprocessedLogLine = action.getLogEntry();
             }
         } else if (CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)
-                && !context.contains(G1PreprocessAction.TOKEN)
-                && !context.contains(ParallelSerialOldPreprocessAction.TOKEN)) {
+                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)) {
             /*
              * ^^^ Verify not in the middle of G1 preprocessing. The following log line is common to both:
              * 
@@ -269,12 +273,6 @@ public class GcManager {
              */
             CmsPreprocessAction action = new CmsPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                     entangledLogLines, context);
-            if (action.getLogEntry() != null) {
-                preprocessedLogLine = action.getLogEntry();
-            }
-        } else if (PrintTenuringDistributionPreprocessAction.match(currentLogLine, priorLogLine)) {
-            PrintTenuringDistributionPreprocessAction action = new PrintTenuringDistributionPreprocessAction(
-                    currentLogLine);
             if (action.getLogEntry() != null) {
                 preprocessedLogLine = action.getLogEntry();
             }

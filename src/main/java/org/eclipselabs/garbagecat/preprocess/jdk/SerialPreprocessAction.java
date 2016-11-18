@@ -24,28 +24,27 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * PARALLEL_SERIAL_0LD
+ * SERIAL preprocessing.
  * </p>
  * 
  * <p>
- * General PARALLEL_SERIAL_0LD preprocessing.
- * </p>
- *
- * <p>
- * Fix issues with Parallel Serial Old logging.
+ * Fix issues with Serial logging.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
  * *
  * <p>
- * 1) {@link org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent} with "GC time <em>would exceed</em>
- * GCTimeLimit":
+ * 1) {@link org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent} with
+ * {@link org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent}:
  * </p>
  * 
  * <pre>
- * 3743.645: [Full GC [PSYoungGen: 419840K-&gt;415020K(839680K)] [PSOldGen: 5008922K-&gt;5008922K(5033984K)] 5428762K-&gt;5423942K(5873664K) [PSPermGen: 193275K-&gt;193275K(262144K)]      GC time would exceed GCTimeLimit of 98%
- * , 33.6887649 secs] [Times: user=33.68 sys=0.02, real=33.69 secs]
+ * 10.204: [GC 10.204: [DefNew
+ * Desired survivor size 2228224 bytes, new threshold 1 (max 15)
+ * - age   1:    3177664 bytes,    3177664 total
+ * - age   2:    1278784 bytes,    4456448 total
+ * : 36825K-&gt;4352K(39424K), 0.0224830 secs] 44983K-&gt;14441K(126848K), 0.0225800 secs]
  * </pre>
  * 
  * <p>
@@ -53,66 +52,36 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 3743.645: [Full GC [PSYoungGen: 419840K-&gt;415020K(839680K)] [PSOldGen: 5008922K-&gt;5008922K(5033984K)] 5428762K-&gt;5423942K(5873664K) [PSPermGen: 193275K-&gt;193275K(262144K)], 33.6887649 secs] [Times: user=33.68 sys=0.02, real=33.69 secs]
- * </pre>
- * 
- * <p>
- * 2) {@link org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent} with "GC time <em>is exceeding</em>
- * GCTimeLimit":
- * </p>
- * 
- * <pre>
- * 3924.453: [Full GC [PSYoungGen: 419840K-&gt;418436K(839680K)] [PSOldGen: 5008601K-&gt;5008601K(5033984K)] 5428441K-&gt;5427038K(5873664K) [PSPermGen: 193278K-&gt;193278K(262144K)]      GC time is exceeding GCTimeLimit of 98%
- * </pre>
- * 
- * <p>
- * 3) {@link org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent} with "GC time <em>is exceeding</em>
- * GCTimeLimit":
- * </p>
- * 
- * <pre>
- * 52767.809: [Full GC [PSYoungGen: 109294K-&gt;94333K(184960K)] [ParOldGen: 1307971K-&gt;1307412K(1310720K)] 1417265K-&gt;1401746K(1495680K) [PSPermGen: 113654K-&gt;113646K(196608K)]        GC time is exceeding GCTimeLimit of 98%
+ * 10.204: [GC 10.204: [DefNew: 36825K-&gt;4352K(39424K), 0.0224830 secs] 44983K-&gt;14441K(126848K), 0.0225800 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ParallelSerialOldPreprocessAction implements PreprocessAction {
+public class SerialPreprocessAction implements PreprocessAction {
 
     /**
-     * Regular expressions defining the logging.
+     * Regular expression for retained beginning of collection.
      * 
-     * 
+     * 10.204: [GC 10.204: [DefNew
      */
-    private static final String REGEX_BEGINNING_UNLOADING_CLASS = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC)"
-            + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
-
-    private static final String REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[Full GC \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)\\] \\[(PS|Par)OldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)\\])(      |\t)(GC time (would exceed|is exceeding) GCTimeLimit of 98%)$";
+    private static final String REGEX_RETAIN_BEGINNING = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
+            + ": \\[DefNew)$";
 
     /**
-     * Regular expression for retained end of a serial .
+     * Regular expression for retained end of collection.
      * 
-     * [PSYoungGen: 32064K->0K(819840K)] [PSOldGen: 355405K->387085K(699072K)] 387470K->387085K(1518912K) [PSPermGen:
-     * 115215K->115215K(238912K)], 1.5692400 secs]
-     * 
-     * , 33.6887649 secs] [Times: user=33.68 sys=0.02, real=33.69 secs]
+     * : 36825K->4352K(39424K), 0.0224830 secs] 44983K->14441K(126848K), 0.0225800 secs]
      */
-    private static final String REGEX_RETAIN_END = "^(  | )?((\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+    private static final String REGEX_RETAIN_END = "^(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\])$";
 
     /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
      * context is necessary to detangle multi-line events where logging patterns are shared among preprocessors.
      */
-    public static final String TOKEN = "PARALLEL_SERIAL_OLD_PREPROCESS_ACTION_TOKEN";
+    public static final String TOKEN = "SERIAL_PREPROCESS_ACTION_TOKEN";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -133,38 +102,24 @@ public class ParallelSerialOldPreprocessAction implements PreprocessAction {
      * @param context
      *            Information to make preprocessing decisions.
      */
-    public ParallelSerialOldPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
+    public SerialPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
             List<String> entangledLogLines, Set<String> context) {
 
         // Beginning logging
-        if (logEntry.matches(REGEX_BEGINNING_UNLOADING_CLASS)) {
-            Pattern pattern = Pattern.compile(REGEX_BEGINNING_UNLOADING_CLASS);
+        if (logEntry.matches(REGEX_RETAIN_BEGINNING)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED)) {
-            // Remove UseGCOverheadLimit output
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
-                entangledLogLines.add(matcher.group(17));
-            }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_END)) {
             // End of logging event
             Pattern pattern = Pattern.compile(REGEX_RETAIN_END);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                if (matcher.group(1) != null) {
-                    this.logEntry = " " + matcher.group(2);
-                } else {
-                    this.logEntry = matcher.group(2);
-                }
+                this.logEntry = matcher.group(1);
             }
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
@@ -177,7 +132,7 @@ public class ParallelSerialOldPreprocessAction implements PreprocessAction {
     }
 
     public String getName() {
-        return JdkUtil.PreprocessActionType.PARALLEL_SERIAL_OLD.toString();
+        return JdkUtil.PreprocessActionType.SERIAL.toString();
     }
 
     /**
@@ -210,7 +165,6 @@ public class ParallelSerialOldPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX_BEGINNING_UNLOADING_CLASS)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED) || logLine.matches(REGEX_RETAIN_END);
+        return logLine.matches(REGEX_RETAIN_BEGINNING) || logLine.matches(REGEX_RETAIN_END);
     }
 }
