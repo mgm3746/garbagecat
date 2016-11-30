@@ -786,6 +786,20 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
 
+    public void testLogLineYoungPauseMixedConccurrentMarkEnd() {
+        String priorLogLine = "";
+        String logLine = "188935.313: [GC pause (G1 Evacuation Pause) (young)"
+                + "188935.321: [GC concurrent-mark-end, 0.4777427 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.", "188935.313: [GC pause (G1 Evacuation Pause) (young)",
+                event.getLogEntry());
+    }
+
     /**
      * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE.
      * 

@@ -355,8 +355,8 @@ public class G1PreprocessAction implements PreprocessAction {
      * Regular expression for retained beginning G1_YOUNG_PAUSE mixed with G1_CONCURRENT collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[GC pause \\(young\\))(" + JdkRegEx.TIMESTAMP + ": \\[GC concurrent-(root-region-scan|cleanup)-end, "
-            + JdkRegEx.DURATION + "\\])[ ]*$";
+            + ": \\[GC pause( \\(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "\\))? \\(young\\))(" + JdkRegEx.TIMESTAMP
+            + ": \\[GC concurrent-(root-region-scan|cleanup|mark)-end, " + JdkRegEx.DURATION + "\\])[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_FULL_GC mixed with G1_CONCURRENT collection.
@@ -601,7 +601,7 @@ public class G1PreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(3));
+                entangledLogLines.add(matcher.group(4));
             }
             // Output beginning of young line
             this.logEntry = matcher.group(1);
