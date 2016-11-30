@@ -335,6 +335,11 @@ public class JdkRegEx {
     public static final String TRIGGER_HEAP_DUMP_INITIATED_GC = "Heap Dump Initiated GC";
 
     /**
+     * Humongous object allocation failed trigger.
+     */
+    public static final String TRIGGER_G1_HUMONGOUS_ALLOCATION = "G1 Humongous Allocation";
+
+    /**
      * Units for JVM options that take a byte number.
      * 
      * For example: -Xss128k -Xmx2048m -Xms2G

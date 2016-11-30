@@ -147,5 +147,4 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 16384 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 739, event.getDuration());
     }
-
 }

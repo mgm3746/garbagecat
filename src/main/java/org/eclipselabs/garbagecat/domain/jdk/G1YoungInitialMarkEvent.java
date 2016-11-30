@@ -79,12 +79,13 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
      */
     private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\(("
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: "
-            + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)->" + JdkRegEx.SIZE_G1_DECIMAL + "\\("
-            + JdkRegEx.SIZE_G1_DECIMAL + "\\) Survivors: " + JdkRegEx.SIZE_G1_DECIMAL + "->" + JdkRegEx.SIZE_G1_DECIMAL
-            + " Heap: " + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)->"
-            + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION
+            + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?, "
+            + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)->"
+            + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\) Survivors: " + JdkRegEx.SIZE_G1_DECIMAL
+            + "->" + JdkRegEx.SIZE_G1_DECIMAL + " Heap: " + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL
+            + "\\)->" + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)\\]" + JdkRegEx.TIMES_BLOCK
+            + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
