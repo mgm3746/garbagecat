@@ -183,12 +183,12 @@ public class G1YoungPauseEvent extends G1Collector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                if (matcher.group(3) != null) {
-                    // trigger before (young):
-                    trigger = matcher.group(3);
-                } else {
+                if (matcher.group(5) != null) {
                     // trigger after (young):
                     trigger = matcher.group(5);
+                } else {
+                    // trigger before (young):
+                    trigger = matcher.group(3);
                 }
                 duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
                 if (matcher.group(40) != null) {

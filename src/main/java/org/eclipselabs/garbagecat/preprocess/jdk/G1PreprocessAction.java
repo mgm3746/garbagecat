@@ -282,9 +282,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class G1PreprocessAction implements PreprocessAction {
 
     /**
-     * Regular expression for retained beginning G1_YOUNG_PAUSE collection. Trigger can be before or after "(young)".
+     * Regular expression for retained beginning G1_YOUNG_PAUSE collection. Trigger can be before and/or after
+     * "(young)".
      * 
      * 0.807: [GC pause (young), 0.00290200 secs]
+     * 
+     * 6049.175: [GC pause (G1 Evacuation Pause) (young) (to-space exhausted), 3.1713585 secs]
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_PAUSE = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC
@@ -469,6 +472,8 @@ public class G1PreprocessAction implements PreprocessAction {
             "^      \\[Humongous Reclaim:.+$",
             //
             "^      \\[Choose CSet:.+$",
+            //
+            "^      \\[Evacuation Failure:.+$",
             //
             "^      \\[Ref Proc:.+$",
             //

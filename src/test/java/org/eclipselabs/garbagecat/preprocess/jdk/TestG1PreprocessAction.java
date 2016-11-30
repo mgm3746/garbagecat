@@ -241,6 +241,12 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogEvacuationFailure() {
+        String logLine = "      [Evacuation Failure: 2381.8 ms]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
     public void testLogLineRetainMiddleJdk8() {
         String logLine = "   [Eden: 128.0M(128.0M)->0.0B(112.0M) Survivors: 0.0B->16.0M "
                 + "Heap: 128.0M(30.0G)->24.9M(30.0G)]";
@@ -335,6 +341,12 @@ public class TestG1PreprocessAction extends TestCase {
 
     public void testLogLineYoungPauseWithToSpaceExhaustedTrigger() {
         String logLine = "27997.968: [GC pause (young) (to-space exhausted), 0.1208740 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
+    public void testLogLineYoungPauseDoubleTriggerToSpaceExhausted() {
+        String logLine = "6049.175: [GC pause (G1 Evacuation Pause) (young) (to-space exhausted), 3.1713585 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
                 G1PreprocessAction.match(logLine, null, null));
     }
@@ -1443,5 +1455,25 @@ public class TestG1PreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+    }
+
+    /**
+     * Test preprocessing G1_YOUNG_PAUSE with double trigger and Evacuation Failure details. .
+     * 
+     */
+    public void testG1YoungPauseEvacuationFailure() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset100.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+        Assert.assertTrue(Analysis.KEY_G1_EVACUATION_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_G1_EVACUATION_FAILURE));
     }
 }
