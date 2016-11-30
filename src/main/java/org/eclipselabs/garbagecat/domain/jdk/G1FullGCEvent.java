@@ -83,13 +83,13 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
      */
     private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC[ ]{0,1}(\\(("
             + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION
-            + ")\\)[ ]{1,2}|" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + JdkRegEx.SIZE_G1_WHOLE + "->"
-            + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\), " + JdkRegEx.DURATION + "\\]\\[Eden: "
-            + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)->" + JdkRegEx.SIZE_G1_DECIMAL + "\\("
-            + JdkRegEx.SIZE_G1_DECIMAL + "\\) Survivors: " + JdkRegEx.SIZE_G1_DECIMAL + "->" + JdkRegEx.SIZE_G1_DECIMAL
-            + " Heap: " + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)->"
-            + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)\\](, \\[(Perm|Metaspace): "
+            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|"
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\)[ ]{1,2}|" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?"
+            + JdkRegEx.SIZE_G1_WHOLE + "->" + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\), "
+            + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)->"
+            + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\) Survivors: " + JdkRegEx.SIZE_G1_DECIMAL
+            + "->" + JdkRegEx.SIZE_G1_DECIMAL + " Heap: " + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL
+            + "\\)->" + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)\\](, \\[(Perm|Metaspace): "
             + JdkRegEx.SIZE_G1_WHOLE + "->" + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\)\\])?"
             + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 

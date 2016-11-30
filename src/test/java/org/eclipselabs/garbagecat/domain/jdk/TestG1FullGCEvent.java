@@ -24,6 +24,12 @@ import junit.framework.TestCase;
  */
 public class TestG1FullGCEvent extends TestCase {
 
+    public void testIsBlocking() {
+        String logLine = "1302.524: [Full GC (System.gc()) 653M->586M(979M), 1.6364900 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.G1_FULL_GC.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testLogLineTriggerSystemGC() {
         String logLine = "1302.524: [Full GC (System.gc()) 653M->586M(979M), 1.6364900 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
@@ -158,9 +164,24 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 19818, event.getDuration());
     }
 
-    public void testIsBlocking() {
-        String logLine = "1302.524: [Full GC (System.gc()) 653M->586M(979M), 1.6364900 secs]";
-        Assert.assertTrue(JdkUtil.LogEventType.G1_FULL_GC.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    public void testLogLinePreprocessedDetailsTriggerAllocationFailure() {
+        String logLine = "56965.451: [Full GC (Allocation Failure)  28G->387M(28G), 1.1821630 secs]"
+                + "[Eden: 0.0B(45.7G)->0.0B(34.4G) Survivors: 0.0B->0.0B Heap: 28.0G(28.0G)->387.6M(28.0G)], "
+                + "[Metaspace: 65867K->65277K(1112064K)] [Times: user=1.43 sys=0.00, real=1.18 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
+                G1FullGCEvent.match(logLine));
+        G1FullGCEvent event = new G1FullGCEvent(logLine);
+        Assert.assertEquals("Trigger not parsed correctly.", JdkRegEx.TRIGGER_ALLOCATION_FAILURE, event.getTrigger());
+        Assert.assertEquals("Time stamp not parsed correctly.", 56965451, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 28 * 1024 * 1024,
+                event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 387 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 28 * 1024 * 1024,
+                event.getCombinedSpace());
+        Assert.assertEquals("Metaspace begin size not parsed correctly.", 65867, event.getPermOccupancyInit());
+        Assert.assertEquals("Metaspace end size not parsed correctly.", 65277, event.getPermOccupancyEnd());
+        Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1112064, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 1182, event.getDuration());
     }
+
 }
