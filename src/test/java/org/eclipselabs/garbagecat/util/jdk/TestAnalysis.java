@@ -221,4 +221,32 @@ public class TestAnalysis extends TestCase {
         Assert.assertTrue(Analysis.KEY_METASPACE_SIZE_NOT_SET + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_METASPACE_SIZE_NOT_SET));
     }
+
+    /**
+     * Test PAR_NEW disabled with -XX:-UseParNewGC.
+     */
+    public void testParNewDisabled() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset101.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 4, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL_NEW));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_INITIAL_MARK));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(Analysis.KEY_CMS_PAR_NEW_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_PAR_NEW_DISABLED));
+        Assert.assertFalse(Analysis.KEY_SERIAL_GC + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC));
+    }
 }

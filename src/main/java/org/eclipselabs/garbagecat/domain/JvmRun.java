@@ -478,6 +478,15 @@ public class JvmRun {
                 analysisKeys.add(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME);
             }
         }
+
+        // 10) Check for PAR_NEW disabled.
+        if (getEventTypes().contains(LogEventType.SERIAL_NEW) && collectorFamilies.contains(CollectorFamily.CMS)) {
+            // Replace general gc.serial analysis
+            if (analysisKeys.contains(Analysis.KEY_SERIAL_GC)) {
+                analysisKeys.remove(Analysis.KEY_SERIAL_GC);
+            }
+            analysisKeys.add(Analysis.KEY_CMS_PAR_NEW_DISABLED);
+        }
     }
 
     /**
@@ -700,6 +709,11 @@ public class JvmRun {
         // Check for PrintFLSStatistics option is being used
         if (jvm.getPrintFLStatistics() != null) {
             analysisKeys.add(Analysis.KEY_PRINT_FLS_STATISTICS);
+        }
+
+        // Check if PARN_NEW collector disabled
+        if (jvm.getUseParNewGcDisabled() != null && !analysisKeys.contains(Analysis.KEY_CMS_PAR_NEW_DISABLED)) {
+            analysisKeys.add(Analysis.KEY_CMS_PAR_NEW_DISABLED);
         }
     }
 

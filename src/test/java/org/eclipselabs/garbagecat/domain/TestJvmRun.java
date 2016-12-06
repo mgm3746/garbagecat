@@ -981,4 +981,17 @@ public class TestJvmRun extends TestCase {
         Assert.assertFalse(Analysis.KEY_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_DETAILS_MISSING));
     }
+
+    /**
+     * Test if PAR_NEW collector disabled with -XX:-UseParNewGC.
+     */
+    public void testUseParNewGcDisabled() {
+        String jvmOptions = "Xss128k -XX:-UseParNewGC -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.KEY_CMS_PAR_NEW_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_PAR_NEW_DISABLED));
+    }
 }

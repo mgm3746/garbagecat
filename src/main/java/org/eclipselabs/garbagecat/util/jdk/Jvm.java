@@ -550,6 +550,20 @@ public class Jvm {
     }
 
     /**
+     * The option to disable the PAR_NEW collector. For example:
+     * 
+     * <pre>
+     * -XX:-UseParNewGC
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseParNewGcDisabled() {
+        String regex = "(-XX:\\-UseParNewGC)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * The option for the CMS old collector. For example:
      * 
      * <pre>

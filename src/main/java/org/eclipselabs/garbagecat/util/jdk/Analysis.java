@@ -237,6 +237,11 @@ public class Analysis {
     public static final String KEY_CMS_PROMOTION_FAILED = "cms.promotion.failed";
 
     /**
+     * Property key for PAR_NEW collector disabled.
+     */
+    public static final String KEY_CMS_PAR_NEW_DISABLED = "cms.par.new.disabled";
+
+    /**
      * Property key for CMS collector not unloading classes.
      */
     public static final String KEY_CMS_CLASS_UNLOADING_DISABLED = "cms.class.unloading.disabled";
