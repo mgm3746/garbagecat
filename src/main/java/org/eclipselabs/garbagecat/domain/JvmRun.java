@@ -680,14 +680,19 @@ public class JvmRun {
             analysisKeys.add(Analysis.KEY_BIASED_LOCKING_DISABLED);
         }
 
-        // Check for print class histogram enabled with -XX:+PrintClassHistogram.
-        if (!analysisKeys.contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM)) {
-            if (jvm.getPrintClassHistogramEnabled() != null) {
-                analysisKeys.add(Analysis.KEY_PRINT_CLASS_HISTOGRAM);
-            }
+        // Check for print class histogram output enabled with -XX:+PrintClassHistogram,
+        // -XX:+PrintClassHistogramBeforeFullGC, or -XX:+PrintClassHistogramAfterFullGC.
+        if (jvm.getPrintClassHistogramEnabled() != null) {
+            analysisKeys.add(Analysis.KEY_PRINT_CLASS_HISTOGRAM);
+        }
+        if (jvm.getPrintClassHistogramAfterFullGcEnabled() != null) {
+            analysisKeys.add(Analysis.KEY_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC);
+        }
+        if (jvm.getPrintClassHistogramBeforeFullGcEnabled() != null) {
+            analysisKeys.add(Analysis.KEY_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC);
         }
 
-        // Check for print class histogram enabled with -XX:+PrintGCApplicationConcurrentTime
+        // Check for outputting application concurrent time
         if (!analysisKeys.contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
             if (jvm.getPrintGcApplicationConcurrentTime() != null) {
                 analysisKeys.add(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME);

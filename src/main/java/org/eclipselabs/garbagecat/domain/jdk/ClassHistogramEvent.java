@@ -22,21 +22,26 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Logging enabled with the <code>-XX:+PrintClassHistogram</code> option used to determine the objects in a heap and how
- * much space they are consuming. The output is triggered manually with a thread dump.
+ * Logging enabled with one of the following options:
  * </p>
+ * 
+ * <ul>
+ * <li>-XX:+PrintClassHistogram (output triggered by a thread dump)</li>
+ * <li>-XX:+PrintClassHistogramBeforeFullGC (output before every full collection)</li>
+ * <li>-XX:+PrintClassHistogramAfterFullGC (output after every full collection)</li>
+ * </ul>
  * 
  * <p>
  * This is generally not a useful option for the following reasons:
  * </p>
  * 
  * <ul>
- * <li>It is a heavyweight option. It forces a full collection and can output tens of thousands of logging lines.</li>
+ * <li>It is a heavyweight option.</li>
  * <li>A class histogram has limited usefulness troubleshooting memory leaks compared to a full heap dump.</li>
  * </ul>
  * 
  * <p>
- * Generally memory leaks are investigated by getting a heap dump, but there are use cases where this option can be
+ * Generally memory leaks are investigated by getting a heap dump, but there are use cases where this output can be
  * useful.
  * </p>
  * 

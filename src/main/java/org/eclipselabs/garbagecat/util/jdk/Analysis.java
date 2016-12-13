@@ -298,9 +298,26 @@ public class Analysis {
     public static final String KEY_HEAP_INSPECTION_INITIATED_GC = "heap.inspection.initiated.gc";
 
     /**
+     * Property key for class histogram output.
+     */
+    public static final String KEY_CLASS_HISTOGRAM = "class.histogram";
+
+    /**
      * Property key for printing a class histogram when a thread dump is initiated (-XX:+PrintClassHistogram).
      */
     public static final String KEY_PRINT_CLASS_HISTOGRAM = "print.class.histogram";
+
+    /**
+     * Property key for printing a class histogram when a thread dump is initiated
+     * (-XX:+PrintClassHistogramAfterFullGC).
+     */
+    public static final String KEY_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC = "print.class.histogram.after.full.gc";
+
+    /**
+     * Property key for printing a class histogram when a thread dump is initiated
+     * (-XX:+PrintClassHistogramBeforeFullGC).
+     */
+    public static final String KEY_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC = "print.class.histogram.before.full.gc";
 
     /**
      * Property key for when the Metaspace is not able to be resized, and the JVM is doing full, serial collections

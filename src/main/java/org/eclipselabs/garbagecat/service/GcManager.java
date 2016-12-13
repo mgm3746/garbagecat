@@ -241,9 +241,9 @@ public class GcManager {
                     jvmDao.getAnalysisKeys().add(Analysis.KEY_PRINT_HEAP_AT_GC);
                 }
             }
-            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM)) {
+            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CLASS_HISTOGRAM)) {
                 if (ClassHistogramEvent.match(currentLogLine)) {
-                    jvmDao.getAnalysisKeys().add(Analysis.KEY_PRINT_CLASS_HISTOGRAM);
+                    jvmDao.getAnalysisKeys().add(Analysis.KEY_CLASS_HISTOGRAM);
                 }
             }
             if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_FLS_STATISTICS)) {

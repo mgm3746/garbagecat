@@ -700,7 +700,35 @@ public class Jvm {
      * @return the option if it exists, null otherwise.
      */
     public String getPrintClassHistogramEnabled() {
-        String regex = "(-XX:\\+PrintClassHistogram)";
+        String regex = "(-XX:\\+PrintClassHistogram)\\b";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for printing a class histogram before every full collection.
+     * 
+     * <pre>
+     * -XX:+PrintClassHistogramAfterFullGC
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintClassHistogramAfterFullGcEnabled() {
+        String regex = "(-XX:\\+PrintClassHistogramAfterFullGC)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for printing a class histogram before every full collection:
+     * 
+     * <pre>
+     * -XX:+PrintClassHistogramBeforeFullGC
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintClassHistogramBeforeFullGcEnabled() {
+        String regex = "(-XX:\\+PrintClassHistogramBeforeFullGC)";
         return getJvmOption(regex);
     }
 
