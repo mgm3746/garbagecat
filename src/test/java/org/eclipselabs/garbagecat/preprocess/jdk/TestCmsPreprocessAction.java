@@ -510,6 +510,23 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
 
+    public void testLogLinParNewPromotionFailedTruncatedeWithCmsConcurrentEvent() {
+        String priorLogLine = "";
+        String logLine = "36455.096: [GC 36455.096: [ParNew (promotion failed): 153344K->153344K(153344K), "
+                + "0.6818450 secs]36455.778: [CMS36459.090: [CMS-concurrent-mark: 3.439/4.155 secs] "
+                + "[Times: user=8.27 sys=0.17, real=4.16 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "36455.096: [GC 36455.096: [ParNew (promotion failed): 153344K->153344K(153344K), 0.6818450 secs]"
+                        + "36455.778: [CMS",
+                event.getLogEntry());
+    }
+
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */
@@ -676,6 +693,26 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_HEAP_AT_GC));
     }
 
+    public void testParNewPromotionFailedTruncatedEventLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset23.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertFalse(LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertEquals("Event type count not correct.", 3, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+        Assert.assertTrue(Analysis.KEY_CMS_PROMOTION_FAILED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_PROMOTION_FAILED));
+    }
+
     /**
      * Test PAR_NEW mixed with CMS_CONCURRENT over 2 lines.
      * 
@@ -798,26 +835,6 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_INTERRUPTED));
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
-    }
-
-    /**
-     * Test preprocessing CMS_SERIAL_OLD triggered by <code>PrintClassHistogramEvent</code>.
-     * 
-     */
-    public void testCmsSerialOldPrintClassHistogramTrigger() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset73.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        Assert.assertFalse(LogEventType.UNKNOWN.toString() + " collector identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".",
-                jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
-        Assert.assertTrue(JdkUtil.TriggerType.CLASS_HISTOGRAM.toString() + " trigger not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM));
     }
 
     /**

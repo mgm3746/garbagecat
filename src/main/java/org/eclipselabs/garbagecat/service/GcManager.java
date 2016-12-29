@@ -294,7 +294,25 @@ public class GcManager {
                 preprocessedLogLine = action.getLogEntry();
             }
         } else {
-            preprocessedLogLine = currentLogLine;
+            // Output any entangled log lines
+            if (entangledLogLines != null && entangledLogLines.size() > 0) {
+                Iterator<String> iterator = entangledLogLines.iterator();
+                while (iterator.hasNext()) {
+                    String logLine = iterator.next();
+                    if (preprocessedLogLine == null) {
+                        preprocessedLogLine = logLine;
+                    } else {
+                        preprocessedLogLine = preprocessedLogLine + System.getProperty("line.separator") + logLine;
+                    }
+                }
+                // Reset entangled log lines
+                entangledLogLines.clear();
+            }
+            if (preprocessedLogLine == null) {
+                preprocessedLogLine = currentLogLine;
+            } else {
+                preprocessedLogLine = preprocessedLogLine + System.getProperty("line.separator") + currentLogLine;
+            }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         }
 
@@ -498,6 +516,16 @@ public class GcManager {
                         if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED)) {
                             if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_G1_EVACUATION_FAILURE)) {
                                 jvmDao.addAnalysisKey(Analysis.KEY_G1_EVACUATION_FAILURE);
+                            }
+                        }
+                    }
+
+                    // 12) CMS promotion failure
+                    if (event instanceof TriggerData) {
+                        String trigger = ((TriggerData) event).getTrigger();
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_PROMOTION_FAILED)) {
+                            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_PROMOTION_FAILED)) {
+                                jvmDao.addAnalysisKey(Analysis.KEY_CMS_PROMOTION_FAILED);
                             }
                         }
                     }

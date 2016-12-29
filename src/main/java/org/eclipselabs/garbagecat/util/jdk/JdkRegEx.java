@@ -320,7 +320,31 @@ public class JdkRegEx {
     public static final String TRIGGER_CONCURRENT_MODE_INTERRUPTED = "concurrent mode interrupted";
 
     /**
+     * <p>
      * Promotion failed trigger.
+     * </p>
+     * 
+     * <p>
+     * Occurs when objects cannot be moved from the young to the old generation due to lack of space or fragmentation.
+     * The young generation collection backs out of the young collection and initiates a
+     * {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} full collection in an attempt to free up and
+     * compact space. This is an expensive operation that typically results in large pause times.
+     * </p>
+     * 
+     * <p>
+     * The CMS collector is not a compacting collector. It discovers garbage and adds the memory to free lists of
+     * available space that it maintains based on popular object sizes. If many objects of varying sizes are allocated,
+     * the free lists will be split. This can lead to many free lists whose total size is large enough to satisfy the
+     * calculated free space needed for promotions; however, there is not enough contiguous space for one of the objects
+     * being promoted.
+     * </p>
+     * 
+     * <p>
+     * Prior to Java 5.0 the space requirement was the worst-case scenario that all young generation objects get
+     * promoted to the old generation (the young generation guarantee). Starting in Java 5.0 the space requirement is an
+     * estimate based on recent promotion history and is usually much less than the young generation guarantee.
+     * </p>
+     * 
      */
     public static final String TRIGGER_PROMOTION_FAILED = "promotion failed";
 

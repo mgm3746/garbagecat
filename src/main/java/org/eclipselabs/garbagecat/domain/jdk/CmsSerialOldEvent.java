@@ -88,6 +88,31 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2013-12-09T16:43:09.366+0000: 1504.625: [Full GC2013-12-09T16:43:09.366+0000: 1504.625: [CMS: 1172695K-&gt;840574K(1549164K), 3.7572507 secs] 1301420K-&gt;840574K(1855852K), [CMS Perm : 226817K-&gt;226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
  * </pre>
  * 
+ * *
+ * <p>
+ * 5) ParNew promotion failed:
+ * </p>
+ * 
+ * <pre>
+ * 144501.626: [GC 144501.627: [ParNew (promotion failed): 680066K-&gt;680066K(707840K), 3.7067346 secs] 1971073K-&gt;1981370K(2018560K), 3.7084059 secs]
+ * </pre>
+ * 
+ * <p>
+ * 6) ParNew promotion failed in incremental mode (<code>-XX:+CMSIncrementalMode</code>):
+ * </p>
+ * 
+ * <pre>
+ * 159275.552: [GC 159275.552: [ParNew (promotion failed): 2007040K-&gt;2007040K(2007040K), 4.3393411 secs] 5167424K-&gt;5187429K(12394496K) icms_dc=7 , 4.3398519 secs] [Times: user=4.96 sys=1.91, real=4.34 secs]
+ * </pre>
+ * 
+ * <p>
+ * 7) ParNew promotion failed truncated:
+ * </p>
+ * 
+ * <pre>
+ * 5881.424: [GC 5881.424: [ParNew (promotion failed): 153272K-&gt;152257K(153344K), 0.2143850 secs]5881.639: [CMS
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
@@ -166,7 +191,7 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
             + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|"
             + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
             + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|"
-            + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + ")";
+            + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")";
 
     /**
      * Regular expression for CMS_REMARK block in some events.
@@ -178,21 +203,21 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
             + "\\]";
 
     /**
-     * Regular expression for CMS block in some events.
+     * Regular expression for old data block.
      */
-    private static final String CMS_BLOCK = JdkRegEx.TIMESTAMP + ": \\[CMS(bailing out to foreground collection)?( \\("
-            + TRIGGER + "\\))?( \\(" + TRIGGER + "\\))?(" + REMARK_BLOCK + ")?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]";
+    private static final String OLD_BLOCK = JdkRegEx.TIMESTAMP
+            + ": \\[(CMS|ParNew|ClassHistogram)(bailing out to foreground collection)?( \\(" + TRIGGER + "\\))?( \\("
+            + TRIGGER + "\\))?(" + REMARK_BLOCK + ")?:( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\))?, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.TIMESTAMP + ": \\[CMS)?";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\(" + TRIGGER + "\\) )?("
-            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?(" + CMS_BLOCK + ")?("
-            + ClassHistogramEvent.REGEX_PREPROCESSED + ")? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(\\(" + TRIGGER + "\\) )?("
+            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + OLD_BLOCK + "((" + ClassHistogramEvent.REGEX_PREPROCESSED
+            + ")? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(, \\[(CMS Perm |Metaspace): "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\])?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
 
@@ -208,34 +233,44 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            if (matcher.group(17) != null) {
+            if (matcher.group(18) != null) {
                 // if > 1 triggers, use the last one
-                this.trigger = matcher.group(17);
-            } else if (matcher.group(6) != null || matcher.group(37) != null) {
+                this.trigger = matcher.group(18);
+            } else if (matcher.group(7) != null || matcher.group(42) != null) {
                 this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
-            } else if (matcher.group(4) != null) {
-                this.trigger = matcher.group(4);
+            } else if (matcher.group(5) != null) {
+                this.trigger = matcher.group(5);
             }
 
-            int totalBegin = Integer.parseInt(matcher.group(44));
-            int totalEnd = Integer.parseInt(matcher.group(45));
-            int totalAllocation = Integer.parseInt(matcher.group(46));
-
-            // Only CMS block has old data
-            if (matcher.group(13) != null) {
-                this.old = Integer.parseInt(matcher.group(33));
-                this.oldEnd = Integer.parseInt(matcher.group(34));
-                this.oldAllocation = Integer.parseInt(matcher.group(35));
-                this.young = totalBegin - this.old;
-                this.youngEnd = totalEnd - this.oldEnd;
-                this.youngAvailable = totalAllocation - this.oldAllocation;
+            // Old data
+            if (matcher.group(14) != null) {
+                this.old = Integer.parseInt(matcher.group(35));
+                this.oldEnd = Integer.parseInt(matcher.group(36));
+                this.oldAllocation = Integer.parseInt(matcher.group(37));
             }
 
-            this.permGen = Integer.parseInt(matcher.group(48));
-            this.permGenEnd = Integer.parseInt(matcher.group(49));
-            this.permGenAllocation = Integer.parseInt(matcher.group(50));
-            this.duration = JdkMath.convertSecsToMillis(matcher.group(52)).intValue();
+            // young data
+            if (matcher.group(41) != null) {
+                this.young = Integer.parseInt(matcher.group(49)) - this.old;
+                this.youngEnd = Integer.parseInt(matcher.group(50)) - this.oldEnd;
+                this.youngAvailable = Integer.parseInt(matcher.group(51)) - this.oldAllocation;
+            }
+
+            // perm/metaspace data
+            if (matcher.group(52) != null) {
+                this.permGen = Integer.parseInt(matcher.group(54));
+                this.permGenEnd = Integer.parseInt(matcher.group(55));
+                this.permGenAllocation = Integer.parseInt(matcher.group(56));
+            }
+
+            if (matcher.group(58) != null) {
+                this.duration = JdkMath.convertSecsToMillis(matcher.group(58)).intValue();
+            } else {
+                // truncated event. use old block duration
+                this.duration = JdkMath.convertSecsToMillis(matcher.group(38)).intValue();
+            }
         }
+
     }
 
     /**

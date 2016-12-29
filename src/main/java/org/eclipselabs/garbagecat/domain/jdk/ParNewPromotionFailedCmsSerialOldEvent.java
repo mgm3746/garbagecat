@@ -30,7 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Combined {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedEvent} and
+ * Combined {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} promotion failed and
  * {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent}. Occurs when objects cannot be moved from the young
  * to the old generation due to lack of space or fragmentation. The young generation collection backs out of the young
  * collection and initiates a {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} full collection in an

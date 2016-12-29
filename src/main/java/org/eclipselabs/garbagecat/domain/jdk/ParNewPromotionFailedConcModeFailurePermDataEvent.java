@@ -31,9 +31,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Combined {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedEvent} and
+ * Combined {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} promotion failed and
  * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent}. This appears to be a result
- * of a chain reaction where the {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedEvent} initiates a
+ * of a chain reaction where the {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} promotion failed initiates a
  * {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} which leads to a
  * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent}.
  * </p>

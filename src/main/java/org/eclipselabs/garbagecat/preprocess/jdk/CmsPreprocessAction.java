@@ -586,7 +586,7 @@ public class CmsPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
-        return (logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT) && nextLogLine.matches(REGEX_RETAIN_END))
+        return logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)
@@ -635,7 +635,7 @@ public class CmsPreprocessAction implements PreprocessAction {
      * @return True if the line is the start of a new logging event or a complete logging event.
      */
     private boolean newLoggingEvent(String logLine) {
-        return (logLine == null || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT))
+        return logLine == null || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)

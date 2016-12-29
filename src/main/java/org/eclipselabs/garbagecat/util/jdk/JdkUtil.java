@@ -57,8 +57,6 @@ import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldEv
 import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldPermDataEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcModeFailurePermDataEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcurrentModeFailureEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedTruncatedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
@@ -90,7 +88,7 @@ public class JdkUtil {
         //
         PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD, PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA,
         //
-        PAR_NEW_PROMOTION_FAILED, PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE,
+        PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE,
         //
         PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA, PAR_NEW, PAR_NEW_CMS_SERIAL_OLD,
         //
@@ -98,7 +96,7 @@ public class JdkUtil {
         //
         CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK, CMS_CONCURRENT, APPLICATION_CONCURRENT_TIME,
         //
-        APPLICATION_STOPPED_TIME, UNKNOWN, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, PAR_NEW_PROMOTION_FAILED_TRUNCATED,
+        APPLICATION_STOPPED_TIME, UNKNOWN, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD,
         //
         G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
         //
@@ -175,8 +173,6 @@ public class JdkUtil {
             return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD;
         if (ParNewPromotionFailedCmsSerialOldPermDataEvent.match(logLine))
             return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA;
-        if (ParNewPromotionFailedEvent.match(logLine))
-            return LogEventType.PAR_NEW_PROMOTION_FAILED;
         if (ParNewPromotionFailedConcurrentModeFailureEvent.match(logLine))
             return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE;
         if (ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine))
@@ -199,8 +195,6 @@ public class JdkUtil {
             return LogEventType.VERBOSE_GC_YOUNG;
         if (VerboseGcOldEvent.match(logLine))
             return LogEventType.VERBOSE_GC_OLD;
-        if (ParNewPromotionFailedTruncatedEvent.match(logLine))
-            return LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED;
         if (G1YoungPauseEvent.match(logLine))
             return LogEventType.G1_YOUNG_PAUSE;
         if (G1MixedPauseEvent.match(logLine))
@@ -360,9 +354,6 @@ public class JdkUtil {
         case PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA:
             event = new ParNewConcurrentModeFailurePermDataEvent(logLine);
             break;
-        case PAR_NEW_PROMOTION_FAILED:
-            event = new ParNewPromotionFailedEvent(logLine);
-            break;
         case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE:
             event = new ParNewPromotionFailedConcurrentModeFailureEvent(logLine);
             break;
@@ -371,9 +362,6 @@ public class JdkUtil {
             break;
         case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD:
             event = new ParNewPromotionFailedCmsSerialOldEvent(logLine);
-            break;
-        case PAR_NEW_PROMOTION_FAILED_TRUNCATED:
-            event = new ParNewPromotionFailedTruncatedEvent(logLine);
             break;
         case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA:
             event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(logLine);
@@ -470,9 +458,6 @@ public class JdkUtil {
         case PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA:
             event = new ParNewConcurrentModeFailurePermDataEvent(logEntry, timestamp, duration);
             break;
-        case PAR_NEW_PROMOTION_FAILED:
-            event = new ParNewPromotionFailedEvent(logEntry, timestamp, duration);
-            break;
         case PAR_NEW_CMS_SERIAL_OLD:
             event = new ParNewCmsSerialOldEvent(logEntry, timestamp, duration);
             break;
@@ -484,9 +469,6 @@ public class JdkUtil {
             break;
         case VERBOSE_GC_OLD:
             event = new VerboseGcOldEvent(logEntry, timestamp, duration);
-            break;
-        case PAR_NEW_PROMOTION_FAILED_TRUNCATED:
-            event = new ParNewPromotionFailedTruncatedEvent(logEntry, timestamp, duration);
             break;
         case G1_YOUNG_PAUSE:
             event = new G1YoungPauseEvent(logEntry, timestamp, duration);

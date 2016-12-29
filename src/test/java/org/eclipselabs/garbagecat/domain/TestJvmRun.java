@@ -282,29 +282,6 @@ public class TestJvmRun extends TestCase {
     }
 
     /**
-     * Test to make sure a <code>ParNewPromotionFailedTruncatedEvent</code> is not mistakenly preprocessed as a
-     * <code>ParNewCmsConcurrentPreprocessAction</code>.
-     */
-    public void testParNewPromotionFailedTruncatedEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset23.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED.toString()
-                        + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_TRUNCATED));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
-        Assert.assertTrue(Analysis.KEY_CMS_PROMOTION_FAILED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_PROMOTION_FAILED));
-    }
-
-    /**
      * Test <code>DateStampPreprocessAction</code>.
      */
     public void testDateStampPreprocessActionLogging() {

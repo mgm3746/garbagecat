@@ -32,6 +32,15 @@ import junit.framework.TestCase;
  */
 public class TestCmsSerialOldEvent extends TestCase {
 
+    public void testIsBlocking() {
+        String logLine = "262372.344: [Full GC (JvmtiEnv ForceGarbageCollection) 262372.344: [CMS "
+                + "(concurrent mode interrupted): 49392K->48780K(1756416K), 0.2620228 secs] "
+                + "49392K->48780K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.2624794 secs] "
+                + "[Times: user=0.26 sys=0.00, real=0.27 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testLogLine() {
         String logLine = "5.980: [Full GC 5.980: "
                 + "[CMS: 5589K->5796K(122880K), 0.0889610 secs] 11695K->5796K(131072K), "
@@ -365,13 +374,56 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 262, event.getDuration());
     }
 
-    public void testIsBlocking() {
-        String logLine = "262372.344: [Full GC (JvmtiEnv ForceGarbageCollection) 262372.344: [CMS "
-                + "(concurrent mode interrupted): 49392K->48780K(1756416K), 0.2620228 secs] "
-                + "49392K->48780K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.2624794 secs] "
-                + "[Times: user=0.26 sys=0.00, real=0.27 secs]";
-        Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    public void testLogLineParNewPromotionFailed() {
+        String logLine = "144501.626: [GC 144501.627: [ParNew (promotion failed): 680066K->680066K(707840K), "
+                + "3.7067346 secs] 1971073K->1981370K(2018560K), 3.7084059 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
+        Assert.assertEquals("Time stamp not parsed correctly.", 144501626, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 1971073 - 680066, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 1981370 - 680066, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 2018560 - 707840, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 680066, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 680066, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 707840, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 0, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 3708, event.getDuration());
+    }
+
+    public void testParNewPromotionFailedIncrementalMode() {
+        String logLine = "159275.552: [GC 159275.552: [ParNew (promotion failed): 2007040K->2007040K(2007040K), "
+                + "4.3393411 secs] 5167424K->5187429K(12394496K) icms_dc=7 , 4.3398519 secs] "
+                + "[Times: user=4.96 sys=1.91, real=4.34 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
+        Assert.assertEquals("Time stamp not parsed correctly.", 159275552, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 4339, event.getDuration());
+    }
+
+    public void testParNewPromotionFailedTruncated() {
+        String logLine = "5881.424: [GC 5881.424: [ParNew (promotion failed): 153272K->152257K(153344K), "
+                + "0.2143850 secs]5881.639: [CMS";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
+        Assert.assertEquals("Time stamp not parsed correctly.", 5881424, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 214, event.getDuration());
+    }
+
+    public void testFirstLineOfMultiLineParallelScavengeEvent() {
+        String logLine = "10.392: [GC";
+        Assert.assertFalse("Log line incorrectly recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
     }
 
     /**
