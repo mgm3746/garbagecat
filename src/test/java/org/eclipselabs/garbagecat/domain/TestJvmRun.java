@@ -115,32 +115,6 @@ public class TestJvmRun extends TestCase {
     }
 
     /**
-     * Test preprocessing a split <code>ParNewPromotionFailedCmsConcurrentModeFailureEvent</code>.
-     */
-    public void testSplitParNewPromotionFailedCmsConcurrentModeFailure() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset5.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 3, jvmRun.getEventTypes().size());
-        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        Assert.assertTrue(
-                "Log line not recognized as "
-                        + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
-                jvmRun.getEventTypes()
-                        .contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_INITIAL_MARK));
-        Assert.assertTrue(Analysis.KEY_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED));
-    }
-
-    /**
      * Test preprocessing <code>GcTimeLimitExceededEvent</code> with underlying <code>ParallelOldCompactingEvent</code>
      * .
      */
@@ -160,67 +134,6 @@ public class TestJvmRun extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_GC_OVERHEAD_LIMIT));
         Assert.assertTrue(Analysis.KEY_GC_OVERHEAD_LIMIT + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_GC_OVERHEAD_LIMIT));
-    }
-
-    /**
-     * Test preprocessing a split <code>ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent</code>.
-     */
-    public void testSplitParNewPromotionFailedCmsConcurrentModeFailurePermData() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset12.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        Assert.assertTrue("Log line not recognized as "
-                + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
-                jvmRun.getEventTypes()
-                        .contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
-    }
-
-    /**
-     * Test preprocessing a split <code>ParNewCmsConcurrentModeFailurePermDataEvent</code>.
-     */
-    public void testSplitParNewCmsConcurrentModeFailurePermData() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset13.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertTrue(
-                "Log line not recognized as "
-                        + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
-    }
-
-    /**
-     * Test preprocessing <code>ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent</code> split over 3 lines.
-     */
-    public void testSplit3LinesParNewPromotionFailedCmsConcurrentModeFailurePermDataEventMarkLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset16.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        Assert.assertTrue("Log line not recognized as "
-                + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
-                jvmRun.getEventTypes()
-                        .contains(JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
     }
 
     /**

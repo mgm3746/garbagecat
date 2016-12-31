@@ -23,28 +23,13 @@ import junit.framework.TestCase;
  */
 public class TestParNewConcurrentModeFailurePermDataEvent extends TestCase {
 
-    public void testLogLine() {
+    public void testIsBlocking() {
         String logLine = "3070.289: [GC 3070.289: [ParNew: 207744K->207744K(242304K), 0.0000682 secs]3070.289: "
                 + "[CMS (concurrent mode failure): 6010121K->6014591K(6014592K), 79.0505229 secs] "
                 + "6217865K->6028029K(6256896K), [CMS Perm : 206688K->206662K(262144K)], 79.0509595 secs] "
                 + "[Times: user=104.69 sys=3.63, real=79.05 secs]";
-        Assert.assertTrue(
-                "Log line not recognized as "
-                        + JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA.toString() + ".",
-                ParNewConcurrentModeFailurePermDataEvent.match(logLine));
-        ParNewConcurrentModeFailurePermDataEvent event = new ParNewConcurrentModeFailurePermDataEvent(logLine);
-        Assert.assertEquals("Time stamp not parsed correctly.", 3070289, event.getTimestamp());
-        Assert.assertEquals("Young begin size not parsed correctly.", (6217865 - 6010121),
-                event.getYoungOccupancyInit());
-        Assert.assertEquals("Young end size not parsed correctly.", (6028029 - 6014591), event.getYoungOccupancyEnd());
-        Assert.assertEquals("Young available size not parsed correctly.", (6256896 - 6014592), event.getYoungSpace());
-        Assert.assertEquals("Old begin size not parsed correctly.", 6010121, event.getOldOccupancyInit());
-        Assert.assertEquals("Old end size not parsed correctly.", 6014591, event.getOldOccupancyEnd());
-        Assert.assertEquals("Old allocation size not parsed correctly.", 6014592, event.getOldSpace());
-        Assert.assertEquals("Perm gen begin size not parsed correctly.", 206688, event.getPermOccupancyInit());
-        Assert.assertEquals("Perm gen end size not parsed correctly.", 206662, event.getPermOccupancyEnd());
-        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 79050, event.getDuration());
+        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA.toString()
+                + " not indentified as blocking.", JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
     public void testLogLineMetaspaceIcrementalMode() {
@@ -158,12 +143,4 @@ public class TestParNewConcurrentModeFailurePermDataEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 83677, event.getDuration());
     }
 
-    public void testIsBlocking() {
-        String logLine = "3070.289: [GC 3070.289: [ParNew: 207744K->207744K(242304K), 0.0000682 secs]3070.289: "
-                + "[CMS (concurrent mode failure): 6010121K->6014591K(6014592K), 79.0505229 secs] "
-                + "6217865K->6028029K(6256896K), [CMS Perm : 206688K->206662K(262144K)], 79.0509595 secs] "
-                + "[Times: user=104.69 sys=3.63, real=79.05 secs]";
-        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA.toString()
-                + " not indentified as blocking.", JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
-    }
 }

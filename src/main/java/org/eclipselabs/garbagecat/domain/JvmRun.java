@@ -455,29 +455,21 @@ public class JvmRun {
 
         }
 
-        // 7) Check for CMS promotion failed by event type
-        if (!analysisKeys.contains(Analysis.KEY_CMS_PROMOTION_FAILED)) {
-            if (getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD)
-                    || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA)) {
-                analysisKeys.add(Analysis.KEY_CMS_PROMOTION_FAILED);
-            }
-        }
-
-        // 8) Check for -XX:+PrintReferenceGC by event type
+        // 7) Check for -XX:+PrintReferenceGC by event type
         if (!analysisKeys.contains(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED)) {
             if (getEventTypes().contains(LogEventType.REFERENCE_GC)) {
                 analysisKeys.add(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED);
             }
         }
 
-        // 9) Check for print application concurrent time.
+        // 8) Check for print application concurrent time.
         if (!analysisKeys.contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
             if (getEventTypes().contains(LogEventType.APPLICATION_CONCURRENT_TIME)) {
                 analysisKeys.add(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME);
             }
         }
 
-        // 10) Check for PAR_NEW disabled.
+        // 9) Check for PAR_NEW disabled.
         if (getEventTypes().contains(LogEventType.SERIAL_NEW) && collectorFamilies.contains(CollectorFamily.CMS)) {
             // Replace general gc.serial analysis
             if (analysisKeys.contains(Analysis.KEY_SERIAL_GC)) {

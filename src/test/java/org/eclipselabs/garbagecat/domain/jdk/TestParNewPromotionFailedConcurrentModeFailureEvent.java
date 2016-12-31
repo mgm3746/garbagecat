@@ -23,27 +23,6 @@ import junit.framework.TestCase;
  */
 public class TestParNewPromotionFailedConcurrentModeFailureEvent extends TestCase {
 
-    public void testLogLine() {
-        String logLine = "25281.015: [GC 25281.015: [ParNew (promotion failed): 261760K->261760K(261952K), "
-                + "0.1785000 secs]25281.193: [CMS (concurrent mode failure): 1048384K->1015603K(1179648K), "
-                + "7.6767910 secs] 1292923K->1015603K(1441600K), 7.8557660 secs]";
-        Assert.assertTrue(
-                "Log line not recognized as "
-                        + JdkUtil.LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE.toString() + ".",
-                ParNewPromotionFailedConcurrentModeFailureEvent.match(logLine));
-        ParNewPromotionFailedConcurrentModeFailureEvent event = new ParNewPromotionFailedConcurrentModeFailureEvent(
-                logLine);
-        Assert.assertEquals("Time stamp not parsed correctly.", 25281015, event.getTimestamp());
-        Assert.assertEquals("Young begin size not parsed correctly.", (1292923 - 1048384),
-                event.getYoungOccupancyInit());
-        Assert.assertEquals("Young end size not parsed correctly.", (1015603 - 1015603), event.getYoungOccupancyEnd());
-        Assert.assertEquals("Young available size not parsed correctly.", (1441600 - 1179648), event.getYoungSpace());
-        Assert.assertEquals("Old begin size not parsed correctly.", 1048384, event.getOldOccupancyInit());
-        Assert.assertEquals("Old end size not parsed correctly.", 1015603, event.getOldOccupancyEnd());
-        Assert.assertEquals("Old allocation size not parsed correctly.", 1179648, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 7855, event.getDuration());
-    }
-
     public void testLogLinewithAbortablePreclean() {
         String logLine = "233333.318: [GC 233333.319: [ParNew (promotion failed): "
                 + "673108K->673108K(707840K), 1.5366054 secs]233334.855: [CMS233334.856: "

@@ -49,12 +49,9 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.LogFileEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ParNewCmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailurePermDataEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedCmsSerialOldPermDataEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcModeFailurePermDataEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcurrentModeFailureEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
@@ -86,11 +83,9 @@ public class JdkUtil {
     public enum LogEventType {
         SERIAL_OLD, SERIAL_NEW, PAR_NEW_CONCURRENT_MODE_FAILURE, PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA,
         //
-        PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD, PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA,
-        //
         PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE,
         //
-        PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA, PAR_NEW, PAR_NEW_CMS_SERIAL_OLD,
+        PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA, PAR_NEW,
         //
         PARALLEL_SERIAL_OLD, PARALLEL_SCAVENGE, PARALLEL_OLD_COMPACTING, CMS_SERIAL_OLD,
         //
@@ -169,10 +164,6 @@ public class JdkUtil {
             return LogEventType.CMS_REMARK;
         if (CmsRemarkWithClassUnloadingEvent.match(logLine))
             return LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING;
-        if (ParNewPromotionFailedCmsSerialOldEvent.match(logLine))
-            return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD;
-        if (ParNewPromotionFailedCmsSerialOldPermDataEvent.match(logLine))
-            return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA;
         if (ParNewPromotionFailedConcurrentModeFailureEvent.match(logLine))
             return LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE;
         if (ParNewPromotionFailedConcModeFailurePermDataEvent.match(logLine))
@@ -181,8 +172,6 @@ public class JdkUtil {
             return LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE;
         if (ParNewConcurrentModeFailurePermDataEvent.match(logLine))
             return LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA;
-        if (ParNewCmsSerialOldEvent.match(logLine))
-            return LogEventType.PAR_NEW_CMS_SERIAL_OLD;
         if (SerialNewEvent.match(logLine))
             return LogEventType.SERIAL_NEW;
         if (CmsConcurrentEvent.match(logLine))
@@ -345,9 +334,6 @@ public class JdkUtil {
         case PAR_NEW:
             event = new ParNewEvent(logLine);
             break;
-        case PAR_NEW_CMS_SERIAL_OLD:
-            event = new ParNewCmsSerialOldEvent(logLine);
-            break;
         case PAR_NEW_CONCURRENT_MODE_FAILURE:
             event = new ParNewConcurrentModeFailureEvent(logLine);
             break;
@@ -359,12 +345,6 @@ public class JdkUtil {
             break;
         case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA:
             event = new ParNewPromotionFailedConcModeFailurePermDataEvent(logLine);
-            break;
-        case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD:
-            event = new ParNewPromotionFailedCmsSerialOldEvent(logLine);
-            break;
-        case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA:
-            event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(logLine);
             break;
         case REFERENCE_GC:
             event = new ReferenceGcEvent(logLine);
@@ -440,12 +420,6 @@ public class JdkUtil {
         case CMS_REMARK_WITH_CLASS_UNLOADING:
             event = new CmsRemarkWithClassUnloadingEvent(logEntry, timestamp, duration);
             break;
-        case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD:
-            event = new ParNewPromotionFailedCmsSerialOldEvent(logEntry, timestamp, duration);
-            break;
-        case PAR_NEW_PROMOTION_FAILED_CMS_SERIAL_OLD_PERM_DATA:
-            event = new ParNewPromotionFailedCmsSerialOldPermDataEvent(logEntry, timestamp, duration);
-            break;
         case PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE:
             event = new ParNewPromotionFailedConcurrentModeFailureEvent(logEntry, timestamp, duration);
             break;
@@ -457,9 +431,6 @@ public class JdkUtil {
             break;
         case PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA:
             event = new ParNewConcurrentModeFailurePermDataEvent(logEntry, timestamp, duration);
-            break;
-        case PAR_NEW_CMS_SERIAL_OLD:
-            event = new ParNewCmsSerialOldEvent(logEntry, timestamp, duration);
             break;
         case SERIAL_NEW:
             event = new SerialNewEvent(logEntry, timestamp, duration);

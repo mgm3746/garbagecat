@@ -113,6 +113,30 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 5881.424: [GC 5881.424: [ParNew (promotion failed): 153272K-&gt;152257K(153344K), 0.2143850 secs]5881.639: [CMS
  * </pre>
  * 
+ * <p>
+ * 8) ParNew promotion failed with CMS block:
+ * </p>
+ * 
+ * <pre>
+ * 1181.943: [GC 1181.943: [ParNew (promotion failed): 145542K-&gt;142287K(149120K), 0.1316193 secs]1182.075: [CMS: 6656483K-&gt;548489K(8218240K), 9.1244297 secs] 6797120K-&gt;548489K(8367360K), 9.2564476 secs]
+ * </pre>
+ * 
+ * <p>
+ * 9) JDK 1.7 with perm data
+ * </p>
+ * 
+ * <pre>
+ * 6.102: [GC6.102: [ParNew: 19648K-&gt;2176K(19648K), 0.0184470 secs]6.121: [Tenured: 44849K-&gt;25946K(44864K), 0.2586250 secs] 60100K-&gt;25946K(64512K), [Perm : 43759K-&gt;43759K(262144K)], 0.2773070 secs] [Times: user=0.16 sys=0.01, real=0.28 secs]
+ * </pre>
+ * 
+ * <p>
+ * 10) JDK 1.8
+ * </p>
+ * 
+ * <pre>
+ * 1817.644: [GC (Allocation Failure) 1817.646: [ParNew: 1382383K-&gt;1382383K(1382400K), 0.0000530 secs]1817.646: [CMS: 2658303K-&gt;2658303K(2658304K), 8.7951430 secs] 4040686K-&gt;2873414K(4040704K), [Metaspace: 72200K-&gt;72200K(1118208K)], 8.7986750 secs] [Times: user=8.79 sys=0.01, real=8.80 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
@@ -203,19 +227,25 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
             + "\\]";
 
     /**
+     * Regular expression for young data block.
+     */
+    private static final String YOUNG_BLOCK = JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(" + TRIGGER + "\\))?: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]";
+
+    /**
      * Regular expression for old data block.
      */
-    private static final String OLD_BLOCK = JdkRegEx.TIMESTAMP
-            + ": \\[(CMS|ParNew|ClassHistogram)(bailing out to foreground collection)?( \\(" + TRIGGER + "\\))?( \\("
-            + TRIGGER + "\\))?(" + REMARK_BLOCK + ")?:( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\))?, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.TIMESTAMP + ": \\[CMS)?";
+    private static final String OLD_BLOCK = "(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + JdkRegEx.TIMESTAMP
+            + ": \\[(CMS|Tenured)(bailing out to foreground collection)?( \\(" + TRIGGER + "\\))?( \\(" + TRIGGER
+            + "\\))?(" + REMARK_BLOCK + ")?(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\])?";
 
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(\\(" + TRIGGER + "\\) )?("
-            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + OLD_BLOCK + "((" + ClassHistogramEvent.REGEX_PREPROCESSED
-            + ")? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(, \\[(CMS Perm |Metaspace): "
+            + YOUNG_BLOCK + "|" + OLD_BLOCK + ")(" + OLD_BLOCK + ")?((" + ClassHistogramEvent.REGEX_PREPROCESSED + ")? "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(, \\[(CMS Perm |Metaspace|Perm ): "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, "
             + JdkRegEx.DURATION + "\\])?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
@@ -233,41 +263,79 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            if (matcher.group(18) != null) {
-                // if > 1 triggers, use the last one
-                this.trigger = matcher.group(18);
-            } else if (matcher.group(7) != null || matcher.group(42) != null) {
-                this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
-            } else if (matcher.group(5) != null) {
+
+            // trigger
+            if (matcher.group(5) != null) {
                 this.trigger = matcher.group(5);
+            } else if (matcher.group(49) != null || matcher.group(82) != null) {
+                this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
             }
 
-            // Old data
-            if (matcher.group(14) != null) {
-                this.old = Integer.parseInt(matcher.group(35));
-                this.oldEnd = Integer.parseInt(matcher.group(36));
-                this.oldAllocation = Integer.parseInt(matcher.group(37));
-            }
+            // young or old block
+            if (matcher.group(7) != null) {
+                if (matcher.group(7).matches(YOUNG_BLOCK)) {
+                    // assume promotion failure
+                    this.trigger = JdkRegEx.TRIGGER_PROMOTION_FAILED;
 
-            // young data
-            if (matcher.group(41) != null) {
-                this.young = Integer.parseInt(matcher.group(49)) - this.old;
-                this.youngEnd = Integer.parseInt(matcher.group(50)) - this.oldEnd;
-                this.youngAvailable = Integer.parseInt(matcher.group(51)) - this.oldAllocation;
+                    this.young = Integer.parseInt(matcher.group(12));
+                    // No data to determine old end size.
+                    this.youngAvailable = Integer.parseInt(matcher.group(14));
+
+                    // use young block duration for truncated events
+                    if (matcher.group(98) == null) {
+                        this.duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
+                    }
+
+                    // old block after young
+                    if (matcher.group(76) != null) {
+                        // update trigger
+                        if (matcher.group(60) != null) {
+                            this.trigger = matcher.group(60);
+                        }
+                        this.old = Integer.parseInt(matcher.group(77));
+                        this.oldEnd = Integer.parseInt(matcher.group(78));
+                        this.oldAllocation = Integer.parseInt(matcher.group(79));
+                        if (matcher.group(81) != null) {
+                            this.youngEnd = Integer.parseInt(matcher.group(90)) - this.oldEnd;
+                        }
+                    } else {
+                        if (matcher.group(81) != null) {
+                            this.old = Integer.parseInt(matcher.group(89)) - this.young;
+                            // No data to determine old end size.
+                            this.oldEnd = 0;
+                            this.oldAllocation = Integer.parseInt(matcher.group(91)) - this.youngAvailable;
+                        }
+                    }
+                } else {
+                    if (matcher.group(27) != null) {
+                        this.trigger = matcher.group(27);
+                    }
+                    if (matcher.group(44) != null) {
+                        this.old = Integer.parseInt(matcher.group(44));
+                    }
+                    if (matcher.group(45) != null) {
+                        this.oldEnd = Integer.parseInt(matcher.group(45));
+                    }
+                    if (matcher.group(46) != null) {
+                        this.oldAllocation = Integer.parseInt(matcher.group(46));
+                    }
+                    if (matcher.group(81) != null) {
+                        this.young = Integer.parseInt(matcher.group(89)) - this.old;
+                        this.youngEnd = Integer.parseInt(matcher.group(90)) - this.oldEnd;
+                        this.youngAvailable = Integer.parseInt(matcher.group(91)) - this.oldAllocation;
+                    }
+                }
             }
 
             // perm/metaspace data
-            if (matcher.group(52) != null) {
-                this.permGen = Integer.parseInt(matcher.group(54));
-                this.permGenEnd = Integer.parseInt(matcher.group(55));
-                this.permGenAllocation = Integer.parseInt(matcher.group(56));
+            if (matcher.group(92) != null) {
+                this.permGen = Integer.parseInt(matcher.group(94));
+                this.permGenEnd = Integer.parseInt(matcher.group(95));
+                this.permGenAllocation = Integer.parseInt(matcher.group(96));
             }
 
-            if (matcher.group(58) != null) {
-                this.duration = JdkMath.convertSecsToMillis(matcher.group(58)).intValue();
-            } else {
-                // truncated event. use old block duration
-                this.duration = JdkMath.convertSecsToMillis(matcher.group(38)).intValue();
+            if (matcher.group(98) != null) {
+                this.duration = JdkMath.convertSecsToMillis(matcher.group(98)).intValue();
             }
         }
 
