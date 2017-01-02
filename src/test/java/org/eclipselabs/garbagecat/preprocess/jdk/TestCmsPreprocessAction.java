@@ -510,7 +510,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
 
-    public void testLogLinParNewPromotionFailedTruncatedeWithCmsConcurrentEvent() {
+    public void testLogLinParNewPromotionFailedTruncatedWithCmsConcurrentMark() {
         String priorLogLine = "";
         String logLine = "36455.096: [GC 36455.096: [ParNew (promotion failed): 153344K->153344K(153344K), "
                 + "0.6818450 secs]36455.778: [CMS36459.090: [CMS-concurrent-mark: 3.439/4.155 secs] "
@@ -524,6 +524,23 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertEquals("Log line not parsed correctly.",
                 "36455.096: [GC 36455.096: [ParNew (promotion failed): 153344K->153344K(153344K), 0.6818450 secs]"
                         + "36455.778: [CMS",
+                event.getLogEntry());
+    }
+
+    public void testLogLinParNewPromotionFailedTruncatedWithCmsConcurrentPreclean() {
+        String priorLogLine = "";
+        String logLine = "65778.258: [GC65778.258: [ParNew (promotion failed): 8300210K->8088352K(8388608K), "
+                + "1.4967400 secs]65779.755: [CMS65781.579: [CMS-concurrent-preclean: 2.150/47.638 secs] "
+                + "[Times: user=81.22 sys=2.02, real=47.63 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "65778.258: [GC65778.258: [ParNew (promotion failed): 8300210K->8088352K(8388608K), "
+                        + "1.4967400 secs]65779.755: [CMS",
                 event.getLogEntry());
     }
 
