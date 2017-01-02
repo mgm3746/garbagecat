@@ -59,7 +59,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 2) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent}:
+ * 2) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent}:
  * </p>
  * 
  * <pre>
@@ -123,7 +123,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 4) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcurrentModeFailureEvent}:
+ * 4) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent}:
  * </p>
  * 
  * <pre>

@@ -209,13 +209,28 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
     private String trigger;
 
     /**
-     * Trigger(s) regular expression(s).
+     * Trigger(s) after "Full GC".
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE
-            + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|"
-            + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|"
-            + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")";
+    private static final String TRIGGER_FULL_GC = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + "|"
+            + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|"
+            + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + ")";
+
+    /**
+     * Trigger(s) after "GC".
+     */
+    private static final String TRIGGER_GC = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
+
+    /**
+     * Trigger(s) after "CMS".
+     */
+    private static final String TRIGGER_CMS = "(" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|"
+            + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + ")";
+
+    /**
+     * Trigger(s) after "ParNew".
+     */
+    private static final String TRIGGER_PAR_NEW = "(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")";
 
     /**
      * Regular expression for CMS_REMARK block in some events.
@@ -227,29 +242,31 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
             + "\\]";
 
     /**
-     * Regular expression for young data block.
+     * Regular expression defining the logging beginning with "Full GC".
      */
-    private static final String YOUNG_BLOCK = JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(" + TRIGGER + "\\))?: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]";
+    private static final String REGEX_FULL_GC = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( \\(" + TRIGGER_FULL_GC
+            + "\\))?[ ]{0,1}(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + JdkRegEx.TIMESTAMP + ": "
+            + "\\[CMS(bailing out to foreground collection)?( \\(" + TRIGGER_CMS + "\\))?( \\(" + TRIGGER_CMS + "\\))?("
+            + REMARK_BLOCK + ")?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")? " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + "\\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION
+            + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
-     * Regular expression for old data block.
+     * Regular expression defining the logging beginning with "GC".
      */
-    private static final String OLD_BLOCK = "(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + JdkRegEx.TIMESTAMP
-            + ": \\[(CMS|Tenured)(bailing out to foreground collection)?( \\(" + TRIGGER + "\\))?( \\(" + TRIGGER
-            + "\\))?(" + REMARK_BLOCK + ")?(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + JdkRegEx.DURATION + "\\])?";
-
-    /**
-     * Regular expressions defining the logging.
-     */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(\\(" + TRIGGER + "\\) )?("
-            + YOUNG_BLOCK + "|" + OLD_BLOCK + ")(" + OLD_BLOCK + ")?((" + ClassHistogramEvent.REGEX_PREPROCESSED + ")? "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(, \\[(CMS Perm |Metaspace|Perm ): "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, "
-            + JdkRegEx.DURATION + "\\])?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
-
-    private static Pattern pattern = Pattern.compile(CmsSerialOldEvent.REGEX);
+    private static final String REGEX_GC = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + TRIGGER_GC + "\\))?[ ]{0,1}"
+            + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(" + TRIGGER_PAR_NEW + "\\))?: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]("
+            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?((" + JdkRegEx.TIMESTAMP
+            + ": \\[(CMS|Tenured))?(Java HotSpot\\(TM\\) Server VM warning: )?"
+            + "(bailing out to foreground collection)?( \\(" + TRIGGER_CMS + "\\))?(: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?)?("
+            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)(, \\[(CMS Perm |Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\])?"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * Create event from log entry.
@@ -260,82 +277,81 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
     public CmsSerialOldEvent(String logEntry) {
 
         this.setLogEntry(logEntry);
-        Matcher matcher = pattern.matcher(logEntry);
-        if (matcher.find()) {
-            this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-
-            // trigger
-            if (matcher.group(5) != null) {
-                this.trigger = matcher.group(5);
-            } else if (matcher.group(49) != null || matcher.group(82) != null) {
-                this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
+        if (logEntry.matches(REGEX_FULL_GC)) {
+            Pattern pattern = Pattern.compile(REGEX_FULL_GC);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                // If multiple triggers, use last one.
+                if (matcher.group(5) != null || matcher.group(33) != null) {
+                    this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
+                } else if (matcher.group(17) != null) {
+                    this.trigger = matcher.group(17);
+                } else if (matcher.group(15) != null) {
+                    this.trigger = matcher.group(15);
+                } else if (matcher.group(3) != null) {
+                    this.trigger = matcher.group(3);
+                }
+                this.old = Integer.parseInt(matcher.group(29));
+                this.oldEnd = Integer.parseInt(matcher.group(30));
+                this.oldAllocation = Integer.parseInt(matcher.group(31));
+                this.young = Integer.parseInt(matcher.group(40)) - this.old;
+                this.youngEnd = Integer.parseInt(matcher.group(41)) - this.oldEnd;
+                this.youngAvailable = Integer.parseInt(matcher.group(42)) - this.oldAllocation;
+                this.permGen = Integer.parseInt(matcher.group(44));
+                this.permGenEnd = Integer.parseInt(matcher.group(45));
+                this.permGenAllocation = Integer.parseInt(matcher.group(46));
+                this.duration = JdkMath.convertSecsToMillis(matcher.group(48)).intValue();
             }
-
-            // young or old block
-            if (matcher.group(7) != null) {
-                if (matcher.group(7).matches(YOUNG_BLOCK)) {
+        } else if (logEntry.matches(REGEX_GC)) {
+            Pattern pattern = Pattern.compile(REGEX_GC);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                // If multiple triggers, use last one.
+                if (matcher.group(25) != null) {
+                    this.trigger = matcher.group(25);
+                } else if (matcher.group(6) != null) {
+                    this.trigger = matcher.group(6);
+                } else {
                     // assume promotion failure
                     this.trigger = JdkRegEx.TRIGGER_PROMOTION_FAILED;
+                }
+                this.young = Integer.parseInt(matcher.group(7));
+                // No data to determine young end size.
+                this.youngEnd = 0;
+                this.youngAvailable = Integer.parseInt(matcher.group(9));
 
-                    this.young = Integer.parseInt(matcher.group(12));
-                    // No data to determine old end size.
-                    this.youngAvailable = Integer.parseInt(matcher.group(14));
+                // use young block duration for truncated events
+                if (matcher.group(48) == null) {
+                    this.duration = JdkMath.convertSecsToMillis(matcher.group(10)).intValue();
+                }
 
-                    // use young block duration for truncated events
-                    if (matcher.group(98) == null) {
-                        this.duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
-                    }
-
-                    // old block after young
-                    if (matcher.group(76) != null) {
-                        // update trigger
-                        if (matcher.group(60) != null) {
-                            this.trigger = matcher.group(60);
-                        }
-                        this.old = Integer.parseInt(matcher.group(77));
-                        this.oldEnd = Integer.parseInt(matcher.group(78));
-                        this.oldAllocation = Integer.parseInt(matcher.group(79));
-                        if (matcher.group(81) != null) {
-                            this.youngEnd = Integer.parseInt(matcher.group(90)) - this.oldEnd;
-                        }
-                    } else {
-                        if (matcher.group(81) != null) {
-                            this.old = Integer.parseInt(matcher.group(89)) - this.young;
-                            // No data to determine old end size.
-                            this.oldEnd = 0;
-                            this.oldAllocation = Integer.parseInt(matcher.group(91)) - this.youngAvailable;
-                        }
+                // old block after young
+                if (matcher.group(26) != null) {
+                    this.old = Integer.parseInt(matcher.group(27));
+                    this.oldEnd = Integer.parseInt(matcher.group(28));
+                    this.oldAllocation = Integer.parseInt(matcher.group(29));
+                    if (matcher.group(40) != null) {
+                        this.youngEnd = Integer.parseInt(matcher.group(40)) - this.oldEnd;
                     }
                 } else {
-                    if (matcher.group(27) != null) {
-                        this.trigger = matcher.group(27);
-                    }
-                    if (matcher.group(44) != null) {
-                        this.old = Integer.parseInt(matcher.group(44));
-                    }
-                    if (matcher.group(45) != null) {
-                        this.oldEnd = Integer.parseInt(matcher.group(45));
-                    }
-                    if (matcher.group(46) != null) {
-                        this.oldAllocation = Integer.parseInt(matcher.group(46));
-                    }
-                    if (matcher.group(81) != null) {
-                        this.young = Integer.parseInt(matcher.group(89)) - this.old;
-                        this.youngEnd = Integer.parseInt(matcher.group(90)) - this.oldEnd;
-                        this.youngAvailable = Integer.parseInt(matcher.group(91)) - this.oldAllocation;
+                    if (matcher.group(38) != null) {
+                        this.old = Integer.parseInt(matcher.group(39)) - this.young;
+                        // No data to determine old end size.
+                        this.oldEnd = 0;
+                        this.oldAllocation = Integer.parseInt(matcher.group(41)) - this.youngAvailable;
                     }
                 }
-            }
-
-            // perm/metaspace data
-            if (matcher.group(92) != null) {
-                this.permGen = Integer.parseInt(matcher.group(94));
-                this.permGenEnd = Integer.parseInt(matcher.group(95));
-                this.permGenAllocation = Integer.parseInt(matcher.group(96));
-            }
-
-            if (matcher.group(98) != null) {
-                this.duration = JdkMath.convertSecsToMillis(matcher.group(98)).intValue();
+                // perm/metaspace data
+                if (matcher.group(42) != null) {
+                    this.permGen = Integer.parseInt(matcher.group(44));
+                    this.permGenEnd = Integer.parseInt(matcher.group(45));
+                    this.permGenAllocation = Integer.parseInt(matcher.group(46));
+                }
+                if (matcher.group(48) != null) {
+                    this.duration = JdkMath.convertSecsToMillis(matcher.group(48)).intValue();
+                }
             }
         }
 
@@ -473,6 +489,6 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return logLine.matches(REGEX_FULL_GC) || logLine.matches(REGEX_GC);
     }
 }

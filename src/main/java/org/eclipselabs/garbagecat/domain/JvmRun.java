@@ -432,20 +432,7 @@ public class JvmRun {
             }
         }
 
-        // 5) Check for concurrent mode failure by logging event type. This is needed to deal with legacy code that does
-        // not understand triggers and creates many unnecessary events instead of preparsing them into their component
-        // events and/or triggers.
-        if (!analysisKeys.contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE)) {
-            if (getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE)
-                    || getEventTypes().contains(LogEventType.PAR_NEW_CONCURRENT_MODE_FAILURE_PERM_DATA)
-                    || getEventTypes().contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE)
-                    || getEventTypes()
-                            .contains(LogEventType.PAR_NEW_PROMOTION_FAILED_CMS_CONCURRENT_MODE_FAILURE_PERM_DATA)) {
-                analysisKeys.add(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE);
-            }
-        }
-
-        // 6) Check if CMS handling Perm/Metaspace collections by collector analysis (if no jvm options available and
+        // 5) Check if CMS handling Perm/Metaspace collections by collector analysis (if no jvm options available and
         // class unloading has not already been detected).
         if (!analysisKeys.contains(Analysis.KEY_CMS_CLASS_UNLOADING_DISABLED)) {
             if (getEventTypes().contains(LogEventType.CMS_REMARK)
@@ -455,21 +442,21 @@ public class JvmRun {
 
         }
 
-        // 7) Check for -XX:+PrintReferenceGC by event type
+        // 6) Check for -XX:+PrintReferenceGC by event type
         if (!analysisKeys.contains(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED)) {
             if (getEventTypes().contains(LogEventType.REFERENCE_GC)) {
                 analysisKeys.add(Analysis.KEY_PRINT_REFERENCE_GC_ENABLED);
             }
         }
 
-        // 8) Check for print application concurrent time.
+        // 7) Check for print application concurrent time.
         if (!analysisKeys.contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
             if (getEventTypes().contains(LogEventType.APPLICATION_CONCURRENT_TIME)) {
                 analysisKeys.add(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME);
             }
         }
 
-        // 9) Check for PAR_NEW disabled.
+        // 8) Check for PAR_NEW disabled.
         if (getEventTypes().contains(LogEventType.SERIAL_NEW) && collectorFamilies.contains(CollectorFamily.CMS)) {
             // Replace general gc.serial analysis
             if (analysisKeys.contains(Analysis.KEY_SERIAL_GC)) {

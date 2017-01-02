@@ -47,7 +47,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 2) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.ParNewPromotionFailedConcModeFailurePermDataEvent} :
+ * 2) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent}:
  * </p>
  * 
  * <pre>
