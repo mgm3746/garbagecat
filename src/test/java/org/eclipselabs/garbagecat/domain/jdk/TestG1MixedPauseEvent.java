@@ -108,7 +108,7 @@ public class TestG1MixedPauseEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 76, event.getDuration());
     }
 
-    public void testLogLinePreprocessedTriggerAfterToSpaceExhausted() {
+    public void testNoTriggerToSpaceExhausted() {
         String logLine = "615375.044: [GC pause (mixed) (to-space exhausted), 1.5026320 secs]"
                 + "[Eden: 3416.0M(3416.0M)->0.0B(3464.0M) Survivors: 264.0M->216.0M Heap: 17.7G(18.0G)->17.8G(18.0G)] "
                 + "[Times: user=11.35 sys=0.00, real=1.50 secs]";
@@ -125,13 +125,50 @@ public class TestG1MixedPauseEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 1502, event.getDuration());
     }
 
+    public void testDoubleTriggerToSpaceExhausted() {
+        String logLine = "506146.808: [GC pause (G1 Evacuation Pause) (mixed) (to-space exhausted), 8.6429024 secs]"
+                + "[Eden: 22.9G(24.3G)->0.0B(24.3G) Survivors: 112.0M->0.0B Heap: 27.7G(28.0G)->23.5G(28.0G)] "
+                + "[Times: user=34.39 sys=13.70, real=8.64 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
+                G1MixedPauseEvent.match(logLine));
+        G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED));
+        Assert.assertEquals("Time stamp not parsed correctly.", 506146808, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 29045555, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 24641536, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 28 * 1024 * 1024,
+                event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 8642, event.getDuration());
+    }
+
     /**
      * Test preprocessing TRIGGER_TO_SPACE_EXHAUSTED after "mixed".
      * 
      */
-    public void testLogLineTriggerHeapDumpedInitiatedGc() {
+    public void testPreprocessingNoTriggerToSpaceExhausted() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset99.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.G1_MIXED_PAUSE));
+        Assert.assertTrue(Analysis.KEY_G1_EVACUATION_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_G1_EVACUATION_FAILURE));
+    }
+
+    /**
+     * Test preprocessing TRIGGER_TO_SPACE_EXHAUSTED after "mixed".
+     * 
+     */
+    public void testPreprocessingDoubleTriggerToSpaceExhausted() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset102.txt");
         GcManager jvmManager = new GcManager();
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile, false);

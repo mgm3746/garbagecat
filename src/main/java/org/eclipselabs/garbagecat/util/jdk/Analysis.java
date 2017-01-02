@@ -362,7 +362,7 @@ public class Analysis {
     public static final String KEY_PRINT_FLS_STATISTICS = "print.fls.statistics";
 
     /**
-     * Property key for G1 evauation failure.
+     * Property key for G1 evacuation failure.
      */
     public static final String KEY_G1_EVACUATION_FAILURE = "g1.evacuation.failure";
 

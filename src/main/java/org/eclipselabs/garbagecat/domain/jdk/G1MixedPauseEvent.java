@@ -157,10 +157,11 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Com
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                if (matcher.group(3) != null) {
-                    trigger = matcher.group(3);
-                } else if (matcher.group(5) != null) {
+                // use last trigger
+                if (matcher.group(5) != null) {
                     trigger = matcher.group(5);
+                } else if (matcher.group(3) != null) {
+                    trigger = matcher.group(3);
                 }
                 duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
                 combined = JdkMath.convertSizeG1DetailsToKilobytes((matcher.group(19)), matcher.group(20).charAt(0));
