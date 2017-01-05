@@ -142,6 +142,22 @@ public class TestG1MixedPauseEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 8642, event.getDuration());
     }
 
+    public void testTriggerGcLockerInitiatedGc() {
+        String logLine = "55.647: [GC pause (GCLocker Initiated GC) (mixed), 0.0210214 secs][Eden: "
+                + "44.0M(44.0M)->0.0B(248.0M) Survivors: 31.0M->10.0M Heap: 1141.0M(1500.0M)->1064.5M(1500.0M)] "
+                + "[Times: user=0.07 sys=0.00, real=0.02 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
+                G1MixedPauseEvent.match(logLine));
+        G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
+        Assert.assertEquals("Time stamp not parsed correctly.", 55647, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 1141 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 1090048, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 1500 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 21, event.getDuration());
+    }
+
     /**
      * Test preprocessing TRIGGER_TO_SPACE_EXHAUSTED after "mixed".
      * 

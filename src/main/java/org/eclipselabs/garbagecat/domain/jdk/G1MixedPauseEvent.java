@@ -77,7 +77,7 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Com
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")";
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
 
     /**
      * Regular expression standard format.
