@@ -71,7 +71,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <pre>
  * preprocessed:
- * 84.335: [GC 84.336: [ParNew: 273152K-&gt;858K(341376K), 0.0030008 secs] 273152K-&gt;858K(980352K), 0.0031183 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+ * 13.086: [GC: 13.086: [ParNew: 272640K-&gt;33532K(306688K), 0.0381419 secs] 272640K-&gt;33532K(1014528K), 0.0383306 secs] [Times: user=0.11 sys=0.02, real=0.04 secs]
  * </pre>
  * 
  * <p>
@@ -101,7 +101,7 @@ public class ParNewEvent extends CmsCollector
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
 
     /**
      * Regular expressions defining the logging.
@@ -187,17 +187,17 @@ public class ParNewEvent extends CmsCollector
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(5)).longValue();
             trigger = matcher.group(9);
-            young = Integer.parseInt(matcher.group(14));
-            youngEnd = Integer.parseInt(matcher.group(15));
-            youngAvailable = Integer.parseInt(matcher.group(16));
-            int totalBegin = Integer.parseInt(matcher.group(18));
+            young = Integer.parseInt(matcher.group(15));
+            youngEnd = Integer.parseInt(matcher.group(16));
+            youngAvailable = Integer.parseInt(matcher.group(17));
+            int totalBegin = Integer.parseInt(matcher.group(19));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(19));
+            int totalEnd = Integer.parseInt(matcher.group(20));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(20));
+            int totalAllocation = Integer.parseInt(matcher.group(21));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(22)).intValue();
-            if (matcher.group(21) != null) {
+            duration = JdkMath.convertSecsToMillis(matcher.group(23)).intValue();
+            if (matcher.group(22) != null) {
                 incrementalMode = true;
             } else {
                 incrementalMode = false;

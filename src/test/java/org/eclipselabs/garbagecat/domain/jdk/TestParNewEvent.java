@@ -185,6 +185,23 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 524, event.getDuration());
     }
 
+    public void testLogLineSystemGcTrigger() {
+        String logLine = "27880.710: [GC (System.gc()) 27880.710: [ParNew: 925502K->58125K(996800K), 0.0133005 secs] "
+                + "5606646K->4742781K(8277888K), 0.0138294 secs] [Times: user=0.14 sys=0.00, real=0.02 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                ParNewEvent.match(logLine));
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 27880710, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
+        Assert.assertEquals("Young begin size not parsed correctly.", 925502, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 58125, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 996800, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", (5606646 - 925502), event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", (4742781 - 58125), event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", (8277888 - 996800), event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 13, event.getDuration());
+    }
+
     public void testLogLinePromotionFailed() {
         String logLine = "393747.603: [GC393747.603: [ParNew (promotion failed): 476295K->476295K(4128768K), "
                 + "0.5193071 secs] 7385012K->7555732K(13172736K), 0.5196411 secs] "
