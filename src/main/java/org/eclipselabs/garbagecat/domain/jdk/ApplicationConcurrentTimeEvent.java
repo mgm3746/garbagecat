@@ -14,7 +14,8 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -40,12 +41,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ApplicationConcurrentTimeEvent implements LogEvent {
+public class ApplicationConcurrentTimeEvent implements ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^Application time: \\d{1,4}\\.\\d{7} seconds[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP
+            + ": )?Application time: \\d{1,4}\\.\\d{7} seconds[ ]*$";
 
     /**
      * RegEx pattern.

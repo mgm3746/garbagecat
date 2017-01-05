@@ -107,11 +107,6 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
-        Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
-        Assert.assertTrue(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME));
     }
 
     /**
@@ -150,11 +145,6 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
-        Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
-        Assert.assertTrue(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME));
     }
 
     /**
@@ -183,10 +173,7 @@ public class TestJvmRun extends TestCase {
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
-        Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
         Assert.assertTrue(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
@@ -477,6 +464,21 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("Stopped time throughput not correct.", 4, jvmRun.getStoppedTimeThroughput());
         Assert.assertFalse(Analysis.KEY_GC_STOPPED_RATIO + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_GC_STOPPED_RATIO));
+    }
+
+    /**
+     * Test identifying <code>ParNewEvent</code> running in incremental mode.
+     */
+    public void testPrintGcApplicationConcurrentTimeAnalysis() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset104.txt");
+        Jvm jvm = new Jvm(null, null);
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME));
     }
 
     /**

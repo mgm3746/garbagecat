@@ -35,6 +35,7 @@ import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ApplicationConcurrentTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
@@ -232,7 +233,8 @@ public class GcManager {
         if (isThrowawayEvent(currentLogLine)) {
             // Analysis
             if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_TRACE_CLASS_UNLOADING)) {
-                if (ClassUnloadingEvent.match(currentLogLine)) {
+                if (ClassUnloadingEvent.match(currentLogLine)
+                        && !jvmDao.getAnalysisKeys().contains(Analysis.KEY_TRACE_CLASS_UNLOADING)) {
                     jvmDao.getAnalysisKeys().add(Analysis.KEY_TRACE_CLASS_UNLOADING);
                 }
             }
@@ -254,6 +256,11 @@ public class GcManager {
             if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_TENURING_DISTRIBUTION)) {
                 if (TenuringDistributionEvent.match(currentLogLine)) {
                     jvmDao.getAnalysisKeys().add(Analysis.KEY_PRINT_TENURING_DISTRIBUTION);
+                }
+            }
+            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
+                if (ApplicationConcurrentTimeEvent.match(currentLogLine)) {
+                    jvmDao.getAnalysisKeys().add(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME);
                 }
             }
             currentLogLine = null;

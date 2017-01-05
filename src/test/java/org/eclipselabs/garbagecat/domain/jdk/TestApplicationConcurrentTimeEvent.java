@@ -23,6 +23,13 @@ import junit.framework.TestCase;
  */
 public class TestApplicationConcurrentTimeEvent extends TestCase {
 
+    public void testNotBlocking() {
+        String logLine = "Application time: 130.5284640 seconds   ";
+        Assert.assertFalse(
+                JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testLogLine() {
         String logLine = "Application time: 130.5284640 seconds";
         Assert.assertTrue(
@@ -37,10 +44,10 @@ public class TestApplicationConcurrentTimeEvent extends TestCase {
                 ApplicationConcurrentTimeEvent.match(logLine));
     }
 
-    public void testNotBlocking() {
-        String logLine = "Application time: 130.5284640 seconds   ";
-        Assert.assertFalse(
-                JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    public void testLogLineWithTimestamp() {
+        String logLine = "0.193: Application time: 0.0430320 seconds";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                ApplicationConcurrentTimeEvent.match(logLine));
     }
 }

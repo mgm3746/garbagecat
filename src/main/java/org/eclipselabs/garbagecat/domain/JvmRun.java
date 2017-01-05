@@ -449,14 +449,7 @@ public class JvmRun {
             }
         }
 
-        // 7) Check for print application concurrent time.
-        if (!analysisKeys.contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
-            if (getEventTypes().contains(LogEventType.APPLICATION_CONCURRENT_TIME)) {
-                analysisKeys.add(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME);
-            }
-        }
-
-        // 8) Check for PAR_NEW disabled.
+        // 7) Check for PAR_NEW disabled.
         if (getEventTypes().contains(LogEventType.SERIAL_NEW) && collectorFamilies.contains(CollectorFamily.CMS)) {
             // Replace general gc.serial analysis
             if (analysisKeys.contains(Analysis.KEY_SERIAL_GC)) {
