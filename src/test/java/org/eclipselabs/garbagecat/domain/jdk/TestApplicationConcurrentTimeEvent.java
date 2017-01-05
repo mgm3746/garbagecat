@@ -50,4 +50,11 @@ public class TestApplicationConcurrentTimeEvent extends TestCase {
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
                 ApplicationConcurrentTimeEvent.match(logLine));
     }
+
+    public void testLogLineNoTimestampStartingSemicolon() {
+        String logLine = ": Application time: 1.0001619 seconds";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                ApplicationConcurrentTimeEvent.match(logLine));
+    }
 }

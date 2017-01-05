@@ -47,7 +47,7 @@ public class ApplicationConcurrentTimeEvent implements ThrowAwayEvent {
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP
-            + ": )?Application time: \\d{1,4}\\.\\d{7} seconds[ ]*$";
+            + ")?(: )?Application time: \\d{1,4}\\.\\d{7} seconds[ ]*$";
 
     /**
      * RegEx pattern.
