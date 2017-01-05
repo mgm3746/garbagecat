@@ -341,7 +341,7 @@ public class JvmDao {
 
         PreparedStatement pst = null;
         try {
-            String sqlInsertBlockingEvent = "insert into application_stopped_time (time_stamp, event_name, "
+            String sqlInsertStoppedEvent = "insert into application_stopped_time (time_stamp, event_name, "
                     + "duration, log_entry) " + "values(?, ?, ?, ?)";
 
             final int TIME_STAMP_INDEX = 1;
@@ -349,7 +349,7 @@ public class JvmDao {
             final int DURATION_INDEX = 3;
             final int LOG_ENTRY_INDEX = 4;
 
-            pst = connection.prepareStatement(sqlInsertBlockingEvent);
+            pst = connection.prepareStatement(sqlInsertStoppedEvent);
 
             for (int i = 0; i < stoppedTimeBatch.size(); i++) {
                 ApplicationStoppedTimeEvent event = stoppedTimeBatch.get(i);
@@ -364,7 +364,7 @@ public class JvmDao {
             System.err.println(e.getMessage());
             throw new RuntimeException("Error inserting stopped time event.");
         } finally {
-            blockingBatch.clear();
+            stoppedTimeBatch.clear();
             try {
                 pst.close();
             } catch (SQLException e) {

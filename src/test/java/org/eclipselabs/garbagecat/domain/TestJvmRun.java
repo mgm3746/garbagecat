@@ -428,7 +428,8 @@ public class TestJvmRun extends TestCase {
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("GC Event count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertEquals("GC event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertEquals("GC blocking event count not correct.", 2, jvmRun.getBlockingEventCount());
         Assert.assertEquals("GC pause total not correct.", 61, jvmRun.getTotalGcPause());
         Assert.assertEquals("GC first timestamp not correct.", 1002192, jvmRun.getFirstGcTimestamp());
         Assert.assertEquals("GC last timestamp not correct.", 1002847, jvmRun.getLastGcTimestamp());
@@ -444,6 +445,37 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("GC throughput not correct.", 98, jvmRun.getGcThroughput());
         Assert.assertEquals("Stopped time throughput not correct.", 73, jvmRun.getStoppedTimeThroughput());
         Assert.assertTrue(Analysis.KEY_GC_STOPPED_RATIO + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_GC_STOPPED_RATIO));
+    }
+
+    /**
+     * Test summary stats with batching.
+     */
+    public void testStopedTime() {
+
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset103.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("GC event type count not correct.", 3, jvmRun.getEventTypes().size());
+        Assert.assertEquals("GC blocking event count not correct.", 160, jvmRun.getBlockingEventCount());
+        Assert.assertEquals("GC pause total not correct.", 2568121, jvmRun.getTotalGcPause());
+        Assert.assertEquals("GC first timestamp not correct.", 4364, jvmRun.getFirstGcTimestamp());
+        Assert.assertEquals("GC last timestamp not correct.", 2801954, jvmRun.getLastGcTimestamp());
+        Assert.assertEquals("GC last duration not correct.", 25963, jvmRun.getLastGcDuration());
+        Assert.assertEquals("Stopped Time event count not correct.", 151, jvmRun.getStoppedTimeEventCount());
+        Assert.assertEquals("Stopped time total not correct.", 2721420, jvmRun.getTotalStoppedTime());
+        Assert.assertEquals("Stopped first timestamp not correct.", 0, jvmRun.getFirstStoppedTimestamp());
+        Assert.assertEquals("Stopped last timestamp not correct.", 0, jvmRun.getLastStoppedTimestamp());
+        Assert.assertEquals("Stopped last duration not correct.", 36651675, jvmRun.getLastStoppedDuration());
+        Assert.assertEquals("JVM first timestamp not correct.", 4364, jvmRun.getFirstTimestamp());
+        Assert.assertEquals("JVM last timestamp not correct.", 2801954, jvmRun.getLastTimestamp());
+        Assert.assertEquals("JVM run duration not correct.", 2827917, jvmRun.getJvmRunDuration());
+        Assert.assertEquals("GC throughput not correct.", 9, jvmRun.getGcThroughput());
+        Assert.assertEquals("Stopped time throughput not correct.", 4, jvmRun.getStoppedTimeThroughput());
+        Assert.assertFalse(Analysis.KEY_GC_STOPPED_RATIO + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_GC_STOPPED_RATIO));
     }
 
