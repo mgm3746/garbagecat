@@ -152,7 +152,8 @@ public class ParallelOldCompactingEvent extends ParallelCollector
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
             + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|"
-            + JdkRegEx.TRIGGER_ERGONOMICS + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + ")";
+            + JdkRegEx.TRIGGER_ERGONOMICS + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
 
     /**
      * Regular expressions defining the logging.

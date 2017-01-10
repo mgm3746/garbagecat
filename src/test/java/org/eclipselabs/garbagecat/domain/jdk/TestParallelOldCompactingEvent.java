@@ -173,4 +173,27 @@ public class TestParallelOldCompactingEvent extends TestCase {
         Assert.assertEquals("Metaspace allocation size not parsed correctly.", 3977216, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 2430, event.getDuration());
     }
+
+    public void testAllocationFailureTrigger() {
+        String logLine = "3203650.654: [Full GC (Allocation Failure) [PSYoungGen: 393482K->393073K(532992K)] "
+                + "[ParOldGen: 1398224K->1398199K(1398272K)] 1791707K->1791273K(1931264K), "
+                + "[Metaspace: 170955K->170731K(1220608K)], 3.5730395 secs] "
+                + "[Times: user=26.24 sys=0.09, real=3.57 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
+                ParallelOldCompactingEvent.match(logLine));
+        ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", Long.parseLong("3203650654"), event.getTimestamp());
+        Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.ALLOCATION_FAILURE.toString() + ".",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        Assert.assertEquals("Young begin size not parsed correctly.", 393482, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 393073, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 532992, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 1398224, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 1398199, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 1398272, event.getOldSpace());
+        Assert.assertEquals("Metaspace begin size not parsed correctly.", 170955, event.getPermOccupancyInit());
+        Assert.assertEquals("Metaspace end size not parsed correctly.", 170731, event.getPermOccupancyEnd());
+        Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1220608, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 3573, event.getDuration());
+    }
 }
