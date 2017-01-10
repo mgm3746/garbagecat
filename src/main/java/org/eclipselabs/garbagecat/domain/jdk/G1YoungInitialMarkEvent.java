@@ -81,11 +81,14 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
             + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION
             + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?, "
-            + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)->"
-            + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\) Survivors: " + JdkRegEx.SIZE_G1_DECIMAL
-            + "->" + JdkRegEx.SIZE_G1_DECIMAL + " Heap: " + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL
-            + "\\)->" + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\)\\]" + JdkRegEx.TIMES_BLOCK
-            + "?[ ]*$";
+            + JdkRegEx.DURATION + "\\]\\[Eden: (" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\(("
+            + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\)->(" + JdkRegEx.SIZE_G1_WHOLE + "|"
+            + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL
+            + ")\\) Survivors: (" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")->("
+            + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ") Heap: (" + JdkRegEx.SIZE_G1_WHOLE + "|"
+            + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\)->("
+            + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE + "|"
+            + JdkRegEx.SIZE_G1_DECIMAL + ")\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -151,14 +154,35 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 if (matcher.group(3) != null) {
                     trigger = matcher.group(3);
-                } else {
+                } else if (matcher.group(6) != null) {
                     trigger = matcher.group(6);
                 }
                 duration = JdkMath.convertSecsToMillis(matcher.group(7)).intValue();
-                combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(20), matcher.group(21).charAt(0));
-                combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(24), matcher.group(25).charAt(0));
-                combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(26),
-                        matcher.group(27).charAt(0));
+                if (matcher.group(41) != null) {
+                    // SIZE_G1_DECIMAL
+                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(41), matcher.group(42).charAt(0));
+                } else {
+                    // SIZE_G1_WHOLE
+                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(39), matcher.group(40).charAt(0));
+                }
+                if (matcher.group(51) != null) {
+                    // SIZE_G1_DECIMAL
+                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(51),
+                            matcher.group(52).charAt(0));
+                } else {
+                    // SIZE_G1_WHOLE
+                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(49),
+                            matcher.group(50).charAt(0));
+                }
+                if (matcher.group(56) != null) {
+                    // SIZE_G1_DECIMAL
+                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(56),
+                            matcher.group(57).charAt(0));
+                } else {
+                    // SIZE_G1_WHOLE
+                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(54),
+                            matcher.group(55).charAt(0));
+                }
             }
         }
     }
