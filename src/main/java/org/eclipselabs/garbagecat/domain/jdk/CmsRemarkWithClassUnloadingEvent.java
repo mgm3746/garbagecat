@@ -22,6 +22,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
+ * TODO: Roll this into CMS_REMARK.
+ * 
  * <p>
  * CMS_REMARK_WITH_CLASS_UNLOADING
  * </p>
@@ -115,15 +117,16 @@ public class CmsRemarkWithClassUnloadingEvent extends CmsCollector implements Bl
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
-            + ")\\) )?\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.TIMESTAMP
-            + ": \\[Rescan \\((non-)?parallel\\) (" + JdkRegEx.TIMESTAMP + ": \\[grey object rescan, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[root rescan, " + JdkRegEx.DURATION + "\\])?, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": ((\\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\])|(\\[scrub symbol table, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[scrub string table, " + JdkRegEx.DURATION
-            + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\])?"
+            + JdkRegEx.TIMESTAMP + ": \\[Rescan \\((non-)?parallel\\) (" + JdkRegEx.TIMESTAMP
+            + ": \\[grey object rescan, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[root rescan, "
+            + JdkRegEx.DURATION + "\\])?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[class unloading, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": ((\\[scrub symbol & string tables, "
+            + JdkRegEx.DURATION + "\\])|(\\[scrub symbol table, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[scrub string table, " + JdkRegEx.DURATION + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     private static Pattern pattern = Pattern.compile(CmsRemarkWithClassUnloadingEvent.REGEX);
 
     /**

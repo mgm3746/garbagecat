@@ -24,6 +24,16 @@ import junit.framework.TestCase;
  */
 public class TestCmsRemarkWithClassUnloadingEvent extends TestCase {
 
+    public void testIsBlocking() {
+        String logLine = "4.578: [Rescan (parallel) , 0.0185521 secs]4.597: [weak refs processing, 0.0008993 secs]"
+                + "4.598: [class unloading, 0.0046742 secs]4.603: [scrub symbol table, 0.0044444 secs]"
+                + "4.607: [scrub string table, 0.0005670 secs][1 CMS-remark: 6569K(4023936K)] 16685K(4177280K), "
+                + "0.1025102 secs] [Times: user=0.17 sys=0.01, real=0.10 secs]";
+        Assert.assertTrue(
+                JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testLogLine() {
         String logLine = "76694.727: [GC[YG occupancy: 80143 K (153344 K)]76694.727: "
                 + "[Rescan (parallel) , 0.0574180 secs]76694.785: [weak refs processing, 0.0170540 secs]76694.802: "
@@ -128,13 +138,20 @@ public class TestCmsRemarkWithClassUnloadingEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 102, event.getDuration());
     }
 
-    public void testIsBlocking() {
-        String logLine = "4.578: [Rescan (parallel) , 0.0185521 secs]4.597: [weak refs processing, 0.0008993 secs]"
-                + "4.598: [class unloading, 0.0046742 secs]4.603: [scrub symbol table, 0.0044444 secs]"
-                + "4.607: [scrub string table, 0.0005670 secs][1 CMS-remark: 6569K(4023936K)] 16685K(4177280K), "
-                + "0.1025102 secs] [Times: user=0.17 sys=0.01, real=0.10 secs]";
+    public void testLogLineNoSpaceAfterTrigger() {
+        String logLine = "38.695: [GC (CMS Final Remark)[YG occupancy: 4251867 K (8388608 K)]"
+                + "38.695: [Rescan (parallel) , 0.5678440 secs]39.263: [weak refs processing, 0.0000540 secs]"
+                + "39.263: [class unloading, 0.0065460 secs]39.270: [scrub symbol table, 0.0118150 secs]"
+                + "39.282: [scrub string table, 0.0020090 secs] "
+                + "[1 CMS-remark: 0K(13631488K)] 4251867K(22020096K), 0.5893800 secs] "
+                + "[Times: user=3.92 sys=0.04, real=0.59 secs]";
         Assert.assertTrue(
-                JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING.toString() + ".",
+                CmsRemarkWithClassUnloadingEvent.match(logLine));
+        CmsRemarkWithClassUnloadingEvent event = new CmsRemarkWithClassUnloadingEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 38695, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        Assert.assertEquals("Duration not parsed correctly.", 589, event.getDuration());
     }
 }
