@@ -826,6 +826,30 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 83677, event.getDuration());
     }
 
+    public void testTriggerGcLockerInitiatedGc() {
+        String logLine = "58626.878: [Full GC (GCLocker Initiated GC)58626.878: [CMS (concurrent mode failure): "
+                + "13441202K->12005469K(13631488K), 23.1836190 secs] 19349630K->12005469K(22020096K), "
+                + "[CMS Perm : 1257346K->1257346K(2097152K)] icms_dc=100 , 23.1838500 secs] "
+                + "[Times: user=22.77 sys=0.39, real=23.18 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
+        Assert.assertEquals("Time stamp not parsed correctly.", 58626878, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 19349630 - 13441202,
+                event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 12005469 - 12005469, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 22020096 - 13631488, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 13441202, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 12005469, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 13631488, event.getOldSpace());
+        Assert.assertEquals("Perm begin size not parsed correctly.", 1257346, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm end size not parsed correctly.", 1257346, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm allocation size not parsed correctly.", 2097152, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 23183, event.getDuration());
+    }
+
     public void testSplitParNewPromotionFailedCmsConcurrentModeFailure() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset5.txt");

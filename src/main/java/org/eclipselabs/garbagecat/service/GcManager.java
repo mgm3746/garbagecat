@@ -354,8 +354,9 @@ public class GcManager {
                     // Verify logging in correct order. If overridden, logging will be stored in database and reordered
                     // by timestamp for analysis.
                     if (!reorder && priorEvent != null && event.getTimestamp() < priorEvent.getTimestamp()) {
-                        System.out.println("prior event: " + priorEvent.getLogEntry());
-                        throw new TimeWarpException("Logging reversed: " + event.getLogEntry());
+                        throw new TimeWarpException(
+                                "Logging reversed: " + System.getProperty("line.separator") + priorEvent.getLogEntry()
+                                        + System.getProperty("line.separator") + event.getLogEntry());
                     }
 
                     jvmDao.addBlockingEvent((BlockingEvent) event);

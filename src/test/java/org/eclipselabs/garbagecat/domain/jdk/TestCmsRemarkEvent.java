@@ -103,4 +103,18 @@ public class TestCmsRemarkEvent extends TestCase {
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         Assert.assertEquals("Duration not parsed correctly.", 340, event.getDuration());
     }
+
+    public void testLogLineParNewTrigger() {
+        String logLine = "58427.547: [GC (CMS Final Remark)[YG occupancy: 5117539 K (8388608 K)]"
+                + "58427.548: [GC (CMS Final Remark)58427.548: [ParNew (promotion failed): "
+                + "5117539K->5001473K(8388608K), 27.6557600 secs] 17958061K->18622281K(22020096K) icms_dc=57 , "
+                + "27.6560550 secs] [Times: user=49.10 sys=6.01, real=27.65 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
+                CmsRemarkEvent.match(logLine));
+        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 58427547, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
+        Assert.assertEquals("Duration not parsed correctly.", 27656, event.getDuration());
+    }
 }

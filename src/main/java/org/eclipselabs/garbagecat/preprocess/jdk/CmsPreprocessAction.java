@@ -184,9 +184,10 @@ public class CmsPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC( \\("
             + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))?( )?(" + JdkRegEx.TIMESTAMP + ": \\[ParNew)?( \\("
             + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS)?)("
-            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|mark|sweep|preclean): "
-            + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS)?)(( CMS: abort preclean due to time )?" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS-concurrent-(abortable-preclean|mark|sweep|preclean): " + JdkRegEx.DURATION_FRACTION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
 
     /**
      * Regular expression for retained beginning PAR_NEW mixed with FLS_STATISTICS.
@@ -217,10 +218,10 @@ public class CmsPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
             + ": \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD
-            + ")\\) )?" + JdkRegEx.TIMESTAMP + ": \\[CMS)(" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+            + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)[ ]{0,1})?" + JdkRegEx.TIMESTAMP + ": \\[CMS)("
+            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): "
+            + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
 
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD bailing out collection.

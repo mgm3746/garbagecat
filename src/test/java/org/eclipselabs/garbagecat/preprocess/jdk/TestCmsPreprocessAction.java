@@ -472,6 +472,35 @@ public class TestCmsPreprocessAction extends TestCase {
                 "262375.122: [Full GC (Metadata GC Threshold) 262375.122: [CMS", event.getLogEntry());
     }
 
+    public void testLogLineBeginningSerialNoSpaceAfterTrigger() {
+        String priorLogLine = "";
+        String logLine = "5026.107: [Full GC (Allocation Failure)5026.108: [CMS"
+                + "5027.062: [CMS-concurrent-sweep: 9.543/33.853 secs] "
+                + "[Times: user=107.27 sys=5.82, real=33.85 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.", "5026.107: [Full GC (Allocation Failure)5026.108: [CMS",
+                event.getLogEntry());
+    }
+
+    public void testLogLineBeginningSerialConcurrentWithGcLockerInitiatedGc() {
+        String priorLogLine = "";
+        String logLine = "58626.878: [Full GC (GCLocker Initiated GC)58626.878: [CMS"
+                + "58630.075: [CMS-concurrent-sweep: 3.220/3.228 secs] [Times: user=3.38 sys=0.01, real=3.22 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "58626.878: [Full GC (GCLocker Initiated GC)58626.878: [CMS", event.getLogEntry());
+    }
+
     public void testLogLineBeginningParNewWithFlsStatistics() {
         String priorLogLine = "";
         String logLine = "1.118: [GC Before GC:";
@@ -555,6 +584,24 @@ public class TestCmsPreprocessAction extends TestCase {
         List<String> entangledLogLines = new ArrayList<String>();
         CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
         Assert.assertEquals("Log line not parsed correctly.", "3576157.596: [GC ", event.getLogEntry());
+    }
+
+    public void testLogLinParNewPromotionFailedWithCmsAbortPrecleanDueToTime() {
+        String priorLogLine = "";
+        String logLine = "73241.738: [GC (Allocation Failure)73241.738: [ParNew (promotion failed): "
+                + "8205461K->8187503K(8388608K), 2.1449990 secs]73243.883: [CMS CMS: abort preclean due to time "
+                + "3244.984: [CMS-concurrent-abortable-preclean: 3.335/9.080 secs] "
+                + "[Times: user=43.26 sys=1.66, real=9.08 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "73241.738: [GC (Allocation Failure)73241.738: [ParNew (promotion failed): "
+                        + "8205461K->8187503K(8388608K), 2.1449990 secs]73243.883: [CMS",
+                event.getLogEntry());
     }
 
     public void testLogLineEndParNew() {

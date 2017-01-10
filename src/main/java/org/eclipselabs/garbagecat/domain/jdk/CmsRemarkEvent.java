@@ -102,10 +102,10 @@ public class CmsRemarkEvent extends CmsCollector implements BlockingEvent, Trigg
     private static final String REGEX_PARNEW = "^" + JdkRegEx.TIMESTAMP + ": \\[GC \\(("
             + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1}\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
             + JdkRegEx.SIZE + "\\)]" + JdkRegEx.TIMESTAMP + ": \\[GC \\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
-            + "\\)[ ]{0,1}" + JdkRegEx.TIMESTAMP + ": \\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
-            + "?[ ]*$";
+            + "\\)[ ]{0,1}" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * Create event from log entry.
@@ -130,9 +130,13 @@ public class CmsRemarkEvent extends CmsCollector implements BlockingEvent, Trigg
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                trigger = matcher.group(2);
+                if (matcher.group(8) != null) {
+                    trigger = matcher.group(8);
+                } else {
+                    trigger = matcher.group(2);
+                }
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMillis(matcher.group(15)).intValue();
+                duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
             }
         }
     }

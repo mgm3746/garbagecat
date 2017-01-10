@@ -559,11 +559,12 @@ public class JdkUtil {
 
         // Verify data integrity
         if (gcEvent.getTimestamp() < (priorEvent.getTimestamp() + priorEvent.getDuration())) {
-            System.out.println("prior event: " + priorEvent.getLogEntry());
-            throw new TimeWarpException("Event overlap: " + gcEvent.getLogEntry());
+            throw new TimeWarpException("Event overlap: " + System.getProperty("line.separator")
+                    + priorEvent.getLogEntry() + System.getProperty("line.separator") + gcEvent.getLogEntry());
         }
         if (interval <= 0) {
-            throw new TimeWarpException("Negative interval: " + gcEvent.getLogEntry());
+            throw new TimeWarpException("Negative interval: " + System.getProperty("line.separator")
+                    + priorEvent.getLogEntry() + System.getProperty("line.separator") + gcEvent.getLogEntry());
         }
 
         // Determine the maximum duration for the given interval that meets the
