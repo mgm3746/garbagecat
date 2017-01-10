@@ -158,30 +158,30 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
                     trigger = matcher.group(6);
                 }
                 duration = JdkMath.convertSecsToMillis(matcher.group(7)).intValue();
-                if (matcher.group(41) != null) {
+                if (matcher.group(43) != null) {
                     // SIZE_G1_DECIMAL
-                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(41), matcher.group(42).charAt(0));
+                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(43), matcher.group(44).charAt(0));
                 } else {
                     // SIZE_G1_WHOLE
-                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(39), matcher.group(40).charAt(0));
+                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(41), matcher.group(42).charAt(0));
                 }
-                if (matcher.group(51) != null) {
+                if (matcher.group(53) != null) {
                     // SIZE_G1_DECIMAL
+                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(53),
+                            matcher.group(54).charAt(0));
+                } else {
+                    // SIZE_G1_WHOLE
                     combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(51),
                             matcher.group(52).charAt(0));
+                }
+                if (matcher.group(58) != null) {
+                    // SIZE_G1_DECIMAL
+                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(58),
+                            matcher.group(59).charAt(0));
                 } else {
                     // SIZE_G1_WHOLE
-                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(49),
-                            matcher.group(50).charAt(0));
-                }
-                if (matcher.group(56) != null) {
-                    // SIZE_G1_DECIMAL
                     combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(56),
                             matcher.group(57).charAt(0));
-                } else {
-                    // SIZE_G1_WHOLE
-                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(54),
-                            matcher.group(55).charAt(0));
                 }
             }
         }

@@ -123,7 +123,7 @@ public class CmsRemarkEvent extends CmsCollector implements BlockingEvent, Trigg
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 trigger = matcher.group(3);
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
+                duration = JdkMath.convertSecsToMillis(matcher.group(23)).intValue();
             }
         } else if (logEntry.matches(REGEX_PARNEW)) {
             Pattern pattern = Pattern.compile(REGEX_PARNEW);
@@ -136,7 +136,7 @@ public class CmsRemarkEvent extends CmsCollector implements BlockingEvent, Trigg
                     trigger = matcher.group(2);
                 }
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
+                duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
             }
         }
     }

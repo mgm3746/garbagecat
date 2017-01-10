@@ -108,7 +108,7 @@ public class JdkRegEx {
      * 
      * For example: 0.0225213 secs, 0.00376500 secs
      */
-    public static final String DURATION = "(\\d{1,4}[\\.\\,]\\d{7,8}) secs";
+    public static final String DURATION = "(\\d{1,4}[\\.\\,]\\d{7,8})( sec)?(s)?";
 
     /**
      * The duration of the event as a fraction of a time period.

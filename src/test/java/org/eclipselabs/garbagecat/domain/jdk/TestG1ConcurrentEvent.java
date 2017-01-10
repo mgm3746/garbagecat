@@ -124,4 +124,19 @@ public class TestG1ConcurrentEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 23743632, event.getTimestamp());
     }
 
+    public void testLogLineWithoutTrailingSecs() {
+        String logLine = "449391.280: [GC concurrent-root-region-scan-end, 0.0033660]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
+                G1ConcurrentEvent.match(logLine));
+        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 449391280, event.getTimestamp());
+    }
+
+    public void testLogLineWithTrailingSecNotSecs() {
+        String logLine = "449391.442: [GC concurrent-mark-end, 0.1620950 sec]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
+                G1ConcurrentEvent.match(logLine));
+        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 449391442, event.getTimestamp());
+    }
 }

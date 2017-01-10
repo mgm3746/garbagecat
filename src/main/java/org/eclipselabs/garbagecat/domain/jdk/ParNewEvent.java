@@ -190,14 +190,14 @@ public class ParNewEvent extends CmsCollector
             young = Integer.parseInt(matcher.group(15));
             youngEnd = Integer.parseInt(matcher.group(16));
             youngAvailable = Integer.parseInt(matcher.group(17));
-            int totalBegin = Integer.parseInt(matcher.group(19));
+            int totalBegin = Integer.parseInt(matcher.group(21));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(20));
+            int totalEnd = Integer.parseInt(matcher.group(22));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(21));
+            int totalAllocation = Integer.parseInt(matcher.group(23));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(23)).intValue();
-            if (matcher.group(22) != null) {
+            duration = JdkMath.convertSecsToMillis(matcher.group(25)).intValue();
+            if (matcher.group(24) != null) {
                 incrementalMode = true;
             } else {
                 incrementalMode = false;

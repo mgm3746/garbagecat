@@ -191,30 +191,30 @@ public class G1YoungPauseEvent extends G1Collector
                     trigger = matcher.group(3);
                 }
                 duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
-                if (matcher.group(40) != null) {
+                if (matcher.group(42) != null) {
                     // SIZE_G1_DECIMAL
-                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(40), matcher.group(41).charAt(0));
+                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(42), matcher.group(43).charAt(0));
                 } else {
                     // SIZE_G1_WHOLE
-                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(38), matcher.group(39).charAt(0));
+                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(40), matcher.group(41).charAt(0));
                 }
-                if (matcher.group(50) != null) {
+                if (matcher.group(52) != null) {
                     // SIZE_G1_DECIMAL
+                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(52),
+                            matcher.group(53).charAt(0));
+                } else {
+                    // SIZE_G1_WHOLE
                     combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(50),
                             matcher.group(51).charAt(0));
+                }
+                if (matcher.group(57) != null) {
+                    // SIZE_G1_DECIMAL
+                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(57),
+                            matcher.group(58).charAt(0));
                 } else {
                     // SIZE_G1_WHOLE
-                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(48),
-                            matcher.group(49).charAt(0));
-                }
-                if (matcher.group(55) != null) {
-                    // SIZE_G1_DECIMAL
                     combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(55),
                             matcher.group(56).charAt(0));
-                } else {
-                    // SIZE_G1_WHOLE
-                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(53),
-                            matcher.group(54).charAt(0));
                 }
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
@@ -223,10 +223,10 @@ public class G1YoungPauseEvent extends G1Collector
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 duration = JdkMath.convertSecsToMillis(matcher.group(2)).intValue();
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(3)), matcher.group(4).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(6).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)),
-                        matcher.group(8).charAt(0));
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(6).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(8).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)),
+                        matcher.group(10).charAt(0));
             }
         }
     }

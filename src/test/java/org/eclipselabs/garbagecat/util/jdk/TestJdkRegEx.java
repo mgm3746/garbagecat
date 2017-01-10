@@ -119,9 +119,14 @@ public class TestJdkRegEx extends TestCase {
         Assert.assertFalse("Durations less than one have a leading zero.", duration.matches(JdkRegEx.DURATION));
     }
 
-    public void testDurationWithoutUnits() {
+    public void testDurationWithSec() {
         String duration = "0.0225213 sec";
-        Assert.assertFalse("Durations have 'secs' for units.", duration.matches(JdkRegEx.DURATION));
+        Assert.assertTrue("'0.0225213 sec' is a valid duration.", duration.matches(JdkRegEx.DURATION));
+    }
+
+    public void testDurationWithoutUnits() {
+        String duration = "0.0225213";
+        Assert.assertTrue("'0.0225213' is a valid duration.", duration.matches(JdkRegEx.DURATION));
     }
 
     public void testDurationValid7() {

@@ -108,6 +108,20 @@ public class TestG1MixedPauseEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 76, event.getDuration());
     }
 
+    public void testLogLinePreprocessedNoTriggerWholeSizes() {
+        String logLine = "449412.888: [GC pause (mixed), 0.06137400 secs][Eden: 2044M(2044M)->0B(1792M) "
+                + "Survivors: 4096K->256M Heap: 2653M(12288M)->435M(12288M)] "
+                + "[Times: user=0.43 sys=0.00, real=0.06 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
+                G1MixedPauseEvent.match(logLine));
+        G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 449412888, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 2653 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 435 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 12288 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 61, event.getDuration());
+    }
+
     public void testNoTriggerToSpaceExhausted() {
         String logLine = "615375.044: [GC pause (mixed) (to-space exhausted), 1.5026320 secs]"
                 + "[Eden: 3416.0M(3416.0M)->0.0B(3464.0M) Survivors: 264.0M->216.0M Heap: 17.7G(18.0G)->17.8G(18.0G)] "

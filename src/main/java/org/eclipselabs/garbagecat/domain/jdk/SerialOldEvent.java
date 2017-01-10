@@ -183,20 +183,20 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
             if (matcher.group(4) != null) {
                 trigger = matcher.group(4);
             }
-            old = Integer.parseInt(matcher.group(14));
-            oldEnd = Integer.parseInt(matcher.group(15));
-            oldAllocation = Integer.parseInt(matcher.group(16));
-            int totalBegin = Integer.parseInt(matcher.group(18));
+            old = Integer.parseInt(matcher.group(16));
+            oldEnd = Integer.parseInt(matcher.group(17));
+            oldAllocation = Integer.parseInt(matcher.group(18));
+            int totalBegin = Integer.parseInt(matcher.group(22));
             young = totalBegin - getOldOccupancyInit();
-            int totalEnd = Integer.parseInt(matcher.group(19));
+            int totalEnd = Integer.parseInt(matcher.group(23));
             youngEnd = totalEnd - getOldOccupancyEnd();
-            int totalAllocation = Integer.parseInt(matcher.group(20));
+            int totalAllocation = Integer.parseInt(matcher.group(24));
             youngAvailable = totalAllocation - getOldSpace();
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Integer.parseInt(matcher.group(21));
-            permGenEnd = Integer.parseInt(matcher.group(22));
-            permGenAllocation = Integer.parseInt(matcher.group(23));
-            duration = JdkMath.convertSecsToMillis(matcher.group(24)).intValue();
+            permGen = Integer.parseInt(matcher.group(25));
+            permGenEnd = Integer.parseInt(matcher.group(26));
+            permGenAllocation = Integer.parseInt(matcher.group(27));
+            duration = JdkMath.convertSecsToMillis(matcher.group(28)).intValue();
         }
     }
 

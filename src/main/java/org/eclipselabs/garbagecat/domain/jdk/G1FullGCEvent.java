@@ -173,17 +173,17 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
                 } else if (matcher.group(2) != null) {
                     trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
                 }
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)), matcher.group(12).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(14).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)),
-                        matcher.group(16).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
-                if (matcher.group(38) != null) {
-                    permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(40)), matcher.group(41).charAt(0));
-                    permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(42)),
-                            matcher.group(43).charAt(0));
-                    permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(44)),
-                            matcher.group(45).charAt(0));
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(14).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(16).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)),
+                        matcher.group(18).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+                if (matcher.group(44) != null) {
+                    permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(44)), matcher.group(45).charAt(0));
+                    permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(46)),
+                            matcher.group(47).charAt(0));
+                    permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(48)),
+                            matcher.group(49).charAt(0));
                 }
             }
         }

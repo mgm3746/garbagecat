@@ -284,7 +284,7 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
             if (matcher.find()) {
                 this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 // If multiple triggers, use last one.
-                if (matcher.group(5) != null || matcher.group(33) != null) {
+                if (matcher.group(5) != null || matcher.group(45) != null) {
                     this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
                 } else if (matcher.group(17) != null) {
                     this.trigger = matcher.group(17);
@@ -293,16 +293,16 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
                 } else if (matcher.group(3) != null) {
                     this.trigger = matcher.group(3);
                 }
-                this.old = Integer.parseInt(matcher.group(29));
-                this.oldEnd = Integer.parseInt(matcher.group(30));
-                this.oldAllocation = Integer.parseInt(matcher.group(31));
-                this.young = Integer.parseInt(matcher.group(40)) - this.old;
-                this.youngEnd = Integer.parseInt(matcher.group(41)) - this.oldEnd;
-                this.youngAvailable = Integer.parseInt(matcher.group(42)) - this.oldAllocation;
-                this.permGen = Integer.parseInt(matcher.group(44));
-                this.permGenEnd = Integer.parseInt(matcher.group(45));
-                this.permGenAllocation = Integer.parseInt(matcher.group(46));
-                this.duration = JdkMath.convertSecsToMillis(matcher.group(48)).intValue();
+                this.old = Integer.parseInt(matcher.group(39));
+                this.oldEnd = Integer.parseInt(matcher.group(40));
+                this.oldAllocation = Integer.parseInt(matcher.group(41));
+                this.young = Integer.parseInt(matcher.group(54)) - this.old;
+                this.youngEnd = Integer.parseInt(matcher.group(55)) - this.oldEnd;
+                this.youngAvailable = Integer.parseInt(matcher.group(56)) - this.oldAllocation;
+                this.permGen = Integer.parseInt(matcher.group(58));
+                this.permGenEnd = Integer.parseInt(matcher.group(59));
+                this.permGenAllocation = Integer.parseInt(matcher.group(60));
+                this.duration = JdkMath.convertSecsToMillis(matcher.group(62)).intValue();
             }
         } else if (logEntry.matches(REGEX_GC)) {
             Pattern pattern = Pattern.compile(REGEX_GC);
@@ -310,8 +310,8 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
             if (matcher.find()) {
                 this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 // If multiple triggers, use last one.
-                if (matcher.group(25) != null) {
-                    this.trigger = matcher.group(25);
+                if (matcher.group(29) != null) {
+                    this.trigger = matcher.group(29);
                 } else if (matcher.group(6) != null) {
                     this.trigger = matcher.group(6);
                 } else {
@@ -324,34 +324,34 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
                 this.youngAvailable = Integer.parseInt(matcher.group(9));
 
                 // use young block duration for truncated events
-                if (matcher.group(48) == null) {
+                if (matcher.group(56) == null) {
                     this.duration = JdkMath.convertSecsToMillis(matcher.group(10)).intValue();
                 }
 
                 // old block after young
-                if (matcher.group(26) != null) {
-                    this.old = Integer.parseInt(matcher.group(27));
-                    this.oldEnd = Integer.parseInt(matcher.group(28));
-                    this.oldAllocation = Integer.parseInt(matcher.group(29));
-                    if (matcher.group(40) != null) {
-                        this.youngEnd = Integer.parseInt(matcher.group(40)) - this.oldEnd;
+                if (matcher.group(30) != null) {
+                    this.old = Integer.parseInt(matcher.group(31));
+                    this.oldEnd = Integer.parseInt(matcher.group(32));
+                    this.oldAllocation = Integer.parseInt(matcher.group(33));
+                    if (matcher.group(48) != null) {
+                        this.youngEnd = Integer.parseInt(matcher.group(48)) - this.oldEnd;
                     }
                 } else {
-                    if (matcher.group(38) != null) {
-                        this.old = Integer.parseInt(matcher.group(39)) - this.young;
+                    if (matcher.group(46) != null) {
+                        this.old = Integer.parseInt(matcher.group(47)) - this.young;
                         // No data to determine old end size.
                         this.oldEnd = 0;
-                        this.oldAllocation = Integer.parseInt(matcher.group(41)) - this.youngAvailable;
+                        this.oldAllocation = Integer.parseInt(matcher.group(49)) - this.youngAvailable;
                     }
                 }
                 // perm/metaspace data
-                if (matcher.group(42) != null) {
-                    this.permGen = Integer.parseInt(matcher.group(44));
-                    this.permGenEnd = Integer.parseInt(matcher.group(45));
-                    this.permGenAllocation = Integer.parseInt(matcher.group(46));
+                if (matcher.group(50) != null) {
+                    this.permGen = Integer.parseInt(matcher.group(52));
+                    this.permGenEnd = Integer.parseInt(matcher.group(53));
+                    this.permGenAllocation = Integer.parseInt(matcher.group(54));
                 }
-                if (matcher.group(48) != null) {
-                    this.duration = JdkMath.convertSecsToMillis(matcher.group(48)).intValue();
+                if (matcher.group(56) != null) {
+                    this.duration = JdkMath.convertSecsToMillis(matcher.group(56)).intValue();
                 }
             }
         }

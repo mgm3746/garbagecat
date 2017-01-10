@@ -131,13 +131,13 @@ public class SerialNewEvent extends SerialCollector
             young = Integer.parseInt(matcher.group(5));
             youngEnd = Integer.parseInt(matcher.group(6));
             youngAvailable = Integer.parseInt(matcher.group(7));
-            int totalBegin = Integer.parseInt(matcher.group(9));
+            int totalBegin = Integer.parseInt(matcher.group(11));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(10));
+            int totalEnd = Integer.parseInt(matcher.group(12));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(11));
+            int totalAllocation = Integer.parseInt(matcher.group(13));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(12)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(14)).intValue();
         }
     }
 

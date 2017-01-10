@@ -148,7 +148,7 @@ public class CmsRemarkWithClassUnloadingEvent extends CmsCollector implements Bl
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(7)).longValue();
             }
             // The last duration is the total duration for the phase.
-            duration = JdkMath.convertSecsToMillis(matcher.group(32)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(48)).intValue();
         }
     }
 
