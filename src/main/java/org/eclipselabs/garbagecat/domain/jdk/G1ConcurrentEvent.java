@@ -111,10 +111,9 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent {
      */
     private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC concurrent-(((root-region-scan|mark|cleanup)-(start|end|abort))"
-            + "|string-deduplication)(\\])?(,)?( " + JdkRegEx.DURATION + ")?(\\])?( " + JdkRegEx.SIZE_G1_WHOLE + "->"
-            + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\))?( " + JdkRegEx.SIZE_G1_DECIMAL + "->"
-            + JdkRegEx.SIZE_G1_DECIMAL + "\\(" + JdkRegEx.SIZE_G1_DECIMAL + "\\))?(, avg " + JdkRegEx.PERCENT + ", "
-            + JdkRegEx.DURATION + "\\])?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "|string-deduplication)(\\])?(,)?( " + JdkRegEx.DURATION + ")?(\\])?( " + JdkRegEx.SIZE_G1 + "->"
+            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\))?(, avg " + JdkRegEx.PERCENT + ", " + JdkRegEx.DURATION
+            + "\\])?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 

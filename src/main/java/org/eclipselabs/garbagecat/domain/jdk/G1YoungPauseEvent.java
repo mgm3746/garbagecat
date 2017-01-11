@@ -81,8 +81,8 @@ public class G1YoungPauseEvent extends G1Collector
      * 1.234: [GC pause (young) 102M-&gt;24M(512M), 0.0254200 secs]
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\) )?\\(young\\) " + JdkRegEx.SIZE_G1_WHOLE + "->"
-            + JdkRegEx.SIZE_G1_WHOLE + "\\(" + JdkRegEx.SIZE_G1_WHOLE + "\\), " + JdkRegEx.DURATION + "\\]";
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\) )?\\(young\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1
+            + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]";
 
     /**
      * Regular expression preprocessed with G1 details.
@@ -105,14 +105,10 @@ public class G1YoungPauseEvent extends G1Collector
     private static final String REGEX_PREPROCESSED_DETAILS = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC
             + ")\\) )?\\(young\\)( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?, " + JdkRegEx.DURATION
-            + "\\]\\[Eden: (" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\(("
-            + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\)->(" + JdkRegEx.SIZE_G1_WHOLE + "|"
-            + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL
-            + ")\\) Survivors: (" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")->("
-            + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ") Heap: (" + JdkRegEx.SIZE_G1_WHOLE + "|"
-            + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\)->("
-            + JdkRegEx.SIZE_G1_WHOLE + "|" + JdkRegEx.SIZE_G1_DECIMAL + ")\\((" + JdkRegEx.SIZE_G1_WHOLE + "|"
-            + JdkRegEx.SIZE_G1_DECIMAL + ")\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\]\\[Eden: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\("
+            + JdkRegEx.SIZE_G1 + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: "
+            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
+            + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * Regular expression preprocessed, no details.
@@ -121,8 +117,8 @@ public class G1YoungPauseEvent extends G1Collector
      * 
      */
     private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause \\(young\\), "
-            + JdkRegEx.DURATION + "\\]\\[ " + JdkRegEx.SIZE_G1_WHOLE + "->" + JdkRegEx.SIZE_G1_WHOLE + "\\("
-            + JdkRegEx.SIZE_G1_WHOLE + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.DURATION + "\\]\\[ " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
+            + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -172,11 +168,11 @@ public class G1YoungPauseEvent extends G1Collector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(5).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(7).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
-                        matcher.group(9).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(10)).intValue();
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(6).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(9).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(10)),
+                        matcher.group(12).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(13)).intValue();
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED_DETAILS)) {
             Pattern pattern = Pattern.compile(REGEX_PREPROCESSED_DETAILS);
@@ -191,31 +187,10 @@ public class G1YoungPauseEvent extends G1Collector
                     trigger = matcher.group(3);
                 }
                 duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
-                if (matcher.group(42) != null) {
-                    // SIZE_G1_DECIMAL
-                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(42), matcher.group(43).charAt(0));
-                } else {
-                    // SIZE_G1_WHOLE
-                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(40), matcher.group(41).charAt(0));
-                }
-                if (matcher.group(52) != null) {
-                    // SIZE_G1_DECIMAL
-                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(52),
-                            matcher.group(53).charAt(0));
-                } else {
-                    // SIZE_G1_WHOLE
-                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(50),
-                            matcher.group(51).charAt(0));
-                }
-                if (matcher.group(57) != null) {
-                    // SIZE_G1_DECIMAL
-                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(57),
-                            matcher.group(58).charAt(0));
-                } else {
-                    // SIZE_G1_WHOLE
-                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(55),
-                            matcher.group(56).charAt(0));
-                }
+                combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(27), matcher.group(29).charAt(0));
+                combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(33), matcher.group(35).charAt(0));
+                combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(36),
+                        matcher.group(38).charAt(0));
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
             Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
@@ -223,10 +198,10 @@ public class G1YoungPauseEvent extends G1Collector
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 duration = JdkMath.convertSecsToMillis(matcher.group(2)).intValue();
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(6).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(8).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)),
-                        matcher.group(10).charAt(0));
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)), matcher.group(10).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)),
+                        matcher.group(13).charAt(0));
             }
         }
     }

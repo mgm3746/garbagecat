@@ -182,42 +182,42 @@ public class TestJdkRegEx extends TestCase {
 
     public void testSizeG1WholeBytes() {
         String size = "0B";
-        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_WHOLE));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
     }
 
     public void testSizeG1WholeKilobytes() {
         String size = "8192K";
-        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_WHOLE));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
     }
 
     public void testSizeG1WholeMegabytes() {
         String size = "28M";
-        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_WHOLE));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
     }
 
     public void testSizeG1WholeGigabytes() {
         String size = "30G";
-        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_WHOLE));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
     }
 
     public void testSizeG1DecimalBytes() {
         String size = "0.0B";
-        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_DECIMAL));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
     }
 
     public void testSizeG1DecimalKilobytes() {
         String size = "8192.0K";
-        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_DECIMAL));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
     }
 
     public void testSizeG1DecimalMegabytes() {
         String size = "28.0M";
-        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_DECIMAL));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
     }
 
     public void testSizeG1DecimalGigabytes() {
         String size = "30.0G";
-        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1_DECIMAL));
+        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1));
     }
 
     public void testPercent() {
