@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.OldCollection;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -43,7 +44,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class VerboseGcOldEvent implements BlockingEvent, OldCollection, CombinedData {
+public class VerboseGcOldEvent implements BlockingEvent, OldCollection, CombinedData, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -76,10 +77,21 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
     private int combinedAllocation;
 
     /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
+
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + ")";
+
+    /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( \\(" + TRIGGER + "\\) )? "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
     private static Pattern pattern = Pattern.compile(VerboseGcOldEvent.REGEX);
 
     /**
@@ -93,10 +105,11 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            combinedBegin = Integer.parseInt(matcher.group(2));
-            combinedEnd = Integer.parseInt(matcher.group(3));
-            combinedAllocation = Integer.parseInt(matcher.group(4));
-            duration = JdkMath.convertSecsToMillis(matcher.group(5)).intValue();
+            trigger = matcher.group(3);
+            combinedBegin = Integer.parseInt(matcher.group(4));
+            combinedEnd = Integer.parseInt(matcher.group(5));
+            combinedAllocation = Integer.parseInt(matcher.group(6));
+            duration = JdkMath.convertSecsToMillis(matcher.group(7)).intValue();
         }
     }
 
@@ -144,6 +157,10 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
         return combinedAllocation;
     }
 
+    public String getTrigger() {
+        return trigger;
+    }
+
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
      * 
@@ -154,4 +171,4 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
     public static final boolean match(String logLine) {
         return pattern.matcher(logLine).matches();
     }
-}// VerboseGcOldEvent
+}

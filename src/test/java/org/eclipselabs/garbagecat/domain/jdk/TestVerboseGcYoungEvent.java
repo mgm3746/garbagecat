@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 import junit.framework.Assert;
@@ -22,6 +23,12 @@ import junit.framework.TestCase;
  * 
  */
 public class TestVerboseGcYoungEvent extends TestCase {
+
+    public void testIsBlocking() {
+        String logLine = "2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 
     public void testLogLine() {
         String logLine = "2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]";
@@ -56,9 +63,65 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 70, event.getDuration());
     }
 
-    public void testIsBlocking() {
-        String logLine = "2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]";
-        Assert.assertTrue(JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    public void testLogLineTriggerAllocationFailure() {
+        String logLine = "4.970: [GC (Allocation Failure)  136320K->18558K(3128704K), 0.1028162 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".",
+                VerboseGcYoungEvent.match(logLine));
+        VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 4970, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        Assert.assertEquals("Combined begin size not parsed correctly.", 136320, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 18558, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 102, event.getDuration());
+    }
+
+    public void testLogLineTriggerCmsInitialMark() {
+        String logLine = "12.915: [GC (CMS Initial Mark)  59894K(3128704K), 0.0058845 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".",
+                VerboseGcYoungEvent.match(logLine));
+        VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 12915, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK));
+        // We set beginging to end occupancy
+        Assert.assertEquals("Combined begin size not parsed correctly.", 59894, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 59894, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 5, event.getDuration());
+    }
+
+    public void testLogLineTriggerCmsFinalRemark() {
+        String logLine = "70.096: [GC (CMS Final Remark)  521627K(3128704K), 0.2481277 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".",
+                VerboseGcYoungEvent.match(logLine));
+        VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 70096, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        // We set beginging to end occupancy
+        Assert.assertEquals("Combined begin size not parsed correctly.", 521627, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 521627, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 248, event.getDuration());
+    }
+
+    public void testLogLineTriggerGcLockerInitiatedGc() {
+        String logLine = "37.357: [GC (GCLocker Initiated GC)  128035K->124539K(3128704K), 0.0713498 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".",
+                VerboseGcYoungEvent.match(logLine));
+        VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 37357, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
+        Assert.assertEquals("Combined begin size not parsed correctly.", 128035, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 124539, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 71, event.getDuration());
     }
 }

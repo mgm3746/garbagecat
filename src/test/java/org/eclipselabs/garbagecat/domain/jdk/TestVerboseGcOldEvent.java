@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 import junit.framework.Assert;
@@ -22,6 +23,12 @@ import junit.framework.TestCase;
  * 
  */
 public class TestVerboseGcOldEvent extends TestCase {
+
+    public void testIsBlocking() {
+        String logLine = "2143132.151: [Full GC 1606823K->1409859K(2976064K), 12.0855599 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
 
     public void testLogLine() {
         String logLine = "2143132.151: [Full GC 1606823K->1409859K(2976064K), 12.0855599 secs]";
@@ -42,9 +49,33 @@ public class TestVerboseGcOldEvent extends TestCase {
                 VerboseGcOldEvent.match(logLine));
     }
 
-    public void testIsBlocking() {
-        String logLine = "2143132.151: [Full GC 1606823K->1409859K(2976064K), 12.0855599 secs]";
-        Assert.assertTrue(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    public void testLogLineTriggerMetadataGcThreshold() {
+        String logLine = "18129.496: [Full GC (Metadata GC Threshold)  629455K->457103K(3128704K), 4.4946967 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".",
+                VerboseGcOldEvent.match(logLine));
+        VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 18129496, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
+        Assert.assertEquals("Combined begin size not parsed correctly.", 629455, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 457103, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 4494, event.getDuration());
+    }
+
+    public void testLogLineTriggerLastDitchCollection() {
+        String logLine = "18134.427: [Full GC (Last ditch collection)  457103K->449140K(3128704K), 5.6081071 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".",
+                VerboseGcOldEvent.match(logLine));
+        VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 18134427, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION));
+        Assert.assertEquals("Combined begin size not parsed correctly.", 457103, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 449140, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 5608, event.getDuration());
     }
 }

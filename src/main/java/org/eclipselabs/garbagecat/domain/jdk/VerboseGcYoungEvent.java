@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -55,7 +56,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, CombinedData {
+public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, CombinedData, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -88,10 +89,22 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
     private int combinedAllocation;
 
     /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
+
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+            + JdkRegEx.TRIGGER_CMS_INITIAL_MARK + "|" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
+
+    /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC (" + JdkRegEx.SIZE + "->)?" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + TRIGGER + "\\) )? (" + JdkRegEx.SIZE
+            + "->)?" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
 
@@ -106,15 +119,16 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            if (matcher.group(2) != null) {
-                combinedBegin = Integer.parseInt(matcher.group(3));
+            trigger = matcher.group(3);
+            if (matcher.group(4) != null) {
+                combinedBegin = Integer.parseInt(matcher.group(5));
             } else {
                 // set it to the end
-                combinedBegin = Integer.parseInt(matcher.group(4));
+                combinedBegin = Integer.parseInt(matcher.group(6));
             }
-            combinedEnd = Integer.parseInt(matcher.group(4));
-            combinedAllocation = Integer.parseInt(matcher.group(5));
-            duration = JdkMath.convertSecsToMillis(matcher.group(6)).intValue();
+            combinedEnd = Integer.parseInt(matcher.group(6));
+            combinedAllocation = Integer.parseInt(matcher.group(7));
+            duration = JdkMath.convertSecsToMillis(matcher.group(8)).intValue();
         }
     }
 
@@ -160,6 +174,10 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
 
     public int getCombinedSpace() {
         return combinedAllocation;
+    }
+
+    public String getTrigger() {
+        return trigger;
     }
 
     /**
