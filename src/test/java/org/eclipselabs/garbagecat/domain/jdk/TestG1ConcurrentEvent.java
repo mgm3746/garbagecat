@@ -139,4 +139,12 @@ public class TestG1ConcurrentEvent extends TestCase {
         G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 449391442, event.getTimestamp());
     }
+
+    public void testLogLineConcurrentMarkResetForOverflow() {
+        String logLine = "1048.227: [GC concurrent-mark-reset-for-overflow]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
+                G1ConcurrentEvent.match(logLine));
+        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 1048227, event.getTimestamp());
+    }
 }
