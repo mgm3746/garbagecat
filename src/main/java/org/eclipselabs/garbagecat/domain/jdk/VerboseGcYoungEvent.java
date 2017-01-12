@@ -103,8 +103,9 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + TRIGGER + "\\) )? (" + JdkRegEx.SIZE
-            + "->)?" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC(--)?( \\(" + TRIGGER + "\\) )? ("
+            + JdkRegEx.SIZE + "->)?" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
+            + "\\]?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
 
@@ -119,16 +120,16 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(3);
-            if (matcher.group(4) != null) {
-                combinedBegin = Integer.parseInt(matcher.group(5));
+            trigger = matcher.group(4);
+            if (matcher.group(5) != null) {
+                combinedBegin = Integer.parseInt(matcher.group(6));
             } else {
                 // set it to the end
-                combinedBegin = Integer.parseInt(matcher.group(6));
+                combinedBegin = Integer.parseInt(matcher.group(7));
             }
-            combinedEnd = Integer.parseInt(matcher.group(6));
-            combinedAllocation = Integer.parseInt(matcher.group(7));
-            duration = JdkMath.convertSecsToMillis(matcher.group(8)).intValue();
+            combinedEnd = Integer.parseInt(matcher.group(7));
+            combinedAllocation = Integer.parseInt(matcher.group(8));
+            duration = JdkMath.convertSecsToMillis(matcher.group(9)).intValue();
         }
     }
 
