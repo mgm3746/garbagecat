@@ -97,7 +97,7 @@ public class FlsStatisticsEvent implements ThrowAwayEvent {
             /*
              * # blocks
              */
-            "^Number of Blocks: \\d{1,4}$",
+            "^Number of Blocks: \\d{1,6}$",
             /*
              * av block size
              */
@@ -105,7 +105,7 @@ public class FlsStatisticsEvent implements ThrowAwayEvent {
             /*
              * tree height
              */
-            "^Tree[ ]{6}Height: \\d{1,2}$",
+            "^Tree[ ]{6}Height: \\d{1,3}$",
             /*
              * before gc
              */

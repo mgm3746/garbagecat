@@ -72,6 +72,18 @@ public class TestFlsStaticsEvent extends TestCase {
                 FlsStatisticsEvent.match(logLine));
     }
 
+    public void testLogLineNumberOfBlocks5Digits() {
+        String logLine = "Number of Blocks: 68082";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
+                FlsStatisticsEvent.match(logLine));
+    }
+
+    public void testLogLineNumberOfBlocks6Digits() {
+        String logLine = "Number of Blocks: 218492";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
+                FlsStatisticsEvent.match(logLine));
+    }
+
     public void testLogLineAvBlockSize() {
         String logLine = "Av.  Block  Size: 536870912";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
@@ -92,6 +104,12 @@ public class TestFlsStaticsEvent extends TestCase {
 
     public void testLogLineTreeHeight2Digits() {
         String logLine = "Tree      Height: 20";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
+                FlsStatisticsEvent.match(logLine));
+    }
+
+    public void testLogLineTreeHeight3Digits() {
+        String logLine = "Tree      Height: 130";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
                 FlsStatisticsEvent.match(logLine));
     }
