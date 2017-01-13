@@ -455,7 +455,9 @@ public class JvmRun {
             if (analysisKeys.contains(Analysis.KEY_SERIAL_GC)) {
                 analysisKeys.remove(Analysis.KEY_SERIAL_GC);
             }
-            analysisKeys.add(Analysis.KEY_CMS_PAR_NEW_DISABLED);
+            if (!analysisKeys.contains(Analysis.KEY_CMS_PAR_NEW_DISABLED)) {
+                analysisKeys.add(Analysis.KEY_CMS_PAR_NEW_DISABLED);
+            }
         }
     }
 
