@@ -136,36 +136,7 @@ public class JdkUtil {
     public static final LogEventType identifyEventType(String logLine) {
 
         // In order of most common events to limit checking
-        if (ParallelScavengeEvent.match(logLine))
-            return LogEventType.PARALLEL_SCAVENGE;
-        if (ParNewEvent.match(logLine))
-            return LogEventType.PAR_NEW;
-        if (ParallelSerialOldEvent.match(logLine))
-            return LogEventType.PARALLEL_SERIAL_OLD;
-        if (ParallelOldCompactingEvent.match(logLine))
-            return LogEventType.PARALLEL_OLD_COMPACTING;
-        if (SerialOldEvent.match(logLine))
-            return LogEventType.SERIAL_OLD;
-        if (CmsSerialOldEvent.match(logLine))
-            return LogEventType.CMS_SERIAL_OLD;
-        if (CmsInitialMarkEvent.match(logLine))
-            return LogEventType.CMS_INITIAL_MARK;
-        if (CmsRemarkEvent.match(logLine))
-            return LogEventType.CMS_REMARK;
-        if (CmsRemarkWithClassUnloadingEvent.match(logLine))
-            return LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING;
-        if (SerialNewEvent.match(logLine))
-            return LogEventType.SERIAL_NEW;
-        if (CmsConcurrentEvent.match(logLine))
-            return LogEventType.CMS_CONCURRENT;
-        if (ApplicationConcurrentTimeEvent.match(logLine))
-            return LogEventType.APPLICATION_CONCURRENT_TIME;
-        if (ApplicationStoppedTimeEvent.match(logLine))
-            return LogEventType.APPLICATION_STOPPED_TIME;
-        if (VerboseGcYoungEvent.match(logLine))
-            return LogEventType.VERBOSE_GC_YOUNG;
-        if (VerboseGcOldEvent.match(logLine))
-            return LogEventType.VERBOSE_GC_OLD;
+        // G1
         if (G1YoungPauseEvent.match(logLine))
             return LogEventType.G1_YOUNG_PAUSE;
         if (G1MixedPauseEvent.match(logLine))
@@ -180,6 +151,40 @@ public class JdkUtil {
             return LogEventType.G1_FULL_GC;
         if (G1CleanupEvent.match(logLine))
             return LogEventType.G1_CLEANUP;
+        // CMS
+        if (ParNewEvent.match(logLine))
+            return LogEventType.PAR_NEW;
+        if (CmsSerialOldEvent.match(logLine))
+            return LogEventType.CMS_SERIAL_OLD;
+        if (CmsInitialMarkEvent.match(logLine))
+            return LogEventType.CMS_INITIAL_MARK;
+        if (CmsRemarkEvent.match(logLine))
+            return LogEventType.CMS_REMARK;
+        if (CmsRemarkWithClassUnloadingEvent.match(logLine))
+            return LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING;
+        if (CmsConcurrentEvent.match(logLine))
+            return LogEventType.CMS_CONCURRENT;
+        // Parallel
+        if (ParallelScavengeEvent.match(logLine))
+            return LogEventType.PARALLEL_SCAVENGE;
+        if (ParallelSerialOldEvent.match(logLine))
+            return LogEventType.PARALLEL_SERIAL_OLD;
+        if (ParallelOldCompactingEvent.match(logLine))
+            return LogEventType.PARALLEL_OLD_COMPACTING;
+        // Serial
+        if (SerialOldEvent.match(logLine))
+            return LogEventType.SERIAL_OLD;
+        if (SerialNewEvent.match(logLine))
+            return LogEventType.SERIAL_NEW;
+        // Other
+        if (ApplicationConcurrentTimeEvent.match(logLine))
+            return LogEventType.APPLICATION_CONCURRENT_TIME;
+        if (ApplicationStoppedTimeEvent.match(logLine))
+            return LogEventType.APPLICATION_STOPPED_TIME;
+        if (VerboseGcYoungEvent.match(logLine))
+            return LogEventType.VERBOSE_GC_YOUNG;
+        if (VerboseGcOldEvent.match(logLine))
+            return LogEventType.VERBOSE_GC_OLD;
         if (HeaderCommandLineFlagsEvent.match(logLine))
             return LogEventType.HEADER_COMMAND_LINE_FLAGS;
         if (HeaderMemoryEvent.match(logLine))
@@ -226,42 +231,7 @@ public class JdkUtil {
         LogEventType eventType = identifyEventType(logLine);
         LogEvent event = null;
         switch (eventType) {
-        case APPLICATION_CONCURRENT_TIME:
-            event = new ApplicationConcurrentTimeEvent();
-            break;
-        case APPLICATION_LOGGING:
-            event = new ApplicationLoggingEvent(logLine);
-            break;
-        case APPLICATION_STOPPED_TIME:
-            event = new ApplicationStoppedTimeEvent(logLine);
-            break;
-        case BLANK_LINE:
-            event = new BlankLineEvent(logLine);
-            break;
-        case CLASS_HISTOGRAM:
-            event = new ClassHistogramEvent(logLine);
-            break;
-        case CLASS_UNLOADING:
-            event = new ClassUnloadingEvent(logLine);
-            break;
-        case CMS_CONCURRENT:
-            event = new CmsConcurrentEvent();
-            break;
-        case CMS_INITIAL_MARK:
-            event = new CmsInitialMarkEvent(logLine);
-            break;
-        case CMS_REMARK:
-            event = new CmsRemarkEvent(logLine);
-            break;
-        case CMS_REMARK_WITH_CLASS_UNLOADING:
-            event = new CmsRemarkWithClassUnloadingEvent(logLine);
-            break;
-        case CMS_SERIAL_OLD:
-            event = new CmsSerialOldEvent(logLine);
-            break;
-        case FLS_STATISTICS:
-            event = new FlsStatisticsEvent(logLine);
-            break;
+        // G1
         case G1_CLEANUP:
             event = new G1CleanupEvent(logLine);
             break;
@@ -282,6 +252,64 @@ public class JdkUtil {
             break;
         case G1_YOUNG_PAUSE:
             event = new G1YoungPauseEvent(logLine);
+            break;
+        // CMS
+        case PAR_NEW:
+            event = new ParNewEvent(logLine);
+            break;
+        case CMS_CONCURRENT:
+            event = new CmsConcurrentEvent();
+            break;
+        case CMS_INITIAL_MARK:
+            event = new CmsInitialMarkEvent(logLine);
+            break;
+        case CMS_REMARK:
+            event = new CmsRemarkEvent(logLine);
+            break;
+        case CMS_REMARK_WITH_CLASS_UNLOADING:
+            event = new CmsRemarkWithClassUnloadingEvent(logLine);
+            break;
+        case CMS_SERIAL_OLD:
+            event = new CmsSerialOldEvent(logLine);
+            break;
+        // Parallel
+        case PARALLEL_OLD_COMPACTING:
+            event = new ParallelOldCompactingEvent(logLine);
+            break;
+        case PARALLEL_SCAVENGE:
+            event = new ParallelScavengeEvent(logLine);
+            break;
+        case PARALLEL_SERIAL_OLD:
+            event = new ParallelSerialOldEvent(logLine);
+            break;
+        // Serial
+        case SERIAL_NEW:
+            event = new SerialNewEvent(logLine);
+            break;
+        case SERIAL_OLD:
+            event = new SerialOldEvent(logLine);
+            break;
+        // Other
+        case APPLICATION_CONCURRENT_TIME:
+            event = new ApplicationConcurrentTimeEvent();
+            break;
+        case APPLICATION_LOGGING:
+            event = new ApplicationLoggingEvent(logLine);
+            break;
+        case APPLICATION_STOPPED_TIME:
+            event = new ApplicationStoppedTimeEvent(logLine);
+            break;
+        case BLANK_LINE:
+            event = new BlankLineEvent(logLine);
+            break;
+        case CLASS_HISTOGRAM:
+            event = new ClassHistogramEvent(logLine);
+            break;
+        case CLASS_UNLOADING:
+            event = new ClassUnloadingEvent(logLine);
+            break;
+        case FLS_STATISTICS:
+            event = new FlsStatisticsEvent(logLine);
             break;
         case GC_LOCKER:
             event = new GcLockerEvent(logLine);
@@ -304,26 +332,8 @@ public class JdkUtil {
         case LOG_FILE:
             event = new LogFileEvent(logLine);
             break;
-        case PARALLEL_OLD_COMPACTING:
-            event = new ParallelOldCompactingEvent(logLine);
-            break;
-        case PARALLEL_SCAVENGE:
-            event = new ParallelScavengeEvent(logLine);
-            break;
-        case PARALLEL_SERIAL_OLD:
-            event = new ParallelSerialOldEvent(logLine);
-            break;
-        case PAR_NEW:
-            event = new ParNewEvent(logLine);
-            break;
         case REFERENCE_GC:
             event = new ReferenceGcEvent(logLine);
-            break;
-        case SERIAL_NEW:
-            event = new SerialNewEvent(logLine);
-            break;
-        case SERIAL_OLD:
-            event = new SerialOldEvent(logLine);
             break;
         case TENURING_DISTRIBUTION:
             event = new TenuringDistributionEvent(logLine);
@@ -363,42 +373,7 @@ public class JdkUtil {
             int duration) {
         BlockingEvent event = null;
         switch (eventType) {
-        case PARALLEL_SCAVENGE:
-            event = new ParallelScavengeEvent(logEntry, timestamp, duration);
-            break;
-        case PAR_NEW:
-            event = new ParNewEvent(logEntry, timestamp, duration);
-            break;
-        case PARALLEL_SERIAL_OLD:
-            event = new ParallelSerialOldEvent(logEntry, timestamp, duration);
-            break;
-        case PARALLEL_OLD_COMPACTING:
-            event = new ParallelOldCompactingEvent(logEntry, timestamp, duration);
-            break;
-        case SERIAL_OLD:
-            event = new SerialOldEvent(logEntry, timestamp, duration);
-            break;
-        case CMS_SERIAL_OLD:
-            event = new CmsSerialOldEvent(logEntry, timestamp, duration);
-            break;
-        case CMS_INITIAL_MARK:
-            event = new CmsInitialMarkEvent(logEntry, timestamp, duration);
-            break;
-        case CMS_REMARK:
-            event = new CmsRemarkEvent(logEntry, timestamp, duration);
-            break;
-        case CMS_REMARK_WITH_CLASS_UNLOADING:
-            event = new CmsRemarkWithClassUnloadingEvent(logEntry, timestamp, duration);
-            break;
-        case SERIAL_NEW:
-            event = new SerialNewEvent(logEntry, timestamp, duration);
-            break;
-        case VERBOSE_GC_YOUNG:
-            event = new VerboseGcYoungEvent(logEntry, timestamp, duration);
-            break;
-        case VERBOSE_GC_OLD:
-            event = new VerboseGcOldEvent(logEntry, timestamp, duration);
-            break;
+        // G1
         case G1_YOUNG_PAUSE:
             event = new G1YoungPauseEvent(logEntry, timestamp, duration);
             break;
@@ -417,6 +392,47 @@ public class JdkUtil {
         case G1_FULL_GC:
             event = new G1FullGCEvent(logEntry, timestamp, duration);
             break;
+        // CMS
+        case PAR_NEW:
+            event = new ParNewEvent(logEntry, timestamp, duration);
+            break;
+        case CMS_SERIAL_OLD:
+            event = new CmsSerialOldEvent(logEntry, timestamp, duration);
+            break;
+        case CMS_INITIAL_MARK:
+            event = new CmsInitialMarkEvent(logEntry, timestamp, duration);
+            break;
+        case CMS_REMARK:
+            event = new CmsRemarkEvent(logEntry, timestamp, duration);
+            break;
+        case CMS_REMARK_WITH_CLASS_UNLOADING:
+            event = new CmsRemarkWithClassUnloadingEvent(logEntry, timestamp, duration);
+            break;
+        // Parallel
+        case PARALLEL_SCAVENGE:
+            event = new ParallelScavengeEvent(logEntry, timestamp, duration);
+            break;
+        case PARALLEL_SERIAL_OLD:
+            event = new ParallelSerialOldEvent(logEntry, timestamp, duration);
+            break;
+        case PARALLEL_OLD_COMPACTING:
+            event = new ParallelOldCompactingEvent(logEntry, timestamp, duration);
+            break;
+        // Serial
+        case SERIAL_OLD:
+            event = new SerialOldEvent(logEntry, timestamp, duration);
+            break;
+        case SERIAL_NEW:
+            event = new SerialNewEvent(logEntry, timestamp, duration);
+            break;
+        // Other
+        case VERBOSE_GC_YOUNG:
+            event = new VerboseGcYoungEvent(logEntry, timestamp, duration);
+            break;
+        case VERBOSE_GC_OLD:
+            event = new VerboseGcOldEvent(logEntry, timestamp, duration);
+            break;
+
         default:
             throw new AssertionError("Unexpected event type value: " + eventType + ": " + logEntry);
         }
