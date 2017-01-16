@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -356,11 +357,75 @@ public class Main {
             // Analysis
             List<String> analysisKeys = jvmRun.getAnalysisKeys();
             if (!analysisKeys.isEmpty()) {
-                bufferedWriter.write("ANALYSIS:" + System.getProperty("line.separator"));
-                bufferedWriter.write("----------------------------------------" + System.getProperty("line.separator"));
+
+                // Determine analysis levels
+                List<String> error = new ArrayList<String>();
+                List<String> warn = new ArrayList<String>();
+                List<String> info = new ArrayList<String>();
 
                 Iterator<String> iterator = analysisKeys.iterator();
                 while (iterator.hasNext()) {
+                    String key = iterator.next();
+                    String level = key.split("\\.")[0];
+                    if (level.equals("error")) {
+                        error.add(key);
+                    } else if (level.equals("warn")) {
+                        warn.add(key);
+                    } else if (level.equals("info")) {
+                        info.add(key);
+                    } else {
+                        throw new IllegalArgumentException("Unknown analysis level: " + level);
+                    }
+                }
+
+                bufferedWriter.write("ANALYSIS:" + System.getProperty("line.separator"));
+
+                iterator = error.iterator();
+                boolean printHeader = true;
+                // ERROR
+                while (iterator.hasNext()) {
+                    if (printHeader) {
+                        bufferedWriter.write(
+                                "----------------------------------------" + System.getProperty("line.separator"));
+                        bufferedWriter.write("ERROR Level" + System.getProperty("line.separator"));
+                        bufferedWriter.write(
+                                "----------------------------------------" + System.getProperty("line.separator"));
+                    }
+                    printHeader = false;
+                    String key = iterator.next();
+                    bufferedWriter.write("*");
+                    bufferedWriter.write(GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, key));
+                    bufferedWriter.write(System.getProperty("line.separator"));
+                }
+                // WARN
+                iterator = warn.iterator();
+                printHeader = true;
+                while (iterator.hasNext()) {
+                    if (printHeader) {
+                        bufferedWriter.write(
+                                "----------------------------------------" + System.getProperty("line.separator"));
+                        bufferedWriter.write("WARN Level" + System.getProperty("line.separator"));
+                        bufferedWriter.write(
+                                "----------------------------------------" + System.getProperty("line.separator"));
+                    }
+                    printHeader = false;
+                    String key = iterator.next();
+                    bufferedWriter.write("*");
+                    bufferedWriter.write(GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, key));
+                    bufferedWriter.write(System.getProperty("line.separator"));
+                }
+                // INFO
+                iterator = info.iterator();
+                printHeader = true;
+                while (iterator.hasNext()) {
+                    if (printHeader) {
+                        bufferedWriter.write(
+                                "----------------------------------------" + System.getProperty("line.separator"));
+                        bufferedWriter.write("INFO Level" + System.getProperty("line.separator"));
+                        bufferedWriter.write(
+                                "----------------------------------------" + System.getProperty("line.separator"));
+                    }
+                    printHeader = false;
                     String key = iterator.next();
                     bufferedWriter.write("*");
                     bufferedWriter.write(GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, key));

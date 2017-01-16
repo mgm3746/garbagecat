@@ -874,10 +874,10 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
-        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_SERIAL_G1 + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_G1));
-        Assert.assertFalse(Analysis.KEY_SERIAL_GC_G1 + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_G1));
+        Assert.assertTrue(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1 + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1));
+        Assert.assertFalse(Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_G1));
     }
 
     /**
@@ -992,8 +992,8 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
-        Assert.assertTrue(Analysis.KEY_G1_EVACUATION_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_G1_EVACUATION_FAILURE));
+        Assert.assertTrue(Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_G1_EVACUATION_FAILURE));
     }
 
     /**
@@ -1078,8 +1078,8 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
-        Assert.assertTrue(Analysis.KEY_G1_EVACUATION_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_G1_EVACUATION_FAILURE));
+        Assert.assertTrue(Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_G1_EVACUATION_FAILURE));
     }
 
     /**
@@ -1132,8 +1132,8 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK));
-        Assert.assertTrue(Analysis.KEY_G1_EVACUATION_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_G1_EVACUATION_FAILURE));
+        Assert.assertTrue(Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_G1_EVACUATION_FAILURE));
     }
 
     /**
@@ -1279,7 +1279,7 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
         Assert.assertTrue(JdkUtil.TriggerType.LAST_DITCH_COLLECTION.toString() + " trigger not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_METASPACE_ALLOCATION_FAILURE));
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_METASPACE_ALLOCATION_FAILURE));
     }
 
     /**
@@ -1301,7 +1301,7 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK));
         Assert.assertTrue(JdkUtil.TriggerType.JVMTI_FORCED_GARBAGE_COLLECTION.toString() + " trigger not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_JVMTI));
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_EXPLICIT_GC_JVMTI));
     }
 
     /**
@@ -1432,11 +1432,11 @@ public class TestG1PreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CLASS_HISTOGRAM));
-        Assert.assertTrue(Analysis.KEY_PRINT_CLASS_HISTOGRAM + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM));
+        Assert.assertTrue(Analysis.WARN_PRINT_CLASS_HISTOGRAM + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM));
         // G1_FULL is caused by CLASS_HISTOGRAM
-        Assert.assertFalse(Analysis.KEY_SERIAL_GC_G1 + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_G1));
+        Assert.assertFalse(Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_G1));
     }
 
     /**
@@ -1473,7 +1473,7 @@ public class TestG1PreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
-        Assert.assertTrue(Analysis.KEY_G1_EVACUATION_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_G1_EVACUATION_FAILURE));
+        Assert.assertTrue(Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_G1_EVACUATION_FAILURE));
     }
 }

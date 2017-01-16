@@ -34,8 +34,8 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_BIASED_LOCKING_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_BIASED_LOCKING_DISABLED));
+        Assert.assertTrue(Analysis.WARN_BIASED_LOCKING_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_BIASED_LOCKING_DISABLED));
     }
 
     public void testPrintClassHistogramEnabled() {
@@ -44,12 +44,12 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_PRINT_CLASS_HISTOGRAM + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM));
-        Assert.assertFalse(Analysis.KEY_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC));
-        Assert.assertFalse(Analysis.KEY_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC));
+        Assert.assertTrue(Analysis.WARN_PRINT_CLASS_HISTOGRAM + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM));
+        Assert.assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC));
+        Assert.assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC));
     }
 
     public void testPrintClassHistogramAfterFullGcEnabled() {
@@ -58,12 +58,12 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC));
-        Assert.assertFalse(Analysis.KEY_PRINT_CLASS_HISTOGRAM + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM));
-        Assert.assertFalse(Analysis.KEY_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC));
+        Assert.assertTrue(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC));
+        Assert.assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM));
+        Assert.assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC));
     }
 
     public void testPrintClassHistogramBeforeFullGcEnabled() {
@@ -72,12 +72,12 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC));
-        Assert.assertFalse(Analysis.KEY_PRINT_CLASS_HISTOGRAM + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM));
-        Assert.assertFalse(Analysis.KEY_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC));
+        Assert.assertTrue(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC));
+        Assert.assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM));
+        Assert.assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC));
     }
 
     public void testPrintApplicationConcurrentTime() {
@@ -86,8 +86,8 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME));
+        Assert.assertTrue(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME));
     }
 
     public void testTraceClassUnloading() {
@@ -96,8 +96,8 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_TRACE_CLASS_UNLOADING + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_TRACE_CLASS_UNLOADING));
+        Assert.assertTrue(Analysis.WARN_TRACE_CLASS_UNLOADING + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_TRACE_CLASS_UNLOADING));
     }
 
     public void testCompressedClassSpaceSize() {
@@ -106,8 +106,8 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_COMPRESSED_CLASS_SPACE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_COMPRESSED_CLASS_SPACE_NOT_SET));
+        Assert.assertTrue(Analysis.INFO_COMPRESSED_CLASS_SPACE_NOT_SET + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_COMPRESSED_CLASS_SPACE_NOT_SET));
     }
 
     public void testPrintFlsStatistics() {
@@ -116,8 +116,8 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_PRINT_FLS_STATISTICS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PRINT_FLS_STATISTICS));
+        Assert.assertTrue(Analysis.INFO_PRINT_FLS_STATISTICS + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_PRINT_FLS_STATISTICS));
     }
 
     public void testPermMetatspaceNotSet() {
@@ -126,8 +126,8 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_PERM_METASPACE_SIZE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_PERM_METASPACE_SIZE_NOT_SET));
+        Assert.assertTrue(Analysis.WARN_PERM_METASPACE_SIZE_NOT_SET + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PERM_METASPACE_SIZE_NOT_SET));
     }
 
     public void testTieredCompilation() {
@@ -139,8 +139,8 @@ public class TestAnalysis extends TestCase {
                 + "Oct  2 2015 03:26:24 by \"java_re\" with unknown MS VC++:1600";
         jvmRun.getJvm().setVersion(version);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.KEY_JDK7_TIERED_COMPILATION_ENABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_JDK7_TIERED_COMPILATION_ENABLED));
+        Assert.assertTrue(Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED));
     }
 
     public void testHeaderLogging() {
@@ -157,8 +157,8 @@ public class TestAnalysis extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.HEADER_VERSION.toString() + " information not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION));
         // Usually no reason to set the thread stack size on 64 bit.
-        Assert.assertFalse(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET));
+        Assert.assertFalse(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET));
     }
 
     /**
@@ -179,10 +179,10 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
-        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_SERIAL_CMS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_CMS));
-        Assert.assertFalse(Analysis.KEY_SERIAL_GC_CMS + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_CMS));
+        Assert.assertTrue(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS));
+        Assert.assertFalse(Analysis.ERROR_SERIAL_GC_CMS + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS));
     }
 
     /**
@@ -202,10 +202,10 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING));
-        Assert.assertTrue(Analysis.KEY_EXPLICIT_GC_PARALLEL + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_PARALLEL));
-        Assert.assertFalse(Analysis.KEY_SERIAL_GC_PARALLEL + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_PARALLEL));
+        Assert.assertTrue(Analysis.WARN_EXPLICIT_GC_PARALLEL + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_EXPLICIT_GC_PARALLEL));
+        Assert.assertFalse(Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_PARALLEL));
     }
 
     public void testThreadStackSizeAnalysis32Bit() {
@@ -215,8 +215,8 @@ public class TestAnalysis extends TestCase {
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_THREAD_STACK_SIZE_NOT_SET));
+        Assert.assertTrue(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET));
     }
 
     public void testMetaspaceSizeNotSet() {
@@ -226,8 +226,8 @@ public class TestAnalysis extends TestCase {
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.KEY_METASPACE_SIZE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_METASPACE_SIZE_NOT_SET));
+        Assert.assertTrue(Analysis.WARN_METASPACE_SIZE_NOT_SET + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_METASPACE_SIZE_NOT_SET));
     }
 
     /**
@@ -252,9 +252,9 @@ public class TestAnalysis extends TestCase {
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
-        Assert.assertTrue(Analysis.KEY_CMS_PAR_NEW_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_PAR_NEW_DISABLED));
-        Assert.assertFalse(Analysis.KEY_SERIAL_GC + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC));
+        Assert.assertTrue(Analysis.WARN_CMS_PAR_NEW_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_PAR_NEW_DISABLED));
+        Assert.assertFalse(Analysis.ERROR_SERIAL_GC + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC));
     }
 }

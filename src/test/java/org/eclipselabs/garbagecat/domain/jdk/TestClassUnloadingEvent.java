@@ -71,7 +71,7 @@ public class TestClassUnloadingEvent extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD));
-        Assert.assertTrue(Analysis.KEY_TRACE_CLASS_UNLOADING + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_TRACE_CLASS_UNLOADING));
+        Assert.assertTrue(Analysis.WARN_TRACE_CLASS_UNLOADING + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_TRACE_CLASS_UNLOADING));
     }
 }

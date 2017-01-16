@@ -232,35 +232,35 @@ public class GcManager {
         // Other preprocessing
         if (isThrowawayEvent(currentLogLine)) {
             // Analysis
-            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_TRACE_CLASS_UNLOADING)) {
+            if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_TRACE_CLASS_UNLOADING)) {
                 if (ClassUnloadingEvent.match(currentLogLine)
-                        && !jvmDao.getAnalysisKeys().contains(Analysis.KEY_TRACE_CLASS_UNLOADING)) {
-                    jvmDao.getAnalysisKeys().add(Analysis.KEY_TRACE_CLASS_UNLOADING);
+                        && !jvmDao.getAnalysisKeys().contains(Analysis.WARN_TRACE_CLASS_UNLOADING)) {
+                    jvmDao.getAnalysisKeys().add(Analysis.WARN_TRACE_CLASS_UNLOADING);
                 }
             }
-            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_HEAP_AT_GC)) {
+            if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_PRINT_HEAP_AT_GC)) {
                 if (HeapAtGcEvent.match(currentLogLine)) {
-                    jvmDao.getAnalysisKeys().add(Analysis.KEY_PRINT_HEAP_AT_GC);
+                    jvmDao.getAnalysisKeys().add(Analysis.WARN_PRINT_HEAP_AT_GC);
                 }
             }
-            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CLASS_HISTOGRAM)) {
+            if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_CLASS_HISTOGRAM)) {
                 if (ClassHistogramEvent.match(currentLogLine)) {
-                    jvmDao.getAnalysisKeys().add(Analysis.KEY_CLASS_HISTOGRAM);
+                    jvmDao.getAnalysisKeys().add(Analysis.WARN_CLASS_HISTOGRAM);
                 }
             }
-            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_FLS_STATISTICS)) {
+            if (!jvmDao.getAnalysisKeys().contains(Analysis.INFO_PRINT_FLS_STATISTICS)) {
                 if (FlsStatisticsEvent.match(currentLogLine)) {
-                    jvmDao.getAnalysisKeys().add(Analysis.KEY_PRINT_FLS_STATISTICS);
+                    jvmDao.getAnalysisKeys().add(Analysis.INFO_PRINT_FLS_STATISTICS);
                 }
             }
-            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_TENURING_DISTRIBUTION)) {
+            if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_PRINT_TENURING_DISTRIBUTION)) {
                 if (TenuringDistributionEvent.match(currentLogLine)) {
-                    jvmDao.getAnalysisKeys().add(Analysis.KEY_PRINT_TENURING_DISTRIBUTION);
+                    jvmDao.getAnalysisKeys().add(Analysis.WARN_PRINT_TENURING_DISTRIBUTION);
                 }
             }
-            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
+            if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
                 if (ApplicationConcurrentTimeEvent.match(currentLogLine)) {
-                    jvmDao.getAnalysisKeys().add(Analysis.KEY_PRINT_GC_APPLICATION_CONCURRENT_TIME);
+                    jvmDao.getAnalysisKeys().add(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME);
                 }
             }
             currentLogLine = null;
@@ -371,32 +371,32 @@ public class GcManager {
 
                             switch (collectorFamily) {
                             case G1:
-                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_G1)) {
-                                    jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL_G1);
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1)) {
+                                    jvmDao.addAnalysisKey(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1);
                                 }
                                 break;
                             case CMS:
-                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_CMS)) {
-                                    jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL_CMS);
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS)) {
+                                    jvmDao.addAnalysisKey(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS);
                                 }
                                 break;
                             case PARALLEL:
                                 if (event instanceof ParallelSerialOldEvent) {
-                                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL_PARALLEL)) {
-                                        jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL_PARALLEL);
+                                    if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL)) {
+                                        jvmDao.addAnalysisKey(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL);
                                     }
-                                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_PARALLEL)) {
-                                        jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_PARALLEL);
+                                    if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_PARALLEL)) {
+                                        jvmDao.addAnalysisKey(Analysis.ERROR_SERIAL_GC_PARALLEL);
                                     }
                                 } else if (event instanceof ParallelOldCompactingEvent) {
-                                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_PARALLEL)) {
-                                        jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_PARALLEL);
+                                    if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_EXPLICIT_GC_PARALLEL)) {
+                                        jvmDao.addAnalysisKey(Analysis.WARN_EXPLICIT_GC_PARALLEL);
                                     }
                                 }
                                 break;
                             case SERIAL:
-                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_SERIAL)) {
-                                    jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_SERIAL);
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_EXPLICIT_GC_SERIAL)) {
+                                    jvmDao.addAnalysisKey(Analysis.WARN_EXPLICIT_GC_SERIAL);
                                 }
                                 break;
                             }
@@ -415,23 +415,23 @@ public class GcManager {
                                 && !trigger.matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM))) {
                             switch (collectorFamily) {
                             case G1:
-                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_G1)) {
-                                    jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_G1);
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_G1)) {
+                                    jvmDao.addAnalysisKey(Analysis.ERROR_SERIAL_GC_G1);
                                 }
                                 break;
                             case CMS:
-                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_CMS)) {
-                                    jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_CMS);
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS)) {
+                                    jvmDao.addAnalysisKey(Analysis.ERROR_SERIAL_GC_CMS);
                                 }
                                 break;
                             case PARALLEL:
-                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC_PARALLEL)) {
-                                    jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC_PARALLEL);
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_PARALLEL)) {
+                                    jvmDao.addAnalysisKey(Analysis.ERROR_SERIAL_GC_PARALLEL);
                                 }
                                 break;
                             case SERIAL:
-                                if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_SERIAL_GC)) {
-                                    jvmDao.addAnalysisKey(Analysis.KEY_SERIAL_GC);
+                                if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC)) {
+                                    jvmDao.addAnalysisKey(Analysis.ERROR_SERIAL_GC);
                                 }
                                 break;
                             }
@@ -439,81 +439,81 @@ public class GcManager {
                     }
 
                     // 3) CMS concurrent mode failure
-                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE)) {
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE)) {
                         if (event instanceof CmsSerialOldEvent) {
                             String trigger = ((TriggerData) event).getTrigger();
                             if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE);
+                                jvmDao.addAnalysisKey(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE);
                             }
                         }
                     }
 
                     // 4) CMS concurrent mode interrupted
-                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_INTERRUPTED)) {
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED)) {
                         if (event instanceof CmsSerialOldEvent) {
                             String trigger = ((TriggerData) event).getTrigger();
                             if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_CMS_CONCURRENT_MODE_INTERRUPTED);
+                                jvmDao.addAnalysisKey(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED);
                             }
                         }
                     }
 
                     // 5) CMS incremental mode
-                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_INCREMENTAL_MODE)) {
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_CMS_INCREMENTAL_MODE)) {
                         if (event instanceof CmsIncrementalModeCollector) {
                             if (((CmsIncrementalModeCollector) event).isIncrementalMode()) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_CMS_INCREMENTAL_MODE);
+                                jvmDao.addAnalysisKey(Analysis.WARN_CMS_INCREMENTAL_MODE);
                             }
                         }
                     }
 
                     // 6) Heap dump initiated gc
-                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_HEAP_DUMP_INITIATED_GC)) {
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_HEAP_DUMP_INITIATED_GC)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
                             if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_HEAP_DUMP_INITIATED_GC);
+                                jvmDao.addAnalysisKey(Analysis.WARN_HEAP_DUMP_INITIATED_GC);
                             }
                         }
                     }
 
                     // 7) Heap inspection initiated gc
-                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_HEAP_INSPECTION_INITIATED_GC)) {
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
                             if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_HEAP_INSPECTION_INITIATED_GC);
+                                jvmDao.addAnalysisKey(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC);
                             }
                         }
                     }
 
                     // 8) PrintClassHistogram
-                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_PRINT_CLASS_HISTOGRAM)) {
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
                             if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_PRINT_CLASS_HISTOGRAM);
+                                jvmDao.addAnalysisKey(Analysis.WARN_PRINT_CLASS_HISTOGRAM);
                             }
                         }
                     }
 
                     // 9) Metaspace allocation failure
-                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_METASPACE_ALLOCATION_FAILURE)) {
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_METASPACE_ALLOCATION_FAILURE)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
                             if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_METASPACE_ALLOCATION_FAILURE);
+                                jvmDao.addAnalysisKey(Analysis.ERROR_METASPACE_ALLOCATION_FAILURE);
                             }
                         }
                     }
 
                     // 10) JVM TI explicit gc
-                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_EXPLICIT_GC_JVMTI)) {
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_EXPLICIT_GC_JVMTI)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
                             if (trigger != null
                                     && trigger.matches(JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_EXPLICIT_GC_JVMTI);
+                                jvmDao.addAnalysisKey(Analysis.WARN_EXPLICIT_GC_JVMTI);
                             }
                         }
                     }
@@ -522,8 +522,8 @@ public class GcManager {
                     if (event instanceof TriggerData) {
                         String trigger = ((TriggerData) event).getTrigger();
                         if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED)) {
-                            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_G1_EVACUATION_FAILURE)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_G1_EVACUATION_FAILURE);
+                            if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_G1_EVACUATION_FAILURE)) {
+                                jvmDao.addAnalysisKey(Analysis.ERROR_G1_EVACUATION_FAILURE);
                             }
                         }
                     }
@@ -532,8 +532,8 @@ public class GcManager {
                     if (event instanceof TriggerData) {
                         String trigger = ((TriggerData) event).getTrigger();
                         if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_PROMOTION_FAILED)) {
-                            if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_PROMOTION_FAILED)) {
-                                jvmDao.addAnalysisKey(Analysis.KEY_CMS_PROMOTION_FAILED);
+                            if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_CMS_PROMOTION_FAILED)) {
+                                jvmDao.addAnalysisKey(Analysis.ERROR_CMS_PROMOTION_FAILED);
                             }
                         }
                     }
@@ -549,8 +549,8 @@ public class GcManager {
                 } else if (event instanceof HeaderVersionEvent) {
                     jvmDao.setVersion(((HeaderVersionEvent) event).getLogEntry());
                 } else if (event instanceof GcOverheadLimitEvent) {
-                    if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_GC_OVERHEAD_LIMIT)) {
-                        jvmDao.getAnalysisKeys().add(Analysis.KEY_GC_OVERHEAD_LIMIT);
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED)) {
+                        jvmDao.getAnalysisKeys().add(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED);
                     }
                 } else if (event instanceof UnknownEvent) {
                     if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {

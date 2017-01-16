@@ -255,9 +255,9 @@ public class TestParNewEvent extends TestCase {
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.KEY_CMS_INCREMENTAL_MODE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_INCREMENTAL_MODE));
-        Assert.assertTrue(Analysis.KEY_CMS_INC_MODE_INIT_OCCUP_FRACT_CONFLICT + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_INC_MODE_INIT_OCCUP_FRACT_CONFLICT));
+        Assert.assertTrue(Analysis.WARN_CMS_INCREMENTAL_MODE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_INCREMENTAL_MODE));
+        Assert.assertTrue(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT));
     }
 }

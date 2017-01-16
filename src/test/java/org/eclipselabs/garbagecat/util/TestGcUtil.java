@@ -16,6 +16,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.eclipselabs.garbagecat.util.jdk.Analysis;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -193,10 +195,10 @@ public class TestGcUtil extends TestCase {
     }
 
     public void testGetPropertyValues() {
-        Assert.assertNotNull("Could not retrieve stack_thread_size.not_set.",
-                GcUtil.getPropertyValue("analysis", "thread.stack.size.not.set"));
-        Assert.assertNotNull("Could not retrieve min.heap.not.equal.max.heap.",
-                GcUtil.getPropertyValue("analysis", "min.heap.not.equal.max.heap"));
+        Assert.assertNotNull("Could not retrieve " + Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + ".",
+                GcUtil.getPropertyValue("analysis", Analysis.WARN_THREAD_STACK_SIZE_NOT_SET));
+        Assert.assertNotNull("Could not retrieve " + Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX + ".",
+                GcUtil.getPropertyValue("analysis", Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX));
     }
 
     public void testConvertDateStampStringToDate() {
