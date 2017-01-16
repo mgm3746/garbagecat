@@ -33,6 +33,7 @@ public class TestCmsRemarkEvent extends TestCase {
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 253103, event.getTimestamp());
         Assert.assertEquals("Duration not parsed correctly.", 85, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
     public void testLogLineWhitespaceAtEnd() {
@@ -53,6 +54,7 @@ public class TestCmsRemarkEvent extends TestCase {
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 253103, event.getTimestamp());
         Assert.assertEquals("Duration not parsed correctly.", 85, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
     public void testLogLineJdk8WithTriggerAndDatestamps() {
@@ -67,6 +69,7 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         Assert.assertEquals("Duration not parsed correctly.", 23, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
     public void testLogLineJdk8WithParNewEnd() {
@@ -80,6 +83,7 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         Assert.assertEquals("Duration not parsed correctly.", 72, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
     public void testIsBlocking() {
@@ -102,6 +106,7 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         Assert.assertEquals("Duration not parsed correctly.", 340, event.getDuration());
+        Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
     public void testLogLineParNewTrigger() {
@@ -116,5 +121,6 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         Assert.assertEquals("Duration not parsed correctly.", 27656, event.getDuration());
+        Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 }

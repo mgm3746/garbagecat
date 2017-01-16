@@ -94,7 +94,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParNewEvent extends CmsCollector
+public class ParNewEvent extends CmsIncrementalModeCollector
         implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData {
 
     /**
@@ -165,17 +165,6 @@ public class ParNewEvent extends CmsCollector
     private String trigger;
 
     /**
-     * Whether or not the collector is running in Incremental Mode (with the <code>-XX:+CMSIncrementalMode</code> JVM
-     * option). In this mode, the CMS collector does not hold the processor(s) for the entire long concurrent phases but
-     * periodically stops them and yields the processor back to other threads in the application. It divides the work to
-     * be done in concurrent phases into small chunks called duty cycles and schedules them between minor collections.
-     * This is very useful for applications that need low pause times and are run on machines with a small number of
-     * processors. The icms_dc value is the time in percentage that the concurrent work took between two young
-     * generation collections.
-     */
-    private boolean incrementalMode;
-
-    /**
      * Create event from log entry.
      * 
      * @param logEntry
@@ -198,9 +187,9 @@ public class ParNewEvent extends CmsCollector
             oldAllocation = totalAllocation - youngAvailable;
             duration = JdkMath.convertSecsToMillis(matcher.group(25)).intValue();
             if (matcher.group(24) != null) {
-                incrementalMode = true;
+                super.setIncrementalMode(true);
             } else {
-                incrementalMode = false;
+                super.setIncrementalMode(false);
             }
         }
     }
@@ -263,10 +252,6 @@ public class ParNewEvent extends CmsCollector
 
     public String getTrigger() {
         return trigger;
-    }
-
-    public boolean isIncrementalMode() {
-        return incrementalMode;
     }
 
     /**

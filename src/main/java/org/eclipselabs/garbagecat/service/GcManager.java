@@ -39,6 +39,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ApplicationConcurrentTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
+import org.eclipselabs.garbagecat.domain.jdk.CmsIncrementalModeCollector;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcEvent;
@@ -47,7 +48,6 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
@@ -460,8 +460,8 @@ public class GcManager {
 
                     // 5) CMS incremental mode
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.KEY_CMS_INCREMENTAL_MODE)) {
-                        if (event instanceof ParNewEvent) {
-                            if (((ParNewEvent) event).isIncrementalMode()) {
+                        if (event instanceof CmsIncrementalModeCollector) {
+                            if (((CmsIncrementalModeCollector) event).isIncrementalMode()) {
                                 jvmDao.addAnalysisKey(Analysis.KEY_CMS_INCREMENTAL_MODE);
                             }
                         }

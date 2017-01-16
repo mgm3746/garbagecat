@@ -63,7 +63,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class CmsRemarkEvent extends CmsCollector implements BlockingEvent, TriggerData {
+public class CmsRemarkEvent extends CmsIncrementalModeCollector implements BlockingEvent, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -134,6 +134,9 @@ public class CmsRemarkEvent extends CmsCollector implements BlockingEvent, Trigg
                     trigger = matcher.group(8);
                 } else {
                     trigger = matcher.group(2);
+                }
+                if (matcher.group(18) != null) {
+                    super.setIncrementalMode(true);
                 }
                 // The last duration is the total duration for the phase.
                 duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();

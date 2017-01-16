@@ -140,8 +140,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, YoungCollection, OldCollection,
-        PermCollection, YoungData, OldData, PermData, TriggerData, SerialCollection {
+public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements BlockingEvent, YoungCollection,
+        OldCollection, PermCollection, YoungData, OldData, PermData, TriggerData, SerialCollection {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -302,6 +302,9 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
                 this.permGen = Integer.parseInt(matcher.group(58));
                 this.permGenEnd = Integer.parseInt(matcher.group(59));
                 this.permGenAllocation = Integer.parseInt(matcher.group(60));
+                if (matcher.group(61) != null) {
+                    super.setIncrementalMode(true);
+                }
                 this.duration = JdkMath.convertSecsToMillis(matcher.group(62)).intValue();
             }
         } else if (logEntry.matches(REGEX_GC)) {
@@ -350,12 +353,14 @@ public class CmsSerialOldEvent extends CmsCollector implements BlockingEvent, Yo
                     this.permGenEnd = Integer.parseInt(matcher.group(53));
                     this.permGenAllocation = Integer.parseInt(matcher.group(54));
                 }
+                if (matcher.group(55) != null) {
+                    super.setIncrementalMode(true);
+                }
                 if (matcher.group(56) != null) {
                     this.duration = JdkMath.convertSecsToMillis(matcher.group(56)).intValue();
                 }
             }
         }
-
     }
 
     /**

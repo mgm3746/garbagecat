@@ -854,6 +854,8 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
         Assert.assertTrue(LogEventType.CMS_CONCURRENT.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(Analysis.KEY_CMS_INCREMENTAL_MODE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_INCREMENTAL_MODE));
         Assert.assertTrue(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.KEY_CMS_CONCURRENT_MODE_FAILURE));
     }
