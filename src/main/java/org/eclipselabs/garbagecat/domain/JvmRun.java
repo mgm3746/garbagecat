@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
@@ -679,8 +680,22 @@ public class JvmRun {
         }
 
         // Check for CompressedClassPointers enabled without setting CompressedClassSpaceSize
-        if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSize() == null) {
+        if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSize() == null
+                && jvm.getUseCompressedOopsDisabled() == null) {
             analysisKeys.add(Analysis.INFO_COMPRESSED_CLASS_SPACE_NOT_SET);
+        }
+
+        // Check for compressed references disabled
+        if (jvm.getUseCompressedOopsDisabled() != null) {
+            if (jvm.getMaxHeapValue() == null) {
+                analysisKeys.add(Analysis.WARN_COMPRESSED_OOPS_DISABLED_HEAP_UNK);
+            } else {
+                BigDecimal kilo = new BigDecimal("1024");
+                BigDecimal thirtyTwoGigabytes = new BigDecimal("32").multiply(kilo).multiply(kilo).multiply(kilo);
+                if (JdkUtil.convertOptionSizeToBytes(jvm.getMaxHeapValue()) < thirtyTwoGigabytes.longValue()) {
+                    analysisKeys.add(Analysis.ERROR_COMPRESSED_OOPS_DISABLED_HEAP_32G);
+                }
+            }
         }
 
         // Check for PrintFLSStatistics option is being used

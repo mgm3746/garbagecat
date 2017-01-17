@@ -761,7 +761,21 @@ public class Jvm {
     }
 
     /**
-     * The option for enabling compressed class pointers.
+     * The option for disabling compressed object references.
+     * 
+     * <pre>
+     * -XX:-UseCompressedOops
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseCompressedOopsDisabled() {
+        String regex = "(-XX:\\-UseCompressedOops)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for compressed class pointers disabled.
      * 
      * <pre>
      * -XX:+UseCompressedClassPointers

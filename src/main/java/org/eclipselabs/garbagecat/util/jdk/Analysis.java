@@ -357,6 +357,16 @@ public class Analysis {
     public static final String INFO_COMPRESSED_CLASS_SPACE_NOT_SET = "info.compressed.class.space.size.not.set";
 
     /**
+     * Property key for compressed object references disabled (-XX:-UseCompressedOops), and heap &lt; 32G.
+     */
+    public static final String ERROR_COMPRESSED_OOPS_DISABLED_HEAP_32G = "error.compressed.oops.disabled.heap.32g";
+
+    /**
+     * Property key for compressed object references disabled (-XX:-UseCompressedOops), and heap size unknown.
+     */
+    public static final String WARN_COMPRESSED_OOPS_DISABLED_HEAP_UNK = "warn.compressed.oops.disabled.heap.unk";
+
+    /**
      * Property key for CMS Free List Space statistics being output.
      */
     public static final String INFO_PRINT_FLS_STATISTICS = "info.print.fls.statistics";

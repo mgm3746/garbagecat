@@ -387,7 +387,7 @@ public class Main {
                     if (printHeader) {
                         bufferedWriter.write(
                                 "----------------------------------------" + System.getProperty("line.separator"));
-                        bufferedWriter.write("ERROR Level" + System.getProperty("line.separator"));
+                        bufferedWriter.write("error" + System.getProperty("line.separator"));
                         bufferedWriter.write(
                                 "----------------------------------------" + System.getProperty("line.separator"));
                     }
@@ -404,7 +404,7 @@ public class Main {
                     if (printHeader) {
                         bufferedWriter.write(
                                 "----------------------------------------" + System.getProperty("line.separator"));
-                        bufferedWriter.write("WARN Level" + System.getProperty("line.separator"));
+                        bufferedWriter.write("warn" + System.getProperty("line.separator"));
                         bufferedWriter.write(
                                 "----------------------------------------" + System.getProperty("line.separator"));
                     }
@@ -421,7 +421,7 @@ public class Main {
                     if (printHeader) {
                         bufferedWriter.write(
                                 "----------------------------------------" + System.getProperty("line.separator"));
-                        bufferedWriter.write("INFO Level" + System.getProperty("line.separator"));
+                        bufferedWriter.write("info" + System.getProperty("line.separator"));
                         bufferedWriter.write(
                                 "----------------------------------------" + System.getProperty("line.separator"));
                     }
