@@ -786,6 +786,20 @@ public class Jvm {
     }
 
     /**
+     * The option for enabling compressed object references.
+     * 
+     * <pre>
+     * -XX:+UseCompressedOops
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseCompressedOopsEnabled() {
+        String regex = "(-XX:\\+UseCompressedOops)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * The option for disabling log file rotation.
      * 
      * <pre>

@@ -709,7 +709,14 @@ public class JvmRun {
             if (jvm.getCompressedClassSpaceSize() != null) {
                 analysisKeys.add(Analysis.WARN_COMP_CLS_SPC_SET_COMP_OOPS_DSBLD);
             }
-        } else {
+        }
+        if (!isHeapLessThan32G) {
+
+            // Compressed object references shouldn't be enabled
+            if (jvm.getUseCompressedOopsEnabled() != null) {
+                analysisKeys.add(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G);
+            }
+
             // Class compressed pointers shouldn't be enabled
             if (jvm.getUseCompressedClassPointersEnabled() != null) {
                 analysisKeys.add(Analysis.WARN_COMP_CLS_SPC_ENBLD_HEAP_GT_32G);

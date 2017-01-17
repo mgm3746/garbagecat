@@ -171,6 +171,16 @@ public class TestAnalysis extends TestCase {
 
     }
 
+    public void testCompressedOopsEnabledHeapGreater32G() {
+        String jvmOptions = "-Xss128k -XX:+UseCompressedOops -Xmx40G";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G));
+    }
+
     public void testPrintFlsStatistics() {
         String jvmOptions = "-Xss128k -XX:PrintFLSStatistics=1 -Xms2048M";
         GcManager jvmManager = new GcManager();
