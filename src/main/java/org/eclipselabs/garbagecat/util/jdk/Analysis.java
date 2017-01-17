@@ -352,29 +352,19 @@ public class Analysis {
     public static final String ERROR_GC_TIME_LIMIT_EXCEEEDED = "error.gc.time.limit.exceeded";
 
     /**
-     * Property key for the compressed class space size not set.
+     * Property key for compressed class pointers disabled (-XX:-UseCompressedClassPointers), and heap &lt; 32G.
      */
-    public static final String INFO_COMPRESSED_CLASS_SPACE_NOT_SET = "info.compressed.class.space.size.not.set";
+    public static final String ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G = "error.comp.class.disabled.heap.lt.32g";
 
     /**
-     * Property key for compressed class space size set with object references disabled and heap size unknown.
+     * Property key for compressed class pointers enabled (-XX:+UseCompressedClassPointers), and heap &gt;= 32G.
      */
-    public static final String WARN_COMP_CLS_SPC_SET_COMP_OOPS_DSBLD = "warn.comp.cls.spc.size.set.comp.oops.dsbld";
+    public static final String ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G = "error.comp.class.enabled.heap.gt.32g";
 
     /**
-     * Property key for compressed class space size set with object references disabled and heap &gt;= 32G.
+     * Property key for compressed class pointers space size set (-XX:CompressedClassSpaceSize), and heap &gt;= 32G.
      */
-    public static final String WARN_COMP_CLS_SPC_SET_HEAP_GT_32G = "warn.comp.cls.spc.size.set.heap.gt.32g";
-
-    /**
-     * Property key for compressed class space enabled with object references disabled, and heap &lt; 32G.
-     */
-    public static final String WARN_COMP_CLS_SPC_ENBLD_COMP_OOPS_DSBLD = "warn.comp.cls.spc.enbld.comp.oops.dsbld";
-
-    /**
-     * Property key for compressed class space enabled with object references disabled, and heap &gt;= 32G.
-     */
-    public static final String WARN_COMP_CLS_SPC_ENBLD_HEAP_GT_32G = "warn.comp.cls.spc.enbld.heap.gt.32g";
+    public static final String ERROR_COMP_CLASS_SIZE_HEAP_GT_32G = "error.comp.class.size.heap.gt.32g";
 
     /**
      * Property key for compressed object references disabled (-XX:-UseCompressedOops), and heap &lt; 32G.
@@ -387,9 +377,31 @@ public class Analysis {
     public static final String ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G = "error.comp.oops.enabled.heap.gt.32g";
 
     /**
+     * Property key for the compressed class space size not set.
+     */
+    public static final String INFO_COMP_CLASS_SIZE_NOT_SET = "info.comp.class.size.not.set";
+
+    /**
+     * Property key for compressed class pointers size set (-XX:CompressedClassSpaceSize) with compressed object
+     * references disabled (-XX:-UseCompressedOops).
+     */
+    public static final String INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED = "info.comp.class.size.comp.oops.disabled";
+
+    /**
+     * Property key for compressed class pointers size set (-XX:CompressedClassSpaceSize) with compressed class pointers
+     * disabled (-XX:+UseCompressedClassPointers).
+     */
+    public static final String INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED = "info.comp.class.size.comp.class.disabled";
+
+    /**
+     * Property key for compressed class pointers disabled (-XX:-UseCompressedClassPointers), and heap size unknown.
+     */
+    public static final String WARN_COMP_CLASS_DISABLED_HEAP_UNK = "warn.comp.class.disabled.heap.unk";
+
+    /**
      * Property key for compressed object references disabled (-XX:-UseCompressedOops), and heap size unknown.
      */
-    public static final String WARN_COMPRESSED_OOPS_DISABLED_HEAP_UNK = "warn.compressed.oops.disabled.heap.unk";
+    public static final String WARN_COMP_OOPS_DISABLED_HEAP_UNK = "warn.comp.oops.disabled.heap.unk";
 
     /**
      * Property key for CMS Free List Space statistics being output.

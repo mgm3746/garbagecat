@@ -828,7 +828,7 @@ public class Jvm {
     }
 
     /**
-     * The option for compressed class pointers disabled.
+     * The option for compressed class pointers enabled.
      * 
      * <pre>
      * -XX:+UseCompressedClassPointers
@@ -838,6 +838,20 @@ public class Jvm {
      */
     public String getUseCompressedClassPointersEnabled() {
         String regex = "(-XX:\\+UseCompressedClassPointers)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for compressed class pointers disabled.
+     * 
+     * <pre>
+     * -XX:-UseCompressedClassPointers
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseCompressedClassPointersDisabled() {
+        String regex = "(-XX:\\-UseCompressedClassPointers)";
         return getJvmOption(regex);
     }
 

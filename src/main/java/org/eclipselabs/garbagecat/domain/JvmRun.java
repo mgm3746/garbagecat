@@ -679,52 +679,59 @@ public class JvmRun {
         }
 
         // Compressed object references should only be used when heap < 32G
-        boolean isHeapLessThan32G = true;
+        boolean heapLessThan32G = true;
         BigDecimal thirtyTwoGigabytes = new BigDecimal("32").multiply(Constants.GIGABYTE);
         if (jvm.getMaxHeapBytes() >= thirtyTwoGigabytes.longValue()) {
-            isHeapLessThan32G = false;
+            heapLessThan32G = false;
         }
 
-        // Check for CompressedClassPointers enabled without setting CompressedClassSpaceSize
-        if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSize() == null
-                && isHeapLessThan32G) {
-            analysisKeys.add(Analysis.INFO_COMPRESSED_CLASS_SPACE_NOT_SET);
-        }
+        if (heapLessThan32G) {
+            // Should use compressed object pointers
+            if (jvm.getUseCompressedOopsDisabled() != null) {
 
-        // Check for compressed references disabled when it should be enabled
-        if (jvm.getUseCompressedOopsDisabled() != null && isHeapLessThan32G) {
-            if (jvm.getMaxHeapBytes() == 0) {
-                // Max heap size unknown
-                analysisKeys.add(Analysis.WARN_COMPRESSED_OOPS_DISABLED_HEAP_UNK);
-            } else {
-                analysisKeys.add(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G);
+                if (jvm.getMaxHeapBytes() == 0) {
+                    // Heap size unknown
+                    analysisKeys.add(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK);
+                } else {
+                    // Heap < 32G
+                    analysisKeys.add(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G);
+                }
+                if (jvm.getCompressedClassSpaceSize() != null) {
+                    analysisKeys.add(Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED);
+                }
             }
 
-            // Compressed object references shouldn't be disabled if using class compressed pointers
-            if (jvm.getUseCompressedClassPointersEnabled() != null) {
-                analysisKeys.add(Analysis.WARN_COMP_CLS_SPC_ENBLD_COMP_OOPS_DSBLD);
+            // Should use compressed class pointers
+            if (jvm.getUseCompressedClassPointersDisabled() != null) {
+                if (jvm.getMaxHeapBytes() == 0) {
+                    // Heap size unknown
+                    analysisKeys.add(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK);
+                } else {
+                    // Heap < 32G
+                    analysisKeys.add(Analysis.ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G);
+                }
+                if (jvm.getCompressedClassSpaceSize() != null) {
+                    analysisKeys.add(Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED);
+                }
             }
 
-            // Compressed object references shouldn't be disabled if setting compressed class space size.
-            if (jvm.getCompressedClassSpaceSize() != null) {
-                analysisKeys.add(Analysis.WARN_COMP_CLS_SPC_SET_COMP_OOPS_DSBLD);
+            if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSize() == null) {
+                analysisKeys.add(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET);
             }
-        }
-        if (!isHeapLessThan32G) {
-
-            // Compressed object references shouldn't be enabled
+        } else {
+            // Should not use compressed object pointers
             if (jvm.getUseCompressedOopsEnabled() != null) {
                 analysisKeys.add(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G);
             }
 
-            // Class compressed pointers shouldn't be enabled
+            // Should not use compressed class pointers
             if (jvm.getUseCompressedClassPointersEnabled() != null) {
-                analysisKeys.add(Analysis.WARN_COMP_CLS_SPC_ENBLD_HEAP_GT_32G);
+                analysisKeys.add(Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G);
             }
 
-            // Compressed class space size should not be set.
+            // Should not be setting class pointer space size
             if (jvm.getCompressedClassSpaceSize() != null) {
-                analysisKeys.add(Analysis.WARN_COMP_CLS_SPC_SET_HEAP_GT_32G);
+                analysisKeys.add(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G);
             }
         }
 
