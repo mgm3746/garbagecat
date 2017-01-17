@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 public class TestAnalysis extends TestCase {
 
     public void testBisasedLockingDisabled() {
-        String jvmOptions = "Xss128k -XX:-UseBiasedLocking -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:-UseBiasedLocking -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -39,7 +39,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testPrintClassHistogramEnabled() {
-        String jvmOptions = "Xss128k -XX:+PrintClassHistogram -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:+PrintClassHistogram -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -53,7 +53,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testPrintClassHistogramAfterFullGcEnabled() {
-        String jvmOptions = "Xss128k -XX:+PrintClassHistogramAfterFullGC -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:+PrintClassHistogramAfterFullGC -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -67,7 +67,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testPrintClassHistogramBeforeFullGcEnabled() {
-        String jvmOptions = "Xss128k -XX:+PrintClassHistogramBeforeFullGC -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:+PrintClassHistogramBeforeFullGC -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -81,7 +81,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testPrintApplicationConcurrentTime() {
-        String jvmOptions = "Xss128k -XX:+PrintGCApplicationConcurrentTime -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:+PrintGCApplicationConcurrentTime -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -91,7 +91,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testTraceClassUnloading() {
-        String jvmOptions = "Xss128k -XX:+TraceClassUnloading -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:+TraceClassUnloading -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -101,7 +101,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testCompressedClassSpaceSize() {
-        String jvmOptions = "Xss128k -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -110,8 +110,22 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_COMPRESSED_CLASS_SPACE_NOT_SET));
     }
 
+    public void testCompressedClassSpaceEnabledCompressedOopsDisabledHeapUnknown() {
+        String jvmOptions = "-Xss128k -XX:+UseCompressedClassPointers -XX:-UseCompressedOops -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.INFO_COMPRESSED_CLASS_SPACE_NOT_SET + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_COMPRESSED_CLASS_SPACE_NOT_SET));
+        Assert.assertTrue(Analysis.WARN_COMPRESSED_OOPS_DISABLED_HEAP_UNK + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_COMPRESSED_OOPS_DISABLED_HEAP_UNK));
+        Assert.assertTrue(Analysis.WARN_COMP_CLS_SPC_ENBLD_COMP_OOPS_DSBLD + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_COMP_CLS_SPC_ENBLD_COMP_OOPS_DSBLD));
+    }
+
     public void testCompressedClassSpaceSizeWithCompressedOopsDisabledHeapUnknown() {
-        String jvmOptions = "Xss128k -XX:+UseCompressedClassPointers -XX:-UseCompressedOops -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:CompressedClassSpaceSize=1G -XX:-UseCompressedOops -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -120,10 +134,12 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_COMPRESSED_CLASS_SPACE_NOT_SET));
         Assert.assertTrue(Analysis.WARN_COMPRESSED_OOPS_DISABLED_HEAP_UNK + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_COMPRESSED_OOPS_DISABLED_HEAP_UNK));
+        Assert.assertTrue(Analysis.WARN_COMP_CLS_SPC_SET_COMP_OOPS_DSBLD + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_COMP_CLS_SPC_SET_COMP_OOPS_DSBLD));
     }
 
     public void testCompressedOopsDisabledHeapLess32G() {
-        String jvmOptions = "Xss128k -XX:-UseCompressedOops -Xmx2048M";
+        String jvmOptions = "-Xss128k -XX:-UseCompressedOops -Xmx2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -133,7 +149,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testCompressedOopsDisabledHeapEqual32G() {
-        String jvmOptions = "Xss128k -XX:-UseCompressedOops -Xmx32G";
+        String jvmOptions = "-Xss128k -XX:-UseCompressedOops -Xmx32G";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -145,7 +161,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testCompressedOopsDisabledHeapGreater32G() {
-        String jvmOptions = "Xss128k -XX:-UseCompressedOops -Xmx40G";
+        String jvmOptions = "-Xss128k -XX:-UseCompressedOops -Xmx40G";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -156,7 +172,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testPrintFlsStatistics() {
-        String jvmOptions = "Xss128k -XX:PrintFLSStatistics=1 -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:PrintFLSStatistics=1 -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -166,7 +182,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testPermMetatspaceNotSet() {
-        String jvmOptions = "Xss128k -Xms2048M";
+        String jvmOptions = "-Xss128k -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -176,7 +192,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testTieredCompilation() {
-        String jvmOptions = "Xss128k -XX:+TieredCompilation -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:+TieredCompilation -Xms2048M";
         GcManager jvmManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -186,6 +202,28 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED));
+    }
+
+    public void testLogFileRotationDisabled() {
+        String jvmOptions = "-Xss128k -XX:-UseGCLogFileRotation -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED));
+    }
+
+    public void testLogFileNumberWithRotationDisabled() {
+        String jvmOptions = "-Xss128k -XX:NumberOfGCLogFiles=5 -XX:-UseGCLogFileRotation -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED));
+        Assert.assertTrue(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED));
     }
 
     public void testHeaderLogging() {

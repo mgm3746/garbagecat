@@ -357,9 +357,24 @@ public class Analysis {
     public static final String INFO_COMPRESSED_CLASS_SPACE_NOT_SET = "info.compressed.class.space.size.not.set";
 
     /**
+     * Property key for compressed class space size set with object references disabled.
+     */
+    public static final String WARN_COMP_CLS_SPC_SET_COMP_OOPS_DSBLD = "warn.comp.cls.spc.size.set.comp.oops.dsbld";
+
+    /**
+     * Property key for compressed class space enabled with object references disabled.
+     */
+    public static final String WARN_COMP_CLS_SPC_ENBLD_COMP_OOPS_DSBLD = "warn.comp.cls.spc.enbld.comp.oops.dsbld";
+
+    /**
      * Property key for compressed object references disabled (-XX:-UseCompressedOops), and heap &lt; 32G.
      */
     public static final String ERROR_COMPRESSED_OOPS_DISABLED_HEAP_32G = "error.compressed.oops.disabled.heap.32g";
+
+    /**
+     * Property key for compressed object references enabled (-XX:+UseCompressedOops), and heap &gt;= 32G.
+     */
+    public static final String ERROR_COMPRESSED_OOPS_ENABLED_HEAP_32G = "error.compressed.oops.enabled.heap.32g";
 
     /**
      * Property key for compressed object references disabled (-XX:-UseCompressedOops), and heap size unknown.
@@ -380,6 +395,17 @@ public class Analysis {
      * Property key for outputting tenuring distribution information (-XX:+PrintTenuringDistribution).
      */
     public static final String WARN_PRINT_TENURING_DISTRIBUTION = "warn.print.tenuring.distribution";
+
+    /**
+     * Property key for GC log file rotation disabled (-XX:-UseGCLogFileRotation).
+     */
+    public static final String INFO_GC_LOG_FILE_ROTATION_DISABLED = "info.gc.log.file.rotation.disabled";
+
+    /**
+     * Property key for specify number of GC log files (-XX:NumberOfGCLogFiles) with log rotation disabled
+     * (-XX:-UseGCLogFileRotation).
+     */
+    public static final String WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED = "warn.gc.log.file.num.rotation.disabled";
 
     /**
      * Make default constructor private so the class cannot be instantiated.

@@ -680,13 +680,13 @@ public class JvmRun {
         }
 
         // Check for CompressedClassPointers enabled without setting CompressedClassSpaceSize
-        if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSize() == null
-                && jvm.getUseCompressedOopsDisabled() == null) {
+        if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSize() == null) {
             analysisKeys.add(Analysis.INFO_COMPRESSED_CLASS_SPACE_NOT_SET);
         }
 
         // Check for compressed references disabled
         if (jvm.getUseCompressedOopsDisabled() != null) {
+            // Should be used for heaps > 32G
             if (jvm.getMaxHeapValue() == null) {
                 analysisKeys.add(Analysis.WARN_COMPRESSED_OOPS_DISABLED_HEAP_UNK);
             } else {
@@ -695,6 +695,14 @@ public class JvmRun {
                 if (JdkUtil.convertOptionSizeToBytes(jvm.getMaxHeapValue()) < thirtyTwoGigabytes.longValue()) {
                     analysisKeys.add(Analysis.ERROR_COMPRESSED_OOPS_DISABLED_HEAP_32G);
                 }
+            }
+            // Compressed object references shouldn't be disabled if using class compressed pointers
+            if (jvm.getUseCompressedClassPointersEnabled() != null) {
+                analysisKeys.add(Analysis.WARN_COMP_CLS_SPC_ENBLD_COMP_OOPS_DSBLD);
+            }
+            // Compressed object references shouldn't be disabled if setting class compressed size
+            if (jvm.getCompressedClassSpaceSize() != null) {
+                analysisKeys.add(Analysis.WARN_COMP_CLS_SPC_SET_COMP_OOPS_DSBLD);
             }
         }
 
@@ -706,6 +714,16 @@ public class JvmRun {
         // Check if PARN_NEW collector disabled
         if (jvm.getUseParNewGcDisabled() != null && !analysisKeys.contains(Analysis.WARN_CMS_PAR_NEW_DISABLED)) {
             analysisKeys.add(Analysis.WARN_CMS_PAR_NEW_DISABLED);
+        }
+
+        // Check if log file rotation disabled
+        if (jvm.getUseGcLogFileRotationDisabled() != null) {
+            analysisKeys.add(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED);
+        }
+
+        // Check if number of log files specified with log file rotation disabled
+        if (jvm.getNumberOfGcLogFiles() != null && jvm.getUseGcLogFileRotationDisabled() != null) {
+            analysisKeys.add(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED);
         }
     }
 

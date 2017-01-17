@@ -775,6 +775,34 @@ public class Jvm {
     }
 
     /**
+     * The option for disabling log file rotation.
+     * 
+     * <pre>
+     * -XX:-UseGCLogFileRotation
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseGcLogFileRotationDisabled() {
+        String regex = "(-XX:\\-UseGCLogFileRotation)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for setting number of log files to rotate. For example:
+     * 
+     * <pre>
+     * -XX:NumberOfGCLogFiles=5
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getNumberOfGcLogFiles() {
+        String regex = "(-XX:NumberOfGCLogFiles=\\d{1,2})";
+        return getJvmOption(regex);
+    }
+
+    /**
      * The option for compressed class pointers disabled.
      * 
      * <pre>
