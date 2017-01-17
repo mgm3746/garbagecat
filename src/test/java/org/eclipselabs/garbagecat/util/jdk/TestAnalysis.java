@@ -144,8 +144,8 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.ERROR_COMPRESSED_OOPS_DISABLED_HEAP_32G + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMPRESSED_OOPS_DISABLED_HEAP_32G));
+        Assert.assertTrue(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G));
     }
 
     public void testCompressedOopsDisabledHeapEqual32G() {
@@ -154,8 +154,8 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertFalse(Analysis.ERROR_COMPRESSED_OOPS_DISABLED_HEAP_32G + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMPRESSED_OOPS_DISABLED_HEAP_32G));
+        Assert.assertFalse(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G));
         Assert.assertFalse(Analysis.WARN_COMPRESSED_OOPS_DISABLED_HEAP_UNK + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_COMPRESSED_OOPS_DISABLED_HEAP_UNK));
     }
@@ -166,8 +166,8 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertFalse(Analysis.ERROR_COMPRESSED_OOPS_DISABLED_HEAP_32G + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMPRESSED_OOPS_DISABLED_HEAP_32G));
+        Assert.assertFalse(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G));
 
     }
 
@@ -339,5 +339,26 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_PAR_NEW_DISABLED));
         Assert.assertFalse(Analysis.ERROR_SERIAL_GC + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC));
+    }
+
+    /**
+     * Test compressed oops disabled with heap >= 32G.
+     */
+    public void testCompressedOopsDisabledLargeHeap() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset106.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Max heap value not parsed correctly.", "45097156608", jvmRun.getJvm().getMaxHeapValue());
+        Assert.assertFalse(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G));
+        Assert.assertFalse(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G));
+        Assert.assertFalse(Analysis.WARN_COMP_CLS_SPC_SET_COMP_OOPS_DSBLD + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_COMP_CLS_SPC_SET_COMP_OOPS_DSBLD));
+        Assert.assertTrue(Analysis.WARN_COMP_CLS_SPC_SET_HEAP_GT_32G + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_COMP_CLS_SPC_SET_HEAP_GT_32G));
     }
 }

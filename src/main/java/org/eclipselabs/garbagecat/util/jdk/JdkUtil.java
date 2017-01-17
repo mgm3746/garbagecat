@@ -662,7 +662,7 @@ public class JdkUtil {
      */
     public static long convertOptionSizeToBytes(final String size) {
 
-        String regex = "(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?";
+        String regex = "(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?";
 
         String value = null;
         char units = 'b';

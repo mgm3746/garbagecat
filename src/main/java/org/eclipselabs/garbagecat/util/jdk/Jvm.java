@@ -206,6 +206,17 @@ public class Jvm {
     }
 
     /**
+     * @return The maximum heap space in bytes, or 0 if not set.
+     */
+    public long getMaxHeapBytes() {
+        long maxHeapBytes = 0;
+        if (getMaxHeapValue() != null) {
+            maxHeapBytes = JdkUtil.convertOptionSizeToBytes(getMaxHeapValue());
+        }
+        return maxHeapBytes;
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum heap space are set equal.
      */

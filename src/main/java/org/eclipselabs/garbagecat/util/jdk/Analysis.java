@@ -357,24 +357,34 @@ public class Analysis {
     public static final String INFO_COMPRESSED_CLASS_SPACE_NOT_SET = "info.compressed.class.space.size.not.set";
 
     /**
-     * Property key for compressed class space size set with object references disabled.
+     * Property key for compressed class space size set with object references disabled and heap size unknown.
      */
     public static final String WARN_COMP_CLS_SPC_SET_COMP_OOPS_DSBLD = "warn.comp.cls.spc.size.set.comp.oops.dsbld";
 
     /**
-     * Property key for compressed class space enabled with object references disabled.
+     * Property key for compressed class space size set with object references disabled and heap &gt;= 32G.
+     */
+    public static final String WARN_COMP_CLS_SPC_SET_HEAP_GT_32G = "warn.comp.cls.spc.size.set.heap.gt.32g";
+
+    /**
+     * Property key for compressed class space enabled with object references disabled, and heap &lt; 32G.
      */
     public static final String WARN_COMP_CLS_SPC_ENBLD_COMP_OOPS_DSBLD = "warn.comp.cls.spc.enbld.comp.oops.dsbld";
 
     /**
+     * Property key for compressed class space enabled with object references disabled, and heap &gt;= 32G.
+     */
+    public static final String WARN_COMP_CLS_SPC_ENBLD_HEAP_GT_32G = "warn.comp.cls.spc.enbld.heap.gt.32g";
+
+    /**
      * Property key for compressed object references disabled (-XX:-UseCompressedOops), and heap &lt; 32G.
      */
-    public static final String ERROR_COMPRESSED_OOPS_DISABLED_HEAP_32G = "error.compressed.oops.disabled.heap.32g";
+    public static final String ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G = "error.comp.oops.disabled.heap.lt.32g";
 
     /**
      * Property key for compressed object references enabled (-XX:+UseCompressedOops), and heap &gt;= 32G.
      */
-    public static final String ERROR_COMPRESSED_OOPS_ENABLED_HEAP_32G = "error.compressed.oops.enabled.heap.32g";
+    public static final String ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G = "error.comp.oops.enabled.heap.gt.32g";
 
     /**
      * Property key for compressed object references disabled (-XX:-UseCompressedOops), and heap size unknown.

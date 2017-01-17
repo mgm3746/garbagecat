@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
+import java.math.BigDecimal;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -627,5 +629,18 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("-XX:+PrintTenuringDistribution option incorrect.", "-XX:+PrintTenuringDistribution",
                 jvm.getPrintTenuringDistribution());
+    }
+
+    public void testMaxHeapBytes() {
+        String jvmOptions = "-Xss128k -Xmx2048m -XX:MaxMetaspaceSize=1280m";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        BigDecimal size = new BigDecimal("2147483648");
+        Assert.assertEquals("Max heap bytes incorrect.", size.longValue(), jvm.getMaxHeapBytes());
+    }
+
+    public void testMaxHeapBytesUnknown() {
+        String jvmOptions = "-Xss128k -XX:MaxMetaspaceSize=1280m";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("Max heap bytes incorrect.", 0L, jvm.getMaxHeapBytes());
     }
 }

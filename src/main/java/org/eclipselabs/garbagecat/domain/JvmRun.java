@@ -20,7 +20,6 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
@@ -679,30 +678,46 @@ public class JvmRun {
             }
         }
 
+        // Compressed object references should only be used when heap < 32G
+        boolean isHeapLessThan32G = true;
+        BigDecimal thirtyTwoGigabytes = new BigDecimal("32").multiply(Constants.GIGABYTE);
+        if (jvm.getMaxHeapBytes() >= thirtyTwoGigabytes.longValue()) {
+            isHeapLessThan32G = false;
+        }
+
         // Check for CompressedClassPointers enabled without setting CompressedClassSpaceSize
-        if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSize() == null) {
+        if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSize() == null
+                && isHeapLessThan32G) {
             analysisKeys.add(Analysis.INFO_COMPRESSED_CLASS_SPACE_NOT_SET);
         }
 
-        // Check for compressed references disabled
-        if (jvm.getUseCompressedOopsDisabled() != null) {
-            // Should be used for heaps > 32G
-            if (jvm.getMaxHeapValue() == null) {
+        // Check for compressed references disabled when it should be enabled
+        if (jvm.getUseCompressedOopsDisabled() != null && isHeapLessThan32G) {
+            if (jvm.getMaxHeapBytes() == 0) {
+                // Max heap size unknown
                 analysisKeys.add(Analysis.WARN_COMPRESSED_OOPS_DISABLED_HEAP_UNK);
             } else {
-                BigDecimal kilo = new BigDecimal("1024");
-                BigDecimal thirtyTwoGigabytes = new BigDecimal("32").multiply(kilo).multiply(kilo).multiply(kilo);
-                if (JdkUtil.convertOptionSizeToBytes(jvm.getMaxHeapValue()) < thirtyTwoGigabytes.longValue()) {
-                    analysisKeys.add(Analysis.ERROR_COMPRESSED_OOPS_DISABLED_HEAP_32G);
-                }
+                analysisKeys.add(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G);
             }
+
             // Compressed object references shouldn't be disabled if using class compressed pointers
             if (jvm.getUseCompressedClassPointersEnabled() != null) {
                 analysisKeys.add(Analysis.WARN_COMP_CLS_SPC_ENBLD_COMP_OOPS_DSBLD);
             }
-            // Compressed object references shouldn't be disabled if setting class compressed size
+
+            // Compressed object references shouldn't be disabled if setting compressed class space size.
             if (jvm.getCompressedClassSpaceSize() != null) {
                 analysisKeys.add(Analysis.WARN_COMP_CLS_SPC_SET_COMP_OOPS_DSBLD);
+            }
+        } else {
+            // Class compressed pointers shouldn't be enabled
+            if (jvm.getUseCompressedClassPointersEnabled() != null) {
+                analysisKeys.add(Analysis.WARN_COMP_CLS_SPC_ENBLD_HEAP_GT_32G);
+            }
+
+            // Compressed class space size should not be set.
+            if (jvm.getCompressedClassSpaceSize() != null) {
+                analysisKeys.add(Analysis.WARN_COMP_CLS_SPC_SET_HEAP_GT_32G);
             }
         }
 

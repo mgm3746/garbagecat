@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
@@ -219,5 +220,60 @@ public class TestJdkUtil extends TestCase {
         String logLine = "2016-10-12T09:53:31.818+02002016-10-12T09:53:31.818+0200: : 290.944: "
                 + "[GC concurrent-root-region-scan-start]";
         Assert.assertTrue("Datestamp not found.", JdkUtil.isLogLineWithDateStamp(logLine));
+    }
+
+    public void testConvertOptionSizeToBytesNoUnits() {
+        String optionSize = "45097156608";
+        BigDecimal size = new BigDecimal("45097156608");
+        Assert.assertEquals("'" + optionSize + "' not converted to expected bytes.", size.longValue(),
+                JdkUtil.convertOptionSizeToBytes(optionSize));
+    }
+
+    public void testConvertOptionSizeToBytesLowercaseB() {
+        String optionSize = "12345678b";
+        Assert.assertEquals("'" + optionSize + "' not converted to expected bytes.", 12345678,
+                JdkUtil.convertOptionSizeToBytes(optionSize));
+    }
+
+    public void testConvertOptionSizeToBytesUppercaseB() {
+        String optionSize = "12345678B";
+        Assert.assertEquals("'" + optionSize + "' not converted to expected bytes.", 12345678,
+                JdkUtil.convertOptionSizeToBytes(optionSize));
+    }
+
+    public void testConvertOptionSizeToBytesLowercaseK() {
+        String optionSize = "1k";
+        Assert.assertEquals("'" + optionSize + "' not converted to expected bytes.", 1024,
+                JdkUtil.convertOptionSizeToBytes(optionSize));
+    }
+
+    public void testConvertOptionSizeToBytesUppercaseK() {
+        String optionSize = "1K";
+        Assert.assertEquals("'" + optionSize + "' not converted to expected bytes.", 1024,
+                JdkUtil.convertOptionSizeToBytes(optionSize));
+    }
+
+    public void testConvertOptionSizeToBytesLowercaseM() {
+        String optionSize = "1m";
+        Assert.assertEquals("'" + optionSize + "' not converted to expected bytes.", 1048576,
+                JdkUtil.convertOptionSizeToBytes(optionSize));
+    }
+
+    public void testConvertOptionSizeToBytesUppercaseM() {
+        String optionSize = "1M";
+        Assert.assertEquals("'" + optionSize + "' not converted to expected bytes.", 1048576,
+                JdkUtil.convertOptionSizeToBytes(optionSize));
+    }
+
+    public void testConvertOptionSizeToBytesLowercaseG() {
+        String optionSize = "1g";
+        Assert.assertEquals("'" + optionSize + "' not converted to expected bytes.", 1073741824,
+                JdkUtil.convertOptionSizeToBytes(optionSize));
+    }
+
+    public void testConvertOptionSizeToBytesUppercaseG() {
+        String optionSize = "1G";
+        Assert.assertEquals("'" + optionSize + "' not converted to expected bytes.", 1073741824,
+                JdkUtil.convertOptionSizeToBytes(optionSize));
     }
 }
