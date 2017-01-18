@@ -425,7 +425,8 @@ public class JvmRun {
         }
 
         // 4) Check if logging indicates gc details missing
-        if (!analysisKeys.contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING)) {
+        if (!analysisKeys.contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING)
+                && !analysisKeys.contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED)) {
             if (getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)
                     || getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG)) {
                 analysisKeys.add(Analysis.WARN_PRINT_GC_DETAILS_MISSING);

@@ -13,10 +13,13 @@
 package org.eclipselabs.garbagecat.util.jdk;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 import junit.framework.Assert;
@@ -280,6 +283,361 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED));
     }
 
+    /**
+     * Test passing JVM options on the command line.
+     */
+    public void testThreadStackSizeLarge() {
+        String options = "-o \"-Xss1024k\"";
+        GcManager jvmManager = new GcManager();
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_THREAD_STACK_SIZE_LARGE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_THREAD_STACK_SIZE_LARGE));
+    }
+
+    /**
+     * Test DGC not managed analysis.
+     */
+    public void testDgcNotManaged() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_RMI_DGC_NOT_MANAGED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_RMI_DGC_NOT_MANAGED));
+    }
+
+    /**
+     * Test DGC redundant options analysis.
+     */
+    public void testDgcRedundantOptions() {
+        String jvmOptions = "-XX:+DisableExplicitGC -Dsun.rmi.dgc.client.gcInterval=14400000 "
+                + "-Dsun.rmi.dgc.server.gcInterval=24400000";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT));
+        Assert.assertTrue(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT));
+    }
+
+    /**
+     * Test analysis not small DGC intervals.
+     */
+    public void testDgcNotSmallIntervals() {
+        String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertFalse(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL));
+        Assert.assertFalse(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL));
+    }
+
+    /**
+     * Test analysis small DGC intervals
+     */
+    public void testDgcSmallIntervals() {
+        String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=3599999 -Dsun.rmi.dgc.server.gcInterval=3599999";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL));
+        Assert.assertTrue(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL));
+    }
+
+    /**
+     * Test analysis if heap dump on OOME enabled.
+     */
+    public void testHeapDumpOnOutOfMemoryError() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING));
+    }
+
+    /**
+     * Test analysis if instrumentation being used.
+     */
+    public void testInstrumentation() {
+        String jvmOptions = "Xss128k -Xms2048M -javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar -Xmx2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.INFO_INSTRUMENTATION + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_INSTRUMENTATION));
+    }
+
+    /**
+     * Test analysis if native library being used.
+     */
+    public void testNative() {
+        String jvmOptions = "Xss128k -Xms2048M -agentpath:/path/to/agent.so -Xmx2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.INFO_NATIVE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_NATIVE));
+    }
+
+    /**
+     * Test analysis background compilation disabled.
+     */
+    public void testBackgroundCompilationDisabled() {
+        String jvmOptions = "Xss128k -XX:-BackgroundCompilation -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED));
+    }
+
+    /**
+     * Test analysis background compilation disabled.
+     */
+    public void testBackgroundCompilationDisabledXBatch() {
+        String jvmOptions = "Xss128k -Xbatch -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED));
+    }
+
+    /**
+     * Test analysis compilation on first invocation enabled.
+     */
+    public void testCompilationOnFirstInvocation() {
+        String jvmOptions = "Xss128k -Xcomp-Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_BYTECODE_COMPILE_FIRST_INVOCATION + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_BYTECODE_COMPILE_FIRST_INVOCATION));
+    }
+
+    /**
+     * Test analysis just in time (JIT) compiler disabled.
+     */
+    public void testCompilationDisabled() {
+        String jvmOptions = "Xss128k -Xint -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_BYTECODE_COMPILE_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_BYTECODE_COMPILE_DISABLED));
+    }
+
+    /**
+     * Test analysis explicit GC not concurrent.
+     */
+    public void testExplicitGcNotConcurrentG1() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.G1_FULL_GC);
+        jvmRun.setEventTypes(eventTypes);
+        List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
+        collectorFamilies.add(CollectorFamily.G1);
+        jvmRun.setCollectorFamiles(collectorFamilies);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT));
+    }
+
+    /**
+     * Test analysis explicit GC not concurrent.
+     */
+    public void testExplicitGcNotConcurrentCms() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.CMS_CONCURRENT);
+        jvmRun.setEventTypes(eventTypes);
+        List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
+        collectorFamilies.add(CollectorFamily.CMS);
+        jvmRun.setCollectorFamiles(collectorFamilies);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT));
+    }
+
+    /**
+     * Test DisableExplicitGC in combination with ExplicitGCInvokesConcurrent.
+     */
+    public void testDisableExplictGcWithConcurrentHandling() {
+        String jvmOptions = "Xss128k -XX:+DisableExplicitGC -XX:+ExplicitGCInvokesConcurrent -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_EXPLICIT_GC_DISABLED_CONCURRENT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_EXPLICIT_GC_DISABLED_CONCURRENT));
+    }
+
+    /**
+     * Test HeapDumpOnOutOfMemoryError disabled.
+     */
+    public void testHeapDumpOnOutOfMemoryErrorDisabled() {
+        String jvmOptions = "Xss128k -XX:-HeapDumpOnOutOfMemoryError -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED));
+    }
+
+    /**
+     * Test PrintCommandLineFlags missing.
+     */
+    public void testPrintCommandlineFlagsMissing() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_COMMANDLINE_FLAGS));
+    }
+
+    /**
+     * Test PrintCommandLineFlags not missing.
+     */
+    public void testPrintCommandlineFlagsNotMissing() {
+        String jvmOptions = "Xss128k -XX:+PrintCommandLineFlags -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_COMMANDLINE_FLAGS));
+    }
+
+    /**
+     * Test PrintGCDetails missing.
+     */
+    public void testPrintGCDetailsMissing() {
+        String jvmOptions = "Xss128k -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING));
+    }
+
+    /**
+     * Test PrintGCDetails not missing.
+     */
+    public void testPrintGCDetailsNotMissing() {
+        String jvmOptions = "Xss128k -XX:+PrintGCDetails -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING));
+    }
+
+    /**
+     * Test CMS not being used to collect old generation.
+     */
+    public void testCmsYoungSerialOld() {
+        String jvmOptions = "Xss128k -XX:+UseParNewGC -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.ERROR_CMS_NEW_SERIAL_OLD + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_NEW_SERIAL_OLD));
+    }
+
+    /**
+     * Test CMS being used to collect old generation.
+     */
+    public void testCmsYoungCmsOld() {
+        String jvmOptions = "Xss128k -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.ERROR_CMS_NEW_SERIAL_OLD + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_NEW_SERIAL_OLD));
+    }
+
+    /**
+     * Test CMS being used to collect old generation.
+     */
+    public void testCMSClassUnloadingEnabledMissing() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.CMS_CONCURRENT);
+        jvmRun.setEventTypes(eventTypes);
+        List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
+        collectorFamilies.add(CollectorFamily.CMS);
+        jvmRun.setCollectorFamiles(collectorFamilies);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
+    }
+
+    /**
+     * Test CMS handling perm/metaspace collections.
+     */
+    public void testCMSClassUnloadingEnabledMissingButJDK8EnabledByDefault() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING);
+        jvmRun.setEventTypes(eventTypes);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
+    }
+
+    /**
+     * Test CMS handling perm/metaspace collections.
+     */
+    public void testCMSClassUnloadingEnabledMissingButNotCms() {
+        String jvmOptions = "MGM";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
+    }
+
+    /**
+     * Test CMS handling perm/metaspace collections.
+     */
+    public void testCMSClassUnloadingEnabledMissingCollector() {
+        String jvmOptions = null;
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.CMS_REMARK);
+        jvmRun.setEventTypes(eventTypes);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
+    }
+
     public void testHeaderLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset42.txt");
@@ -296,6 +654,23 @@ public class TestAnalysis extends TestCase {
         // Usually no reason to set the thread stack size on 64 bit.
         Assert.assertFalse(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET));
+    }
+
+    /**
+     * Test analysis perm gen or metaspace size not set.
+     * 
+     */
+    public void testAnalysisPermMetaspaceNotSet() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset60.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_PERM_SIZE_NOT_SET + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PERM_SIZE_NOT_SET));
+        Assert.assertFalse(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT));
     }
 
     /**
@@ -412,5 +787,23 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G));
         Assert.assertTrue(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G));
+    }
+
+    /**
+     * Test PrintGCDetails disabled with VERBOSE_GC logging.
+     */
+    public void testPrintGcDetailsDisabledWithVerboseGc() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset107.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG));
+        Assert.assertTrue(Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED));
+        Assert.assertFalse(Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING));
     }
 }
