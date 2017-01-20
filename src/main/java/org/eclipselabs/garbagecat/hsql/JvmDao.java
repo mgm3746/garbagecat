@@ -122,24 +122,24 @@ public class JvmDao {
     private String memory;
 
     /**
-     * Physical memory (kilobytes).
+     * Physical memory (bytes).
      */
-    private int physicalMemory;
+    private long physicalMemory;
 
     /**
-     * Physical memory free (kilobytes).
+     * Physical memory free (bytes).
      */
-    private int physicalMemoryFree;
+    private long physicalMemoryFree;
 
     /**
-     * Swap size (kilobytes).
+     * Swap size (bytes).
      */
-    private int swap;
+    private long swap;
 
     /**
-     * Swap free (kilobytes).
+     * Swap free (bytes).
      */
-    private int swapFree;
+    private long swapFree;
 
     public JvmDao() {
         try {
@@ -277,9 +277,9 @@ public class JvmDao {
     }
 
     /**
-     * @return The JVM environment physical memory.
+     * @return The JVM environment physical memory (bytes).
      */
-    public int getPhysicalMemory() {
+    public long getPhysicalMemory() {
         return physicalMemory;
     }
 
@@ -287,14 +287,14 @@ public class JvmDao {
      * @param physicalMemory
      *            The JVM physical memory to set.
      */
-    public void setPhysicalMemory(int physicalMemory) {
+    public void setPhysicalMemory(long physicalMemory) {
         this.physicalMemory = physicalMemory;
     }
 
     /**
-     * @return The JVM environment physical free memory.
+     * @return The JVM environment physical free memory (bytes).
      */
-    public int getPhysicalMemoryFree() {
+    public long getPhysicalMemoryFree() {
         return physicalMemoryFree;
     }
 
@@ -302,14 +302,14 @@ public class JvmDao {
      * @param physicalMemoryFree
      *            The JVM physical free memory to set.
      */
-    public void setPhysicalMemoryFree(int physicalMemoryFree) {
+    public void setPhysicalMemoryFree(long physicalMemoryFree) {
         this.physicalMemoryFree = physicalMemoryFree;
     }
 
     /**
-     * @return The JVM environment swap size.
+     * @return The JVM environment swap size (bytes).
      */
-    public int getSwap() {
+    public long getSwap() {
         return swap;
     }
 
@@ -317,14 +317,14 @@ public class JvmDao {
      * @param swap
      *            The JVM swap to set.
      */
-    public void setSwap(int swap) {
+    public void setSwap(long swap) {
         this.swap = swap;
     }
 
     /**
-     * @return The JVM environment swap free.
+     * @return The JVM environment swap free (bytes).
      */
-    public int getSwapFree() {
+    public long getSwapFree() {
         return swapFree;
     }
 
@@ -332,7 +332,7 @@ public class JvmDao {
      * @param swapFree
      *            The JVM swap free to set.
      */
-    public void setSwapFree(int swapFree) {
+    public void setSwapFree(long swapFree) {
         this.swapFree = swapFree;
     }
 

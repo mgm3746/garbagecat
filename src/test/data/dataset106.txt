@@ -1,5 +1,5 @@
 Java HotSpot(TM) 64-Bit Server VM (25.45-b02) for linux-amd64 JRE (1.8.0_45-b14), built on Apr 10 2015 10:07:45 by "java_re" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
-Memory: 4k page, physical 528792532k(351929072k free), swap 30736380k(30736380k free)
+Memory: 4k page, physical 49283073k(1283073k free), swap 30736380k(30736380k free)
 CommandLine flags: -XX:CompressedClassSpaceSize=1073741824 -XX:+DoEscapeAnalysis -XX:GCLogFileSize=2097152 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/my/path -XX:InitialHeapSize=45097156608 -XX:MaxGCPauseMillis=500 -XX:MaxHeapSize=45097156608 -XX:MaxMetaspaceSize=5368709120 -XX:MetaspaceSize=5368709120 -XX:NumberOfGCLogFiles=5 -XX:+PrintGC -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:ThreadStackSize=256 -XX:-UseCompressedOops -XX:+UseG1GC -XX:-UseGCLogFileRotation -XX:+UseLargePages
 2017-01-12T04:41:34.411-0500: 0.341: Total time for which application threads were stopped: 0.0001222 seconds, Stopping threads took: 0.0000194 seconds
 2017-01-12T04:41:34.496-0500: 0.426: Total time for which application threads were stopped: 0.0001175 seconds, Stopping threads took: 0.0000275 seconds

@@ -49,24 +49,24 @@ public class Jvm {
     private String memory;
 
     /**
-     * Physical memory (kilobytes).
+     * Physical memory (bytes).
      */
-    private int physicalMemory;
+    private long physicalMemory;
 
     /**
-     * Physical memory free (kilobytes).
+     * Physical memory free (bytes).
      */
-    private int physicalMemoryFree;
+    private long physicalMemoryFree;
 
     /**
-     * Swap size (kilobytes).
+     * Swap size (bytes).
      */
-    private int swap;
+    private long swap;
 
     /**
-     * Swap free (kilobytes).
+     * Swap free (bytes).
      */
-    private int swapFree;
+    private long swapFree;
 
     /**
      * Constructor accepting list of JVM options.
@@ -133,35 +133,35 @@ public class Jvm {
         this.memory = memory;
     }
 
-    public int getPhysicalMemory() {
+    public long getPhysicalMemory() {
         return physicalMemory;
     }
 
-    public void setPhysicalMemory(int physicalMemory) {
+    public void setPhysicalMemory(long physicalMemory) {
         this.physicalMemory = physicalMemory;
     }
 
-    public int getPhysicalMemoryFree() {
+    public long getPhysicalMemoryFree() {
         return physicalMemoryFree;
     }
 
-    public void setPhysicalMemoryFree(int physicalMemoryFree) {
+    public void setPhysicalMemoryFree(long physicalMemoryFree) {
         this.physicalMemoryFree = physicalMemoryFree;
     }
 
-    public int getSwap() {
+    public long getSwap() {
         return swap;
     }
 
-    public void setSwap(int swap) {
+    public void setSwap(long swap) {
         this.swap = swap;
     }
 
-    public int getSwapFree() {
+    public long getSwapFree() {
         return swapFree;
     }
 
-    public void setSwapFree(int swapFree) {
+    public void setSwapFree(long swapFree) {
         this.swapFree = swapFree;
     }
 
@@ -940,9 +940,31 @@ public class Jvm {
      * 
      * @return the option if it exists, null otherwise.
      */
-    public String getCompressedClassSpaceSize() {
-        String regex = "(-XX:CompressedClassSpaceSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
+    public String getCompressedClassSpaceSizeOption() {
+        String regex = "(-XX:CompressedClassSpaceSize=((\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?))";
         return getJvmOption(regex);
+    }
+
+    /**
+     * @return The compressed class space size value, or null if not set. For example:
+     * 
+     *         <pre>
+     * 768m
+     *         </pre>
+     */
+    public String getCompressedClassSpaceSizeValue() {
+        return JdkUtil.getOptionValue(getCompressedClassSpaceSizeOption());
+    }
+
+    /**
+     * @return The compressed class space in bytes, or 0 if not set.
+     */
+    public long getCompressedClassSpaceSizeBytes() {
+        long compressedClassSpaceSizeBytes = 0;
+        if (getCompressedClassSpaceSizeValue() != null) {
+            compressedClassSpaceSizeBytes = JdkUtil.convertOptionSizeToBytes(getCompressedClassSpaceSizeValue());
+        }
+        return compressedClassSpaceSizeBytes;
     }
 
     /**

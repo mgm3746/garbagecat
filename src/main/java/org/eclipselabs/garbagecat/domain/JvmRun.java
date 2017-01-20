@@ -472,8 +472,16 @@ public class JvmRun {
 
         // 9) Check for insufficient physical memory
         if (getJvm().getPhysicalMemory() > 0) {
-            if (getJvm().getMaxHeapBytes() + getJvm().getMaxPermBytes() + getJvm().getMaxMetaspaceBytes() > getJvm()
-                    .getPhysicalMemory()) {
+            Long jvmMemory;
+            if (jvm.getUseCompressedOopsDisabled() == null && jvm.getUseCompressedClassPointersDisabled() == null) {
+                // Using compressed class pointers space
+                jvmMemory = getJvm().getMaxHeapBytes() + getJvm().getMaxPermBytes() + getJvm().getMaxMetaspaceBytes()
+                        + getJvm().getCompressedClassSpaceSizeBytes();
+            } else {
+                // Not using compressed class pointers space
+                jvmMemory = getJvm().getMaxHeapBytes() + getJvm().getMaxPermBytes() + getJvm().getMaxMetaspaceBytes();
+            }
+            if (jvmMemory > getJvm().getPhysicalMemory()) {
                 analysisKeys.add(Analysis.ERROR_PHYSICAL_MEMORY);
             }
         }
@@ -714,7 +722,7 @@ public class JvmRun {
                     // Heap < 32G
                     analysisKeys.add(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G);
                 }
-                if (jvm.getCompressedClassSpaceSize() != null) {
+                if (jvm.getCompressedClassSpaceSizeOption() != null) {
                     analysisKeys.add(Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED);
                 }
             }
@@ -728,12 +736,12 @@ public class JvmRun {
                     // Heap < 32G
                     analysisKeys.add(Analysis.ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G);
                 }
-                if (jvm.getCompressedClassSpaceSize() != null) {
+                if (jvm.getCompressedClassSpaceSizeOption() != null) {
                     analysisKeys.add(Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED);
                 }
             }
 
-            if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSize() == null) {
+            if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSizeOption() == null) {
                 analysisKeys.add(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET);
             }
         } else {
@@ -748,7 +756,7 @@ public class JvmRun {
             }
 
             // Should not be setting class pointer space size
-            if (jvm.getCompressedClassSpaceSize() != null) {
+            if (jvm.getCompressedClassSpaceSizeOption() != null) {
                 analysisKeys.add(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G);
             }
         }

@@ -621,7 +621,7 @@ public class TestJvm extends TestCase {
                 + "-XX:CompressedClassSpaceSize=768m -XX:+PrintGCApplicationConcurrentTime "
                 + "-XX:+CMSParallelRemarkEnabled";
         Jvm jvm = new Jvm(jvmOptions, null);
-        Assert.assertNotNull("CompressedClassSpaceSize not found.", jvm.getCompressedClassSpaceSize());
+        Assert.assertNotNull("CompressedClassSpaceSize not found.", jvm.getCompressedClassSpaceSizeOption());
     }
 
     public void testPrintTenuringDistribution() {
@@ -668,5 +668,12 @@ public class TestJvm extends TestCase {
         String jvmOptions = "-Xss128k";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Max metaspace bytes incorrect.", 0L, jvm.getMaxMetaspaceBytes());
+    }
+
+    public void testgetCompressedClassSpaceSizeBytes() {
+        String jvmOptions = "-XX:CompressedClassSpaceSize=768m";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("Compressed class space size bytes incorrect.", 805306368,
+                jvm.getCompressedClassSpaceSizeBytes());
     }
 }
