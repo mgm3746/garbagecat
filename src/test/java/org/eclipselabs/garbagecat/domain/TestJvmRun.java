@@ -431,6 +431,21 @@ public class TestJvmRun extends TestCase {
     }
 
     /**
+     * Test no gc logging events, only stopped time events.
+     */
+    public void testStoppedTimeWithoutGcEvents() {
+
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset108.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        jvmManager.store(testFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Stopped time throughput not correct.", 0, jvmRun.getStoppedTimeThroughput());
+    }
+
+    /**
      * Test identifying <code>ParNewEvent</code> running in incremental mode.
      */
     public void testPrintGcApplicationConcurrentTimeAnalysis() {

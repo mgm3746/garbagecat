@@ -369,11 +369,15 @@ public class JvmRun {
 
         long stoppedTimeThroughput;
         if (stoppedTimeEventCount > 0) {
-            long timeNotStopped = getJvmRunDuration() - new Long(totalStoppedTime).longValue();
-            BigDecimal throughput = new BigDecimal(timeNotStopped);
-            throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, RoundingMode.HALF_EVEN);
-            throughput = throughput.movePointRight(2);
-            stoppedTimeThroughput = throughput.longValue();
+            if (getJvmRunDuration() > 0) {
+                long timeNotStopped = getJvmRunDuration() - new Long(totalStoppedTime).longValue();
+                BigDecimal throughput = new BigDecimal(timeNotStopped);
+                throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, RoundingMode.HALF_EVEN);
+                throughput = throughput.movePointRight(2);
+                stoppedTimeThroughput = throughput.longValue();
+            } else {
+                stoppedTimeThroughput = 0L;
+            }
         } else {
             stoppedTimeThroughput = 100L;
         }
