@@ -806,4 +806,18 @@ public class TestAnalysis extends TestCase {
         Assert.assertFalse(Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING));
     }
+
+    /**
+     * Test physical memory less than heap + perm/metaspace.
+     */
+    public void testPhysicalMemoryLessThanJvmAllocation() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset109.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_PHYSICAL_MEMORY));
+    }
 }

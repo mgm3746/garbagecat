@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
@@ -38,9 +39,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class HeaderMemoryEvent implements LogEvent {
 
     /**
+     * Regular expression for memory size.
+     */
+    private static final String SIZE = "(\\d{1,9})k";
+
+    /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^Memory: .+$";
+    private static final String REGEX = "^Memory: 4k page, physical " + SIZE + "\\(" + SIZE + " free\\), swap " + SIZE
+            + "\\(" + SIZE + " free\\)$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
@@ -55,6 +62,26 @@ public class HeaderMemoryEvent implements LogEvent {
     private long timestamp;
 
     /**
+     * Physical memory (kilobytes).
+     */
+    private int physicalMemory;
+
+    /**
+     * Physical memory free (kilobytes).
+     */
+    private int physicalMemoryFree;
+
+    /**
+     * Swap size (kilobytes).
+     */
+    private int swap;
+
+    /**
+     * Swap free (kilobytes).
+     */
+    private int swapFree;
+
+    /**
      * Create event from log entry.
      * 
      * @param logEntry
@@ -63,6 +90,13 @@ public class HeaderMemoryEvent implements LogEvent {
     public HeaderMemoryEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            physicalMemory = Integer.parseInt(matcher.group(1));
+            physicalMemoryFree = Integer.parseInt(matcher.group(2));
+            swap = Integer.parseInt(matcher.group(3));
+            swapFree = Integer.parseInt(matcher.group(4));
+        }
     }
 
     public String getLogEntry() {
@@ -75,6 +109,22 @@ public class HeaderMemoryEvent implements LogEvent {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public int getPhysicalMemory() {
+        return physicalMemory;
+    }
+
+    public int getPhysicalMemoryFree() {
+        return physicalMemoryFree;
+    }
+
+    public int getSwap() {
+        return swap;
+    }
+
+    public int getSwapFree() {
+        return swapFree;
     }
 
     /**

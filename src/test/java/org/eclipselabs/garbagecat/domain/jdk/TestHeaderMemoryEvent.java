@@ -23,15 +23,22 @@ import junit.framework.TestCase;
  */
 public class TestHeaderMemoryEvent extends TestCase {
 
-    public void testLine() {
-        String logLine = "Memory: 4k page, physical 65806300k(58281908k free), swap 16777212k(16777212k free)";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEADER_MEMORY.toString() + ".",
-                HeaderMemoryEvent.match(logLine));
-    }
-
     public void testNotBlocking() {
         String logLine = "Memory: 4k page, physical 65806300k(58281908k free), swap 16777212k(16777212k free)";
         Assert.assertFalse(JdkUtil.LogEventType.HEADER_MEMORY.toString() + " incorrectly indentified as blocking.",
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
+    public void testLine() {
+        String logLine = "Memory: 4k page, physical 65806300k(58281908k free), swap 16777212k(16777212k free)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEADER_MEMORY.toString() + ".",
+                HeaderMemoryEvent.match(logLine));
+        HeaderMemoryEvent event = new HeaderMemoryEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 0, event.getTimestamp());
+        Assert.assertEquals("Physical memory not parsed correctly.", 65806300, event.getPhysicalMemory());
+        Assert.assertEquals("Physical memory free not parsed correctly.", 58281908, event.getPhysicalMemoryFree());
+        Assert.assertEquals("Swap not parsed correctly.", 16777212, event.getSwap());
+        Assert.assertEquals("Swap free not parsed correctly.", 16777212, event.getSwapFree());
+
     }
 }

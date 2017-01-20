@@ -430,6 +430,16 @@ public class Analysis {
     public static final String WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED = "warn.gc.log.file.num.rotation.disabled";
 
     /**
+     * Property key for significant swapping.
+     */
+    public static final String WARN_SWAPPY = "warn.swappy";
+
+    /**
+     * Property key for insufficient physical memory.
+     */
+    public static final String ERROR_PHYSICAL_MEMORY = "error.physical.memory";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

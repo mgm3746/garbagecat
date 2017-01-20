@@ -546,6 +546,10 @@ public class GcManager {
                     jvmDao.setOptions(((HeaderCommandLineFlagsEvent) event).getJvmOptions());
                 } else if (event instanceof HeaderMemoryEvent) {
                     jvmDao.setMemory(((HeaderMemoryEvent) event).getLogEntry());
+                    jvmDao.setPhysicalMemory(((HeaderMemoryEvent) event).getPhysicalMemory());
+                    jvmDao.setPhysicalMemoryFree(((HeaderMemoryEvent) event).getPhysicalMemoryFree());
+                    jvmDao.setSwap(((HeaderMemoryEvent) event).getSwap());
+                    jvmDao.setSwapFree(((HeaderMemoryEvent) event).getSwapFree());
                 } else if (event instanceof HeaderVersionEvent) {
                     jvmDao.setVersion(((HeaderVersionEvent) event).getLogEntry());
                 } else if (event instanceof GcOverheadLimitEvent) {
@@ -673,6 +677,10 @@ public class GcManager {
             jvmRun.getJvm().setOptions(jvmDao.getOptions());
         }
         jvmRun.getJvm().setMemory(jvmDao.getMemory());
+        jvmRun.getJvm().setPhysicalMemory(jvmDao.getPhysicalMemory());
+        jvmRun.getJvm().setPhysicalMemoryFree(jvmDao.getPhysicalMemoryFree());
+        jvmRun.getJvm().setSwap(jvmDao.getSwap());
+        jvmRun.getJvm().setSwapFree(jvmDao.getSwapFree());
         jvmRun.getJvm().setVersion(jvmDao.getVersion());
         jvmRun.setFirstGcTimestamp(jvmDao.getFirstGcTimestamp());
         jvmRun.setLastGcTimestamp(jvmDao.getLastGcTimestamp());

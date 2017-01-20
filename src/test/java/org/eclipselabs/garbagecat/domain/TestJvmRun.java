@@ -33,8 +33,150 @@ import junit.framework.TestCase;
  */
 public class TestJvmRun extends TestCase {
 
-    public void testSummaryStatsParallel() {
+    /**
+     * Test passing JVM options on the command line.
+     * 
+     */
+    public void testJvmOptionsPassedInOnCommandLine() {
+        String options = "MGM was here!";
+        GcManager jvmManager = new GcManager();
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue("JVM options passed in are missing or have changed.",
+                jvmRun.getJvm().getOptions().equals(options));
+    }
 
+    /**
+     * Test if -XX:+PrintReferenceGC enabled by inspecting logging events.
+     */
+    public void testPrintReferenceGCByLogging() {
+        String jvmOptions = null;
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.REFERENCE_GC);
+        jvmRun.setEventTypes(eventTypes);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED));
+    }
+
+    /**
+     * Test if -XX:+PrintReferenceGC enabled by inspecting jvm options.
+     */
+    public void testPrintReferenceGCByOptions() {
+        String jvmOptions = "-Xss128k -XX:+PrintReferenceGC -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED));
+    }
+
+    /**
+     * Test if -XX:+PrintStringDeduplicationStatistics enabled by inspecting jvm options.
+     */
+    public void testPrintStringDeduplicationStatistics() {
+        String jvmOptions = "-Xss128k -XX:+PrintStringDeduplicationStatistics -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED));
+    }
+
+    /**
+     * Test if PrintGCDetails disabled with -XX:-PrintGCDetails.
+     */
+    public void testPrintGCDetailsDisabled() {
+        String jvmOptions = "-Xss128k -XX:-PrintGCDetails -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED));
+        Assert.assertFalse(Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING));
+    }
+
+    /**
+     * Test if PAR_NEW collector disabled with -XX:-UseParNewGC.
+     */
+    public void testUseParNewGcDisabled() {
+        String jvmOptions = "-Xss128k -XX:-UseParNewGC -Xms2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_CMS_PAR_NEW_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_PAR_NEW_DISABLED));
+    }
+
+    /**
+     * Test percent swap free at threshold.
+     */
+    public void testPercentSwapFreeAtThreshold() {
+        String jvmOptions = null;
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.getJvm().setSwap(1000);
+        jvmRun.getJvm().setSwapFree(946);
+        jvmRun.doAnalysis();
+        Assert.assertEquals("Percent swap free not correct.", 95, jvmRun.getJvm().getPercentSwapFree());
+        Assert.assertFalse(Analysis.WARN_SWAPPY + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_SWAPPY));
+    }
+
+    /**
+     * Test percent swap free below threshold.
+     */
+    public void testPercentSwapFreeBelowThreshold() {
+        String jvmOptions = null;
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.getJvm().setSwap(1000);
+        jvmRun.getJvm().setSwapFree(945);
+        jvmRun.doAnalysis();
+        Assert.assertEquals("Percent swap free not correct.", 94, jvmRun.getJvm().getPercentSwapFree());
+        Assert.assertTrue(Analysis.WARN_SWAPPY + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_SWAPPY));
+    }
+
+    /**
+     * Test physical memory equals heap + perm/metaspace.
+     */
+    public void testPhysicalMemoryEqualJvmAllocation() {
+        String jvmOptions = "-Xmx1024M -XX:MaxPermSize=128M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.getJvm().setPhysicalMemory(1207959552);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_PHYSICAL_MEMORY));
+    }
+
+    /**
+     * Test physical memory less than heap + perm/metaspace.
+     */
+    public void testPhysicalMemoryLessThanJvmAllocation() {
+        String jvmOptions = "-Xmx1024M -XX:MaxPermSize=128M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.getJvm().setPhysicalMemory(1207959551);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_PHYSICAL_MEMORY));
+    }
+
+    public void testSummaryStatsParallel() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset1.txt");
         GcManager jvmManager = new GcManager();
@@ -458,88 +600,5 @@ public class TestJvmRun extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME));
-    }
-
-    /**
-     * Test passing JVM options on the command line.
-     * 
-     */
-    public void testJvmOptionsPassedInOnCommandLine() {
-        String options = "MGM was here!";
-        GcManager jvmManager = new GcManager();
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue("JVM options passed in are missing or have changed.",
-                jvmRun.getJvm().getOptions().equals(options));
-    }
-
-    /**
-     * Test if -XX:+PrintReferenceGC enabled by inspecting logging events.
-     */
-    public void testPrintReferenceGCByLogging() {
-        String jvmOptions = null;
-        GcManager jvmManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.REFERENCE_GC);
-        jvmRun.setEventTypes(eventTypes);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED));
-    }
-
-    /**
-     * Test if -XX:+PrintReferenceGC enabled by inspecting jvm options.
-     */
-    public void testPrintReferenceGCByOptions() {
-        String jvmOptions = "Xss128k -XX:+PrintReferenceGC -Xms2048M";
-        GcManager jvmManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED));
-    }
-
-    /**
-     * Test if -XX:+PrintStringDeduplicationStatistics enabled by inspecting jvm options.
-     */
-    public void testPrintStringDeduplicationStatistics() {
-        String jvmOptions = "Xss128k -XX:+PrintStringDeduplicationStatistics -Xms2048M";
-        GcManager jvmManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED));
-    }
-
-    /**
-     * Test if PrintGCDetails disabled with -XX:-PrintGCDetails.
-     */
-    public void testPrintGCDetailsDisabled() {
-        String jvmOptions = "Xss128k -XX:-PrintGCDetails -Xms2048M";
-        GcManager jvmManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED));
-        Assert.assertFalse(Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING));
-    }
-
-    /**
-     * Test if PAR_NEW collector disabled with -XX:-UseParNewGC.
-     */
-    public void testUseParNewGcDisabled() {
-        String jvmOptions = "Xss128k -XX:-UseParNewGC -Xms2048M";
-        GcManager jvmManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.WARN_CMS_PAR_NEW_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_PAR_NEW_DISABLED));
     }
 }

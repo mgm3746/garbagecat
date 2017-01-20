@@ -185,12 +185,6 @@ public class JdkUtil {
             return LogEventType.VERBOSE_GC_YOUNG;
         if (VerboseGcOldEvent.match(logLine))
             return LogEventType.VERBOSE_GC_OLD;
-        if (HeaderCommandLineFlagsEvent.match(logLine))
-            return LogEventType.HEADER_COMMAND_LINE_FLAGS;
-        if (HeaderMemoryEvent.match(logLine))
-            return LogEventType.HEADER_MEMORY;
-        if (HeaderVersionEvent.match(logLine))
-            return LogEventType.HEADER_VERSION;
         if (ReferenceGcEvent.match(logLine))
             return LogEventType.REFERENCE_GC;
         if (ClassUnloadingEvent.match(logLine))
@@ -215,6 +209,12 @@ public class JdkUtil {
             return LogEventType.FLS_STATISTICS;
         if (GcLockerEvent.match(logLine))
             return LogEventType.GC_LOCKER;
+        if (HeaderCommandLineFlagsEvent.match(logLine))
+            return LogEventType.HEADER_COMMAND_LINE_FLAGS;
+        if (HeaderMemoryEvent.match(logLine))
+            return LogEventType.HEADER_MEMORY;
+        if (HeaderVersionEvent.match(logLine))
+            return LogEventType.HEADER_VERSION;
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -314,15 +314,6 @@ public class JdkUtil {
         case GC_LOCKER:
             event = new GcLockerEvent(logLine);
             break;
-        case HEADER_COMMAND_LINE_FLAGS:
-            event = new HeaderCommandLineFlagsEvent(logLine);
-            break;
-        case HEADER_MEMORY:
-            event = new HeaderMemoryEvent(logLine);
-            break;
-        case HEADER_VERSION:
-            event = new HeaderVersionEvent(logLine);
-            break;
         case HEAP_AT_GC:
             event = new HeapAtGcEvent(logLine);
             break;
@@ -349,6 +340,15 @@ public class JdkUtil {
             break;
         case VERBOSE_GC_YOUNG:
             event = new VerboseGcYoungEvent(logLine);
+            break;
+        case HEADER_COMMAND_LINE_FLAGS:
+            event = new HeaderCommandLineFlagsEvent(logLine);
+            break;
+        case HEADER_MEMORY:
+            event = new HeaderMemoryEvent(logLine);
+            break;
+        case HEADER_VERSION:
+            event = new HeaderVersionEvent(logLine);
             break;
         default:
             throw new AssertionError("Unexpected event type value: " + eventType);

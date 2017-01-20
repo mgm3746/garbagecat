@@ -643,4 +643,30 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Max heap bytes incorrect.", 0L, jvm.getMaxHeapBytes());
     }
+
+    public void testMaxPermBytes() {
+        String jvmOptions = "-Xss128k -Xmx2048m -XX:MaxPermSize=1280m";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        BigDecimal size = new BigDecimal("1342177280");
+        Assert.assertEquals("Max perm space bytes incorrect.", size.longValue(), jvm.getMaxPermBytes());
+    }
+
+    public void testMaxPermBytesUnknown() {
+        String jvmOptions = "-Xss128k";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("Max perm space bytes incorrect.", 0L, jvm.getMaxPermBytes());
+    }
+
+    public void testMaxMetaspaceBytes() {
+        String jvmOptions = "-Xss128k -Xmx2048m -XX:MaxMetaspaceSize=1280m";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        BigDecimal size = new BigDecimal("1342177280");
+        Assert.assertEquals("Max metaspace bytes incorrect.", size.longValue(), jvm.getMaxMetaspaceBytes());
+    }
+
+    public void testMaxMetaspaceBytesUnknown() {
+        String jvmOptions = "-Xss128k";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("Max metaspace bytes incorrect.", 0L, jvm.getMaxMetaspaceBytes());
+    }
 }

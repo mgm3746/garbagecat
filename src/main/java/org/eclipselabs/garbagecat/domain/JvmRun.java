@@ -464,6 +464,19 @@ public class JvmRun {
                 analysisKeys.add(Analysis.WARN_CMS_PAR_NEW_DISABLED);
             }
         }
+
+        // 8) Check for swappiness
+        if (getJvm().getPercentSwapFree() < 95) {
+            analysisKeys.add(Analysis.WARN_SWAPPY);
+        }
+
+        // 9) Check for insufficient physical memory
+        if (getJvm().getPhysicalMemory() > 0) {
+            if (getJvm().getMaxHeapBytes() + getJvm().getMaxPermBytes() + getJvm().getMaxMetaspaceBytes() > getJvm()
+                    .getPhysicalMemory()) {
+                analysisKeys.add(Analysis.ERROR_PHYSICAL_MEMORY);
+            }
+        }
     }
 
     /**

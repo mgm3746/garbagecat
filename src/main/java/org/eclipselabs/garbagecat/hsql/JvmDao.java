@@ -121,6 +121,26 @@ public class JvmDao {
      */
     private String memory;
 
+    /**
+     * Physical memory (kilobytes).
+     */
+    private int physicalMemory;
+
+    /**
+     * Physical memory free (kilobytes).
+     */
+    private int physicalMemoryFree;
+
+    /**
+     * Swap size (kilobytes).
+     */
+    private int swap;
+
+    /**
+     * Swap free (kilobytes).
+     */
+    private int swapFree;
+
     public JvmDao() {
         try {
             // Load database driver.
@@ -254,6 +274,66 @@ public class JvmDao {
      */
     public void setMemory(String memory) {
         this.memory = memory;
+    }
+
+    /**
+     * @return The JVM environment physical memory.
+     */
+    public int getPhysicalMemory() {
+        return physicalMemory;
+    }
+
+    /**
+     * @param physicalMemory
+     *            The JVM physical memory to set.
+     */
+    public void setPhysicalMemory(int physicalMemory) {
+        this.physicalMemory = physicalMemory;
+    }
+
+    /**
+     * @return The JVM environment physical free memory.
+     */
+    public int getPhysicalMemoryFree() {
+        return physicalMemoryFree;
+    }
+
+    /**
+     * @param physicalMemoryFree
+     *            The JVM physical free memory to set.
+     */
+    public void setPhysicalMemoryFree(int physicalMemoryFree) {
+        this.physicalMemoryFree = physicalMemoryFree;
+    }
+
+    /**
+     * @return The JVM environment swap size.
+     */
+    public int getSwap() {
+        return swap;
+    }
+
+    /**
+     * @param swap
+     *            The JVM swap to set.
+     */
+    public void setSwap(int swap) {
+        this.swap = swap;
+    }
+
+    /**
+     * @return The JVM environment swap free.
+     */
+    public int getSwapFree() {
+        return swapFree;
+    }
+
+    /**
+     * @param swapFree
+     *            The JVM swap free to set.
+     */
+    public void setSwapFree(int swapFree) {
+        this.swapFree = swapFree;
     }
 
     /**

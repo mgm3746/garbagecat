@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,6 +47,26 @@ public class Jvm {
      * JVM memory information.
      */
     private String memory;
+
+    /**
+     * Physical memory (kilobytes).
+     */
+    private int physicalMemory;
+
+    /**
+     * Physical memory free (kilobytes).
+     */
+    private int physicalMemoryFree;
+
+    /**
+     * Swap size (kilobytes).
+     */
+    private int swap;
+
+    /**
+     * Swap free (kilobytes).
+     */
+    private int swapFree;
 
     /**
      * Constructor accepting list of JVM options.
@@ -109,6 +131,38 @@ public class Jvm {
      */
     public void setMemory(String memory) {
         this.memory = memory;
+    }
+
+    public int getPhysicalMemory() {
+        return physicalMemory;
+    }
+
+    public void setPhysicalMemory(int physicalMemory) {
+        this.physicalMemory = physicalMemory;
+    }
+
+    public int getPhysicalMemoryFree() {
+        return physicalMemoryFree;
+    }
+
+    public void setPhysicalMemoryFree(int physicalMemoryFree) {
+        this.physicalMemoryFree = physicalMemoryFree;
+    }
+
+    public int getSwap() {
+        return swap;
+    }
+
+    public void setSwap(int swap) {
+        this.swap = swap;
+    }
+
+    public int getSwapFree() {
+        return swapFree;
+    }
+
+    public void setSwapFree(int swapFree) {
+        this.swapFree = swapFree;
     }
 
     /**
@@ -214,6 +268,28 @@ public class Jvm {
             maxHeapBytes = JdkUtil.convertOptionSizeToBytes(getMaxHeapValue());
         }
         return maxHeapBytes;
+    }
+
+    /**
+     * @return The maximum perm space in bytes, or 0 if not set.
+     */
+    public long getMaxPermBytes() {
+        long maxPermBytes = 0;
+        if (getMaxPermValue() != null) {
+            maxPermBytes = JdkUtil.convertOptionSizeToBytes(getMaxPermValue());
+        }
+        return maxPermBytes;
+    }
+
+    /**
+     * @return The maximum metaspace in bytes, or 0 if not set.
+     */
+    public long getMaxMetaspaceBytes() {
+        long maxMetaspaceBytes = 0;
+        if (getMaxMetaspaceValue() != null) {
+            maxMetaspaceBytes = JdkUtil.convertOptionSizeToBytes(getMaxMetaspaceValue());
+        }
+        return maxMetaspaceBytes;
     }
 
     /**
@@ -976,5 +1052,21 @@ public class Jvm {
             is64Bit = version.matches("^.+64-Bit.+$");
         }
         return is64Bit;
+    }
+
+    /**
+     * @return The percentage of swap that is free. 100 means no swap used. 0 means all swap used.
+     */
+    public long getPercentSwapFree() {
+        long percentSwapFree;
+        if (swap > 0) {
+            BigDecimal percentFree = new BigDecimal(swapFree);
+            percentFree = percentFree.divide(new BigDecimal(swap), 2, RoundingMode.HALF_EVEN);
+            percentFree = percentFree.movePointRight(2);
+            percentSwapFree = percentFree.longValue();
+        } else {
+            percentSwapFree = 100L;
+        }
+        return percentSwapFree;
     }
 }
