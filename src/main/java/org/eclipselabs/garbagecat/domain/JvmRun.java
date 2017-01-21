@@ -467,7 +467,7 @@ public class JvmRun {
 
         // 8) Check for swappiness
         if (getJvm().getPercentSwapFree() < 95) {
-            analysisKeys.add(Analysis.WARN_SWAPPY);
+            analysisKeys.add(Analysis.INFO_SWAPPING);
         }
 
         // 9) Check for insufficient physical memory

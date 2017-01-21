@@ -128,8 +128,8 @@ public class TestJvmRun extends TestCase {
         jvmRun.getJvm().setSwapFree(946);
         jvmRun.doAnalysis();
         Assert.assertEquals("Percent swap free not correct.", 95, jvmRun.getJvm().getPercentSwapFree());
-        Assert.assertFalse(Analysis.WARN_SWAPPY + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_SWAPPY));
+        Assert.assertFalse(Analysis.INFO_SWAPPING + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_SWAPPING));
     }
 
     /**
@@ -144,8 +144,8 @@ public class TestJvmRun extends TestCase {
         jvmRun.getJvm().setSwapFree(945);
         jvmRun.doAnalysis();
         Assert.assertEquals("Percent swap free not correct.", 94, jvmRun.getJvm().getPercentSwapFree());
-        Assert.assertTrue(Analysis.WARN_SWAPPY + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_SWAPPY));
+        Assert.assertTrue(Analysis.INFO_SWAPPING + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_SWAPPING));
     }
 
     /**

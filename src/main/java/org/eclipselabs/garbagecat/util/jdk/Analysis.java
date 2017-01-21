@@ -430,9 +430,9 @@ public class Analysis {
     public static final String WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED = "warn.gc.log.file.num.rotation.disabled";
 
     /**
-     * Property key for significant swapping.
+     * Property key for swapping.
      */
-    public static final String WARN_SWAPPY = "warn.swappy";
+    public static final String INFO_SWAPPING = "info.swapping";
 
     /**
      * Property key for insufficient physical memory.
