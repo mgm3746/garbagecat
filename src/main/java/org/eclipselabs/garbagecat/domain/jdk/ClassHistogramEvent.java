@@ -69,7 +69,7 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
     /**
      * Regular expression for cruft left after class histogram preprocessing.
      */
-    public static final String REGEX_PREPROCESSED = "(" + JdkRegEx.TIMESTAMP
+    public static final String REGEX_PREPROCESSED = "(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP
             + ": )?\\[Class Histogram( \\((before|after) full gc\\))?(:)?[ ]{0,1}?, " + JdkRegEx.DURATION + "\\]";
 
     /**

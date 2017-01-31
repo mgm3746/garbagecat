@@ -122,6 +122,21 @@ public class TestG1MixedPauseEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 61, event.getDuration());
     }
 
+    public void testLogLinePreprocessedWithDatestamp() {
+        String logLine = "2016-02-09T23:27:04.149-0500: 3082.652: [GC pause (mixed), 0.0762060 secs]"
+                + "[Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: 40.0M->40.0M Heap: 11.8G(26.0G)->9058.4M(26.0G)] "
+                + "[Times: user=0.30 sys=0.00, real=0.08 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
+                G1MixedPauseEvent.match(logLine));
+        G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 3082652, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 12373197, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 9275802, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 26 * 1024 * 1024,
+                event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 76, event.getDuration());
+    }
+
     public void testNoTriggerToSpaceExhausted() {
         String logLine = "615375.044: [GC pause (mixed) (to-space exhausted), 1.5026320 secs]"
                 + "[Eden: 3416.0M(3416.0M)->0.0B(3464.0M) Survivors: 264.0M->216.0M Heap: 17.7G(18.0G)->17.8G(18.0G)] "

@@ -57,7 +57,6 @@ import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ParallelPreprocessAction;
@@ -213,24 +212,12 @@ public class GcManager {
 
         String preprocessedLogLine = null;
 
-        // First convert any datestamps to timestamps
-        if (JdkUtil.isLogLineWithDateStamp(currentLogLine)) {
-            // The datestamp prefixes or replaces the timestamp
-            if (DateStampPrefixPreprocessAction.match(currentLogLine)) {
-                // Datestamp + Timestamp combinationdataset83.txt => drop the timestamp
-                DateStampPrefixPreprocessAction action = new DateStampPrefixPreprocessAction(currentLogLine);
-                currentLogLine = action.getLogEntry();
-            } else {
-                // Datestamp only. Convert datestamp to timestamp.
-                if (jvmStartDate == null) {
-                    throw new IllegalArgumentException(
-                            "JVM start datetime must be defined to do datestamp to timestamp conversion."
-                                    + currentLogLine);
-                }
-                DateStampPreprocessAction action = new DateStampPreprocessAction(currentLogLine, jvmStartDate);
-                currentLogLine = action.getLogEntry();
-            }
+        // Convert datestamp to timestamp.
+        if (jvmStartDate != null && DateStampPreprocessAction.match(currentLogLine)) {
+            DateStampPreprocessAction action = new DateStampPreprocessAction(currentLogLine, jvmStartDate);
+            currentLogLine = action.getLogEntry();
         }
+
         // Other preprocessing
         if (isThrowawayEvent(currentLogLine)) {
             // Analysis

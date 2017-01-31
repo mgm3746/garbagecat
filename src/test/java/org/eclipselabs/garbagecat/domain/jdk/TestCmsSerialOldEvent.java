@@ -700,7 +700,7 @@ public class TestCmsSerialOldEvent extends TestCase {
                 CmsSerialOldEvent.match(logLine));
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         Assert.assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
+                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
         Assert.assertEquals("Time stamp not parsed correctly.", 1817644, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", 1382383, event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", 2873414 - 2658303, event.getYoungOccupancyEnd());

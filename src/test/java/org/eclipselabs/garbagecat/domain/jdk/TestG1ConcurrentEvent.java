@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 import junit.framework.Assert;
@@ -80,11 +79,9 @@ public class TestG1ConcurrentEvent extends TestCase {
 
     public void testDateStamp() {
         String logLine = "2016-02-09T06:22:10.399-0500: 28039.161: [GC concurrent-root-region-scan-start]";
-        // Datestamp preprocessing is done before any other preprocessing
-        DateStampPrefixPreprocessAction action = new DateStampPrefixPreprocessAction(logLine);
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
-                G1ConcurrentEvent.match(action.getLogEntry()));
-        G1ConcurrentEvent event = new G1ConcurrentEvent(action.getLogEntry());
+                G1ConcurrentEvent.match(logLine));
+        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 28039161, event.getTimestamp());
     }
 
@@ -99,11 +96,9 @@ public class TestG1ConcurrentEvent extends TestCase {
 
     public void testLogLineCleanupEndWithDatestamp() {
         String logLine = "2016-02-11T18:15:35.431-0500: 14974.501: [GC concurrent-cleanup-end, 0.0033880 secs]";
-        // Datestamp preprocessing is done before any other preprocessing
-        DateStampPrefixPreprocessAction action = new DateStampPrefixPreprocessAction(logLine);
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
-                G1ConcurrentEvent.match(action.getLogEntry()));
-        G1ConcurrentEvent event = new G1ConcurrentEvent(action.getLogEntry());
+                G1ConcurrentEvent.match(logLine));
+        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 14974501, event.getTimestamp());
     }
 
@@ -146,5 +141,13 @@ public class TestG1ConcurrentEvent extends TestCase {
                 G1ConcurrentEvent.match(logLine));
         G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 1048227, event.getTimestamp());
+    }
+
+    public void testLogLineWithDatestamp() {
+        String logLine = "2016-02-09T06:17:15.377-0500: 27744.139: [GC concurrent-root-region-scan-start]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
+                G1ConcurrentEvent.match(logLine));
+        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 27744139, event.getTimestamp());
     }
 }

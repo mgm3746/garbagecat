@@ -44,8 +44,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 2) JDK8 after {@link org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction} with trigger, no
- * space after trigger, and no space after "scrub symbol table":
+ * 2) JDK8 with trigger, no space after trigger, and no space after "scrub symbol table":
  * </p>
  * 
  * <pre>

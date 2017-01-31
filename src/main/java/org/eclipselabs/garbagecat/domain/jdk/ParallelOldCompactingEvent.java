@@ -158,8 +158,8 @@ public class ParallelOldCompactingEvent extends ParallelCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(" + TRIGGER
-            + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\("
+            + TRIGGER + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\)\\] \\[ParOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(,)? \\[(PSPermGen|Metaspace): "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
@@ -177,19 +177,19 @@ public class ParallelOldCompactingEvent extends ParallelCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(3);
-            young = Integer.parseInt(matcher.group(5));
-            youngEnd = Integer.parseInt(matcher.group(6));
-            youngAvailable = Integer.parseInt(matcher.group(7));
-            old = Integer.parseInt(matcher.group(8));
-            oldEnd = Integer.parseInt(matcher.group(9));
-            oldAllocation = Integer.parseInt(matcher.group(10));
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            trigger = matcher.group(14);
+            young = Integer.parseInt(matcher.group(16));
+            youngEnd = Integer.parseInt(matcher.group(17));
+            youngAvailable = Integer.parseInt(matcher.group(18));
+            old = Integer.parseInt(matcher.group(19));
+            oldEnd = Integer.parseInt(matcher.group(20));
+            oldAllocation = Integer.parseInt(matcher.group(21));
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Integer.parseInt(matcher.group(16));
-            permGenEnd = Integer.parseInt(matcher.group(17));
-            permGenAllocation = Integer.parseInt(matcher.group(18));
-            duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+            permGen = Integer.parseInt(matcher.group(27));
+            permGenEnd = Integer.parseInt(matcher.group(28));
+            permGenAllocation = Integer.parseInt(matcher.group(29));
+            duration = JdkMath.convertSecsToMillis(matcher.group(30)).intValue();
         }
     }
 

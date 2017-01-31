@@ -96,7 +96,7 @@ public class JdkUtil {
      * Defined preprocessing actions.
      */
     public enum PreprocessActionType {
-        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, DATE_STAMP, DATE_STAMP_PREFIX, G1, CMS, PARALLEL, SERIAL
+        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, DATE_STAMP, G1, CMS, PARALLEL, SERIAL
     };
 
     /**

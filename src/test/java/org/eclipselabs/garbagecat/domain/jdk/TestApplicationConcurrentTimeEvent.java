@@ -57,4 +57,11 @@ public class TestApplicationConcurrentTimeEvent extends TestCase {
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
                 ApplicationConcurrentTimeEvent.match(logLine));
     }
+
+    public void testLogLineDatestamp() {
+        String logLine = "2016-12-21T14:28:11.159-0500: 0.311: Application time: 0.0060964 seconds";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                ApplicationConcurrentTimeEvent.match(logLine));
+    }
 }

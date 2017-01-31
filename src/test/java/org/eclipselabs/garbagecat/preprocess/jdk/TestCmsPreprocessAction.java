@@ -125,7 +125,8 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testLogLineCmsSerialOldMixedConcurrentMark() {
-        String logLine = "44.684: [Full GC44.684: [CMS44.877: [CMS-concurrent-mark: 1.508/2.428 secs] "
+        String logLine = "2016-02-26T16:37:58.740+1100: 44.684: [Full GC2016-02-26T16:37:58.740+1100: 44.684: [CMS"
+                + "2016-02-26T16:37:58.933+1100: 44.877: [CMS-concurrent-mark: 1.508/2.428 secs] "
                 + "[Times: user=3.44 sys=0.49, real=2.42 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
                 CmsPreprocessAction.match(logLine, null, null));

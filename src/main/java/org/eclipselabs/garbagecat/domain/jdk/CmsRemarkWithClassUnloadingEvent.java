@@ -116,11 +116,11 @@ public class CmsRemarkWithClassUnloadingEvent extends CmsCollector implements Bl
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
-            + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\])?"
-            + JdkRegEx.TIMESTAMP + ": \\[Rescan \\((non-)?parallel\\) (" + JdkRegEx.TIMESTAMP
-            + ": \\[grey object rescan, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[root rescan, "
-            + JdkRegEx.DURATION + "\\])?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+    private static final String REGEX = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(("
+            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
+            + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\((non-)?parallel\\) ("
+            + JdkRegEx.TIMESTAMP + ": \\[grey object rescan, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[root rescan, " + JdkRegEx.DURATION + "\\])?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
             + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[class unloading, "
             + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": ((\\[scrub symbol & string tables, "
             + JdkRegEx.DURATION + "\\])|(\\[scrub symbol table, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
@@ -141,14 +141,14 @@ public class CmsRemarkWithClassUnloadingEvent extends CmsCollector implements Bl
         if (matcher.find()) {
             if (matcher.group(1) != null) {
                 // Initial GC[YG block exists
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(2)).longValue();
-                trigger = matcher.group(4);
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                trigger = matcher.group(15);
             } else {
                 // Initial GC[YG block missing
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(7)).longValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(18)).longValue();
             }
             // The last duration is the total duration for the phase.
-            duration = JdkMath.convertSecsToMillis(matcher.group(48)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(59)).intValue();
         }
     }
 

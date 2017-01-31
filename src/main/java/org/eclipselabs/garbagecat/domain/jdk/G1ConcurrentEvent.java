@@ -109,7 +109,8 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP
             + ": \\[GC concurrent-(((root-region-scan|mark|cleanup)-(start|end|abort|reset-for-overflow))"
             + "|string-deduplication)(\\])?(,)?( " + JdkRegEx.DURATION + ")?(\\])?( " + JdkRegEx.SIZE_G1 + "->"
             + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\))?(, avg " + JdkRegEx.PERCENT + ", " + JdkRegEx.DURATION
@@ -138,7 +139,7 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent {
 
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(3)).longValue();
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
         }
     }
 

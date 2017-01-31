@@ -142,8 +142,8 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(" + TRIGGER
-            + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\("
+            + TRIGGER + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
@@ -161,24 +161,24 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            this.timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
 
-            if (matcher.group(3) != null) {
-                this.trigger = matcher.group(3);
+            if (matcher.group(14) != null) {
+                this.trigger = matcher.group(14);
             }
-            this.young = Integer.parseInt(matcher.group(5));
-            this.youngEnd = Integer.parseInt(matcher.group(6));
-            this.youngAvailable = Integer.parseInt(matcher.group(7));
+            this.young = Integer.parseInt(matcher.group(16));
+            this.youngEnd = Integer.parseInt(matcher.group(17));
+            this.youngAvailable = Integer.parseInt(matcher.group(18));
 
-            this.old = Integer.parseInt(matcher.group(8));
-            this.oldEnd = Integer.parseInt(matcher.group(9));
-            this.oldAllocation = Integer.parseInt(matcher.group(10));
+            this.old = Integer.parseInt(matcher.group(19));
+            this.oldEnd = Integer.parseInt(matcher.group(20));
+            this.oldAllocation = Integer.parseInt(matcher.group(21));
 
-            this.permGen = Integer.parseInt(matcher.group(14));
-            this.permGenEnd = Integer.parseInt(matcher.group(15));
-            this.permGenAllocation = Integer.parseInt(matcher.group(16));
+            this.permGen = Integer.parseInt(matcher.group(25));
+            this.permGenEnd = Integer.parseInt(matcher.group(26));
+            this.permGenAllocation = Integer.parseInt(matcher.group(27));
 
-            this.duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
+            this.duration = JdkMath.convertSecsToMillis(matcher.group(28)).intValue();
         }
     }
 

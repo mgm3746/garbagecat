@@ -45,11 +45,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 1) Missing beginning occupancy:
+ * 2) Missing beginning occupancy:
  * </p>
  * 
  * <pre>
  * 90.168: [GC 876593K(1851392K), 0.0701780 secs]
+ * </pre>
+ * 
+ * <p>
+ * 3) With datestamp:
+ * </p>
+ * 
+ * <pre>
+ * 2016-07-22T11:49:00.678+0100: 4.970: [GC (Allocation Failure)  136320K-&gt;18558K(3128704K), 0.1028162 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -103,9 +111,9 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC(--)?( \\(" + TRIGGER + "\\) )? ("
-            + JdkRegEx.SIZE + "->)?" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
-            + "\\]?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC(--)?( \\("
+            + TRIGGER + "\\) )? (" + JdkRegEx.SIZE + "->)?" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\]?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
 
@@ -119,17 +127,17 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(4);
-            if (matcher.group(5) != null) {
-                combinedBegin = Integer.parseInt(matcher.group(6));
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            trigger = matcher.group(15);
+            if (matcher.group(16) != null) {
+                combinedBegin = Integer.parseInt(matcher.group(17));
             } else {
                 // set it to the end
-                combinedBegin = Integer.parseInt(matcher.group(7));
+                combinedBegin = Integer.parseInt(matcher.group(18));
             }
-            combinedEnd = Integer.parseInt(matcher.group(7));
-            combinedAllocation = Integer.parseInt(matcher.group(8));
-            duration = JdkMath.convertSecsToMillis(matcher.group(9)).intValue();
+            combinedEnd = Integer.parseInt(matcher.group(18));
+            combinedAllocation = Integer.parseInt(matcher.group(19));
+            duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
         }
     }
 

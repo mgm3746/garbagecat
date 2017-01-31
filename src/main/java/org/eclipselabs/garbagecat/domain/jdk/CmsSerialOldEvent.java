@@ -64,23 +64,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 3) After {@link org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction} with no space after Full
- * GC:
+ * 3) No space after Full GC: GC:
  * </p>
  * 
  * <pre>
- * raw:
  * 2013-12-09T16:43:09.366+0000: 1504.625: [Full GC2013-12-09T16:43:09.366+0000: 1504.625: [CMS: 1172695K-&gt;840574K(1549164K), 3.7572507 secs] 1301420K-&gt;840574K(1855852K), [CMS Perm : 226817K-&gt;226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
- * 
- * </pre>
- * 
- * <pre>
- * preprocessed:
- * 1504.625: [Full GC1504.625: [CMS: 1172695K-&gt;840574K(1549164K), 3.7572507 secs] 1301420K-&gt;840574K(1855852K), [CMS Perm : 226817K-&gt;226813K(376168K)], 3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]
  * </pre>
  * 
  * <p>
- * 4) After {@link org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction} with trigger after "CMS":
+ * 4) With trigger after "CMS":
  * </p>
  * 
  * <pre>
@@ -245,8 +237,9 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
     /**
      * Regular expression defining the logging beginning with "Full GC".
      */
-    private static final String REGEX_FULL_GC = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( \\(" + TRIGGER_FULL_GC
-            + "\\))?[ ]{0,1}(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + JdkRegEx.TIMESTAMP + ": "
+    private static final String REGEX_FULL_GC = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[Full GC( \\(" + TRIGGER_FULL_GC + "\\))?[ ]{0,1}(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?("
+            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": "
             + "\\[CMS(bailing out to foreground collection)?( \\(" + TRIGGER_CMS + "\\))?( \\(" + TRIGGER_CMS + "\\))?("
             + REMARK_BLOCK + ")?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
             + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")? " + JdkRegEx.SIZE + "->"
@@ -257,11 +250,11 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
     /**
      * Regular expression defining the logging beginning with "GC".
      */
-    private static final String REGEX_GC = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + TRIGGER_GC + "\\))?[ ]{0,1}"
-            + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(" + TRIGGER_PAR_NEW + "\\))?: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]("
-            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?((" + JdkRegEx.TIMESTAMP
-            + ": \\[(CMS|Tenured))?(Java HotSpot\\(TM\\) Server VM warning: )?"
+    private static final String REGEX_GC = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC( \\("
+            + TRIGGER_GC + "\\))?[ ]{0,1}(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\("
+            + TRIGGER_PAR_NEW + "\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?(((" + JdkRegEx.DATESTAMP
+            + ": )?" + JdkRegEx.TIMESTAMP + ": \\[(CMS|Tenured))?(Java HotSpot\\(TM\\) Server VM warning: )?"
             + "(bailing out to foreground collection)?( \\(" + TRIGGER_CMS + "\\))?(: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?)?("
             + ClassHistogramEvent.REGEX_PREPROCESSED + ")?( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
@@ -282,82 +275,82 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
             Pattern pattern = Pattern.compile(REGEX_FULL_GC);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                this.timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 // If multiple triggers, use last one.
-                if (matcher.group(5) != null || matcher.group(45) != null) {
+                if (matcher.group(16) != null || matcher.group(89) != null) {
                     this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
-                } else if (matcher.group(17) != null) {
-                    this.trigger = matcher.group(17);
-                } else if (matcher.group(15) != null) {
-                    this.trigger = matcher.group(15);
-                } else if (matcher.group(3) != null) {
-                    this.trigger = matcher.group(3);
+                } else if (matcher.group(52) != null) {
+                    this.trigger = matcher.group(52);
+                } else if (matcher.group(50) != null) {
+                    this.trigger = matcher.group(50);
+                } else if (matcher.group(14) != null) {
+                    this.trigger = matcher.group(14);
                 }
-                this.old = Integer.parseInt(matcher.group(39));
-                this.oldEnd = Integer.parseInt(matcher.group(40));
-                this.oldAllocation = Integer.parseInt(matcher.group(41));
-                this.young = Integer.parseInt(matcher.group(54)) - this.old;
-                this.youngEnd = Integer.parseInt(matcher.group(55)) - this.oldEnd;
-                this.youngAvailable = Integer.parseInt(matcher.group(56)) - this.oldAllocation;
-                this.permGen = Integer.parseInt(matcher.group(58));
-                this.permGenEnd = Integer.parseInt(matcher.group(59));
-                this.permGenAllocation = Integer.parseInt(matcher.group(60));
-                if (matcher.group(61) != null) {
+                this.old = Integer.parseInt(matcher.group(72));
+                this.oldEnd = Integer.parseInt(matcher.group(73));
+                this.oldAllocation = Integer.parseInt(matcher.group(74));
+                this.young = Integer.parseInt(matcher.group(98)) - this.old;
+                this.youngEnd = Integer.parseInt(matcher.group(99)) - this.oldEnd;
+                this.youngAvailable = Integer.parseInt(matcher.group(100)) - this.oldAllocation;
+                this.permGen = Integer.parseInt(matcher.group(102));
+                this.permGenEnd = Integer.parseInt(matcher.group(103));
+                this.permGenAllocation = Integer.parseInt(matcher.group(104));
+                if (matcher.group(105) != null) {
                     super.setIncrementalMode(true);
                 }
-                this.duration = JdkMath.convertSecsToMillis(matcher.group(62)).intValue();
+                this.duration = JdkMath.convertSecsToMillis(matcher.group(106)).intValue();
             }
         } else if (logEntry.matches(REGEX_GC)) {
             Pattern pattern = Pattern.compile(REGEX_GC);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                this.timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                this.timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 // If multiple triggers, use last one.
-                if (matcher.group(29) != null) {
-                    this.trigger = matcher.group(29);
-                } else if (matcher.group(6) != null) {
-                    this.trigger = matcher.group(6);
+                if (matcher.group(73) != null) {
+                    this.trigger = matcher.group(73);
+                } else if (matcher.group(14) != null) {
+                    this.trigger = matcher.group(14);
                 } else {
                     // assume promotion failure
                     this.trigger = JdkRegEx.TRIGGER_PROMOTION_FAILED;
                 }
-                this.young = Integer.parseInt(matcher.group(7));
+                this.young = Integer.parseInt(matcher.group(29));
                 // No data to determine young end size.
                 this.youngEnd = 0;
-                this.youngAvailable = Integer.parseInt(matcher.group(9));
+                this.youngAvailable = Integer.parseInt(matcher.group(31));
 
                 // use young block duration for truncated events
-                if (matcher.group(56) == null) {
-                    this.duration = JdkMath.convertSecsToMillis(matcher.group(10)).intValue();
+                if (matcher.group(111) == null) {
+                    this.duration = JdkMath.convertSecsToMillis(matcher.group(32)).intValue();
                 }
 
                 // old block after young
-                if (matcher.group(30) != null) {
-                    this.old = Integer.parseInt(matcher.group(31));
-                    this.oldEnd = Integer.parseInt(matcher.group(32));
-                    this.oldAllocation = Integer.parseInt(matcher.group(33));
-                    if (matcher.group(48) != null) {
-                        this.youngEnd = Integer.parseInt(matcher.group(48)) - this.oldEnd;
+                if (matcher.group(74) != null) {
+                    this.old = Integer.parseInt(matcher.group(75));
+                    this.oldEnd = Integer.parseInt(matcher.group(76));
+                    this.oldAllocation = Integer.parseInt(matcher.group(77));
+                    if (matcher.group(103) != null) {
+                        this.youngEnd = Integer.parseInt(matcher.group(103)) - this.oldEnd;
                     }
                 } else {
-                    if (matcher.group(46) != null) {
-                        this.old = Integer.parseInt(matcher.group(47)) - this.young;
+                    if (matcher.group(101) != null) {
+                        this.old = Integer.parseInt(matcher.group(102)) - this.young;
                         // No data to determine old end size.
                         this.oldEnd = 0;
-                        this.oldAllocation = Integer.parseInt(matcher.group(49)) - this.youngAvailable;
+                        this.oldAllocation = Integer.parseInt(matcher.group(104)) - this.youngAvailable;
                     }
                 }
                 // perm/metaspace data
-                if (matcher.group(50) != null) {
-                    this.permGen = Integer.parseInt(matcher.group(52));
-                    this.permGenEnd = Integer.parseInt(matcher.group(53));
-                    this.permGenAllocation = Integer.parseInt(matcher.group(54));
+                if (matcher.group(105) != null) {
+                    this.permGen = Integer.parseInt(matcher.group(107));
+                    this.permGenEnd = Integer.parseInt(matcher.group(108));
+                    this.permGenAllocation = Integer.parseInt(matcher.group(109));
                 }
-                if (matcher.group(55) != null) {
+                if (matcher.group(110) != null) {
                     super.setIncrementalMode(true);
                 }
-                if (matcher.group(56) != null) {
-                    this.duration = JdkMath.convertSecsToMillis(matcher.group(56)).intValue();
+                if (matcher.group(111) != null) {
+                    this.duration = JdkMath.convertSecsToMillis(matcher.group(111)).intValue();
                 }
             }
         }

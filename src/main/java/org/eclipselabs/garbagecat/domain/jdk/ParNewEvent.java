@@ -61,17 +61,11 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 4) After {@link org.eclipselabs.garbagecat.preprocess.jdk.DateStampPrefixPreprocessAction} with no space after GC:
+ * 4) No space after GC:
  * </p>
  * 
  * <pre>
- * raw:
  * 2013-12-09T16:18:17.813+0000: 13.086: [GC2013-12-09T16:18:17.813+0000: 13.086: [ParNew: 272640K-&gt;33532K(306688K), 0.0381419 secs] 272640K-&gt;33532K(1014528K), 0.0383306 secs] [Times: user=0.11 sys=0.02, real=0.04 secs]
- * </pre>
- * 
- * <pre>
- * preprocessed:
- * 13.086: [GC: 13.086: [ParNew: 272640K-&gt;33532K(306688K), 0.0381419 secs] 272640K-&gt;33532K(1014528K), 0.0383306 secs] [Times: user=0.11 sys=0.02, real=0.04 secs]
  * </pre>
  * 
  * <p>
@@ -106,12 +100,13 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
-            + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(\\(" + TRIGGER + "\\))?( )?("
-            + JdkRegEx.TIMESTAMP + ": )?\\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: " + JdkRegEx.SIZE
-            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP
+            + ": \\[GC\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\])?(" + JdkRegEx.DATESTAMP
+            + ": )?" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(\\(" + TRIGGER + "\\))?( )?(" + JdkRegEx.DATESTAMP
+            + ": )?(" + JdkRegEx.TIMESTAMP + ": )?\\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(ParNewEvent.REGEX);
     /**
@@ -174,19 +169,19 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(5)).longValue();
-            trigger = matcher.group(9);
-            young = Integer.parseInt(matcher.group(15));
-            youngEnd = Integer.parseInt(matcher.group(16));
-            youngAvailable = Integer.parseInt(matcher.group(17));
-            int totalBegin = Integer.parseInt(matcher.group(21));
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(27)).longValue();
+            trigger = matcher.group(31);
+            young = Integer.parseInt(matcher.group(48));
+            youngEnd = Integer.parseInt(matcher.group(49));
+            youngAvailable = Integer.parseInt(matcher.group(50));
+            int totalBegin = Integer.parseInt(matcher.group(54));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(22));
+            int totalEnd = Integer.parseInt(matcher.group(55));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(23));
+            int totalAllocation = Integer.parseInt(matcher.group(56));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(25)).intValue();
-            if (matcher.group(24) != null) {
+            duration = JdkMath.convertSecsToMillis(matcher.group(58)).intValue();
+            if (matcher.group(57) != null) {
                 super.setIncrementalMode(true);
             } else {
                 super.setIncrementalMode(false);

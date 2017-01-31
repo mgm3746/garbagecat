@@ -113,8 +113,8 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.TIMESTAMP + ": )?(" + JdkRegEx.TIMESTAMP
-            + ": |: )?Total time for which application threads " + "were stopped: ((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds"
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP
+            + ": )?Total time for which application threads " + "were stopped: ((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds"
             + "(, Stopping threads took: \\d{1,4}[\\.\\,]\\d{7} seconds)?[ ]*$";
     /**
      * RegEx pattern.
@@ -131,10 +131,10 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            if (matcher.group(2) != null) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(2)).longValue();
+            if (matcher.group(13) != null) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(5)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(14)).intValue();
         }
     }
 

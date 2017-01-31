@@ -225,6 +225,42 @@ public class TestParNewEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
+    public void testLogLineWithDatestamp() {
+        String logLine = "2010-04-16T12:11:18.979+0200: 84.335: [GC 84.336: [ParNew: 273152K->858K(341376K), "
+                + "0.0030008 secs] 273152K->858K(980352K), 0.0031183 secs] "
+                + "[Times: user=0.00 sys=0.00, real=0.00 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                ParNewEvent.match(logLine));
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 84335, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 273152, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 858, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 341376, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", (273152 - 273152), event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", (858 - 858), event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", (980352 - 341376), event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 3, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
+    }
+
+    public void testLogLineWithDoubleDatestamp() {
+        String logLine = "2013-12-09T16:18:17.813+0000: 13.086: [GC2013-12-09T16:18:17.813+0000: 13.086: [ParNew: "
+                + "272640K->33532K(306688K), 0.0381419 secs] 272640K->33532K(1014528K), 0.0383306 secs] "
+                + "[Times: user=0.11 sys=0.02, real=0.04 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                ParNewEvent.match(logLine));
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 13086, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 272640, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 33532, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 306688, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", (272640 - 272640), event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", (33532 - 33532), event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", (1014528 - 306688), event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 38, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
+    }
+
     /**
      * Test preprocessing a split <code>ParNewCmsConcurrentEvent</code> that does not include the
      * "concurrent mode failure" text.
