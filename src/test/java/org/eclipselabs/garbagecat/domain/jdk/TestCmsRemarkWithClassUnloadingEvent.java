@@ -154,4 +154,23 @@ public class TestCmsRemarkWithClassUnloadingEvent extends TestCase {
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         Assert.assertEquals("Duration not parsed correctly.", 589, event.getDuration());
     }
+
+    public void testLogLineDatestamp() {
+        String logLine = "2016-10-10T18:43:51.337-0700: 3.674: [GC (CMS Final Remark) [YG occupancy: 87907 K "
+                + "(153344 K)]2016-10-10T18:43:51.337-0700: 3.674: [Rescan (parallel) , 0.0590379 secs]"
+                + "2016-10-10T18:43:51.396-0700: 3.733: [weak refs processing, 0.0000785 secs]"
+                + "2016-10-10T18:43:51.396-0700: 3.733: [class unloading, 0.0102437 secs]"
+                + "2016-10-10T18:43:51.407-0700: 3.744: [scrub symbol table, 0.0208682 secs]"
+                + "2016-10-10T18:43:51.428-0700: 3.765: [scrub string table, 0.0013969 secs]"
+                + "[1 CMS-remark: 6993K(8218240K)] 94901K(8371584K), 0.0935737 secs] "
+                + "[Times: user=0.26 sys=0.01, real=0.09 secs]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING.toString() + ".",
+                CmsRemarkWithClassUnloadingEvent.match(logLine));
+        CmsRemarkWithClassUnloadingEvent event = new CmsRemarkWithClassUnloadingEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 3674, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        Assert.assertEquals("Duration not parsed correctly.", 93, event.getDuration());
+    }
 }

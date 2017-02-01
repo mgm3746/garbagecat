@@ -180,6 +180,10 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * 3576157.596: [GC 3576157.596: [CMS-concurrent-abortable-preclean: 0.997/1.723 secs] [Times: user=3.20 sys=0.03,
      * real=1.73 secs]
+     * 
+     * 2016-10-10T19:17:37.771-0700: 2030.108: [GC (Allocation Failure) 2016-10-10T19:17:37.771-0700: 2030.108:
+     * [ParNew2016-10-10T19:17:37.773-0700: 2030.110: [CMS-concurrent-abortable-preclean: 0.050/0.150 secs] [Times:
+     * user=0.11 sys=0.03, real=0.15 secs]
      */
     private static final String REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))?( )?(("
@@ -211,8 +215,9 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * 182314.858: [GC 182314.859: [ParNew (promotion failed)
      */
-    private static final String REGEX_RETAIN_BEGINNING_PARNEW = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC( )?"
-            + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?)[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_PARNEW = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[GC( )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(("
+            + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?)[ ]*$";
 
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD mixed with CMS_CONCURRENT collection.

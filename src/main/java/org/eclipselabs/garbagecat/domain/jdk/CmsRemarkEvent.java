@@ -59,6 +59,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 4.506: [GC (CMS Final Remark) [YG occupancy: 100369 K (153344 K)]4.506: [GC (CMS Final Remark) 4.506: [ParNew: 100369K-&gt;10116K(153344K), 0.0724021 secs] 100369K-&gt;16685K(4177280K), 0.0724907 secs] [Times: user=0.13 sys=0.01, real=0.07 secs]
  * </pre>
  * 
+ * *
+ * <p>
+ * 4) With datestamp:
+ * </p>
+ * 
+ * <pre>
+ * 2016-10-27T19:06:06.651-0400: 6.458: [GC[YG occupancy: 480317 K (5505024 K)]6.458: [Rescan (parallel) , 0.0103480 secs]6.469: [weak refs processing, 0.0000110 secs]6.469: [scrub string table, 0.0001750 secs] [1 CMS-remark: 0K(37748736K)] 480317K(43253760K), 0.0106300 secs] [Times: user=0.23 sys=0.01, real=0.01 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -87,10 +96,10 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
-            + ")\\))?\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.TIMESTAMP
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(("
+            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\))?\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE
+            + "\\)\\]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.TIMESTAMP
             + ": \\[scrub string table, " + JdkRegEx.DURATION + "\\])? \\[1 CMS-remark: " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
             + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
@@ -119,10 +128,10 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                trigger = matcher.group(3);
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                trigger = matcher.group(14);
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMillis(matcher.group(23)).intValue();
+                duration = JdkMath.convertSecsToMillis(matcher.group(34)).intValue();
             }
         } else if (logEntry.matches(REGEX_PARNEW)) {
             Pattern pattern = Pattern.compile(REGEX_PARNEW);

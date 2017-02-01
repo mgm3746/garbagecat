@@ -619,6 +619,39 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
 
+    public void testLogLineBeginningParNewDatestamp() {
+        String priorLogLine = "";
+        String logLine = "2016-09-07T16:59:44.005-0400: 26536.942: [GC"
+                + "2016-09-07T16:59:44.005-0400: 26536.943: [ParNew";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+    }
+
+    public void testLogLineCmsSerialOldCombinedConcurrentDatestamp() {
+        String priorLogLine = "";
+        String logLine = "2016-10-10T19:17:37.771-0700: 2030.108: [GC (Allocation Failure) "
+                + "2016-10-10T19:17:37.771-0700: 2030.108: [ParNew2016-10-10T19:17:37.773-0700: "
+                + "2030.110: [CMS-concurrent-abortable-preclean: 0.050/0.150 secs] "
+                + "[Times: user=0.11 sys=0.03, real=0.15 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "2016-10-10T19:17:37.771-0700: 2030.108: [GC (Allocation Failure) "
+                        + "2016-10-10T19:17:37.771-0700: 2030.108: [ParNew",
+                event.getLogEntry());
+    }
+
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */

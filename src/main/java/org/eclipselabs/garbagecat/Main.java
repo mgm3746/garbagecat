@@ -148,7 +148,7 @@ public class Main {
                 } else {
                     outputFileName = Constants.OUTPUT_FILE_NAME;
                 }
-                createReport(jvmRun, outputFileName);
+                createReport(jvmRun, outputFileName, cmd.hasOption(Constants.OPTION_PREPROCESS_LONG));
             }
         }
     }
@@ -234,9 +234,11 @@ public class Main {
      *            JVM run data.
      * @param reportFileName
      *            Output report file name.
+     * @param reportFileName
+     *            Whether or not preparsing is enabled.
      * 
      */
-    public static void createReport(JvmRun jvmRun, String reportFileName) {
+    public static void createReport(JvmRun jvmRun, String reportFileName, boolean preparsing) {
         File reportFile = new File(reportFileName);
         FileWriter fileWriter = null;
         BufferedWriter bufferedWriter = null;
@@ -362,6 +364,10 @@ public class Main {
                 List<String> error = new ArrayList<String>();
                 List<String> warn = new ArrayList<String>();
                 List<String> info = new ArrayList<String>();
+
+                if (jvmRun.getUnidentifiedLogLines().size() > 0 && !preparsing) {
+                    error.add(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE);
+                }
 
                 Iterator<String> iterator = analysisKeys.iterator();
                 while (iterator.hasNext()) {

@@ -78,4 +78,20 @@ public class TestVerboseGcOldEvent extends TestCase {
         Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 5608, event.getDuration());
     }
+
+    public void testLogLineDatestamp() {
+        String logLine = "2016-06-22T14:04:51.080+0100: 22561.627: [Full GC (Last ditch collection)  "
+                + "500269K->500224K(3128704K), 4.2311820 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".",
+                VerboseGcOldEvent.match(logLine));
+        VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 22561627, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION));
+        Assert.assertEquals("Combined begin size not parsed correctly.", 500269, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 500224, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 4231, event.getDuration());
+    }
 }

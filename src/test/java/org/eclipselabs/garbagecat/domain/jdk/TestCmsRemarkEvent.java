@@ -24,6 +24,14 @@ import junit.framework.TestCase;
  */
 public class TestCmsRemarkEvent extends TestCase {
 
+    public void testIsBlocking() {
+        String logLine = "4.506: [GC (CMS Final Remark) [YG occupancy: 100369 K (153344 K)]"
+                + "4.506: [GC (CMS Final Remark) 4.506: [ParNew: 100369K->10116K(153344K), 0.0724021 secs] "
+                + "100369K->16685K(4177280K), 0.0724907 secs] [Times: user=0.13 sys=0.01, real=0.07 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.CMS_REMARK.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testLogLine() {
         String logLine = "253.103: [GC[YG occupancy: 16172 K (149120 K)]253.103: "
                 + "[Rescan (parallel) , 0.0226730 secs]253.126: [weak refs processing, 0.0624566 secs] "
@@ -86,14 +94,6 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
-    public void testIsBlocking() {
-        String logLine = "4.506: [GC (CMS Final Remark) [YG occupancy: 100369 K (153344 K)]"
-                + "4.506: [GC (CMS Final Remark) 4.506: [ParNew: 100369K->10116K(153344K), 0.0724021 secs] "
-                + "100369K->16685K(4177280K), 0.0724907 secs] [Times: user=0.13 sys=0.01, real=0.07 secs]";
-        Assert.assertTrue(JdkUtil.LogEventType.CMS_REMARK.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
-    }
-
     public void testLogLineNoSpaceAfterTrigger() {
         String logLine = "78.251: [GC (CMS Final Remark)[YG occupancy: 2619547 K (8388608 K)]"
                 + "78.251: [GC (CMS Final Remark)78.251: [ParNew: 2619547K->569438K(8388608K), 0.3405110 secs] "
@@ -123,4 +123,18 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 27656, event.getDuration());
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
+
+    public void testLogLineDatestamp() {
+        String logLine = "2016-10-27T19:06:06.651-0400: 6.458: [GC[YG occupancy: 480317 K (5505024 K)]6.458: "
+                + "[Rescan (parallel) , 0.0103480 secs]6.469: [weak refs processing, 0.0000110 secs]6.469: "
+                + "[scrub string table, 0.0001750 secs] [1 CMS-remark: 0K(37748736K)] 480317K(43253760K), "
+                + "0.0106300 secs] [Times: user=0.23 sys=0.01, real=0.01 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
+                CmsRemarkEvent.match(logLine));
+        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 6458, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 10, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
+    }
+
 }

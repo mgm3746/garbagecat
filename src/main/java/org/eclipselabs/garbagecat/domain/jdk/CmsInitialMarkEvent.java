@@ -77,9 +77,10 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC (\\((" + JdkRegEx.TRIGGER_CMS_INITIAL_MARK
-            + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC (\\(("
+            + JdkRegEx.TRIGGER_CMS_INITIAL_MARK + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
     private static Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
 
     /**
@@ -92,9 +93,9 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(3);
-            duration = JdkMath.convertSecsToMillis(matcher.group(8)).intValue();
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            trigger = matcher.group(14);
+            duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
         }
     }
 

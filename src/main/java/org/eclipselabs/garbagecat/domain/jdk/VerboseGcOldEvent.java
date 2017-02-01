@@ -90,8 +90,9 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC( \\(" + TRIGGER + "\\) )? "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC( \\("
+            + TRIGGER + "\\) )? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\]?[ ]*$";
     private static Pattern pattern = Pattern.compile(VerboseGcOldEvent.REGEX);
 
     /**
@@ -104,12 +105,12 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(3);
-            combinedBegin = Integer.parseInt(matcher.group(4));
-            combinedEnd = Integer.parseInt(matcher.group(5));
-            combinedAllocation = Integer.parseInt(matcher.group(6));
-            duration = JdkMath.convertSecsToMillis(matcher.group(7)).intValue();
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            trigger = matcher.group(14);
+            combinedBegin = Integer.parseInt(matcher.group(15));
+            combinedEnd = Integer.parseInt(matcher.group(16));
+            combinedAllocation = Integer.parseInt(matcher.group(17));
+            duration = JdkMath.convertSecsToMillis(matcher.group(18)).intValue();
         }
     }
 

@@ -100,4 +100,25 @@ public class TestApplicationStoppedTimeEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 139, event.getDuration());
     }
 
+    public void testLogLineDoubleDatestamp() {
+        String logLine = "2016-11-08T02:06:23.230-0800: 2016-11-08T02:06:23.230-0800: 8290.973: Total time for which "
+                + "application threads were stopped: 0.2409380 seconds, Stopping threads took: 0.0001210 seconds";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
+                ApplicationStoppedTimeEvent.match(logLine));
+        ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 8290973, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 240938, event.getDuration());
+    }
+
+    public void testLogLineDoubleDatestampDoubleTimestampMisplacedSemicolon() {
+        String logLine = "2016-11-10T06:14:13.216-0500: 2016-11-10T06:14:13.216-0500672303.818: : 672303.818: Total "
+                + "time for which application threads were stopped: 0.2934160 seconds";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
+                ApplicationStoppedTimeEvent.match(logLine));
+        ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 672303818, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 293416, event.getDuration());
+    }
 }

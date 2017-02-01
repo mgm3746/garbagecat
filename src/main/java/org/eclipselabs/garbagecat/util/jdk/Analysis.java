@@ -440,6 +440,11 @@ public class Analysis {
     public static final String ERROR_PHYSICAL_MEMORY = "error.physical.memory";
 
     /**
+     * Property key for unidentified log lines w/o preparsing.
+     */
+    public static final String ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE = "error.unidentified.log.lines.preparse";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {
