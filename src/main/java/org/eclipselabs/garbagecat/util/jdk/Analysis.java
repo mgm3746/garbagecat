@@ -445,6 +445,16 @@ public class Analysis {
     public static final String ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE = "error.unidentified.log.lines.preparse";
 
     /**
+     * Property key for unidentified last log line w/ preparsing.
+     */
+    public static final String INFO_UNIDENTIFIED_LOG_LINE_LAST = "info.unidentified.log.line.last";
+
+    /**
+     * Property key for unidentified line(s) needing reporting.
+     */
+    public static final String WARN_UNIDENTIFIED_LOG_LINE_REPORT = "warn.unidentified.log.line.report";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

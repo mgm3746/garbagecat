@@ -365,8 +365,21 @@ public class Main {
                 List<String> warn = new ArrayList<String>();
                 List<String> info = new ArrayList<String>();
 
-                if (jvmRun.getUnidentifiedLogLines().size() > 0 && !preparsing) {
-                    error.add(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE);
+                // Unidentified logging line(s) analysis
+                if (jvmRun.getUnidentifiedLogLines().size() > 0) {
+                    if (!preparsing) {
+                        error.add(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE);
+                        if (analysisKeys.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
+                            analysisKeys.remove(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
+                        }
+                    } else {
+                        if (jvmRun.getUnidentifiedLogLines().size() > 1) {
+                            analysisKeys.add(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT);
+                            if (analysisKeys.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
+                                analysisKeys.remove(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
+                            }
+                        }
+                    }
                 }
 
                 Iterator<String> iterator = analysisKeys.iterator();

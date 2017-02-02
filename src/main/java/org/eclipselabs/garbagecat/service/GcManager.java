@@ -571,6 +571,13 @@ public class GcManager {
                 }
 
                 logLine = bufferedReader.readLine();
+
+                // Check for partial last line
+                if (logLine == null) {
+                    if (event instanceof UnknownEvent && jvmDao.getUnidentifiedLogLines().size() == 1) {
+                        jvmDao.addAnalysisKey(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
+                    }
+                }
             }
 
             // Process final batches
