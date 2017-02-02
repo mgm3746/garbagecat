@@ -374,7 +374,7 @@ public class Main {
                         }
                     } else {
                         if (jvmRun.getUnidentifiedLogLines().size() > 1) {
-                            analysisKeys.add(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT);
+                            analysisKeys.add(0, Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT);
                             if (analysisKeys.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
                                 analysisKeys.remove(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
                             }
