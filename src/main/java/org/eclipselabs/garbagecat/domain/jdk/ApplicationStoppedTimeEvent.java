@@ -113,8 +113,9 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.DATESTAMP + "(: )?)?("
-            + JdkRegEx.TIMESTAMP + ": )?(: )?(" + JdkRegEx.TIMESTAMP + ": )?Total time for which application threads "
+    private static final String REGEX = "^(: )?(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.DATESTAMP + "(: )?)?("
+            + JdkRegEx.TIMESTAMP + "(: )?)?(" + JdkRegEx.DATESTAMP + "(: )?)?(: )?" + JdkRegEx.TIMESTAMP + "?(: )?("
+            + JdkRegEx.TIMESTAMP + ": )?Total time for which application threads "
             + "were stopped: ((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds"
             + "(, Stopping threads took: \\d{1,4}[\\.\\,]\\d{7} seconds)?[ ]*$";
     /**
@@ -132,12 +133,12 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            if (matcher.group(28) != null) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(28)).longValue();
-            } else if (matcher.group(25) != null) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(25)).longValue();
+            if (matcher.group(26) != null) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(26)).longValue();
+            } else if (matcher.group(41) != null) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(41)).longValue();
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(29)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(45)).intValue();
         }
     }
 

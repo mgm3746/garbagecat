@@ -23,6 +23,13 @@ import junit.framework.TestCase;
  */
 public class TestCmsConcurrentEvent extends TestCase {
 
+    public void testNotBlocking() {
+        String logLine = "572289.495: [CMS572304.683: [CMS-concurrent-sweep: 17.692/44.143 secs] "
+                + "[Times: user=97.86 sys=1.85, real=44.14 secs]";
+        Assert.assertFalse(JdkUtil.LogEventType.CMS_CONCURRENT.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testMarkStart() {
         String logLine = "251.781: [CMS-concurrent-mark-start]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
@@ -109,12 +116,5 @@ public class TestCmsConcurrentEvent extends TestCase {
                 + "[Times: user=97.86 sys=1.85, real=44.14 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 CmsConcurrentEvent.match(logLine));
-    }
-
-    public void testNotBlocking() {
-        String logLine = "572289.495: [CMS572304.683: [CMS-concurrent-sweep: 17.692/44.143 secs] "
-                + "[Times: user=97.86 sys=1.85, real=44.14 secs]";
-        Assert.assertFalse(JdkUtil.LogEventType.CMS_CONCURRENT.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 }
