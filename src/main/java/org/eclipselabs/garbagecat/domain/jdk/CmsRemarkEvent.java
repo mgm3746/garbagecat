@@ -97,12 +97,12 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(("
-            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\))?\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE
-            + "\\)\\]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.TIMESTAMP
-            + ": \\[scrub string table, " + JdkRegEx.DURATION + "\\])? \\[1 CMS-remark: " + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
+            + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION
+            + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]("
+            + JdkRegEx.TIMESTAMP + ": \\[scrub string table, " + JdkRegEx.DURATION + "\\])?[ ]{0,1}\\[1 CMS-remark: "
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * Regular expression for JDK8 logging with {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} ending.

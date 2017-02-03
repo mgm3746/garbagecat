@@ -137,4 +137,15 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
+    public void testLogLineSpaceBeforeYgBlockAndNoSpaceBeforeCmsRemarkBlock() {
+        String logLine = "61.013: [GC (CMS Final Remark) [YG occupancy: 237181 K (471872 K)]61.014: [Rescan (parallel)"
+                + " , 0.0335675 secs]61.047: [weak refs processing, 0.0011687 secs][1 CMS-remark: 1137616K(1572864K)] "
+                + "1374798K(2044736K), 0.0351204 secs] [Times: user=0.12 sys=0.00, real=0.04 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
+                CmsRemarkEvent.match(logLine));
+        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 61013, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 35, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
+    }
 }
