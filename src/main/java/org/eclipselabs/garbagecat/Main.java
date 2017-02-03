@@ -148,7 +148,7 @@ public class Main {
                 } else {
                     outputFileName = Constants.OUTPUT_FILE_NAME;
                 }
-                createReport(jvmRun, outputFileName, cmd.hasOption(Constants.OPTION_PREPROCESS_LONG));
+                createReport(jvmRun, outputFileName);
             }
         }
     }
@@ -238,7 +238,7 @@ public class Main {
      *            Whether or not preparsing is enabled.
      * 
      */
-    public static void createReport(JvmRun jvmRun, String reportFileName, boolean preparsing) {
+    public static void createReport(JvmRun jvmRun, String reportFileName) {
         File reportFile = new File(reportFileName);
         FileWriter fileWriter = null;
         BufferedWriter bufferedWriter = null;
@@ -365,23 +365,6 @@ public class Main {
                 List<String> warn = new ArrayList<String>();
                 List<String> info = new ArrayList<String>();
 
-                // Unidentified logging line(s) analysis
-                if (jvmRun.getUnidentifiedLogLines().size() > 0) {
-                    if (!preparsing) {
-                        error.add(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE);
-                        if (analysisKeys.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
-                            analysisKeys.remove(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
-                        }
-                    } else {
-                        if (jvmRun.getUnidentifiedLogLines().size() > 1) {
-                            analysisKeys.add(0, Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT);
-                            if (analysisKeys.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
-                                analysisKeys.remove(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
-                            }
-                        }
-                    }
-                }
-
                 Iterator<String> iterator = analysisKeys.iterator();
                 while (iterator.hasNext()) {
                     String key = iterator.next();
@@ -468,7 +451,9 @@ public class Main {
                 }
                 bufferedWriter.write("========================================" + System.getProperty("line.separator"));
             }
-        } catch (FileNotFoundException e) {
+        } catch (
+
+        FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

@@ -1078,12 +1078,19 @@ public class TestCmsPreprocessAction extends TestCase {
         File preprocessedFile = jvmManager.preprocess(testFile, null);
         jvmManager.store(preprocessedFile, false);
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        String lastLogLineUnprocessed = "130454.251: [Full GC (Allocation Failure) 130454.251: [CMS130456.427: "
+                + "[CMS-concurrent-mark: 2.176/2.182 secs] [Times: user=2.18 sys=0.00, real=2.18 secs]";
+        Assert.assertEquals("Last unprocessed log line not correct.", lastLogLineUnprocessed,
+                jvmManager.getLastLogLineUnprocessed());
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + LogEventType.UNKNOWN.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
-        //Assert.assertTrue(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT + " analysis not identified.",
-          //      jvmRun.getAnalysisKeys().contains(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT));
+        // Not the last preprocessed line, but part of last unpreprocessed line
+        Assert.assertTrue(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST));
+        Assert.assertFalse(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT));
     }
 }

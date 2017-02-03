@@ -149,6 +149,16 @@ public class JvmRun {
     private List<CollectorFamily> collectorFamilies;
 
     /**
+     * Whether or not the JVM events are from a preprocessed file.
+     */
+    private boolean preprocessed;
+
+    /**
+     * Last log line unprocessed.
+     */
+    private String lastLogLineUnprocessed;
+
+    /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
      * 
      * @param throughputThreshold
@@ -341,6 +351,22 @@ public class JvmRun {
         this.collectorFamilies = collectorFamilies;
     }
 
+    public boolean isPreprocessed() {
+        return preprocessed;
+    }
+
+    public void setPreprocessed(boolean preprocessed) {
+        this.preprocessed = preprocessed;
+    }
+
+    public String getLastLogLineUnprocessed() {
+        return lastLogLineUnprocessed;
+    }
+
+    public void setLastLogLineUnprocessed(String lastLogLineUnprocessed) {
+        this.lastLogLineUnprocessed = lastLogLineUnprocessed;
+    }
+
     /*
      * Throughput based only on garbage collection as a percent rounded to the nearest integer. CG throughput is the
      * percent of time not spent doing GC. 0 means all time was spent doing GC. 100 means no time was spent doing GC.
@@ -484,6 +510,30 @@ public class JvmRun {
             }
             if (jvmMemory > getJvm().getPhysicalMemory()) {
                 analysisKeys.add(Analysis.ERROR_PHYSICAL_MEMORY);
+            }
+        }
+
+        // 10) Unidentified logging lines
+        if (getUnidentifiedLogLines().size() > 0) {
+            if (!preprocessed) {
+                analysisKeys.add(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE);
+                // Don't double report
+                if (analysisKeys.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
+                    analysisKeys.remove(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
+                }
+            } else if (getUnidentifiedLogLines().size() == 1) {
+                // Check if the unidentified line is not the last preprocessed line but it is the beginning of the last
+                // unpreprocessed line (the line was split).
+                if (!analysisKeys.add(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)
+                        && lastLogLineUnprocessed.startsWith(getUnidentifiedLogLines().get(0))) {
+                    analysisKeys.add(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
+                }
+            } else {
+                analysisKeys.add(0, Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT);
+                // Don't double report
+                if (analysisKeys.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
+                    analysisKeys.remove(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
+                }
             }
         }
     }

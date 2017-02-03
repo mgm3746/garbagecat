@@ -84,11 +84,28 @@ public class GcManager {
     private JvmDao jvmDao;
 
     /**
+     * Whether or not the JVM events are from a preprocessed file.
+     */
+    private boolean preprocessed;
+
+    /**
+     * Last log line unprocessed.
+     */
+    private String lastLogLineUnprocessed;
+
+    /**
      * Default constructor.
      */
     public GcManager() {
         this.jvmDao = new JvmDao();
-        ;
+    }
+
+    public boolean isPreprocessed() {
+        return preprocessed;
+    }
+
+    public String getLastLogLineUnprocessed() {
+        return lastLogLineUnprocessed;
     }
 
     /**
@@ -141,6 +158,10 @@ public class GcManager {
                 priorLogLine = currentLogLine;
                 currentLogLine = nextLogLine;
                 nextLogLine = bufferedReader.readLine();
+
+                if (nextLogLine == null) {
+                    lastLogLineUnprocessed = currentLogLine;
+                }
             }
 
             // Process last line
@@ -188,6 +209,7 @@ public class GcManager {
                     e.printStackTrace();
                 }
             }
+            preprocessed = true;
         }
 
         return preprocessFile;
@@ -683,6 +705,8 @@ public class GcManager {
      */
     public JvmRun getJvmRun(Jvm jvm, int throughputThreshold) {
         JvmRun jvmRun = new JvmRun(jvm, throughputThreshold);
+        jvmRun.setPreprocessed(this.preprocessed);
+        jvmRun.setLastLogLineUnprocessed(lastLogLineUnprocessed);
         // Override any options passed in on command line
         if (jvmDao.getOptions() != null) {
             jvmRun.getJvm().setOptions(jvmDao.getOptions());
