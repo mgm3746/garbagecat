@@ -155,6 +155,17 @@ public class GcManager {
                 }
             }
 
+            // output entangled log lines
+            if (entangledLogLines.size() > 0) {
+                Iterator<String> iterator = entangledLogLines.iterator();
+                while (iterator.hasNext()) {
+                    String logLine = iterator.next();
+                    bufferedWriter.write(System.getProperty("line.separator") + logLine);
+                }
+                // Reset entangled log lines
+                entangledLogLines.clear();
+            }
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

@@ -280,7 +280,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
 
     /**
-     * Middle line when mixed serial and concurrent logging (e.g. PrintHeapAtGC).
+     * Middle line when mixed serial and concurrent logging.
      * 
      * 28282.075: [CMS28284.687: [CMS-concurrent-preclean: 3.706/3.706 secs]
      * 
@@ -293,7 +293,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
 
     /**
-     * Middle line when mixed PAR_NEW and concurrent logging (e.g. PrintHeapAtGC).
+     * Middle line when mixed PAR_NEW and concurrent logging.
      */
     private static final String REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED = "^(" + JdkRegEx.TIMESTAMP
             + ": \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
@@ -332,6 +332,10 @@ public class CmsPreprocessAction implements PreprocessAction {
      * (concurrent mode failure): 1125100K->1156809K(1310720K), 36.8003032 secs] 1791073K->1156809K(2018560K),
      * 38.3378201 secs]
      * 
+     * (promotion failed): 471871K->471872K(471872K), 0.7685416 secs]66645.266: [CMS (concurrent mode failure):
+     * 1572864K->1572863K(1572864K), 6.3611861 secs] 2001479K->1657572K(2044736K), [Metaspace:
+     * 567956K->567956K(1609728K)], 7.1304658 secs] [Times: user=8.60 sys=0.01, real=7.13 secs]
+     * 
      * (concurrent mode interrupted): 861863K->904027K(1797568K), 42.9053262 secs] 1045947K->904027K(2047232K), [CMS
      * Perm : 252246K->252202K(262144K)], 42.9070278 secs] [Times: user=43.11 sys=0.18, real=42.91 secs]
      * 
@@ -347,7 +351,9 @@ public class CmsPreprocessAction implements PreprocessAction {
      * [Times: user=0.44 sys=0.00, real=0.08 secs]
      * 
      */
-    private static final String REGEX_RETAIN_END = "^((" + JdkRegEx.TIMESTAMP + ": \\[ParNew)?( \\(("
+    private static final String REGEX_RETAIN_END = "^((" + JdkRegEx.TIMESTAMP + ": \\[ParNew)?( \\("
+            + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS)?( \\(("
             + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|" + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED
             + ")\\))?( \\(" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\)\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
             + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION
