@@ -242,9 +242,14 @@ public class Analysis {
     public static final String WARN_CMS_PAR_NEW_DISABLED = "warn.cms.par.new.disabled";
 
     /**
-     * Property key for CMS collector not unloading classes.
+     * Property key for CMS collector class unloading disabled.
      */
     public static final String WARN_CMS_CLASS_UNLOADING_DISABLED = "warn.cms.class.unloading.disabled";
+
+    /**
+     * Property key for CMS collector class unloading not enabled.
+     */
+    public static final String WARN_CMS_CLASS_UNLOADING_NOT_ENABLED = "warn.cms.class.unloading.not.enabled";
 
     /**
      * Property key for CMS collector running in incremental mode.
@@ -453,6 +458,16 @@ public class Analysis {
      * Property key for unidentified line(s) needing reporting.
      */
     public static final String WARN_UNIDENTIFIED_LOG_LINE_REPORT = "warn.unidentified.log.line.report";
+
+    /**
+     * Property key for -XX:-ExplicitGCInvokesConcurrentAndUnloadsClasses in combination with -XX:+DisableExplicitGC.
+     */
+    public static final String INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA = "info.cruft.exp.gc.inv.con.and.unl.cla";
+
+    /**
+     * Property key for class unloading disabled with -XX:-ClassUnloadingDisabled.
+     */
+    public static final String WARN_CLASS_UNLOADING_DISABLED = "warn.class.unloading.disabled";
 
     /**
      * Make default constructor private so the class cannot be instantiated.

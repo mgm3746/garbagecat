@@ -589,7 +589,9 @@ public class TestAnalysis extends TestCase {
         collectorFamilies.add(CollectorFamily.CMS);
         jvmRun.setCollectorFamiles(collectorFamilies);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis not identified.",
+        Assert.assertTrue(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
+        Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
     }
 
@@ -605,6 +607,8 @@ public class TestAnalysis extends TestCase {
         eventTypes.add(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING);
         jvmRun.setEventTypes(eventTypes);
         jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
         Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
     }
@@ -618,8 +622,8 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
+        Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
     }
 
     /**
@@ -634,8 +638,8 @@ public class TestAnalysis extends TestCase {
         eventTypes.add(LogEventType.CMS_REMARK);
         jvmRun.setEventTypes(eventTypes);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
+        Assert.assertTrue(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
     }
 
     public void testHeaderLogging() {
@@ -865,5 +869,25 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getJvm().getCompressedClassSpaceSizeBytes());
         Assert.assertFalse(Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_PHYSICAL_MEMORY));
+    }
+
+    /**
+     * Test CMS class unloading disabled.
+     */
+    public void testCmsClassunloadingDisabled() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset110.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
+        Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
+        Assert.assertTrue(Analysis.WARN_CLASS_UNLOADING_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CLASS_UNLOADING_DISABLED));
+        Assert.assertTrue(Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA));
     }
 }

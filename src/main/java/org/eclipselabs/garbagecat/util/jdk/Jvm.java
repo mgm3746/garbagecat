@@ -679,6 +679,20 @@ public class Jvm {
     }
 
     /**
+     * The option for disabling the CMS collector to collect Perm/Metaspace. For example:
+     * 
+     * <pre>
+     * -XX:-CMSClassUnloadingEnabled
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCMSClassUnloadingDisabled() {
+        String regex = "(-XX:\\-CMSClassUnloadingEnabled)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * The option for outputting times for reference processing (weak, soft,JNI). For example:
      * 
      * <pre>
@@ -992,6 +1006,34 @@ public class Jvm {
      */
     public String getPrintTenuringDistribution() {
         String regex = "(-XX:\\+PrintTenuringDistribution)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for explicit gc invokes concurrent and unloads classes disabled.
+     * 
+     * <pre>
+     * -XX:-ExplicitGCInvokesConcurrentAndUnloadsClasses
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getExplicitGcInvokesConcurrentAndUnloadsClassesDisabled() {
+        String regex = "(-XX:\\-ExplicitGCInvokesConcurrentAndUnloadsClasses)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for class unloading disabled.
+     * 
+     * <pre>
+     * -XX:-ClassUnloading
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getClassUnloadingDisabled() {
+        String regex = "(-XX:\\-ClassUnloading)";
         return getJvmOption(regex);
     }
 

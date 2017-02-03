@@ -513,6 +513,13 @@ public class TestJvm extends TestCase {
                 jvm.getCMSClassUnloadingEnabled());
     }
 
+    public void testCMSClassUnloadingDisabled() {
+        String jvmOptions = "-Xss128k -XX:-CMSClassUnloadingEnabled -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:-CMSClassUnloadingEnabled option incorrect.", "-XX:-CMSClassUnloadingEnabled",
+                jvm.getCMSClassUnloadingDisabled());
+    }
+
     public void testPrintReferenceGC() {
         String jvmOptions = "-Xss128k -XX:+PrintReferenceGC -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);

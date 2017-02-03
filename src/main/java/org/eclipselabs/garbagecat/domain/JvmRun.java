@@ -439,10 +439,11 @@ public class JvmRun {
 
         // 5) Check if CMS handling Perm/Metaspace collections by collector analysis (if no jvm options available and
         // class unloading has not already been detected).
-        if (!analysisKeys.contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED)) {
+        if (!analysisKeys.contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)
+                && !analysisKeys.contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED)) {
             if (getEventTypes().contains(LogEventType.CMS_REMARK)
                     && !getEventTypes().contains(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING)) {
-                analysisKeys.add(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED);
+                analysisKeys.add(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
             }
 
         }
@@ -636,10 +637,14 @@ public class JvmRun {
         }
 
         // Check if CMS handling Perm/Metaspace collections.
-        if ((collectorFamilies.contains(CollectorFamily.CMS)
-                && !eventTypes.contains(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING)
-                && jvm.getCMSClassUnloadingEnabled() == null)) {
+        if (jvm.getCMSClassUnloadingDisabled() != null) {
             analysisKeys.add(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED);
+        } else {
+            if ((collectorFamilies.contains(CollectorFamily.CMS)
+                    && !eventTypes.contains(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING)
+                    && jvm.getCMSClassUnloadingEnabled() == null)) {
+                analysisKeys.add(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
+            }
         }
 
         // Check for -XX:+PrintReferenceGC.
@@ -779,6 +784,17 @@ public class JvmRun {
         // Check if number of log files specified with log file rotation disabled
         if (jvm.getNumberOfGcLogFiles() != null && jvm.getUseGcLogFileRotationDisabled() != null) {
             analysisKeys.add(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED);
+        }
+
+        // If explicit gc is disabled, don't need to set explicit gc options
+        if (jvm.getExplicitGcInvokesConcurrentAndUnloadsClassesDisabled() != null
+                && jvm.getDisableExplicitGCOption() != null) {
+            analysisKeys.add(Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA);
+        }
+
+        // Check for class unloading disabled
+        if (jvm.getClassUnloadingDisabled() != null) {
+            analysisKeys.add(Analysis.WARN_CLASS_UNLOADING_DISABLED);
         }
     }
 
