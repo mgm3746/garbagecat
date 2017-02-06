@@ -1090,7 +1090,5 @@ public class TestCmsPreprocessAction extends TestCase {
         // Not the last preprocessed line, but part of last unpreprocessed line
         Assert.assertTrue(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST));
-        Assert.assertFalse(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT));
     }
 }
