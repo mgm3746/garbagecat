@@ -717,8 +717,8 @@ public class GcManager {
         jvmRun.getJvm().setSwap(jvmDao.getSwap());
         jvmRun.getJvm().setSwapFree(jvmDao.getSwapFree());
         jvmRun.getJvm().setVersion(jvmDao.getVersion());
-        jvmRun.setFirstGcTimestamp(jvmDao.getFirstGcTimestamp());
-        jvmRun.setLastGcTimestamp(jvmDao.getLastGcTimestamp());
+        jvmRun.setFirstGcEvent(jvmDao.getFirstGcEvent());
+        jvmRun.setLastGcEvent(jvmDao.getLastGcEvent());
         jvmRun.setMaxHeapSpace(jvmDao.getMaxHeapSpace());
         jvmRun.setMaxHeapOccupancy(jvmDao.getMaxHeapOccupancy());
         jvmRun.setMaxPermSpace(jvmDao.getMaxPermSpace());
@@ -726,13 +726,11 @@ public class GcManager {
         jvmRun.setMaxPause(jvmDao.getMaxGcPause());
         jvmRun.setTotalGcPause(jvmDao.getTotalGcPause());
         jvmRun.setBlockingEventCount(jvmDao.getBlockingEventCount());
-        jvmRun.setLastGcDuration(jvmDao.getLastGcDuration());
-        jvmRun.setFirstStoppedTimestamp(jvmDao.getFirstStoppedTimestamp());
-        jvmRun.setLastStoppedTimestamp(jvmDao.getLastStoppedTimestamp());
+        jvmRun.setFirstStoppedEvent(jvmDao.getFirstStoppedEvent());
+        jvmRun.setLastStoppedEvent(jvmDao.getLastStoppedEvent());
         jvmRun.setMaxStoppedTime(jvmDao.getMaxStoppedTime());
         jvmRun.setTotalStoppedTime(jvmDao.getTotalStoppedTime());
         jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
-        jvmRun.setLastStoppedDuration(jvmDao.getLastStoppedDuration());
         jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
         jvmRun.setEventTypes(jvmDao.getEventTypes());
         jvmRun.setCollectorFamiles(jvmDao.getCollectorFamilies());

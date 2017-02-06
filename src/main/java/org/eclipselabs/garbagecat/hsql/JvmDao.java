@@ -525,26 +525,26 @@ public class JvmDao {
     }
 
     /**
-     * The first blocking event timestamp.
+     * The first blocking event.
      * 
      * TODO: Should this consider non-blocking events?
      * 
-     * @return The time of the first blocking event, in milliseconds after JVM startup.
+     * @return The first blocking event.
      */
-    public synchronized long getFirstGcTimestamp() {
-        long firstTimestamp = 0;
+    public synchronized BlockingEvent getFirstGcEvent() {
+        BlockingEvent event = null;
         Statement statement = null;
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
             rs = statement.executeQuery(
-                    "select time_stamp from blocking_event where id = " + "(select min(id) from blocking_event)");
+                    "select log_entry from blocking_event where id = " + "(select min(id) from blocking_event)");
             if (rs.next()) {
-                firstTimestamp = rs.getLong(1);
+                event = (BlockingEvent) JdkUtil.parseLogLine(rs.getString(1));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining first timestamp.");
+            throw new RuntimeException("Error determining first blocking event.");
         } finally {
             try {
                 rs.close();
@@ -559,69 +559,49 @@ public class JvmDao {
                 throw new RuntimeException("Error closing Statement.");
             }
         }
-        return firstTimestamp;
+        return event;
     }
 
     /**
-     * Retrieve the last blocking event timestamp.
+     * Retrieve the last blocking event.
      * 
      * TODO: Should this consider non-blocking events?
      * 
-     * @return The time of the last blocking event, in milliseconds after JVM startup.
+     * @return The last blocking event.
      */
-    public synchronized long getLastGcTimestamp() {
-        long lastTimestamp = 0;
-        // Retrieve last timestamp from batch or database.
+    public synchronized BlockingEvent getLastGcEvent() {
+        BlockingEvent event = null;
+        // Retrieve last event from batch or database.
         if (blockingBatch.size() > 0) {
-            BlockingEvent event = blockingBatch.get(blockingBatch.size() - 1);
-            lastTimestamp = event.getTimestamp();
+            event = blockingBatch.get(blockingBatch.size() - 1);
         } else {
-            lastTimestamp = queryGcLastTimeStamp();
+            event = queryGcLastEvent();
         }
-        return lastTimestamp;
+        return event;
     }
 
     /**
-     * Retrieve the last blocking event duration.
+     * Retrieve the last blocking event.
      * 
      * TODO: Should this consider non-blocking events?
      * 
-     * @return The duration of the last blocking event (milliseconds).
-     */
-    public synchronized int getLastGcDuration() {
-        int lastDuration = 0;
-        // Retrieve last duration from batch or database.
-        if (blockingBatch.size() > 0) {
-            BlockingEvent event = blockingBatch.get(blockingBatch.size() - 1);
-            lastDuration = event.getDuration();
-        } else {
-            lastDuration = queryGcLastDuration();
-        }
-        return lastDuration;
-    }
-
-    /**
-     * Retrieve the last blocking event timestamp from the database.
-     * 
-     * TODO: Should this consider non-blocking events?
-     * 
-     * @return The time of the last blocking event in database, in milliseconds after JVM startup.
+     * @return The last blocking event in database.
      */
 
-    private synchronized long queryGcLastTimeStamp() {
-        long lastTimestamp = 0;
+    private synchronized BlockingEvent queryGcLastEvent() {
+        BlockingEvent event = null;
         Statement statement = null;
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
             rs = statement.executeQuery(
-                    "select time_stamp from blocking_event where id = " + "(select max(id) from blocking_event)");
+                    "select log_entry from blocking_event where id = " + "(select max(id) from blocking_event)");
             if (rs.next()) {
-                lastTimestamp = rs.getLong(1);
+                event = (BlockingEvent) JdkUtil.parseLogLine(rs.getString(1));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining last timestamp.");
+            throw new RuntimeException("Error determining last blocking event.");
         } finally {
             try {
                 rs.close();
@@ -636,46 +616,7 @@ public class JvmDao {
                 throw new RuntimeException("Error closing Statement.");
             }
         }
-        return lastTimestamp;
-    }
-
-    /**
-     * Retrieve the last blocking event duration from the database.
-     * 
-     * TODO: Should this consider non-blocking events?
-     * 
-     * @return The duration of the last blocking event in database (milliseconds).
-     */
-
-    private synchronized int queryGcLastDuration() {
-        int duration = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery(
-                    "select duration from blocking_event where id = " + "(select max(id) from blocking_event)");
-            if (rs.next()) {
-                duration = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining last duration.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return duration;
+        return event;
     }
 
     /**
@@ -963,24 +904,24 @@ public class JvmDao {
     }
 
     /**
-     * The first stopped event timestamp.
+     * The first stopped event.
      * 
-     * @return The time of the first stopped event, in milliseconds after JVM startup.
+     * @return The time first stopped event.
      */
-    public synchronized long getFirstStoppedTimestamp() {
-        long firstTimestamp = 0;
+    public synchronized ApplicationStoppedTimeEvent getFirstStoppedEvent() {
+        ApplicationStoppedTimeEvent event = null;
         Statement statement = null;
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
-            rs = statement.executeQuery("select time_stamp from application_stopped_time where id = "
+            rs = statement.executeQuery("select log_entry from application_stopped_time where id = "
                     + "(select min(id) from application_stopped_time)");
             if (rs.next()) {
-                firstTimestamp = rs.getLong(1);
+                event = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(rs.getString(1));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining first timestamp.");
+            throw new RuntimeException("Error determining first stopped event.");
         } finally {
             try {
                 rs.close();
@@ -995,63 +936,45 @@ public class JvmDao {
                 throw new RuntimeException("Error closing Statement.");
             }
         }
-        return firstTimestamp;
+        return event;
     }
 
     /**
-     * Retrieve the last stopped event timestamp.
+     * Retrieve the last stopped event.
      * 
-     * @return The time of the last stopped event, in milliseconds after JVM startup.
+     * @return The last stopped event.
      */
-    public synchronized long getLastStoppedTimestamp() {
-        long lastTimestamp = 0;
-        // Retrieve last timestamp from batch or database.
+    public synchronized ApplicationStoppedTimeEvent getLastStoppedEvent() {
+        ApplicationStoppedTimeEvent event;
+        // Retrieve last event from batch or database.
         if (stoppedTimeBatch.size() > 0) {
-            ApplicationStoppedTimeEvent event = stoppedTimeBatch.get(stoppedTimeBatch.size() - 1);
-            lastTimestamp = event.getTimestamp();
+            event = stoppedTimeBatch.get(stoppedTimeBatch.size() - 1);
         } else {
-            lastTimestamp = queryStoppedLastTimeStamp();
+            event = queryStoppedLastEvent();
         }
-        return lastTimestamp;
+        return event;
     }
 
     /**
-     * Retrieve the last stopped event duration.
+     * Retrieve the last stopped event from the database.
      * 
-     * @return The duration of the last stopped event (milliseconds).
-     */
-    public synchronized int getLastStoppedDuration() {
-        int lastDuration = 0;
-        // Retrieve last duration from batch or database.
-        if (stoppedTimeBatch.size() > 0) {
-            ApplicationStoppedTimeEvent event = stoppedTimeBatch.get(stoppedTimeBatch.size() - 1);
-            lastDuration = event.getDuration();
-        } else {
-            lastDuration = queryStoppedLastDuration();
-        }
-        return lastDuration;
-    }
-
-    /**
-     * Retrieve the last stopped event timestamp from the database.
-     * 
-     * @return The time of the last stopped event in database, in milliseconds after JVM startup.
+     * @return The last stopped event in database.
      */
 
-    private synchronized long queryStoppedLastTimeStamp() {
-        long lastTimestamp = 0;
+    private synchronized ApplicationStoppedTimeEvent queryStoppedLastEvent() {
+        ApplicationStoppedTimeEvent event = null;
         Statement statement = null;
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
-            rs = statement.executeQuery("select time_stamp from application_stopped_time where id = "
+            rs = statement.executeQuery("select log_entry from application_stopped_time where id = "
                     + "(select max(id) from application_stopped_time)");
             if (rs.next()) {
-                lastTimestamp = rs.getLong(1);
+                event = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(rs.getString(1));
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining last timestamp.");
+            throw new RuntimeException("Error determining last stopped event.");
         } finally {
             try {
                 rs.close();
@@ -1066,44 +989,7 @@ public class JvmDao {
                 throw new RuntimeException("Error closing Statement.");
             }
         }
-        return lastTimestamp;
-    }
-
-    /**
-     * Retrieve the last stopped event duration from the database.
-     * 
-     * @return The duration of the last stopped event in database (milliseconds).
-     */
-
-    private synchronized int queryStoppedLastDuration() {
-        int duration = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select duration from application_stopped_time where id = "
-                    + "(select max(id) from application_stopped_time)");
-            if (rs.next()) {
-                duration = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining last duration.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return duration;
+        return event;
     }
 
     /**

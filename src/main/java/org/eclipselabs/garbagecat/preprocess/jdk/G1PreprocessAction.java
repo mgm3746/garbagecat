@@ -265,7 +265,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 8) With G1Ergonomic
+ * 8) With G1Ergonomics
  * </p>
  *
  * <pre>
@@ -308,8 +308,9 @@ public class G1PreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|"
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\))? \\(young\\) \\(initial-mark\\)(, " + JdkRegEx.DURATION
-            + "\\])?)( " + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+)?[ ]*$";
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION
+            + ")\\))? \\(young\\) \\(initial-mark\\)(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.TIMESTAMP
+            + ": \\[G1Ergonomics.+)?[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_FULL_GC collection.

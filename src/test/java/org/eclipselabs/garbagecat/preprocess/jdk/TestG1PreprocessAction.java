@@ -423,6 +423,14 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineYoungInitialMarkTriggerG1HumongousAllocationWithG1Ergonomics() {
+        String logLine = "2017-02-02T01:55:56.661-0500: 860.367: [GC pause (G1 Humongous Allocation) (young) "
+                + "(initial-mark) 860.367: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: "
+                + "3305091, predicted base time: 457.90 ms, remaining time: 42.10 ms, target pause time: 500.00 ms]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
     public void testLogLineMixedWithG1Ergonomics() {
         String logLine = "2016-02-11T16:06:59.987-0500: 7259.058: [GC pause (mixed) 7259.058: [G1Ergonomics (CSet "
                 + "Construction) start choosing CSet, _pending_cards: 273214, predicted base time: 74.01 ms, "

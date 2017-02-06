@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
@@ -74,19 +75,14 @@ public class JvmRun {
     private int totalGcPause;
 
     /**
-     * Time of the first blocking event, in milliseconds after JVM startup.
+     * The first blocking event.
      */
-    private long firstGcTimestamp;
+    private BlockingEvent firstGcEvent;
 
     /**
-     * Time of the last blocking event, in milliseconds after JVM startup.
+     * The last blocking event.
      */
-    private long lastGcTimestamp;
-
-    /**
-     * Duration of the last blocking event (milliseconds). Required to compute throughput for very short JVM runs.
-     */
-    private long lastGcDuration;
+    private BlockingEvent lastGcEvent;
 
     /**
      * Total number of blocking events.
@@ -104,19 +100,14 @@ public class JvmRun {
     private int totalStoppedTime;
 
     /**
-     * Time of the first stopped event, in milliseconds after JVM startup.
+     * The first stopped event.
      */
-    private long firstStoppedTimestamp;
+    private ApplicationStoppedTimeEvent firstStoppedEvent;
 
     /**
-     * Time of the last stopped event, in milliseconds after JVM startup.
+     * The last stopped event.
      */
-    private long lastStoppedTimestamp;
-
-    /**
-     * Duration of the last stopped event (microseconds). Required to compute throughput for very short JVM runs.
-     */
-    private long lastStoppedDuration;
+    private ApplicationStoppedTimeEvent lastStoppedEvent;
 
     /**
      * Total number of {@link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent}.
@@ -235,28 +226,20 @@ public class JvmRun {
         this.totalGcPause = totalGcPause;
     }
 
-    public long getFirstGcTimestamp() {
-        return firstGcTimestamp;
+    public BlockingEvent getFirstGcEvent() {
+        return firstGcEvent;
     }
 
-    public void setFirstGcTimestamp(long firstGcTimestamp) {
-        this.firstGcTimestamp = firstGcTimestamp;
+    public void setFirstGcEvent(BlockingEvent firstGcEvent) {
+        this.firstGcEvent = firstGcEvent;
     }
 
-    public long getLastGcTimestamp() {
-        return lastGcTimestamp;
+    public BlockingEvent getLastGcEvent() {
+        return lastGcEvent;
     }
 
-    public void setLastGcTimestamp(long lastGcTimestamp) {
-        this.lastGcTimestamp = lastGcTimestamp;
-    }
-
-    public long getLastGcDuration() {
-        return lastGcDuration;
-    }
-
-    public void setLastGcDuration(long lastGcDuration) {
-        this.lastGcDuration = lastGcDuration;
+    public void setLastGcEvent(BlockingEvent lastGcEvent) {
+        this.lastGcEvent = lastGcEvent;
     }
 
     public int getBlockingEventCount() {
@@ -267,28 +250,20 @@ public class JvmRun {
         this.blockingEventCount = blockingEventCount;
     }
 
-    public long getFirstStoppedTimestamp() {
-        return firstStoppedTimestamp;
+    public ApplicationStoppedTimeEvent getFirstStoppedEvent() {
+        return firstStoppedEvent;
     }
 
-    public void setFirstStoppedTimestamp(long firstStoppedTimestamp) {
-        this.firstStoppedTimestamp = firstStoppedTimestamp;
+    public void setFirstStoppedEvent(ApplicationStoppedTimeEvent firstStoppedEvent) {
+        this.firstStoppedEvent = firstStoppedEvent;
     }
 
-    public long getLastStoppedTimestamp() {
-        return lastStoppedTimestamp;
+    public ApplicationStoppedTimeEvent getLastStoppedEvent() {
+        return lastStoppedEvent;
     }
 
-    public void setLastStoppedTimestamp(long lastStoppedTimestamp) {
-        this.lastStoppedTimestamp = lastStoppedTimestamp;
-    }
-
-    public long getLastStoppedDuration() {
-        return lastStoppedDuration;
-    }
-
-    public void setLastStoppedDuration(long lastStoppedDuration) {
-        this.lastStoppedDuration = lastStoppedDuration;
+    public void setLastStoppedEvent(ApplicationStoppedTimeEvent lastStoppedEvent) {
+        this.lastStoppedEvent = lastStoppedEvent;
     }
 
     public int getStoppedTimeEventCount() {
@@ -438,7 +413,7 @@ public class JvmRun {
         }
 
         // 1) Check for partial log
-        if (GcUtil.isPartialLog(firstGcTimestamp)) {
+        if (firstGcEvent != null && GcUtil.isPartialLog(firstGcEvent.getTimestamp())) {
             analysisKeys.add(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
         }
 
@@ -852,12 +827,23 @@ public class JvmRun {
      * @return Time of the first gc or stopped event, in milliseconds after JVM startup.
      */
     public long getFirstTimestamp() {
-        long firstTimeStamp;
-        if (Math.min(firstGcTimestamp, firstStoppedTimestamp) == 0) {
-            firstTimeStamp = Math.max(firstGcTimestamp, firstStoppedTimestamp);
-        } else {
-            firstTimeStamp = Math.min(firstGcTimestamp, firstStoppedTimestamp);
+        long firstTimeStamp = 0;
+
+        long firstGcEventTimeStamp = 0;
+        if (firstGcEvent != null) {
+            firstGcEventTimeStamp = firstGcEvent.getTimestamp();
         }
+        long firstStoppedEventTimestamp = 0;
+        if (firstStoppedEvent != null) {
+            firstStoppedEventTimestamp = firstStoppedEvent.getTimestamp();
+        }
+
+        if (Math.min(firstGcEventTimeStamp, firstStoppedEventTimestamp) == 0) {
+            firstTimeStamp = Math.max(firstGcEventTimeStamp, firstStoppedEventTimestamp);
+        } else {
+            firstTimeStamp = Math.min(firstGcEventTimeStamp, firstStoppedEventTimestamp);
+        }
+
         return firstTimeStamp;
     }
 
@@ -865,7 +851,20 @@ public class JvmRun {
      * @return Time of the last gc or stopped event, in milliseconds after JVM startup.
      */
     public long getLastTimestamp() {
-        return Math.max(lastGcTimestamp, lastStoppedTimestamp);
+        long lastTimeStamp = 0;
+
+        long lastGcEventTimeStamp = 0;
+        if (lastGcEvent != null) {
+            lastGcEventTimeStamp = lastGcEvent.getTimestamp();
+        }
+        long lastStoppedEventTimestamp = 0;
+        if (lastStoppedEvent != null) {
+            lastStoppedEventTimestamp = lastStoppedEvent.getTimestamp();
+        }
+
+        lastTimeStamp = Math.max(lastGcEventTimeStamp, lastStoppedEventTimestamp);
+
+        return lastTimeStamp;
     }
 
     /**
@@ -881,10 +880,23 @@ public class JvmRun {
 
         long end = 0;
         // Use either last gc or last timestamp and add duration of gc/stop
-        if (lastStoppedTimestamp > lastGcTimestamp) {
-            end = lastStoppedTimestamp + JdkMath.convertMicrosToMillis(lastStoppedDuration).longValue();
+        long lastGcEventTimeStamp = 0;
+        long lastGcEventDuration = 0;
+        if (lastGcEvent != null) {
+            lastGcEventTimeStamp = lastGcEvent.getTimestamp();
+            lastGcEventDuration = lastGcEvent.getDuration();
+        }
+        long lastStoppedEventTimestamp = 0;
+        long lastStoppedEventDuration = 0;
+        if (lastStoppedEvent != null) {
+            lastStoppedEventTimestamp = lastStoppedEvent.getTimestamp();
+            lastStoppedEventDuration = lastStoppedEvent.getDuration();
+        }
+
+        if (lastStoppedEventTimestamp > lastGcEventTimeStamp) {
+            end = lastStoppedEventTimestamp + JdkMath.convertMicrosToMillis(lastStoppedEventDuration).longValue();
         } else {
-            end = lastGcTimestamp + new Long(lastGcDuration).longValue();
+            end = lastGcEventTimeStamp + new Long(lastGcEventDuration).longValue();
         }
 
         return end - start;
