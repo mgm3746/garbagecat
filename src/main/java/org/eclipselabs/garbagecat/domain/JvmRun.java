@@ -499,7 +499,7 @@ public class JvmRun {
             } else if (getUnidentifiedLogLines().size() == 1) {
                 // Check if the unidentified line is not the last preprocessed line but it is the beginning of the last
                 // unpreprocessed line (the line was split).
-                if (!analysisKeys.add(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)
+                if (!analysisKeys.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)
                         && lastLogLineUnprocessed.startsWith(getUnidentifiedLogLines().get(0))) {
                     analysisKeys.add(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
                 }
