@@ -217,7 +217,7 @@ public class Analysis {
     public static final String WARN_PRINT_GC_DETAILS_DISABLED = "warn.print.gc.details.disabled";
 
     /**
-     * Property key for not specifying the cms be used for old collections.
+     * Property key for not specifying the CMS collector be used for old collections.
      */
     public static final String ERROR_CMS_NEW_SERIAL_OLD = "error.cms.new.serial.old";
 

@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
@@ -39,6 +40,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_BIASED_LOCKING_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_BIASED_LOCKING_DISABLED));
+        Assert.assertNotNull(Analysis.WARN_BIASED_LOCKING_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_BIASED_LOCKING_DISABLED));
     }
 
     public void testPrintClassHistogramEnabled() {
@@ -53,6 +56,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC));
         Assert.assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC));
+        Assert.assertNotNull(Analysis.WARN_PRINT_CLASS_HISTOGRAM + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_PRINT_CLASS_HISTOGRAM));
     }
 
     public void testPrintClassHistogramAfterFullGcEnabled() {
@@ -67,6 +72,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM));
         Assert.assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC));
+        Assert.assertNotNull(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC));
     }
 
     public void testPrintClassHistogramBeforeFullGcEnabled() {
@@ -81,6 +88,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM));
         Assert.assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC));
+        Assert.assertNotNull(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC));
     }
 
     public void testPrintApplicationConcurrentTime() {
@@ -91,6 +100,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME));
+        Assert.assertNotNull(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME));
     }
 
     public void testTraceClassUnloading() {
@@ -101,6 +112,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_TRACE_CLASS_UNLOADING + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_TRACE_CLASS_UNLOADING));
+        Assert.assertNotNull(Analysis.WARN_TRACE_CLASS_UNLOADING + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_TRACE_CLASS_UNLOADING));
     }
 
     public void testCompressedClassSpaceSize() {
@@ -111,6 +124,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET));
+        Assert.assertNotNull(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.INFO_COMP_CLASS_SIZE_NOT_SET));
     }
 
     public void testCompressedClassPointersEnabledCompressedOopsDisabledHeapUnknown() {
@@ -123,6 +138,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET));
         Assert.assertTrue(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK));
+        Assert.assertNotNull(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK));
     }
 
     public void testCompressedClassPointersEnabledHeapGt32G() {
@@ -135,6 +152,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET));
         Assert.assertTrue(Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G));
+        Assert.assertNotNull(Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G));
     }
 
     public void testCompressedClassPointersDisabledHeapLt32G() {
@@ -145,6 +164,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G));
+        Assert.assertNotNull(Analysis.ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G));
     }
 
     public void testCompressedClassPointersDisabledHeapUnknown() {
@@ -155,6 +176,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK));
+        Assert.assertNotNull(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK));
     }
 
     public void testCompressedClassSpaceSizeWithCompressedOopsDisabledHeapUnknown() {
@@ -169,6 +192,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK));
         Assert.assertTrue(Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED));
+        Assert.assertNotNull(Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED));
     }
 
     public void testCompressedClassSpaceSizeWithCompressedClassPointersDisabledHeapUnknown() {
@@ -183,6 +208,10 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK));
         Assert.assertTrue(Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED));
+        Assert.assertNotNull(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK));
+        Assert.assertNotNull(Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED));
     }
 
     public void testCompressedOopsDisabledHeapLess32G() {
@@ -193,6 +222,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G));
+        Assert.assertNotNull(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G));
     }
 
     public void testCompressedOopsDisabledHeapEqual32G() {
@@ -215,7 +246,6 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertFalse(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G));
-
     }
 
     public void testCompressedOopsEnabledHeapGreater32G() {
@@ -226,6 +256,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G));
+        Assert.assertNotNull(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G));
     }
 
     public void testPrintFlsStatistics() {
@@ -236,6 +268,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.INFO_PRINT_FLS_STATISTICS + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_PRINT_FLS_STATISTICS));
+        Assert.assertNotNull(Analysis.INFO_PRINT_FLS_STATISTICS + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.INFO_PRINT_FLS_STATISTICS));
     }
 
     public void testPermMetatspaceNotSet() {
@@ -246,6 +280,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_PERM_METASPACE_SIZE_NOT_SET + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PERM_METASPACE_SIZE_NOT_SET));
+        Assert.assertNotNull(Analysis.WARN_PERM_METASPACE_SIZE_NOT_SET + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_PERM_METASPACE_SIZE_NOT_SET));
     }
 
     public void testTieredCompilation() {
@@ -259,6 +295,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED));
+        Assert.assertNotNull(Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED));
     }
 
     public void testLogFileRotationDisabled() {
@@ -269,6 +307,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED));
+        Assert.assertNotNull(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED));
     }
 
     public void testLogFileNumberWithRotationDisabled() {
@@ -281,6 +321,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED));
         Assert.assertTrue(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED));
+        Assert.assertNotNull(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED));
     }
 
     /**
@@ -293,6 +335,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_THREAD_STACK_SIZE_LARGE + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_THREAD_STACK_SIZE_LARGE));
+        Assert.assertNotNull(Analysis.WARN_THREAD_STACK_SIZE_LARGE + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_THREAD_STACK_SIZE_LARGE));
     }
 
     /**
@@ -305,6 +349,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_RMI_DGC_NOT_MANAGED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_RMI_DGC_NOT_MANAGED));
+        Assert.assertNotNull(Analysis.WARN_RMI_DGC_NOT_MANAGED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_RMI_DGC_NOT_MANAGED));
     }
 
     /**
@@ -320,6 +366,10 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT));
         Assert.assertTrue(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT));
+        Assert.assertNotNull(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT));
+        Assert.assertNotNull(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT));
     }
 
     /**
@@ -348,6 +398,10 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL));
         Assert.assertTrue(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL));
+        Assert.assertNotNull(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL));
+        Assert.assertNotNull(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL));
     }
 
     /**
@@ -360,6 +414,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING));
+        Assert.assertNotNull(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING));
     }
 
     /**
@@ -372,6 +428,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.INFO_INSTRUMENTATION + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_INSTRUMENTATION));
+        Assert.assertNotNull(Analysis.INFO_INSTRUMENTATION + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.INFO_INSTRUMENTATION));
     }
 
     /**
@@ -384,6 +442,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.INFO_NATIVE + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_NATIVE));
+        Assert.assertNotNull(Analysis.INFO_NATIVE + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.INFO_NATIVE));
     }
 
     /**
@@ -396,6 +456,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED));
+        Assert.assertNotNull(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED));
     }
 
     /**
@@ -420,6 +482,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_BYTECODE_COMPILE_FIRST_INVOCATION + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_BYTECODE_COMPILE_FIRST_INVOCATION));
+        Assert.assertNotNull(Analysis.WARN_BYTECODE_COMPILE_FIRST_INVOCATION + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_BYTECODE_COMPILE_FIRST_INVOCATION));
     }
 
     /**
@@ -432,6 +496,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_BYTECODE_COMPILE_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_BYTECODE_COMPILE_DISABLED));
+        Assert.assertNotNull(Analysis.WARN_BYTECODE_COMPILE_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_BYTECODE_COMPILE_DISABLED));
     }
 
     /**
@@ -451,6 +517,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT));
+        Assert.assertNotNull(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT));
     }
 
     /**
@@ -482,6 +550,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_EXPLICIT_GC_DISABLED_CONCURRENT + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_EXPLICIT_GC_DISABLED_CONCURRENT));
+        Assert.assertNotNull(Analysis.WARN_EXPLICIT_GC_DISABLED_CONCURRENT + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_EXPLICIT_GC_DISABLED_CONCURRENT));
     }
 
     /**
@@ -494,6 +564,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED));
+        Assert.assertNotNull(Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED));
     }
 
     /**
@@ -507,6 +579,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_COMMANDLINE_FLAGS));
+        Assert.assertNotNull(Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_PRINT_COMMANDLINE_FLAGS));
     }
 
     /**
@@ -533,6 +607,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING));
+        Assert.assertNotNull(Analysis.WARN_PRINT_GC_DETAILS_MISSING + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_PRINT_GC_DETAILS_MISSING));
     }
 
     /**
@@ -559,6 +635,8 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.ERROR_CMS_NEW_SERIAL_OLD + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_NEW_SERIAL_OLD));
+        Assert.assertNotNull(Analysis.ERROR_CMS_NEW_SERIAL_OLD + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_CMS_NEW_SERIAL_OLD));
     }
 
     /**
@@ -593,6 +671,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
         Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
+        Assert.assertNotNull(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
     }
 
     /**
@@ -611,6 +691,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
         Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
+        Assert.assertNotNull(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
     }
 
     /**
@@ -675,6 +757,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PERM_SIZE_NOT_SET));
         Assert.assertFalse(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT));
+        Assert.assertNotNull(Analysis.WARN_PERM_SIZE_NOT_SET + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_PERM_SIZE_NOT_SET));
     }
 
     /**
@@ -699,6 +783,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS));
         Assert.assertFalse(Analysis.ERROR_SERIAL_GC_CMS + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS));
+        Assert.assertNotNull(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS));
     }
 
     /**
@@ -722,6 +808,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_EXPLICIT_GC_PARALLEL));
         Assert.assertFalse(Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_PARALLEL));
+        Assert.assertNotNull(Analysis.WARN_EXPLICIT_GC_PARALLEL + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_EXPLICIT_GC_PARALLEL));
     }
 
     public void testThreadStackSizeAnalysis32Bit() {
@@ -744,6 +832,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_METASPACE_SIZE_NOT_SET + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_METASPACE_SIZE_NOT_SET));
+        Assert.assertNotNull(Analysis.WARN_METASPACE_SIZE_NOT_SET + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_METASPACE_SIZE_NOT_SET));
     }
 
     /**
@@ -772,6 +862,10 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_PAR_NEW_DISABLED));
         Assert.assertFalse(Analysis.ERROR_SERIAL_GC + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC));
+        Assert.assertNotNull(Analysis.WARN_CMS_PAR_NEW_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_CMS_PAR_NEW_DISABLED));
+        Assert.assertNotNull(Analysis.ERROR_SERIAL_GC + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_SERIAL_GC));
     }
 
     /**
@@ -791,6 +885,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G));
         Assert.assertTrue(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G));
+        Assert.assertNotNull(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G));
     }
 
     /**
@@ -809,6 +905,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED));
         Assert.assertFalse(Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING));
+        Assert.assertNotNull(Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_PRINT_GC_DETAILS_DISABLED));
     }
 
     /**
@@ -828,6 +926,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getJvm().getCompressedClassSpaceSizeBytes());
         Assert.assertTrue(Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_PHYSICAL_MEMORY));
+        Assert.assertNotNull(Analysis.ERROR_PHYSICAL_MEMORY + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_PHYSICAL_MEMORY));
     }
 
     /**
@@ -889,5 +989,9 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CLASS_UNLOADING_DISABLED));
         Assert.assertTrue(Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA));
+        Assert.assertNotNull(Analysis.WARN_CLASS_UNLOADING_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_CLASS_UNLOADING_DISABLED));
+        Assert.assertNotNull(Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA));
     }
 }
