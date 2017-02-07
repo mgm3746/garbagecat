@@ -824,10 +824,10 @@ public class JvmRun {
     }
 
     /**
-     * @return Time of the first gc or stopped event, in milliseconds after JVM startup.
+     * @return The first gc or stopped event.
      */
-    public long getFirstTimestamp() {
-        long firstTimeStamp = 0;
+    public LogEvent getFirstEvent() {
+        LogEvent event = null;
 
         long firstGcEventTimeStamp = 0;
         if (firstGcEvent != null) {
@@ -839,19 +839,27 @@ public class JvmRun {
         }
 
         if (Math.min(firstGcEventTimeStamp, firstStoppedEventTimestamp) == 0) {
-            firstTimeStamp = Math.max(firstGcEventTimeStamp, firstStoppedEventTimestamp);
+            if (firstGcEventTimeStamp >= firstStoppedEventTimestamp) {
+                event = firstGcEvent;
+            } else {
+                event = firstStoppedEvent;
+            }
         } else {
-            firstTimeStamp = Math.min(firstGcEventTimeStamp, firstStoppedEventTimestamp);
+            if (firstGcEventTimeStamp <= firstStoppedEventTimestamp) {
+                event = firstGcEvent;
+            } else {
+                event = firstStoppedEvent;
+            }
         }
 
-        return firstTimeStamp;
+        return event;
     }
 
     /**
-     * @return Time of the last gc or stopped event, in milliseconds after JVM startup.
+     * @return The last gc or stopped event.
      */
-    public long getLastTimestamp() {
-        long lastTimeStamp = 0;
+    public LogEvent getLastEvent() {
+        LogEvent event = null;
 
         long lastGcEventTimeStamp = 0;
         if (lastGcEvent != null) {
@@ -862,9 +870,13 @@ public class JvmRun {
             lastStoppedEventTimestamp = lastStoppedEvent.getTimestamp();
         }
 
-        lastTimeStamp = Math.max(lastGcEventTimeStamp, lastStoppedEventTimestamp);
+        if (lastGcEventTimeStamp >= lastStoppedEventTimestamp) {
+            event = lastGcEvent;
+        } else {
+            event = lastStoppedEvent;
+        }
 
-        return lastTimeStamp;
+        return event;
     }
 
     /**
@@ -873,9 +885,9 @@ public class JvmRun {
     public long getJvmRunDuration() {
 
         long start = 0;
-        if (getFirstTimestamp() > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
+        if (getFirstEvent() != null && getFirstEvent().getTimestamp() > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000) {
             // partial log
-            start = getFirstTimestamp();
+            start = getFirstEvent().getTimestamp();
         }
 
         long end = 0;

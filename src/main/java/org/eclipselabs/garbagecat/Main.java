@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -35,6 +36,7 @@ import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
+import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
@@ -322,21 +324,25 @@ public class Main {
                 bufferedWriter.write(
                         "GC Throughput: " + jvmRun.getGcThroughput() + "%" + System.getProperty("line.separator"));
                 // GC max pause
+                BigDecimal maxGcPause = JdkMath.convertMillisToSecs(jvmRun.getMaxGcPause());
                 bufferedWriter.write(
-                        "GC Max Pause: " + jvmRun.getMaxGcPause() + " ms" + System.getProperty("line.separator"));
+                        "GC Max Pause: " + maxGcPause.toString() + " secs" + System.getProperty("line.separator"));
                 // GC total pause time
+                BigDecimal totalGcPause = JdkMath.convertMillisToSecs(jvmRun.getTotalGcPause());
                 bufferedWriter.write(
-                        "GC Total Pause: " + jvmRun.getTotalGcPause() + " ms" + System.getProperty("line.separator"));
+                        "GC Total Pause: " + totalGcPause.toString() + " secs" + System.getProperty("line.separator"));
             }
             if (jvmRun.getStoppedTimeEventCount() > 0) {
                 // Stopped time throughput
                 bufferedWriter.write("Stopped Time Throughput: " + jvmRun.getStoppedTimeThroughput() + "%"
                         + System.getProperty("line.separator"));
                 // Max stopped time
-                bufferedWriter.write("Stopped Time Max Pause: " + jvmRun.getMaxStoppedTime() + " ms"
+                BigDecimal maxStoppedPause = JdkMath.convertMillisToSecs(jvmRun.getMaxStoppedTime());
+                bufferedWriter.write("Stopped Time Max Pause: " + maxStoppedPause.toString() + " secs"
                         + System.getProperty("line.separator"));
                 // Total stopped time
-                bufferedWriter.write("Stopped Time Total: " + jvmRun.getTotalStoppedTime() + " ms"
+                BigDecimal totalStoppedTime = JdkMath.convertMillisToSecs(jvmRun.getTotalStoppedTime());
+                bufferedWriter.write("Stopped Time Total: " + totalStoppedTime.toString() + " secs"
                         + System.getProperty("line.separator"));
                 // Ratio of GC vs. stopped time. 100 means all stopped time due to GC.
                 if (jvmRun.getBlockingEventCount() > 0) {
@@ -346,12 +352,28 @@ public class Main {
             }
             // First/last timestamps
             if (jvmRun.getBlockingEventCount() > 0 || jvmRun.getStoppedTimeEventCount() > 0) {
-                // First Timestamp
-                bufferedWriter.write("First Timestamp: " + jvmRun.getFirstTimestamp() + " ms"
-                        + System.getProperty("line.separator"));
-                // Last Timestamp
-                bufferedWriter.write(
-                        "Last Timestamp: " + jvmRun.getLastTimestamp() + " ms" + System.getProperty("line.separator"));
+                // First event
+                String firstEventDatestamp = JdkUtil.getDateStamp(jvmRun.getFirstEvent().getLogEntry());
+                if (firstEventDatestamp != null) {
+                    bufferedWriter.write("First Datestamp: ");
+                    bufferedWriter.write(firstEventDatestamp);
+                    bufferedWriter.write(System.getProperty("line.separator"));
+                }
+                bufferedWriter.write("First Timestamp: ");
+                BigDecimal firstEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getFirstEvent().getTimestamp());
+                bufferedWriter.write(firstEventTimestamp.toString());
+                bufferedWriter.write(" secs" + System.getProperty("line.separator"));
+                // Last event
+                String lastEventDatestamp = JdkUtil.getDateStamp(jvmRun.getLastEvent().getLogEntry());
+                if (lastEventDatestamp != null) {
+                    bufferedWriter.write("Last Datestamp: ");
+                    bufferedWriter.write(lastEventDatestamp);
+                    bufferedWriter.write(System.getProperty("line.separator"));
+                }
+                bufferedWriter.write("Last Timestamp: ");
+                BigDecimal lastEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getLastEvent().getTimestamp());
+                bufferedWriter.write(lastEventTimestamp.toString());
+                bufferedWriter.write(" secs" + System.getProperty("line.separator"));
             }
 
             bufferedWriter.write("========================================" + System.getProperty("line.separator"));

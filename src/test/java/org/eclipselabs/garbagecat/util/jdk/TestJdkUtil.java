@@ -276,4 +276,18 @@ public class TestJdkUtil extends TestCase {
         Assert.assertEquals("'" + optionSize + "' not converted to expected bytes.", 1073741824,
                 JdkUtil.convertOptionSizeToBytes(optionSize));
     }
+
+    public void testDateStampBeginning() {
+        String logLine = "2017-01-30T10:06:50.070+0400: 2232356.357: [GC [PSYoungGen: 242595K->5980K(1324544K)] "
+                + "1264815K->1037853K(4121088K), 0.0173240 secs] [Times: user=0.08 sys=0.00, real=0.02 secs]";
+        Assert.assertEquals("Datestamp not parsed correctly.", "2017-01-30T10:06:50.070+0400",
+                JdkUtil.getDateStamp(logLine));
+    }
+
+    public void testDateStampMiddle() {
+        String logLine = "85030.389: [Full GC 85030.390: [CMS2012-06-20T12:29:58.094+0200: 85030.443: "
+                + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
+        Assert.assertEquals("Datestamp not parsed correctly.", "2012-06-20T12:29:58.094+0200",
+                JdkUtil.getDateStamp(logLine));
+    }
 }
