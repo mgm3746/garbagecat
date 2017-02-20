@@ -194,4 +194,23 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old allocation size not parsed correctly.", 6191104 - 1472512, event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 166, event.getDuration());
     }
+
+    public void testHeapDumpInitiatedGcTrigger() {
+        String logLine = "2017-02-01T17:09:50.155+0000: 1029482.045: [GC (Heap Dump Initiated GC) "
+                + "[PSYoungGen: 335699K->33192K(397312K)] 1220565K->918194K(1287680K), 0.0243428 secs] "
+                + "[Times: user=0.07 sys=0.01, real=0.03 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
+                ParallelScavengeEvent.match(logLine));
+        ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 1029482045, event.getTimestamp());
+        Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.HEAP_DUMP_INITIATED_GC.toString() + ".",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC));
+        Assert.assertEquals("Young begin size not parsed correctly.", 335699, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 33192, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 397312, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 1220565 - 335699, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 918194 - 33192, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 1287680 - 397312, event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 24, event.getDuration());
+    }
 }
