@@ -60,6 +60,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 1.219: [GC (Metadata GC Threshold) [PSYoungGen: 1226834K-&gt;17779K(1835008K)] 1226834K-&gt;17795K(6029312K), 0.0144911 secs] [Times: user=0.04 sys=0.00, real=0.01 secs]
  * </pre>
  * 
+ * <p>
+ * 4) With 2 dashes before PSYoungGen block. Undetermined what causes this.
+ * </p>
+ * 
+ * <pre>
+ * 2017-02-01T15:56:24.437+0000: 1025076.327: [GC (Allocation Failure) --[PSYoungGen: 385537K-&gt;385537K(397824K)] 1271095K-&gt;1275901K(1288192K), 0.1674611 secs] [Times: user=0.24 sys=0.00, real=0.17 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  * 
@@ -129,7 +137,7 @@ public class ParallelScavengeEvent extends ParallelCollector
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC(--)? (\\("
-            + TRIGGER + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + TRIGGER + "\\) )?(--)?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
             + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
@@ -147,16 +155,16 @@ public class ParallelScavengeEvent extends ParallelCollector
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             trigger = matcher.group(15);
-            young = Integer.parseInt(matcher.group(17));
-            youngEnd = Integer.parseInt(matcher.group(18));
-            youngAvailable = Integer.parseInt(matcher.group(19));
-            int totalBegin = Integer.parseInt(matcher.group(20));
+            young = Integer.parseInt(matcher.group(18));
+            youngEnd = Integer.parseInt(matcher.group(19));
+            youngAvailable = Integer.parseInt(matcher.group(20));
+            int totalBegin = Integer.parseInt(matcher.group(21));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(21));
+            int totalEnd = Integer.parseInt(matcher.group(22));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(22));
+            int totalAllocation = Integer.parseInt(matcher.group(23));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(23)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(24)).intValue();
         }
     }
 
