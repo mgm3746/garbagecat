@@ -351,6 +351,16 @@ public class TestCmsPreprocessAction extends TestCase {
                 CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
     }
 
+    public void testLogMiddleParNewTruncatedConcurrentMarkMixed() {
+        String priorLogLine = "";
+        String logLine = ": 153344K->153344K(153344K), 0.2049130 secs]2017-02-15T16:22:05.602+0900: 1223922.433: "
+                + "[CMS2017-02-15T16:22:06.001+0900: 1223922.832: [CMS-concurrent-mark: 3.589/4.431 secs] "
+                + "[Times: user=6.13 sys=0.89, real=4.43 secs]";
+        String nextLogLine = "";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+    }
+
     public void testLogLinePrintHeapAtGcMiddleSerial() {
         String priorLogLine = "";
         String logLine = "49830.934: [CMS: 1640998K->1616248K(3407872K), 11.0964500 secs] "
@@ -1090,5 +1100,21 @@ public class TestCmsPreprocessAction extends TestCase {
         // Not the last preprocessed line, but part of last unpreprocessed line
         Assert.assertTrue(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST));
+    }
+
+    public void testParNewCmsConcurrentOverThreeLines() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset112.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
     }
 }

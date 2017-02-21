@@ -294,12 +294,18 @@ public class CmsPreprocessAction implements PreprocessAction {
 
     /**
      * Middle line when mixed PAR_NEW and concurrent logging.
+     * 
+     * : 153344K->153344K(153344K), 0.2049130 secs]2017-02-15T16:22:05.602+0900: 1223922.433:
+     * [CMS2017-02-15T16:22:06.001+0900: 1223922.832: [CMS-concurrent-mark: 3.589/4.431 secs] [Times: user=6.13
+     * sys=0.89, real=4.43 secs]
+     * 
      */
-    private static final String REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS)("
-            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark): "
-            + JdkRegEx.DURATION_FRACTION + "\\])[ ]*$";
+    private static final String REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED = "^((" + JdkRegEx.TIMESTAMP
+            + ": \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?)?: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP + ": \\[CMS)((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark): " + JdkRegEx.DURATION_FRACTION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
 
     /**
      * Middle line PAR_NEW with FLS_STATISTICS
@@ -521,7 +527,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
-                entangledLogLines.add(matcher.group(11));
+                entangledLogLines.add(matcher.group(23));
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS)) {
