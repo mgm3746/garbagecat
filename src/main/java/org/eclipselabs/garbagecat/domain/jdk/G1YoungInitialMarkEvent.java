@@ -65,26 +65,32 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
 
     /**
      * Regular expressions defining the logging.
+     * 
+     * 1244.357: [GC pause (young) (initial-mark) 847M->599M(970M), 0.0566840 secs]
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC
-            + ")\\) )?\\(young\\) \\(initial-mark\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\) )?\\(young\\) \\(initial-mark\\) " + JdkRegEx.SIZE_G1
+            + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * Regular expression preprocessed.
      * 
      * 27474.176: [GC pause (young) (initial-mark), 0.4234530 secs][Eden: 5376.0M(7680.0M)->0.0B(6944.0M) Survivors:
      * 536.0M->568.0M Heap: 13.8G(26.0G)->8821.4M(26.0G)] [Times: user=1.66 sys=0.02, real=0.43 secs]
+     * 
+     * 2017-02-20T20:17:04.874-0500: 40442.077: [GC pause (G1 Humongous Allocation) (young) (initial-mark), 0.0142482
+     * secs]
      */
     private static final String REGEX_PREPROCESSED = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC pause (\\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
             + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
             + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\(("
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE_G1
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?, " + JdkRegEx.DURATION + "\\](\\[Eden: " + JdkRegEx.SIZE_G1
             + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\) Survivors: "
             + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?)?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -154,10 +160,13 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
                     trigger = matcher.group(17);
                 }
                 duration = JdkMath.convertSecsToMillis(matcher.group(18)).intValue();
-                combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(39), matcher.group(41).charAt(0));
-                combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(45), matcher.group(47).charAt(0));
-                combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(48),
-                        matcher.group(50).charAt(0));
+                if (matcher.group(21) != null) {
+                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(40), matcher.group(42).charAt(0));
+                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(46),
+                            matcher.group(48).charAt(0));
+                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(49),
+                            matcher.group(51).charAt(0));
+                }
             }
         }
     }

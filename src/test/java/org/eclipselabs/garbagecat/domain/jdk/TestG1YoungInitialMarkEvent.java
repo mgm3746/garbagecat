@@ -207,4 +207,17 @@ public class TestG1YoungInitialMarkEvent extends TestCase {
                 event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 423, event.getDuration());
     }
+
+    public void testLogLinePreprocessedTriggerG1HumongousAllocationNoSizeData() {
+        String logLine = "2017-02-20T20:17:04.874-0500: 40442.077: [GC pause (G1 Humongous Allocation) (young) "
+                + "(initial-mark), 0.0142482 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
+                G1YoungInitialMarkEvent.match(logLine));
+        G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 40442077, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 0, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 0, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 0, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 14, event.getDuration());
+    }
 }
