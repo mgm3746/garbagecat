@@ -994,4 +994,22 @@ public class TestAnalysis extends TestCase {
         Assert.assertNotNull(Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA + " not found.",
                 GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA));
     }
+
+    /**
+     * Test application/gc logging mixed.
+     */
+    public void testApplicationLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset114.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_APPLICATION_LOGGING + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_APPLICATION_LOGGING));
+        Assert.assertTrue("64-bit not identified.", jvmRun.getJvm().is64Bit());
+        Assert.assertFalse(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET));
+
+    }
 }

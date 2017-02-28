@@ -1038,6 +1038,20 @@ public class Jvm {
     }
 
     /**
+     * The option for specifying 64-bit.
+     * 
+     * <pre>
+     * -d64
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getD64() {
+        String regex = "(-d64)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */
@@ -1111,11 +1125,15 @@ public class Jvm {
      * @return True if 64 bit, false otherwise.
      */
     public boolean is64Bit() {
-        boolean is64Bit = false;
+        boolean is64BitVersion = false;
         if (version != null) {
-            is64Bit = version.matches("^.+64-Bit.+$");
+            is64BitVersion = version.matches("^.+64-Bit.+$");
         }
-        return is64Bit;
+        boolean is64BitOption = false;
+        if (getD64() != null) {
+            is64BitOption = true;
+        }
+        return is64BitVersion || is64BitOption;
     }
 
     /**

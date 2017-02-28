@@ -13,10 +13,12 @@
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.io.File;
+import java.util.Date;
 
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -243,6 +245,14 @@ public class TestParNewEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
+    public void testLogLineWithDatestampNoTimestamp() {
+        String logLine = "2017-02-27T07:23:39.571+0100: [GC [ParNew: 2304000K->35161K(2688000K), 0.0759285 secs] "
+                + "2304000K->35161K(9856000K), 0.0760907 secs] [Times: user=0.21 sys=0.05, real=0.08 secs]";
+        // Datestamp only is handled by preparsing.
+        Assert.assertFalse("Log line incorrectly recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                ParNewEvent.match(logLine));
+    }
+
     public void testLogLineWithDoubleDatestamp() {
         String logLine = "2013-12-09T16:18:17.813+0000: 13.086: [GC2013-12-09T16:18:17.813+0000: 13.086: [ParNew: "
                 + "272640K->33532K(306688K), 0.0381419 secs] 272640K->33532K(1014528K), 0.0383306 secs] "
@@ -295,5 +305,46 @@ public class TestParNewEvent extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_INCREMENTAL_MODE));
         Assert.assertTrue(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT));
+    }
+
+    /**
+     * Test datestamp only logging without passing in JVM start datetime.
+     */
+    public void testParNewDatestampNoTimestampNoJvmStartDate() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset113.txt");
+        Jvm jvm = new Jvm(null, null);
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.ERROR_DATESTAMP_NO_TIMESTAMP + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_DATESTAMP_NO_TIMESTAMP));
+        // Don't report datestamp only lines unidentified
+        Assert.assertFalse(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE));
+        Assert.assertFalse(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST));
+        Assert.assertFalse(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT));
+    }
+
+    /**
+     * Test datestamp only logging with passing in JVM start datetime.
+     */
+    public void testParNewDatestampNoTimestampJvmStartDate() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset113.txt");
+        Date jvmStartDate = GcUtil.parseStartDateTime("2017-02-28 11:26:24,135");
+        Jvm jvm = new Jvm(null, jvmStartDate);
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, jvmStartDate);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+        Assert.assertFalse(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED));
     }
 }

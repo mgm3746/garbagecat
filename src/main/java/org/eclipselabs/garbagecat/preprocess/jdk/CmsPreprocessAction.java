@@ -198,9 +198,11 @@ public class CmsPreprocessAction implements PreprocessAction {
      * Regular expression for retained beginning PAR_NEW mixed with FLS_STATISTICS.
      * 
      * 1.118: [GC Before GC:
+     * 
+     * 2017-02-27T14:29:54.533+0000: 2.730: [GC (Allocation Failure) Before GC:
      */
     private static final String REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[GC )(Before GC:)$";
+            + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))? )(Before GC:)$";
 
     /**
      * Regular expression for beginning CMS_SERIAL_OLD collection.
@@ -311,10 +313,14 @@ public class CmsPreprocessAction implements PreprocessAction {
      * Middle line PAR_NEW with FLS_STATISTICS
      * 
      * 1.118: [ParNew: 377487K->8426K(5505024K), 0.0535260 secs] 377487K->8426K(43253760K)After GC:
+     * 
+     * 2017-02-27T14:29:54.534+0000: 2.730: [ParNew: 2048000K->191475K(2304000K), 0.0366288 secs]
+     * 2048000K->191475K(7424000K)After GC:
      */
-    private static final String REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS = "^(" + JdkRegEx.TIMESTAMP + ": \\[ParNew: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))(After GC:)$";
+    private static final String REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS = "^((" + JdkRegEx.DATESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP + ": \\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\))(After GC:)$";
 
     /**
      * Middle line with PrintHeapAtGC.

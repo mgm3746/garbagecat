@@ -79,4 +79,40 @@ public class TestApplicationLoggingEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".",
                 ApplicationLoggingEvent.match(logLine));
     }
+
+    public void testJBossDivider() {
+        String logLine = "=========================================================================";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".",
+                ApplicationLoggingEvent.match(logLine));
+    }
+
+    public void testJBossBootstrapEnvironement() {
+        String logLine = "  JBoss Bootstrap Environment";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".",
+                ApplicationLoggingEvent.match(logLine));
+    }
+
+    public void testJBossHome() {
+        String logLine = "  JBOSS_HOME: /opt/jboss/jboss-eap-4.3/jboss-as";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".",
+                ApplicationLoggingEvent.match(logLine));
+    }
+
+    public void testJBossJava() {
+        String logLine = "  JAVA: /opt/java/bin/java";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".",
+                ApplicationLoggingEvent.match(logLine));
+    }
+
+    public void testJBossClasspath() {
+        String logLine = "  CLASSPATH: /opt/jboss/jboss-eap-4.3/jboss-as/bin/run.jar:/opt/java/lib/tools.jar";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".",
+                ApplicationLoggingEvent.match(logLine));
+    }
+
+    public void testJBossJavaOptsWarning() {
+        String logLine = "JAVA_OPTS already set in environment; overriding default settings with values: -d64";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".",
+                ApplicationLoggingEvent.match(logLine));
+    }
 }

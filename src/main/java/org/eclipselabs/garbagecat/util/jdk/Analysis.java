@@ -470,6 +470,16 @@ public class Analysis {
     public static final String WARN_CLASS_UNLOADING_DISABLED = "warn.class.unloading.disabled";
 
     /**
+     * Property key for logging with datestamps only, no timestamps.
+     */
+    public static final String ERROR_DATESTAMP_NO_TIMESTAMP = "error.datestamp.no.timestamp";
+
+    /**
+     * Property key for application logging mixed with gc logging.
+     */
+    public static final String WARN_APPLICATION_LOGGING = "warn.application.logging";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -97,6 +98,10 @@ public class DateStampPreprocessAction implements PreprocessAction {
             String logEntryMinusDateStamp = matcher.group(12);
             Date datestamp = GcUtil.parseDateStamp(matcher.group(1));
             long diff = GcUtil.dateDiff(jvmStartDate, datestamp);
+            if (diff < 0) {
+                throw new TimeWarpException(
+                        "JVM start date (" + jvmStartDate + ") is after logging datestamp (" + datestamp + ")");
+            }
             this.logEntry = JdkMath.convertMillisToSecs(diff) + ": " + logEntryMinusDateStamp;
         }
     }

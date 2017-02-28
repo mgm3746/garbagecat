@@ -683,4 +683,10 @@ public class TestJvm extends TestCase {
         Assert.assertEquals("Compressed class space size bytes incorrect.", 805306368,
                 jvm.getCompressedClassSpaceSizeBytes());
     }
+
+    public void testD64() {
+        String jvmOptions = "-XX:CompressedClassSpaceSize=768m -d64";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-d64 not found.", jvm.getD64());
+    }
 }

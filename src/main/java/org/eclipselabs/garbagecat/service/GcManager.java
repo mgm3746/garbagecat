@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipselabs.garbagecat.Main;
+import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
@@ -61,6 +62,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ParallelPreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -283,6 +285,11 @@ public class GcManager {
             if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
                 if (ApplicationConcurrentTimeEvent.match(currentLogLine)) {
                     jvmDao.getAnalysisKeys().add(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME);
+                }
+            }
+            if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_APPLICATION_LOGGING)) {
+                if (ApplicationLoggingEvent.match(currentLogLine)) {
+                    jvmDao.getAnalysisKeys().add(Analysis.WARN_APPLICATION_LOGGING);
                 }
             }
             currentLogLine = null;
@@ -583,8 +590,21 @@ public class GcManager {
                         jvmDao.getAnalysisKeys().add(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED);
                     }
                 } else if (event instanceof UnknownEvent) {
-                    if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
-                        jvmDao.getUnidentifiedLogLines().add(logLine);
+                    // Don't count datestamp only lines as unidentified
+                    Date jvmStartDate = GcUtil.parseStartDateTime("2000-01-01 00:00:00,000");
+                    DateStampPreprocessAction preprocessAction = new DateStampPreprocessAction(logLine, jvmStartDate);
+                    LogEvent preprocessedEvent = null;
+                    if (preprocessAction.getLogEntry() != null) {
+                        preprocessedEvent = JdkUtil.parseLogLine(preprocessAction.getLogEntry());
+                    }
+                    if (preprocessedEvent != null && !(preprocessedEvent instanceof UnknownEvent)) {
+                        if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_DATESTAMP_NO_TIMESTAMP)) {
+                            jvmDao.getAnalysisKeys().add(Analysis.ERROR_DATESTAMP_NO_TIMESTAMP);
+                        }
+                    } else {
+                        if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
+                            jvmDao.getUnidentifiedLogLines().add(logLine);
+                        }
                     }
                 }
 
@@ -616,7 +636,9 @@ public class GcManager {
             // Process final batches
             jvmDao.processBlockingBatch();
             jvmDao.processStoppedTimeBatch();
-        } catch (FileNotFoundException e) {
+        } catch (
+
+        FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

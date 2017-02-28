@@ -679,6 +679,37 @@ public class TestCmsPreprocessAction extends TestCase {
                 event.getLogEntry());
     }
 
+    public void testLogLineBeginParNewCombinedFlsStatistics() {
+        String priorLogLine = "";
+        String logLine = "2017-02-27T14:29:54.533+0000: 2.730: [GC (Allocation Failure) Before GC:";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "2017-02-27T14:29:54.533+0000: 2.730: [GC (Allocation Failure) ", event.getLogEntry());
+    }
+
+    public void testLogLineMiddleParNewCombinedFlsStatistics() {
+        String priorLogLine = "";
+        String logLine = "2017-02-27T14:29:54.534+0000: 2.730: [ParNew: 2048000K->191475K(2304000K), 0.0366288 secs] "
+                + "2048000K->191475K(7424000K)After GC:";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "2017-02-27T14:29:54.534+0000: 2.730: [ParNew: 2048000K->191475K(2304000K), 0.0366288 secs] "
+                        + "2048000K->191475K(7424000K)",
+                event.getLogEntry());
+    }
+
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */

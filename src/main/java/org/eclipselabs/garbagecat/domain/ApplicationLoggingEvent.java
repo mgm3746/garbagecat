@@ -81,7 +81,21 @@ public class ApplicationLoggingEvent implements ThrowAwayEvent {
             // stack trace caused by
             "^Caused by: (java|com|org|oracle).*$",
             // stack trace ellipsis
-            "\\t\\.\\.\\. \\d{1,3} more$" };
+            "\\t\\.\\.\\. \\d{1,3} more$",
+            // JBoss divider
+            "^=========================================================================$",
+            // JBoss bootstrap environment
+            "^  JBoss Bootstrap Environment$",
+            // JBOSS_HOME
+            "^  JBOSS_HOME:.*$",
+            // JBoss JAVA
+            "^  JAVA:.*$",
+            // JBoss CLASS_PATH
+            "^  CLASSPATH:.*$",
+            // JBoss JAVA_OPTS warning
+            "^JAVA_OPTS already set in environment; overriding default settings with values: -d64$"
+            //
+    };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

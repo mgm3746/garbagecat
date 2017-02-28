@@ -114,7 +114,8 @@ public class Main {
                 GcManager jvmManager = new GcManager();
 
                 // Do preprocessing
-                if (cmd.hasOption(Constants.OPTION_PREPROCESS_LONG)) {
+                if (cmd.hasOption(Constants.OPTION_PREPROCESS_LONG)
+                        || cmd.hasOption(Constants.OPTION_STARTDATETIME_LONG)) {
                     /*
                      * Requiring the JVM start date/time for preprocessing is a hack to handle datestamps. When
                      * garbagecat was started there was no <code>-XX:+PrintGCDateStamps</code> option. When it was
