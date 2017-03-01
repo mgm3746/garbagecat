@@ -1012,4 +1012,22 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET));
 
     }
+
+    /**
+     * Test <code>-XX:PrintFLSStatistics</code> and <code>-XX:PrintPromotionFailure</code>.
+     */
+    public void testPrintFlsStatisticsPrintPromotionFailure() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset115.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.INFO_PRINT_FLS_STATISTICS + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_PRINT_FLS_STATISTICS));
+        Assert.assertTrue(Analysis.INFO_PRINT_PROMOTION_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_PRINT_PROMOTION_FAILURE));
+        Assert.assertTrue(Analysis.WARN_USE_MEMBAR + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_USE_MEMBAR));
+    }
 }

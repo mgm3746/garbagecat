@@ -648,6 +648,28 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
+    public void testParNewPromotionFailedPrintPromotionFailure() {
+        String logLine = "2017-02-28T00:43:55.587+0000: 36843.783: [GC (Allocation Failure) "
+                + "2017-02-28T00:43:55.587+0000: 36843.783: [ParNew (promotion failed): 2304000K->2304000K(2304000K), "
+                + "0.4501923 secs]2017-02-28T00:43:56.037+0000: 36844.234: [CMS: 2818067K->2769354K(5120000K), "
+                + "3.8341757 secs] 5094036K->2769354K(7424000K), [Metaspace: 18583K->18583K(1067008K)], "
+                + "4.2847962 secs] [Times: user=9.11 sys=0.00, real=4.29 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
+        Assert.assertEquals("Time stamp not parsed correctly.", 36843783, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 2304000, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", (2769354 - 2769354), event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 2304000, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 2818067, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 2769354, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 5120000, event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 4284, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
+    }
+
     public void testParNewCmsSerialOld() {
         String logLine = "42782.086: [GC 42782.086: [ParNew: 254464K->7680K(254464K), 0.2853553 secs]"
                 + "42782.371: [Tenured: 1082057K->934941K(1082084K), 6.2719770 secs] "

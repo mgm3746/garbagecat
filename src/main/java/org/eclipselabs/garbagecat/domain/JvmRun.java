@@ -792,7 +792,7 @@ public class JvmRun {
         }
 
         // Check for PrintFLSStatistics option is being used
-        if (jvm.getPrintFLStatistics() != null) {
+        if (jvm.getPrintFLStatistics() != null && !analysisKeys.contains(Analysis.INFO_PRINT_FLS_STATISTICS)) {
             analysisKeys.add(Analysis.INFO_PRINT_FLS_STATISTICS);
         }
 
@@ -820,6 +820,17 @@ public class JvmRun {
         // Check for class unloading disabled
         if (jvm.getClassUnloadingDisabled() != null) {
             analysisKeys.add(Analysis.WARN_CLASS_UNLOADING_DISABLED);
+        }
+
+        // Check for -XX:+PrintPromotionFailure option being used
+        if (jvm.getPrintPromotionFailureEnabled() != null
+                && !analysisKeys.contains(Analysis.INFO_PRINT_PROMOTION_FAILURE)) {
+            analysisKeys.add(Analysis.INFO_PRINT_PROMOTION_FAILURE);
+        }
+
+        // Check for -XX:+UseMembar option being used
+        if (jvm.getUseMembarEnabled() != null) {
+            analysisKeys.add(Analysis.WARN_USE_MEMBAR);
         }
     }
 

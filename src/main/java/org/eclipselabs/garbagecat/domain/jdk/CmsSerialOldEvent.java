@@ -251,10 +251,11 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
      * Regular expression defining the logging beginning with "GC".
      */
     private static final String REGEX_GC = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC( \\("
-            + TRIGGER_GC + "\\))?[ ]{0,1}(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\("
-            + TRIGGER_PAR_NEW + "\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?(((" + JdkRegEx.DATESTAMP
-            + ": )?" + JdkRegEx.TIMESTAMP + ": \\[(CMS|Tenured))?(Java HotSpot\\(TM\\) Server VM warning: )?"
+            + TRIGGER_GC + "\\))?[ ]{0,1}(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew("
+            + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\(" + TRIGGER_PAR_NEW + "\\))?: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]("
+            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?(((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[(CMS|Tenured))?(Java HotSpot\\(TM\\) Server VM warning: )?"
             + "(bailing out to foreground collection)?( \\(" + TRIGGER_CMS + "\\))?(: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?)?("
             + ClassHistogramEvent.REGEX_PREPROCESSED + ")?( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
@@ -306,51 +307,53 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
             if (matcher.find()) {
                 this.timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 // If multiple triggers, use last one.
-                if (matcher.group(73) != null) {
-                    this.trigger = matcher.group(73);
+                if (matcher.group(75) != null) {
+                    this.trigger = matcher.group(75);
+                } else if (matcher.group(30) != null) {
+                    this.trigger = matcher.group(30);
                 } else if (matcher.group(14) != null) {
                     this.trigger = matcher.group(14);
                 } else {
                     // assume promotion failure
                     this.trigger = JdkRegEx.TRIGGER_PROMOTION_FAILED;
                 }
-                this.young = Integer.parseInt(matcher.group(29));
+                this.young = Integer.parseInt(matcher.group(31));
                 // No data to determine young end size.
                 this.youngEnd = 0;
-                this.youngAvailable = Integer.parseInt(matcher.group(31));
+                this.youngAvailable = Integer.parseInt(matcher.group(33));
 
                 // use young block duration for truncated events
-                if (matcher.group(111) == null) {
-                    this.duration = JdkMath.convertSecsToMillis(matcher.group(32)).intValue();
+                if (matcher.group(113) == null) {
+                    this.duration = JdkMath.convertSecsToMillis(matcher.group(34)).intValue();
                 }
 
                 // old block after young
-                if (matcher.group(74) != null) {
-                    this.old = Integer.parseInt(matcher.group(75));
-                    this.oldEnd = Integer.parseInt(matcher.group(76));
-                    this.oldAllocation = Integer.parseInt(matcher.group(77));
-                    if (matcher.group(103) != null) {
-                        this.youngEnd = Integer.parseInt(matcher.group(103)) - this.oldEnd;
+                if (matcher.group(76) != null) {
+                    this.old = Integer.parseInt(matcher.group(77));
+                    this.oldEnd = Integer.parseInt(matcher.group(78));
+                    this.oldAllocation = Integer.parseInt(matcher.group(79));
+                    if (matcher.group(105) != null) {
+                        this.youngEnd = Integer.parseInt(matcher.group(105)) - this.oldEnd;
                     }
                 } else {
-                    if (matcher.group(101) != null) {
-                        this.old = Integer.parseInt(matcher.group(102)) - this.young;
+                    if (matcher.group(103) != null) {
+                        this.old = Integer.parseInt(matcher.group(104)) - this.young;
                         // No data to determine old end size.
                         this.oldEnd = 0;
-                        this.oldAllocation = Integer.parseInt(matcher.group(104)) - this.youngAvailable;
+                        this.oldAllocation = Integer.parseInt(matcher.group(106)) - this.youngAvailable;
                     }
                 }
                 // perm/metaspace data
-                if (matcher.group(105) != null) {
-                    this.permGen = Integer.parseInt(matcher.group(107));
-                    this.permGenEnd = Integer.parseInt(matcher.group(108));
-                    this.permGenAllocation = Integer.parseInt(matcher.group(109));
+                if (matcher.group(107) != null) {
+                    this.permGen = Integer.parseInt(matcher.group(109));
+                    this.permGenEnd = Integer.parseInt(matcher.group(110));
+                    this.permGenAllocation = Integer.parseInt(matcher.group(111));
                 }
-                if (matcher.group(110) != null) {
+                if (matcher.group(112) != null) {
                     super.setIncrementalMode(true);
                 }
-                if (matcher.group(111) != null) {
-                    this.duration = JdkMath.convertSecsToMillis(matcher.group(111)).intValue();
+                if (matcher.group(113) != null) {
+                    this.duration = JdkMath.convertSecsToMillis(matcher.group(113)).intValue();
                 }
             }
         }

@@ -710,6 +710,73 @@ public class TestCmsPreprocessAction extends TestCase {
                 event.getLogEntry());
     }
 
+    public void testLogLineMiddleParNewCombinedFlsStatisticsPrintPromotionFailure() {
+        String priorLogLine = "";
+        String logLine = "2017-02-28T00:43:55.587+0000: 36843.783: [ParNew (0: promotion failure size = 200)  "
+                + "(1: promotion failure size = 8)  (2: promotion failure size = 200)  "
+                + "(3: promotion failure size = 200)  (4: promotion failure size = 200)  "
+                + "(5: promotion failure size = 200)  (6: promotion failure size = 200)  "
+                + "(7: promotion failure size = 200)  (8: promotion failure size = 10)  "
+                + "(9: promotion failure size = 10)  (10: promotion failure size = 10)  "
+                + "(11: promotion failure size = 200)  (12: promotion failure size = 200)  "
+                + "(13: promotion failure size = 10)  (14: promotion failure size = 200)  "
+                + "(15: promotion failure size = 200)  (16: promotion failure size = 200)  "
+                + "(17: promotion failure size = 200)  (18: promotion failure size = 200)  "
+                + "(19: promotion failure size = 200)  (20: promotion failure size = 10)  "
+                + "(21: promotion failure size = 200)  (22: promotion failure size = 10)  "
+                + "(23: promotion failure size = 45565)  (24: promotion failure size = 10)  "
+                + "(25: promotion failure size = 4)  (26: promotion failure size = 200)  "
+                + "(27: promotion failure size = 200)  (28: promotion failure size = 10)  "
+                + "(29: promotion failure size = 200)  (30: promotion failure size = 200)  "
+                + "(31: promotion failure size = 200)  (32: promotion failure size = 200)  "
+                + "(promotion failed): 2304000K->2304000K(2304000K), 0.4501923 secs]"
+                + "2017-02-28T00:43:56.037+0000: 36844.234: [CMSCMS: Large block 0x0000000730892bb8";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        String logLinePreprocessed = "2017-02-28T00:43:55.587+0000: 36843.783: [ParNew "
+                + "(0: promotion failure size = 200)  (1: promotion failure size = 8)  "
+                + "(2: promotion failure size = 200)  (3: promotion failure size = 200)  "
+                + "(4: promotion failure size = 200)  (5: promotion failure size = 200)  "
+                + "(6: promotion failure size = 200)  (7: promotion failure size = 200)  "
+                + "(8: promotion failure size = 10)  (9: promotion failure size = 10)  "
+                + "(10: promotion failure size = 10)  (11: promotion failure size = 200)  "
+                + "(12: promotion failure size = 200)  (13: promotion failure size = 10)  "
+                + "(14: promotion failure size = 200)  (15: promotion failure size = 200)  "
+                + "(16: promotion failure size = 200)  (17: promotion failure size = 200)  "
+                + "(18: promotion failure size = 200)  (19: promotion failure size = 200)  "
+                + "(20: promotion failure size = 10)  (21: promotion failure size = 200)  "
+                + "(22: promotion failure size = 10)  (23: promotion failure size = 45565)  "
+                + "(24: promotion failure size = 10)  (25: promotion failure size = 4)  "
+                + "(26: promotion failure size = 200)  (27: promotion failure size = 200)  "
+                + "(28: promotion failure size = 10)  (29: promotion failure size = 200)  "
+                + "(30: promotion failure size = 200)  (31: promotion failure size = 200)  "
+                + "(32: promotion failure size = 200)  (promotion failed): 2304000K->2304000K(2304000K), "
+                + "0.4501923 secs]2017-02-28T00:43:56.037+0000: 36844.234: [CMS";
+        Assert.assertEquals("Log line not parsed correctly.", logLinePreprocessed, event.getLogEntry());
+    }
+
+    public void testLogLineMiddleSerialFlsStatistics() {
+        String priorLogLine = "";
+        String logLine = ": 2818067K->2769354K(5120000K), 3.8341757 secs] 5094036K->2769354K(7424000K), "
+                + "[Metaspace: 18583K->18583K(1067008K)]After GC:";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                ": 2818067K->2769354K(5120000K), 3.8341757 secs] 5094036K->2769354K(7424000K), "
+                        + "[Metaspace: 18583K->18583K(1067008K)]",
+                event.getLogEntry());
+    }
+
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */
@@ -1147,5 +1214,19 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
+    }
+
+    public void testPrintPromotionFailure() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset115.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 4, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue(Analysis.ERROR_CMS_PROMOTION_FAILED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_PROMOTION_FAILED));
     }
 }

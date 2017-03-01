@@ -1052,6 +1052,34 @@ public class Jvm {
     }
 
     /**
+     * The option for enabling printing promotion failure information.
+     * 
+     * <pre>
+     * -XX:+PrintPromotionFailure
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintPromotionFailureEnabled() {
+        String regex = "(-XX:\\+PrintPromotionFailure)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for enabling a strict memory barrier.
+     * 
+     * <pre>
+     * -XX:+UseMembar
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseMembarEnabled() {
+        String regex = "(-XX:\\+UseMembar)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

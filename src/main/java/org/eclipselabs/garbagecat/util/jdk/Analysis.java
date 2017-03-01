@@ -480,6 +480,16 @@ public class Analysis {
     public static final String WARN_APPLICATION_LOGGING = "warn.application.logging";
 
     /**
+     * Property key for -XX:+PrintPromotionFailure.
+     */
+    public static final String INFO_PRINT_PROMOTION_FAILURE = "info.print.promotion.failure";
+
+    /**
+     * Property key for -XX:+UseMembar.
+     */
+    public static final String WARN_USE_MEMBAR = "warn.use.membar";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

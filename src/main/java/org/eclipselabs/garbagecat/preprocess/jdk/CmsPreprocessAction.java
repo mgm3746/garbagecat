@@ -316,11 +316,37 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * 2017-02-27T14:29:54.534+0000: 2.730: [ParNew: 2048000K->191475K(2304000K), 0.0366288 secs]
      * 2048000K->191475K(7424000K)After GC:
+     * 
+     * 2017-02-28T00:43:55.587+0000: 36843.783: [ParNew (0: promotion failure size = 200) (1: promotion failure size =
+     * 8) (2: promotion failure size = 200) (3: promotion failure size = 200) (4: promotion failure size = 200) (5:
+     * promotion failure size = 200) (6: promotion failure size = 200) (7: promotion failure size = 200) (8: promotion
+     * failure size = 10) (9: promotion failure size = 10) (10: promotion failure size = 10) (11: promotion failure size
+     * = 200) (12: promotion failure size = 200) (13: promotion failure size = 10) (14: promotion failure size = 200)
+     * (15: promotion failure size = 200) (16: promotion failure size = 200) (17: promotion failure size = 200) (18:
+     * promotion failure size = 200) (19: promotion failure size = 200) (20: promotion failure size = 10) (21: promotion
+     * failure size = 200) (22: promotion failure size = 10) (23: promotion failure size = 45565) (24: promotion failure
+     * size = 10) (25: promotion failure size = 4) (26: promotion failure size = 200) (27: promotion failure size = 200)
+     * (28: promotion failure size = 10) (29: promotion failure size = 200) (30: promotion failure size = 200) (31:
+     * promotion failure size = 200) (32: promotion failure size = 200) (promotion failed):
+     * 2304000K->2304000K(2304000K), 0.4501923 secs]2017-02-28T00:43:56.037+0000: 36844.234: [CMSCMS: Large block
+     * 0x0000000730892bb8
      */
     private static final String REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\))(After GC:)$";
+            + JdkRegEx.TIMESTAMP + ": \\[ParNew(" + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\("
+            + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\))?((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS)?)(After GC:|CMS: Large block " + JdkRegEx.ADDRESS + ")$";
+    /**
+     * Middle serial line with FLS_STATISTICS
+     * 
+     * : 2818067K->2769354K(5120000K), 3.8341757 secs] 5094036K->2769354K(7424000K), [Metaspace:
+     * 18583K->18583K(1067008K)]After GC:
+     */
+    private static final String REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS = "^(: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)\\])After GC:$";
 
     /**
      * Middle line with PrintHeapAtGC.
@@ -537,8 +563,16 @@ public class CmsPreprocessAction implements PreprocessAction {
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS)) {
-            // Output ParNew par
+            // Output ParNew part minus FL stats
             Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS)) {
+            // Output serial part minus FL stats
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
@@ -633,6 +667,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                 || logLine.matches(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC) || logLine.matches(REGEX_RETAIN_END)
                 || logLine.matches(REGEX_RETAIN_DURATION) || logLine.matches(REGEX_RETAIN_PAR_NEW);
     }

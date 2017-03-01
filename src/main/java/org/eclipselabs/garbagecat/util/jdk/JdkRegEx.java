@@ -367,6 +367,25 @@ public class JdkRegEx {
     public static final String OPTION_SIZE = "(b|B|k|K|m|M|g|G)";
 
     /**
+     * <code>-XX:+PrintPromotionFailure</code> output.
+     * 
+     * For example:
+     * 
+     * (0: promotion failure size = 200) (1: promotion failure size = 8) (2: promotion failure size = 200) (3: promotion
+     * failure size = 200) (4: promotion failure size = 200) (5: promotion failure size = 200) (6: promotion failure
+     * size = 200) (7: promotion failure size = 200) (8: promotion failure size = 10) (9: promotion failure size = 10)
+     * (10: promotion failure size = 10) (11: promotion failure size = 200) (12: promotion failure size = 200) (13:
+     * promotion failure size = 10) (14: promotion failure size = 200) (15: promotion failure size = 200) (16: promotion
+     * failure size = 200) (17: promotion failure size = 200) (18: promotion failure size = 200) (19: promotion failure
+     * size = 200) (20: promotion failure size = 10) (21: promotion failure size = 200) (22: promotion failure size =
+     * 10) (23: promotion failure size = 45565) (24: promotion failure size = 10) (25: promotion failure size = 4) (26:
+     * promotion failure size = 200) (27: promotion failure size = 200) (28: promotion failure size = 10) (29: promotion
+     * failure size = 200) (30: promotion failure size = 200) (31: promotion failure size = 200) (32: promotion failure
+     * size = 200)
+     */
+    public static final String PRINT_PROMOTION_FAILURE = "( \\(\\d{1,2}: promotion failure size = \\d{1,10}\\) ){1,64}";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private JdkRegEx() {

@@ -689,4 +689,16 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertNotNull("-d64 not found.", jvm.getD64());
     }
+
+    public void testPrintPromotionFailure() {
+        String jvmOptions = "-XX:CompressedClassSpaceSize=768m -XX:+PrintPromotionFailure -d64";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-XX:+PrintPromotionFailure not found.", jvm.getPrintPromotionFailureEnabled());
+    }
+
+    public void testUseMembar() {
+        String jvmOptions = "-XX:CompressedClassSpaceSize=768m -XX:+UseMembar -d64";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-XX:+UseMembar not found.", jvm.getUseMembarEnabled());
+    }
 }
