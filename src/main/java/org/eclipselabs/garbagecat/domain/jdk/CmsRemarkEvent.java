@@ -98,11 +98,12 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(("
             + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
-            + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION
-            + "\\]" + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]("
-            + JdkRegEx.TIMESTAMP + ": \\[scrub string table, " + JdkRegEx.DURATION + "\\])?[ ]{0,1}\\[1 CMS-remark: "
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.SIZE + "\\)\\](" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP
+            + ": )?(" + JdkRegEx.TIMESTAMP + ": \\[scrub string table, " + JdkRegEx.DURATION
+            + "\\])?[ ]{0,1}\\[1 CMS-remark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * Regular expression for JDK8 logging with {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} ending.
@@ -131,7 +132,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 trigger = matcher.group(14);
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMillis(matcher.group(34)).intValue();
+                duration = JdkMath.convertSecsToMillis(matcher.group(67)).intValue();
             }
         } else if (logEntry.matches(REGEX_PARNEW)) {
             Pattern pattern = Pattern.compile(REGEX_PARNEW);
