@@ -84,6 +84,28 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 3426, event.getDuration());
     }
 
+    public void testLogLinePreprocessedDetailsPermNoSpaceAfterTriggerWithDatestamp() {
+        String logLine = "2017-02-27T02:55:32.523+0300: 35911.404: [Full GC (Allocation Failure)21G->20G(22G), "
+                + "40.6782890 secs][Eden: 0.0B(1040.0M)->0.0B(1120.0M) Survivors: 80.0M->0.0B "
+                + "Heap: 22.0G(22.0G)->20.6G(22.0G)], [Perm: 1252884K->1252884K(2097152K)] "
+                + "[Times: user=56.34 sys=1.78, real=40.67 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
+                G1FullGCEvent.match(logLine));
+        G1FullGCEvent event = new G1FullGCEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        Assert.assertEquals("Time stamp not parsed correctly.", 35911404, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 22 * 1024 * 1024,
+                event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 21600666, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 22 * 1024 * 1024,
+                event.getCombinedSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 1252884, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 1252884, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 2097152, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 40678, event.getDuration());
+    }
+
     public void testLogLinePreprocessedDetailsTriggerMetadatGcThresholdMetaspace() {
         String logLine = "188.123: [Full GC (Metadata GC Threshold) 1831M->1213M(5120M), 5.1353878 secs]"
                 + "[Eden: 0.0B(1522.0M)->0.0B(2758.0M) Survivors: 244.0M->0.0B "

@@ -379,12 +379,15 @@ public class G1PreprocessAction implements PreprocessAction {
      * Sometimes the G1_CONCURRENT timestamp is missing. When that happens, use the G1_FULL timestamp.
      * 
      * 298.027: [Full GC (Metadata GC Threshold) [GC concurrent-root-region-scan-start]
+     * 
+     * 2017-02-27T02:55:32.523+0300: 35911.404: [Full GC (Allocation Failure)2017-02-27T02:55:32.524+0300: 35911.405:
+     * [GC concurrent-root-region-scan-end, 0.0127300 secs]
      */
     private static final String REGEX_RETAIN_BEGINNING_FULL_CONCURRENT = "^(" + JdkRegEx.DATESTAMP + ": )?("
             + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + "?(: )?" + JdkRegEx.TIMESTAMP
-            + "?(:)?( )?(\\[Full GC \\(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "\\) )((" + JdkRegEx.DATESTAMP
-            + ": )?" + JdkRegEx.TIMESTAMP + "?(:)?( )?(\\[GC concurrent-root-region-scan-(start|end)(, "
-            + JdkRegEx.DURATION + ")?\\]))[ ]*$";
+            + "?(:)?( )?(\\[Full GC \\((" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\)[ ]{0,1})((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + "?(:)?( )?(\\[GC concurrent-root-region-scan-(start|end)(, " + JdkRegEx.DURATION + ")?\\]))[ ]*$";
 
     /**
      * Regular expression for retained middle G1_YOUNG_PAUSE collection.
@@ -627,22 +630,22 @@ public class G1PreprocessAction implements PreprocessAction {
             // Handle concurrent mixed with full collections. See dataset 74.
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_FULL_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
-            int indexConcurrentTimestamp = 41;
-            int indexG1FullTimestamp = 25;
+            int indexConcurrentTimestamp = 42;
+            int indexG1FullTimestamp = 23;
             if (matcher.matches()) {
                 if (matcher.group(indexConcurrentTimestamp) != null) {
-                    entangledLogLines.add(matcher.group(29));
+                    entangledLogLines.add(matcher.group(30));
                 } else {
                     // G1_CONCURRENT timestamp missing. Use G1_FULL timestamp.
                     if (matcher.group(12) != null) {
                         entangledLogLines.add(
-                                matcher.group(12) + matcher.group(indexG1FullTimestamp) + ": " + matcher.group(44));
+                                matcher.group(12) + matcher.group(indexG1FullTimestamp) + ": " + matcher.group(45));
                     } else {
                         if (matcher.group(1) != null) {
                             entangledLogLines.add(
-                                    matcher.group(1) + matcher.group(indexG1FullTimestamp) + ": " + matcher.group(44));
+                                    matcher.group(1) + matcher.group(indexG1FullTimestamp) + ": " + matcher.group(45));
                         } else {
-                            entangledLogLines.add(matcher.group(indexG1FullTimestamp) + ": " + matcher.group(44));
+                            entangledLogLines.add(matcher.group(indexG1FullTimestamp) + ": " + matcher.group(45));
                         }
                     }
                 }
@@ -661,8 +664,8 @@ public class G1PreprocessAction implements PreprocessAction {
                 }
             } else {
                 // G1_FULL timestamp missing. Use G1_CONCURRENT timestamp.
-                if (matcher.group(30) != null) {
-                    this.logEntry = matcher.group(30) + matcher.group(indexConcurrentTimestamp) + ": "
+                if (matcher.group(31) != null) {
+                    this.logEntry = matcher.group(31) + matcher.group(indexConcurrentTimestamp) + ": "
                             + matcher.group(28);
                 } else {
                     this.logEntry = matcher.group(indexConcurrentTimestamp) + ": " + matcher.group(28);
@@ -678,24 +681,24 @@ public class G1PreprocessAction implements PreprocessAction {
                 // Handle concurrent mixed with young collections. See datasets 47-48 and 51-52, 54.
                 if (!context.contains(TOKEN)) {
                     // Output now
-                    if (matcher.group(13) != null) {
-                        this.logEntry = matcher.group(13) + matcher.group(39);
+                    if (matcher.group(2) != null && matcher.group(13) != null) {
+                        this.logEntry = matcher.group(2) + matcher.group(13) + matcher.group(39);
                     } else {
-                        if (matcher.group(2) != null) {
-                            this.logEntry = matcher.group(2) + matcher.group(13) + matcher.group(39);
-                        } else {
+                        if (matcher.group(13) != null) {
+                            this.logEntry = matcher.group(13) + matcher.group(39);
+                        } else if (matcher.group(2) != null) {
                             this.logEntry = matcher.group(13) + matcher.group(39);
                         }
                     }
                 } else {
                     // Output later
-                    if (matcher.group(13) != null) {
-                        entangledLogLines.add(matcher.group(13) + matcher.group(39));
+                    if (matcher.group(2) != null && matcher.group(13) != null) {
+                        entangledLogLines.add(matcher.group(2) + matcher.group(13) + matcher.group(39));
                     } else {
-                        if (matcher.group(2) != null) {
-                            entangledLogLines.add(matcher.group(2) + matcher.group(13) + matcher.group(39));
-                        } else {
+                        if (matcher.group(13) != null) {
                             entangledLogLines.add(matcher.group(13) + matcher.group(39));
+                        } else if (matcher.group(2) != null) {
+                            entangledLogLines.add(matcher.group(2) + matcher.group(39));
                         }
                     }
                 }

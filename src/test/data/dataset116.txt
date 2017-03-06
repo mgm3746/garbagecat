@@ -1,0 +1,6 @@
+2017-02-27T02:55:32.523+0300: 35911.404: [Full GC (Allocation Failure)2017-02-27T02:55:32.524+0300: 35911.405: [GC concurrent-root-region-scan-end, 0.0127300 secs]
+2017-02-27T02:55:32.524+0300: 35911.405: [GC concurrent-mark-start]
+ 21G->20G(22G), 40.6782890 secs]
+   [Eden: 0.0B(1040.0M)->0.0B(1120.0M) Survivors: 80.0M->0.0B Heap: 22.0G(22.0G)->20.6G(22.0G)], [Perm: 1252884K->1252884K(2097152K)]
+ [Times: user=56.34 sys=1.78, real=40.67 secs]
+2017-02-27T02:56:13.203+0300: 35952.084: Total time for which application threads were stopped: 40.6810160 seconds

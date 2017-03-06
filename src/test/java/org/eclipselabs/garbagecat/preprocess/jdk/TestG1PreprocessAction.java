@@ -856,6 +856,31 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineFullMixedConcurrentNoSpaceAfterTrigger() {
+        String logLine = "2017-02-27T02:55:32.523+0300: 35911.404: [Full GC (Allocation Failure)"
+                + "2017-02-27T02:55:32.524+0300: 35911.405: [GC concurrent-root-region-scan-end, 0.0127300 secs]";
+        String nextLogLine = "2017-02-27T02:55:32.524+0300: 35911.405: [GC concurrent-mark-start]";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "2017-02-27T02:55:32.523+0300: 35911.404: [Full GC (Allocation Failure)", event.getLogEntry());
+    }
+
+    public void testLogLineConcurrentWithDatestamp() {
+        String logLine = "2017-02-27T02:55:32.524+0300: 35911.405: [GC concurrent-mark-start]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "2017-02-27T02:55:32.524+0300: 35911.405: [GC concurrent-mark-start]", event.getLogEntry());
+    }
+
     /**
      * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE.
      * 
@@ -1502,7 +1527,7 @@ public class TestG1PreprocessAction extends TestCase {
     }
 
     /**
-     * Test preprocessing G1_YOUNG_PAUSE with double trigger and Evacuation Failure details. .
+     * Test preprocessing G1_YOUNG_PAUSE with double trigger and Evacuation Failure details.
      * 
      */
     public void testG1YoungPauseEvacuationFailure() {
@@ -1519,5 +1544,26 @@ public class TestG1PreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
         Assert.assertTrue(Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_G1_EVACUATION_FAILURE));
+    }
+
+    public void testFullGcMixedConcurrent() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset116.txt");
+        GcManager jvmManager = new GcManager();
+        File preprocessedFile = jvmManager.preprocess(testFile, null);
+        jvmManager.store(preprocessedFile, false);
+        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 3, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CONCURRENT));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
+        Assert.assertTrue(Analysis.ERROR_SERIAL_GC_G1 + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_G1));
     }
 }

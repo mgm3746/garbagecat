@@ -84,7 +84,7 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
     private static final String REGEX_PREPROCESSED = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[Full GC[ ]{0,1}(\\((" + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD
             + "|" + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION
-            + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\)[ ]{1,2}|" + ClassHistogramEvent.REGEX_PREPROCESSED
+            + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\)[ ]{0,2}|" + ClassHistogramEvent.REGEX_PREPROCESSED
             + ")?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION
             + "\\]\\[Eden: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\("
             + JdkRegEx.SIZE_G1 + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: "
