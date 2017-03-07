@@ -678,13 +678,22 @@ public class JvmRun {
         }
 
         // Check for -XX:+PrintGCCause missing.
-        if (jvm.getPrintGCCause() == null && jvm.JdkNumber() == 7) {
+        if (jvm.getPrintGCCause() == null && jvm.JdkNumber() == 7
+                && !analysisKeys.contains(Analysis.WARN_PRINT_GC_CAUSE_MISSING)) {
             analysisKeys.add(Analysis.WARN_PRINT_GC_CAUSE_MISSING);
+            // Don't double report
+            if (analysisKeys.contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED)) {
+                analysisKeys.remove(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
+            }
         }
 
         // Check for -XX:-PrintGCCause (PrintGCCause disabled).
         if (jvm.getPrintGCCauseDisabled() != null) {
             analysisKeys.add(Analysis.WARN_PRINT_GC_CAUSE_DISABLED);
+            // Don't double report
+            if (analysisKeys.contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED)) {
+                analysisKeys.remove(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
+            }
         }
 
         // Check for -XX:+TieredCompilation.

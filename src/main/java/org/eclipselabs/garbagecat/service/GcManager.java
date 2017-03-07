@@ -44,6 +44,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsIncrementalModeCollector;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
@@ -563,6 +564,16 @@ public class GcManager {
                         if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_PROMOTION_FAILED)) {
                             if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_CMS_PROMOTION_FAILED)) {
                                 jvmDao.addAnalysisKey(Analysis.ERROR_CMS_PROMOTION_FAILED);
+                            }
+                        }
+                    }
+
+                    // 13) -XX:+PrintGCCause is essential for troubleshooting G1 full GCs
+                    if (event instanceof G1FullGCEvent) {
+                        String trigger = ((TriggerData) event).getTrigger();
+                        if (trigger == null) {
+                            if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED)) {
+                                jvmDao.addAnalysisKey(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
                             }
                         }
                     }

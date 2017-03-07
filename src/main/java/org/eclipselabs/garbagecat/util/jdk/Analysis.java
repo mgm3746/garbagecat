@@ -268,7 +268,7 @@ public class Analysis {
     public static final String WARN_PRINT_REFERENCE_GC_ENABLED = "warn.print.reference.gc.enabled";
 
     /**
-     * Property key for -XX:+PrintGCCause.
+     * Property key for -XX:+PrintGCCause missing.
      */
     public static final String WARN_PRINT_GC_CAUSE_MISSING = "warn.print.gc.cause.missing";
 
@@ -276,6 +276,11 @@ public class Analysis {
      * Property key for -XX:-PrintGCCause.
      */
     public static final String WARN_PRINT_GC_CAUSE_DISABLED = "warn.print.gc.cause.disabled";
+
+    /**
+     * Property key for -XX:_PrintGCCause not enabled.
+     */
+    public static final String WARN_PRINT_GC_CAUSE_NOT_ENABLED = "warn.print.gc.cause.not.enabled";
 
     /**
      * Property key for -XX:+TieredCompilation, which has issues with JDK7.

@@ -1329,6 +1329,10 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
+        Assert.assertTrue(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED));
+        Assert.assertFalse(Analysis.WARN_PRINT_GC_CAUSE_MISSING + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_CAUSE_MISSING));
     }
 
     /**
