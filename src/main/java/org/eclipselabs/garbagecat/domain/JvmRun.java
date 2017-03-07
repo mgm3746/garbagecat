@@ -841,6 +841,11 @@ public class JvmRun {
         if (jvm.getUseMembarEnabled() != null) {
             analysisKeys.add(Analysis.WARN_USE_MEMBAR);
         }
+
+        // Check for -XX:-PrintAdaptiveSizePolicy option being used
+        if (jvm.getPrintAdaptiveResizePolicyDisabled() != null) {
+            analysisKeys.add(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_DISABLED);
+        }
     }
 
     /**

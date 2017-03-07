@@ -495,6 +495,11 @@ public class Analysis {
     public static final String WARN_USE_MEMBAR = "warn.use.membar";
 
     /**
+     * Property key for disabling Adaptive Resize Policy output with -XX:-PrintAdaptiveSizePolicy.
+     */
+    public static final String INFO_PRINT_ADAPTIVE_RESIZE_PLCY_DISABLED = "info.print.adaptive.resize.plcy.disabled";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {
