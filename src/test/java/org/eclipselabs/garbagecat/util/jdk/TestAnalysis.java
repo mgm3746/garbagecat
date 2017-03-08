@@ -293,10 +293,10 @@ public class TestAnalysis extends TestCase {
                 + "Oct  2 2015 03:26:24 by \"java_re\" with unknown MS VC++:1600";
         jvmRun.getJvm().setVersion(version);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED));
-        Assert.assertNotNull(Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED + " not found.",
-                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED));
+        Assert.assertTrue(Analysis.WARN_TIERED_COMPILATION_ENABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_TIERED_COMPILATION_ENABLED));
+        Assert.assertNotNull(Analysis.WARN_TIERED_COMPILATION_ENABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_TIERED_COMPILATION_ENABLED));
     }
 
     public void testLogFileRotationDisabled() {

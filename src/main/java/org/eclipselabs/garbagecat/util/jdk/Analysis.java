@@ -283,9 +283,9 @@ public class Analysis {
     public static final String WARN_PRINT_GC_CAUSE_NOT_ENABLED = "warn.print.gc.cause.not.enabled";
 
     /**
-     * Property key for -XX:+TieredCompilation, which has issues with JDK7.
+     * Property key for -XX:+TieredCompilation.
      */
-    public static final String WARN_JDK7_TIERED_COMPILATION_ENABLED = "warn.jdk7.tiered.compilation.enabled";
+    public static final String WARN_TIERED_COMPILATION_ENABLED = "warn.tiered.compilation.enabled";
 
     /**
      * Property key for -XX:+PrintStringDeduplicationStatistics.

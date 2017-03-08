@@ -697,8 +697,8 @@ public class JvmRun {
         }
 
         // Check for -XX:+TieredCompilation.
-        if (jvm.getTieredCompilation() != null && jvm.JdkNumber() == 7) {
-            analysisKeys.add(Analysis.WARN_JDK7_TIERED_COMPILATION_ENABLED);
+        if (jvm.getTieredCompilation() != null) {
+            analysisKeys.add(Analysis.WARN_TIERED_COMPILATION_ENABLED);
         }
 
         // Check for -XX:+PrintStringDeduplicationStatistics.
