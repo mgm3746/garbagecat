@@ -846,6 +846,11 @@ public class JvmRun {
         if (jvm.getPrintAdaptiveResizePolicyDisabled() != null) {
             analysisKeys.add(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_DISABLED);
         }
+
+        // Check for -XX:+PrintAdaptiveSizePolicy option being used
+        if (jvm.getPrintAdaptiveResizePolicyEnabled() != null) {
+            analysisKeys.add(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED);
+        }
     }
 
     /**

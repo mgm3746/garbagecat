@@ -724,6 +724,16 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
     }
 
+    public void testPrintAdaptiveResizePolicyEnabled() {
+        String jvmOptions = "-Xss128k -XX:+PrintAdaptiveSizePolicy -Xmx2048M";
+        GcManager jvmManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED));
+    }
+
     public void testHeaderLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset42.txt");

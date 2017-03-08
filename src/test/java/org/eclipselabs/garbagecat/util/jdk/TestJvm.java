@@ -707,4 +707,10 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertNotNull("-XX:-PrintAdaptiveSizePolicy not found.", jvm.getPrintAdaptiveResizePolicyDisabled());
     }
+
+    public void testPrintAdaptiveResizePolicyEnabled() {
+        String jvmOptions = "-XX:CompressedClassSpaceSize=768m -XX:+PrintAdaptiveSizePolicy -d64";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-XX:+PrintAdaptiveSizePolicy not found.", jvm.getPrintAdaptiveResizePolicyEnabled());
+    }
 }

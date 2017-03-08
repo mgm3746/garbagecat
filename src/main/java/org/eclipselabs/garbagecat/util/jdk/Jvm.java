@@ -1094,6 +1094,20 @@ public class Jvm {
     }
 
     /**
+     * The option for enabling Adaptive Resize Policy output.
+     * 
+     * <pre>
+     * -XX:+PrintAdaptiveSizePolicy
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintAdaptiveResizePolicyEnabled() {
+        String regex = "(-XX:\\+PrintAdaptiveSizePolicy)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

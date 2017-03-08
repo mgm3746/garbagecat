@@ -500,6 +500,11 @@ public class Analysis {
     public static final String INFO_PRINT_ADAPTIVE_RESIZE_PLCY_DISABLED = "info.print.adaptive.resize.plcy.disabled";
 
     /**
+     * Property key for enabling Adaptive Resize Policy output with -XX:+PrintAdaptiveSizePolicy.
+     */
+    public static final String INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED = "info.print.adaptive.resize.plcy.enabled";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {
