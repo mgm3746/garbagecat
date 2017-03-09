@@ -869,7 +869,7 @@ public class JvmRun {
         }
 
         if (Math.min(firstGcEventTimeStamp, firstStoppedEventTimestamp) == 0) {
-            if (firstGcEventTimeStamp >= firstStoppedEventTimestamp) {
+            if (firstGcEvent != null && firstGcEventTimeStamp >= firstStoppedEventTimestamp) {
                 event = firstGcEvent;
             } else {
                 event = firstStoppedEvent;
@@ -900,7 +900,7 @@ public class JvmRun {
             lastStoppedEventTimestamp = lastStoppedEvent.getTimestamp();
         }
 
-        if (lastGcEventTimeStamp >= lastStoppedEventTimestamp) {
+        if (lastGcEvent != null && lastGcEventTimeStamp >= lastStoppedEventTimestamp) {
             event = lastGcEvent;
         } else {
             event = lastStoppedEvent;

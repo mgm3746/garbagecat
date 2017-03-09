@@ -233,6 +233,8 @@ public class Main {
     /**
      * Create Garbage Collection Analysis report.
      * 
+     * TODO: Move to JvmRun to facilitate testing.
+     * 
      * @param jvmRun
      *            JVM run data.
      * @param reportFileName
