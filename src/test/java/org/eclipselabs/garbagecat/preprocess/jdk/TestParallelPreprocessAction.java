@@ -100,10 +100,10 @@ public class TestParallelPreprocessAction extends TestCase {
     public void testSplitParallelSerialOldEventLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset9.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
@@ -122,10 +122,10 @@ public class TestParallelPreprocessAction extends TestCase {
     public void testUnloadingClassPreprocessActionParallelSerialOldEventLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset24.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD));
@@ -138,10 +138,10 @@ public class TestParallelPreprocessAction extends TestCase {
     public void testSplitParallelScavengeEventLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset30.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE));

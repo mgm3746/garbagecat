@@ -39,8 +39,8 @@ public class TestJvmRun extends TestCase {
      */
     public void testJvmOptionsPassedInOnCommandLine() {
         String options = "MGM was here!";
-        GcManager jvmManager = new GcManager();
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertTrue("JVM options passed in are missing or have changed.",
                 jvmRun.getJvm().getOptions().equals(options));
@@ -51,9 +51,9 @@ public class TestJvmRun extends TestCase {
      */
     public void testPrintReferenceGCByLogging() {
         String jvmOptions = null;
-        GcManager jvmManager = new GcManager();
+        GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.REFERENCE_GC);
         jvmRun.setEventTypes(eventTypes);
@@ -67,9 +67,9 @@ public class TestJvmRun extends TestCase {
      */
     public void testPrintReferenceGCByOptions() {
         String jvmOptions = "-Xss128k -XX:+PrintReferenceGC -Xms2048M";
-        GcManager jvmManager = new GcManager();
+        GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED));
@@ -80,9 +80,9 @@ public class TestJvmRun extends TestCase {
      */
     public void testPrintStringDeduplicationStatistics() {
         String jvmOptions = "-Xss128k -XX:+PrintStringDeduplicationStatistics -Xms2048M";
-        GcManager jvmManager = new GcManager();
+        GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED));
@@ -93,9 +93,9 @@ public class TestJvmRun extends TestCase {
      */
     public void testPrintGCDetailsDisabled() {
         String jvmOptions = "-Xss128k -XX:-PrintGCDetails -Xms2048M";
-        GcManager jvmManager = new GcManager();
+        GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED));
@@ -108,9 +108,9 @@ public class TestJvmRun extends TestCase {
      */
     public void testUseParNewGcDisabled() {
         String jvmOptions = "-Xss128k -XX:-UseParNewGC -Xms2048M";
-        GcManager jvmManager = new GcManager();
+        GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_CMS_PAR_NEW_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_PAR_NEW_DISABLED));
@@ -121,9 +121,9 @@ public class TestJvmRun extends TestCase {
      */
     public void testPercentSwapFreeAtThreshold() {
         String jvmOptions = null;
-        GcManager jvmManager = new GcManager();
+        GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.getJvm().setSwap(1000);
         jvmRun.getJvm().setSwapFree(946);
         jvmRun.doAnalysis();
@@ -137,9 +137,9 @@ public class TestJvmRun extends TestCase {
      */
     public void testPercentSwapFreeBelowThreshold() {
         String jvmOptions = null;
-        GcManager jvmManager = new GcManager();
+        GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.getJvm().setSwap(1000);
         jvmRun.getJvm().setSwapFree(945);
         jvmRun.doAnalysis();
@@ -153,9 +153,9 @@ public class TestJvmRun extends TestCase {
      */
     public void testPhysicalMemoryEqualJvmAllocation() {
         String jvmOptions = "-Xmx1024M -XX:MaxPermSize=128M";
-        GcManager jvmManager = new GcManager();
+        GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.getJvm().setPhysicalMemory(1207959552);
         jvmRun.doAnalysis();
         Assert.assertFalse(Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.",
@@ -167,9 +167,9 @@ public class TestJvmRun extends TestCase {
      */
     public void testPhysicalMemoryLessThanJvmAllocation() {
         String jvmOptions = "-Xmx1024M -XX:MaxPermSize=128M";
-        GcManager jvmManager = new GcManager();
+        GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.getJvm().setPhysicalMemory(1207959551);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.",
@@ -179,9 +179,9 @@ public class TestJvmRun extends TestCase {
     public void testSummaryStatsParallel() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset1.txt");
-        GcManager jvmManager = new GcManager();
-        jvmManager.store(testFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        gcManager.store(testFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
 
         Assert.assertEquals("Max heap space not calculated correctly.", 1034624, jvmRun.getMaxHeapSpace());
         Assert.assertEquals("Max heap occupancy not calculated correctly.", 1013058, jvmRun.getMaxHeapOccupancy());
@@ -204,9 +204,9 @@ public class TestJvmRun extends TestCase {
 
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset2.txt");
-        GcManager jvmManager = new GcManager();
-        jvmManager.store(testFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        gcManager.store(testFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
 
         Assert.assertEquals("Max heap space not calculated correctly.", 1048256, jvmRun.getMaxHeapSpace());
         Assert.assertEquals("Max heap occupancy not calculated correctly.", 424192, jvmRun.getMaxHeapOccupancy());
@@ -224,9 +224,9 @@ public class TestJvmRun extends TestCase {
     }
 
     public void testLastTimestampNoEvents() {
-        GcManager jvmManager = new GcManager();
-        jvmManager.store(null, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        gcManager.store(null, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertNull("Last GC event not correct.", jvmRun.getLastGcEvent());
     }
 
@@ -236,9 +236,9 @@ public class TestJvmRun extends TestCase {
     public void testParseLoggingWithApplicationTime() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset3.txt");
-        GcManager jvmManager = new GcManager();
-        jvmManager.store(testFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        gcManager.store(testFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event count not correct.", 3, jvmRun.getEventTypes().size());
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
@@ -257,10 +257,10 @@ public class TestJvmRun extends TestCase {
     public void testSplitParallelOldCompactingEventLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset28.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
@@ -279,10 +279,10 @@ public class TestJvmRun extends TestCase {
     public void testCombinedCmsConcurrentApplicationConcurrentTimeLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset19.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
@@ -295,10 +295,10 @@ public class TestJvmRun extends TestCase {
     public void testCombinedCmsConcurrentApplicationStoppedTimeLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset27.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
@@ -310,10 +310,10 @@ public class TestJvmRun extends TestCase {
     public void testRemoveBlankLines() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset20.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
@@ -328,7 +328,7 @@ public class TestJvmRun extends TestCase {
     public void testDateStampPreprocessActionLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset25.txt");
-        GcManager jvmManager = new GcManager();
+        GcManager gcManager = new GcManager();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 2010);
         calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
@@ -337,9 +337,9 @@ public class TestJvmRun extends TestCase {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        File preprocessedFile = jvmManager.preprocess(testFile, calendar.getTime());
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        File preprocessedFile = gcManager.preprocess(testFile, calendar.getTime());
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
@@ -348,10 +348,10 @@ public class TestJvmRun extends TestCase {
     public void testSummaryStatsStoppedTime() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset41.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE));
         Assert.assertTrue(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " not identified.",
@@ -382,10 +382,10 @@ public class TestJvmRun extends TestCase {
     public void testExplicitGcAnalsysisParallelSerialOld() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset56.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE));
@@ -404,10 +404,10 @@ public class TestJvmRun extends TestCase {
     public void testHeaders() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset59.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertEquals("Event type count not correct.", 3, jvmRun.getEventTypes().size());
@@ -428,10 +428,10 @@ public class TestJvmRun extends TestCase {
     public void testPrintTenuringDistributionPreprocessActionNoSpaceAfterGc() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset66.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
@@ -443,10 +443,10 @@ public class TestJvmRun extends TestCase {
     public void testApplicationStoppedTimeNoTimestamps() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset96.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("GC pause total not correct.", 2096, jvmRun.getTotalGcPause());
         Assert.assertEquals("GC first timestamp not correct.", 16517, jvmRun.getFirstGcEvent().getTimestamp());
         Assert.assertEquals("GC last timestamp not correct.", 31432, jvmRun.getLastGcEvent().getTimestamp());
@@ -470,10 +470,10 @@ public class TestJvmRun extends TestCase {
 
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset98.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("GC event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertEquals("GC blocking event count not correct.", 2, jvmRun.getBlockingEventCount());
         Assert.assertEquals("GC pause total not correct.", 61, jvmRun.getTotalGcPause());
@@ -503,10 +503,10 @@ public class TestJvmRun extends TestCase {
 
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset103.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("GC event type count not correct.", 3, jvmRun.getEventTypes().size());
         Assert.assertEquals("GC blocking event count not correct.", 160, jvmRun.getBlockingEventCount());
         Assert.assertEquals("GC pause total not correct.", 2568121, jvmRun.getTotalGcPause());
@@ -534,11 +534,11 @@ public class TestJvmRun extends TestCase {
 
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset108.txt");
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        jvmManager.store(testFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        gcManager.store(testFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Stopped time throughput not correct.", 0, jvmRun.getStoppedTimeThroughput());
     }
 
@@ -549,10 +549,10 @@ public class TestJvmRun extends TestCase {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset104.txt");
         Jvm jvm = new Jvm(null, null);
-        GcManager jvmManager = new GcManager();
-        File preprocessedFile = jvmManager.preprocess(testFile, null);
-        jvmManager.store(preprocessedFile, false);
-        JvmRun jvmRun = jvmManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME));
     }

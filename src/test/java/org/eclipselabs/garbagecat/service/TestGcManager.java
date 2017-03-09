@@ -30,9 +30,9 @@ public class TestGcManager extends TestCase {
     public void testNullPointerExceptionNotRaised() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset31.txt");
-        GcManager jvmManager = new GcManager();
+        GcManager gcManager = new GcManager();
         try {
-            jvmManager.preprocess(testFile, null);
+            gcManager.preprocess(testFile, null);
         } catch (NullPointerException e) {
             Assert.fail("Preprocessing results in NullPointerException.");
         }

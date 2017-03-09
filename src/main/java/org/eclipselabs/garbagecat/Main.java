@@ -111,7 +111,7 @@ public class Main {
                 String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
                 File logFile = new File(logFileName);
 
-                GcManager jvmManager = new GcManager();
+                GcManager gcManager = new GcManager();
 
                 // Do preprocessing
                 if (cmd.hasOption(Constants.OPTION_PREPROCESS_LONG)
@@ -125,7 +125,7 @@ public class Main {
                      * TODO: Handle datetimes separately from preprocessing so preprocessing doesn't require passing in
                      * the JVM start date/time.
                      */
-                    logFile = jvmManager.preprocess(logFile, jvmStartDate);
+                    logFile = gcManager.preprocess(logFile, jvmStartDate);
                 }
 
                 // Allow logging to be reordered?
@@ -135,7 +135,7 @@ public class Main {
                 }
 
                 // Store garbage collection logging in data store.
-                jvmManager.store(logFile, reorder);
+                gcManager.store(logFile, reorder);
 
                 // Create report
                 Jvm jvm = new Jvm(jvmOptions, jvmStartDate);
@@ -144,7 +144,7 @@ public class Main {
                 if (cmd.hasOption(Constants.OPTION_THRESHOLD_LONG)) {
                     throughputThreshold = Integer.parseInt(cmd.getOptionValue(Constants.OPTION_THRESHOLD_SHORT));
                 }
-                JvmRun jvmRun = jvmManager.getJvmRun(jvm, throughputThreshold);
+                JvmRun jvmRun = gcManager.getJvmRun(jvm, throughputThreshold);
                 String outputFileName;
                 if (cmd.hasOption(Constants.OPTION_OUTPUT_LONG)) {
                     outputFileName = cmd.getOptionValue(Constants.OPTION_OUTPUT_SHORT);
