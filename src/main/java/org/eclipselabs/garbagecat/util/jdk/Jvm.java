@@ -166,8 +166,8 @@ public class Jvm {
     }
 
     /**
-     * Thread stack size. Specified with either the <code>-Xss</code> or <code>-XX:ThreadStackSize</code> options. For
-     * example:
+     * Thread stack size. Specified with either the <code>-Xss</code>, <code>-ss</code>, or
+     * <code>-XX:ThreadStackSize</code> options. For example:
      * 
      * <pre>
      * -Xss128k
@@ -182,7 +182,7 @@ public class Jvm {
      * @return The JVM thread stack size setting, or null if not explicitly set.
      */
     public String getThreadStackSizeOption() {
-        String regex = "(-X(ss|X:ThreadStackSize=)(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
+        String regex = "(-(X)?(ss|X:ThreadStackSize=)(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
         return getJvmOption(regex);
     }
 

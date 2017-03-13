@@ -29,63 +29,84 @@ public class TestJvm extends TestCase {
         Assert.assertNotNull("Jvm object creation failed.", jvm);
     }
 
-    public void testGetThreadStackShortSmallK() {
+    public void testGetThreadStackSizeSsSmallK() {
+        String jvmOptions = "-ss128k -Xms1024m -Xmx2048m";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("Thread stack size not populated correctly.", "-ss128k", jvm.getThreadStackSizeOption());
+        Assert.assertEquals("Thread stack size value incorrect.", "128k", jvm.getThreadStackSizeValue());
+    }
+
+    public void testGetThreadStackSizeSsBigK() {
+        String jvmOptions = "-ss128K -Xms1024m -Xmx2048m";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("Thread stack size not populated correctly.", "-ss128K", jvm.getThreadStackSizeOption());
+        Assert.assertEquals("Thread stack size value incorrect.", "128K", jvm.getThreadStackSizeValue());
+    }
+
+    public void testGetThreadStackSizeSsSmallM() {
+        String jvmOptions = "-ss1m -Xms1024m -Xmx2048m";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("Thread stack size not populated correctly.", "-ss1m", jvm.getThreadStackSizeOption());
+        Assert.assertEquals("Thread stack size value incorrect.", "1m", jvm.getThreadStackSizeValue());
+    }
+
+    public void testGetThreadStackSizeXssSmallK() {
         String jvmOptions = "-Xss128k -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Thread stack size not populated correctly.", "-Xss128k", jvm.getThreadStackSizeOption());
         Assert.assertEquals("Thread stack size value incorrect.", "128k", jvm.getThreadStackSizeValue());
     }
 
-    public void testGetThreadStackShortBigK() {
+    public void testGetThreadStackSizeXssBigK() {
         String jvmOptions = "-Xss128K -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Thread stack size not populated correctly.", "-Xss128K", jvm.getThreadStackSizeOption());
         Assert.assertEquals("Thread stack size value incorrect.", "128K", jvm.getThreadStackSizeValue());
     }
 
-    public void testGetThreadStackShortSmallM() {
+    public void testGetThreadStackSizeXssSmallM() {
         String jvmOptions = "-Xss1m -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Thread stack size not populated correctly.", "-Xss1m", jvm.getThreadStackSizeOption());
         Assert.assertEquals("Thread stack size value incorrect.", "1m", jvm.getThreadStackSizeValue());
     }
 
-    public void testGetThreadStackShortBigM() {
+    public void testGetThreadStackSizeXssBigM() {
         String jvmOptions = "-Xss1M -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Thread stack size not populated correctly.", "-Xss1M", jvm.getThreadStackSizeOption());
         Assert.assertEquals("Thread stack size value incorrect.", "1M", jvm.getThreadStackSizeValue());
     }
 
-    public void testGetThreadStackLongSmallK() {
+    public void testGetThreadStackSizeSmallK() {
         String jvmOptions = "-XX:ThreadStackSize=128k -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Thread stack size incorrect.", "-XX:ThreadStackSize=128k", jvm.getThreadStackSizeOption());
         Assert.assertEquals("Thread stack size value incorrect.", "128k", jvm.getThreadStackSizeValue());
     }
 
-    public void testGetThreadStackLongBigK() {
+    public void testGetThreadStackSizeBigK() {
         String jvmOptions = "-XX:ThreadStackSize=128K -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Thread stack size incorrect.", "-XX:ThreadStackSize=128K", jvm.getThreadStackSizeOption());
         Assert.assertEquals("Thread stack size value incorrect.", "128K", jvm.getThreadStackSizeValue());
     }
 
-    public void testGetThreadStackLongSmallM() {
+    public void testGetThreadStackSizeSmallM() {
         String jvmOptions = "-XX:ThreadStackSize=1m -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Thread stack size incorrect.", "-XX:ThreadStackSize=1m", jvm.getThreadStackSizeOption());
         Assert.assertEquals("Thread stack size value incorrect.", "1m", jvm.getThreadStackSizeValue());
     }
 
-    public void testGetThreadStackLongBigM() {
+    public void testGetThreadStackSizeBigM() {
         String jvmOptions = "-XX:ThreadStackSize=1M -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Thread stack size incorrect.", "-XX:ThreadStackSize=1M", jvm.getThreadStackSizeOption());
         Assert.assertEquals("Thread stack size value incorrect.", "1M", jvm.getThreadStackSizeValue());
     }
 
-    public void testGetThreadStackNoUnits() {
+    public void testGetThreadStackSizeNoUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1234567 -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertEquals("Thread stack size incorrect.", "-XX:ThreadStackSize=1234567",
@@ -93,73 +114,73 @@ public class TestJvm extends TestCase {
         Assert.assertEquals("Thread stack size value incorrect.", "1234567", jvm.getThreadStackSizeValue());
     }
 
-    public void testGetThreadStackOneLessThanLargeNoUnits() {
+    public void testGetThreadStackSizeOneLessThanLargeNoUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1048575 -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertFalse("Thread stack size is not large.", jvm.hasLargeThreadStackSize());
     }
 
-    public void testGetThreadStackEqualsLargeNoUnits() {
+    public void testGetThreadStackSizeEqualsLargeNoUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1048576 -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
     }
 
-    public void testGetThreadStackOneGreaterLargeNoUnits() {
+    public void testGetThreadStackSizeOneGreaterLargeNoUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1048577 -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
     }
 
-    public void testGetThreadStackOneLessThanLargeByteUnits() {
+    public void testGetThreadStackSizeOneLessThanLargeByteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1048575b -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertFalse("Thread stack size is not large.", jvm.hasLargeThreadStackSize());
     }
 
-    public void testGetThreadStackEqualsLargeByteUnits() {
+    public void testGetThreadStackSizeEqualsLargeByteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1048576B -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
     }
 
-    public void testGetThreadStackOneGreaterLargeByteUnits() {
+    public void testGetThreadStackSizeOneGreaterLargeByteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1048577B -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
     }
 
-    public void testGetThreadStackOneLessThanLargeKilobyteUnits() {
+    public void testGetThreadStackSizeOneLessThanLargeKilobyteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1023k -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertFalse("Thread stack size is not large.", jvm.hasLargeThreadStackSize());
     }
 
-    public void testGetThreadStackEqualsLargeKilobyteUnits() {
+    public void testGetThreadStackSizeEqualsLargeKilobyteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1024K -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
     }
 
-    public void testGetThreadStackOneGreaterLargeKilobyteUnits() {
+    public void testGetThreadStackSizeOneGreaterLargeKilobyteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1025K -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
     }
 
-    public void testGetThreadStackEqualsLargeMegabyteUnits() {
+    public void testGetThreadStackSizeEqualsLargeMegabyteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1m -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
     }
 
-    public void testGetThreadStackOneGreaterLargeMegabyteUnits() {
+    public void testGetThreadStackSizeOneGreaterLargeMegabyteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1M -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
     }
 
-    public void testGetThreadStackLargeGigabyteUnits() {
+    public void testGetThreadStackSizeLargeGigabyteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1G -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
