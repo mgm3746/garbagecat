@@ -505,6 +505,11 @@ public class Analysis {
     public static final String INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED = "info.print.adaptive.resize.plcy.enabled";
 
     /**
+     * Property key for -XX:CMSInitiatingOccupancyFraction without -XX:+UseCMSInitiatingOccupancyOnly.
+     */
+    public static final String WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING = "warn.cms.init.occupancy.only.missing";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

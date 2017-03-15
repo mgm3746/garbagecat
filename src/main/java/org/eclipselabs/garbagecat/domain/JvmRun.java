@@ -851,6 +851,11 @@ public class JvmRun {
         if (jvm.getPrintAdaptiveResizePolicyEnabled() != null) {
             analysisKeys.add(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED);
         }
+
+        // Check for-XX:CMSInitiatingOccupancyFraction without -XX:+UseCMSInitiatingOccupancyOnly.
+        if (jvm.getCMSInitiatingOccupancyFraction() != null && jvm.getCMSInitiatingOccupancyOnlyEnabled() == null) {
+            analysisKeys.add(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING);
+        }
     }
 
     /**

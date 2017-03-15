@@ -596,11 +596,19 @@ public class TestJvm extends TestCase {
                 jvm.getPrintStringDeduplicationStatistics());
     }
 
-    public void testCMSInitiatingOccupancyFraction() {
+    public void testCmsInitiatingOccupancyFraction() {
         String jvmOptions = "-Xss128k -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled";
         Jvm jvm = new Jvm(jvmOptions, null);
-        Assert.assertEquals("XX:CMSInitiatingOccupancyFraction option incorrect.",
+        Assert.assertEquals("-XX:CMSInitiatingOccupancyFraction option incorrect.",
                 "-XX:CMSInitiatingOccupancyFraction=70", jvm.getCMSInitiatingOccupancyFraction());
+    }
+
+    public void testUseCmsInitiatingOccupancyOnlyEnabled() {
+        String jvmOptions = "-Xss128k -XX:CMSInitiatingOccupancyFraction=70 -XX:+UseCMSInitiatingOccupancyOnly "
+                + "-XX:+CMSParallelRemarkEnabled";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:+UseCMSInitiatingOccupancyOnly option incorrect.",
+                "-XX:+UseCMSInitiatingOccupancyOnly", jvm.getCMSInitiatingOccupancyOnlyEnabled());
     }
 
     public void testBiasedLockingDisabled() {

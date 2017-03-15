@@ -1039,5 +1039,7 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_PRINT_PROMOTION_FAILURE));
         Assert.assertTrue(Analysis.WARN_USE_MEMBAR + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_USE_MEMBAR));
+        Assert.assertTrue(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING));
     }
 }

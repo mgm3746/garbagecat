@@ -778,6 +778,23 @@ public class Jvm {
     }
 
     /**
+     * The option for disabling heuristics (calculating anticipated promotions) and use only the occupancy fraction to
+     * determine when to trigger a CMS cycle. When an application has large variances in object allocation and young
+     * generation promotion rates, the CMS collector is not able to accurately predict when to start the CMS cycle. For
+     * example:
+     * 
+     * <pre>
+     * -XX:+UseCMSInitiatingOccupancyOnly
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCMSInitiatingOccupancyOnlyEnabled() {
+        String regex = "(-XX:\\+UseCMSInitiatingOccupancyOnly)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * The option for bias locking disabled. For example:
      * 
      * <pre>
