@@ -585,9 +585,8 @@ public class JdkUtil {
      */
     public static final boolean isBottleneck(BlockingEvent gcEvent, BlockingEvent priorEvent, int throughputThreshold)
             throws TimeWarpException {
-        // Timestamp is the start of a garbage collection event; therefore, the
-        // interval is from the
-        // end of the prior event to the end of the current event.
+        // Timestamp is the start of a garbage collection event; therefore, the interval is from the end of the prior
+        // event to the end of the current event.
         long interval = gcEvent.getTimestamp() + gcEvent.getDuration() - priorEvent.getTimestamp()
                 - priorEvent.getDuration();
 
@@ -596,7 +595,7 @@ public class JdkUtil {
             throw new TimeWarpException("Event overlap: " + System.getProperty("line.separator")
                     + priorEvent.getLogEntry() + System.getProperty("line.separator") + gcEvent.getLogEntry());
         }
-        if (interval <= 0) {
+        if (interval < 0) {
             throw new TimeWarpException("Negative interval: " + System.getProperty("line.separator")
                     + priorEvent.getLogEntry() + System.getProperty("line.separator") + gcEvent.getLogEntry());
         }
