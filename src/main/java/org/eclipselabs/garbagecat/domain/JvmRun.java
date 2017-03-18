@@ -21,6 +21,7 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
@@ -855,6 +856,19 @@ public class JvmRun {
         // Check for-XX:CMSInitiatingOccupancyFraction without -XX:+UseCMSInitiatingOccupancyOnly.
         if (jvm.getCMSInitiatingOccupancyFraction() != null && jvm.getCMSInitiatingOccupancyOnlyEnabled() == null) {
             analysisKeys.add(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING);
+        }
+
+        // Check for tenuring disabled or changed from default
+        if (jvm.getMaxTenuringThresholdOption() != null) {
+            String maxTenuringThreshold = JdkUtil.getOptionValue(jvm.getMaxTenuringThresholdOption());
+            if (maxTenuringThreshold != null) {
+                int tenuring = Integer.parseInt(maxTenuringThreshold);
+                if (tenuring == 0 || tenuring > 15) {
+                    analysisKeys.add(Analysis.WARN_TENURING_DISABLED);
+                } else if (tenuring != 15) {
+                    analysisKeys.add(Analysis.INFO_TENURING_DEFAULT_OVERRIDEN);
+                }
+            }
         }
     }
 

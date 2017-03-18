@@ -734,6 +734,36 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED));
     }
 
+    public void testTenuringDisabledZero() {
+        String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=0 -Xmx2048M";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_TENURING_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_TENURING_DISABLED));
+    }
+
+    public void testTenuringDisabledGreater15() {
+        String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=32 -Xmx2048M";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_TENURING_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_TENURING_DISABLED));
+    }
+
+    public void testTenuringDefaultOverriden() {
+        String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=6 -Xmx2048M";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.INFO_TENURING_DEFAULT_OVERRIDEN + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_TENURING_DEFAULT_OVERRIDEN));
+    }
+
     public void testHeaderLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset42.txt");

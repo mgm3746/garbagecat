@@ -1125,6 +1125,21 @@ public class Jvm {
     }
 
     /**
+     * The option for setting the maximum tenuring threshold option (the number of times objects surviving a young
+     * collection are copied to a survivor space).
+     * 
+     * <pre>
+     * -XX:MaxTenuringThreshold=0
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getMaxTenuringThresholdOption() {
+        String regex = "(-XX:MaxTenuringThreshold=(\\d+))";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */
