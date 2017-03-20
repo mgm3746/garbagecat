@@ -865,8 +865,6 @@ public class JvmRun {
                 int tenuring = Integer.parseInt(maxTenuringThreshold);
                 if (tenuring == 0 || tenuring > 15) {
                     analysisKeys.add(Analysis.WARN_TENURING_DISABLED);
-                } else if (tenuring != 15) {
-                    analysisKeys.add(Analysis.INFO_TENURING_DEFAULT_OVERRIDEN);
                 }
             }
         }

@@ -516,11 +516,6 @@ public class Analysis {
     public static final String WARN_TENURING_DISABLED = "warn.tenuring.disabled";
 
     /**
-     * Property key for the default tenuring behavior (-XX:MaxTenuringThreshold=15) being overriden.
-     */
-    public static final String INFO_TENURING_DEFAULT_OVERRIDEN = "info.tenuring.default.overriden";
-
-    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {
