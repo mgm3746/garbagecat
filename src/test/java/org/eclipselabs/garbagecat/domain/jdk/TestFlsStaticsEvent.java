@@ -24,6 +24,31 @@ import junit.framework.TestCase;
  */
 public class TestFlsStaticsEvent extends TestCase {
 
+    public void testNotBlocking() {
+        String logLine = "Max   Chunk Size: 536870912";
+        Assert.assertFalse(JdkUtil.LogEventType.FLS_STATISTICS.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
+    public void testNotReportable() {
+        String logLine = "Max   Chunk Size: 536870912";
+        Assert.assertFalse(JdkUtil.LogEventType.FLS_STATISTICS.toString() + " incorrectly indentified as reportable.",
+                JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
+    }
+
+    public void testJdkUtilParseLogLineDoesNotReturnUnknownEvent() {
+        String logLine = "Max   Chunk Size: 536870912";
+        Assert.assertFalse("JdkUtil.parseLogLine() returns " + JdkUtil.LogEventType.UNKNOWN.toString() + " event.",
+                JdkUtil.parseLogLine(logLine) instanceof UnknownEvent);
+    }
+
+    public void testJdkUtilParseLogLineReturnsFlsStatisticsEvent() {
+        String logLine = "Max   Chunk Size: 536870912";
+        Assert.assertTrue(
+                "JdkUtil.parseLogLine() does not return " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + " event.",
+                JdkUtil.parseLogLine(logLine) instanceof FlsStatisticsEvent);
+    }
+
     public void testLineStatistics() {
         String logLine = "Statistics for BinaryTreeDictionary:";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
@@ -84,6 +109,18 @@ public class TestFlsStaticsEvent extends TestCase {
                 FlsStatisticsEvent.match(logLine));
     }
 
+    public void testLogLineNumberOfBlocks7Digits() {
+        String logLine = "Number of Blocks: 6455862";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
+                FlsStatisticsEvent.match(logLine));
+    }
+
+    public void testLogLineNumberOfBlocks8Digits() {
+        String logLine = "Number of Blocks: 64558627";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
+                FlsStatisticsEvent.match(logLine));
+    }
+
     public void testLogLineAvBlockSize() {
         String logLine = "Av.  Block  Size: 536870912";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
@@ -138,28 +175,49 @@ public class TestFlsStaticsEvent extends TestCase {
                 FlsStatisticsEvent.match(logLine));
     }
 
-    public void testNotBlocking() {
-        String logLine = "Max   Chunk Size: 536870912";
-        Assert.assertFalse(JdkUtil.LogEventType.FLS_STATISTICS.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    public void testLogLineStatisticsForIndexedFreeLists() {
+        String logLine = "Statistics for IndexedFreeLists:";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
+                FlsStatisticsEvent.match(logLine));
     }
 
-    public void testNotReportable() {
-        String logLine = "Max   Chunk Size: 536870912";
-        Assert.assertFalse(JdkUtil.LogEventType.FLS_STATISTICS.toString() + " incorrectly indentified as reportable.",
-                JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
+    public void testLogLineDivider() {
+        String logLine = "--------------------------------";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
+                FlsStatisticsEvent.match(logLine));
     }
 
-    public void testJdkUtilParseLogLineDoesNotReturnUnknownEvent() {
-        String logLine = "Max   Chunk Size: 536870912";
-        Assert.assertFalse("JdkUtil.parseLogLine() returns " + JdkUtil.LogEventType.UNKNOWN.toString() + " event.",
-                JdkUtil.parseLogLine(logLine) instanceof UnknownEvent);
+    public void testLogLineFrag() {
+        String logLine = " free=1161964910 frag=0.8232";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
+                FlsStatisticsEvent.match(logLine));
     }
 
-    public void testJdkUtilParseLogLineReturnsFlsStatisticsEvent() {
-        String logLine = "Max   Chunk Size: 536870912";
-        Assert.assertTrue(
-                "JdkUtil.parseLogLine() does not return " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + " event.",
-                JdkUtil.parseLogLine(logLine) instanceof FlsStatisticsEvent);
+    public void testLogLineSweepSize() {
+        String logLine = "size[256] : demand: 0, old_rate: 0.000000, current_rate: 0.000000, new_rate: 0.000000, "
+                + "old_desired: 0, new_desired: 0";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
+                FlsStatisticsEvent.match(logLine));
+    }
+
+    public void testLogLineSweepDemand() {
+        String logLine = "demand: 1, old_rate: 0.000000, current_rate: 0.000282, new_rate: 0.000282, old_desired: 0, "
+                + "new_desired: 2";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
+                FlsStatisticsEvent.match(logLine));
+    }
+
+    public void testLogLineSweepSizeDemand8DigitsRate3Digits() {
+        String logLine = "size[3] : demand: 11798284, old_rate: 717.797668, current_rate: 743.942383, new_rate: "
+                + "742.511902, old_desired: 15402672, new_desired: 13570211";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
+                FlsStatisticsEvent.match(logLine));
+    }
+
+    public void testLogLineSweepSizeDemand9DigitsRate4Digits() {
+        String logLine = "size[4] : demand: 81603741, old_rate: 5028.634277, current_rate: 5145.535156, new_rate: "
+                + "5146.810547, old_desired: 107905624, new_desired: 94063552";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + ".",
+                FlsStatisticsEvent.match(logLine));
     }
 }

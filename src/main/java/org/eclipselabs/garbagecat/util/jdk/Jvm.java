@@ -1140,6 +1140,34 @@ public class Jvm {
     }
 
     /**
+     * The option for setting the size of the eden space compared to ONE survivor space.
+     * 
+     * <pre>
+     * -XX:SurvivorRatio=6
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getSurvivorRatio() {
+        String regex = "(-XX:SurvivorRatio=(\\d+))";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for setting the percentage of the survivor space allowed to be occupied.
+     * 
+     * <pre>
+     * -XX:TargetSurvivorRatio=90
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getTargetSurvivorRatio() {
+        String regex = "(-XX:TargetSurvivorRatio=(\\d{1,3}))";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

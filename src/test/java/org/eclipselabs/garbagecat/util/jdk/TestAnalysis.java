@@ -754,6 +754,36 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_TENURING_DISABLED));
     }
 
+    public void testMaxTenuring() {
+        String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=6 -Xmx2048M";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.INFO_MAX_TENURING + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_MAX_TENURING));
+    }
+
+    public void testSurvivorRatio() {
+        String jvmOptions = "-Xss128k -XX:SurvivorRatio=6 -Xmx2048M";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.INFO_SURVIVOR_RATIO + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_SURVIVOR_RATIO));
+    }
+
+    public void testTargetSurvivorRatio() {
+        String jvmOptions = "-Xss128k -XX:TargetSurvivorRatio=90 -Xmx2048M";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.INFO_SURVIVOR_RATIO_TARGET + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_SURVIVOR_RATIO_TARGET));
+    }
+
     public void testHeaderLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset42.txt");

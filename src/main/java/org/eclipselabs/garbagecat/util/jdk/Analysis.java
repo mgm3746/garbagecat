@@ -516,6 +516,26 @@ public class Analysis {
     public static final String WARN_TENURING_DISABLED = "warn.tenuring.disabled";
 
     /**
+     * Property key for the survivor ratio being set with -XX:SurvivorRatio=N (e.g. -XX:SurvivorRatio=6 ).
+     * 
+     */
+    public static final String INFO_SURVIVOR_RATIO = "info.survivor.ratio";
+
+    /**
+     * Property key for the target survivor ratio being set with -XX:TargetSurvivorRatio=N (e.g.
+     * -XX:TargetSurvivorRatio=90).
+     * 
+     */
+    public static final String INFO_SURVIVOR_RATIO_TARGET = "info.survivor.ratio.target";
+
+    /**
+     * Property key for setting the number of times an object surviving a young collection is copied between survivor
+     * spaces with -XX:MaxTenuringThreshold=N (0-15) (e.g. -XX:MaxTenuringThreshold=6).
+     * 
+     */
+    public static final String INFO_MAX_TENURING = "info.max.tenuring";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

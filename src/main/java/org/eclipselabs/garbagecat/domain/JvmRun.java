@@ -858,15 +858,27 @@ public class JvmRun {
             analysisKeys.add(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING);
         }
 
-        // Check for tenuring disabled or changed from default
+        // Check for tenuring disabled or explicitly set
         if (jvm.getMaxTenuringThresholdOption() != null) {
             String maxTenuringThreshold = JdkUtil.getOptionValue(jvm.getMaxTenuringThresholdOption());
             if (maxTenuringThreshold != null) {
                 int tenuring = Integer.parseInt(maxTenuringThreshold);
                 if (tenuring == 0 || tenuring > 15) {
                     analysisKeys.add(Analysis.WARN_TENURING_DISABLED);
+                } else {
+                    analysisKeys.add(Analysis.INFO_MAX_TENURING);
                 }
             }
+        }
+
+        // Check for -XX:SurvivorRatio option being used
+        if (jvm.getSurvivorRatio() != null) {
+            analysisKeys.add(Analysis.INFO_SURVIVOR_RATIO);
+        }
+
+        // Check for -XX:TargetSurvivorRatio option being used
+        if (jvm.getTargetSurvivorRatio() != null) {
+            analysisKeys.add(Analysis.INFO_SURVIVOR_RATIO_TARGET);
         }
     }
 
