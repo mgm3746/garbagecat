@@ -777,6 +777,35 @@ public class TestCmsPreprocessAction extends TestCase {
                 event.getLogEntry());
     }
 
+    public void testLogLineMiddleParNewTruncatedBeginMixedConcurrentFlsStatistics2() {
+        String priorLogLine = "";
+        String logLine = "2017-03-19T11:48:55.207+0000: 356616.193: [ParNew2017-03-19T11:48:55.211+0000: 356616.198: "
+                + "[CMS-concurrent-abortable-preclean: 1.046/3.949 secs] [Times: user=1.16 sys=0.05, real=3.95 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.", "2017-03-19T11:48:55.207+0000: 356616.193: [ParNew",
+                event.getLogEntry());
+    }
+
+    public void testLogLineMiddleParNewTruncatedEndMixedConcurrentFlsStatistics2() {
+        String priorLogLine = "";
+        String logLine = ": 66097K->7194K(66368K), 0.0440189 secs] 5274098K->5219953K(10478400K)After GC:";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                ": 66097K->7194K(66368K), 0.0440189 secs] 5274098K->5219953K(10478400K)", event.getLogEntry());
+    }
+
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */
@@ -1200,7 +1229,7 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST));
     }
 
-    public void testParNewCmsConcurrentOverThreeLines() {
+    public void testParNewCmsConcurrentOver3Lines() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset112.txt");
         GcManager gcManager = new GcManager();
@@ -1228,5 +1257,21 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
         Assert.assertTrue(Analysis.ERROR_CMS_PROMOTION_FAILED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_PROMOTION_FAILED));
+    }
+
+    public void testPrintFLSStatistics2ParNewOver4Lines() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset117.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(Analysis.INFO_PRINT_FLS_STATISTICS + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_PRINT_FLS_STATISTICS));
     }
 }

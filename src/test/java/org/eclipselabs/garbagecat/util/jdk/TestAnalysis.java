@@ -754,14 +754,43 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_TENURING_DISABLED));
     }
 
-    public void testMaxTenuring() {
+    public void testMaxTenuringParallel() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=6 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<CollectorFamily> collectors = new ArrayList<CollectorFamily>();
+        collectors.add(JdkUtil.CollectorFamily.PARALLEL);
+        jvmRun.setCollectorFamiles(collectors);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.INFO_MAX_TENURING + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.INFO_MAX_TENURING));
+        Assert.assertTrue(Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_MAX_TENURING_OVERRIDE));
+    }
+
+    public void testMaxTenuringCms() {
+        String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=14 -Xmx2048M";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<CollectorFamily> collectors = new ArrayList<CollectorFamily>();
+        collectors.add(JdkUtil.CollectorFamily.CMS);
+        jvmRun.setCollectorFamiles(collectors);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_MAX_TENURING_OVERRIDE));
+    }
+
+    public void testMaxTenuringG1() {
+        String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=6 -Xmx2048M";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<CollectorFamily> collectors = new ArrayList<CollectorFamily>();
+        collectors.add(JdkUtil.CollectorFamily.G1);
+        jvmRun.setCollectorFamiles(collectors);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_MAX_TENURING_OVERRIDE));
     }
 
     public void testSurvivorRatio() {

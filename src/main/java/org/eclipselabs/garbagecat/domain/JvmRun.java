@@ -858,15 +858,17 @@ public class JvmRun {
             analysisKeys.add(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING);
         }
 
-        // Check for tenuring disabled or explicitly set
+        // Check for tenuring disabled or default overriden
         if (jvm.getMaxTenuringThresholdOption() != null) {
             String maxTenuringThreshold = JdkUtil.getOptionValue(jvm.getMaxTenuringThresholdOption());
             if (maxTenuringThreshold != null) {
                 int tenuring = Integer.parseInt(maxTenuringThreshold);
                 if (tenuring == 0 || tenuring > 15) {
                     analysisKeys.add(Analysis.WARN_TENURING_DISABLED);
-                } else {
-                    analysisKeys.add(Analysis.INFO_MAX_TENURING);
+                } else if ((collectorFamilies.contains(CollectorFamily.CMS) && tenuring != 6)
+                        || ((collectorFamilies.contains(CollectorFamily.PARALLEL)
+                                || collectorFamilies.contains(CollectorFamily.G1)) && tenuring != 15)) {
+                    analysisKeys.add(Analysis.INFO_MAX_TENURING_OVERRIDE);
                 }
             }
         }

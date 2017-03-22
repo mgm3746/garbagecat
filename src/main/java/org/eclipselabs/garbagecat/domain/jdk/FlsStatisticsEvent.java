@@ -110,7 +110,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * ...
  * demand: 0, old_rate: 0.000000, current_rate: 0.000000, new_rate: 0.000000, old_desired: 0, new_desired: 0
  * demand: 1, old_rate: 0.000000, current_rate: 0.000282, new_rate: 0.000282, old_desired: 0, new_desired: 2
- * CMS: Large Block: 0x000000075d6b71f0; Proximity: 0x00000006d60c73f0 -> 0x00000007580cee20
+ * CMS: Large Block: 0x000000075d6b71f0; Proximity: 0x00000006d60c73f0 -&gt; 0x00000007580cee20
  * CMS: Large block 0x000000075d658970
  * 2017-03-19T12:48:01.450+0000: 360162.436: [CMS-concurrent-sweep: 2.184/2.184 secs] [Times: user=2.27 sys=0.02, real=2.19 secs]
  * </pre>
