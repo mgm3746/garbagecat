@@ -36,8 +36,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Standard format:
+ * </p>
+ * 
  * <pre>
  * 2143132.151: [Full GC 1606823K-&gt;1409859K(2976064K), 12.0855599 secs]
+ * </pre>
+ *
+ * <p>
+ * 2) with -XX:+UseG1GC (G1 sizes):
+ * </p>
+ * 
+ * <pre>
+ * 2017-03-20T04:30:01.936+0800: 2950.666: [Full GC 8134M-&gt;2349M(8192M), 10.3726320 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -91,8 +103,10 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC( \\("
-            + TRIGGER + "\\) )? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + JdkRegEx.DURATION + "\\]?[ ]*$";
+            + TRIGGER + "\\) )? (" + JdkRegEx.SIZE + "|" + JdkRegEx.SIZE_G1 + ")->(" + JdkRegEx.SIZE + "|"
+            + JdkRegEx.SIZE_G1 + ")\\((" + JdkRegEx.SIZE + "|" + JdkRegEx.SIZE_G1 + ")\\), " + JdkRegEx.DURATION
+            + "\\]?[ ]*$";
+
     private static Pattern pattern = Pattern.compile(VerboseGcOldEvent.REGEX);
 
     /**
@@ -107,10 +121,23 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             trigger = matcher.group(14);
-            combinedBegin = Integer.parseInt(matcher.group(15));
-            combinedEnd = Integer.parseInt(matcher.group(16));
-            combinedAllocation = Integer.parseInt(matcher.group(17));
-            duration = JdkMath.convertSecsToMillis(matcher.group(18)).intValue();
+            if (matcher.group(15).matches(JdkRegEx.SIZE)) {
+                combinedBegin = Integer.parseInt(matcher.group(16));
+            } else {
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), matcher.group(19).charAt(0));
+            }
+            if (matcher.group(20).matches(JdkRegEx.SIZE)) {
+                combinedEnd = Integer.parseInt(matcher.group(21));
+            } else {
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)), matcher.group(24).charAt(0));
+            }
+            if (matcher.group(25).matches(JdkRegEx.SIZE)) {
+                combinedAllocation = Integer.parseInt(matcher.group(26));
+            } else {
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)),
+                        matcher.group(29).charAt(0));
+            }
+            duration = JdkMath.convertSecsToMillis(matcher.group(30)).intValue();
         }
     }
 
