@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,6 +64,7 @@ public class Main {
         // Declare command line options
         options = new Options();
         options.addOption(Constants.OPTION_HELP_SHORT, Constants.OPTION_HELP_LONG, false, "help");
+        options.addOption(Constants.OPTION_VERSION_SHORT, Constants.OPTION_VERSION_LONG, false, "version");
         options.addOption(Constants.OPTION_JVMOPTIONS_SHORT, Constants.OPTION_JVMOPTIONS_LONG, true,
                 "JVM options used during JVM run");
         options.addOption(Constants.OPTION_PREPROCESS_SHORT, Constants.OPTION_PREPROCESS_LONG, false,
@@ -164,10 +166,13 @@ public class Main {
     private static final CommandLine parseOptions(String[] args) throws ParseException {
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = null;
-        // Allow user to just specify help.
+        // Allow user to just specify help or version.
         if (args.length == 1 && (args[0].equals("-" + Constants.OPTION_HELP_SHORT)
                 || args[0].equals("--" + Constants.OPTION_HELP_LONG))) {
             usage(options);
+        } else if (args.length == 1 && (args[0].equals("-" + Constants.OPTION_VERSION_SHORT)
+                || args[0].equals("--" + Constants.OPTION_VERSION_LONG))) {
+            System.out.println("garbagecat v" + getVersion());
         } else {
             cmd = parser.parse(options, args);
             validateOptions(cmd);
@@ -499,6 +504,14 @@ public class Main {
                 }
             }
         }
+    }
+
+    /**
+     * @return version string.
+     */
+    private static String getVersion() {
+        ResourceBundle rb = ResourceBundle.getBundle("META-INF/maven/garbagecat/garbagecat/pom");
+        return rb.getString("version");
     }
 
 }
