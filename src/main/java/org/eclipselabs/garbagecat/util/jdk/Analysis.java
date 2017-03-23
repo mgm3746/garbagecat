@@ -470,7 +470,7 @@ public class Analysis {
     public static final String INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA = "info.cruft.exp.gc.inv.con.and.unl.cla";
 
     /**
-     * Property key for class unloading disabled with -XX:-ClassUnloadingDisabled.
+     * Property key for class unloading disabled with -XX:-ClassUnloading.
      */
     public static final String WARN_CLASS_UNLOADING_DISABLED = "warn.class.unloading.disabled";
 

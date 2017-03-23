@@ -42,6 +42,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsIncrementalModeCollector;
+import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
@@ -576,6 +577,12 @@ public class GcManager {
                                 jvmDao.addAnalysisKey(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
                             }
                         }
+                    }
+
+                    // 14) CMS_REMARK class unloading
+                    if (event instanceof CmsRemarkEvent && !((CmsRemarkEvent) event).isClassUnloading()
+                            && !jvmDao.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
+                        jvmDao.addAnalysisKey(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
                     }
 
                     priorEvent = (BlockingEvent) event;

@@ -32,7 +32,6 @@ import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
-import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkWithClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1CleanupEvent;
@@ -79,7 +78,7 @@ public class JdkUtil {
     public enum LogEventType {
         SERIAL_OLD, SERIAL_NEW, PAR_NEW, PARALLEL_SERIAL_OLD, PARALLEL_SCAVENGE, PARALLEL_OLD_COMPACTING,
         //
-        CMS_SERIAL_OLD, CMS_REMARK_WITH_CLASS_UNLOADING, CMS_REMARK, CMS_INITIAL_MARK, CMS_CONCURRENT,
+        CMS_SERIAL_OLD, CMS_REMARK, CMS_INITIAL_MARK, CMS_CONCURRENT,
         //
         APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD,
         //
@@ -160,8 +159,6 @@ public class JdkUtil {
             return LogEventType.CMS_INITIAL_MARK;
         if (CmsRemarkEvent.match(logLine))
             return LogEventType.CMS_REMARK;
-        if (CmsRemarkWithClassUnloadingEvent.match(logLine))
-            return LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING;
         if (CmsConcurrentEvent.match(logLine))
             return LogEventType.CMS_CONCURRENT;
         // Parallel
@@ -265,9 +262,6 @@ public class JdkUtil {
             break;
         case CMS_REMARK:
             event = new CmsRemarkEvent(logLine);
-            break;
-        case CMS_REMARK_WITH_CLASS_UNLOADING:
-            event = new CmsRemarkWithClassUnloadingEvent(logLine);
             break;
         case CMS_SERIAL_OLD:
             event = new CmsSerialOldEvent(logLine);
@@ -404,9 +398,6 @@ public class JdkUtil {
             break;
         case CMS_REMARK:
             event = new CmsRemarkEvent(logEntry, timestamp, duration);
-            break;
-        case CMS_REMARK_WITH_CLASS_UNLOADING:
-            event = new CmsRemarkWithClassUnloadingEvent(logEntry, timestamp, duration);
             break;
         // Parallel
         case PARALLEL_SCAVENGE:

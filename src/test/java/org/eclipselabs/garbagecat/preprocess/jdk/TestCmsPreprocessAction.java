@@ -21,6 +21,7 @@ import java.util.Set;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
@@ -1202,10 +1203,16 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertTrue("Log line not recognized as " + LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
-        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING.toString() + ".",
-                jvmRun.getEventTypes().contains(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_REMARK.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_REMARK));
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
+        Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
+        Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
+        Assert.assertNotNull(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
     }
 
     public void testUnknownWithCmsConcurrent() {

@@ -678,26 +678,6 @@ public class TestAnalysis extends TestCase {
     /**
      * Test CMS handling perm/metaspace collections.
      */
-    public void testCMSClassUnloadingEnabledMissingButJDK8EnabledByDefault() {
-        String jvmOptions = "MGM";
-        GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING);
-        jvmRun.setEventTypes(eventTypes);
-        jvmRun.doAnalysis();
-        Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
-        Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
-        Assert.assertNotNull(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " not found.",
-                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
-    }
-
-    /**
-     * Test CMS handling perm/metaspace collections.
-     */
     public void testCMSClassUnloadingEnabledMissingButNotCms() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
@@ -705,22 +685,6 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
-    }
-
-    /**
-     * Test CMS handling perm/metaspace collections.
-     */
-    public void testCMSClassUnloadingEnabledMissingCollector() {
-        String jvmOptions = null;
-        GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.CMS_REMARK);
-        jvmRun.setEventTypes(eventTypes);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
     }
 
@@ -942,10 +906,9 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL_NEW));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_INITIAL_MARK));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_REMARK));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING));
-        Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.WARN_CMS_PAR_NEW_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_PAR_NEW_DISABLED));

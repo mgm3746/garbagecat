@@ -439,25 +439,14 @@ public class JvmRun {
             }
         }
 
-        // 5) Check if CMS handling Perm/Metaspace collections by collector analysis (if no jvm options available and
-        // class unloading has not already been detected).
-        if (!analysisKeys.contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)
-                && !analysisKeys.contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED)) {
-            if (getEventTypes().contains(LogEventType.CMS_REMARK)
-                    && !getEventTypes().contains(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING)) {
-                analysisKeys.add(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
-            }
-
-        }
-
-        // 6) Check for -XX:+PrintReferenceGC by event type
+        // 5) Check for -XX:+PrintReferenceGC by event type
         if (!analysisKeys.contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED)) {
             if (getEventTypes().contains(LogEventType.REFERENCE_GC)) {
                 analysisKeys.add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
             }
         }
 
-        // 7) Check for PAR_NEW disabled.
+        // 6) Check for PAR_NEW disabled.
         if (getEventTypes().contains(LogEventType.SERIAL_NEW) && collectorFamilies.contains(CollectorFamily.CMS)) {
             // Replace general gc.serial analysis
             if (analysisKeys.contains(Analysis.ERROR_SERIAL_GC)) {
@@ -468,12 +457,12 @@ public class JvmRun {
             }
         }
 
-        // 8) Check for swappiness
+        // 7) Check for swappiness
         if (getJvm().getPercentSwapFree() < 95) {
             analysisKeys.add(Analysis.INFO_SWAPPING);
         }
 
-        // 9) Check for insufficient physical memory
+        // 8) Check for insufficient physical memory
         if (getJvm().getPhysicalMemory() > 0) {
             Long jvmMemory;
             if (jvm.getUseCompressedOopsDisabled() == null && jvm.getUseCompressedClassPointersDisabled() == null) {
@@ -489,7 +478,7 @@ public class JvmRun {
             }
         }
 
-        // 10) Unidentified logging lines
+        // 9) Unidentified logging lines
         if (getUnidentifiedLogLines().size() > 0) {
             if (!preprocessed) {
                 analysisKeys.add(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE);
@@ -662,14 +651,20 @@ public class JvmRun {
             analysisKeys.add(Analysis.ERROR_CMS_NEW_SERIAL_OLD);
         }
 
-        // Check if CMS handling Perm/Metaspace collections.
+        // Check if CMS handling Perm/Metaspace collections is explictily disabled or just not set.
         if (jvm.getCMSClassUnloadingDisabled() != null) {
+            // Explicitly disabled.
             analysisKeys.add(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED);
+            //
+            if (analysisKeys.contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
+                analysisKeys.remove(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
+            }
         } else {
-            if ((collectorFamilies.contains(CollectorFamily.CMS)
-                    && !eventTypes.contains(LogEventType.CMS_REMARK_WITH_CLASS_UNLOADING)
-                    && jvm.getCMSClassUnloadingEnabled() == null)) {
-                analysisKeys.add(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
+            // Not enabled
+            if ((collectorFamilies.contains(CollectorFamily.CMS) && jvm.getCMSClassUnloadingEnabled() == null)) {
+                if (!analysisKeys.contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
+                    analysisKeys.add(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
+                }
             }
         }
 
