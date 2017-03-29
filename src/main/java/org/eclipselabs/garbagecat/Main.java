@@ -196,6 +196,9 @@ public class Main {
      * 
      * @param cmd
      *            The command line options.
+     * 
+     * @throws ParseException
+     *             Command line options not valid.
      */
     public static void validateOptions(CommandLine cmd) throws ParseException {
         // Ensure log file specified.

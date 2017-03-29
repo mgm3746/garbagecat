@@ -1084,4 +1084,18 @@ public class TestAnalysis extends TestCase {
         Assert.assertTrue(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING));
     }
+
+    /**
+     * Test humongous allocations on old JDK not able to reclaim humongous objects during young collections.
+     */
+    public void testHumongousAllocationsNotCollectedYoung() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset118.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.ERROR_G1_HUMONGOUS_JDK8_U60 + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_G1_HUMONGOUS_JDK8_U60));
+    }
 }

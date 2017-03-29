@@ -1,0 +1,21 @@
+Java HotSpot(TM) 64-Bit Server VM (25.45-b02) for linux-amd64 JRE (1.8.0_45-b14), built on Apr 10 2015 10:07:45 by "java_re" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
+Memory: 4k page, physical 49422600k(36272064k free), swap 8388604k(8385820k free)
+CommandLine flags: -XX:ConcGCThreads=2 -XX:+DisableExplicitGC -XX:+DoEscapeAnalysis -XX:G1HeapRegionSize=16777216 -XX:G1HeapWastePercent=5 -XX:G1MixedGCLiveThresholdPercent=85 -XX:G1ReservePercent=15 -XX:GCLogFileSize=20971520 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/logs/jboss-eap-6.4/eap_1/heapdump_eap_1.log -XX:InitialHeapSize=32749125632 -XX:InitiatingHeapOccupancyPercent=35 -XX:MaxGCPauseMillis=1000 -XX:MaxHeapSize=32749125632 -XX:MaxMetaspaceSize=1073741824 -XX:NumberOfGCLogFiles=5 -XX:+ParallelRefProcEnabled -XX:+PrintCommandLineFlags -XX:+PrintGC -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:ThreadStackSize=1536 -XX:+UnlockExperimentalVMOptions -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseG1GC -XX:+UseGCLogFileRotation
+2017-02-20T10:53:42.521-0500: 6639.724: [GC pause (G1 Humongous Allocation) (young) (initial-mark)
+Desired survivor size 1140850688 bytes, new threshold 15 (max 15)
+- age   1:   45349184 bytes,   45349184 total
+- age   2:   14341672 bytes,   59690856 total
+- age   3:   12672888 bytes,   72363744 total
+- age   4:   10670216 bytes,   83033960 total
+- age   5:   11672760 bytes,   94706720 total
+- age   6:   12594216 bytes,  107300936 total
+- age   7:   11465312 bytes,  118766248 total
+- age   8:   13470720 bytes,  132236968 total
+- age   9:   12437272 bytes,  144674240 total
+- age  10:   11520096 bytes,  156194336 total
+- age  11:   10964472 bytes,  167158808 total
+- age  12:   10978736 bytes,  178137544 total
+- age  13:   11794496 bytes,  189932040 total
+- age  14:   11732472 bytes,  201664512 total
+- age  15:   12766944 bytes,  214431456 total
+, 0.2313211 secs]

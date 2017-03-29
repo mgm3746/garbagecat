@@ -572,6 +572,17 @@ public class TestJvm extends TestCase {
     }
 
     /**
+     * Test JDK7 update version by inspecting version header.
+     */
+    public void testJdkUpdate7() {
+        String version = "Java HotSpot(TM) 64-Bit Server VM (24.91-b03) for windows-amd64 JRE (1.7.0_91-b15), built on "
+                + "Oct  2 2015 03:26:24 by \"java_re\" with unknown MS VC++:1600";
+        Jvm jvm = new Jvm(null, null);
+        jvm.setVersion(version);
+        Assert.assertEquals("JDK7 not identified", 91, jvm.JdkUpdate());
+    }
+
+    /**
      * Test if JDK8 by inspecting version header.
      */
     public void testJdk8() {
@@ -580,6 +591,17 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(null, null);
         jvm.setVersion(version);
         Assert.assertEquals("JDK8 not identified", 8, jvm.JdkNumber());
+    }
+
+    /**
+     * Test JDK8 update version by inspecting version header.
+     */
+    public void testJdkUpdate8() {
+        String version = "Java HotSpot(TM) 64-Bit Server VM (25.73-b02) for linux-amd64 JRE (1.8.0_73-b02), "
+                + "built on Jan 29 2016 17:39:45 by \"java_re\" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)";
+        Jvm jvm = new Jvm(null, null);
+        jvm.setVersion(version);
+        Assert.assertEquals("JDK8 not identified", 73, jvm.JdkUpdate());
     }
 
     public void testTieredCompilation() {

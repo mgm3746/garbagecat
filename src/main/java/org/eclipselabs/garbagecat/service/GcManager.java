@@ -45,6 +45,7 @@ import org.eclipselabs.garbagecat.domain.jdk.CmsIncrementalModeCollector;
 import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
@@ -583,6 +584,15 @@ public class GcManager {
                     if (event instanceof CmsRemarkEvent && !((CmsRemarkEvent) event).isClassUnloading()
                             && !jvmDao.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
                         jvmDao.addAnalysisKey(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
+                    }
+
+                    // 15) Humongous allocation
+                    if (event instanceof G1Collector && event instanceof TriggerData
+                            && !jvmDao.getAnalysisKeys().contains(Analysis.INFO_G1_HUMONGOUS_ALLOCATION)) {
+                        String trigger = ((TriggerData) event).getTrigger();
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION)) {
+                            jvmDao.addAnalysisKey(Analysis.INFO_G1_HUMONGOUS_ALLOCATION);
+                        }
                     }
 
                     priorEvent = (BlockingEvent) event;

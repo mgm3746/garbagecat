@@ -1238,6 +1238,24 @@ public class Jvm {
     }
 
     /**
+     * @return The JDK update (e.g. '60'), or `0` if it could not be determined.
+     */
+    public int JdkUpdate() {
+        String regex = "^.+JRE \\(1\\.(5|6|7|8|9)\\.\\d_(\\d{1,3})-.+$";
+        int number = 0;
+        if (version != null) {
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(version);
+            if (matcher.find()) {
+                if (matcher.group(1) != null) {
+                    number = Integer.parseInt(matcher.group(2));
+                }
+            }
+        }
+        return number;
+    }
+
+    /**
      * @return True if 64 bit, false otherwise.
      */
     public boolean is64Bit() {

@@ -522,8 +522,8 @@ public class Analysis {
     public static final String INFO_SURVIVOR_RATIO = "info.survivor.ratio";
 
     /**
-     * Property key for the target survivor ratio being set with -XX:TargetSurvivorRatio=N (e.g.
-     * -XX:TargetSurvivorRatio=90).
+     * Property key for the target survivor ratio being set with -XX:TargetSerror.g1.humongous.jdk8.u60urvivorRatio=N
+     * (e.g. -XX:TargetSurvivorRatio=90).
      * 
      */
     public static final String INFO_SURVIVOR_RATIO_TARGET = "info.survivor.ratio.target";
@@ -534,6 +534,17 @@ public class Analysis {
      * promote when the survivor space fills. Defaults: CMS = 6, Parallel, G1 = 15.
      */
     public static final String INFO_MAX_TENURING_OVERRIDE = "info.max.tenuring.override";
+
+    /**
+     * Property key for humongous allocations.
+     */
+    public static final String INFO_G1_HUMONGOUS_ALLOCATION = "info.g1.humongous.allocation";
+
+    /**
+     * Property key for humongous allocations on an old JDK not able to fully reclaim humongous objects during young
+     * collections (&lt; JDK8 u60).
+     */
+    public static final String ERROR_G1_HUMONGOUS_JDK8_U60 = "error.g1.humongous.jdk8.u60";
 
     /**
      * Make default constructor private so the class cannot be instantiated.
