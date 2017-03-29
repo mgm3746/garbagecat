@@ -191,8 +191,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[CMS)?)(( CMS: abort preclean due to time )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-(abortable-preclean|mark|sweep|preclean): " + JdkRegEx.DURATION_FRACTION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+            + ": \\[CMS-concurrent-(abortable-preclean|mark|sweep|preclean|reset): " + JdkRegEx.DURATION_FRACTION
+            + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
 
     /**
      * Regular expression for retained beginning PAR_NEW mixed with FLS_STATISTICS.
