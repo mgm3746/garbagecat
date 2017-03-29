@@ -504,11 +504,11 @@ public class JvmRun {
 
         // 10) Check for humongous allocations on old JDK not able to fully reclaim them in a young collection
         if (collectorFamilies.contains(CollectorFamily.G1)
-                && analysisKeys.contains(Analysis.INFO_G1_HUMONGOUS_ALLOCATION) && jvm.JdkNumber() == 8
-                && jvm.JdkUpdate() < 60) {
+                && analysisKeys.contains(Analysis.INFO_G1_HUMONGOUS_ALLOCATION)
+                && (jvm.JdkNumber() == 7 || (jvm.JdkNumber() == 8 && jvm.JdkUpdate() < 60))) {
             // Don't double report
             analysisKeys.remove(Analysis.INFO_G1_HUMONGOUS_ALLOCATION);
-            analysisKeys.add(Analysis.ERROR_G1_HUMONGOUS_JDK8_U60);
+            analysisKeys.add(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD);
         }
     }
 

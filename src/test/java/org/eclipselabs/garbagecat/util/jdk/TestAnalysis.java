@@ -1095,7 +1095,7 @@ public class TestAnalysis extends TestCase {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.ERROR_G1_HUMONGOUS_JDK8_U60 + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_G1_HUMONGOUS_JDK8_U60));
+        Assert.assertTrue(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD));
     }
 }

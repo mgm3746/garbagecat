@@ -544,7 +544,7 @@ public class Analysis {
      * Property key for humongous allocations on an old JDK not able to fully reclaim humongous objects during young
      * collections (&lt; JDK8 u60).
      */
-    public static final String ERROR_G1_HUMONGOUS_JDK8_U60 = "error.g1.humongous.jdk8.u60";
+    public static final String ERROR_G1_HUMONGOUS_JDK_OLD = "error.g1.humongous.jdk.old";
 
     /**
      * Make default constructor private so the class cannot be instantiated.
