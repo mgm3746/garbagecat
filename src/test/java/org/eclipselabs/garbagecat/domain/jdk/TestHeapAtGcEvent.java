@@ -213,8 +213,22 @@ public class TestHeapAtGcEvent extends TestCase {
                 HeapAtGcEvent.match(logLine));
     }
 
+    public void testMetaspaceLineWithDatestamp() {
+        String logLine = "2017-03-21T15:06:10.427+1100:  Metaspace       used 625128K, capacity 943957K, "
+                + "committed 951712K, reserved 1943552K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".",
+                HeapAtGcEvent.match(logLine));
+    }
+
     public void testJDK8ClassSpaceLine() {
         String logLine = "  class space    used 8643K, capacity 10553K, committed 10632K, reserved 1048576K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".",
+                HeapAtGcEvent.match(logLine));
+    }
+
+    public void testClassSpaceLineWithTimestamp() {
+        String logLine = "425018.340:   class space    used 37442K, capacity 57351K, committed 58624K, reserved "
+                + "1048576K";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".",
                 HeapAtGcEvent.match(logLine));
     }

@@ -886,6 +886,17 @@ public class JvmRun {
         if (jvm.getTargetSurvivorRatio() != null) {
             analysisKeys.add(Analysis.INFO_SURVIVOR_RATIO_TARGET);
         }
+
+        // Check for experimental options being used
+        if (jvm.getUnlockExperimentalVmOptionsEnabled() != null) {
+            if (jvm.getUseFastUnorderedTimeStampsEnabled() != null) {
+                analysisKeys.add(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS);
+            } else if (jvm.getG1MixedGCLiveThresholdPercent() != null) {
+                analysisKeys.add(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT);
+            } else {
+                analysisKeys.add(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
+            }
+        }
     }
 
     /**

@@ -408,6 +408,15 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineYoungPauseWithTriggerWithG1ErgonomicsDoubleTimestampAndDateStamps() {
+        String logLine = "2017-03-21T15:05:53.717+1100: 425001.630: [GC pause (G1 Evacuation Pause) (young)"
+                + "2017-03-21T15:05:53.717+1100: 425001.630:  425001.630: [G1Ergonomics (CSet Construction) start "
+                + "choosing CSet, _pending_cards: 3, predicted base time: 45.72 ms, remaining time: 304.28 ms, target "
+                + "pause time: 350.00 ms]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
     public void testLogLineYoungInitialMarkWithDatestamp() {
         String logLine = "2017-01-20T23:18:29.561-0500: 1513296.434: [GC pause (young) (initial-mark), "
                 + "0.0225230 secs]";

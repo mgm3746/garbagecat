@@ -1168,6 +1168,49 @@ public class Jvm {
     }
 
     /**
+     * The option for enabling experimental JVM options.
+     * 
+     * <pre>
+     * -XX:+UnlockExperimentalVMOptions
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUnlockExperimentalVmOptionsEnabled() {
+        String regex = "(-XX:\\+UnlockExperimentalVMOptions)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for enabling fast unordered timestamps.
+     * 
+     * <pre>
+     * -XX:+UseFastUnorderedTimeStamps
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseFastUnorderedTimeStampsEnabled() {
+        String regex = "(-XX:\\+UseFastUnorderedTimeStamps)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for setting the occupancy threshold for a region to be considered as a candidate region for a
+     * G1_CLEANUP collection. For example:
+     * 
+     * <pre>
+     * -XX:G1MixedGCLiveThresholdPercent=85
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getG1MixedGCLiveThresholdPercent() {
+        String regex = "(-XX:G1MixedGCLiveThresholdPercent=\\d{1,3})";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

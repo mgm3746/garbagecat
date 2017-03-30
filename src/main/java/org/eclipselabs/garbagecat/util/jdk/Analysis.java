@@ -547,6 +547,23 @@ public class Analysis {
     public static final String ERROR_G1_HUMONGOUS_JDK_OLD = "error.g1.humongous.jdk.old";
 
     /**
+     * Property key for experimental jvm options enabled with <code>-XX:+UnlockExperimentalVMOptions</code>.
+     */
+    public static final String INFO_EXPERIMENTAL_VM_OPTIONS = "info.experimental.vm.options.enabled";
+
+    /**
+     * Property key for fast unordered timestamps (experimental) enabled with
+     * <code>-XX:+UseFastUnorderedTimeStamps</code>.
+     */
+    public static final String WARN_FAST_UNORDERED_TIMESTAMPS = "warn.fast.unordered.timestamps";
+
+    /**
+     * Property key for the occupancy threshold for a region to be considered as a candidate region for a G1_CLEANUP
+     * collection being specified with <code>-XX:G1MixedGCLiveThresholdPercent=NN</code>.
+     */
+    public static final String WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT = "warn.g1.mixed.gc.live.thrshld.prcnt";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

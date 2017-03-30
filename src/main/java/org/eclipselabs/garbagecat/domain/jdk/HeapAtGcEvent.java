@@ -252,8 +252,9 @@ public class HeapAtGcEvent implements ThrowAwayEvent {
             //
             "^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$",
             //
-            "^ (Metaspace| class space)[ ]+used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE + ", committed "
-                    + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
+            "^(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": )? (Metaspace| class space)[ ]+used "
+                    + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE + ", committed " + JdkRegEx.SIZE + ", reserved "
+                    + JdkRegEx.SIZE + "$",
             //
             "^}$",
             //

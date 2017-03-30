@@ -777,6 +777,28 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_SURVIVOR_RATIO_TARGET));
     }
 
+    public void testExperimentalOptionsEnabled() {
+        String jvmOptions = "-XX:+UnlockExperimentalVMOptions -Xmx2048M";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+    }
+
+    public void testUseFastUnorderedTimeStamps() {
+        String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:+UseFastUnorderedTimeStamps -Xmx2048M";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS));
+        Assert.assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+    }
+
     public void testHeaderLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset42.txt");
@@ -1097,5 +1119,9 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD));
+        Assert.assertTrue(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT));
+        Assert.assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
     }
 }

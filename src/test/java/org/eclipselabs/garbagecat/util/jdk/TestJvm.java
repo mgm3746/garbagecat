@@ -764,4 +764,24 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertNotNull("-XX:+PrintAdaptiveSizePolicy not found.", jvm.getPrintAdaptiveResizePolicyEnabled());
     }
+
+    public void testUnlockExperimentalVmOptionsEnabled() {
+        String jvmOptions = "-XX:CompressedClassSpaceSize=768m -XX:+UnlockExperimentalVMOptions -d64";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-XX:+UnlockExperimentalVMOptions not found.",
+                jvm.getUnlockExperimentalVmOptionsEnabled());
+    }
+
+    public void testUseFastUnorderedTimeStampsEnabled() {
+        String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:+UseFastUnorderedTimeStamps -d64";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-XX:+UseFastUnorderedTimeStamps not found.", jvm.getUseFastUnorderedTimeStampsEnabled());
+    }
+
+    public void testG1MixedGcLiveThresholdPercent() {
+        String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:G1MixedGCLiveThresholdPercent=85 -d64";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-XX:G1MixedGCLiveThresholdPercent=NN not found.", jvm.getG1MixedGCLiveThresholdPercent());
+    }
+
 }

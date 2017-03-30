@@ -292,13 +292,17 @@ public class G1PreprocessAction implements PreprocessAction {
      * 0.807: [GC pause (young), 0.00290200 secs]
      * 
      * 6049.175: [GC pause (G1 Evacuation Pause) (young) (to-space exhausted), 3.1713585 secs]
+     * 
+     * 2017-03-21T15:05:53.717+1100: 425001.630: [GC pause (G1 Evacuation Pause) (young)2017-03-21T15:05:53.717+1100:
+     * 425001.630: 425001.630: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: 3, predicted base
+     * time: 45.72 ms, remaining time: 304.28 ms, target pause time: 350.00 ms]
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_PAUSE = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
             + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\))? \\(young\\)( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE
             + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, "
-            + JdkRegEx.DURATION + "\\])?)((" + JdkRegEx.DATESTAMP + ": )?( )?" + JdkRegEx.TIMESTAMP
-            + ": \\[G1Ergonomics.+)?[ ]*$";
+            + JdkRegEx.DURATION + "\\])?)((" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": )?( )?"
+            + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+)?[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_YOUNG_INITIAL_MARK collection.
