@@ -596,10 +596,12 @@ public class JvmRun {
             }
         }
 
-        // Check if explicit gc should be handled concurrently.
+        // Check if explicit gc not detected, but JVM not configured to handle it concurrently.
         if ((collectorFamilies.contains(CollectorFamily.CMS) || collectorFamilies.contains(CollectorFamily.G1))
-                && jvm.getDisableExplicitGCOption() == null && jvm.getExplicitGcInvokesConcurrentOption() == null) {
-            analysisKeys.add(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT);
+                && jvm.getDisableExplicitGCOption() == null && jvm.getExplicitGcInvokesConcurrentOption() == null
+                && !analysisKeys.contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1)
+                && !analysisKeys.contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS)) {
+            analysisKeys.add(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT);
         }
 
         // Specifying that explicit gc be collected concurrently makes no sense if explicit gc is disabled.

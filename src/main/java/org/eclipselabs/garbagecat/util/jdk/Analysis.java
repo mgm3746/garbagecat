@@ -63,7 +63,7 @@ public class Analysis {
     /**
      * Property key for explicit garbage not collected concurrently.
      */
-    public static final String ERROR_EXPLICIT_GC_NOT_CONCURRENT = "error.explicit.gc.not.concurrent";
+    public static final String WARN_EXPLICIT_GC_NOT_CONCURRENT = "warn.explicit.gc.not.concurrent";
 
     /**
      * Property key for explicit garbage collection disabled and specifying concurrent collections.

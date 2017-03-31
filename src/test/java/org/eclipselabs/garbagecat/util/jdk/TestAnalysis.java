@@ -515,10 +515,10 @@ public class TestAnalysis extends TestCase {
         collectorFamilies.add(CollectorFamily.G1);
         jvmRun.setCollectorFamiles(collectorFamilies);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT));
-        Assert.assertNotNull(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT + " not found.",
-                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT));
+        Assert.assertTrue(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT));
+        Assert.assertNotNull(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT));
     }
 
     /**
@@ -536,8 +536,8 @@ public class TestAnalysis extends TestCase {
         collectorFamilies.add(CollectorFamily.CMS);
         jvmRun.setCollectorFamiles(collectorFamilies);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT));
+        Assert.assertTrue(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT));
     }
 
     /**
@@ -830,8 +830,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_PERM_SIZE_NOT_SET + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PERM_SIZE_NOT_SET));
-        Assert.assertFalse(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_EXPLICIT_GC_NOT_CONCURRENT));
+        Assert.assertFalse(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT));
         Assert.assertNotNull(Analysis.WARN_PERM_SIZE_NOT_SET + " not found.",
                 GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_PERM_SIZE_NOT_SET));
     }
