@@ -10,9 +10,8 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 import junit.framework.Assert;
@@ -22,36 +21,17 @@ import junit.framework.TestCase;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestGcLockerEvent extends TestCase {
-
-    public void testNotBlocking() {
-        String logLine = "GC locker: Trying a full collection because scavenge failed";
-        Assert.assertFalse(JdkUtil.LogEventType.GC_LOCKER.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
-    }
+public class TestBlankLineEvent extends TestCase {
 
     public void testReportable() {
-        String logLine = "GC locker: Trying a full collection because scavenge failed";
-        Assert.assertFalse(JdkUtil.LogEventType.GC_LOCKER.toString() + " incorrectly indentified as reportable.",
+        String logLine = "";
+        Assert.assertFalse(JdkUtil.LogEventType.BLANK_LINE.toString() + " incorrectly indentified as reportable.",
                 JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
     }
 
-    public void testLine() {
-        String logLine = "GC locker: Trying a full collection because scavenge failed";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_LOCKER.toString() + ".",
-                GcLockerEvent.match(logLine));
-    }
-
-    public void testParseLogLine() {
-        String logLine = "GC locker: Trying a full collection because scavenge failed";
-        LogEvent event = JdkUtil.parseLogLine(logLine);
-        Assert.assertTrue(JdkUtil.LogEventType.GC_LOCKER.toString() + " event not identified.",
-                event instanceof GcLockerEvent);
-    }
-
-    public void testIdentifyEventType() {
-        String logLine = "GC locker: Trying a full collection because scavenge failed";
-        Assert.assertTrue(JdkUtil.LogEventType.GC_LOCKER.toString() + " event not identified.",
-                JdkUtil.identifyEventType(logLine) == JdkUtil.LogEventType.GC_LOCKER);
+    public void testLogLine() {
+        String logLine = "";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.BLANK_LINE.toString() + ".",
+                BlankLineEvent.match(logLine));
     }
 }

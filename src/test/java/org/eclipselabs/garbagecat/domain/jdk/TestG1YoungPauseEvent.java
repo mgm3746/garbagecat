@@ -180,4 +180,20 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 1500 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 12, event.getDuration());
     }
+
+    public void testLogLinePreprocessedNoDuration() {
+        String logLine = "2017-04-05T09:09:00.416-0500: 201626.141: [GC pause (G1 Evacuation Pause) (young)"
+                + "[Eden: 3808.0M(3808.0M)->0.0B(3760.0M) Survivors: 40.0M->64.0M "
+                + "Heap: 7253.9M(8192.0M)->3472.3M(8192.0M)] [Times: user=0.22 sys=0.00, real=0.11 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                G1YoungPauseEvent.match(logLine));
+        G1YoungPauseEvent event = new G1YoungPauseEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
+        Assert.assertEquals("Time stamp not parsed correctly.", 201626141, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 7427994, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 3555635, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 8192 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 110, event.getDuration());
+    }
 }

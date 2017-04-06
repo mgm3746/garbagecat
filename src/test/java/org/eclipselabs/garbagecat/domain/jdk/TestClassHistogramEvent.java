@@ -23,6 +23,20 @@ import junit.framework.TestCase;
  */
 public class TestClassHistogramEvent extends TestCase {
 
+    public void testNotBlocking() {
+        String logLine = "49709.036: [Class Histogram (after full gc):, 2.4232900 secs] "
+                + "[Times: user=29.91 sys=0.08, real=22.24 secs]";
+        Assert.assertFalse(JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
+    public void testReportable() {
+        String logLine = "49709.036: [Class Histogram (after full gc):, 2.4232900 secs] "
+                + "[Times: user=29.91 sys=0.08, real=22.24 secs]";
+        Assert.assertFalse(JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + " incorrectly indentified as reportable.",
+                JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testColumnsNameLine() {
         String logLine = " num     #instances         #bytes  class name";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
@@ -101,12 +115,5 @@ public class TestClassHistogramEvent extends TestCase {
                 + "[Times: user=29.91 sys=0.08, real=22.24 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
                 ClassHistogramEvent.match(logLine));
-    }
-
-    public void testNotBlocking() {
-        String logLine = "49709.036: [Class Histogram (after full gc):, 2.4232900 secs] "
-                + "[Times: user=29.91 sys=0.08, real=22.24 secs]";
-        Assert.assertFalse(JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 }

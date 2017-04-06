@@ -23,7 +23,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * After a JNI critical section was exited the GC wanted tried to do a young collection, but it failed due to the full
+ * After a JNI critical section was exited the GC tried to do a young collection, but it failed due to the full
  * promotion guarantee. This will cause the serial collector to be invoked.
  * </p>
  * 

@@ -55,6 +55,7 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
@@ -70,6 +71,7 @@ import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
 /**
@@ -293,6 +295,11 @@ public class GcManager {
             if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_APPLICATION_LOGGING)) {
                 if (ApplicationLoggingEvent.match(currentLogLine)) {
                     jvmDao.getAnalysisKeys().add(Analysis.WARN_APPLICATION_LOGGING);
+                }
+            }
+            if (!jvmDao.getAnalysisKeys().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED)) {
+                if (ReferenceGcEvent.match(currentLogLine)) {
+                    jvmDao.getAnalysisKeys().add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
                 }
             }
             currentLogLine = null;
@@ -618,14 +625,15 @@ public class GcManager {
                         jvmDao.getAnalysisKeys().add(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED);
                     }
                 } else if (event instanceof UnknownEvent) {
-                    // Don't count datestamp only lines as unidentified
+                    // Don't count reportable events with datestamp only as unidentified
                     Date jvmStartDate = GcUtil.parseStartDateTime("2000-01-01 00:00:00,000");
                     DateStampPreprocessAction preprocessAction = new DateStampPreprocessAction(logLine, jvmStartDate);
                     LogEvent preprocessedEvent = null;
                     if (preprocessAction.getLogEntry() != null) {
                         preprocessedEvent = JdkUtil.parseLogLine(preprocessAction.getLogEntry());
-                    }
-                    if (preprocessedEvent != null && !(preprocessedEvent instanceof UnknownEvent)) {
+                    } //
+                    if (preprocessedEvent != null
+                            && JdkUtil.isReportable(LogEventType.valueOf(preprocessedEvent.getName()))) {
                         if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_DATESTAMP_NO_TIMESTAMP)) {
                             jvmDao.getAnalysisKeys().add(Analysis.ERROR_DATESTAMP_NO_TIMESTAMP);
                         }

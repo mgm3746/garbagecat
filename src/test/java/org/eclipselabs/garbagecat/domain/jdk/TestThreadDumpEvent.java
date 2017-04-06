@@ -23,6 +23,18 @@ import junit.framework.TestCase;
  */
 public class TestThreadDumpEvent extends TestCase {
 
+    public void testNotBlocking() {
+        String logLine = "Full thread dump Java HotSpot(TM) Server VM (11.0-b16 mixed mode):";
+        Assert.assertFalse(JdkUtil.LogEventType.THREAD_DUMP.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
+    public void testReportable() {
+        String logLine = "Full thread dump Java HotSpot(TM) Server VM (11.0-b16 mixed mode):";
+        Assert.assertTrue(JdkUtil.LogEventType.THREAD_DUMP.toString() + " incorrectly indentified as not reportable.",
+                JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testBeginningDateTime() {
         String logLine = "2009-12-29 14:17:17";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".",
@@ -218,11 +230,5 @@ public class TestThreadDumpEvent extends TestCase {
                 + "[0xe4c40000, 0xe982a000, 0xf4c40000)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".",
                 ThreadDumpEvent.match(logLine));
-    }
-
-    public void testNotBlocking() {
-        String logLine = "Full thread dump Java HotSpot(TM) Server VM (11.0-b16 mixed mode):";
-        Assert.assertFalse(JdkUtil.LogEventType.THREAD_DUMP.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 }

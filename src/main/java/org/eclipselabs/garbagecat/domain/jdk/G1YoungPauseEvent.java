@@ -121,6 +121,22 @@ public class G1YoungPauseEvent extends G1Collector
             + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
+     * Regular expression preprocessed with G1 details with no duration. Get duration from times block.
+     * 
+     * Trigger before (young):
+     * 
+     * 2017-04-05T09:09:00.416-0500: 201626.141: [GC pause (G1 Evacuation Pause) (young)[Eden:
+     * 3808.0M(3808.0M)->0.0B(3760.0M) Survivors: 40.0M->64.0M Heap: 7253.9M(8192.0M)->3472.3M(8192.0M)] [Times:
+     * user=0.22 sys=0.00, real=0.11 secs]
+     */
+    private static final String REGEX_PREPROCESSED_NO_DURATION = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[GC pause (\\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\) )?\\(young\\)\\[Eden: "
+            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
+            + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: " + JdkRegEx.SIZE_G1 + "\\("
+            + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\]" + JdkRegEx.TIMES_BLOCK
+            + "[ ]*$";
+
+    /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
@@ -203,6 +219,22 @@ public class G1YoungPauseEvent extends G1Collector
                 combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)),
                         matcher.group(13).charAt(0));
             }
+        } else if (logEntry.matches(REGEX_PREPROCESSED_NO_DURATION)) {
+            Pattern pattern = Pattern.compile(REGEX_PREPROCESSED_NO_DURATION);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                if (matcher.group(14) != null) {
+                    // trigger before (young):
+                    trigger = matcher.group(14);
+                }
+                // Get duration from times block
+                duration = JdkMath.convertSecsToMillis(matcher.group(46)).intValue();
+                combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(33), matcher.group(35).charAt(0));
+                combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(39), matcher.group(41).charAt(0));
+                combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(42),
+                        matcher.group(44).charAt(0));
+            }
         }
     }
 
@@ -263,6 +295,6 @@ public class G1YoungPauseEvent extends G1Collector
      */
     public static final boolean match(String logLine) {
         return logLine.matches(REGEX) || logLine.matches(REGEX_PREPROCESSED_DETAILS)
-                || logLine.matches(REGEX_PREPROCESSED);
+                || logLine.matches(REGEX_PREPROCESSED) || logLine.matches(REGEX_PREPROCESSED_NO_DURATION);
     }
 }

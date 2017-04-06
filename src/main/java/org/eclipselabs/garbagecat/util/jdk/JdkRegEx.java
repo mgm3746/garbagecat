@@ -120,7 +120,7 @@ public class JdkRegEx {
      * For example: [Times: user=0.31 sys=0.00, real=0.04 secs]
      */
     public static final String TIMES_BLOCK = "( \\[Times: user=\\d{1,4}[\\.\\,]\\d{2} sys=\\d{1,4}[\\.\\,]\\d{2}, "
-            + "real=\\d{1,4}[\\.\\,]\\d{2} secs\\])";
+            + "real=(\\d{1,4}[\\.\\,]\\d{2}) secs\\])";
 
     /**
      * Data when the CMS collector is run in incremental mode with the <code>-XX:+CMSIncrementalMode</code> JVM option.

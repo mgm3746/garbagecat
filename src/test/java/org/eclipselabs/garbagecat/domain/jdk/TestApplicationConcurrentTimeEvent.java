@@ -30,6 +30,13 @@ public class TestApplicationConcurrentTimeEvent extends TestCase {
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
+    public void testReportable() {
+        String logLine = "Application time: 130.5284640 seconds   ";
+        Assert.assertFalse(
+                JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + " incorrectly indentified as reportable.",
+                JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testLogLine() {
         String logLine = "Application time: 130.5284640 seconds";
         Assert.assertTrue(

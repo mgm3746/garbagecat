@@ -721,12 +721,19 @@ public class JdkUtil {
         boolean reportable = true;
 
         switch (eventType) {
+        case APPLICATION_CONCURRENT_TIME:
+        case APPLICATION_LOGGING:
         case APPLICATION_STOPPED_TIME:
+        case BLANK_LINE:
         case CLASS_HISTOGRAM:
+        case CLASS_UNLOADING:
         case FLS_STATISTICS:
+        case GC_LOCKER:
         case HEADER_COMMAND_LINE_FLAGS:
         case HEADER_MEMORY:
         case HEADER_VERSION:
+        case HEAP_AT_GC:
+        case REFERENCE_GC:
         case LOG_FILE:
         case UNKNOWN:
             reportable = false;

@@ -31,6 +31,18 @@ import junit.framework.TestCase;
  */
 public class TestClassUnloadingEvent extends TestCase {
 
+    public void testNotBlocking() {
+        String logLine = " [Unloading class $Proxy225]";
+        Assert.assertFalse(JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
+    public void testReportable() {
+        String logLine = " [Unloading class $Proxy225]";
+        Assert.assertFalse(JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as reportable.",
+                JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testLine() {
         String logLine = "[Unloading class $Proxy61]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".",
@@ -47,12 +59,6 @@ public class TestClassUnloadingEvent extends TestCase {
         String logLine = " [Unloading class $Proxy225]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".",
                 ClassUnloadingEvent.match(logLine));
-    }
-
-    public void testNotBlocking() {
-        String logLine = " [Unloading class $Proxy225]";
-        Assert.assertFalse(JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
     /**

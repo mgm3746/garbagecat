@@ -23,6 +23,18 @@ import junit.framework.TestCase;
  */
 public class TestHeapAtGcEvent extends TestCase {
 
+    public void testNotBlocking() {
+        String logLine = "{Heap before gc invocations=1:";
+        Assert.assertFalse(JdkUtil.LogEventType.HEAP_AT_GC.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
+    public void testNotReportable() {
+        String logLine = "{Heap before gc invocations=1:";
+        Assert.assertFalse(JdkUtil.LogEventType.HEAP_AT_GC.toString() + " incorrectly indentified as reportable.",
+                JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testHeapBeforeLowerCaseGcLine() {
         String logLine = "{Heap before gc invocations=1:";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".",
@@ -231,11 +243,5 @@ public class TestHeapAtGcEvent extends TestCase {
                 + "1048576K";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".",
                 HeapAtGcEvent.match(logLine));
-    }
-
-    public void testNotBlocking() {
-        String logLine = "{Heap before gc invocations=1:";
-        Assert.assertFalse(JdkUtil.LogEventType.HEAP_AT_GC.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 }

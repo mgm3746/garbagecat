@@ -31,6 +31,8 @@ public interface LogEvent {
     String getLogEntry();
 
     /**
+     * TODO: Change to LogEventType.
+     * 
      * @return The event identifier.
      */
     String getName();

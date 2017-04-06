@@ -23,6 +23,13 @@ import junit.framework.TestCase;
  */
 public class TestApplicationLoggingEvent extends TestCase {
 
+    public void testReportable() {
+        String logLine = "00:02:05,067 INFO  [STDOUT] log4j: setFile ended";
+        Assert.assertFalse(
+                JdkUtil.LogEventType.APPLICATION_LOGGING.toString() + " incorrectly indentified as reportable.",
+                JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testHhMmSsError() {
         String logLine = "00:02:05,067 INFO  [STDOUT] log4j: setFile ended";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_LOGGING.toString() + ".",
