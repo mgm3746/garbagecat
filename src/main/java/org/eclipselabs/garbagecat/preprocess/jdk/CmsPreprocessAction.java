@@ -254,9 +254,12 @@ public class CmsPreprocessAction implements PreprocessAction {
 
     /**
      * Regular expression for retained beginning PrintHeapAtGC collection.
+     * 
+     * 2017-04-03T08:55:45.544-0500: 20653.796: [GC (CMS Final Remark) {Heap before GC invocations=686 (full 15):
      */
-    private static final String REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[(Full )?GC )\\{Heap before gc invocations=\\d{1,10}:[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC = "^((" + JdkRegEx.DATESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC (\\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
+            + "\\) )?)\\{Heap before (gc|GC) invocations=\\d{1,10}( \\(full \\d{1,2}\\))?:[ ]*$";
 
     /**
      * Regular expression for retained beginning PAR_NEW bailing out collection.

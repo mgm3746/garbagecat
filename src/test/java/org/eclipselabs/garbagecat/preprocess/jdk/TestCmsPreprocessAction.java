@@ -345,6 +345,15 @@ public class TestCmsPreprocessAction extends TestCase {
                 CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
     }
 
+    public void testLogLinePrintHeapAtGcBeginCmsRemark() {
+        String priorLogLine = "";
+        String logLine = "2017-04-03T08:55:45.544-0500: 20653.796: [GC (CMS Final Remark) {Heap before GC "
+                + "invocations=686 (full 15):";
+        String nextLogLine = "";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+    }
+
     public void testLogMiddleSerialConcurrentPrecleanMixed() {
         String priorLogLine = "";
         String logLine = "28282.075: [CMS28284.687: [CMS-concurrent-preclean: 3.706/3.706 secs]";
