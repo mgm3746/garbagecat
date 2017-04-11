@@ -14,7 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
+import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -23,20 +23,26 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * After a JNI critical section was exited the GC tried to do a young collection, but it failed due to the full
- * promotion guarantee. This will cause the serial collector to be invoked.
+ * After a JNI critical section was exited, the CMS collector tried to do a <code>ParNew</code> collection, but it
+ * failed due to the full promotion guarantee. This will cause the serial collector to be invoked.
+ * </p>
+ * 
+ * <p>
+ * Retain logging, to allow analysis if trigger information is not being printed.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
  * <pre>
+ * 2017-01-08T14:18:15.878+0300: 58626.878: [GC (GCLocker Initiated GC)2017-01-08T14:18:15.878+0300: 58626.878: [ParNew: 5908427K-&gt;5908427K(8388608K), 0.0000320 secs] 19349630K-&gt;19349630K(22020096K) icms_dc=100 , 0.0002560 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
  * GC locker: Trying a full collection because scavenge failed
+ * 2017-01-08T14:18:15.879+0300: 58626.878: [Full GC (GCLocker Initiated GC)2017-01-08T14:18:15.879+0300: 58626.878: [CMS2017-01-08T14:18:19.075+0300: 58630.075: [CMS-concurrent-sweep: 3.220/3.228 secs] [Times: user=3.38 sys=0.01, real=3.22 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class GcLockerEvent implements ThrowAwayEvent {
+public class GcLockerEvent implements LogEvent {
 
     /**
      * Regular expression defining the logging.

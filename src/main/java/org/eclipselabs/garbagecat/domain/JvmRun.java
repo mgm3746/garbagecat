@@ -659,7 +659,7 @@ public class JvmRun {
 
         // Check if CMS not being used for old collections
         if (jvm.getUseParNewGCOption() != null && jvm.getUseConcMarkSweepGCOption() == null) {
-            analysisKeys.add(Analysis.ERROR_CMS_NEW_SERIAL_OLD);
+            analysisKeys.add(Analysis.ERROR_CMS_SERIAL_OLD);
         }
 
         // Check if CMS handling Perm/Metaspace collections is explictily disabled or just not set.

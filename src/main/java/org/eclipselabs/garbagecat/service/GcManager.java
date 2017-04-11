@@ -48,6 +48,7 @@ import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.GcLockerEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
@@ -590,7 +591,7 @@ public class GcManager {
                     // 14) CMS_REMARK class unloading
                     if (event instanceof CmsRemarkEvent && !((CmsRemarkEvent) event).isClassUnloading()
                             && !jvmDao.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
-                        jvmDao.addAnalysisKey(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
+                        jvmDao.addAnalysisKey(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
                     }
 
                     // 15) Humongous allocation
@@ -623,6 +624,10 @@ public class GcManager {
                 } else if (event instanceof GcOverheadLimitEvent) {
                     if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED)) {
                         jvmDao.getAnalysisKeys().add(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED);
+                    }
+                } else if (event instanceof GcLockerEvent) {
+                    if (!jvmDao.getAnalysisKeys().contains(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED)) {
+                        jvmDao.addAnalysisKey(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED);
                     }
                 } else if (event instanceof UnknownEvent) {
                     // Don't count reportable events with datestamp only as unidentified

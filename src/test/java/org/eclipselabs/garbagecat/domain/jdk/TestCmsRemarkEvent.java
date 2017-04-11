@@ -98,6 +98,23 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
     }
 
+    public void testLogLineJdk8WithParNewEndWithTimeStamps() {
+        String logLine = "2017-01-07T22:02:15.504+0300: 66.504: [GC (CMS Final Remark)[YG occupancy: 4266790 K "
+                + "(8388608 K)]2017-01-07T22:02:15.504+0300: 66.504: [GC (CMS Final Remark)"
+                + "2017-01-07T22:02:15.504+0300: 66.504: [ParNew: 4266790K->922990K(8388608K), 0.6540990 secs] "
+                + "6417140K->3472610K(22020096K) icms_dc=35 , 0.6542370 secs] "
+                + "[Times: user=1.89 sys=0.01, real=0.66 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
+                CmsRemarkEvent.match(logLine));
+        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 66504, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        Assert.assertEquals("Duration not parsed correctly.", 654, event.getDuration());
+        Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
+        Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
+    }
+
     public void testLogLineNoSpaceAfterTrigger() {
         String logLine = "78.251: [GC (CMS Final Remark)[YG occupancy: 2619547 K (8388608 K)]"
                 + "78.251: [GC (CMS Final Remark)78.251: [ParNew: 2619547K->569438K(8388608K), 0.3405110 secs] "

@@ -167,13 +167,14 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
     /**
      * Regular expression for JDK8 logging with {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} ending.
      */
-    private static final String REGEX_PARNEW = "^" + JdkRegEx.TIMESTAMP + ": \\[GC \\(("
+    private static final String REGEX_PARNEW = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC \\(("
             + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1}\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
-            + JdkRegEx.SIZE + "\\)]" + JdkRegEx.TIMESTAMP + ": \\[GC \\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
-            + "\\)[ ]{0,1}" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.SIZE + "\\)](" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC \\("
+            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\)[ ]{0,1}(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     /**
      * Regular expression for class unloading enabled with <code>-XX:+CMSClassUnloadingEnabled</code> .
@@ -215,17 +216,17 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
             Pattern pattern = Pattern.compile(REGEX_PARNEW);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                if (matcher.group(8) != null) {
-                    trigger = matcher.group(8);
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                if (matcher.group(41) != null) {
+                    trigger = matcher.group(41);
                 } else {
-                    trigger = matcher.group(2);
+                    trigger = matcher.group(13);
                 }
-                if (matcher.group(18) != null) {
+                if (matcher.group(51) != null) {
                     super.setIncrementalMode(true);
                 }
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+                duration = JdkMath.convertSecsToMillis(matcher.group(52)).intValue();
             }
             classUnloading = false;
         } else if (logEntry.matches(REGEX_CLASS_UNLOADING)) {

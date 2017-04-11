@@ -217,9 +217,10 @@ public class Analysis {
     public static final String WARN_PRINT_GC_DETAILS_DISABLED = "warn.print.gc.details.disabled";
 
     /**
-     * Property key for not specifying the CMS collector be used for old collections.
+     * Property key for not specifying the CMS collector be used for old collections, causing the CMS_SERIAL_OLD
+     * collector to be used by default.
      */
-    public static final String ERROR_CMS_NEW_SERIAL_OLD = "error.cms.new.serial.old";
+    public static final String ERROR_CMS_SERIAL_OLD = "error.cms.serial.old";
 
     /**
      * Property key for concurrent mode failure.
@@ -562,6 +563,12 @@ public class Analysis {
      * collection being specified with <code>-XX:G1MixedGCLiveThresholdPercent=NN</code>.
      */
     public static final String WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT = "warn.g1.mixed.gc.live.thrshld.prcnt";
+
+    /**
+     * Property key for the CMS_SERIAL_OLD collector being invoked due to a GCLocker initiated PAR_NEW collection
+     * failing due to the full promotion guarantee.
+     */
+    public static final String ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED = "error.cms.par.new.gc.locker.failed";
 
     /**
      * Make default constructor private so the class cannot be instantiated.

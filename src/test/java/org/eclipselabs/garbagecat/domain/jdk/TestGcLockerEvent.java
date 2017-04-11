@@ -40,6 +40,8 @@ public class TestGcLockerEvent extends TestCase {
         String logLine = "GC locker: Trying a full collection because scavenge failed";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_LOCKER.toString() + ".",
                 GcLockerEvent.match(logLine));
+        GcLockerEvent event = new GcLockerEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 0, event.getTimestamp());
     }
 
     public void testParseLogLine() {

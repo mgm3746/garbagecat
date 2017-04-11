@@ -633,10 +633,10 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.ERROR_CMS_NEW_SERIAL_OLD + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_NEW_SERIAL_OLD));
-        Assert.assertNotNull(Analysis.ERROR_CMS_NEW_SERIAL_OLD + " not found.",
-                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_CMS_NEW_SERIAL_OLD));
+        Assert.assertTrue(Analysis.ERROR_CMS_SERIAL_OLD + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_SERIAL_OLD));
+        Assert.assertNotNull(Analysis.ERROR_CMS_SERIAL_OLD + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_CMS_SERIAL_OLD));
     }
 
     /**
@@ -648,8 +648,8 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertFalse(Analysis.ERROR_CMS_NEW_SERIAL_OLD + " analysis identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_NEW_SERIAL_OLD));
+        Assert.assertFalse(Analysis.ERROR_CMS_SERIAL_OLD + " analysis identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_SERIAL_OLD));
     }
 
     /**
@@ -1123,5 +1123,21 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT));
         Assert.assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+    }
+
+    /**
+     * Test CMS_SERIAL_OLD triggered by GCLocker promotion failure.
+     */
+    public void testCmsSerialOldGcLocker() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset119.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED));
+        Assert.assertFalse(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED));
     }
 }
