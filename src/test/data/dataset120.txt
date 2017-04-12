@@ -1,0 +1,22 @@
+Java HotSpot(TM) 64-Bit Server VM (25.91-b14) for linux-amd64 JRE (1.8.0_91-b14), built on Apr  1 2016 00:57:21 by "java_re" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
+Memory: 4k page, physical 132033672k(85950972k free), swap 2097148k(2097148k free)
+CommandLine flags: -XX:CMSInitiatingOccupancyFraction=85 -XX:+CMSParallelRemarkEnabled -XX:+CMSScavengeBeforeRemark -XX:+DisableExplicitGC -XX:InitialHeapSize=8589934592 -XX:MaxHeapSize=8589934592 -XX:MaxMetaspaceSize=536870912 -XX:MaxNewSize=3242196992 -XX:NewSize=3242196992 -XX:OldPLABSize=16 -XX:ParallelGCThreads=2 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -XX:+ScavengeBeforeFullGC -XX:SurvivorRatio=6 -XX:ThreadStackSize=512 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseParNewGC
+2017-04-03T03:12:02.133-0500: 30.385: [GC (CMS Final Remark) {Heap before GC invocations=7 (full 2):
+ par new generation   total 2770432K, used 451444K [0x00000005c0000000, 0x0000000681400000, 0x0000000681400000)
+  eden space 2374656K,   5% used [0x00000005c0000000, 0x00000005c829d0f8, 0x0000000650f00000)
+  from space 395776K,  80% used [0x0000000669180000, 0x000000067c7bffa8, 0x0000000681400000)
+  to   space 395776K,   0% used [0x0000000650f00000, 0x0000000650f00000, 0x0000000669180000)
+ concurrent mark-sweep generation total 5222400K, used 439466K [0x0000000681400000, 0x00000007c0000000, 0x00000007c0000000)
+ Metaspace       used 121767K, capacity 129296K, committed 129468K, reserved 1161216K
+  class space    used 15102K, capacity 17285K, committed 17288K, reserved 1048576K
+2017-04-03T03:12:02.134-0500: 30.385: [GC (CMS Final Remark)  890910K->620060K(7992832K), 0.1223879 secs]
+Heap after GC invocations=8 (full 2):
+ par new generation   total 2770432K, used 180594K [0x00000005c0000000, 0x0000000681400000, 0x0000000681400000)
+  eden space 2374656K,   0% used [0x00000005c0000000, 0x00000005c0000000, 0x0000000650f00000)
+  from space 395776K,  45% used [0x0000000650f00000, 0x000000065bf5ca28, 0x0000000669180000)
+  to   space 395776K,   0% used [0x0000000669180000, 0x0000000669180000, 0x0000000681400000)
+ concurrent mark-sweep generation total 5222400K, used 439466K [0x0000000681400000, 0x00000007c0000000, 0x00000007c0000000)
+ Metaspace       used 121767K, capacity 129296K, committed 129468K, reserved 1161216K
+  class space    used 15102K, capacity 17285K, committed 17288K, reserved 1048576K
+}
+ 620060K(7992832K), 0.2328529 secs]

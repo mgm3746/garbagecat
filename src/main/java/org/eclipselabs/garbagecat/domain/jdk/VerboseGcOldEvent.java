@@ -97,7 +97,7 @@ public class VerboseGcOldEvent implements BlockingEvent, OldCollection, Combined
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + ")";
+            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
 
     /**
      * Regular expressions defining the logging.

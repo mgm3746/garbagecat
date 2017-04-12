@@ -327,4 +327,18 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 93, event.getDuration());
         Assert.assertTrue("Class unloading not parsed correctly.", event.isClassUnloading());
     }
+
+    public void testLogLineScavengeBeforeRemarkNoGcDetailsPreprocessed() {
+        String logLine = "2017-04-03T03:12:02.133-0500: 30.385: [GC (CMS Final Remark) 2017-04-03T03:12:02.134-0500: "
+                + "30.385: [GC (CMS Final Remark)  890910K->620060K(7992832K), 0.1223879 secs] 620060K(7992832K), "
+                + "0.2328529 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
+                CmsRemarkEvent.match(logLine));
+        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 30385, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        Assert.assertEquals("Duration not parsed correctly.", 232, event.getDuration());
+        Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
+    }
 }

@@ -835,6 +835,34 @@ public class TestCmsPreprocessAction extends TestCase {
                 ": 66097K->7194K(66368K), 0.0440189 secs] 5274098K->5219953K(10478400K)", event.getLogEntry());
     }
 
+    public void testLogLineEndCmsScavengeBeforeRemark() {
+        String priorLogLine = "";
+        String logLine = " 1677988K(7992832K), 0.3055773 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.", " 1677988K(7992832K), 0.3055773 secs]",
+                event.getLogEntry());
+    }
+
+    public void testLogLineCmsRemarkWithoutGcDetails() {
+        String priorLogLine = "";
+        String logLine = "2017-04-03T03:12:02.134-0500: 30.385: [GC (CMS Final Remark)  890910K->620060K(7992832K), "
+                + "0.1223879 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+    }
+
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */
@@ -1308,5 +1336,16 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.INFO_PRINT_FLS_STATISTICS + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_PRINT_FLS_STATISTICS));
+    }
+
+    public void testCmsScavengeBeforeRemarkNoPrintGcDetails() {
+        File testFile = new File("src/test/data/dataset120.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 4, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_REMARK));
     }
 }
