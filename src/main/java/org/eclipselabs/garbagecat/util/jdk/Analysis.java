@@ -577,6 +577,16 @@ public class Analysis {
     public static final String ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED = "error.cms.par.new.gc.locker.failed";
 
     /**
+     * Property key for the JDK8 prior to update 40.
+     */
+    public static final String WARN_G1_JDK8_PRIOR_U40 = "warn.g1.jdk8.prior.u40";
+
+    /**
+     * Property key for the JDK8 prior to update 40 recommendations.
+     */
+    public static final String WARN_G1_JDK8_PRIOR_U40_RECS = "warn.g1.jdk8.prior.u40.recs";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {

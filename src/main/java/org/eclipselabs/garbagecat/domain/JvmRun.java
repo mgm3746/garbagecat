@@ -510,6 +510,12 @@ public class JvmRun {
             analysisKeys.remove(Analysis.INFO_G1_HUMONGOUS_ALLOCATION);
             analysisKeys.add(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD);
         }
+
+        // Check for using G1 collecgtor JDK < u40
+        if ((collectorFamilies.contains(CollectorFamily.G1) || jvm.getUseG1Gc() != null) && jvm.JdkNumber() == 8
+                && jvm.JdkUpdate() < 40) {
+            analysisKeys.add(Analysis.WARN_G1_JDK8_PRIOR_U40);
+        }
     }
 
     /**
@@ -893,14 +899,24 @@ public class JvmRun {
             analysisKeys.add(Analysis.INFO_SURVIVOR_RATIO_TARGET);
         }
 
-        // Check for experimental options being used
-        if (jvm.getUnlockExperimentalVmOptionsEnabled() != null) {
-            if (jvm.getUseFastUnorderedTimeStampsEnabled() != null) {
-                analysisKeys.add(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS);
-            } else if (jvm.getG1MixedGCLiveThresholdPercent() != null) {
-                analysisKeys.add(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT);
-            } else {
-                analysisKeys.add(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
+        // Check for JDK < u40 recommendations (require experimental options)
+        if ((collectorFamilies.contains(CollectorFamily.G1) || jvm.getUseG1Gc() != null) && jvm.JdkNumber() == 8
+                && jvm.JdkUpdate() < 40) {
+            if (jvm.getG1MixedGCLiveThresholdPercent() == null
+                    || !jvm.getG1MixedGCLiveThresholdPercentValue().equals("85") || jvm.getG1HeapWastePercent() == null
+                    || !jvm.getG1HeapWastePercentValue().equals("5")) {
+                analysisKeys.add(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS);
+            }
+        } else {
+            // Check for experimental options being used
+            if (jvm.getUnlockExperimentalVmOptionsEnabled() != null) {
+                if (jvm.getUseFastUnorderedTimeStampsEnabled() != null) {
+                    analysisKeys.add(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS);
+                } else if (jvm.getG1MixedGCLiveThresholdPercent() != null) {
+                    analysisKeys.add(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT);
+                } else {
+                    analysisKeys.add(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
+                }
             }
         }
     }

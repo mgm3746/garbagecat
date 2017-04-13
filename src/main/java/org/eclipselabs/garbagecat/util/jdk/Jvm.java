@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.util.Constants;
 
 /**
- * JVM environment information.
+ * JVM environment information
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
@@ -1221,6 +1221,77 @@ public class Jvm {
      */
     public String getG1MixedGCLiveThresholdPercent() {
         String regex = "(-XX:G1MixedGCLiveThresholdPercent=\\d{1,3})";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * @return The occupancy threshold percent for a region to be considered as a candidate region for a G1_CLEANUP
+     *         collection, or null if not set. For example:
+     * 
+     *         <pre>
+     *         85
+     *         </pre>
+     */
+    public String getG1MixedGCLiveThresholdPercentValue() {
+        // Cannot use JdkUtil.getOptionValue() because the option name has a number in it.
+        String value = null;
+        if (getG1MixedGCLiveThresholdPercent() != null) {
+            String regex = "^-XX:G1MixedGCLiveThresholdPercent=(\\d{1,3})$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(getG1MixedGCLiveThresholdPercent());
+            if (matcher.find()) {
+                value = matcher.group(1);
+            }
+        }
+        return value;
+    }
+
+    /**
+     * The option for setting the G1 heap waste percentage. For example:
+     * 
+     * <pre>
+     * -XX:G1HeapWastePercent=5
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getG1HeapWastePercent() {
+        String regex = "(-XX:G1HeapWastePercent=\\d{1,3})";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * @return The G1 heap waste percentage, or null if not set. For example:
+     * 
+     *         <pre>
+     *         5
+     *         </pre>
+     */
+    public String getG1HeapWastePercentValue() {
+        // Cannot use JdkUtil.getOptionValue() because the option name has a number in it.
+        String value = null;
+        if (getG1HeapWastePercent() != null) {
+            String regex = "^-XX:G1HeapWastePercent=(\\d{1,3})$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(getG1HeapWastePercent());
+            if (matcher.find()) {
+                value = matcher.group(1);
+            }
+        }
+        return value;
+    }
+    
+    /**
+     * The option for specifying the G1 collector. For example:
+     * 
+     * <pre>
+     * -XX:+UseG1GC
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseG1Gc() {
+        String regex = "(-XX:\\+UseG1GC)";
         return getJvmOption(regex);
     }
 

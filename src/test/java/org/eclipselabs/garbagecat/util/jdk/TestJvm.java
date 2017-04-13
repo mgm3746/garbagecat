@@ -782,6 +782,15 @@ public class TestJvm extends TestCase {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:G1MixedGCLiveThresholdPercent=85 -d64";
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertNotNull("-XX:G1MixedGCLiveThresholdPercent=NN not found.", jvm.getG1MixedGCLiveThresholdPercent());
+        Assert.assertEquals("G1MixedGCLiveThresholdPercent incorrect.", "85",
+                jvm.getG1MixedGCLiveThresholdPercentValue());
+    }
+
+    public void testG1HeapWastePercent() {
+        String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:G1HeapWastePercent=5 -d64";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-XX:G1HeapWastePercent=NN not found.", jvm.getG1HeapWastePercent());
+        Assert.assertEquals("G1HeapWastePercent incorrect.", "5", jvm.getG1HeapWastePercentValue());
     }
 
     public void testUseGcLogFileRotationEnabled() {
@@ -790,4 +799,9 @@ public class TestJvm extends TestCase {
         Assert.assertNotNull("-XX:+UseGCLogFileRotation not found.", jvm.getUseGcLogFileRotationEnabled());
     }
 
+    public void testUseG1Gc() {
+        String jvmOptions = "-Xmx2048m -XX:+UseG1GC -d64";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-XX:+UseG1GC not found.", jvm.getUseG1Gc());
+    }
 }

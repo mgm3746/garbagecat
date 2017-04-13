@@ -781,6 +781,7 @@ public class TestAnalysis extends TestCase {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
+        jvm.setVersion("1.8.0_91-b14");
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis not identified.",
@@ -797,6 +798,91 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS));
         Assert.assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+    }
+
+    public void testJdk8G1PriorUpdate40() {
+        String jvmOptions = "";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.getJvm().setVersion(" JRE (1.8.0_20-b32) ");
+        List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
+        collectorFamilies.add(CollectorFamily.G1);
+        jvmRun.setCollectorFamiles(collectorFamilies);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));
+        Assert.assertTrue(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS));
+        Assert.assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+    }
+
+    public void testJdk8G1PriorUpdate40NoLoggingEvents() {
+        String jvmOptions = "-XX:+UseG1GC";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.getJvm().setVersion(" JRE (1.8.0_20-b32) ");
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));
+        Assert.assertTrue(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS));
+        Assert.assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+    }
+
+    public void testJdk8NotG1PriorUpdate40() {
+        String jvmOptions = "";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.getJvm().setVersion(" JRE (1.8.0_20-b32) ");
+        List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
+        collectorFamilies.add(CollectorFamily.CMS);
+        jvmRun.setCollectorFamiles(collectorFamilies);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));
+        Assert.assertFalse(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS));
+        Assert.assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+    }
+
+    public void testJdk8G1PriorUpdate40WithRecommendedJvmOptions() {
+        String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:G1MixedGCLiveThresholdPercent=85 "
+                + "-XX:G1HeapWastePercent=5";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.getJvm().setVersion(" JRE (1.8.0_20-b32) ");
+        List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
+        collectorFamilies.add(CollectorFamily.G1);
+        jvmRun.setCollectorFamiles(collectorFamilies);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));
+        Assert.assertFalse(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS));
+        Assert.assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+    }
+
+    public void testJdk8Update40() {
+        String jvmOptions = "-XX:+UnlockExperimentalVMOptions";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.getJvm().setVersion(" JRE (1.8.0_40-b26) ");
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+        Assert.assertFalse(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));
+        Assert.assertFalse(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS));
     }
 
     public void testHeaderLogging() {
