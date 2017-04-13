@@ -921,6 +921,20 @@ public class Jvm {
     }
 
     /**
+     * The option for enabling log file rotation.
+     * 
+     * <pre>
+     * -XX:+UseGCLogFileRotation
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseGcLogFileRotationEnabled() {
+        String regex = "(-XX:\\+UseGCLogFileRotation)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * The option for setting number of log files to rotate. For example:
      * 
      * <pre>

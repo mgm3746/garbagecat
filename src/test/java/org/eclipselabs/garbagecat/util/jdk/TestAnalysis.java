@@ -940,6 +940,8 @@ public class TestAnalysis extends TestCase {
                 GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_CMS_PAR_NEW_DISABLED));
         Assert.assertNotNull(Analysis.ERROR_SERIAL_GC + " not found.",
                 GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_SERIAL_GC));
+        Assert.assertFalse(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED));
     }
 
     /**
@@ -961,6 +963,27 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G));
         Assert.assertNotNull(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G + " not found.",
                 GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G));
+    }
+
+    /**
+     * Test physical memory less than heap + perm/metaspace.
+     */
+    public void testPhysicalMemoryLessThanJvmMemoryWithoutCompressedClassPointerSpace() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset106.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Physical not parsed correctly.", 50465866752L, jvmRun.getJvm().getPhysicalMemory());
+        Assert.assertEquals("Heap size not parsed correctly.", 45097156608L, jvmRun.getJvm().getMaxHeapBytes());
+        Assert.assertEquals("Metaspace size not parsed correctly.", 5368709120L,
+                jvmRun.getJvm().getMaxMetaspaceBytes());
+        // Class compressed pointer space has a size, but it is ignored when calculating JVM memory.
+        Assert.assertEquals("Class compressed pointer space size not parsed correctly.", 1073741824L,
+                jvmRun.getJvm().getCompressedClassSpaceSizeBytes());
+        Assert.assertFalse(Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_PHYSICAL_MEMORY));
     }
 
     /**
@@ -986,27 +1009,6 @@ public class TestAnalysis extends TestCase {
     /**
      * Test physical memory less than heap + perm/metaspace.
      */
-    public void testPhysicalMemoryLessThanHeapAllocation() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset109.txt");
-        GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Physical not parsed correctly.", 1968287744L, jvmRun.getJvm().getPhysicalMemory());
-        Assert.assertEquals("Heap size not parsed correctly.", 4718592000L, jvmRun.getJvm().getMaxHeapBytes());
-        Assert.assertEquals("Metaspace size not parsed correctly.", 0L, jvmRun.getJvm().getMaxMetaspaceBytes());
-        Assert.assertEquals("Class compressed pointer space size not parsed correctly.", 0L,
-                jvmRun.getJvm().getCompressedClassSpaceSizeBytes());
-        Assert.assertTrue(Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_PHYSICAL_MEMORY));
-        Assert.assertNotNull(Analysis.ERROR_PHYSICAL_MEMORY + " not found.",
-                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_PHYSICAL_MEMORY));
-    }
-
-    /**
-     * Test physical memory less than heap + perm/metaspace.
-     */
     public void testPhysicalMemoryLessThanJvmMemoryWithCompressedClassPointerSpace() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset107.txt");
@@ -1027,22 +1029,22 @@ public class TestAnalysis extends TestCase {
     /**
      * Test physical memory less than heap + perm/metaspace.
      */
-    public void testPhysicalMemoryLessThanJvmMemoryWithoutCompressedClassPointerSpace() {
+    public void testPhysicalMemoryLessThanHeapAllocation() {
         // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset106.txt");
+        File testFile = new File("src/test/data/dataset109.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Physical not parsed correctly.", 50465866752L, jvmRun.getJvm().getPhysicalMemory());
-        Assert.assertEquals("Heap size not parsed correctly.", 45097156608L, jvmRun.getJvm().getMaxHeapBytes());
-        Assert.assertEquals("Metaspace size not parsed correctly.", 5368709120L,
-                jvmRun.getJvm().getMaxMetaspaceBytes());
-        // Class compressed pointer space has a size, but it is ignored when calculating JVM memory.
-        Assert.assertEquals("Class compressed pointer space size not parsed correctly.", 1073741824L,
+        Assert.assertEquals("Physical not parsed correctly.", 1968287744L, jvmRun.getJvm().getPhysicalMemory());
+        Assert.assertEquals("Heap size not parsed correctly.", 4718592000L, jvmRun.getJvm().getMaxHeapBytes());
+        Assert.assertEquals("Metaspace size not parsed correctly.", 0L, jvmRun.getJvm().getMaxMetaspaceBytes());
+        Assert.assertEquals("Class compressed pointer space size not parsed correctly.", 0L,
                 jvmRun.getJvm().getCompressedClassSpaceSizeBytes());
-        Assert.assertFalse(Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.",
+        Assert.assertTrue(Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_PHYSICAL_MEMORY));
+        Assert.assertNotNull(Analysis.ERROR_PHYSICAL_MEMORY + " not found.",
+                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.ERROR_PHYSICAL_MEMORY));
     }
 
     /**
@@ -1123,6 +1125,8 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT));
         Assert.assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+        Assert.assertFalse(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED));
     }
 
     /**
@@ -1139,5 +1143,7 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED));
         Assert.assertFalse(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED + " analysis incorrectly identified.",
                 jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED));
+        Assert.assertTrue(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED));
     }
 }

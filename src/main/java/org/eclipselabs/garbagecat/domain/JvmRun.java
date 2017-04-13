@@ -817,9 +817,13 @@ public class JvmRun {
             analysisKeys.add(Analysis.WARN_CMS_PAR_NEW_DISABLED);
         }
 
-        // Check if log file rotation disabled
+        // Check if log file rotation disabled or missing
         if (jvm.getUseGcLogFileRotationDisabled() != null) {
             analysisKeys.add(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED);
+        } else {
+            if (jvm.getUseGcLogFileRotationEnabled() == null) {
+                analysisKeys.add(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED);
+            }
         }
 
         // Check if number of log files specified with log file rotation disabled

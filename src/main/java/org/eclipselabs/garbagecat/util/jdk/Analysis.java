@@ -435,6 +435,12 @@ public class Analysis {
     public static final String INFO_GC_LOG_FILE_ROTATION_DISABLED = "info.gc.log.file.rotation.disabled";
 
     /**
+     * Property key for GC log file rotation not enabled (-XX:+UseGCLogFileRotation -XX:GCLogFileSize=N
+     * -XX:NumberOfGCLogFiles=N).
+     */
+    public static final String INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED = "info.gc.log.file.rotation.not.enabled";
+
+    /**
      * Property key for specify number of GC log files (-XX:NumberOfGCLogFiles) with log rotation disabled
      * (-XX:-UseGCLogFileRotation).
      */

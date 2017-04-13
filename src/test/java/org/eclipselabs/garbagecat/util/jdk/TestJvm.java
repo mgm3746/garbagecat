@@ -784,4 +784,10 @@ public class TestJvm extends TestCase {
         Assert.assertNotNull("-XX:G1MixedGCLiveThresholdPercent=NN not found.", jvm.getG1MixedGCLiveThresholdPercent());
     }
 
+    public void testUseGcLogFileRotationEnabled() {
+        String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:+UseGCLogFileRotation -d64";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-XX:+UseGCLogFileRotation not found.", jvm.getUseGcLogFileRotationEnabled());
+    }
+
 }
