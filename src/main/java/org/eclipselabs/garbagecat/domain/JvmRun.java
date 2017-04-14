@@ -46,6 +46,16 @@ public class JvmRun {
     private int throughputThreshold;
 
     /**
+     * Maximum young space size (kilobytes).
+     */
+    private int maxYoungSpace;
+
+    /**
+     * Maximum old space size (kilobytes).
+     */
+    private int maxOldSpace;
+
+    /**
      * Maximum heap size (kilobytes).
      */
     private int maxHeapSpace;
@@ -177,6 +187,22 @@ public class JvmRun {
 
     public void setJvm(Jvm jvm) {
         this.jvm = jvm;
+    }
+
+    public int getMaxYoungSpace() {
+        return maxYoungSpace;
+    }
+
+    public void setMaxYoungSpace(int maxYoungSpace) {
+        this.maxYoungSpace = maxYoungSpace;
+    }
+
+    public int getMaxOldSpace() {
+        return maxOldSpace;
+    }
+
+    public void setMaxOldSpace(int maxOldSpace) {
+        this.maxOldSpace = maxOldSpace;
     }
 
     public int getMaxHeapSpace() {
@@ -343,9 +369,10 @@ public class JvmRun {
         this.lastLogLineUnprocessed = lastLogLineUnprocessed;
     }
 
-    /*
-     * Throughput based only on garbage collection as a percent rounded to the nearest integer. CG throughput is the
-     * percent of time not spent doing GC. 0 means all time was spent doing GC. 100 means no time was spent doing GC.
+    /**
+     * @return Throughput based only on garbage collection as a percent rounded to the nearest integer. CG throughput is
+     *         the percent of time not spent doing GC. 0 means all time was spent doing GC. 100 means no time was spent
+     *         doing GC.
      */
     public long getGcThroughput() {
         long gcThroughput;
@@ -362,13 +389,12 @@ public class JvmRun {
         return gcThroughput;
     }
 
-    /*
-     * Throughput based on stopped time as a percent rounded to the nearest integer. Stopped time throughput is the
-     * percent of total time the JVM threads were running (not in a safepoint). 0 means all stopped time. 100 means no
-     * stopped time.
+    /**
+     * @return Throughput based on stopped time as a percent rounded to the nearest integer. Stopped time throughput is
+     *         the percent of total time the JVM threads were running (not in a safepoint). 0 means all stopped time.
+     *         100 means no stopped time.
      */
     public long getStoppedTimeThroughput() {
-
         long stoppedTimeThroughput;
         if (stoppedTimeEventCount > 0) {
             if (getJvmRunDuration() > 0) {
@@ -384,6 +410,21 @@ public class JvmRun {
             stoppedTimeThroughput = 100L;
         }
         return stoppedTimeThroughput;
+    }
+
+    /**
+     * @return Ratio of old/young space sizes rounded to whole number.
+     */
+    public long getNewRatio() {
+        int newRatio;
+        if (maxYoungSpace > 0) {
+            BigDecimal ratio = new BigDecimal(maxOldSpace);
+            ratio = ratio.divide(new BigDecimal(maxYoungSpace), 0, RoundingMode.HALF_EVEN);
+            newRatio = ratio.intValue();
+        } else {
+            newRatio = 0;
+        }
+        return newRatio;
     }
 
     /**
@@ -515,6 +556,11 @@ public class JvmRun {
         if ((collectorFamilies.contains(CollectorFamily.G1) || jvm.getUseG1Gc() != null) && jvm.JdkNumber() == 8
                 && jvm.JdkUpdate() < 40) {
             analysisKeys.add(Analysis.WARN_G1_JDK8_PRIOR_U40);
+        }
+
+        // Check for young space > old space
+        if (maxYoungSpace > 0 && maxOldSpace > 0 && maxYoungSpace >= maxOldSpace) {
+            analysisKeys.add(Analysis.INFO_NEW_RATIO_INVERTED);
         }
     }
 

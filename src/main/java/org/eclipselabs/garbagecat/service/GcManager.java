@@ -782,6 +782,8 @@ public class GcManager {
         jvmRun.getJvm().setVersion(jvmDao.getVersion());
         jvmRun.setFirstGcEvent(jvmDao.getFirstGcEvent());
         jvmRun.setLastGcEvent(jvmDao.getLastGcEvent());
+        jvmRun.setMaxYoungSpace(jvmDao.getMaxYoungSpace());
+        jvmRun.setMaxOldSpace(jvmDao.getMaxOldSpace());
         jvmRun.setMaxHeapSpace(jvmDao.getMaxHeapSpace());
         jvmRun.setMaxHeapOccupancy(jvmDao.getMaxHeapOccupancy());
         jvmRun.setMaxPermSpace(jvmDao.getMaxPermSpace());

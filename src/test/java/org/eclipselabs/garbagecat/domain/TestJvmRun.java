@@ -176,13 +176,22 @@ public class TestJvmRun extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_PHYSICAL_MEMORY));
     }
 
+    public void testLastTimestampNoEvents() {
+        GcManager gcManager = new GcManager();
+        gcManager.store(null, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertNull("Last GC event not correct.", jvmRun.getLastGcEvent());
+    }
+
     public void testSummaryStatsParallel() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset1.txt");
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-
+        Assert.assertEquals("Max young space not calculated correctly.", 248192, jvmRun.getMaxYoungSpace());
+        Assert.assertEquals("Max old space not calculated correctly.", 786432, jvmRun.getMaxOldSpace());
+        Assert.assertEquals("NewRatio not calculated correctly.", 3, jvmRun.getNewRatio());
         Assert.assertEquals("Max heap space not calculated correctly.", 1034624, jvmRun.getMaxHeapSpace());
         Assert.assertEquals("Max heap occupancy not calculated correctly.", 1013058, jvmRun.getMaxHeapOccupancy());
         Assert.assertEquals("Max pause not calculated correctly.", 2782, jvmRun.getMaxGcPause());
@@ -207,7 +216,9 @@ public class TestJvmRun extends TestCase {
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-
+        Assert.assertEquals("Max young space not calculated correctly.", 348864, jvmRun.getMaxYoungSpace());
+        Assert.assertEquals("Max old space not calculated correctly.", 699392, jvmRun.getMaxOldSpace());
+        Assert.assertEquals("NewRatio not calculated correctly.", 2, jvmRun.getNewRatio());
         Assert.assertEquals("Max heap space not calculated correctly.", 1048256, jvmRun.getMaxHeapSpace());
         Assert.assertEquals("Max heap occupancy not calculated correctly.", 424192, jvmRun.getMaxHeapOccupancy());
         Assert.assertEquals("Max pause not calculated correctly.", 1070, jvmRun.getMaxGcPause());
@@ -223,13 +234,6 @@ public class TestJvmRun extends TestCase {
                 jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS));
     }
 
-    public void testLastTimestampNoEvents() {
-        GcManager gcManager = new GcManager();
-        gcManager.store(null, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertNull("Last GC event not correct.", jvmRun.getLastGcEvent());
-    }
-
     /**
      * Test parsing logging with -XX:+PrintGCApplicationConcurrentTime and -XX:+PrintGCApplicationStoppedTime output.
      */
@@ -239,6 +243,9 @@ public class TestJvmRun extends TestCase {
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Max young space not calculated correctly.", 1100288, jvmRun.getMaxYoungSpace());
+        Assert.assertEquals("Max old space not calculated correctly.", 1100288, jvmRun.getMaxOldSpace());
+        Assert.assertEquals("NewRatio not calculated correctly.", 1, jvmRun.getNewRatio());
         Assert.assertEquals("Event count not correct.", 3, jvmRun.getEventTypes().size());
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
@@ -248,6 +255,8 @@ public class TestJvmRun extends TestCase {
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
+        Assert.assertTrue(Analysis.INFO_NEW_RATIO_INVERTED + " analysis not identified.",
+                jvmRun.getAnalysisKeys().contains(Analysis.INFO_NEW_RATIO_INVERTED));
     }
 
     /**

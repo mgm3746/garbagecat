@@ -31,9 +31,7 @@ public class JdkMath {
     }
 
     /**
-     * Convert seconds to milliseconds.
-     * 
-     * For example: Convert 0.0225213 to 23.
+     * Convert seconds to milliseconds. For example: Convert 0.0225213 to 23.
      * 
      * @param secs
      *            Seconds as a whole number or decimal.

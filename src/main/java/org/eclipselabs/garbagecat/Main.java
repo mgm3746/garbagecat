@@ -317,6 +317,10 @@ public class Main {
                     }
                 }
                 bufferedWriter.write(System.getProperty("line.separator"));
+                // NewRatio
+                if (jvmRun.getMaxYoungSpace() > 0 && jvmRun.getMaxOldSpace() > 0) {
+                    bufferedWriter.write("NewRatio: " + jvmRun.getNewRatio() + System.getProperty("line.separator"));
+                }
                 // Max heap occupancy.
                 bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K"
                         + System.getProperty("line.separator"));

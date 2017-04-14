@@ -762,6 +762,76 @@ public class JvmDao {
     }
 
     /**
+     * The maximum young space size during the JVM run.
+     * 
+     * @return maximum young space size (kilobytes).
+     */
+    public synchronized int getMaxYoungSpace() {
+        int space = 0;
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            statement = connection.createStatement();
+            rs = statement.executeQuery("select max(young_space) from blocking_event");
+            if (rs.next()) {
+                space = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Error determining max young space.");
+        } finally {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing ResultSet.");
+            }
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing Statement.");
+            }
+        }
+        return space;
+    }
+
+    /**
+     * The maximum old space size during the JVM run.
+     * 
+     * @return maximum old space size (kilobytes).
+     */
+    public synchronized int getMaxOldSpace() {
+        int space = 0;
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            statement = connection.createStatement();
+            rs = statement.executeQuery("select max(old_space) from blocking_event");
+            if (rs.next()) {
+                space = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Error determining max old space.");
+        } finally {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing ResultSet.");
+            }
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing Statement.");
+            }
+        }
+        return space;
+    }
+
+    /**
      * The maximum heap space size during the JVM run.
      * 
      * @return maximum heap size (kilobytes).

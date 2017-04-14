@@ -587,6 +587,11 @@ public class Analysis {
     public static final String WARN_G1_JDK8_PRIOR_U40_RECS = "warn.g1.jdk8.prior.u40.recs";
 
     /**
+     * Property key for young space &gt;= old space.
+     */
+    public static final String INFO_NEW_RATIO_INVERTED = "info.new.ratio.inverted";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Analysis() {
