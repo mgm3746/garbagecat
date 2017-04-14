@@ -24,6 +24,14 @@ import junit.framework.TestCase;
  */
 public class TestSerialOldEvent extends TestCase {
 
+    public void testIsBlocking() {
+        String logLine = "187.159: [Full GC 187.160: "
+                + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
+                + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.SERIAL_OLD.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testLogLine() {
         String logLine = "187.159: [Full GC 187.160: "
                 + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
@@ -94,11 +102,25 @@ public class TestSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 44750, event.getDuration());
     }
 
-    public void testIsBlocking() {
-        String logLine = "187.159: [Full GC 187.160: "
-                + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
-                + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
-        Assert.assertTrue(JdkUtil.LogEventType.SERIAL_OLD.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    public void testLogLineWithDateStamps() {
+        String logLine = "2017-03-26T13:16:18.668+0200: 24.296: [GC2017-03-26T13:16:18.668+0200: 24.296: [DefNew: "
+                + "4928K->511K(4928K), 0.0035715 secs]2017-03-26T13:16:18.684+0200: 24.300: [Tenured: "
+                + "11239K->9441K(11328K), 0.1110369 secs] 15728K->9441K(16256K), [Perm : 15599K->15599K(65536K)], "
+                + "0.1148688 secs] [Times: user=0.11 sys=0.02, real=0.13 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".",
+                SerialOldEvent.match(logLine));
+        SerialOldEvent event = new SerialOldEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 24296, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 15728 - 11239, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 9441 - 9441, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 16256 - 11328, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 11239, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 9441, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 11328, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 15599, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 15599, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 65536, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 114, event.getDuration());
     }
+
 }

@@ -150,17 +150,19 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
     /**
      * Regular expression for SERIAL_NEW block in some events.
      */
-    public static final String SERIAL_NEW_BLOCK = JdkRegEx.TIMESTAMP + ": \\[DefNew: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]";
+    public static final String SERIAL_NEW_BLOCK = "(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[DefNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\]";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( \\(" + TRIGGER + "\\))?( "
-            + SERIAL_NEW_BLOCK + ")?( )?" + JdkRegEx.TIMESTAMP + ": \\[Tenured: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\), \\[Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)\\], " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( \\("
+            + TRIGGER + "\\))?([ ]{0,1}" + SERIAL_NEW_BLOCK + ")?( )?(" + JdkRegEx.DATESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP + ": \\[Tenured: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), \\[Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(SerialOldEvent.REGEX);
 
@@ -179,24 +181,24 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            if (matcher.group(4) != null) {
-                trigger = matcher.group(4);
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            if (matcher.group(15) != null) {
+                trigger = matcher.group(15);
             }
-            old = Integer.parseInt(matcher.group(16));
-            oldEnd = Integer.parseInt(matcher.group(17));
-            oldAllocation = Integer.parseInt(matcher.group(18));
-            int totalBegin = Integer.parseInt(matcher.group(22));
+            old = Integer.parseInt(matcher.group(49));
+            oldEnd = Integer.parseInt(matcher.group(50));
+            oldAllocation = Integer.parseInt(matcher.group(51));
+            int totalBegin = Integer.parseInt(matcher.group(55));
             young = totalBegin - getOldOccupancyInit();
-            int totalEnd = Integer.parseInt(matcher.group(23));
+            int totalEnd = Integer.parseInt(matcher.group(56));
             youngEnd = totalEnd - getOldOccupancyEnd();
-            int totalAllocation = Integer.parseInt(matcher.group(24));
+            int totalAllocation = Integer.parseInt(matcher.group(57));
             youngAvailable = totalAllocation - getOldSpace();
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Integer.parseInt(matcher.group(25));
-            permGenEnd = Integer.parseInt(matcher.group(26));
-            permGenAllocation = Integer.parseInt(matcher.group(27));
-            duration = JdkMath.convertSecsToMillis(matcher.group(28)).intValue();
+            permGen = Integer.parseInt(matcher.group(58));
+            permGenEnd = Integer.parseInt(matcher.group(59));
+            permGenAllocation = Integer.parseInt(matcher.group(60));
+            duration = JdkMath.convertSecsToMillis(matcher.group(61)).intValue();
         }
     }
 
