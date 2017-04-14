@@ -536,9 +536,10 @@ public class Analysis {
     public static final String INFO_SURVIVOR_RATIO_TARGET = "info.survivor.ratio.target";
 
     /**
-     * Property key for the number of times an object surviving a young collection is copied between survivor spaces
-     * being overridden with -XX:MaxTenuringThreshold=N (0-15) (e.g. -XX:MaxTenuringThreshold=4). 0 = disabled. 15 =
-     * promote when the survivor space fills. Defaults: CMS = 6, Parallel, G1 = 15.
+     * Property key for overriding the number of times an object is copied between survivor spaces being set with
+     * -XX:MaxTenuringThreshold=N (0-15). 0 = disabled. 15 = promote when the survivor space fills. Unless testing has
+     * shown this improves performance, consider removing this option to allow the default value to be applied (6 for
+     * CMS, 15 for Parallel, G1).
      */
     public static final String INFO_MAX_TENURING_OVERRIDE = "info.max.tenuring.override";
 
