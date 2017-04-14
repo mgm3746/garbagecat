@@ -246,7 +246,7 @@ public class HeapAtGcEvent implements ThrowAwayEvent {
             //
             "^ (PSYoungGen|PSOldGen|ParOldGen|PSPermGen)[ ]+total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + ".+$",
             //
-            "^ (par new generation|concurrent mark-sweep generation|concurrent-mark-sweep perm gen"
+            "^ ((par|def) new generation|concurrent mark-sweep generation|concurrent-mark-sweep perm gen"
                     + "|tenured generation|compacting perm gen)" + "[ ]+total " + JdkRegEx.SIZE + ", used "
                     + JdkRegEx.SIZE + ".+$",
             //

@@ -244,4 +244,10 @@ public class TestHeapAtGcEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".",
                 HeapAtGcEvent.match(logLine));
     }
+
+    public void testDefNewGeneration() {
+        String logLine = " def new generation   total 39680K, used 11177K [0x04800000, 0x07300000, 0x19d50000)K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".",
+                HeapAtGcEvent.match(logLine));
+    }
 }
