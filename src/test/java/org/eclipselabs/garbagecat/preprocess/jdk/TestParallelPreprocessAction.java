@@ -112,7 +112,7 @@ public class TestParallelPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.GC_OVERHEAD_LIMIT));
         Assert.assertTrue(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED));
     }
 
     /**
@@ -146,6 +146,6 @@ public class TestParallelPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE));
         Assert.assertTrue(Analysis.WARN_PRINT_TENURING_DISTRIBUTION + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_TENURING_DISTRIBUTION));
+                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_TENURING_DISTRIBUTION));
     }
 }

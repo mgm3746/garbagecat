@@ -143,7 +143,7 @@ public class JvmRun {
     /**
      * Analysis property keys.
      */
-    private List<String> analysisKeys;
+    private List<Analysis> analysis;
 
     /**
      * Collector families.
@@ -341,12 +341,12 @@ public class JvmRun {
         this.eventTypes = eventTypes;
     }
 
-    public List<String> getAnalysisKeys() {
-        return analysisKeys;
+    public List<Analysis> getAnalysis() {
+        return analysis;
     }
 
-    public void setAnalysisKeys(List<String> analysisKeys) {
-        this.analysisKeys = analysisKeys;
+    public void setAnalysis(List<Analysis> analysis) {
+        this.analysis = analysis;
     }
 
     public void setCollectorFamiles(List<CollectorFamily> collectorFamilies) {
@@ -456,51 +456,51 @@ public class JvmRun {
 
         // 1) Check for partial log
         if (firstGcEvent != null && GcUtil.isPartialLog(firstGcEvent.getTimestamp())) {
-            analysisKeys.add(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
+            analysis.add(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
         }
 
         // 2) Check to see if -XX:+PrintGCApplicationStoppedTime enabled
         if (!eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)) {
-            analysisKeys.add(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING);
+            analysis.add(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING);
         }
 
         // 3) Check for significant stopped time unrelated to GC
         if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
                 && getGcStoppedRatio() < Constants.GC_STOPPED_RATIO_THRESHOLD
                 && getStoppedTimeThroughput() != getGcThroughput()) {
-            analysisKeys.add(Analysis.WARN_GC_STOPPED_RATIO);
+            analysis.add(Analysis.WARN_GC_STOPPED_RATIO);
         }
 
         // 4) Check if logging indicates gc details missing
-        if (!analysisKeys.contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING)
-                && !analysisKeys.contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED)) {
+        if (!analysis.contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING)
+                && !analysis.contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED)) {
             if (getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)
                     || getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG)) {
-                analysisKeys.add(Analysis.WARN_PRINT_GC_DETAILS_MISSING);
+                analysis.add(Analysis.WARN_PRINT_GC_DETAILS_MISSING);
             }
         }
 
         // 5) Check for -XX:+PrintReferenceGC by event type
-        if (!analysisKeys.contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED)) {
+        if (!analysis.contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED)) {
             if (getEventTypes().contains(LogEventType.REFERENCE_GC)) {
-                analysisKeys.add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
+                analysis.add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
             }
         }
 
         // 6) Check for PAR_NEW disabled.
         if (getEventTypes().contains(LogEventType.SERIAL_NEW) && collectorFamilies.contains(CollectorFamily.CMS)) {
             // Replace general gc.serial analysis
-            if (analysisKeys.contains(Analysis.ERROR_SERIAL_GC)) {
-                analysisKeys.remove(Analysis.ERROR_SERIAL_GC);
+            if (analysis.contains(Analysis.ERROR_SERIAL_GC)) {
+                analysis.remove(Analysis.ERROR_SERIAL_GC);
             }
-            if (!analysisKeys.contains(Analysis.WARN_CMS_PAR_NEW_DISABLED)) {
-                analysisKeys.add(Analysis.WARN_CMS_PAR_NEW_DISABLED);
+            if (!analysis.contains(Analysis.WARN_CMS_PAR_NEW_DISABLED)) {
+                analysis.add(Analysis.WARN_CMS_PAR_NEW_DISABLED);
             }
         }
 
         // 7) Check for swappiness
         if (getJvm().getPercentSwapFree() < 95) {
-            analysisKeys.add(Analysis.INFO_SWAPPING);
+            analysis.add(Analysis.INFO_SWAPPING);
         }
 
         // 8) Check for insufficient physical memory
@@ -515,52 +515,51 @@ public class JvmRun {
                 jvmMemory = getJvm().getMaxHeapBytes() + getJvm().getMaxPermBytes() + getJvm().getMaxMetaspaceBytes();
             }
             if (jvmMemory > getJvm().getPhysicalMemory()) {
-                analysisKeys.add(Analysis.ERROR_PHYSICAL_MEMORY);
+                analysis.add(Analysis.ERROR_PHYSICAL_MEMORY);
             }
         }
 
         // 9) Unidentified logging lines
         if (getUnidentifiedLogLines().size() > 0) {
             if (!preprocessed) {
-                analysisKeys.add(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE);
+                analysis.add(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE);
                 // Don't double report
-                if (analysisKeys.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
-                    analysisKeys.remove(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
+                if (analysis.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
+                    analysis.remove(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
                 }
             } else if (getUnidentifiedLogLines().size() == 1) {
                 // Check if the unidentified line is not the last preprocessed line but it is the beginning of the last
                 // unpreprocessed line (the line was split).
-                if (!analysisKeys.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)
+                if (!analysis.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)
                         && lastLogLineUnprocessed.startsWith(getUnidentifiedLogLines().get(0))) {
-                    analysisKeys.add(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
+                    analysis.add(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
                 }
             } else {
-                analysisKeys.add(0, Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT);
+                analysis.add(0, Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT);
                 // Don't double report
-                if (analysisKeys.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
-                    analysisKeys.remove(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
+                if (analysis.contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
+                    analysis.remove(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
                 }
             }
         }
 
         // 10) Check for humongous allocations on old JDK not able to fully reclaim them in a young collection
-        if (collectorFamilies.contains(CollectorFamily.G1)
-                && analysisKeys.contains(Analysis.INFO_G1_HUMONGOUS_ALLOCATION)
+        if (collectorFamilies.contains(CollectorFamily.G1) && analysis.contains(Analysis.INFO_G1_HUMONGOUS_ALLOCATION)
                 && (jvm.JdkNumber() == 7 || (jvm.JdkNumber() == 8 && jvm.JdkUpdate() < 60))) {
             // Don't double report
-            analysisKeys.remove(Analysis.INFO_G1_HUMONGOUS_ALLOCATION);
-            analysisKeys.add(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD);
+            analysis.remove(Analysis.INFO_G1_HUMONGOUS_ALLOCATION);
+            analysis.add(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD);
         }
 
         // Check for using G1 collecgtor JDK < u40
         if ((collectorFamilies.contains(CollectorFamily.G1) || jvm.getUseG1Gc() != null) && jvm.JdkNumber() == 8
                 && jvm.JdkUpdate() < 40) {
-            analysisKeys.add(Analysis.WARN_G1_JDK8_PRIOR_U40);
+            analysis.add(Analysis.WARN_G1_JDK8_PRIOR_U40);
         }
 
         // Check for young space > old space
         if (maxYoungSpace > 0 && maxOldSpace > 0 && maxYoungSpace >= maxOldSpace) {
-            analysisKeys.add(Analysis.INFO_NEW_RATIO_INVERTED);
+            analysis.add(Analysis.INFO_NEW_RATIO_INVERTED);
         }
     }
 
@@ -571,22 +570,22 @@ public class JvmRun {
 
         // Check to see if thread stack size explicitly set
         if (jvm.getThreadStackSizeOption() == null && !jvm.is64Bit()) {
-            analysisKeys.add(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET);
+            analysis.add(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET);
         }
 
         // Check to see if min and max heap sizes are the same
         if (!jvm.isMinAndMaxHeapSpaceEqual()) {
-            analysisKeys.add(Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX);
+            analysis.add(Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX);
         }
 
         // Check to see if min and max perm gen sizes are the same
         if (!jvm.isMinAndMaxPermSpaceEqual()) {
-            analysisKeys.add(Analysis.WARN_PERM_MIN_NOT_EQUAL_MAX);
+            analysis.add(Analysis.WARN_PERM_MIN_NOT_EQUAL_MAX);
         }
 
         // Check to see if min and max metaspace sizes are the same
         if (!jvm.isMinAndMaxMetaspaceEqual()) {
-            analysisKeys.add(Analysis.WARN_METASPACE_MIN_NOT_EQUAL_MAX);
+            analysis.add(Analysis.WARN_METASPACE_MIN_NOT_EQUAL_MAX);
         }
 
         // Check to see if permanent generation or metaspace size explicitly set
@@ -595,210 +594,209 @@ public class JvmRun {
         case 6:
         case 7:
             if (jvm.getMinPermOption() == null && jvm.getMaxPermOption() == null) {
-                analysisKeys.add(Analysis.WARN_PERM_SIZE_NOT_SET);
+                analysis.add(Analysis.WARN_PERM_SIZE_NOT_SET);
             }
             break;
         case 8:
             if (jvm.getMinMetaspaceOption() == null && jvm.getMaxMetaspaceOption() == null) {
-                analysisKeys.add(Analysis.WARN_METASPACE_SIZE_NOT_SET);
+                analysis.add(Analysis.WARN_METASPACE_SIZE_NOT_SET);
             }
             break;
         default:
             if (jvm.getMinPermOption() == null && jvm.getMaxPermOption() == null && jvm.getMinMetaspaceOption() == null
                     && jvm.getMaxMetaspaceOption() == null) {
-                analysisKeys.add(Analysis.WARN_PERM_METASPACE_SIZE_NOT_SET);
+                analysis.add(Analysis.WARN_PERM_METASPACE_SIZE_NOT_SET);
             }
         }
 
         // Check to see if explicit gc is disabled
         if (jvm.getDisableExplicitGCOption() != null) {
-            analysisKeys.add(Analysis.WARN_EXPLICIT_GC_DISABLED);
+            analysis.add(Analysis.WARN_EXPLICIT_GC_DISABLED);
         }
 
         // Check for large thread stack size
         if (jvm.hasLargeThreadStackSize() && !jvm.is64Bit()) {
-            analysisKeys.add(Analysis.WARN_THREAD_STACK_SIZE_LARGE);
+            analysis.add(Analysis.WARN_THREAD_STACK_SIZE_LARGE);
         }
 
         // Check if the RMI Distributed Garbage Collection (DGC) is managed.
         if (jvm.getRmiDgcClientGcIntervalOption() == null && jvm.getRmiDgcServerGcIntervalOption() == null
                 && jvm.getDisableExplicitGCOption() == null) {
-            analysisKeys.add(Analysis.WARN_RMI_DGC_NOT_MANAGED);
+            analysis.add(Analysis.WARN_RMI_DGC_NOT_MANAGED);
         }
 
         // Check for setting DGC intervals when explicit GC is disabled.
         if (jvm.getDisableExplicitGCOption() != null && jvm.getRmiDgcClientGcIntervalOption() != null) {
-            analysisKeys.add(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT);
+            analysis.add(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT);
         }
         if (jvm.getDisableExplicitGCOption() != null && jvm.getRmiDgcServerGcIntervalOption() != null) {
-            analysisKeys.add(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT);
+            analysis.add(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT);
         }
 
         // Check for small DGC intervals.
         if (jvm.getRmiDgcClientGcIntervalOption() != null) {
             long rmiDgcClientGcInterval = new Long(jvm.getRmiDgcClientGcIntervalValue()).longValue();
             if (rmiDgcClientGcInterval < 3600000) {
-                analysisKeys.add(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL);
+                analysis.add(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL);
             }
         }
         if (jvm.getRmiDgcServerGcIntervalOption() != null) {
             long rmiDgcServerGcInterval = new Long(jvm.getRmiDgcServerGcIntervalValue()).longValue();
             if (rmiDgcServerGcInterval < 3600000) {
-                analysisKeys.add(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL);
+                analysis.add(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL);
             }
         }
 
         // Check if explicit gc not detected, but JVM not configured to handle it concurrently.
         if ((collectorFamilies.contains(CollectorFamily.CMS) || collectorFamilies.contains(CollectorFamily.G1))
                 && jvm.getDisableExplicitGCOption() == null && jvm.getExplicitGcInvokesConcurrentOption() == null
-                && !analysisKeys.contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1)
-                && !analysisKeys.contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS)) {
-            analysisKeys.add(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT);
+                && !analysis.contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1)
+                && !analysis.contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS)) {
+            analysis.add(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT);
         }
 
         // Specifying that explicit gc be collected concurrently makes no sense if explicit gc is disabled.
         if (jvm.getDisableExplicitGCOption() != null && jvm.getExplicitGcInvokesConcurrentOption() != null) {
-            analysisKeys.add(Analysis.WARN_EXPLICIT_GC_DISABLED_CONCURRENT);
+            analysis.add(Analysis.WARN_EXPLICIT_GC_DISABLED_CONCURRENT);
         }
 
         // Check to see if heap dump on OOME disabled or missing.
         if (jvm.getHeapDumpOnOutOfMemoryErrorDisabledOption() != null) {
-            analysisKeys.add(Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED);
+            analysis.add(Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED);
         } else if (jvm.getHeapDumpOnOutOfMemoryErrorEnabledOption() == null) {
-            analysisKeys.add(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING);
+            analysis.add(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING);
         }
 
         // Check if instrumentation being used.
         if (jvm.getJavaagentOption() != null) {
-            analysisKeys.add(Analysis.INFO_INSTRUMENTATION);
+            analysis.add(Analysis.INFO_INSTRUMENTATION);
         }
 
         // Check if native library being used.
         if (jvm.getAgentpathOption() != null) {
-            analysisKeys.add(Analysis.INFO_NATIVE);
+            analysis.add(Analysis.INFO_NATIVE);
         }
 
         // Check if background compilation disabled.
         if (jvm.getXBatchOption() != null || jvm.getDisableBackgroundCompilationOption() != null) {
-            analysisKeys.add(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED);
+            analysis.add(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED);
         }
 
         // Check if compilation being forced on first invocation.
         if (jvm.getXCompOption() != null) {
-            analysisKeys.add(Analysis.WARN_BYTECODE_COMPILE_FIRST_INVOCATION);
+            analysis.add(Analysis.WARN_BYTECODE_COMPILE_FIRST_INVOCATION);
         }
 
         // Check if just in time (JIT) compilation disabled.
         if (jvm.getXIntOption() != null) {
-            analysisKeys.add(Analysis.WARN_BYTECODE_COMPILE_DISABLED);
+            analysis.add(Analysis.WARN_BYTECODE_COMPILE_DISABLED);
         }
 
         // Check for command line flags output.
         if (jvm.getPrintCommandLineFlagsOption() == null
                 && !getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS)) {
-            analysisKeys.add(Analysis.WARN_PRINT_COMMANDLINE_FLAGS);
+            analysis.add(Analysis.WARN_PRINT_COMMANDLINE_FLAGS);
         }
 
         // Check if print gc details option disabled
         if (jvm.getPrintGCDetailsDisabled() != null) {
-            analysisKeys.add(Analysis.WARN_PRINT_GC_DETAILS_DISABLED);
+            analysis.add(Analysis.WARN_PRINT_GC_DETAILS_DISABLED);
         } else {
             // Check if print gc details option missing
             if (jvm.getPrintGCDetailsOption() == null) {
-                analysisKeys.add(Analysis.WARN_PRINT_GC_DETAILS_MISSING);
+                analysis.add(Analysis.WARN_PRINT_GC_DETAILS_MISSING);
             }
         }
 
         // Check if CMS not being used for old collections
         if (jvm.getUseParNewGCOption() != null && jvm.getUseConcMarkSweepGCOption() == null) {
-            analysisKeys.add(Analysis.ERROR_CMS_SERIAL_OLD);
+            analysis.add(Analysis.ERROR_CMS_SERIAL_OLD);
         }
 
         // Check if CMS handling Perm/Metaspace collections is explictily disabled or just not set.
         if (jvm.getCMSClassUnloadingDisabled() != null) {
             // Explicitly disabled.
-            analysisKeys.add(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED);
+            analysis.add(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED);
             //
-            if (analysisKeys.contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
-                analysisKeys.remove(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
+            if (analysis.contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
+                analysis.remove(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
             }
         } else {
             // Not enabled
             if ((collectorFamilies.contains(CollectorFamily.CMS) && jvm.getCMSClassUnloadingEnabled() == null)) {
-                if (!analysisKeys.contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
-                    analysisKeys.add(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
+                if (!analysis.contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
+                    analysis.add(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
                 }
             }
         }
 
         // Check for -XX:+PrintReferenceGC.
         if (jvm.getPrintReferenceGC() != null) {
-            analysisKeys.add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
+            analysis.add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
         }
 
         // Check for -XX:+PrintGCCause missing.
         if (jvm.getPrintGCCause() == null && jvm.JdkNumber() == 7
-                && !analysisKeys.contains(Analysis.WARN_PRINT_GC_CAUSE_MISSING)) {
-            analysisKeys.add(Analysis.WARN_PRINT_GC_CAUSE_MISSING);
+                && !analysis.contains(Analysis.WARN_PRINT_GC_CAUSE_MISSING)) {
+            analysis.add(Analysis.WARN_PRINT_GC_CAUSE_MISSING);
             // Don't double report
-            if (analysisKeys.contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED)) {
-                analysisKeys.remove(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
+            if (analysis.contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED)) {
+                analysis.remove(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
             }
         }
 
         // Check for -XX:-PrintGCCause (PrintGCCause disabled).
         if (jvm.getPrintGCCauseDisabled() != null) {
-            analysisKeys.add(Analysis.WARN_PRINT_GC_CAUSE_DISABLED);
+            analysis.add(Analysis.WARN_PRINT_GC_CAUSE_DISABLED);
             // Don't double report
-            if (analysisKeys.contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED)) {
-                analysisKeys.remove(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
+            if (analysis.contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED)) {
+                analysis.remove(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
             }
         }
 
         // Check for -XX:+TieredCompilation.
         if (jvm.getTieredCompilation() != null) {
-            analysisKeys.add(Analysis.WARN_TIERED_COMPILATION_ENABLED);
+            analysis.add(Analysis.WARN_TIERED_COMPILATION_ENABLED);
         }
 
         // Check for -XX:+PrintStringDeduplicationStatistics.
         if (jvm.getPrintStringDeduplicationStatistics() != null) {
-            analysisKeys.add(Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED);
+            analysis.add(Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED);
         }
 
         // Check for incremental mode in combination with -XX:CMSInitiatingOccupancyFraction=<n>.
-        if (analysisKeys.contains(Analysis.WARN_CMS_INCREMENTAL_MODE)
-                && jvm.getCMSInitiatingOccupancyFraction() != null) {
-            analysisKeys.add(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT);
+        if (analysis.contains(Analysis.WARN_CMS_INCREMENTAL_MODE) && jvm.getCMSInitiatingOccupancyFraction() != null) {
+            analysis.add(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT);
         }
 
         // Check for biased locking disabled with -XX:-UseBiasedLocking.
         if (jvm.getBiasedLockingDisabled() != null) {
-            analysisKeys.add(Analysis.WARN_BIASED_LOCKING_DISABLED);
+            analysis.add(Analysis.WARN_BIASED_LOCKING_DISABLED);
         }
 
         // Check for print class histogram output enabled with -XX:+PrintClassHistogram,
         // -XX:+PrintClassHistogramBeforeFullGC, or -XX:+PrintClassHistogramAfterFullGC.
         if (jvm.getPrintClassHistogramEnabled() != null) {
-            analysisKeys.add(Analysis.WARN_PRINT_CLASS_HISTOGRAM);
+            analysis.add(Analysis.WARN_PRINT_CLASS_HISTOGRAM);
         }
         if (jvm.getPrintClassHistogramAfterFullGcEnabled() != null) {
-            analysisKeys.add(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC);
+            analysis.add(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC);
         }
         if (jvm.getPrintClassHistogramBeforeFullGcEnabled() != null) {
-            analysisKeys.add(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC);
+            analysis.add(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC);
         }
 
         // Check for outputting application concurrent time
-        if (!analysisKeys.contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
+        if (!analysis.contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
             if (jvm.getPrintGcApplicationConcurrentTime() != null) {
-                analysisKeys.add(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME);
+                analysis.add(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME);
             }
         }
 
         // Check for trace class unloading enabled with -XX:+TraceClassUnloading
-        if (!analysisKeys.contains(Analysis.WARN_TRACE_CLASS_UNLOADING)) {
+        if (!analysis.contains(Analysis.WARN_TRACE_CLASS_UNLOADING)) {
             if (jvm.getTraceClassUnloading() != null) {
-                analysisKeys.add(Analysis.WARN_TRACE_CLASS_UNLOADING);
+                analysis.add(Analysis.WARN_TRACE_CLASS_UNLOADING);
             }
         }
 
@@ -815,13 +813,13 @@ public class JvmRun {
 
                 if (jvm.getMaxHeapBytes() == 0) {
                     // Heap size unknown
-                    analysisKeys.add(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK);
+                    analysis.add(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK);
                 } else {
                     // Heap < 32G
-                    analysisKeys.add(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G);
+                    analysis.add(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G);
                 }
                 if (jvm.getCompressedClassSpaceSizeOption() != null) {
-                    analysisKeys.add(Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED);
+                    analysis.add(Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED);
                 }
             }
 
@@ -829,95 +827,95 @@ public class JvmRun {
             if (jvm.getUseCompressedClassPointersDisabled() != null) {
                 if (jvm.getMaxHeapBytes() == 0) {
                     // Heap size unknown
-                    analysisKeys.add(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK);
+                    analysis.add(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK);
                 } else {
                     // Heap < 32G
-                    analysisKeys.add(Analysis.ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G);
+                    analysis.add(Analysis.ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G);
                 }
                 if (jvm.getCompressedClassSpaceSizeOption() != null) {
-                    analysisKeys.add(Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED);
+                    analysis.add(Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED);
                 }
             }
 
             if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSizeOption() == null) {
-                analysisKeys.add(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET);
+                analysis.add(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET);
             }
         } else {
             // Should not use compressed object pointers
             if (jvm.getUseCompressedOopsEnabled() != null) {
-                analysisKeys.add(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G);
+                analysis.add(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G);
             }
 
             // Should not use compressed class pointers
             if (jvm.getUseCompressedClassPointersEnabled() != null) {
-                analysisKeys.add(Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G);
+                analysis.add(Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G);
             }
 
             // Should not be setting class pointer space size
             if (jvm.getCompressedClassSpaceSizeOption() != null) {
-                analysisKeys.add(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G);
+                analysis.add(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G);
             }
         }
 
         // Check for PrintFLSStatistics option is being used
-        if (jvm.getPrintFLStatistics() != null && !analysisKeys.contains(Analysis.INFO_PRINT_FLS_STATISTICS)) {
-            analysisKeys.add(Analysis.INFO_PRINT_FLS_STATISTICS);
+        if (jvm.getPrintFLStatistics() != null && !analysis.contains(Analysis.INFO_PRINT_FLS_STATISTICS)) {
+            analysis.add(Analysis.INFO_PRINT_FLS_STATISTICS);
         }
 
         // Check if PARN_NEW collector disabled
-        if (jvm.getUseParNewGcDisabled() != null && !analysisKeys.contains(Analysis.WARN_CMS_PAR_NEW_DISABLED)) {
-            analysisKeys.add(Analysis.WARN_CMS_PAR_NEW_DISABLED);
+        if (jvm.getUseParNewGcDisabled() != null && !analysis.contains(Analysis.WARN_CMS_PAR_NEW_DISABLED)) {
+            analysis.add(Analysis.WARN_CMS_PAR_NEW_DISABLED);
         }
 
         // Check if log file rotation disabled or missing
         if (jvm.getUseGcLogFileRotationDisabled() != null) {
-            analysisKeys.add(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED);
+            analysis.add(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED);
         } else {
             if (jvm.getUseGcLogFileRotationEnabled() == null) {
-                analysisKeys.add(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED);
+                analysis.add(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED);
             }
         }
 
         // Check if number of log files specified with log file rotation disabled
         if (jvm.getNumberOfGcLogFiles() != null && jvm.getUseGcLogFileRotationDisabled() != null) {
-            analysisKeys.add(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED);
+            analysis.add(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED);
         }
 
         // If explicit gc is disabled, don't need to set explicit gc options
         if (jvm.getExplicitGcInvokesConcurrentAndUnloadsClassesDisabled() != null
                 && jvm.getDisableExplicitGCOption() != null) {
-            analysisKeys.add(Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA);
+            analysis.add(Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA);
         }
 
         // Check for class unloading disabled
         if (jvm.getClassUnloadingDisabled() != null) {
-            analysisKeys.add(Analysis.WARN_CLASS_UNLOADING_DISABLED);
+            analysis.add(Analysis.WARN_CLASS_UNLOADING_DISABLED);
         }
 
         // Check for -XX:+PrintPromotionFailure option being used
         if (jvm.getPrintPromotionFailureEnabled() != null
-                && !analysisKeys.contains(Analysis.INFO_PRINT_PROMOTION_FAILURE)) {
-            analysisKeys.add(Analysis.INFO_PRINT_PROMOTION_FAILURE);
+                && !analysis.contains(Analysis.INFO_PRINT_PROMOTION_FAILURE)) {
+            analysis.add(Analysis.INFO_PRINT_PROMOTION_FAILURE);
         }
 
         // Check for -XX:+UseMembar option being used
         if (jvm.getUseMembarEnabled() != null) {
-            analysisKeys.add(Analysis.WARN_USE_MEMBAR);
+            analysis.add(Analysis.WARN_USE_MEMBAR);
         }
 
         // Check for -XX:-PrintAdaptiveSizePolicy option being used
         if (jvm.getPrintAdaptiveResizePolicyDisabled() != null) {
-            analysisKeys.add(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_DISABLED);
+            analysis.add(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_DISABLED);
         }
 
         // Check for -XX:+PrintAdaptiveSizePolicy option being used
         if (jvm.getPrintAdaptiveResizePolicyEnabled() != null) {
-            analysisKeys.add(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED);
+            analysis.add(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED);
         }
 
         // Check for-XX:CMSInitiatingOccupancyFraction without -XX:+UseCMSInitiatingOccupancyOnly.
         if (jvm.getCMSInitiatingOccupancyFraction() != null && jvm.getCMSInitiatingOccupancyOnlyEnabled() == null) {
-            analysisKeys.add(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING);
+            analysis.add(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING);
         }
 
         // Check for tenuring disabled or default overriden
@@ -926,23 +924,23 @@ public class JvmRun {
             if (maxTenuringThreshold != null) {
                 int tenuring = Integer.parseInt(maxTenuringThreshold);
                 if (tenuring == 0 || tenuring > 15) {
-                    analysisKeys.add(Analysis.WARN_TENURING_DISABLED);
+                    analysis.add(Analysis.WARN_TENURING_DISABLED);
                 } else if ((collectorFamilies.contains(CollectorFamily.CMS) && tenuring != 6)
                         || ((collectorFamilies.contains(CollectorFamily.PARALLEL)
                                 || collectorFamilies.contains(CollectorFamily.G1)) && tenuring != 15)) {
-                    analysisKeys.add(Analysis.INFO_MAX_TENURING_OVERRIDE);
+                    analysis.add(Analysis.INFO_MAX_TENURING_OVERRIDE);
                 }
             }
         }
 
         // Check for -XX:SurvivorRatio option being used
         if (jvm.getSurvivorRatio() != null) {
-            analysisKeys.add(Analysis.INFO_SURVIVOR_RATIO);
+            analysis.add(Analysis.INFO_SURVIVOR_RATIO);
         }
 
         // Check for -XX:TargetSurvivorRatio option being used
         if (jvm.getTargetSurvivorRatio() != null) {
-            analysisKeys.add(Analysis.INFO_SURVIVOR_RATIO_TARGET);
+            analysis.add(Analysis.INFO_SURVIVOR_RATIO_TARGET);
         }
 
         // Check for JDK < u40 recommendations (require experimental options)
@@ -951,17 +949,17 @@ public class JvmRun {
             if (jvm.getG1MixedGCLiveThresholdPercent() == null
                     || !jvm.getG1MixedGCLiveThresholdPercentValue().equals("85") || jvm.getG1HeapWastePercent() == null
                     || !jvm.getG1HeapWastePercentValue().equals("5")) {
-                analysisKeys.add(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS);
+                analysis.add(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS);
             }
         } else {
             // Check for experimental options being used
             if (jvm.getUnlockExperimentalVmOptionsEnabled() != null) {
                 if (jvm.getUseFastUnorderedTimeStampsEnabled() != null) {
-                    analysisKeys.add(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS);
+                    analysis.add(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS);
                 } else if (jvm.getG1MixedGCLiveThresholdPercent() != null) {
-                    analysisKeys.add(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT);
+                    analysis.add(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT);
                 } else {
-                    analysisKeys.add(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
+                    analysis.add(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
                 }
             }
         }

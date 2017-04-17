@@ -204,7 +204,7 @@ public class TestG1MixedPauseEvent extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.G1_MIXED_PAUSE));
         Assert.assertTrue(Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_G1_EVACUATION_FAILURE));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_G1_EVACUATION_FAILURE));
     }
 
     /**
@@ -224,6 +224,6 @@ public class TestG1MixedPauseEvent extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.G1_MIXED_PAUSE));
         Assert.assertTrue(Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_G1_EVACUATION_FAILURE));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_G1_EVACUATION_FAILURE));
     }
 }

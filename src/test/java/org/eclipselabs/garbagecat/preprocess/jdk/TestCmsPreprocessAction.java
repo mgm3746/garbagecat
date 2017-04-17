@@ -21,7 +21,6 @@ import java.util.Set;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
-import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
@@ -877,7 +876,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
         Assert.assertTrue(Analysis.WARN_PRINT_HEAP_AT_GC + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_HEAP_AT_GC));
+                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC));
     }
 
     /**
@@ -894,11 +893,11 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
         Assert.assertTrue(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.WARN_PRINT_HEAP_AT_GC + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_HEAP_AT_GC));
+                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC));
     }
 
     /**
@@ -917,7 +916,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
         Assert.assertTrue(JdkUtil.TriggerType.CMS_CONCURRENT_MODE_FAILURE.toString() + " trigger not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
     }
@@ -938,7 +937,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
         Assert.assertTrue(JdkUtil.TriggerType.CMS_CONCURRENT_MODE_FAILURE.toString() + " trigger not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
     }
@@ -1000,7 +999,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.WARN_PRINT_HEAP_AT_GC + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_HEAP_AT_GC));
+                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC));
     }
 
     public void testParNewPromotionFailedTruncatedEventLogging() {
@@ -1020,7 +1019,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
         Assert.assertTrue(Analysis.ERROR_CMS_PROMOTION_FAILED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_PROMOTION_FAILED));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED));
     }
 
     /**
@@ -1062,7 +1061,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue(LogEventType.CMS_CONCURRENT.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
     }
 
     /**
@@ -1100,9 +1099,9 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue(LogEventType.CMS_CONCURRENT.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.WARN_CMS_INCREMENTAL_MODE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_INCREMENTAL_MODE));
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INCREMENTAL_MODE));
         Assert.assertTrue(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
     }
 
     /**
@@ -1122,7 +1121,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
         Assert.assertTrue(JdkUtil.TriggerType.CMS_CONCURRENT_MODE_INTERRUPTED.toString() + " trigger not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED));
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
     }
@@ -1162,7 +1161,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
         Assert.assertTrue(Analysis.WARN_PRINT_HEAP_AT_GC + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_HEAP_AT_GC));
+                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC));
     }
 
     /**
@@ -1202,7 +1201,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED));
     }
 
     /**
@@ -1224,7 +1223,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
     }
 
     /**
@@ -1244,7 +1243,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
         Assert.assertTrue(Analysis.INFO_PRINT_FLS_STATISTICS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.INFO_PRINT_FLS_STATISTICS));
+                jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_FLS_STATISTICS));
     }
 
     public void testBeginningParNewWithNoParNewWithCmsConcurrentPreclean() {
@@ -1264,11 +1263,9 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
         Assert.assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
-        Assert.assertNotNull(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " not found.",
-                GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
     }
 
     public void testUnknownWithCmsConcurrent() {
@@ -1289,7 +1286,7 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         // Not the last preprocessed line, but part of last unpreprocessed line
         Assert.assertTrue(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST));
+                jvmRun.getAnalysis().contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST));
     }
 
     public void testParNewCmsConcurrentOver3Lines() {
@@ -1305,7 +1302,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
     }
 
     public void testPrintPromotionFailure() {
@@ -1319,7 +1316,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
         Assert.assertTrue(Analysis.ERROR_CMS_PROMOTION_FAILED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_CMS_PROMOTION_FAILED));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED));
     }
 
     public void testPrintFLSStatistics2ParNewOver4Lines() {
@@ -1335,7 +1332,7 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.INFO_PRINT_FLS_STATISTICS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.INFO_PRINT_FLS_STATISTICS));
+                jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_FLS_STATISTICS));
     }
 
     public void testCmsScavengeBeforeRemarkNoPrintGcDetails() {

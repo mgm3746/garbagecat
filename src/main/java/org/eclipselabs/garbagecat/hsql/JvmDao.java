@@ -27,6 +27,7 @@ import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermData;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
+import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
@@ -79,7 +80,7 @@ public class JvmDao {
     /**
      * Analysis property keys.
      */
-    private List<String> analysisKeys;
+    private List<Analysis> analysis;
 
     /**
      * Collector families for JVM run.
@@ -189,7 +190,7 @@ public class JvmDao {
 
         eventTypes = new ArrayList<LogEventType>();
         collectorFamilies = new ArrayList<CollectorFamily>();
-        analysisKeys = new ArrayList<String>();
+        analysis = new ArrayList<Analysis>();
         unidentifiedLogLines = new ArrayList<String>();
         blockingBatch = new ArrayList<BlockingEvent>();
         stoppedTimeBatch = new ArrayList<ApplicationStoppedTimeEvent>();
@@ -203,13 +204,13 @@ public class JvmDao {
         return eventTypes;
     }
 
-    public List<String> getAnalysisKeys() {
-        return analysisKeys;
+    public List<Analysis> getAnalysis() {
+        return analysis;
     }
 
-    public void addAnalysisKey(String analysisKey) {
-        if (!analysisKeys.contains(analysisKey)) {
-            analysisKeys.add(analysisKey);
+    public void addAnalysis(Analysis analysis) {
+        if (!this.analysis.contains(analysis)) {
+            this.analysis.add(analysis);
         }
     }
 

@@ -141,6 +141,11 @@ public class Constants {
     public static final String OUTPUT_FILE_NAME = "report.txt";
 
     /**
+     * Analysis property file.
+     */
+    public static final String ANALYSIS_PROPERTY_FILE = "analysis";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Constants() {

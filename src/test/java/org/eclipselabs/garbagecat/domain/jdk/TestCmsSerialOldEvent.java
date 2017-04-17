@@ -926,9 +926,9 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_INITIAL_MARK));
         Assert.assertTrue(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED));
+                jvmRun.getAnalysis().contains(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED));
         Assert.assertTrue(Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS));
     }
 
     /**
@@ -949,9 +949,9 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.WARN_PRINT_HEAP_AT_GC + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_PRINT_HEAP_AT_GC));
+                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC));
         Assert.assertTrue(Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS));
     }
 
     public void testSplitParNewPromotionFailedCmsConcurrentModeFailurePermData() {
@@ -969,7 +969,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS));
     }
 
     public void testSplitParNewCmsConcurrentModeFailurePermData() {
@@ -985,7 +985,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS));
     }
 
     public void testSplit3LinesParNewPromotionFailedCmsConcurrentModeFailurePermDataEventMarkLogging() {
@@ -1003,7 +1003,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS));
     }
 
     /**
@@ -1025,7 +1025,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.WARN_CMS_INCREMENTAL_MODE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_INCREMENTAL_MODE));
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INCREMENTAL_MODE));
     }
 
     public void testParNewConcurrentModeFailureMixedCmsConcurrentJdk8() {
@@ -1043,9 +1043,9 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue(LogEventType.CMS_CONCURRENT.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS));
         Assert.assertTrue(Analysis.WARN_CMS_INCREMENTAL_MODE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_INCREMENTAL_MODE));
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INCREMENTAL_MODE));
     }
 
     /**
@@ -1065,9 +1065,9 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
         Assert.assertTrue(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC));
+                jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC));
         Assert.assertTrue(Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS));
     }
 
     /**
@@ -1089,7 +1089,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS));
     }
 
     /**
@@ -1109,8 +1109,8 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
         Assert.assertTrue(Analysis.WARN_HEAP_DUMP_INITIATED_GC + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_HEAP_DUMP_INITIATED_GC));
+                jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_INITIATED_GC));
         Assert.assertTrue(Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_SERIAL_GC_CMS));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS));
     }
 }

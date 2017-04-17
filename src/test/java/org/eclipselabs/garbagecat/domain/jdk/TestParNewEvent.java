@@ -302,9 +302,9 @@ public class TestParNewEvent extends TestCase {
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_CMS_INCREMENTAL_MODE + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_INCREMENTAL_MODE));
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INCREMENTAL_MODE));
         Assert.assertTrue(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT));
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT));
     }
 
     /**
@@ -319,14 +319,14 @@ public class TestParNewEvent extends TestCase {
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.ERROR_DATESTAMP_NO_TIMESTAMP + " analysis not identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_DATESTAMP_NO_TIMESTAMP));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_DATESTAMP_NO_TIMESTAMP));
         // Don't report datestamp only lines unidentified
         Assert.assertFalse(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE));
+                jvmRun.getAnalysis().contains(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE));
         Assert.assertFalse(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST));
+                jvmRun.getAnalysis().contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST));
         Assert.assertFalse(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT));
+                jvmRun.getAnalysis().contains(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT));
     }
 
     /**
@@ -345,6 +345,6 @@ public class TestParNewEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
         Assert.assertFalse(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis incorrectly identified.",
-                jvmRun.getAnalysisKeys().contains(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED));
+                jvmRun.getAnalysis().contains(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED));
     }
 }

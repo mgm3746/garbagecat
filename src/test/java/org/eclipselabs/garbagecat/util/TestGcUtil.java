@@ -195,10 +195,10 @@ public class TestGcUtil extends TestCase {
     }
 
     public void testGetPropertyValues() {
-        Assert.assertNotNull("Could not retrieve " + Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + ".",
-                GcUtil.getPropertyValue("analysis", Analysis.WARN_THREAD_STACK_SIZE_NOT_SET));
-        Assert.assertNotNull("Could not retrieve " + Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX + ".",
-                GcUtil.getPropertyValue("analysis", Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX));
+        Assert.assertNotNull("Could not retrieve " + Analysis.WARN_THREAD_STACK_SIZE_NOT_SET.getKey() + ".",
+                GcUtil.getPropertyValue("analysis", Analysis.WARN_THREAD_STACK_SIZE_NOT_SET.getKey()));
+        Assert.assertNotNull("Could not retrieve " + Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX.getKey() + ".",
+                GcUtil.getPropertyValue("analysis", Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX.getKey()));
     }
 
     public void testConvertDateStampStringToDate() {

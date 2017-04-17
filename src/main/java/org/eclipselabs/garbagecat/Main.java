@@ -394,24 +394,24 @@ public class Main {
             bufferedWriter.write("========================================" + System.getProperty("line.separator"));
 
             // Analysis
-            List<String> analysisKeys = jvmRun.getAnalysisKeys();
-            if (!analysisKeys.isEmpty()) {
+            List<Analysis> analysis = jvmRun.getAnalysis();
+            if (!analysis.isEmpty()) {
 
                 // Determine analysis levels
-                List<String> error = new ArrayList<String>();
-                List<String> warn = new ArrayList<String>();
-                List<String> info = new ArrayList<String>();
+                List<Analysis> error = new ArrayList<Analysis>();
+                List<Analysis> warn = new ArrayList<Analysis>();
+                List<Analysis> info = new ArrayList<Analysis>();
 
-                Iterator<String> iterator = analysisKeys.iterator();
+                Iterator<Analysis> iterator = analysis.iterator();
                 while (iterator.hasNext()) {
-                    String key = iterator.next();
-                    String level = key.split("\\.")[0];
+                    Analysis a = iterator.next();
+                    String level = a.getKey().split("\\.")[0];
                     if (level.equals("error")) {
-                        error.add(key);
+                        error.add(a);
                     } else if (level.equals("warn")) {
-                        warn.add(key);
+                        warn.add(a);
                     } else if (level.equals("info")) {
-                        info.add(key);
+                        info.add(a);
                     } else {
                         throw new IllegalArgumentException("Unknown analysis level: " + level);
                     }
@@ -431,9 +431,9 @@ public class Main {
                                 "----------------------------------------" + System.getProperty("line.separator"));
                     }
                     printHeader = false;
-                    String key = iterator.next();
+                    Analysis a = iterator.next();
                     bufferedWriter.write("*");
-                    bufferedWriter.write(GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, key));
+                    bufferedWriter.write(a.getValue());
                     bufferedWriter.write(System.getProperty("line.separator"));
                 }
                 // WARN
@@ -448,9 +448,9 @@ public class Main {
                                 "----------------------------------------" + System.getProperty("line.separator"));
                     }
                     printHeader = false;
-                    String key = iterator.next();
+                    Analysis a = iterator.next();
                     bufferedWriter.write("*");
-                    bufferedWriter.write(GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, key));
+                    bufferedWriter.write(a.getValue());
                     bufferedWriter.write(System.getProperty("line.separator"));
                 }
                 // INFO
@@ -465,9 +465,9 @@ public class Main {
                                 "----------------------------------------" + System.getProperty("line.separator"));
                     }
                     printHeader = false;
-                    String key = iterator.next();
+                    Analysis a = iterator.next();
                     bufferedWriter.write("*");
-                    bufferedWriter.write(GcUtil.getPropertyValue(Analysis.PROPERTY_FILE, key));
+                    bufferedWriter.write(a.getValue());
                     bufferedWriter.write(System.getProperty("line.separator"));
                 }
                 bufferedWriter.write("========================================" + System.getProperty("line.separator"));
