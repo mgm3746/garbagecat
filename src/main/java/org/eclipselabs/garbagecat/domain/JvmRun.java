@@ -141,7 +141,7 @@ public class JvmRun {
     private List<LogEventType> eventTypes;
 
     /**
-     * Analysis property keys.
+     * Analysis.
      */
     private List<Analysis> analysis;
 
