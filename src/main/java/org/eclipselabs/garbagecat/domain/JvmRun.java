@@ -161,6 +161,16 @@ public class JvmRun {
     private String lastLogLineUnprocessed;
 
     /**
+     * The <code>ParallelCollection</code> event with the worst "bad" parallelism (0-1).
+     */
+    private LogEvent baddestParallelismEvent;
+
+    /**
+     * The number of <code>ParallelCollection</code> with "bad" parallelism (0-1).
+     */
+    private long badParallelismCount;
+
+    /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
      * 
      * @param throughputThreshold
@@ -367,6 +377,22 @@ public class JvmRun {
 
     public void setLastLogLineUnprocessed(String lastLogLineUnprocessed) {
         this.lastLogLineUnprocessed = lastLogLineUnprocessed;
+    }
+
+    public LogEvent getBaddestParallelismEvent() {
+        return baddestParallelismEvent;
+    }
+
+    public void setBaddestParallelismEvent(LogEvent baddestParallelismEvent) {
+        this.baddestParallelismEvent = baddestParallelismEvent;
+    }
+
+    public long getBadParallelismCount() {
+        return badParallelismCount;
+    }
+
+    public void setBadParallelismCount(long badParallelismCount) {
+        this.badParallelismCount = badParallelismCount;
     }
 
     /**

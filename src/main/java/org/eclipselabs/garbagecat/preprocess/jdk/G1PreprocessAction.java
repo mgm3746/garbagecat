@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -440,7 +441,7 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * [Times: user=0.01 sys=0.00, real=0.01 secs]
      */
-    private static final String REGEX_RETAIN_END = "^(" + JdkRegEx.TIMES_BLOCK + ")( )?[ ]*$";
+    private static final String REGEX_RETAIN_END = "^(" + TimesData.REGEX + ")( )?[ ]*$";
 
     /**
      * Regular expressions for lines thrown away.

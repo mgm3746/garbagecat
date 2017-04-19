@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermData;
 import org.eclipselabs.garbagecat.domain.YoungData;
@@ -141,6 +142,16 @@ public class JvmDao {
      * Swap free (bytes).
      */
     private long swapFree;
+
+    /**
+     * The <code>ParallelCollection</code> event with the worst "bad" parallelism (0-1).
+     */
+    private LogEvent baddestParallelismEvent;
+
+    /**
+     * The number of <code>ParallelCollection</code> with "bad" parallelism (0-1).
+     */
+    private long badParallelismCount;
 
     public JvmDao() {
         try {
@@ -335,6 +346,36 @@ public class JvmDao {
      */
     public void setSwapFree(long swapFree) {
         this.swapFree = swapFree;
+    }
+
+    /**
+     * @return The worst "bad" (0-1) parallelism event.
+     */
+    public LogEvent getBaddestParallelismEvent() {
+        return baddestParallelismEvent;
+    }
+
+    /**
+     * @param baddestParallelismEvent
+     *            The <code>ParallelCollection</code> with the worst "bad" (0-1) parallelism.
+     */
+    public void setBaddestParallelismEvent(LogEvent baddestParallelismEvent) {
+        this.baddestParallelismEvent = baddestParallelismEvent;
+    }
+
+    /**
+     * @return The number of "bad" (0-1) parallelism events.
+     */
+    public long getBadParallelismCount() {
+        return badParallelismCount;
+    }
+
+    /**
+     * @param badParallelismCount
+     *            The number of "bad" (0-1) parallelism events.
+     */
+    public void setBadParallelismCount(long badParallelismCount) {
+        this.badParallelismCount = badParallelismCount;
     }
 
     /**

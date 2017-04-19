@@ -18,8 +18,10 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
+import org.eclipselabs.garbagecat.domain.ParallelCollection;
 import org.eclipselabs.garbagecat.domain.PermCollection;
 import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -79,8 +81,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParallelOldCompactingEvent extends ParallelCollector
-        implements BlockingEvent, OldCollection, PermCollection, YoungData, OldData, PermData, TriggerData {
+public class ParallelOldCompactingEvent extends ParallelCollector implements BlockingEvent, OldCollection,
+        PermCollection, ParallelCollection, YoungData, OldData, PermData, TriggerData, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -148,6 +150,16 @@ public class ParallelOldCompactingEvent extends ParallelCollector
     private String trigger;
 
     /**
+     * The time of all threads added together in centoseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The wall (clock) time in centoseconds.
+     */
+    private int timeReal;
+
+    /**
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
@@ -163,7 +175,7 @@ public class ParallelOldCompactingEvent extends ParallelCollector
             + "\\)\\] \\[ParOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(,)? \\[(PSPermGen|Metaspace): "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + TimesData.REGEX + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(ParallelOldCompactingEvent.REGEX);
 
@@ -190,6 +202,10 @@ public class ParallelOldCompactingEvent extends ParallelCollector
             permGenEnd = Integer.parseInt(matcher.group(28));
             permGenAllocation = Integer.parseInt(matcher.group(29));
             duration = JdkMath.convertSecsToMillis(matcher.group(30)).intValue();
+            if (matcher.group(33) != null) {
+                timeUser = JdkMath.convertSecsToCentos(matcher.group(34)).intValue();
+                timeReal = JdkMath.convertSecsToCentos(matcher.group(35)).intValue();
+            }
         }
     }
 
@@ -263,6 +279,18 @@ public class ParallelOldCompactingEvent extends ParallelCollector
 
     public String getTrigger() {
         return trigger;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public byte getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     /**

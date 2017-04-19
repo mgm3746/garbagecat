@@ -32,9 +32,11 @@ import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.ParallelCollection;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationConcurrentTimeEvent;
@@ -603,6 +605,24 @@ public class GcManager {
                         }
                     }
 
+                    // 16) Bad parallelism (0-1)
+                    if (event instanceof ParallelCollection && event instanceof TimesData) {
+                        if (((TimesData) event).getParallelism() > 0 && ((TimesData) event).getParallelism() <= 1) {
+                            // bad parallelism
+                            jvmDao.setBadParallelismCount(jvmDao.getBadParallelismCount() + 1);
+                            if (jvmDao.getBaddestParallelismEvent() == null) {
+                                jvmDao.setBaddestParallelismEvent(event);
+                            } else {
+                                if (((TimesData) event)
+                                        .getParallelism() < ((TimesData) jvmDao.getBaddestParallelismEvent())
+                                                .getParallelism()) {
+                                    // Update baddest
+                                    jvmDao.setBaddestParallelismEvent(event);
+                                }
+                            }
+                        }
+                    }
+
                     priorEvent = (BlockingEvent) event;
 
                 } else if (event instanceof ApplicationStoppedTimeEvent) {
@@ -801,6 +821,8 @@ public class GcManager {
         jvmRun.setCollectorFamiles(jvmDao.getCollectorFamilies());
         jvmRun.setAnalysis(jvmDao.getAnalysis());
         jvmRun.setBottlenecks(getBottlenecks(jvm, throughputThreshold));
+        jvmRun.setBaddestParallelismEvent(jvmDao.getBaddestParallelismEvent());
+        jvmRun.setBadParallelismCount(jvmDao.getBadParallelismCount());
         jvmRun.doAnalysis();
         return jvmRun;
     }

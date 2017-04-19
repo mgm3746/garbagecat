@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -80,7 +81,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC (\\(("
             + JdkRegEx.TRIGGER_CMS_INITIAL_MARK + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + TimesData.REGEX + "?[ ]*$";
     private static Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
 
     /**

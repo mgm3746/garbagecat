@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
+import org.eclipselabs.garbagecat.domain.ParallelCollection;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
@@ -73,7 +75,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class ParallelScavengeEvent extends ParallelCollector
-        implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData {
+        implements BlockingEvent, YoungCollection, ParallelCollection, YoungData, OldData, TriggerData, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -126,6 +128,16 @@ public class ParallelScavengeEvent extends ParallelCollector
     private String trigger;
 
     /**
+     * The time of all threads added together in centoseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The wall (clock) time in centoseconds.
+     */
+    private int timeReal;
+
+    /**
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
@@ -139,7 +151,7 @@ public class ParallelScavengeEvent extends ParallelCollector
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC(--)? (\\("
             + TRIGGER + "\\) )?(--)?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
-            + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(ParallelScavengeEvent.REGEX);
 
@@ -165,6 +177,10 @@ public class ParallelScavengeEvent extends ParallelCollector
             int totalAllocation = Integer.parseInt(matcher.group(23));
             oldAllocation = totalAllocation - youngAvailable;
             duration = JdkMath.convertSecsToMillis(matcher.group(24)).intValue();
+            if (matcher.group(27) != null) {
+                timeUser = JdkMath.convertSecsToCentos(matcher.group(28)).intValue();
+                timeReal = JdkMath.convertSecsToCentos(matcher.group(29)).intValue();
+            }
         }
     }
 
@@ -226,6 +242,18 @@ public class ParallelScavengeEvent extends ParallelCollector
 
     public String getTrigger() {
         return trigger;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public byte getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     /**

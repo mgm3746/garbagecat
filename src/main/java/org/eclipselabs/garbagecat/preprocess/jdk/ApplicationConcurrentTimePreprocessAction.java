@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.preprocess.jdk;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -76,7 +77,7 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
     /**
      * Regular expressions defining the 2nd logging line.
      */
-    private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-mark-start\\])?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+    private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-mark-start\\])?" + TimesData.REGEX + "?[ ]*$";
     private static final Pattern PATTERN2 = Pattern.compile(REGEX_LINE2);
 
     /**

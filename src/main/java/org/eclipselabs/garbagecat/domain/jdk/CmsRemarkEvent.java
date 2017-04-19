@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -169,7 +170,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
             + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP
             + ": )?(" + JdkRegEx.TIMESTAMP + ": \\[scrub string table, " + JdkRegEx.DURATION
             + "\\])?[ ]{0,1}\\[1 CMS-remark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression for JDK8 logging with {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} from
@@ -182,7 +183,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
             + ": \\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?:)? " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] (" + JdkRegEx.SIZE + "->)?"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression for class unloading enabled with <code>-XX:+CMSClassUnloadingEnabled</code> .
@@ -199,7 +200,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
             + JdkRegEx.DURATION + "\\])|(\\[scrub symbol table, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP
             + ": )?" + JdkRegEx.TIMESTAMP + ": \\[scrub string table, " + JdkRegEx.DURATION
             + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Create event from log entry.

@@ -97,6 +97,22 @@ public class JdkMath {
     }
 
     /**
+     * Convert seconds to centoseconds. For example: Convert 1.02 to 102.
+     * 
+     * @param secs
+     *            Seconds as a number with 2 decimal places.
+     * @return Centoseconds.
+     */
+    public static BigDecimal convertSecsToCentos(String secs) {
+        // BigDecimal does not accept decimal commas, only decimal periods
+        BigDecimal duration = new BigDecimal(secs.replace(",", "."));
+        duration = duration.movePointRight(2);
+        // Round down to avoid TimeWarpExceptions when events are spaced close together
+        duration = duration.setScale(0, RoundingMode.DOWN);
+        return duration;
+    }
+
+    /**
      * Add together an array of durations and convert seconds to milliseconds.
      * 
      * Useful for the CMS Remark phase, where a single event can have multiple phases and durations.
@@ -196,5 +212,41 @@ public class JdkMath {
         }
         kilobytes = kilobytes.setScale(0, RoundingMode.HALF_EVEN);
         return kilobytes.intValue();
+    }
+
+    /**
+     * Calculate the throughput between two garbage collection (GC) points. Throughput is the percent of time not spent
+     * doing GC.
+     * 
+     * @param currentDuration
+     *            Current collection time spent doing GC (milliseconds) beginning at currentTimestamp.
+     * @param currentTimestamp
+     *            Current collection timestamp (milliseconds after JVM startup).
+     * @param priorDuration
+     *            Prior collection time spent doing GC (milliseconds) beginning at priorTimestamp. 0 for the first
+     *            collection.
+     * @param priorTimestamp
+     *            Prior collection timestamp (milliseconds after JVM startup). 0 for the first collection.
+     * @return Throughput as a percent. 0 means all time was spent doing GC. 100 means no time was spent doing GC.
+     */
+
+    /**
+     * @param timeUser
+     *            The wall (clock) time in centoseconds.
+     * @param timeReal
+     *            The wall (clock) time in centoseconds.
+     * @return The ratio of user:real time rounded to the nearest whole number or -1 if real time - 0.
+     */
+    public static byte calcParallelism(final int timeUser, final int timeReal) {
+        byte calc = -1;
+        if (timeReal > 0) {
+            BigDecimal parallelism = new BigDecimal(timeUser);
+            parallelism = parallelism.divide(new BigDecimal(timeReal), 0, RoundingMode.HALF_EVEN);
+            calc = parallelism.byteValue();
+            if (parallelism.intValue() > 128) {
+                throw new RuntimeException("Parallelism out of range (0-128): " + parallelism.intValue());
+            }
+        }
+        return calc;
     }
 }

@@ -114,15 +114,6 @@ public class JdkRegEx {
     public static final String DURATION_FRACTION = "(\\d{1,4}[\\.\\,]\\d{3}\\/\\d{1,4}[\\.\\,]\\d{3}) secs";
 
     /**
-     * Times data. I'm not really sure what JVM option(s) cause this to be output, but I see it added to the end of GC
-     * events.
-     * 
-     * For example: [Times: user=0.31 sys=0.00, real=0.04 secs]
-     */
-    public static final String TIMES_BLOCK = "( \\[Times: user=\\d{1,4}[\\.\\,]\\d{2} sys=\\d{1,4}[\\.\\,]\\d{2}, "
-            + "real=(\\d{1,4}[\\.\\,]\\d{2}) secs\\])";
-
-    /**
      * Data when the CMS collector is run in incremental mode with the <code>-XX:+CMSIncrementalMode</code> JVM option.
      * In this mode, the CMS collector does not hold the processor(s) for the entire long concurrent phases but
      * periodically stops them and yields the processor back to other threads in the application. It divides the work to

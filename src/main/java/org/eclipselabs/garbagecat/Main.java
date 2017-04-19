@@ -393,6 +393,18 @@ public class Main {
 
             bufferedWriter.write("========================================" + System.getProperty("line.separator"));
 
+            // Parallelism
+            if (jvmRun.getBadParallelismCount() > 0) {
+                // Parallelism
+                bufferedWriter.write("BAD PARALLELISM:" + System.getProperty("line.separator"));
+                bufferedWriter.write("----------------------------------------" + System.getProperty("line.separator"));
+                bufferedWriter
+                        .write("# Events: " + jvmRun.getBadParallelismCount() + System.getProperty("line.separator"));
+                bufferedWriter.write("Worst Event: " + jvmRun.getBaddestParallelismEvent().getLogEntry()
+                        + System.getProperty("line.separator"));
+                bufferedWriter.write("========================================" + System.getProperty("line.separator"));
+            }
+
             // Analysis
             List<Analysis> analysis = jvmRun.getAnalysis();
             if (!analysis.isEmpty()) {

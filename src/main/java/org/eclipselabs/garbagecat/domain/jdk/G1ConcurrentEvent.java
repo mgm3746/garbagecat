@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -114,7 +115,7 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent {
             + ": )?(: )?\\[GC concurrent-(((root-region-scan|mark|cleanup)-(start|end|abort|reset-for-overflow))"
             + "|string-deduplication)(\\])?(,)?( " + JdkRegEx.DURATION + ")?(\\])?( " + JdkRegEx.SIZE_G1 + "->"
             + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\))?(, avg " + JdkRegEx.PERCENT + ", " + JdkRegEx.DURATION
-            + "\\])?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\])?" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 

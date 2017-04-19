@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.preprocess.jdk;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -77,7 +78,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
      * Regular expressions defining the 2nd logging line.
      */
     private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION
-            + "\\])?" + JdkRegEx.TIMES_BLOCK + "[ ]*$";
+            + "\\])?" + TimesData.REGEX + "[ ]*$";
     private static final Pattern PATTERN2 = Pattern.compile(REGEX_LINE2);
 
     /**

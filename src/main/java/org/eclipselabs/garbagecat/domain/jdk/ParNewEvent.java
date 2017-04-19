@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
+import org.eclipselabs.garbagecat.domain.ParallelCollection;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
@@ -89,7 +91,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class ParNewEvent extends CmsIncrementalModeCollector
-        implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData {
+        implements BlockingEvent, YoungCollection, ParallelCollection, YoungData, OldData, TriggerData, TimesData {
 
     /**
      * Trigger(s) regular expression(s).
@@ -106,7 +108,7 @@ public class ParNewEvent extends CmsIncrementalModeCollector
             + ": )?(" + JdkRegEx.TIMESTAMP + ": )?\\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(ParNewEvent.REGEX);
     /**
@@ -160,6 +162,16 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     private String trigger;
 
     /**
+     * The time of all threads added together in centoseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The wall (clock) time in centoseconds.
+     */
+    private int timeReal;
+
+    /**
      * Create event from log entry.
      * 
      * @param logEntry
@@ -185,6 +197,10 @@ public class ParNewEvent extends CmsIncrementalModeCollector
                 super.setIncrementalMode(true);
             } else {
                 super.setIncrementalMode(false);
+            }
+            if (matcher.group(61) != null) {
+                timeUser = JdkMath.convertSecsToCentos(matcher.group(62)).intValue();
+                timeReal = JdkMath.convertSecsToCentos(matcher.group(63)).intValue();
             }
         }
     }
@@ -247,6 +263,18 @@ public class ParNewEvent extends CmsIncrementalModeCollector
 
     public String getTrigger() {
         return trigger;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public byte getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     /**

@@ -21,6 +21,7 @@ import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermCollection;
 import org.eclipselabs.garbagecat.domain.PermData;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
@@ -245,7 +246,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
             + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")? " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + "\\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION
-            + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression defining the logging beginning with "GC".
@@ -261,7 +262,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
             + ClassHistogramEvent.REGEX_PREPROCESSED + ")?( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)(, \\[(CMS Perm |Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\])?"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Create event from log entry.

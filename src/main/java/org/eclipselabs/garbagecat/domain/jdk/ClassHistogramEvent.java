@@ -13,6 +13,7 @@
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -95,7 +96,7 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
             /*
              * Preprocessed block as a single line
              */
-            "^" + REGEX_PREPROCESSED + JdkRegEx.TIMES_BLOCK + "?[ ]*$" };
+            "^" + REGEX_PREPROCESSED + TimesData.REGEX + "?[ ]*$" };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

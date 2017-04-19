@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 
 import junit.framework.Assert;
@@ -176,8 +177,7 @@ public class TestJdkRegEx extends TestCase {
 
     public void testTimesBlock4Digits() {
         String timesBlock = " [Times: user=2889.80 sys=2.42, real=2891.01 secs]";
-        Assert.assertTrue("'" + timesBlock + "' " + "is a valid times block.",
-                timesBlock.matches(JdkRegEx.TIMES_BLOCK));
+        Assert.assertTrue("'" + timesBlock + "' " + "is a valid times block.", timesBlock.matches(TimesData.REGEX));
     }
 
     public void testSizeG1WholeBytes() {

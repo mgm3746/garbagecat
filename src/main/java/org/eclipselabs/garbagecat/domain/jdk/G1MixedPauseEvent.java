@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.ParallelCollection;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -71,7 +73,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, CombinedData, TriggerData {
+public class G1MixedPauseEvent extends G1Collector
+        implements BlockingEvent, ParallelCollection, CombinedData, TriggerData, TimesData {
 
     /**
      * Trigger(s) regular expression(s).
@@ -83,8 +86,8 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Com
      * Regular expression standard format.
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause \\(mixed\\) " + JdkRegEx.SIZE_G1
-            + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
+            + "?[ ]*$";
 
     /**
      * Regular expression preprocessed.
@@ -94,7 +97,7 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Com
             + "\\]\\[Eden: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\("
             + JdkRegEx.SIZE_G1 + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: "
             + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -132,6 +135,16 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Com
     private String trigger;
 
     /**
+     * The time of all threads added together in centoseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The wall (clock) time in centoseconds.
+     */
+    private int timeReal;
+
+    /**
      * Create event from log entry.
      * 
      * @param logEntry
@@ -150,6 +163,10 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Com
                 combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
                         matcher.group(10).charAt(0));
                 duration = JdkMath.convertSecsToMillis(matcher.group(11)).intValue();
+                if (matcher.group(14) != null) {
+                    timeUser = JdkMath.convertSecsToCentos(matcher.group(15)).intValue();
+                    timeReal = JdkMath.convertSecsToCentos(matcher.group(16)).intValue();
+                }
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
             // preprocessed format
@@ -168,6 +185,10 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Com
                 combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(44), matcher.group(46).charAt(0));
                 combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(47),
                         matcher.group(49).charAt(0));
+                if (matcher.group(50) != null) {
+                    timeUser = JdkMath.convertSecsToCentos(matcher.group(51)).intValue();
+                    timeReal = JdkMath.convertSecsToCentos(matcher.group(52)).intValue();
+                }
             }
         }
     }
@@ -218,6 +239,18 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Com
 
     public String getTrigger() {
         return trigger;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public byte getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     /**

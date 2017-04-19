@@ -21,6 +21,7 @@ import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.PermCollection;
 import org.eclipselabs.garbagecat.domain.PermData;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -77,7 +78,7 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
      */
     private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC \\((" + JdkRegEx.TRIGGER_SYSTEM_GC
             + ")\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
     /**
      * Regular expression preprocessed with G1 details.
      */
@@ -90,7 +91,7 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
             + JdkRegEx.SIZE_G1 + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: "
             + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
             + "\\)\\](, \\[(Perm|Metaspace): " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)\\])?" + JdkRegEx.TIMES_BLOCK + "?[ ]*$";
+            + "\\)\\])?" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

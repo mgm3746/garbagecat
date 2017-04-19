@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -192,7 +193,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[CMS)?)(( CMS: abort preclean due to time )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[CMS-concurrent-(abortable-preclean|mark|sweep|preclean|reset): " + JdkRegEx.DURATION_FRACTION
-            + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+            + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Regular expression for retained beginning PAR_NEW mixed with FLS_STATISTICS.
@@ -230,7 +231,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)[ ]{0,1})?(" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[CMS)((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+            + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD bailing out collection.
@@ -282,7 +283,7 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 233307.273: [CMS-concurrent-mark: 16.547/16.547 secs]
      */
     private static final String REGEX_RETAIN_MIDDLE_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+            + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Middle line when mixed serial and concurrent logging.
@@ -295,7 +296,7 @@ public class CmsPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED = "^((: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?" + JdkRegEx.TIMESTAMP
             + ": \\[CMS)(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark|sweep): "
-            + JdkRegEx.DURATION_FRACTION + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+            + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Middle line when mixed PAR_NEW and concurrent logging.
@@ -312,7 +313,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP
             + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS)?)((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark): " + JdkRegEx.DURATION_FRACTION + "\\]"
-            + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+            + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Middle line PAR_NEW with FLS_STATISTICS
@@ -376,8 +377,7 @@ public class CmsPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_MIDDLE_CMS_REMARK = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[GC (\\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\))?  " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
-            + "?)[ ]*$";
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Regular expression for retained end.
@@ -416,14 +416,13 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])? (" + JdkRegEx.SIZE + "->)?"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(, \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION
-            + "\\]" + JdkRegEx.TIMES_BLOCK + "?)[ ]*$";
+            + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
      * multiple lines. Check the TOKEN to see if in the middle of preprocessing an event that spans multiple lines.
      */
-    private static final String REGEX_RETAIN_DURATION = "(, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
-            + "?)[ ]*";
+    private static final String REGEX_RETAIN_DURATION = "(, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*";
 
     /**
      * Regular expression for PAR_NEW with extraneous prefix.
@@ -432,8 +431,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             + ": \\[ParNew)((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC \\("
             + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\) " + JdkRegEx.TIMESTAMP + ": \\[ParNew: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMES_BLOCK
-            + "?)[ ]*$";
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
