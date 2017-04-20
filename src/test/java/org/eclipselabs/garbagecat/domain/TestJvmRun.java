@@ -469,7 +469,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("JVM run duration not correct.", 31703, jvmRun.getJvmRunDuration());
         Assert.assertEquals("GC throughput not correct.", 93, jvmRun.getGcThroughput());
         Assert.assertEquals("Stopped time throughput not correct.", 94, jvmRun.getStoppedTimeThroughput());
-        Assert.assertEquals("Bad parallelism event count not correct.", 1, jvmRun.getBadParallelismCount());
+        Assert.assertEquals("Bad parallelism event count not correct.", 1, jvmRun.getLowParallelismCount());
     }
 
     /**
@@ -535,7 +535,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("Stopped time throughput not correct.", 4, jvmRun.getStoppedTimeThroughput());
         Assert.assertFalse(Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO));
-        Assert.assertEquals("Bad parallelism event count not correct.", 12, jvmRun.getBadParallelismCount());
+        Assert.assertEquals("Bad parallelism event count not correct.", 12, jvmRun.getLowParallelismCount());
     }
 
     /**

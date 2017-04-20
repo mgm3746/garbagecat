@@ -394,13 +394,14 @@ public class Main {
             bufferedWriter.write("========================================" + System.getProperty("line.separator"));
 
             // Parallelism
-            if (jvmRun.getBadParallelismCount() > 0) {
+            if (jvmRun.getLowParallelismCount() > 0) {
                 // Parallelism
-                bufferedWriter.write("LOW PARALLELISM:" + System.getProperty("line.separator"));
+                bufferedWriter.write("PARALLELISM:" + System.getProperty("line.separator"));
                 bufferedWriter.write("----------------------------------------" + System.getProperty("line.separator"));
+                bufferedWriter.write("# Events: " + jvmRun.getParallelCount() + System.getProperty("line.separator"));
                 bufferedWriter
-                        .write("# Events: " + jvmRun.getBadParallelismCount() + System.getProperty("line.separator"));
-                bufferedWriter.write("Worst Event: " + jvmRun.getBaddestParallelismEvent().getLogEntry()
+                        .write("# Low: " + jvmRun.getLowParallelismCount() + System.getProperty("line.separator"));
+                bufferedWriter.write("Worst Low Event: " + jvmRun.getWorstLowParallelismEvent().getLogEntry()
                         + System.getProperty("line.separator"));
                 bufferedWriter.write("========================================" + System.getProperty("line.separator"));
             }

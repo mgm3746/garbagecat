@@ -161,14 +161,19 @@ public class JvmRun {
     private String lastLogLineUnprocessed;
 
     /**
-     * The <code>ParallelCollection</code> event with the worst "bad" parallelism (0-1).
+     * Number of <code>ParallelCollection</code> events.
      */
-    private LogEvent baddestParallelismEvent;
+    private long parallelCount;
 
     /**
-     * The number of <code>ParallelCollection</code> with "bad" parallelism (0-1).
+     * Number of <code>ParallelCollection</code> with "low" parallelism.
      */
-    private long badParallelismCount;
+    private long lowParallelismCount;
+
+    /**
+     * <code>ParallelCollection</code> event with the lowest "low" parallelism.
+     */
+    private LogEvent worstLowParallelismEvent;
 
     /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
@@ -379,20 +384,28 @@ public class JvmRun {
         this.lastLogLineUnprocessed = lastLogLineUnprocessed;
     }
 
-    public LogEvent getBaddestParallelismEvent() {
-        return baddestParallelismEvent;
+    public long getParallelCount() {
+        return parallelCount;
     }
 
-    public void setBaddestParallelismEvent(LogEvent baddestParallelismEvent) {
-        this.baddestParallelismEvent = baddestParallelismEvent;
+    public void setParallelCount(long parallelCount) {
+        this.parallelCount = parallelCount;
     }
 
-    public long getBadParallelismCount() {
-        return badParallelismCount;
+    public long getLowParallelismCount() {
+        return lowParallelismCount;
     }
 
-    public void setBadParallelismCount(long badParallelismCount) {
-        this.badParallelismCount = badParallelismCount;
+    public void setLowParallelismCount(long lowParallelismCount) {
+        this.lowParallelismCount = lowParallelismCount;
+    }
+
+    public LogEvent getWorstLowParallelismEvent() {
+        return worstLowParallelismEvent;
+    }
+
+    public void setWorstLowParallelismEvent(LogEvent worstLowParallelismEvent) {
+        this.worstLowParallelismEvent = worstLowParallelismEvent;
     }
 
     /**

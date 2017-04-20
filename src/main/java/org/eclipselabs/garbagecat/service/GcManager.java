@@ -605,19 +605,20 @@ public class GcManager {
                         }
                     }
 
-                    // 16) Bad parallelism (0-1)
+                    // 16) Low parallelism (> 0, <= 1)
                     if (event instanceof ParallelCollection && event instanceof TimesData) {
+                        jvmDao.setParallelCount(jvmDao.getParallelCount() + 1);
                         if (((TimesData) event).getParallelism() > 0 && ((TimesData) event).getParallelism() <= 1) {
-                            // bad parallelism
-                            jvmDao.setBadParallelismCount(jvmDao.getBadParallelismCount() + 1);
-                            if (jvmDao.getBaddestParallelismEvent() == null) {
-                                jvmDao.setBaddestParallelismEvent(event);
+                            // low parallelism
+                            jvmDao.setLowParallelismCount(jvmDao.getLowParallelismCount() + 1);
+                            if (jvmDao.getWorstLowParallelismEvent() == null) {
+                                jvmDao.setWorstLowParallelismEvent(event);
                             } else {
                                 if (((TimesData) event)
-                                        .getParallelism() < ((TimesData) jvmDao.getBaddestParallelismEvent())
+                                        .getParallelism() < ((TimesData) jvmDao.getWorstLowParallelismEvent())
                                                 .getParallelism()) {
-                                    // Update baddest
-                                    jvmDao.setBaddestParallelismEvent(event);
+                                    // Update lowest "low"
+                                    jvmDao.setWorstLowParallelismEvent(event);
                                 }
                             }
                         }
@@ -821,8 +822,9 @@ public class GcManager {
         jvmRun.setCollectorFamiles(jvmDao.getCollectorFamilies());
         jvmRun.setAnalysis(jvmDao.getAnalysis());
         jvmRun.setBottlenecks(getBottlenecks(jvm, throughputThreshold));
-        jvmRun.setBaddestParallelismEvent(jvmDao.getBaddestParallelismEvent());
-        jvmRun.setBadParallelismCount(jvmDao.getBadParallelismCount());
+        jvmRun.setParallelCount(jvmDao.getParallelCount());
+        jvmRun.setLowParallelismCount(jvmDao.getLowParallelismCount());
+        jvmRun.setWorstLowParallelismEvent(jvmDao.getWorstLowParallelismEvent());
         jvmRun.doAnalysis();
         return jvmRun;
     }

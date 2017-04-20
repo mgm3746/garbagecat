@@ -144,14 +144,19 @@ public class JvmDao {
     private long swapFree;
 
     /**
-     * The <code>ParallelCollection</code> event with the worst "bad" parallelism (0-1).
+     * Number of <code>ParallelCollection</code> events.
      */
-    private LogEvent baddestParallelismEvent;
+    private long parallelCount;
 
     /**
-     * The number of <code>ParallelCollection</code> with "bad" parallelism (0-1).
+     * Number of <code>ParallelCollection</code> with "low" parallelism.
      */
-    private long badParallelismCount;
+    private long lowParallelismCount;
+
+    /**
+     * <code>ParallelCollection</code> event with the lowest "low" parallelism.
+     */
+    private LogEvent worstLowParallelismEvent;
 
     public JvmDao() {
         try {
@@ -349,33 +354,48 @@ public class JvmDao {
     }
 
     /**
-     * @return The worst "bad" (0-1) parallelism event.
+     * @return The number of <code>ParallelCollection</code> events.
      */
-    public LogEvent getBaddestParallelismEvent() {
-        return baddestParallelismEvent;
+    public long getParallelCount() {
+        return parallelCount;
     }
 
     /**
-     * @param baddestParallelismEvent
-     *            The <code>ParallelCollection</code> with the worst "bad" (0-1) parallelism.
+     * @param parallelCount
+     *            The number of <code>ParallelCollection</code> events.
      */
-    public void setBaddestParallelismEvent(LogEvent baddestParallelismEvent) {
-        this.baddestParallelismEvent = baddestParallelismEvent;
+    public void setParallelCount(long parallelCount) {
+        this.parallelCount = parallelCount;
     }
 
     /**
-     * @return The number of "bad" (0-1) parallelism events.
+     * @return The number of "low" parallelism events.
      */
-    public long getBadParallelismCount() {
-        return badParallelismCount;
+    public long getLowParallelismCount() {
+        return lowParallelismCount;
     }
 
     /**
-     * @param badParallelismCount
-     *            The number of "bad" (0-1) parallelism events.
+     * @param lowParallelismCount
+     *            The number of "low" parallelism events.
      */
-    public void setBadParallelismCount(long badParallelismCount) {
-        this.badParallelismCount = badParallelismCount;
+    public void setLowParallelismCount(long lowParallelismCount) {
+        this.lowParallelismCount = lowParallelismCount;
+    }
+
+    /**
+     * @return The <code>ParallelCollection</code> event with the lowest "low" parallelism.
+     */
+    public LogEvent getWorstLowParallelismEvent() {
+        return worstLowParallelismEvent;
+    }
+
+    /**
+     * @param worstLowParallelismEvent
+     *            The <code>ParallelCollection</code> event with the lowest "low" parallelism.
+     */
+    public void setWorstLowParallelismEvent(LogEvent worstLowParallelismEvent) {
+        this.worstLowParallelismEvent = worstLowParallelismEvent;
     }
 
     /**
