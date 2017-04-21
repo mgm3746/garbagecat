@@ -469,7 +469,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("JVM run duration not correct.", 31703, jvmRun.getJvmRunDuration());
         Assert.assertEquals("GC throughput not correct.", 93, jvmRun.getGcThroughput());
         Assert.assertEquals("Stopped time throughput not correct.", 94, jvmRun.getStoppedTimeThroughput());
-        Assert.assertEquals("Bad parallelism event count not correct.", 1, jvmRun.getLowParallelismCount());
+        Assert.assertEquals("Low parallelism event count not correct.", 0, jvmRun.getLowParallelismCount());
     }
 
     /**
@@ -509,7 +509,7 @@ public class TestJvmRun extends TestCase {
     /**
      * Test summary stats with batching.
      */
-    public void testStopedTime() {
+    public void testStoppedTime() {
 
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset103.txt");
@@ -535,7 +535,7 @@ public class TestJvmRun extends TestCase {
         Assert.assertEquals("Stopped time throughput not correct.", 4, jvmRun.getStoppedTimeThroughput());
         Assert.assertFalse(Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO));
-        Assert.assertEquals("Bad parallelism event count not correct.", 12, jvmRun.getLowParallelismCount());
+        Assert.assertEquals("Low parallelism event count not correct.", 1, jvmRun.getLowParallelismCount());
     }
 
     /**

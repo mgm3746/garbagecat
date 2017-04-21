@@ -71,6 +71,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.ParallelPreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
+import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
@@ -605,11 +606,10 @@ public class GcManager {
                         }
                     }
 
-                    // 16) Low parallelism (> 0, <= 1)
+                    // 16) Low parallelism
                     if (event instanceof ParallelCollection && event instanceof TimesData) {
                         jvmDao.setParallelCount(jvmDao.getParallelCount() + 1);
-                        if (((TimesData) event).getParallelism() > 0 && ((TimesData) event).getParallelism() <= 1) {
-                            // low parallelism
+                        if (JdkMath.isLowParallelism(((TimesData) event).getParallelism())) {
                             jvmDao.setLowParallelismCount(jvmDao.getLowParallelismCount() + 1);
                             if (jvmDao.getWorstLowParallelismEvent() == null) {
                                 jvmDao.setWorstLowParallelismEvent(event);

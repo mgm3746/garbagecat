@@ -401,7 +401,7 @@ public class Main {
                 bufferedWriter.write("# Events: " + jvmRun.getParallelCount() + System.getProperty("line.separator"));
                 bufferedWriter
                         .write("# Low: " + jvmRun.getLowParallelismCount() + System.getProperty("line.separator"));
-                bufferedWriter.write("Worst Low Event: " + jvmRun.getWorstLowParallelismEvent().getLogEntry()
+                bufferedWriter.write("Lowest Event: " + jvmRun.getWorstLowParallelismEvent().getLogEntry()
                         + System.getProperty("line.separator"));
                 bufferedWriter.write("========================================" + System.getProperty("line.separator"));
             }

@@ -235,18 +235,26 @@ public class JdkMath {
      *            The wall (clock) time in centoseconds.
      * @param timeReal
      *            The wall (clock) time in centoseconds.
-     * @return The ratio of user:real time rounded to the nearest whole number or -1 if real time - 0.
+     * @return The ratio of user:real time rounded up the the nearest whole number or -1 if real time = 0.
      */
     public static byte calcParallelism(final int timeUser, final int timeReal) {
         byte calc = -1;
         if (timeReal > 0) {
             BigDecimal parallelism = new BigDecimal(timeUser);
-            parallelism = parallelism.divide(new BigDecimal(timeReal), 0, RoundingMode.HALF_EVEN);
+            parallelism = parallelism.divide(new BigDecimal(timeReal), 0, RoundingMode.CEILING);
             calc = parallelism.byteValue();
             if (parallelism.intValue() > 128) {
                 throw new RuntimeException("Parallelism out of range (0-128): " + parallelism.intValue());
             }
         }
         return calc;
+    }
+
+    /**
+     * @return True if the parallelism is "low", false otherwise. Low parallelism is &gt; 0 and &lt;= 1. In other words,
+     *         the parallel collection performance is serial (single-threaded) or less.
+     */
+    public static boolean isLowParallelism(byte parallelism) {
+        return (parallelism > 0 && parallelism <= 1);
     }
 }

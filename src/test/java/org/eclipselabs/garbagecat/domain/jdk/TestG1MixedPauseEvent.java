@@ -131,7 +131,7 @@ public class TestG1MixedPauseEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 61, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 43, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 6, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 7, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 8, event.getParallelism());
     }
 
     public void testLogLinePreprocessedWithDatestamp() {

@@ -904,7 +904,7 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
-        Assert.assertEquals("Bad parallelism event count not correct.", 1, jvmRun.getLowParallelismCount());
+        Assert.assertEquals("Low parallelism event count not correct.", 1, jvmRun.getLowParallelismCount());
     }
 
     /**
