@@ -10,6 +10,19 @@ Parses Java garbage collection logging and does analysis to support JVM tuning a
 
 >-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime
 
+## Installation ##
+
+### Fedora 
+
+```
+# dnf copr enable bostrt/garbagecat
+# dnf install garbagecat
+```
+
+### RHEL 7
+
+More to come after https://bugzilla.redhat.com/show_bug.cgi?id=1429831 is completed. For now, Drop in the YUM repo file into your /etc/yum/repos.d/. Here's the repo file for [RHEL 7](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-7/bostrt-garbagecat-epel-7.repo).
+
 ## Building ##
 
 Maven 2.2 is required. Download the latest Maven 2.2 (2.2.1): http://maven.apache.org/download.html
