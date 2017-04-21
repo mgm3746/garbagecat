@@ -49,11 +49,11 @@ mvn javadoc:javadoc
 java -jar garbagecat-1.0.0.jar --help
 usage: garbagecat [OPTION]... [FILE]
  -h,--help                  help
- -o,--options <arg>         JVM options used during JVM run 
+ -o,--options &lt;arg&gt;         JVM options used during JVM run 
  -p,--preprocess            preprocessing flag
- -s,--startdatetime <arg>   JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS)
+ -s,--startdatetime &lt;arg&gt;   JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS)
                             for converting GC logging timestamps to datetime
- -t,--threshold <arg>       threshold (0-100) for throughput bottleneck
+ -t,--threshold &lt;arg&gt;       threshold (0-100) for throughput bottleneck
                             reporting
 </pre>
 <p>Notes:</p>
@@ -218,7 +218,7 @@ Last Timestamp: 2500548254 ms
 		href="org/eclipselabs/garbagecat/domain/jdk/ParNewPromotionFailedEvent.html">PAR_NEW_PROMOTION_FAILED</a>,
 	and <a
 		href="org/eclipselabs/garbagecat/domain/jdk/CmsSerialOldEvent.html">CMS_SERIAL_OLD</a>
-	events are all concerns for similar reasons</a>.</li>
+	events are all concerns for similar reasons.</li>
 </ol>
 <p>The steps above really are all that is needed to determine the
 issue; however, following is some additional analysis to show the rest
