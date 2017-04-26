@@ -2,7 +2,7 @@ title: garbagecat
 description: Parses Java garbage collection logging and provides analysis to support JVM tuning and troubleshooting for OpenJDK and Sun JDK.
 google_analytics: 
 show_downloads: true
-theme: jekyll-theme-time-machine
+theme: jekyll-theme-minimal
 
 gems:
   - jekyll-mentions
