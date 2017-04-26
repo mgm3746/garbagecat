@@ -33,7 +33,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * This option used to only include garbage collection time, and it used to not be accurate. Therefore it was ignored.
- * However, beginning in JDK7/8, it started included stopped time for the other JVM operations performed at safepoint.
+ * However, beginning in JDK7/8, it started including stopped time for the other JVM operations performed at safepoint.
  * Therefore, it is now a required logging option to determine overall throughput and identify throughput and pause
  * issues not related to garbage collection.
  * </p>

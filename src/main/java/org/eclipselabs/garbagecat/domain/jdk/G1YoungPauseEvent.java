@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
-import org.eclipselabs.garbagecat.domain.ParallelCollection;
+import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
@@ -75,7 +75,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class G1YoungPauseEvent extends G1Collector
-        implements BlockingEvent, YoungCollection, ParallelCollection, CombinedData, TriggerData, TimesData {
+        implements BlockingEvent, YoungCollection, ParallelEvent, CombinedData, TriggerData, TimesData {
 
     /**
      * Regular expression standard format.

@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
-import org.eclipselabs.garbagecat.domain.ParallelCollection;
+import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -74,7 +74,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class G1MixedPauseEvent extends G1Collector
-        implements BlockingEvent, ParallelCollection, CombinedData, TriggerData, TimesData {
+        implements BlockingEvent, ParallelEvent, CombinedData, TriggerData, TimesData {
 
     /**
      * Trigger(s) regular expression(s).

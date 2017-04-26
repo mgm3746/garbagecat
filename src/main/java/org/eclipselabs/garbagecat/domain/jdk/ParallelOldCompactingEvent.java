@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
-import org.eclipselabs.garbagecat.domain.ParallelCollection;
+import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.PermCollection;
 import org.eclipselabs.garbagecat.domain.PermData;
 import org.eclipselabs.garbagecat.domain.TimesData;
@@ -82,7 +82,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class ParallelOldCompactingEvent extends ParallelCollector implements BlockingEvent, OldCollection,
-        PermCollection, ParallelCollection, YoungData, OldData, PermData, TriggerData, TimesData {
+        PermCollection, ParallelEvent, YoungData, OldData, PermData, TriggerData, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

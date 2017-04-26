@@ -317,6 +317,16 @@ public class Main {
                     }
                 }
                 bufferedWriter.write(System.getProperty("line.separator"));
+                // Parallelism
+                bufferedWriter.write(
+                        "# Parallel Events: " + jvmRun.getParallelCount() + System.getProperty("line.separator"));
+                bufferedWriter.write("# Parallel Events with Low Parallelism: " + jvmRun.getLowParallelismCount()
+                        + System.getProperty("line.separator"));
+                if (jvmRun.getLowParallelismCount() > 0) {
+                    bufferedWriter.write("Parallel Event with Lowest Parallelism: "
+                            + jvmRun.getWorstLowParallelismEvent().getLogEntry()
+                            + System.getProperty("line.separator"));
+                }
                 // NewRatio
                 if (jvmRun.getMaxYoungSpace() > 0 && jvmRun.getMaxOldSpace() > 0) {
                     bufferedWriter.write("NewRatio: " + jvmRun.getNewRatio() + System.getProperty("line.separator"));
@@ -392,19 +402,6 @@ public class Main {
             }
 
             bufferedWriter.write("========================================" + System.getProperty("line.separator"));
-
-            // Parallelism
-            if (jvmRun.getLowParallelismCount() > 0) {
-                // Parallelism
-                bufferedWriter.write("PARALLELISM:" + System.getProperty("line.separator"));
-                bufferedWriter.write("----------------------------------------" + System.getProperty("line.separator"));
-                bufferedWriter.write("# Events: " + jvmRun.getParallelCount() + System.getProperty("line.separator"));
-                bufferedWriter
-                        .write("# Low: " + jvmRun.getLowParallelismCount() + System.getProperty("line.separator"));
-                bufferedWriter.write("Lowest Event: " + jvmRun.getWorstLowParallelismEvent().getLogEntry()
-                        + System.getProperty("line.separator"));
-                bufferedWriter.write("========================================" + System.getProperty("line.separator"));
-            }
 
             // Analysis
             List<Analysis> analysis = jvmRun.getAnalysis();

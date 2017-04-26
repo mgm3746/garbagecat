@@ -55,6 +55,9 @@ public class TestCmsInitialMarkEvent extends TestCase {
         CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 251763, event.getTimestamp());
         Assert.assertEquals("Duration not parsed correctly.", 17, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 2, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 1, event.getParallelism());
     }
 
     public void testLogLineJdk8WithTrigger() {
@@ -66,6 +69,9 @@ public class TestCmsInitialMarkEvent extends TestCase {
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK));
         Assert.assertEquals("Duration not parsed correctly.", 15, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 6, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 3, event.getParallelism());
     }
 
     public void testLogLineDatestamp() {
@@ -77,6 +83,8 @@ public class TestCmsInitialMarkEvent extends TestCase {
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK));
         Assert.assertEquals("Duration not parsed correctly.", 9, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 3, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 3, event.getParallelism());
     }
-
 }

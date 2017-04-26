@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -62,7 +63,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEvent, CombinedData, TriggerData {
+public class G1YoungInitialMarkEvent extends G1Collector
+        implements BlockingEvent, CombinedData, TriggerData, ParallelEvent, TimesData {
 
     /**
      * Regular expressions defining the logging.
@@ -129,6 +131,16 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
     private String trigger;
 
     /**
+     * The time of all threads added together in centoseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The wall (clock) time in centoseconds.
+     */
+    private int timeReal;
+
+    /**
      * Create event from log entry.
      * 
      * @param logEntry
@@ -148,6 +160,10 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
                 combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(21)),
                         matcher.group(23).charAt(0));
                 duration = JdkMath.convertSecsToMillis(matcher.group(24)).intValue();
+                if (matcher.group(27) != null) {
+                    timeUser = JdkMath.convertSecsToCentos(matcher.group(28)).intValue();
+                    timeReal = JdkMath.convertSecsToCentos(matcher.group(29)).intValue();
+                }
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
             // preprocessed format
@@ -167,6 +183,10 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
                             matcher.group(48).charAt(0));
                     combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(49),
                             matcher.group(51).charAt(0));
+                }
+                if (matcher.group(52) != null) {
+                    timeUser = JdkMath.convertSecsToCentos(matcher.group(53)).intValue();
+                    timeReal = JdkMath.convertSecsToCentos(matcher.group(54)).intValue();
                 }
             }
         }
@@ -218,6 +238,18 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
 
     public String getTrigger() {
         return trigger;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public byte getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     /**

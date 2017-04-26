@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -132,7 +133,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class CmsRemarkEvent extends CmsIncrementalModeCollector implements BlockingEvent, TriggerData {
+public class CmsRemarkEvent extends CmsIncrementalModeCollector
+        implements BlockingEvent, TriggerData, ParallelEvent, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -159,6 +161,16 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
      * collections. The concurrent low pause collector does not allow for class unloading by default.
      */
     private boolean classUnloading;
+
+    /**
+     * The time of all threads added together in centoseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The wall (clock) time in centoseconds.
+     */
+    private int timeReal;
 
     /**
      * Regular expressions defining the logging.
@@ -221,6 +233,10 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
                 duration = JdkMath.convertSecsToMillis(matcher.group(67)).intValue();
             }
             classUnloading = false;
+            if (matcher.group(70) != null) {
+                timeUser = JdkMath.convertSecsToCentos(matcher.group(71)).intValue();
+                timeReal = JdkMath.convertSecsToCentos(matcher.group(72)).intValue();
+            }
         } else if (logEntry.matches(REGEX_PARNEW)) {
             Pattern pattern = Pattern.compile(REGEX_PARNEW);
             Matcher matcher = pattern.matcher(logEntry);
@@ -238,6 +254,10 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
                 duration = JdkMath.convertSecsToMillis(matcher.group(55)).intValue();
             }
             classUnloading = false;
+            if (matcher.group(58) != null) {
+                timeUser = JdkMath.convertSecsToCentos(matcher.group(59)).intValue();
+                timeReal = JdkMath.convertSecsToCentos(matcher.group(60)).intValue();
+            }
         } else if (logEntry.matches(REGEX_CLASS_UNLOADING)) {
             Pattern pattern = Pattern.compile(REGEX_CLASS_UNLOADING);
             Matcher matcher = pattern.matcher(logEntry);
@@ -254,6 +274,10 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
                 duration = JdkMath.convertSecsToMillis(matcher.group(136)).intValue();
             }
             classUnloading = true;
+            if (matcher.group(139) != null) {
+                timeUser = JdkMath.convertSecsToCentos(matcher.group(140)).intValue();
+                timeReal = JdkMath.convertSecsToCentos(matcher.group(141)).intValue();
+            }
         }
     }
 
@@ -295,6 +319,18 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector implements Block
 
     public boolean isClassUnloading() {
         return classUnloading;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public byte getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     /**

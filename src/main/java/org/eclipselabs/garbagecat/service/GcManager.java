@@ -32,7 +32,7 @@ import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
-import org.eclipselabs.garbagecat.domain.ParallelCollection;
+import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
@@ -607,9 +607,10 @@ public class GcManager {
                     }
 
                     // 16) Low parallelism
-                    if (event instanceof ParallelCollection && event instanceof TimesData) {
+                    if (event instanceof ParallelEvent) {
                         jvmDao.setParallelCount(jvmDao.getParallelCount() + 1);
-                        if (JdkMath.isLowParallelism(((TimesData) event).getParallelism())) {
+                        if (event instanceof TimesData
+                                && JdkMath.isLowParallelism(((TimesData) event).getParallelism())) {
                             jvmDao.setLowParallelismCount(jvmDao.getLowParallelismCount() + 1);
                             if (jvmDao.getWorstLowParallelismEvent() == null) {
                                 jvmDao.setWorstLowParallelismEvent(event);

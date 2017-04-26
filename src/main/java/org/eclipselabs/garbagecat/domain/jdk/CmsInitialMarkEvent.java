@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -53,7 +54,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, TriggerData {
+public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, TriggerData, ParallelEvent, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -74,6 +75,16 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
      * The trigger for the GC event.
      */
     private String trigger;
+
+    /**
+     * The time of all threads added together in centoseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The wall (clock) time in centoseconds.
+     */
+    private int timeReal;
 
     /**
      * Regular expressions defining the logging.
@@ -97,6 +108,10 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             trigger = matcher.group(14);
             duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+            if (matcher.group(22) != null) {
+                timeUser = JdkMath.convertSecsToCentos(matcher.group(23)).intValue();
+                timeReal = JdkMath.convertSecsToCentos(matcher.group(24)).intValue();
+            }
         }
     }
 
@@ -134,6 +149,18 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
 
     public String getTrigger() {
         return trigger;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public byte getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     /**
