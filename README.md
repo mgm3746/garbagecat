@@ -101,11 +101,11 @@ Notes:
 Throughput less than 90%
 ----------------------------------------
 ...
-2017-01-12T05:17:38.064-0500: 2163.994: [GC remark, 0.0614813 secs] [Times: user=1.48 sys=0.01, real=0.06 secs]
-2017-01-12T05:17:38.126-0500: 2164.057: [GC cleanup 24G->23G(42G), 0.0188102 secs] [Times: user=0.49 sys=0.00, real=0.02 secs]
+2017-01-12T05:17:38.064-0500: 2163.994: \[GC remark, 0.0614813 secs] \[Times: user=1.48 sys=0.01, real=0.06 secs]
+2017-01-12T05:17:38.126-0500: 2164.057: \[GC cleanup 24G->23G(42G), 0.0188102 secs] \[Times: user=0.49 sys=0.00, real=0.02 secs]
 ...
-2017-01-12T05:21:43.121-0500: 2409.051: [GC remark, 0.0317641 secs] [Times: user=0.81 sys=0.00, real=0.03 secs]
-2017-01-12T05:21:43.153-0500: 2409.084: [GC cleanup 21G->21G(42G), 0.0174042 secs] [Times: user=0.45 sys=0.00, real=0.02 secs]
+2017-01-12T05:21:43.121-0500: 2409.051: \[GC remark, 0.0317641 secs] \[Times: user=0.81 sys=0.00, real=0.03 secs]
+2017-01-12T05:21:43.153-0500: 2409.084: \[GC cleanup 21G->21G(42G), 0.0174042 secs] \[Times: user=0.45 sys=0.00, real=0.02 secs]
 ...
 ========================================
 JVM:
