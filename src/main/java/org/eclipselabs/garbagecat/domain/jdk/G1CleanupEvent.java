@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -62,7 +63,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1CleanupEvent extends G1Collector implements BlockingEvent, CombinedData {
+public class G1CleanupEvent extends G1Collector implements BlockingEvent, ParallelEvent, CombinedData, TimesData {
 
     /**
      * Regular expressions defining the logging.
@@ -103,6 +104,16 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Combin
     private int combinedAvailable;
 
     /**
+     * The time of all threads added together in centoseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The wall (clock) time in centoseconds.
+     */
+    private int timeReal;
+
+    /**
      * Create event from log entry.
      * 
      * @param logEntry
@@ -117,6 +128,10 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Combin
             combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(18).charAt(0));
             combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
             duration = JdkMath.convertSecsToMillis(matcher.group(22)).intValue();
+            if (matcher.group(25) != null) {
+                timeUser = JdkMath.convertSecsToCentos(matcher.group(26)).intValue();
+                timeReal = JdkMath.convertSecsToCentos(matcher.group(27)).intValue();
+            }
         }
     }
 
@@ -162,6 +177,18 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Combin
 
     public String getName() {
         return JdkUtil.LogEventType.G1_CLEANUP.toString();
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public byte getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     /**

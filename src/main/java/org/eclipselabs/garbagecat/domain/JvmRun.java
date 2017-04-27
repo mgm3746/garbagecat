@@ -256,7 +256,7 @@ public class JvmRun {
         return maxGcPause;
     }
 
-    public void setMaxPause(int maxPause) {
+    public void setMaxGcPause(int maxPause) {
         this.maxGcPause = maxPause;
     }
 
@@ -364,8 +364,12 @@ public class JvmRun {
         this.analysis = analysis;
     }
 
-    public void setCollectorFamiles(List<CollectorFamily> collectorFamilies) {
+    public void setCollectorFamilies(List<CollectorFamily> collectorFamilies) {
         this.collectorFamilies = collectorFamilies;
+    }
+
+    public List<CollectorFamily> getCollectorFamilies() {
+        return collectorFamilies;
     }
 
     public boolean isPreprocessed() {

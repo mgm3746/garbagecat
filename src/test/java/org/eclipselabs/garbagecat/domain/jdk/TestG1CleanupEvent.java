@@ -23,6 +23,12 @@ import junit.framework.TestCase;
  */
 public class TestG1CleanupEvent extends TestCase {
 
+    public void testIsBlocking() {
+        String logLine = "2972.698: [GC cleanup 13G->12G(30G), 0.0358748 secs]";
+        Assert.assertTrue(JdkUtil.LogEventType.G1_CLEANUP.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
     public void testCleanup() {
         String logLine = "18.650: [GC cleanup 297M->236M(512M), 0.0014690 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".",
@@ -53,9 +59,20 @@ public class TestG1CleanupEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 35, event.getDuration());
     }
 
-    public void testIsBlocking() {
-        String logLine = "2972.698: [GC cleanup 13G->12G(30G), 0.0358748 secs]";
-        Assert.assertTrue(JdkUtil.LogEventType.G1_CLEANUP.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    public void testLogLineWithTimesData() {
+        String logLine = "2016-11-08T09:36:22.388-0800: 35290.131: [GC cleanup 5252M->3592M(12G), 0.0154490 secs] "
+                + "[Times: user=0.19 sys=0.00, real=0.01 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".",
+                G1CleanupEvent.match(logLine));
+        G1CleanupEvent event = new G1CleanupEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 35290131, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 5252 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 3592 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 12 * 1024 * 1024,
+                event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 15, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 19, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 19, event.getParallelism());
     }
 }

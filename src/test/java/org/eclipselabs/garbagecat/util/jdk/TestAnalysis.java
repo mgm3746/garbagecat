@@ -456,7 +456,7 @@ public class TestAnalysis extends TestCase {
         jvmRun.setEventTypes(eventTypes);
         List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
         collectorFamilies.add(CollectorFamily.G1);
-        jvmRun.setCollectorFamiles(collectorFamilies);
+        jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT));
@@ -475,7 +475,7 @@ public class TestAnalysis extends TestCase {
         jvmRun.setEventTypes(eventTypes);
         List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
         collectorFamilies.add(CollectorFamily.CMS);
-        jvmRun.setCollectorFamiles(collectorFamilies);
+        jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT));
@@ -596,7 +596,7 @@ public class TestAnalysis extends TestCase {
         jvmRun.setEventTypes(eventTypes);
         List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
         collectorFamilies.add(CollectorFamily.CMS);
-        jvmRun.setCollectorFamiles(collectorFamilies);
+        jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
@@ -654,7 +654,7 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         List<CollectorFamily> collectors = new ArrayList<CollectorFamily>();
         collectors.add(JdkUtil.CollectorFamily.PARALLEL);
-        jvmRun.setCollectorFamiles(collectors);
+        jvmRun.setCollectorFamilies(collectors);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.INFO_MAX_TENURING_OVERRIDE));
@@ -667,7 +667,7 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         List<CollectorFamily> collectors = new ArrayList<CollectorFamily>();
         collectors.add(JdkUtil.CollectorFamily.CMS);
-        jvmRun.setCollectorFamiles(collectors);
+        jvmRun.setCollectorFamilies(collectors);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.INFO_MAX_TENURING_OVERRIDE));
@@ -680,7 +680,7 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         List<CollectorFamily> collectors = new ArrayList<CollectorFamily>();
         collectors.add(JdkUtil.CollectorFamily.G1);
-        jvmRun.setCollectorFamiles(collectors);
+        jvmRun.setCollectorFamilies(collectors);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.INFO_MAX_TENURING_OVERRIDE));
@@ -737,7 +737,7 @@ public class TestAnalysis extends TestCase {
         jvmRun.getJvm().setVersion(" JRE (1.8.0_20-b32) ");
         List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
         collectorFamilies.add(CollectorFamily.G1);
-        jvmRun.setCollectorFamiles(collectorFamilies);
+        jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));
@@ -770,7 +770,7 @@ public class TestAnalysis extends TestCase {
         jvmRun.getJvm().setVersion(" JRE (1.8.0_20-b32) ");
         List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
         collectorFamilies.add(CollectorFamily.CMS);
-        jvmRun.setCollectorFamiles(collectorFamilies);
+        jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
         Assert.assertFalse(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis incorrectly identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));
@@ -789,7 +789,7 @@ public class TestAnalysis extends TestCase {
         jvmRun.getJvm().setVersion(" JRE (1.8.0_20-b32) ");
         List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
         collectorFamilies.add(CollectorFamily.G1);
-        jvmRun.setCollectorFamiles(collectorFamilies);
+        jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));

@@ -810,7 +810,7 @@ public class GcManager {
         jvmRun.setMaxHeapOccupancy(jvmDao.getMaxHeapOccupancy());
         jvmRun.setMaxPermSpace(jvmDao.getMaxPermSpace());
         jvmRun.setMaxPermOccupancy(jvmDao.getMaxPermOccupancy());
-        jvmRun.setMaxPause(jvmDao.getMaxGcPause());
+        jvmRun.setMaxGcPause(jvmDao.getMaxGcPause());
         jvmRun.setTotalGcPause(jvmDao.getTotalGcPause());
         jvmRun.setBlockingEventCount(jvmDao.getBlockingEventCount());
         jvmRun.setFirstStoppedEvent(jvmDao.getFirstStoppedEvent());
@@ -820,7 +820,7 @@ public class GcManager {
         jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
         jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
         jvmRun.setEventTypes(jvmDao.getEventTypes());
-        jvmRun.setCollectorFamiles(jvmDao.getCollectorFamilies());
+        jvmRun.setCollectorFamilies(jvmDao.getCollectorFamilies());
         jvmRun.setAnalysis(jvmDao.getAnalysis());
         jvmRun.setBottlenecks(getBottlenecks(jvm, throughputThreshold));
         jvmRun.setParallelCount(jvmDao.getParallelCount());

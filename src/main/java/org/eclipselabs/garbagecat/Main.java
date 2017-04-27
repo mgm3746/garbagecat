@@ -317,15 +317,17 @@ public class Main {
                     }
                 }
                 bufferedWriter.write(System.getProperty("line.separator"));
-                // Parallelism
-                bufferedWriter.write(
-                        "# Parallel Events: " + jvmRun.getParallelCount() + System.getProperty("line.separator"));
-                bufferedWriter.write("# Parallel Events with Low Parallelism: " + jvmRun.getLowParallelismCount()
-                        + System.getProperty("line.separator"));
-                if (jvmRun.getLowParallelismCount() > 0) {
-                    bufferedWriter.write("Parallel Event with Lowest Parallelism: "
-                            + jvmRun.getWorstLowParallelismEvent().getLogEntry()
+                // Parallelism. Only report if we have Serial/Parallel/CMS/G1 events.
+                if (jvmRun.getCollectorFamilies() != null && jvmRun.getCollectorFamilies().size() > 0) {
+                    bufferedWriter.write(
+                            "# Parallel Events: " + jvmRun.getParallelCount() + System.getProperty("line.separator"));
+                    bufferedWriter.write("# Parallel Events with Low Parallelism: " + jvmRun.getLowParallelismCount()
                             + System.getProperty("line.separator"));
+                    if (jvmRun.getLowParallelismCount() > 0) {
+                        bufferedWriter.write("Parallel Event with Lowest Parallelism: "
+                                + jvmRun.getWorstLowParallelismEvent().getLogEntry()
+                                + System.getProperty("line.separator"));
+                    }
                 }
                 // NewRatio
                 if (jvmRun.getMaxYoungSpace() > 0 && jvmRun.getMaxOldSpace() > 0) {
