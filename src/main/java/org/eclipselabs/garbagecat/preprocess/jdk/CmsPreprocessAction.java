@@ -217,10 +217,15 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 29.839: [GC 36.226: [ParNew
      * 
      * 182314.858: [GC 182314.859: [ParNew (promotion failed)
+     * 
+     * 2017-04-22T12:43:48.008+0100: 466904.470: [GC 466904.473: [ParNew: 516864K->516864K(516864K), 0.0001999
+     * secs]466904.473: [Class Histogram:
      */
     private static final String REGEX_RETAIN_BEGINNING_PARNEW = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC( )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(("
-            + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?)[ ]*$";
+            + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[Class Histogram:)?)[ ]*$";
 
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD mixed with CMS_CONCURRENT collection.
@@ -292,11 +297,15 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * : 917504K->917504K(917504K), 5.5887120 secs]877375.047: [CMS877378.691: [CMS-concurrent-mark: 5.714/11.380 secs]
      * [Times: user=14.72 sys=4.81, real=11.38 secs]
+     * 
+     * 471419.156: [CMS CMS: abort preclean due to time 2017-04-22T13:59:06.831+0100: 471423.282:
+     * [CMS-concurrent-abortable-preclean: 3.663/31.735 secs] [Times: user=39.81 sys=0.23, real=31.74 secs]
      */
     private static final String REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED = "^((: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS)(" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark|sweep): "
-            + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+            + ": \\[CMS)(( CMS: abort preclean due to time )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]"
+            + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Middle line when mixed PAR_NEW and concurrent logging.
@@ -421,6 +430,8 @@ public class CmsPreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
      * multiple lines. Check the TOKEN to see if in the middle of preprocessing an event that spans multiple lines.
+     * 
+     * , 27.5589374 secs]
      */
     private static final String REGEX_RETAIN_DURATION = "(, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*";
 

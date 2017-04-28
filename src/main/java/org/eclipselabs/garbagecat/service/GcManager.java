@@ -68,6 +68,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ParallelPreprocessAction;
+import org.eclipselabs.garbagecat.preprocess.jdk.SerialPreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
@@ -339,6 +340,12 @@ public class GcManager {
             }
         } else if (G1PreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
             G1PreprocessAction action = new G1PreprocessAction(priorLogLine, currentLogLine, nextLogLine,
+                    entangledLogLines, context);
+            if (action.getLogEntry() != null) {
+                preprocessedLogLine = action.getLogEntry();
+            }
+        } else if (SerialPreprocessAction.match(currentLogLine)) {
+            SerialPreprocessAction action = new SerialPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                     entangledLogLines, context);
             if (action.getLogEntry() != null) {
                 preprocessedLogLine = action.getLogEntry();

@@ -1,0 +1,29 @@
+2017-04-22T13:58:35.287+0100: 471391.741: [GC 471391.743: [ParNew (promotion failed)
+Desired survivor size 14391704 bytes, new threshold 2 (max 32)
+- age   1:   10091512 bytes,   10091512 total
+- age   2:    5161504 bytes,   15253016 total
+: 516864K->516864K(516864K), 2.1875738 secs]471393.931: [Class Histogram:
+ num     #instances         #bytes  class name
+----------------------------------------------
+   1:       2050241     4701812112  [Ljava.lang.Object;
+   2:       3842390      388061760  [C
+   3:       6887426      220397632  org.apache.cxf.phase.PhaseInterceptorChain$InterceptorHolder
+32179:             1             16  com.example.SomeClass
+32180:             1             16  com.example.AnotherClass
+32181:             1             16  org.jboss.remoting3.security.InetAddressPrincipal
+Total      44540060     7115953848
+, 25.2253758 secs]
+471419.156: [CMS CMS: abort preclean due to time 2017-04-22T13:59:06.831+0100: 471423.282: [CMS-concurrent-abortable-preclean: 3.663/31.735 secs] [Times: user=39.81 sys=0.23, real=31.74 secs]
+ (concurrent mode failure): 5977264K->1290167K(7331840K), 59.2834068 secs]471478.440: [Class Histogram
+ num     #instances         #bytes  class name
+----------------------------------------------
+   1:       2082654      228457736  [C
+   2:        992380      203033696  [Ljava.lang.Object;
+   3:        177448      126554176  [B
+   4:        667766      100731592  <constMethodKlass>
+30680:             1             16  sun.reflect.GeneratedMethodAccessor298
+30681:             1             16  sun.reflect.GeneratedMethodAccessor1259
+30682:             1             16  sun.reflect.GeneratedMethodAccessor3104
+Total      26124315     1769983592
+, 15.6352805 secs]
+ 6449326K->1290167K(7848704K), [CMS Perm : 473438K->450663K(771512K)], 102.3357902 secs] [Times: user=106.25 sys=0.21, real=102.34 secs]

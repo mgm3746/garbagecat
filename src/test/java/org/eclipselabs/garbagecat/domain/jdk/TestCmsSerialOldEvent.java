@@ -909,6 +909,31 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
+    public void testJdk6ParNewPromotionFailedConcurrentModeFailureWithClassHistogram() {
+        String logLine = "2017-04-22T13:58:35.287+0100: 471391.741: [GC 471391.743: [ParNew (promotion failed): "
+                + "516864K->516864K(516864K), 2.1875738 secs]471393.931: [Class Histogram:, 25.2253758 secs]"
+                + "471419.156: [CMS (concurrent mode failure): 5977264K->1290167K(7331840K), 59.2834068 secs]"
+                + "471478.440: [Class Histogram, 15.6352805 secs] 6449325K->1290167K(7848704K), [CMS Perm : "
+                + "473438K->450663K(771512K)], 102.3357902 secs] [Times: user=106.25 sys=0.21, real=102.34 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                CmsSerialOldEvent.match(logLine));
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
+        Assert.assertEquals("Time stamp not parsed correctly.", 471391741, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 516864, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 1290167 - 1290167, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 7848704 - 7331840, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 5977264, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 1290167, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 7331840, event.getOldSpace());
+        Assert.assertEquals("Perm begin size not parsed correctly.", 473438, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm end size not parsed correctly.", 450663, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm allocation size not parsed correctly.", 771512, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 102335, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
+    }
+
     public void testSplitParNewPromotionFailedCmsConcurrentModeFailure() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset5.txt");

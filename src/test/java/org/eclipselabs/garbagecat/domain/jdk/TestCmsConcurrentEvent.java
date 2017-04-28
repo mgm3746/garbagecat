@@ -36,9 +36,21 @@ public class TestCmsConcurrentEvent extends TestCase {
                 CmsConcurrentEvent.match(logLine));
     }
 
+    public void testMarkStartWithOtherLoggingAppended() {
+        String logLine = "251.781: [CMS-concurrent-mark-start]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
     public void testMark() {
         String logLine = "252.707: [CMS-concurrent-mark: 0.796/0.926 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testMarkWithOtherLoggingAppended() {
+        String logLine = "252.707: [CMS-concurrent-mark: 0.796/0.926 secs]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 CmsConcurrentEvent.match(logLine));
     }
 
@@ -49,9 +61,22 @@ public class TestCmsConcurrentEvent extends TestCase {
                 CmsConcurrentEvent.match(logLine));
     }
 
+    public void testMarkWithTimesDataWithOtherLoggingAppended() {
+        String logLine = "242107.737: [CMS-concurrent-mark: 0.443/10.257 secs] "
+                + "[Times: user=6.00 sys=0.28, real=10.26 secs]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
     public void testPrecleanStart() {
         String logLine = "252.707: [CMS-concurrent-preclean-start]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testPrecleanStartWithOtherLoggingAppended() {
+        String logLine = "252.707: [CMS-concurrent-preclean-start]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 CmsConcurrentEvent.match(logLine));
     }
 
@@ -61,15 +86,33 @@ public class TestCmsConcurrentEvent extends TestCase {
                 CmsConcurrentEvent.match(logLine));
     }
 
+    public void testPrecleanWithOtherLoggingAppended() {
+        String logLine = "252.888: [CMS-concurrent-preclean: 0.141/0.182 secs]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
     public void testAbortablePrecleanStart() {
         String logLine = "252.889: [CMS-concurrent-abortable-preclean-start]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 CmsConcurrentEvent.match(logLine));
     }
 
+    public void testAbortablePrecleanStartWithOtherLoggingAppended() {
+        String logLine = "252.889: [CMS-concurrent-abortable-preclean-start]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
     public void testAbortablePreclean() {
         String logLine = "253.102: [CMS-concurrent-abortable-preclean: 0.083/0.214 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testAbortablePrecleanWithOtherLoggingAppended() {
+        String logLine = "253.102: [CMS-concurrent-abortable-preclean: 0.083/0.214 secs]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 CmsConcurrentEvent.match(logLine));
     }
 
@@ -80,9 +123,22 @@ public class TestCmsConcurrentEvent extends TestCase {
                 CmsConcurrentEvent.match(logLine));
     }
 
+    public void testAbortPrecleanDueToTimeWithOtherLoggingAppended() {
+        String logLine = " CMS: abort preclean due to time 32633.935: "
+                + "[CMS-concurrent-abortable-preclean: 0.622/5.054 secs]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
     public void testSweepStart() {
         String logLine = "253.189: [CMS-concurrent-sweep-start]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testSweepStartWithOtherLoggingAppended() {
+        String logLine = "253.189: [CMS-concurrent-sweep-start]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 CmsConcurrentEvent.match(logLine));
     }
 
@@ -92,15 +148,33 @@ public class TestCmsConcurrentEvent extends TestCase {
                 CmsConcurrentEvent.match(logLine));
     }
 
+    public void testSweepWithOtherLoggingAppended() {
+        String logLine = "258.265: [CMS-concurrent-sweep: 4.134/5.076 secs]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
     public void testResetStart() {
         String logLine = "258.265: [CMS-concurrent-reset-start]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 CmsConcurrentEvent.match(logLine));
     }
 
+    public void testResetStartWithOtherLoggingAppended() {
+        String logLine = "258.265: [CMS-concurrent-reset-start]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
     public void testReset() {
         String logLine = "258.344: [CMS-concurrent-reset: 0.079/0.079 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testResetWithOtherLoggingAppended() {
+        String logLine = "258.344: [CMS-concurrent-reset: 0.079/0.079 secs]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 CmsConcurrentEvent.match(logLine));
     }
 
@@ -111,10 +185,26 @@ public class TestCmsConcurrentEvent extends TestCase {
                 CmsConcurrentEvent.match(logLine));
     }
 
+    public void testPrecleanConcurrentModeFailureWithOtherLoggingAppended() {
+        String logLine = "253.102: [CMS-concurrent-abortable-preclean: 0.083/0.214 secs] "
+                + "[Times: user=1.23 sys=0.02, real=0.21 secs]x";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
     public void testPrecleanConcurrentMarkSweepWithCms() {
         String logLine = "572289.495: [CMS572304.683: [CMS-concurrent-sweep: 17.692/44.143 secs] "
                 + "[Times: user=97.86 sys=1.85, real=44.14 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testConcurrentPrefixWithOtherLoggingAppended() {
+        String logLine = "2017-04-24T21:08:04.965+0100: 669960.868: [CMS-concurrent-sweep: 13.324/39.970 secs] "
+                + "[Times: user=124.31 sys=2.44, real=39.97 secs] 6200850K->1243921K(7848704K), "
+                + "[CMS Perm : 481132K->454310K(785120K)], 100.5538981 secs] "
+                + "[Times: user=100.68 sys=0.14, real=100.56 secs]";
+        Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 CmsConcurrentEvent.match(logLine));
     }
 }

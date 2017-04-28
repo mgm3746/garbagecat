@@ -116,4 +116,10 @@ public class TestClassHistogramEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
                 ClassHistogramEvent.match(logLine));
     }
+
+    public void testJdk6PreprocessedLine() {
+        String logLine = "471478.440: [Class Histogram, 15.6352805 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
+                ClassHistogramEvent.match(logLine));
+    }
 }
