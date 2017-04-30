@@ -208,8 +208,8 @@ public class CmsPreprocessAction implements PreprocessAction {
     /**
      * Regular expression for beginning CMS_SERIAL_OLD collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_SERIAL = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC "
-            + JdkRegEx.TIMESTAMP + ": \\[Class Histogram:)[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[Full GC " + JdkRegEx.TIMESTAMP + ": \\[Class Histogram:)[ ]*$";
 
     /**
      * Regular expression for beginning PAR_NEW collection.

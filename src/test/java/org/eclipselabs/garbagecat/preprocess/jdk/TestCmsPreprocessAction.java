@@ -441,6 +441,14 @@ public class TestCmsPreprocessAction extends TestCase {
                 CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
     }
 
+    public void testLogLineDateStampClassHistogramTrigger() {
+        String priorLogLine = "";
+        String logLine = "2017-04-24T21:07:32.713+0100: 669928.617: [Full GC 669928.619: [Class Histogram:";
+        String nextLogLine = "";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+    }
+
     public void testLogLineRetainMiddleClassHistogram() {
         String priorLogLine = "";
         String logLine = ": 516864K->516864K(516864K), 2.0947428 secs]182316.954: [Class Histogram: ";
