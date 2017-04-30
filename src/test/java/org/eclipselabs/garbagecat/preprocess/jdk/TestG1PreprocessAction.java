@@ -1515,8 +1515,8 @@ public class TestG1PreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CLASS_HISTOGRAM));
-        Assert.assertTrue(Analysis.WARN_PRINT_CLASS_HISTOGRAM + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM));
+        Assert.assertTrue(Analysis.WARN_CLASS_HISTOGRAM + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_CLASS_HISTOGRAM));
         // G1_FULL is caused by CLASS_HISTOGRAM
         Assert.assertFalse(Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_G1));

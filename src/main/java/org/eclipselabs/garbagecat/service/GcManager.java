@@ -537,17 +537,7 @@ public class GcManager {
                         }
                     }
 
-                    // 8) PrintClassHistogram
-                    if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM)) {
-                        if (event instanceof TriggerData) {
-                            String trigger = ((TriggerData) event).getTrigger();
-                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM)) {
-                                jvmDao.addAnalysis(Analysis.WARN_PRINT_CLASS_HISTOGRAM);
-                            }
-                        }
-                    }
-
-                    // 9) Metaspace allocation failure
+                    // 8) Metaspace allocation failure
                     if (!jvmDao.getAnalysis().contains(Analysis.ERROR_METASPACE_ALLOCATION_FAILURE)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
@@ -557,7 +547,7 @@ public class GcManager {
                         }
                     }
 
-                    // 10) JVM TI explicit gc
+                    // 9) JVM TI explicit gc
                     if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_JVMTI)) {
                         if (event instanceof TriggerData) {
                             String trigger = ((TriggerData) event).getTrigger();
@@ -568,7 +558,7 @@ public class GcManager {
                         }
                     }
 
-                    // 11) G1 evacuation failure
+                    // 10) G1 evacuation failure
                     if (event instanceof TriggerData) {
                         String trigger = ((TriggerData) event).getTrigger();
                         if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED)) {
@@ -578,7 +568,7 @@ public class GcManager {
                         }
                     }
 
-                    // 12) CMS promotion failure
+                    // 11) CMS promotion failure
                     if (event instanceof TriggerData) {
                         String trigger = ((TriggerData) event).getTrigger();
                         if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_PROMOTION_FAILED)) {
@@ -588,7 +578,7 @@ public class GcManager {
                         }
                     }
 
-                    // 13) -XX:+PrintGCCause is essential for troubleshooting G1 full GCs
+                    // 12) -XX:+PrintGCCause is essential for troubleshooting G1 full GCs
                     if (event instanceof G1FullGCEvent) {
                         String trigger = ((TriggerData) event).getTrigger();
                         if (trigger == null) {
@@ -598,13 +588,13 @@ public class GcManager {
                         }
                     }
 
-                    // 14) CMS_REMARK class unloading
+                    // 13) CMS_REMARK class unloading
                     if (event instanceof CmsRemarkEvent && !((CmsRemarkEvent) event).isClassUnloading()
                             && !jvmDao.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
                         jvmDao.addAnalysis(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
                     }
 
-                    // 15) Humongous allocation
+                    // 14) Humongous allocation
                     if (event instanceof G1Collector && event instanceof TriggerData
                             && !jvmDao.getAnalysis().contains(Analysis.INFO_G1_HUMONGOUS_ALLOCATION)) {
                         String trigger = ((TriggerData) event).getTrigger();
@@ -613,7 +603,7 @@ public class GcManager {
                         }
                     }
 
-                    // 16) Low parallelism
+                    // 15) Low parallelism
                     if (event instanceof ParallelEvent) {
                         jvmDao.setParallelCount(jvmDao.getParallelCount() + 1);
                         if (event instanceof TimesData
