@@ -263,7 +263,15 @@ public class GcManager {
             currentLogLine = action.getLogEntry();
         }
 
-        // Other preprocessing
+        /*
+         * Other preprocessing.
+         * 
+         * Check context collector type to account for common logging patterns across collector families. For example
+         * the following logging output is common to CMS and G1:
+         * 
+         * , 0.0209631 secs]
+         */
+
         if (isThrowawayEvent(currentLogLine)) {
             // Analysis
             if (!jvmDao.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING)) {
@@ -308,20 +316,16 @@ public class GcManager {
                 }
             }
             currentLogLine = null;
-        } else if (ParallelPreprocessAction.match(currentLogLine) && !context.contains(CmsPreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN)) {
+        } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+                && !context.contains(G1PreprocessAction.TOKEN) && ParallelPreprocessAction.match(currentLogLine)) {
             ParallelPreprocessAction action = new ParallelPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                     entangledLogLines, context);
             if (action.getLogEntry() != null) {
                 preprocessedLogLine = action.getLogEntry();
             }
-        } else if (CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)) {
-            /*
-             * ^^^ Verify not in the middle of G1 preprocessing. The following log line is common to both:
-             * 
-             * , 0.0209631 secs]
-             */
+        } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
+                && !context.contains(G1PreprocessAction.TOKEN)
+                && CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
             CmsPreprocessAction action = new CmsPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                     entangledLogLines, context);
             if (action.getLogEntry() != null) {
@@ -338,13 +342,16 @@ public class GcManager {
             if (action.getLogEntry() != null) {
                 preprocessedLogLine = action.getLogEntry();
             }
-        } else if (G1PreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
+        } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
+                && !context.contains(CmsPreprocessAction.TOKEN)
+                && G1PreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
             G1PreprocessAction action = new G1PreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                     entangledLogLines, context);
             if (action.getLogEntry() != null) {
                 preprocessedLogLine = action.getLogEntry();
             }
-        } else if (SerialPreprocessAction.match(currentLogLine)) {
+        } else if (!context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+                && !context.contains(G1PreprocessAction.TOKEN) && SerialPreprocessAction.match(currentLogLine)) {
             SerialPreprocessAction action = new SerialPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                     entangledLogLines, context);
             if (action.getLogEntry() != null) {
