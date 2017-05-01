@@ -106,7 +106,7 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
             + JdkRegEx.TRIGGER_CMS_INITIAL_MARK + "|" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")";
 
     /**
      * Regular expressions defining the logging.
