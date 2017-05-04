@@ -279,12 +279,12 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
             if (matcher.find()) {
                 this.timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 // If multiple triggers, use last one.
-                if (matcher.group(16) != null || matcher.group(89) != null) {
-                    this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
-                } else if (matcher.group(52) != null) {
+                if (matcher.group(52) != null) {
                     this.trigger = matcher.group(52);
                 } else if (matcher.group(50) != null) {
                     this.trigger = matcher.group(50);
+                } else if (matcher.group(16) != null || matcher.group(89) != null) {
+                    this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
                 } else if (matcher.group(14) != null) {
                     this.trigger = matcher.group(14);
                 }

@@ -899,6 +899,21 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertEquals("Log line not parsed correctly.", "669950.539: [CMS", event.getLogEntry());
     }
 
+    public void testLogLineMiddleCmsSerialOldWithDatestampMixedConcurrentSweep() {
+        String priorLogLine = "";
+        String logLine = "2017-05-03T14:47:16.910-0400: 1801.570: [CMS2017-05-03T14:47:22.416-0400: 1807.075: "
+                + "[CMS-concurrent-mark: 29.707/71.001 secs] [Times: user=121.03 sys=35.41, real=70.99 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.", "2017-05-03T14:47:16.910-0400: 1801.570: [CMS",
+                event.getLogEntry());
+    }
+
     public void testLogLineEndCmsSerialOld() {
         String priorLogLine = "";
         String logLine = " 7778348K->1168095K(7848704K), [CMS Perm : 481281K->451017K(771512K)], 123.0277354 secs] "
@@ -924,6 +939,47 @@ public class TestCmsPreprocessAction extends TestCase {
         List<String> entangledLogLines = new ArrayList<String>();
         CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
                 context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+    }
+
+    public void testLogLineBeginningParNewConcurrentModeFailureClassHistogramWithDatestamps() {
+        String priorLogLine = "";
+        String logLine = "2017-05-03T14:47:00.002-0400: 1784.661: [GC 2017-05-03T14:47:00.006-0400: 1784.664: "
+                + "[ParNew: 4147200K->4147200K(4147200K), 0.0677200 secs]"
+                + "2017-05-03T14:47:00.075-0400: 1784.735: [Class Histogram:";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+    }
+
+    public void testLogLineMiddleConcurrentModeFailureMixedClassHistogram() {
+        String priorLogLine = "";
+        String logLine = " (concurrent mode failure): 7835032K->8154090K(9216000K), 56.0787320 secs]"
+                + "2017-05-03T14:48:13.002-0400: 1857.661: [Class Histogram";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+    }
+
+    public void testLogLineBeginningSerialMixedClassHistogramWithDatestamp() {
+        String priorLogLine = "";
+        String logLine = "2017-05-03T14:51:32.659-0400: 2057.323: [Full GC "
+                + "2017-05-03T14:51:32.680-0400: 2057.341: [Class Histogram:";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
         Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
 
@@ -1428,6 +1484,36 @@ public class TestCmsPreprocessAction extends TestCase {
 
     public void testParNewConcurrentModeFailureMixedConcurrentPreclean() {
         File testFile = new File("src/test/data/dataset122.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
+    }
+
+    public void testParNewConcurrentModeFailureMixedConcurrentMark() {
+        File testFile = new File("src/test/data/dataset123.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
+    }
+
+    public void testCmsSerialOldConcurrentModeFailureMixedConcurrentMark() {
+        File testFile = new File("src/test/data/dataset124.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

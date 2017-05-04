@@ -207,9 +207,11 @@ public class CmsPreprocessAction implements PreprocessAction {
 
     /**
      * Regular expression for beginning CMS_SERIAL_OLD collection.
+     * 
+     * 2017-05-03T14:51:32.659-0400: 2057.323: [Full GC 2017-05-03T14:51:32.680-0400: 2057.341: [Class Histogram:
      */
     private static final String REGEX_RETAIN_BEGINNING_SERIAL = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[Full GC " + JdkRegEx.TIMESTAMP + ": \\[Class Histogram:)[ ]*$";
+            + ": \\[Full GC (" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram:)[ ]*$";
 
     /**
      * Regular expression for beginning PAR_NEW collection.
@@ -220,11 +222,14 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * 2017-04-22T12:43:48.008+0100: 466904.470: [GC 466904.473: [ParNew: 516864K->516864K(516864K), 0.0001999
      * secs]466904.473: [Class Histogram:
+     * 
+     * 2017-05-03T14:47:00.002-0400: 1784.661: [GC 2017-05-03T14:47:00.006-0400: 1784.664: [ParNew:
+     * 4147200K->4147200K(4147200K), 0.0677200 secs]2017-05-03T14:47:00.075-0400: 1784.735: [Class Histogram:
      */
     private static final String REGEX_RETAIN_BEGINNING_PARNEW = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC( )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(("
             + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[Class Histogram:)?)[ ]*$";
 
     /**
@@ -277,10 +282,13 @@ public class CmsPreprocessAction implements PreprocessAction {
 
     /**
      * Regular expression for retained beginning concurrent mode failure.
+     * 
+     * (concurrent mode failure): 7835032K->8154090K(9216000K), 56.0787320 secs]2017-05-03T14:48:13.002-0400: 1857.661:
+     * [Class Histogram
      */
     private static final String REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE = "^( \\(concurrent mode failure\\): "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?)[ ]*$";
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]("
+            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?)[ ]*$";
 
     /**
      * Middle line when logging is split over 3 lines (e.g. bailing).
@@ -300,12 +308,15 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * 471419.156: [CMS CMS: abort preclean due to time 2017-04-22T13:59:06.831+0100: 471423.282:
      * [CMS-concurrent-abortable-preclean: 3.663/31.735 secs] [Times: user=39.81 sys=0.23, real=31.74 secs]
+     * 
+     * 2017-05-03T14:47:16.910-0400: 1801.570: [CMS2017-05-03T14:47:22.416-0400: 1807.075: [CMS-concurrent-mark:
+     * 29.707/71.001 secs] [Times: user=121.03 sys=35.41, real=70.99 secs]
      */
     private static final String REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED = "^((: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS)(( CMS: abort preclean due to time )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]"
-            + TimesData.REGEX + "?)[ ]*$";
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.DATESTAMP
+            + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS)(( CMS: abort preclean due to time )?(" + JdkRegEx.DATESTAMP
+            + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark|sweep): "
+            + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Middle line when mixed PAR_NEW and concurrent logging.
@@ -574,7 +585,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
-                entangledLogLines.add(matcher.group(10));
+                entangledLogLines.add(matcher.group(21));
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED)) {
