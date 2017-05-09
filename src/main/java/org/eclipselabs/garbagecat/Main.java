@@ -317,15 +317,15 @@ public class Main {
                     }
                 }
                 bufferedWriter.write(System.getProperty("line.separator"));
-                // Parallelism. Only report if we have Serial/Parallel/CMS/G1 events.
+                // Inverted parallelism. Only report if we have Serial/Parallel/CMS/G1 events.
                 if (jvmRun.getCollectorFamilies() != null && jvmRun.getCollectorFamilies().size() > 0) {
                     bufferedWriter.write(
                             "# Parallel Events: " + jvmRun.getParallelCount() + System.getProperty("line.separator"));
-                    bufferedWriter.write("# Parallel Events with Low Parallelism: " + jvmRun.getLowParallelismCount()
+                    bufferedWriter.write("# Inverted Parallelism: " + jvmRun.getInvertedParallelismCount()
                             + System.getProperty("line.separator"));
-                    if (jvmRun.getLowParallelismCount() > 0) {
-                        bufferedWriter.write("Parallel Event with Lowest Parallelism: "
-                                + jvmRun.getWorstLowParallelismEvent().getLogEntry()
+                    if (jvmRun.getInvertedParallelismCount() > 0) {
+                        bufferedWriter.write("Lowest Inverted Parallelism: "
+                                + jvmRun.getWorstInvertedParallelismEvent().getLogEntry()
                                 + System.getProperty("line.separator"));
                     }
                 }

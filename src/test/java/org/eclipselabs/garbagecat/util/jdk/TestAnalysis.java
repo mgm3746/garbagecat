@@ -894,7 +894,7 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_PARALLEL));
         Assert.assertFalse(Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis incorrectly identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL));
-        Assert.assertEquals("Low parallelism event count not correct.", 0, jvmRun.getLowParallelismCount());
+        Assert.assertEquals("Inverted parallelism event count not correct.", 0, jvmRun.getInvertedParallelismCount());
     }
 
     public void testThreadStackSizeAnalysis32Bit() {

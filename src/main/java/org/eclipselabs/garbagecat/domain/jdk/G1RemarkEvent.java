@@ -146,7 +146,7 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
         return timeReal;
     }
 
-    public byte getParallelism() {
+    public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeReal);
     }
 

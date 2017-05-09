@@ -73,6 +73,6 @@ public class TestG1CleanupEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 15, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 19, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 19, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 1900, event.getParallelism());
     }
 }

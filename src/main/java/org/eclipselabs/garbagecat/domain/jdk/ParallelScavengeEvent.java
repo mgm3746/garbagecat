@@ -252,7 +252,7 @@ public class ParallelScavengeEvent extends ParallelCollector
         return timeReal;
     }
 
-    public byte getParallelism() {
+    public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeReal);
     }
 

@@ -289,7 +289,7 @@ public class ParallelOldCompactingEvent extends ParallelCollector implements Blo
         return timeReal;
     }
 
-    public byte getParallelism() {
+    public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeReal);
     }
 

@@ -273,7 +273,7 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         return timeReal;
     }
 
-    public byte getParallelism() {
+    public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeReal);
     }
 

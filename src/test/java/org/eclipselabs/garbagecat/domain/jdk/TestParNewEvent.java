@@ -75,7 +75,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 34, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 5, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 7, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 680, event.getParallelism());
     }
 
     public void testLogLineWithIcmsDcData() {
@@ -96,7 +96,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 5, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 3, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 250, event.getParallelism());
     }
 
     public void testLogLineWhitespaceAtEnd() {
@@ -140,7 +140,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 9, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 5, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 450, event.getParallelism());
     }
 
     public void testLogLineJdk8NoSpaceAfterTrigger() {
@@ -162,7 +162,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 10, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 3, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 4, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 334, event.getParallelism());
     }
 
     public void testLogLineGcLockerTrigger() {
@@ -185,7 +185,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 23, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 4, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 6, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 575, event.getParallelism());
     }
 
     public void testLogLineCmsScavengeBeforeRemark() {
@@ -206,7 +206,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 92, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 51, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 2, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 181, event.getParallelism());
     }
 
     public void testLogLineSystemGcTrigger() {
@@ -227,7 +227,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 14, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 7, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 700, event.getParallelism());
     }
 
     public void testLogLinePromotionFailed() {
@@ -248,7 +248,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 92, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 55, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 2, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 168, event.getParallelism());
     }
 
     public void testLogLineWithDatestamp() {
@@ -269,7 +269,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", -1, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
     }
 
     public void testLogLineWithDatestampNoTimestamp() {
@@ -298,7 +298,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 11, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 4, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 3, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 275, event.getParallelism());
     }
 
     /**

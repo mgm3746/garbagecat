@@ -133,30 +133,19 @@ public class TestJdkMath extends TestCase {
     public void testCalcParallelism() {
         int timeUser = 100;
         int timeReal = 10;
+        Assert.assertEquals("Parallelism not calculated correctly.", 1000, JdkMath.calcParallelism(timeUser, timeReal));
+    }
+
+    public void testCalcParallelismRounded() {
+        int timeUser = 100;
+        int timeReal = 1000;
         Assert.assertEquals("Parallelism not calculated correctly.", 10, JdkMath.calcParallelism(timeUser, timeReal));
     }
 
-    public void testCalcParallelismLessRoundedToOne() {
-        int timeUser = 100;
-        int timeReal = 1000;
-        Assert.assertEquals("Parallelism not calculated correctly.", 1, JdkMath.calcParallelism(timeUser, timeReal));
-    }
-
-    public void testCalcParallelismLessRoundedUpToOne() {
+    public void testCalcParallelismRoundedUp() {
         int timeUser = 100;
         int timeReal = 199;
-        Assert.assertEquals("Parallelism not calculated correctly.", 1, JdkMath.calcParallelism(timeUser, timeReal));
-    }
-
-    public void testCalcParallelismOutOfRange() {
-        int timeUser = 129;
-        int timeReal = 1;
-        try {
-            JdkMath.calcParallelism(timeUser, timeReal);
-            Assert.fail("Parallelism > 128 should result in RuntimeException.");
-        } catch (Exception e) {
-            Assert.assertTrue("Did not fail with 'Parallelism out of range (0-128)'.", e instanceof RuntimeException);
-        }
+        Assert.assertEquals("Parallelism not calculated correctly.", 51, JdkMath.calcParallelism(timeUser, timeReal));
     }
 
     public void testCalcParallelismUserZero() {
@@ -168,12 +157,19 @@ public class TestJdkMath extends TestCase {
     public void testCalcParallelismRealZero() {
         int timeUser = 100;
         int timeReal = 0;
-        Assert.assertEquals("Parallelism not calculated correctly.", -1, JdkMath.calcParallelism(timeUser, timeReal));
+        Assert.assertEquals("Parallelism not calculated correctly.", Integer.MAX_VALUE,
+                JdkMath.calcParallelism(timeUser, timeReal));
+    }
+
+    public void testCalcParallelismUserZeroRealZero() {
+        int timeUser = 0;
+        int timeReal = 0;
+        Assert.assertEquals("Parallelism not calculated correctly.", 100, JdkMath.calcParallelism(timeUser, timeReal));
     }
 
     public void testParallelism() {
-        Assert.assertFalse("Parallism not calculated correctly.", JdkMath.isLowParallelism((byte) 0));
-        Assert.assertTrue("Parallism not calculated correctly.", JdkMath.isLowParallelism((byte) 1));
-        Assert.assertFalse("Parallism not calculated correctly.", JdkMath.isLowParallelism((byte) 2));
+        Assert.assertTrue("Parallism not calculated correctly.", JdkMath.isInvertedParallelism((int) 0));
+        Assert.assertTrue("Parallism not calculated correctly.", JdkMath.isInvertedParallelism((int) 99));
+        Assert.assertFalse("Parallism not calculated correctly.", JdkMath.isInvertedParallelism((int) 100));
     }
 }

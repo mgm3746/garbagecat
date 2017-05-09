@@ -60,6 +60,6 @@ public class TestG1RemarkEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 82, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 37, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 8, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 5, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 463, event.getParallelism());
     }
 }

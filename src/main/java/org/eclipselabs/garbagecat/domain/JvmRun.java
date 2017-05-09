@@ -166,14 +166,14 @@ public class JvmRun {
     private long parallelCount;
 
     /**
-     * Number of <code>ParallelCollection</code> with "low" parallelism.
+     * Number of <code>ParallelCollection</code> with "inverted" parallelism.
      */
-    private long lowParallelismCount;
+    private long invertedParallelismCount;
 
     /**
-     * <code>ParallelCollection</code> event with the lowest "low" parallelism.
+     * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
      */
-    private LogEvent worstLowParallelismEvent;
+    private LogEvent worstInvertedParallelismEvent;
 
     /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
@@ -396,20 +396,20 @@ public class JvmRun {
         this.parallelCount = parallelCount;
     }
 
-    public long getLowParallelismCount() {
-        return lowParallelismCount;
+    public long getInvertedParallelismCount() {
+        return invertedParallelismCount;
     }
 
-    public void setLowParallelismCount(long lowParallelismCount) {
-        this.lowParallelismCount = lowParallelismCount;
+    public void setInvertedParallelismCount(long invertedParallelismCount) {
+        this.invertedParallelismCount = invertedParallelismCount;
     }
 
-    public LogEvent getWorstLowParallelismEvent() {
-        return worstLowParallelismEvent;
+    public LogEvent getWorstInvertedParallelismEvent() {
+        return worstInvertedParallelismEvent;
     }
 
-    public void setWorstLowParallelismEvent(LogEvent worstLowParallelismEvent) {
-        this.worstLowParallelismEvent = worstLowParallelismEvent;
+    public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {
+        this.worstInvertedParallelismEvent = worstInvertedParallelismEvent;
     }
 
     /**

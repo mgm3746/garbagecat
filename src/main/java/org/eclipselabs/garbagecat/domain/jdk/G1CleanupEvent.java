@@ -187,7 +187,7 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
         return timeReal;
     }
 
-    public byte getParallelism() {
+    public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeReal);
     }
 

@@ -149,14 +149,14 @@ public class JvmDao {
     private long parallelCount;
 
     /**
-     * Number of <code>ParallelCollection</code> with "low" parallelism.
+     * Number of <code>ParallelCollection</code> with "inverted" parallelism.
      */
-    private long lowParallelismCount;
+    private long invertedParallelismCount;
 
     /**
-     * <code>ParallelCollection</code> event with the lowest "low" parallelism.
+     * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
      */
-    private LogEvent worstLowParallelismEvent;
+    private LogEvent worstInvertedParallelismEvent;
 
     public JvmDao() {
         try {
@@ -369,33 +369,33 @@ public class JvmDao {
     }
 
     /**
-     * @return The number of "low" parallelism events.
+     * @return The number of "inverted" parallelism events.
      */
-    public long getLowParallelismCount() {
-        return lowParallelismCount;
+    public long getInvertedParallelismCount() {
+        return invertedParallelismCount;
     }
 
     /**
-     * @param lowParallelismCount
+     * @param invertedParallelismCount
      *            The number of "low" parallelism events.
      */
-    public void setLowParallelismCount(long lowParallelismCount) {
-        this.lowParallelismCount = lowParallelismCount;
+    public void setInvertedParallelismCount(long invertedParallelismCount) {
+        this.invertedParallelismCount = invertedParallelismCount;
     }
 
     /**
-     * @return The <code>ParallelCollection</code> event with the lowest "low" parallelism.
+     * @return The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
      */
-    public LogEvent getWorstLowParallelismEvent() {
-        return worstLowParallelismEvent;
+    public LogEvent getWorstInvertedParallelismEvent() {
+        return worstInvertedParallelismEvent;
     }
 
     /**
-     * @param worstLowParallelismEvent
-     *            The <code>ParallelCollection</code> event with the lowest "low" parallelism.
+     * @param worstInvertedParallelismEvent
+     *            The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
      */
-    public void setWorstLowParallelismEvent(LogEvent worstLowParallelismEvent) {
-        this.worstLowParallelismEvent = worstLowParallelismEvent;
+    public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {
+        this.worstInvertedParallelismEvent = worstInvertedParallelismEvent;
     }
 
     /**

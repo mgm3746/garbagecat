@@ -43,8 +43,8 @@ public interface TimesData {
     int getTimeReal();
 
     /**
-     * @return The ratio of user:real time rounded to the nearest whole number. With good parallelism, the user time
-     *         will be (# threads) x (real time).
+     * @return Percent user:real time rounded up the the nearest whole number. With good parallelism, the user time will
+     *         be (# threads) x (real time).
      */
-    byte getParallelism();
+    int getParallelism();
 }

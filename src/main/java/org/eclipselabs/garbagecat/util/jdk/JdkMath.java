@@ -215,34 +215,42 @@ public class JdkMath {
     }
 
     /**
-     * Calculate parallelism, the ratio of user to wall (real) time, rounded up.
+     * Calculate parallelism, the ratio of user to wall (real) time.
      * 
      * @param timeUser
      *            The wall (clock) time in centoseconds.
      * @param timeReal
      *            The wall (clock) time in centoseconds.
-     * @return The ratio of user:real time rounded up the the nearest whole number or -1 if real time = 0.
+     * 
+     * @return Percent user:real time rounded up the the nearest whole number.
      */
-    public static byte calcParallelism(final int timeUser, final int timeReal) {
-        byte calc = -1;
-        if (timeReal > 0) {
-            BigDecimal parallelism = new BigDecimal(timeUser);
-            parallelism = parallelism.divide(new BigDecimal(timeReal), 0, RoundingMode.CEILING);
-            calc = parallelism.byteValue();
-            if (parallelism.intValue() > 128) {
-                throw new RuntimeException("Parallelism out of range (0-128): " + parallelism.intValue());
+    public static int calcParallelism(final int timeUser, final int timeReal) {
+        int calc;
+        if (timeReal == 0) {
+            if (timeUser == 0) {
+                // Undefined (no times data) or explicitly equal to zero.
+                calc = 100;
+            } else {
+                calc = Integer.MAX_VALUE;
             }
+        } else {
+            BigDecimal parallelism = new BigDecimal(timeUser);
+            BigDecimal hundred = new BigDecimal("100");
+            parallelism = parallelism.multiply(hundred);
+            parallelism = parallelism.divide(new BigDecimal(timeReal), 0, RoundingMode.CEILING);
+            calc = parallelism.intValue();
         }
         return calc;
     }
 
     /**
      * @param parallelism
-     *            The parallelism value (ratio or user to wall (real time).
-     * @return True if the parallelism is "low", false otherwise. Low parallelism is &gt; 0 and &lt;= 1. In other words,
-     *         the parallel collection performance is serial (single-threaded) or less.
+     *            The parallelism percent (ratio or user to wall (real time).
+     * 
+     * @return True if the parallelism is "inverted", false otherwise. Inverted parallelism is &lt;= 100. In other
+     *         words, the parallel collection performance is less than serial (single-threaded).
      */
-    public static boolean isLowParallelism(byte parallelism) {
-        return (parallelism > 0 && parallelism <= 1);
+    public static boolean isInvertedParallelism(int parallelism) {
+        return (parallelism < 100);
     }
 }

@@ -96,7 +96,7 @@ public class TestParallelOldCompactingEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 35, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 9, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 4, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 3, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 225, event.getParallelism());
     }
 
     public void testLogLineLastDitchCollectionTrigger() {
@@ -122,7 +122,7 @@ public class TestParallelOldCompactingEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 1970, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 441, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 197, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 3, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 224, event.getParallelism());
     }
 
     public void testIsBlocking() {
@@ -156,7 +156,7 @@ public class TestParallelOldCompactingEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 3452, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 1158, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 345, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 4, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 336, event.getParallelism());
     }
 
     public void testHeapInspectionInitiatedGcTrigger() {
@@ -183,7 +183,7 @@ public class TestParallelOldCompactingEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 2430, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 695, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 243, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 3, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 287, event.getParallelism());
     }
 
     public void testAllocationFailureTrigger() {
@@ -209,7 +209,7 @@ public class TestParallelOldCompactingEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 3573, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 2624, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 357, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 8, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 736, event.getParallelism());
     }
 
     public void testHeapDumpInitiatedGcTrigger() {
@@ -235,6 +235,6 @@ public class TestParallelOldCompactingEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 2372, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 755, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 237, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 4, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 319, event.getParallelism());
     }
 }
