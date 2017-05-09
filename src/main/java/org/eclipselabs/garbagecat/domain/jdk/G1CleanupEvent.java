@@ -68,8 +68,8 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup "
-            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup( "
+            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\))?, " + JdkRegEx.DURATION
             + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
@@ -124,13 +124,16 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(15).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(18).charAt(0));
-            combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
-            duration = JdkMath.convertSecsToMillis(matcher.group(22)).intValue();
-            if (matcher.group(25) != null) {
-                timeUser = JdkMath.convertSecsToCentos(matcher.group(26)).intValue();
-                timeReal = JdkMath.convertSecsToCentos(matcher.group(27)).intValue();
+            if (matcher.group(13) != null) {
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(14)), matcher.group(16).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(17)), matcher.group(19).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(20)),
+                        matcher.group(22).charAt(0));
+            }
+            duration = JdkMath.convertSecsToMillis(matcher.group(23)).intValue();
+            if (matcher.group(26) != null) {
+                timeUser = JdkMath.convertSecsToCentos(matcher.group(27)).intValue();
+                timeReal = JdkMath.convertSecsToCentos(matcher.group(28)).intValue();
             }
         }
     }

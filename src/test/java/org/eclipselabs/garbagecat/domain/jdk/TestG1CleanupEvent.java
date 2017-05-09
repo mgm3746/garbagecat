@@ -75,4 +75,20 @@ public class TestG1CleanupEvent extends TestCase {
         Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 1900, event.getParallelism());
     }
+
+    public void testLogLineMissingSizes() {
+        String logLine = "2017-05-09T00:46:14.766+1000: 288368.997: [GC cleanup, 0.0000910 secs] "
+                + "[Times: user=0.00 sys=0.00, real=0.00 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".",
+                G1CleanupEvent.match(logLine));
+        G1CleanupEvent event = new G1CleanupEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 288368997, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 0, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 0, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 0, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 0, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
+    }
 }
