@@ -148,11 +148,6 @@ public class JdkRegEx {
     public static final String PERCENT = "\\d{1,3}\\.\\d%";
 
     /**
-     * Trigger.
-     */
-    // public static final String TRIGGER = "\\((.+?)\\)";
-
-    /**
      * System.gc() trigger. Explicit garbage collection invoked.
      */
     public static final String TRIGGER_SYSTEM_GC = "System(.gc\\(\\))?";
