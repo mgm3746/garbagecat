@@ -324,9 +324,9 @@ public class Main {
                     bufferedWriter.write("# Inverted Parallelism: " + jvmRun.getInvertedParallelismCount()
                             + System.getProperty("line.separator"));
                     if (jvmRun.getInvertedParallelismCount() > 0) {
-                        bufferedWriter.write("Lowest Inverted Parallelism: "
-                                + jvmRun.getWorstInvertedParallelismEvent().getLogEntry()
-                                + System.getProperty("line.separator"));
+                        bufferedWriter.write(
+                                "Max Inverted Parallelism: " + jvmRun.getWorstInvertedParallelismEvent().getLogEntry()
+                                        + System.getProperty("line.separator"));
                     }
                 }
                 // NewRatio
