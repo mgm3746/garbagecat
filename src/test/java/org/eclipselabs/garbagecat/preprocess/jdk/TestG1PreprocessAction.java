@@ -937,6 +937,9 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE));
+        Assert.assertEquals("Inverted parallelism event count not correct.", 1, jvmRun.getInvertedParallelismCount());
+        Assert.assertTrue(Analysis.WARN_PARALLELISM_INVERTED + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_PARALLELISM_INVERTED));
     }
 
     /**

@@ -604,6 +604,11 @@ public class JvmRun {
         if (maxYoungSpace > 0 && maxOldSpace > 0 && maxYoungSpace >= maxOldSpace) {
             analysis.add(Analysis.INFO_NEW_RATIO_INVERTED);
         }
+
+        // Check for inverted parallelism
+        if (getInvertedParallelismCount() > 0) {
+            analysis.add(Analysis.WARN_PARALLELISM_INVERTED);
+        }
     }
 
     /**

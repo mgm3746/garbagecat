@@ -443,6 +443,11 @@ public enum Analysis {
     WARN_METASPACE_SIZE_NOT_SET("warn.metaspace.size.not.set"),
 
     /**
+     * Property key for inverted parallelism.
+     */
+    WARN_PARALLELISM_INVERTED("warn.parallelism.inverted"),
+
+    /**
      * Property key for perm gen or metaspace size not explicitly set.
      */
     WARN_PERM_METASPACE_SIZE_NOT_SET("warn.perm.metaspace.size.not.set"),
