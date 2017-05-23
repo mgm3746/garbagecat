@@ -166,4 +166,18 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Combined allocation size not parsed correctly.", 1253376, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 18, event.getDuration());
     }
+
+    public void testLogLineTriggerExplicitGc() {
+        String logLine = "8453.745: [GC (System.gc())  525225K->457601K(939520K), 0.0325441 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".",
+                VerboseGcYoungEvent.match(logLine));
+        VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 8453745, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
+        Assert.assertEquals("Combined begin size not parsed correctly.", 525225, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 457601, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 939520, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 32, event.getDuration());
+    }
 }

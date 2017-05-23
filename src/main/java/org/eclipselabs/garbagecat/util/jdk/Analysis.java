@@ -374,6 +374,11 @@ public enum Analysis {
     WARN_EXPLICIT_GC_SERIAL_PARALLEL("warn.explicit.gc.serial.parallel"),
 
     /**
+     * Property key for explicit garbage collection invoking a full collection (collector unknown).
+     */
+    WARN_EXPLICIT_GC_UNKNOWN("warn.explicit.gc.unknown"),
+
+    /**
      * Property key for fast unordered timestamps (experimental) enabled with
      * <code>-XX:+UseFastUnorderedTimeStamps</code>.
      */

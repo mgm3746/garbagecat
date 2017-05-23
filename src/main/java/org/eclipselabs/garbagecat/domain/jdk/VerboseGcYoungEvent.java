@@ -64,7 +64,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, CombinedData, TriggerData {
+public class VerboseGcYoungEvent extends UnknownCollector
+        implements BlockingEvent, YoungCollection, CombinedData, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -106,7 +107,8 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
             + JdkRegEx.TRIGGER_CMS_INITIAL_MARK + "|" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")";
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
 
     /**
      * Regular expressions defining the logging.
@@ -129,15 +131,15 @@ public class VerboseGcYoungEvent implements BlockingEvent, YoungCollection, Comb
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             trigger = matcher.group(15);
-            if (matcher.group(16) != null) {
-                combinedBegin = Integer.parseInt(matcher.group(17));
+            if (matcher.group(17) != null) {
+                combinedBegin = Integer.parseInt(matcher.group(18));
             } else {
                 // set it to the end
-                combinedBegin = Integer.parseInt(matcher.group(18));
+                combinedBegin = Integer.parseInt(matcher.group(19));
             }
-            combinedEnd = Integer.parseInt(matcher.group(18));
-            combinedAllocation = Integer.parseInt(matcher.group(19));
-            duration = JdkMath.convertSecsToMillis(matcher.group(20)).intValue();
+            combinedEnd = Integer.parseInt(matcher.group(19));
+            combinedAllocation = Integer.parseInt(matcher.group(20));
+            duration = JdkMath.convertSecsToMillis(matcher.group(21)).intValue();
         }
     }
 

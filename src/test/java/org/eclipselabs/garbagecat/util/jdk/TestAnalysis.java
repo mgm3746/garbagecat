@@ -1140,4 +1140,32 @@ public class TestAnalysis extends TestCase {
         Assert.assertTrue(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED));
     }
+
+    /**
+     * Test VERBOSE_GC_OLD triggered by explicit GC.
+     */
+    public void testVerboseGcOldExplicitGc() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset125.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN));
+    }
+
+    /**
+     * Test VERBOSE_GC_YOUNG triggered by explicit GC.
+     */
+    public void testVerboseGcYoungExplicitGc() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset126.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN));
+    }
 }

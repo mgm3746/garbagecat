@@ -456,6 +456,13 @@ public class GcManager {
                                     jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_SERIAL);
                                 }
                                 break;
+                            case UNKNOWN:
+                                if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN)) {
+                                    jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN);
+                                }
+                                break;
+                            default:
+                                break;
                             }
                         }
                     }
@@ -490,6 +497,10 @@ public class GcManager {
                                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC)) {
                                     jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC);
                                 }
+                                break;
+                            case UNKNOWN:
+                                break;
+                            default:
                                 break;
                             }
                         }

@@ -115,7 +115,7 @@ public class JdkUtil {
      * Defined collector families.
      */
     public enum CollectorFamily {
-        SERIAL, PARALLEL, CMS, G1
+        SERIAL, PARALLEL, CMS, G1, UNKNOWN
     }
 
     /**
