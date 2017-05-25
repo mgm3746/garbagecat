@@ -1,0 +1,36 @@
+2017-05-25T12:24:06.040+0000: 206.156: [GC pause (young)
+Desired survivor size 91750400 bytes, new threshold 2 (max 32)
+- age   1:   59580992 bytes,   59580992 total
+- age   2:   57583896 bytes,  117164888 total
+ (to-space overflow), 0.77121400 secs]
+   [Parallel Time: 225.6 ms]
+      [GC Worker Start (ms):  206157.0  206157.1  206157.6  206157.6  206157.6  206163.1  206163.1  206163.1
+       Avg: 206159.5, Min: 206157.0, Max: 206163.1, Diff:   6.1]
+      [Ext Root Scanning (ms):  27.5  25.4  37.1  24.5  29.8  18.5  23.7  12.6
+       Avg:  24.9, Min:  12.6, Max:  37.1, Diff:  24.6]
+      [Update RS (ms):  9.0  14.3  2.4  11.4  18.4  15.0  19.4  18.8
+       Avg:  13.6, Min:   2.4, Max:  19.4, Diff:  17.0]
+         [Processed Buffers : 12 18 2 34 10 43 7 7
+          Sum: 133, Avg: 16, Min: 2, Max: 43, Diff: 41]
+      [Scan RS (ms):  11.1  11.2  17.3  11.1  2.1  18.0  1.9  2.8
+       Avg:   9.4, Min:   1.9, Max:  18.0, Diff:  16.1]
+      [Object Copy (ms):  161.6  153.7  147.3  157.1  155.2  147.1  153.7  169.1
+       Avg: 155.6, Min: 147.1, Max: 169.1, Diff:  22.0]
+      [Termination (ms):  5.0  4.7  4.7  4.7  8.0  4.7  4.8  0.0
+       Avg:   4.6, Min:   0.0, Max:   8.0, Diff:   8.0]
+         [Termination Attempts : 1 2 2 1 1 2 1 1
+          Sum: 11, Avg: 1, Min: 1, Max: 2, Diff: 1]
+      [GC Worker End (ms):  206371.4  206366.5  206366.5  206366.5  206371.2  206366.5  206366.5  206366.5
+       Avg: 206367.7, Min: 206366.5, Max: 206371.4, Diff:   4.9]
+      [GC Worker (ms):  214.4  209.4  208.9  208.9  213.6  203.4  203.4  203.4
+       Avg: 208.2, Min: 203.4, Max: 214.4, Diff:  10.9]
+      [GC Worker Other (ms):  11.3  16.3  16.8  16.8  12.1  22.3  22.3  22.3
+       Avg:  17.5, Min:  11.3, Max:  22.3, Diff:  11.0]
+   [Clear CT:   1.0 ms]
+   [Other: 544.6 ms]
+      [Choose CSet:   0.3 ms]
+      [Ref Proc: 517.5 ms]
+      [Ref Enq:   8.7 ms]
+      [Free CSet:   6.5 ms]
+   [Eden: 1270M(1270M)->0B(723M) Survivors: 124M->175M Heap: 2468M(3072M)->1695M(3072M)]
+ [Times: user=1.51 sys=0.14, real=0.77 secs]

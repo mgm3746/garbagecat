@@ -205,4 +205,17 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 1182, event.getDuration());
     }
 
+    public void testLogLinePreprocessedNoDetailsNoTrigger() {
+        String logLine = "2017-05-25T13:00:52.772+0000: 2412.888: [Full GC 1630M->1281M(3072M), 4.1555250 secs] "
+                + "[Times: user=7.02 sys=0.01, real=4.16 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
+                G1FullGCEvent.match(logLine));
+        G1FullGCEvent event = new G1FullGCEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger() == null);
+        Assert.assertEquals("Time stamp not parsed correctly.", 2412888, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 1630 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 1281 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 3072 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 4155, event.getDuration());
+    }
 }

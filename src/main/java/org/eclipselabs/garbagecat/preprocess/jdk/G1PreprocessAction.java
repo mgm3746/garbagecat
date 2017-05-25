@@ -440,9 +440,13 @@ public class G1PreprocessAction implements PreprocessAction {
      * Regular expression for retained middle duration.
      * 
      * , 0.0414530 secs]
+     * 
+     * (to-space exhausted), 0.3857580 secs]
+     * 
+     * (to-space overflow), 0.77121400 secs]
      */
-    private static final String REGEX_RETAIN_MIDDLE_DURATION = "^(( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED
-            + ")\\))?, " + JdkRegEx.DURATION + "\\])[ ]*$";
+    private static final String REGEX_RETAIN_MIDDLE_DURATION = "^(( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|"
+            + JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW + ")\\))?, " + JdkRegEx.DURATION + "\\])[ ]*$";
 
     /**
      * Regular expression for retained end.

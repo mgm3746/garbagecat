@@ -579,7 +579,8 @@ public class GcManager {
                     // 10) G1 evacuation failure
                     if (event instanceof TriggerData) {
                         String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED)) {
+                        if (trigger != null && (trigger.matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED)
+                                || trigger.matches(JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW))) {
                             if (!jvmDao.getAnalysis().contains(Analysis.ERROR_G1_EVACUATION_FAILURE)) {
                                 jvmDao.addAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE);
                             }

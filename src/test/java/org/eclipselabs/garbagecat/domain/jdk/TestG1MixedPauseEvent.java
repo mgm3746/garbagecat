@@ -216,7 +216,7 @@ public class TestG1MixedPauseEvent extends TestCase {
      * Test preprocessing TRIGGER_TO_SPACE_EXHAUSTED after "mixed".
      * 
      */
-    public void testPreprocessingNoTriggerToSpaceExhausted() {
+    public void testPreprocessingTriggerToSpaceExhausted() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset99.txt");
         GcManager gcManager = new GcManager();

@@ -278,6 +278,12 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineRetainMiddleDurationWithToSpaceOverflowTrigger() {
+        String logLine = " (to-space overflow), 0.77121400 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
     public void testLogLineGCLockerInitiatedGC() {
         String logLine = "5.293: [GC pause (GCLocker Initiated GC) (young)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",

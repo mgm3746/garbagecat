@@ -12,8 +12,16 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.io.File;
+
+import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -220,5 +228,44 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("User time not parsed correctly.", 22, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 11, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 200, event.getParallelism());
+    }
+
+    public void testLogLinePreprocessedToSpaceOverflow() {
+        String logLine = "2017-05-25T12:24:06.040+0000: 206.156: [GC pause (young) (to-space overflow), "
+                + "0.77121400 secs][Eden: 1270M(1270M)->0B(723M) Survivors: 124M->175M Heap: "
+                + "2468M(3072M)->1695M(3072M)] [Times: user=1.51 sys=0.14, real=0.77 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                G1YoungPauseEvent.match(logLine));
+        G1YoungPauseEvent event = new G1YoungPauseEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW));
+        Assert.assertEquals("Time stamp not parsed correctly.", 206156, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 2468 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 1695 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 3072 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 771, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 151, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 77, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 197, event.getParallelism());
+    }
+
+    /**
+     * Test preprocessing TRIGGER_TO_SPACE_OVERFLOW.
+     * 
+     */
+    public void testPreprocessingTriggerToSpaceOverflow() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset128.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE));
+        Assert.assertTrue(Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_G1_EVACUATION_FAILURE));
     }
 }

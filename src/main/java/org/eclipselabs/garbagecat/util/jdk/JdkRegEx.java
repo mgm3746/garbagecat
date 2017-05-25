@@ -186,6 +186,28 @@ public class JdkRegEx {
     public static final String TRIGGER_TO_SPACE_EXHAUSTED = "to-space exhausted";
 
     /**
+     * <p>
+     * To Space Overflow trigger. A G1_YOUNG_PAUSE, G1_MIXED_PAUSE, or G1_YOUNG_INITIAL_MARK collection cannot happen
+     * due to "to-space oeverflow". There is not enough free space in the heap for survived and/or promoted objects, and
+     * the heap cannot be expanded. This is a very expensive operation. Sometimes the collector's ergonomics can resolve
+     * the issue by dynamically re-sizing heap regions. If it cannot, it invokes a G1_FULL_GC in an attempt to reclaim
+     * enough space to continue. All of the following are possible resolutions:
+     * </p>
+     * 
+     * <ol>
+     * 
+     * <li>Increase the heap size.</li>
+     * <li>Increase <code>-XX:G1ReservePercent</code> and the heap size to increase the amount of to-space reserve
+     * memory.</li>
+     * <li>Reduce the <code>-XX:InitiatingHeapOccupancyPercent</code> (default 45) to start the marking cycle earlier.
+     * </li>
+     * <li>Increase the number of parallel marking threads with <code>-XX:ConcGCThreads</code>. For example:
+     * <code>-XX:ConcGCThreads=16</code>.
+     * </ol>
+     */
+    public static final String TRIGGER_TO_SPACE_OVERFLOW = "to-space overflow";
+
+    /**
      * G1 Evacuation Pause trigger. Live objects are copied out of one region (evacuated) to another region to free
      * contiguous space. For both young and mixed collections.
      */

@@ -76,9 +76,9 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
     /**
      * Regular expression standard format.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC \\((" + JdkRegEx.TRIGGER_SYSTEM_GC
-            + ")\\) " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), "
-            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(("
+            + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\) )?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
+            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
     /**
      * Regular expression preprocessed with G1 details.
      */
@@ -155,13 +155,15 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                trigger = matcher.group(2);
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(6).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(9).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(10)),
-                        matcher.group(12).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(13)).intValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                if (matcher.group(14) != null) {
+                    trigger = matcher.group(14);
+                }
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(18).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)),
+                        matcher.group(24).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(25)).intValue();
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
             Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
