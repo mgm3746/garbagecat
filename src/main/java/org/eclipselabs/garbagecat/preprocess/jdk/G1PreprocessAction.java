@@ -403,6 +403,14 @@ public class G1PreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\])[ ]*$";
 
     /**
+     * Regular expression for retained middle G1_YOUNG_INTIAL_MARK collection.
+     * 
+     * (initial-mark), 0.12895600 secs]
+     */
+    private static final String REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK = "^( \\(initial-mark\\), " + JdkRegEx.DURATION
+            + "\\])[ ]*$";
+
+    /**
      * Regular expression for retained middle G1_FULL_GC collection.
      * 
      * , 5.1353878 secs]
@@ -482,6 +490,8 @@ public class G1PreprocessAction implements PreprocessAction {
             "^   \\[Code Root Migration:.+$",
             //
             "^      \\[Code Root Marking \\(ms\\):.+$",
+            //
+            "^   \\[Complete CSet Marking:.+$",
             //
             "^   \\[Clear CT:.+$",
             // Other
@@ -758,6 +768,14 @@ public class G1PreprocessAction implements PreprocessAction {
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_FULL)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_FULL);
             Matcher matcher = pattern.matcher(logEntry);
@@ -823,7 +841,8 @@ public class G1PreprocessAction implements PreprocessAction {
                 || logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_CONCURRENT)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE) || logLine.matches(REGEX_RETAIN_MIDDLE_FULL)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK) || logLine.matches(REGEX_RETAIN_MIDDLE_FULL)
                 || logLine.matches(REGEX_RETAIN_MIDDLE) || logLine.matches(REGEX_RETAIN_MIDDLE_DURATION)
                 || logLine.matches(REGEX_RETAIN_END)) {
             match = true;

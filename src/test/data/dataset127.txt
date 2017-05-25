@@ -1,0 +1,36 @@
+2017-05-25T14:39:00.986+0000: 456.552: [GC pause (young)
+Desired survivor size 62914560 bytes, new threshold 16 (max 32)
+- age   1:   38059128 bytes,   38059128 total
+- age   2:   10851272 bytes,   48910400 total
+ (initial-mark), 0.12895600 secs]
+   [Parallel Time:  92.6 ms]
+      [GC Worker Start (ms):  456553.4  456553.4  456553.4  456553.5  456553.5  456553.5  456553.6  456553.6
+       Avg: 456553.5, Min: 456553.4, Max: 456553.6, Diff:   0.3]
+      [Ext Root Scanning (ms):  19.8  20.3  15.2  20.4  18.7  18.7  22.8  21.3
+       Avg:  19.6, Min:  15.2, Max:  22.8, Diff:   7.6]
+      [Update RS (ms):  12.7  14.8  12.2  11.9  8.1  12.0  11.1  12.5
+       Avg:  11.9, Min:   8.1, Max:  14.8, Diff:   6.7]
+         [Processed Buffers : 15 42 27 23 34 49 25 22
+          Sum: 237, Avg: 29, Min: 15, Max: 49, Diff: 34]
+      [Scan RS (ms):  5.7  5.8  5.8  5.8  5.8  5.8  5.7  5.8
+       Avg:   5.8, Min:   5.7, Max:   5.8, Diff:   0.1]
+      [Object Copy (ms):  50.7  48.0  55.7  50.8  56.1  52.3  49.1  49.2
+       Avg:  51.5, Min:  48.0, Max:  56.1, Diff:   8.1]
+      [Termination (ms):  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+       Avg:   0.0, Min:   0.0, Max:   0.0, Diff:   0.0]
+         [Termination Attempts : 10 15 7 13 4 6 1 6
+          Sum: 62, Avg: 7, Min: 1, Max: 15, Diff: 14]
+      [GC Worker End (ms):  456642.4  456642.4  456642.4  456642.4  456642.4  456642.4  456642.4  456642.4
+       Avg: 456642.4, Min: 456642.4, Max: 456642.4, Diff:   0.1]
+      [GC Worker (ms):  89.1  89.0  88.9  88.9  88.9  88.8  88.9  88.8
+       Avg:  88.9, Min:  88.8, Max:  89.1, Diff:   0.2]
+      [GC Worker Other (ms):  3.6  3.6  3.7  3.7  3.8  3.8  3.8  3.9
+       Avg:   3.7, Min:   3.6, Max:   3.9, Diff:   0.3]
+   [Clear CT:   0.9 ms]
+   [Other:  35.4 ms]
+      [Choose CSet:   0.1 ms]
+      [Ref Proc:  29.6 ms]
+      [Ref Enq:   0.6 ms]
+      [Free CSet:   3.3 ms]
+   [Eden: 792M(792M)->0B(855M) Survivors: 168M->120M Heap: 2423M(3072M)->1615M(3072M)]
+ [Times: user=0.76 sys=0.02, real=0.13 secs]

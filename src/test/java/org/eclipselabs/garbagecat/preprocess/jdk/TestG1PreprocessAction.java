@@ -175,6 +175,12 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineCompleteCsetMarking() {
+        String logLine = "   [Complete CSet Marking:   0.0 ms]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
     public void testLogLineOther() {
         String logLine = "      [Other:   0.9 ms]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
@@ -890,6 +896,17 @@ public class TestG1PreprocessAction extends TestCase {
                 "2017-02-27T02:55:32.524+0300: 35911.405: [GC concurrent-mark-start]", event.getLogEntry());
     }
 
+    public void testLogLineMiddleInitialMark() {
+        String logLine = " (initial-mark), 0.12895600 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+    }
+
     /**
      * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE.
      * 
@@ -1582,5 +1599,17 @@ public class TestG1PreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
         Assert.assertTrue(Analysis.ERROR_SERIAL_GC_G1 + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_G1));
+    }
+
+    public void testG1YoungInitialMark() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset127.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_INITIAL_MARK));
     }
 }
