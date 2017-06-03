@@ -2,7 +2,7 @@
  * garbagecat                                                                                                         *
  *                                                                                                                    *
  * Copyright (c) 2008-2016 Red Hat, Inc.                                                                              *
- *                                                                                                                    * 
+ *                                                                                                                    *
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
  * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
@@ -47,9 +47,9 @@ import org.eclipselabs.garbagecat.util.jdk.Jvm;
  * Garbage Cat main class. A controller that prepares the model (by parsing GC log entries) and provides analysis (the
  * report view).
  * </p>
- * 
+ *
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
- * 
+ *
  */
 public class Main {
 
@@ -123,7 +123,7 @@ public class Main {
                      * garbagecat was started there was no <code>-XX:+PrintGCDateStamps</code> option. When it was
                      * introduced in JDK 1.6 update 4, the easiest thing to do to handle datestamps was to preprocess
                      * the datestamps and convert them to timestamps.
-                     * 
+                     *
                      * TODO: Handle datetimes separately from preprocessing so preprocessing doesn't require passing in
                      * the JVM start date/time.
                      */
@@ -160,7 +160,7 @@ public class Main {
 
     /**
      * Parse command line options.
-     * 
+     *
      * @return
      */
     private static final CommandLine parseOptions(String[] args) throws ParseException {
@@ -182,7 +182,7 @@ public class Main {
 
     /**
      * Output usage help.
-     * 
+     *
      * @param options
      */
     private static void usage(Options options) {
@@ -193,10 +193,10 @@ public class Main {
 
     /**
      * Validate command line options.
-     * 
+     *
      * @param cmd
      *            The command line options.
-     * 
+     *
      * @throws ParseException
      *             Command line options not valid.
      */
@@ -240,16 +240,16 @@ public class Main {
 
     /**
      * Create Garbage Collection Analysis report.
-     * 
+     *
      * TODO: Move to JvmRun to facilitate testing.
-     * 
+     *
      * @param jvmRun
      *            JVM run data.
      * @param reportFileName
      *            Output report file name.
      * @param reportFileName
      *            Whether or not preparsing is enabled.
-     * 
+     *
      */
     public static void createReport(JvmRun jvmRun, String reportFileName) {
         File reportFile = new File(reportFileName);
@@ -262,6 +262,8 @@ public class Main {
             // Bottlenecks
             List<String> bottlenecks = jvmRun.getBottlenecks();
             if (bottlenecks.size() > 0) {
+                bufferedWriter.write("========================================" + System.getProperty("line.separator"));
+                bufferedWriter.write("garbagecat " + getVersion() + System.getProperty("line.separator"));
                 bufferedWriter.write("========================================" + System.getProperty("line.separator"));
                 bufferedWriter.write("Throughput less than " + jvmRun.getThroughputThreshold() + "%"
                         + System.getProperty("line.separator"));
