@@ -259,6 +259,9 @@ public class Main {
             fileWriter = new FileWriter(reportFile);
             bufferedWriter = new BufferedWriter(fileWriter);
 
+            bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);
+            bufferedWriter.write("garbagecat " + getVersion() + System.getProperty("line.separator"));
+
             // Bottlenecks
             List<String> bottlenecks = jvmRun.getBottlenecks();
             if (bottlenecks.size() > 0) {
