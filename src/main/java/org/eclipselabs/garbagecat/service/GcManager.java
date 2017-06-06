@@ -151,7 +151,7 @@ public class GcManager {
             // Used to provide context for preprocessing decisions
             Set<String> context = new HashSet<String>();
 
-            String priorLogEntry = System.getProperty("line.separator");
+            String priorLogEntry = Constants.LINE_SEPARATOR;
 
             String nextLogLine = bufferedReader.readLine();
             while (nextLogLine != null) {
@@ -159,8 +159,8 @@ public class GcManager {
                         entangledLogLines, context);
                 if (preprocessedLogLine != null) {
                     if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
-                            && !priorLogEntry.matches(System.getProperty("line.separator"))) {
-                        bufferedWriter.write(System.getProperty("line.separator") + preprocessedLogLine);
+                            && !priorLogEntry.matches(Constants.LINE_SEPARATOR)) {
+                        bufferedWriter.write(Constants.LINE_SEPARATOR + preprocessedLogLine);
                     } else {
                         bufferedWriter.write(preprocessedLogLine);
                     }
@@ -181,8 +181,8 @@ public class GcManager {
                     entangledLogLines, context);
             if (preprocessedLogLine != null) {
                 if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
-                        && !priorLogEntry.matches(System.getProperty("line.separator"))) {
-                    bufferedWriter.write(System.getProperty("line.separator") + preprocessedLogLine);
+                        && !priorLogEntry.matches(Constants.LINE_SEPARATOR)) {
+                    bufferedWriter.write(Constants.LINE_SEPARATOR + preprocessedLogLine);
                 } else {
                     bufferedWriter.write(preprocessedLogLine);
                 }
@@ -193,7 +193,7 @@ public class GcManager {
                 Iterator<String> iterator = entangledLogLines.iterator();
                 while (iterator.hasNext()) {
                     String logLine = iterator.next();
-                    bufferedWriter.write(System.getProperty("line.separator") + logLine);
+                    bufferedWriter.write(Constants.LINE_SEPARATOR + logLine);
                 }
                 // Reset entangled log lines
                 entangledLogLines.clear();
@@ -366,7 +366,7 @@ public class GcManager {
                     if (preprocessedLogLine == null) {
                         preprocessedLogLine = logLine;
                     } else {
-                        preprocessedLogLine = preprocessedLogLine + System.getProperty("line.separator") + logLine;
+                        preprocessedLogLine = preprocessedLogLine + Constants.LINE_SEPARATOR + logLine;
                     }
                 }
                 // Reset entangled log lines
@@ -375,7 +375,7 @@ public class GcManager {
             if (preprocessedLogLine == null) {
                 preprocessedLogLine = currentLogLine;
             } else {
-                preprocessedLogLine = preprocessedLogLine + System.getProperty("line.separator") + currentLogLine;
+                preprocessedLogLine = preprocessedLogLine + Constants.LINE_SEPARATOR + currentLogLine;
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         }
@@ -411,9 +411,8 @@ public class GcManager {
                     // Verify logging in correct order. If overridden, logging will be stored in database and reordered
                     // by timestamp for analysis.
                     if (!reorder && priorEvent != null && event.getTimestamp() < priorEvent.getTimestamp()) {
-                        throw new TimeWarpException(
-                                "Logging reversed: " + System.getProperty("line.separator") + priorEvent.getLogEntry()
-                                        + System.getProperty("line.separator") + event.getLogEntry());
+                        throw new TimeWarpException("Logging reversed: " + Constants.LINE_SEPARATOR
+                                + priorEvent.getLogEntry() + Constants.LINE_SEPARATOR + event.getLogEntry());
                     }
 
                     jvmDao.addBlockingEvent((BlockingEvent) event);

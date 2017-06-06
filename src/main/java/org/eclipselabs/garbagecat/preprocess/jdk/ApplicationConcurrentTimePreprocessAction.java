@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -97,7 +98,7 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
             this.logEntry = logEntry;
             // Split line1 logging apart
             if (matcher.group(6) != null) {
-                this.logEntry = matcher.group(6) + System.getProperty("line.separator");
+                this.logEntry = matcher.group(6) + Constants.LINE_SEPARATOR;
                 if (matcher.group(1) != null) {
                     this.logEntry = this.logEntry + matcher.group(1);
                 }
@@ -107,7 +108,7 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
             }
         } else {
             // line2 logging
-            this.logEntry = logEntry + System.getProperty("line.separator");
+            this.logEntry = logEntry + Constants.LINE_SEPARATOR;
         }
     }
 

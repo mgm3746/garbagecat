@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -212,7 +213,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
             Iterator<String> iterator = entangledLogLines.iterator();
             while (iterator.hasNext()) {
                 String logLine = iterator.next();
-                this.logEntry = this.logEntry + System.getProperty("line.separator") + logLine;
+                this.logEntry = this.logEntry + Constants.LINE_SEPARATOR + logLine;
             }
             // Reset entangled log lines
             entangledLogLines.clear();
