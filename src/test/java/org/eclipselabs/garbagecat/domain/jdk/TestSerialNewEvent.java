@@ -85,4 +85,20 @@ public class TestSerialNewEvent extends TestCase {
         Assert.assertEquals("Old allocation size not parsed correctly.", 3137216 - 76672, event.getOldSpace());
         Assert.assertEquals("Duration not parsed correctly.", 36, event.getDuration());
     }
+
+    public void testLogLineWithTrigger() {
+        String logLine = "2.218: [GC (Allocation Failure) 2.218: [DefNew: 209792K->15933K(235968K), 0.0848369 secs] "
+                + "209792K->15933K(760256K), 0.0849244 secs] [Times: user=0.03 sys=0.06, real=0.08 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".",
+                SerialNewEvent.match(logLine));
+        SerialNewEvent event = new SerialNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 2218, event.getTimestamp());
+        Assert.assertEquals("Young begin size not parsed correctly.", 209792, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 15933, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 235968, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 209792 - 209792, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 15933 - 15933, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 760256 - 235968, event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 84, event.getDuration());
+    }
 }

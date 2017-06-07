@@ -123,4 +123,71 @@ public class TestSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 114, event.getDuration());
     }
 
+    public void testLogLineFullGcWithMetadatGcThresholdTrigger() {
+        String logLine = "2.447: [Full GC (Metadata GC Threshold) 2.447: [Tenured: 0K->12062K(524288K), "
+                + "0.1248607 secs] 62508K->12062K(760256K), [Metaspace: 20526K->20526K(1069056K)], 0.1249442 secs] "
+                + "[Times: user=0.18 sys=0.08, real=0.13 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".",
+                SerialOldEvent.match(logLine));
+        SerialOldEvent event = new SerialOldEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 2447, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
+        Assert.assertEquals("Young begin size not parsed correctly.", 62508 - 0, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 12062 - 12062, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 760256 - 524288, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 0, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 12062, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 524288, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 20526, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 20526, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1069056, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 124, event.getDuration());
+    }
+
+    public void testLogLineGcWithAllocationFailureTrigger() {
+        String logLine = "38.922: [GC (Allocation Failure) 38.922: [DefNew: 229570K->229570K(235968K), "
+                + "0.0000182 secs]38.922: [Tenured: 459834K->79151K(524288K), 0.2871383 secs] "
+                + "689404K->79151K(760256K), [Metaspace: 68373K->68373K(1114112K)], 0.2881307 secs] "
+                + "[Times: user=0.30 sys=0.00, real=0.29 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".",
+                SerialOldEvent.match(logLine));
+        SerialOldEvent event = new SerialOldEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 38922, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        Assert.assertEquals("Young begin size not parsed correctly.", 689404 - 459834, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 79151 - 79151, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 760256 - 524288, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 459834, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 79151, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 524288, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 68373, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 68373, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1114112, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 288, event.getDuration());
+    }
+
+    public void testLogLineGcPromotionFailedTrigger() {
+        String logLine = "116.957: [GC (Allocation Failure) 116.957: [DefNew (promotion failed) : "
+                + "229660K->235967K(235968K), 0.2897884 secs]117.247: [Tenured: 524288K->144069K(524288K), "
+                + "0.3905008 secs] 674654K->144069K(760256K), [Metaspace: 65384K->65384K(1114112K)], 0.6804246 secs] "
+                + "[Times: user=0.67 sys=0.01, real=0.69 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".",
+                SerialOldEvent.match(logLine));
+        SerialOldEvent event = new SerialOldEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 116957, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
+        Assert.assertEquals("Young begin size not parsed correctly.", 674654 - 524288, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 144069 - 144069, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 760256 - 524288, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 524288, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 144069, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 524288, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 65384, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 65384, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1114112, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 680, event.getDuration());
+    }
 }

@@ -71,6 +71,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 3727.365: [GC 3727.365: [DefNew: 400314K-&gt;400314K(400384K), 0.0000550 secs]3727.365: [Tenured: 837793K-&gt;597490K(889536K), 44.7498530 secs] 1238107K-&gt;597490K(1289920K), [Perm : 54745K-&gt;54745K(54784K)], 44.7501880 secs] [Times: user=5.32 sys=0.33, real=44.75 secs]
  * </pre>
  * 
+ * <p>
+ * With Metaspace and Datestamps.
+ * </p>
+ * 
+ * <pre>
+ * 2.447: [Full GC (Metadata GC Threshold) 2.447: [Tenured: 0K-&gt;12062K(524288K), 0.1248607 secs] 62508K-&gt;12062K(760256K), [Metaspace: 20526K-&gt;20526K(1069056K)], 0.1249442 secs] [Times: user=0.18 sys=0.08, real=0.13 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  * 
@@ -146,14 +154,15 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + "|"
+            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
 
     /**
      * Regular expression for SERIAL_NEW block in some events.
      */
     public static final String SERIAL_NEW_BLOCK = "(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[DefNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + JdkRegEx.DURATION + "\\]";
+            + ": \\[DefNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\) )?: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]";
 
     /**
      * Regular expressions defining the logging.
@@ -162,7 +171,7 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
             + TRIGGER + "\\))?([ ]{0,1}" + SERIAL_NEW_BLOCK + ")?( )?(" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[Tenured: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), \\[Perm : " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], "
+            + "\\), \\[(Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], "
             + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(SerialOldEvent.REGEX);
@@ -183,23 +192,26 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            if (matcher.group(15) != null) {
+            // Use last trigger
+            if (matcher.group(31) != null) {
+                trigger = matcher.group(31);
+            } else if (matcher.group(15) != null) {
                 trigger = matcher.group(15);
             }
-            old = Integer.parseInt(matcher.group(49));
-            oldEnd = Integer.parseInt(matcher.group(50));
-            oldAllocation = Integer.parseInt(matcher.group(51));
-            int totalBegin = Integer.parseInt(matcher.group(55));
+            old = Integer.parseInt(matcher.group(51));
+            oldEnd = Integer.parseInt(matcher.group(52));
+            oldAllocation = Integer.parseInt(matcher.group(53));
+            int totalBegin = Integer.parseInt(matcher.group(57));
             young = totalBegin - getOldOccupancyInit();
-            int totalEnd = Integer.parseInt(matcher.group(56));
+            int totalEnd = Integer.parseInt(matcher.group(58));
             youngEnd = totalEnd - getOldOccupancyEnd();
-            int totalAllocation = Integer.parseInt(matcher.group(57));
+            int totalAllocation = Integer.parseInt(matcher.group(59));
             youngAvailable = totalAllocation - getOldSpace();
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Integer.parseInt(matcher.group(58));
-            permGenEnd = Integer.parseInt(matcher.group(59));
-            permGenAllocation = Integer.parseInt(matcher.group(60));
-            duration = JdkMath.convertSecsToMillis(matcher.group(61)).intValue();
+            permGen = Integer.parseInt(matcher.group(61));
+            permGenEnd = Integer.parseInt(matcher.group(62));
+            permGenAllocation = Integer.parseInt(matcher.group(63));
+            duration = JdkMath.convertSecsToMillis(matcher.group(64)).intValue();
         }
     }
 

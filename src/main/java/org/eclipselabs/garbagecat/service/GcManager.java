@@ -590,7 +590,9 @@ public class GcManager {
                     if (event instanceof TriggerData) {
                         String trigger = ((TriggerData) event).getTrigger();
                         if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_PROMOTION_FAILED)) {
-                            if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED)) {
+                            CollectorFamily collectorFamily = ((GcEvent) event).getCollectorFamily();
+                            if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED)
+                                    && collectorFamily.equals(CollectorFamily.CMS)) {
                                 jvmDao.addAnalysis(Analysis.ERROR_CMS_PROMOTION_FAILED);
                             }
                         }

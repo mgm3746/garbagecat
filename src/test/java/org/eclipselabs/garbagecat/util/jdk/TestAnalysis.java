@@ -1168,4 +1168,18 @@ public class TestAnalysis extends TestCase {
         Assert.assertTrue(Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN));
     }
+
+    /**
+     * Test serial promotion failed is not reported as cms promotion failed.
+     */
+    public void testSerialPromotionFailed() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset129.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertFalse(Analysis.ERROR_CMS_PROMOTION_FAILED + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED));
+    }
 }

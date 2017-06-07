@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -58,21 +59,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 4.296: [GC4.296: [DefNew: 68160K-&gt;8512K(76672K), 0.0528470 secs] 68160K-&gt;11664K(1325760K), 0.0530640 secs] [Times: user=0.04 sys=0.00, real=0.05 secs]
  * </pre>
  * 
+ * <p>
+ * 4) With trigger:
+ * 
+ * <pre>
+ * 2.218: [GC (Allocation Failure) 2.218: [DefNew: 209792K-&gt;15933K(235968K), 0.0848369 secs] 209792K-&gt;15933K(760256K), 0.0849244 secs] [Times: user=0.03 sys=0.06, real=0.08 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  * 
  */
 public class SerialNewEvent extends SerialCollector
-        implements BlockingEvent, YoungCollection, YoungData, OldData, SerialCollection {
-
-    /**
-     * Regular expressions defining the logging.
-     */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[DefNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
-    private static final Pattern pattern = Pattern.compile(SerialNewEvent.REGEX);
+        implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData, SerialCollection {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -120,6 +119,26 @@ public class SerialNewEvent extends SerialCollector
     private int oldAllocation;
 
     /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
+
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
+
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( \\("
+            + TRIGGER + "\\))?( )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[DefNew: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+            + TimesData.REGEX + "?[ ]*$";
+    private static final Pattern pattern = Pattern.compile(SerialNewEvent.REGEX);
+
+    /**
      * 
      * @param logEntry
      *            The log entry for the event.
@@ -129,16 +148,19 @@ public class SerialNewEvent extends SerialCollector
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            young = Integer.parseInt(matcher.group(27));
-            youngEnd = Integer.parseInt(matcher.group(28));
-            youngAvailable = Integer.parseInt(matcher.group(29));
-            int totalBegin = Integer.parseInt(matcher.group(33));
+            if (matcher.group(15) != null) {
+                trigger = matcher.group(15);
+            }
+            young = Integer.parseInt(matcher.group(29));
+            youngEnd = Integer.parseInt(matcher.group(30));
+            youngAvailable = Integer.parseInt(matcher.group(31));
+            int totalBegin = Integer.parseInt(matcher.group(35));
             old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(34));
+            int totalEnd = Integer.parseInt(matcher.group(36));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(35));
+            int totalAllocation = Integer.parseInt(matcher.group(37));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(36)).intValue();
+            duration = JdkMath.convertSecsToMillis(matcher.group(38)).intValue();
         }
     }
 
@@ -204,6 +226,14 @@ public class SerialNewEvent extends SerialCollector
 
     public int getPermGenAllocation() {
         throw new UnsupportedOperationException("Event does not include perm gen information");
+    }
+
+    public String getTrigger() {
+        return trigger;
+    }
+
+    protected void setTrigger(String trigger) {
+        this.trigger = trigger;
     }
 
     /**
