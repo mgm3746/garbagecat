@@ -32,6 +32,11 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -41,6 +46,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.json.JSONObject;
 
 /**
  * <p>
@@ -260,7 +266,9 @@ public class Main {
             bufferedWriter = new BufferedWriter(fileWriter);
 
             bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);
-            bufferedWriter.write("garbagecat " + getVersion() + System.getProperty("line.separator"));
+	    bufferedWriter.write("Running garbagecat version: " + getVersion() + System.getProperty("line.separator"));
+	    bufferedWriter.write("Latest garbagecat version/tag: " + getLatestVersion() + System.getProperty("line.separator"));
+
 
             // Bottlenecks
             List<String> bottlenecks = jvmRun.getBottlenecks();
@@ -519,5 +527,30 @@ public class Main {
         ResourceBundle rb = ResourceBundle.getBundle("META-INF/maven/garbagecat/garbagecat/pom");
         return rb.getString("version");
     }
+    /**
+     * @return version string.
+     */
+    private static String getLatestVersion()
+    {
+    	 String url = "https://github.com/mgm3746/garbagecat/releases/latest";
+    	 String name= null;
+    	    try {
+    	        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+    	        HttpGet request = new HttpGet(url);
+    	        request.addHeader("Accept","application/json");  
+    	        request.addHeader("content-type", "application/json");
+    	        HttpResponse result = httpClient.execute(request);
+    	        String json = EntityUtils.toString(result.getEntity(), "UTF-8");
+    	        JSONObject jsonObj = new JSONObject(json);
+		name = jsonObj.getString("tag_name");
+          	        
+    	    	}
+    	         	     
+    	    catch(Exception ex){
+    	    	
+    	    	name= "Unable to retrieve";
+    	    }
+			return name;
+}
 
 }
