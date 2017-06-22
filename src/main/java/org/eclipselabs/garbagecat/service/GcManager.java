@@ -643,17 +643,17 @@ public class GcManager {
                         }
                     }
 
-                    // 16) Check for CMS initial mark not multi-threaded
+                    // 16) Check for CMS initial mark low parallelism
                     if (event instanceof CmsInitialMarkEvent && ((TimesData) event).getTimeUser() > 0
-                            && !JdkMath.isMultiThreaded(((TimesData) event).getParallelism())) {
+                            && JdkMath.isLowParallelism(((TimesData) event).getParallelism())) {
                         if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_SERIAL)) {
                             jvmDao.addAnalysis(Analysis.WARN_CMS_INITIAL_MARK_SERIAL);
                         }
                     }
 
-                    // 17) Check for CMS remark not multi-threaded
+                    // 17) Check for CMS remark low parallelism
                     if (event instanceof CmsRemarkEvent && ((TimesData) event).getTimeUser() > 0
-                            && !JdkMath.isMultiThreaded(((TimesData) event).getParallelism())) {
+                            && JdkMath.isLowParallelism(((TimesData) event).getParallelism())) {
                         if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_REMARK_SERIAL)) {
                             jvmDao.addAnalysis(Analysis.WARN_CMS_REMARK_SERIAL);
                         }

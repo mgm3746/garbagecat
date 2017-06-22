@@ -255,16 +255,12 @@ public class JdkMath {
     }
 
     /**
-     * Determine if the parallelism reflected in the times data suggests a single-threaded (serial) collector or a
-     * multi-threaded (parallel) collector. For analysis purposes, any parallelism value rounded to 2 is considered
-     * multi-threaded.
-     * 
      * @param parallelism
      *            The parallelism percent (ratio or user to wall (real time).
      * 
-     * @return True if the parallelism suggests multiple threads, false otherwise.
+     * @return True if the parallelism is low (< 2 threads, rounded), false otherwise.
      */
-    public static boolean isMultiThreaded(int parallelism) {
-        return (parallelism > 150);
+    public static boolean isLowParallelism(int parallelism) {
+        return (parallelism < 150);
     }
 }
