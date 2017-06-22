@@ -1011,6 +1011,18 @@ public class JvmRun {
                 }
             }
         }
+
+        // Check for multi-threaded CMS initial mark disabled
+        if (jvm.getCmsParallelInitialMarkDisabled() != null
+                && !analysis.contains(Analysis.ERROR_CMS_PARALLEL_INITIAL_MARK_DISABLED)) {
+            analysis.add(Analysis.ERROR_CMS_PARALLEL_INITIAL_MARK_DISABLED);
+        }
+
+        // Check for multi-threaded CMS remark disabled
+        if (jvm.getCmsParallelRemarkDisabled() != null
+                && !analysis.contains(Analysis.ERROR_CMS_PARALLEL_REMARK_DISABLED)) {
+            analysis.add(Analysis.ERROR_CMS_PARALLEL_REMARK_DISABLED);
+        }
     }
 
     /**

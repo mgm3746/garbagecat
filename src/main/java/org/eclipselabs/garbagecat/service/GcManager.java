@@ -44,6 +44,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsIncrementalModeCollector;
+import org.eclipselabs.garbagecat.domain.jdk.CmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
@@ -639,6 +640,22 @@ public class GcManager {
                                     jvmDao.setWorstInvertedParallelismEvent(event);
                                 }
                             }
+                        }
+                    }
+
+                    // 16) Check for CMS initial mark not multi-threaded
+                    if (event instanceof CmsInitialMarkEvent && ((TimesData) event).getTimeUser() > 0
+                            && !JdkMath.isMultiThreaded(((TimesData) event).getParallelism())) {
+                        if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_SERIAL)) {
+                            jvmDao.addAnalysis(Analysis.WARN_CMS_INITIAL_MARK_SERIAL);
+                        }
+                    }
+
+                    // 17) Check for CMS remark not multi-threaded
+                    if (event instanceof CmsRemarkEvent && ((TimesData) event).getTimeUser() > 0
+                            && !JdkMath.isMultiThreaded(((TimesData) event).getParallelism())) {
+                        if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_REMARK_SERIAL)) {
+                            jvmDao.addAnalysis(Analysis.WARN_CMS_REMARK_SERIAL);
                         }
                     }
 

@@ -40,6 +40,16 @@ public enum Analysis {
     ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED("error.cms.par.new.gc.locker.failed"),
 
     /**
+     * Property key for multi-threaded CMS initial mark disabled with -XX:-CMSParallelInitialMarkEnabled.
+     */
+    ERROR_CMS_PARALLEL_INITIAL_MARK_DISABLED("error.cms.parallel.initial.mark.disabled"),
+
+    /**
+     * Property key for multi-threaded CMS remark disabled with -XX:-CMSParallelRemarkEnabled.
+     */
+    ERROR_CMS_PARALLEL_REMARK_DISABLED("error.cms.parallel.remark.disabled"),
+
+    /**
      * Property key for promotion failed.
      */
     ERROR_CMS_PROMOTION_FAILED("error.cms.promotion.failed"),
@@ -324,9 +334,19 @@ public enum Analysis {
     WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING("warn.cms.init.occupancy.only.missing"),
 
     /**
+     * Property key for evidence of single-threaded CMS initial mark.
+     */
+    WARN_CMS_INITIAL_MARK_SERIAL("warn.cms.initial.mark.serial"),
+
+    /**
      * Property key for PAR_NEW collector disabled.
      */
     WARN_CMS_PAR_NEW_DISABLED("warn.cms.par.new.disabled"),
+
+    /**
+     * Property key for evidence of single-threaded CMS remark.
+     */
+    WARN_CMS_REMARK_SERIAL("warn.cms.remark.serial"),
 
     /**
      * Property key for compressed class pointers disabled (-XX:-UseCompressedClassPointers), and heap size unknown.

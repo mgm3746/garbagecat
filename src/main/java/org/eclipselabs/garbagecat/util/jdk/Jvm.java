@@ -1296,6 +1296,34 @@ public class Jvm {
     }
 
     /**
+     * The option to disable multi-threaded CMS initial mark. For example:
+     * 
+     * <pre>
+     * -XX:-CMSParallelInitialMarkEnabled
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCmsParallelInitialMarkDisabled() {
+        String regex = "(-XX:-CMSParallelInitialMarkEnabled)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option to disable multi-threaded CMS remark. For example:
+     * 
+     * <pre>
+     * -XX:-CMSParallelRemarkEnabled
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCmsParallelRemarkDisabled() {
+        String regex = "(-XX:-CMSParallelRemarkEnabled)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

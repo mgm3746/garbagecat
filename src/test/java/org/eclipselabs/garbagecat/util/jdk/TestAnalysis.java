@@ -814,6 +814,26 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS));
     }
 
+    public void testCmsParallelInitialMarkDisabled() {
+        String jvmOptions = "-XX:-CMSParallelInitialMarkEnabled";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.ERROR_CMS_PARALLEL_INITIAL_MARK_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PARALLEL_INITIAL_MARK_DISABLED));
+    }
+
+    public void testCmsParallelRemarkDisabled() {
+        String jvmOptions = "-XX:-CMSParallelRemarkEnabled";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.ERROR_CMS_PARALLEL_REMARK_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PARALLEL_REMARK_DISABLED));
+    }
+
     public void testHeaderLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset42.txt");
@@ -1181,5 +1201,33 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertFalse(Analysis.ERROR_CMS_PROMOTION_FAILED + " analysis incorrectly identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED));
+    }
+
+    /**
+     * Test CMS initial mark serial.
+     */
+    public void testCmsInitialMarkSerial() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset130.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_CMS_INITIAL_MARK_SERIAL + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_SERIAL));
+    }
+
+    /**
+     * Test CMS remark serial.
+     */
+    public void testCmsRemarkSerial() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset131.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_CMS_REMARK_SERIAL + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_REMARK_SERIAL));
     }
 }

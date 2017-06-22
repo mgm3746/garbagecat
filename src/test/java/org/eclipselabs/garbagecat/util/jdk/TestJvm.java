@@ -804,4 +804,18 @@ public class TestJvm extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         Assert.assertNotNull("-XX:+UseG1GC not found.", jvm.getUseG1Gc());
     }
+
+    public void testCmsParallelInitialMarkDisabled() {
+        String jvmOptions = "-Xss128k -XX:-CMSParallelInitialMarkEnabled -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:-CMSParallelInitialMarkEnabled option incorrect.",
+                "-XX:-CMSParallelInitialMarkEnabled", jvm.getCmsParallelInitialMarkDisabled());
+    }
+
+    public void testCmsParallelRemarkDisabled() {
+        String jvmOptions = "-Xss128k -XX:-CMSParallelRemarkEnabled -XX:+DisableExplicitGC";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:-CMSParallelRemarkEnabled option incorrect.", "-XX:-CMSParallelRemarkEnabled",
+                jvm.getCmsParallelRemarkDisabled());
+    }
 }
