@@ -258,7 +258,7 @@ public class JdkMath {
      * @param parallelism
      *            The parallelism percent (ratio or user to wall (real time).
      * 
-     * @return True if the parallelism is low (< 2 threads, rounded), false otherwise.
+     * @return True if the parallelism is low (&lt; 2 threads, rounded), false otherwise.
      */
     public static boolean isLowParallelism(int parallelism) {
         return (parallelism < 150);

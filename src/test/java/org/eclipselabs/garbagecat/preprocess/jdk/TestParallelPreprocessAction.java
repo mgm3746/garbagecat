@@ -88,6 +88,14 @@ public class TestParallelPreprocessAction extends TestCase {
                 ParallelPreprocessAction.match(logLine));
     }
 
+    public void testLogLineGcTimeLimitExceedWithDatestamp() {
+        String logLine = "2017-06-02T11:11:29.244+0530: 165944.630: [Full GC [PSYoungGen: 230400K->217423K(268800K)] "
+                + "[PSOldGen: 1789951K->1789951K(1789952K)] 2020351K->2007375K(2058752K) "
+                + "[PSPermGen: 188837K->188837K(524288K)]      GC time would exceed GCTimeLimit of 98%";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.PARALLEL.toString() + ".",
+                ParallelPreprocessAction.match(logLine));
+    }
+
     public void testLogLineBeginningParallelScavenge() {
         String logLine = "10.392: [GC";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.PARALLEL.toString() + ".",
@@ -147,5 +155,26 @@ public class TestParallelPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE));
         Assert.assertTrue(Analysis.WARN_PRINT_TENURING_DISTRIBUTION + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_TENURING_DISTRIBUTION));
+    }
+
+    /**
+     * Test preprocessing <code>GcTimeLimitExceededEvent</code> with logging mixed across multiple lines.
+     */
+    public void testParallelSerialOldAcrossMultipleLinesMixedGcTimeLimitLogging() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset132.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.GC_OVERHEAD_LIMIT));
+        Assert.assertTrue(Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL));
+        Assert.assertTrue(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED));
     }
 }
