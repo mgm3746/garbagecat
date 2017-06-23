@@ -460,6 +460,13 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineMixedHumongousAllocationToSpaceExhausted() {
+        String logLine = "2017-06-22T12:25:26.515+0530: 66155.261: [GC pause (G1 Humongous Allocation) (mixed) "
+                + "(to-space exhausted), 0.2466797 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
     public void testLogLineConcurrentCleanupEndWithDatestamp() {
         String logLine = "2016-02-11T18:15:35.431-0500: 14974.501: [GC concurrent-cleanup-end, 0.0033880 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
@@ -757,6 +764,13 @@ public class TestG1PreprocessAction extends TestCase {
 
     public void testLogLineG1YoungInitialMarkTriggerGcLockerInitiatedGc() {
         String logLine = "6896.482: [GC pause (GCLocker Initiated GC) (young) (initial-mark), 0.0525160 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
+    public void testLogLineG1YoungConcurrentTriggerG1HumongousAllocation() {
+        String logLine = "2017-06-22T13:55:45.753+0530: 71574.499: [GC pause (G1 Humongous Allocation) (young)"
+                + "2017-06-22T13:55:45.771+0530: 71574.517: [GC concurrent-root-region-scan-end, 0.0181265 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
                 G1PreprocessAction.match(logLine, null, null));
     }

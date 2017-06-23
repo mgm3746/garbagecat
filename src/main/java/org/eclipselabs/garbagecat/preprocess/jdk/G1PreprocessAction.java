@@ -359,10 +359,15 @@ public class G1PreprocessAction implements PreprocessAction {
 
     /**
      * Regular expression for retained beginning G1_MIXED collection.
+     * 
+     * 2017-06-22T12:25:26.515+0530: 66155.261: [GC pause (G1 Humongous Allocation) (mixed) (to-space exhausted),
+     * 0.2466797 secs]
      */
     private static final String REGEX_RETAIN_BEGINNING_MIXED = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\))? \\(mixed\\)(, " + JdkRegEx.DURATION
-            + "\\])?)( " + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+)?[ ]*$";
+            + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\))? \\(mixed\\)( \\(("
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.TIMESTAMP
+            + ": \\[G1Ergonomics.+)?[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_CLEANUP collection.
@@ -376,12 +381,15 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * 2017-06-01T03:09:18.078-0400: 3978.886: [GC pause (GCLocker Initiated GC) (young)2017-06-01T03:09:18.081-0400:
      * 3978.888: [GC concurrent-root-region-scan-end, 0.0059070 secs]
+     * 
+     * 2017-06-22T13:55:45.753+0530: 71574.499: [GC pause (G1 Humongous Allocation) (young)2017-06-22T13:55:45.771+0530:
+     * 71574.517: [GC concurrent-root-region-scan-end, 0.0181265 secs]
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\))? \\(young\\))((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[GC concurrent-(root-region-scan|cleanup|mark)-end, " + JdkRegEx.DURATION
-            + "\\])[ ]*$";
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION
+            + ")\\))? \\(young\\))((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[GC concurrent-(root-region-scan|cleanup|mark)-end, " + JdkRegEx.DURATION + "\\])[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_FULL_GC mixed with G1_CONCURRENT collection.
