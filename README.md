@@ -70,10 +70,11 @@ mvn -U -fn clean install
 ## Usage ##
 
 ```
-java -jar garbagecat-2.0.9-SNAPSHOT.jar --help
+java -jar garbagecat-2.0.11-SNAPSHOT.jar --help
 usage: garbagecat [OPTION]... [FILE]
  -h,--help                  help
- -j,--jvmoptions <arg>      JVM options used during JVM run 
+ -j,--jvmoptions <arg>      JVM options used during JVM run
+ -l,--latest                latest version 
  -o,--output <arg>          output file name (default report.txt)
  -p,--preprocess            do preprocessing
  -r,--reorder               reorder logging by timestamp
@@ -87,6 +88,7 @@ usage: garbagecat [OPTION]... [FILE]
 Notes:
   1. JVM options are can be passed in if they are not present in the gc logging header. Specifying the JVM options used during the JVM run allows for more detailed analysis.
   1. By default a report called report.txt is created in the directory where the **garbagecat** tool is run. Specifying a custom name for the output file is useful when analyzing multiple gc logs.
+  1. Version information is included in the report by using the version and.or latest version options.     
   1. Preprocessing is sometimes required (e.g. when non-standard JVM options are used). It removes extraneous logging and makes any format adjustments needed for parsing (e.g. combining logging that the JVM sometimes splits across multiple lines). 
   1. When preprocessing is enabled, a preprocessed file will be created in the same location as the input file with a ".pp" file extension added. 
   1. Reordering is for gc logging that has gotten out of time/date order. Very rare, but some logging management systems/processes are susceptible to this happening (e.g. logging stored in a central repository).
