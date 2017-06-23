@@ -136,6 +136,16 @@ public class Constants {
     public static final String OPTION_VERSION_LONG = "version";
 
     /**
+     * Latest version command line short option.
+     */
+    public static final String OPTION_LATEST_VERSION_SHORT = "l";
+
+    /**
+     * Latest version command line long option.
+     */
+    public static final String OPTION_LATEST_VERSION_LONG = "latest";
+
+    /**
      * Default output file name.
      */
     public static final String OUTPUT_FILE_NAME = "report.txt";

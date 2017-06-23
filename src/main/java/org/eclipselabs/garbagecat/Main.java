@@ -74,6 +74,8 @@ public class Main {
         options = new Options();
         options.addOption(Constants.OPTION_HELP_SHORT, Constants.OPTION_HELP_LONG, false, "help");
         options.addOption(Constants.OPTION_VERSION_SHORT, Constants.OPTION_VERSION_LONG, false, "version");
+        options.addOption(Constants.OPTION_LATEST_VERSION_SHORT, Constants.OPTION_LATEST_VERSION_LONG, false,
+                "latest version");
         options.addOption(Constants.OPTION_JVMOPTIONS_SHORT, Constants.OPTION_JVMOPTIONS_LONG, true,
                 "JVM options used during JVM run");
         options.addOption(Constants.OPTION_PREPROCESS_SHORT, Constants.OPTION_PREPROCESS_LONG, false,
@@ -162,7 +164,10 @@ public class Main {
                 } else {
                     outputFileName = Constants.OUTPUT_FILE_NAME;
                 }
-                createReport(jvmRun, outputFileName);
+
+                boolean version = cmd.hasOption(Constants.OPTION_VERSION_LONG);
+                boolean latestVersion = cmd.hasOption(Constants.OPTION_LATEST_VERSION_LONG);
+                createReport(jvmRun, outputFileName, version, latestVersion);
             }
         }
     }
@@ -181,7 +186,20 @@ public class Main {
             usage(options);
         } else if (args.length == 1 && (args[0].equals("-" + Constants.OPTION_VERSION_SHORT)
                 || args[0].equals("--" + Constants.OPTION_VERSION_LONG))) {
-            System.out.println("garbagecat v" + getVersion());
+            System.out.println("Running garbagecat version: " + getVersion());
+        } else if (args.length == 1 && (args[0].equals("-" + Constants.OPTION_LATEST_VERSION_SHORT)
+                || args[0].equals("--" + Constants.OPTION_LATEST_VERSION_LONG))) {
+            System.out.println("Latest garbagecat version/tag: " + getLatestVersion());
+        } else if (args.length == 2 && (((args[0].equals("-" + Constants.OPTION_VERSION_SHORT)
+                || args[0].equals("--" + Constants.OPTION_VERSION_LONG))
+                && (args[1].equals("-" + Constants.OPTION_LATEST_VERSION_SHORT)
+                        || args[1].equals("--" + Constants.OPTION_LATEST_VERSION_LONG)))
+                || ((args[1].equals("-" + Constants.OPTION_VERSION_SHORT)
+                        || args[1].equals("--" + Constants.OPTION_VERSION_LONG))
+                        && (args[0].equals("-" + Constants.OPTION_LATEST_VERSION_SHORT)
+                                || args[0].equals("--" + Constants.OPTION_LATEST_VERSION_LONG))))) {
+            System.out.println("Running garbagecat version: " + getVersion());
+            System.out.println("Latest garbagecat version/tag: " + getLatestVersion());
         } else {
             cmd = parser.parse(options, args);
             validateOptions(cmd);
@@ -255,12 +273,14 @@ public class Main {
      * @param jvmRun
      *            JVM run data.
      * @param reportFileName
-     *            Output report file name.
-     * @param reportFileName
-     *            Whether or not preparsing is enabled.
+     *            Report file name.
+     * @param version
+     *            Whether or not to report garbagecat version.
+     * @param latestVersion
+     *            Whether or not to report latest garbagecat version.
      * 
      */
-    public static void createReport(JvmRun jvmRun, String reportFileName) {
+    public static void createReport(JvmRun jvmRun, String reportFileName, boolean version, boolean latestVersion) {
         File reportFile = new File(reportFileName);
         FileWriter fileWriter = null;
         BufferedWriter bufferedWriter = null;
@@ -268,10 +288,17 @@ public class Main {
             fileWriter = new FileWriter(reportFile);
             bufferedWriter = new BufferedWriter(fileWriter);
 
-            bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);
-	    bufferedWriter.write("Running garbagecat version: " + getVersion() + System.getProperty("line.separator"));
-	    bufferedWriter.write("Latest garbagecat version/tag: " + getLatestVersion() + System.getProperty("line.separator"));
-
+            if (version || latestVersion) {
+                bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);
+                if (version) {
+                    bufferedWriter.write(
+                            "Running garbagecat version: " + getVersion() + System.getProperty("line.separator"));
+                }
+                if (latestVersion) {
+                    bufferedWriter.write("Latest garbagecat version/tag: " + getLatestVersion()
+                            + System.getProperty("line.separator"));
+                }
+            }
 
             // Bottlenecks
             List<String> bottlenecks = jvmRun.getBottlenecks();
@@ -530,35 +557,31 @@ public class Main {
         ResourceBundle rb = ResourceBundle.getBundle("META-INF/maven/garbagecat/garbagecat/pom");
         return rb.getString("version");
     }
+
     /**
      * @return version string.
      */
-    private static String getLatestVersion()
-    {
-    	 String url = "https://github.com/mgm3746/garbagecat/releases/latest";
-    	 String name= null;
-    	    try {
-    	        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-    	        httpClient = HttpClients.custom()
-    	                .setDefaultRequestConfig(RequestConfig.custom()
-    	                    .setCookieSpec(CookieSpecs.STANDARD).build())
-    	                .build();
-    	        HttpGet request = new HttpGet(url);
-    	        request.addHeader("Accept","application/json");  
-    	        request.addHeader("content-type", "application/json");
-    	        HttpResponse result = httpClient.execute(request);
-    	        String json = EntityUtils.toString(result.getEntity(), "UTF-8");
-    	        JSONObject jsonObj = new JSONObject(json);
-    	        name = jsonObj.getString("tag_name");
-    	        
-    	    	}
-    	         	     
-    	    catch(Exception ex){
-    	    	
-    	    	name= "Unable to retrieve";
-    	    	ex.printStackTrace();
-    	    }
-			return name;
-}
+    private static String getLatestVersion() {
+        String url = "https://github.com/mgm3746/garbagecat/releases/latest";
+        String name = null;
+        try {
+            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+            httpClient = HttpClients.custom()
+                    .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                    .build();
+            HttpGet request = new HttpGet(url);
+            request.addHeader("Accept", "application/json");
+            request.addHeader("content-type", "application/json");
+            HttpResponse result = httpClient.execute(request);
+            String json = EntityUtils.toString(result.getEntity(), "UTF-8");
+            JSONObject jsonObj = new JSONObject(json);
+            name = jsonObj.getString("tag_name");
+        }
 
+        catch (Exception ex) {
+            name = "Unable to retrieve";
+            ex.printStackTrace();
+        }
+        return name;
+    }
 }
