@@ -98,6 +98,9 @@ Notes:
 
 ```
 ========================================
+Running garbagecat version: 2.0.8
+Latest garbagecat version/tag: v2.0.10
+========================================
 Throughput less than 90%
 ----------------------------------------
 ...
@@ -159,7 +162,7 @@ info
 ```
 
 Notes:
-  1. The report contains five sections: (1) Bottlenecks, (2) JVM, (3) Summary, (4) Analysis, and (5) Unidentified log lines.
+  1. The report contains six sections: (1) Version, (2) Bottlenecks, (3) JVM, (4) Summary, (5) Analysis, and (6) Unidentified log lines.
   1. A bottleneck is when throughput between two consecutive blocking gc events is less than the specified throughput threshold.
   1. An ellipsis (...) between log lines in the bottleneck section indicates time periods when throughput was above the threshold.
   1. If the bottleneck section is missing, then no bottlenecks were found for the given threshold.
