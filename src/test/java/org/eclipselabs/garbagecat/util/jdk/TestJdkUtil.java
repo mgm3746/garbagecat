@@ -128,8 +128,7 @@ public class TestJdkUtil extends TestCase {
         Assert.assertTrue("Event should have been flagged as a bottleneck.",
                 JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
 
-        // Decrease timestamp by 1 ms to 2nd event start before 1st event
-        // finishes
+        // Decrease timestamp by 1 ms to 2nd event start before 1st event finishes
         timestamp2 = 10999L;
         gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
         try {
@@ -137,6 +136,30 @@ public class TestJdkUtil extends TestCase {
                     JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
         } catch (Exception e) {
             Assert.assertTrue("Expected TimeWarpException not thrown.", e instanceof TimeWarpException);
+        }
+    }
+
+    /**
+     * Test small overlap of .001 is not reported.
+     */
+    public void testNoTimeWarpExceptionOneThounsandthOverlap() {
+        String logLine1 = "test1";
+        long timestamp1 = 1000L;
+        int duration1 = 101;
+        BlockingEvent priorEvent = new ParallelScavengeEvent(logLine1, timestamp1, duration1);
+
+        // 2nd event starts .001 before the first collection ends
+        String logLine2 = "test2";
+        long timestamp2 = 1100L;
+        int duration2 = 200;
+        BlockingEvent gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
+
+        int throughputThreshold = 100;
+
+        try {
+            JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold);
+        } catch (Exception e) {
+            Assert.fail("Unexpected TimeWarpException.");
         }
     }
 
