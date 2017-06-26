@@ -61,6 +61,13 @@ public class TestCmsConcurrentEvent extends TestCase {
                 CmsConcurrentEvent.match(logLine));
     }
 
+    public void testMarkWithTimesData5Digits() {
+        String logLine = "2017-06-23T08:12:13.943-0400: 39034.532: [CMS-concurrent-mark: 4.583/35144.874 secs] "
+                + "[Times: user=29858.25 sys=2074.63, real=35140.48 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
     public void testMarkWithTimesDataWithOtherLoggingAppended() {
         String logLine = "242107.737: [CMS-concurrent-mark: 0.443/10.257 secs] "
                 + "[Times: user=6.00 sys=0.28, real=10.26 secs]x";

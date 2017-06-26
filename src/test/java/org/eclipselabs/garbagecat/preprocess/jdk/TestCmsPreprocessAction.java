@@ -163,6 +163,22 @@ public class TestCmsPreprocessAction extends TestCase {
                 CmsPreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineCmsSerialOldMixedAbortPrecleanConcurrentAbortablePreclean() {
+        String logLine = "2017-06-22T21:22:03.269-0400: 23.858: [Full GC 23.859: [CMS CMS: abort preclean due to "
+                + "time 2017-06-22T21:22:03.269-0400: 23.859: [CMS-concurrent-abortable-preclean: 0.338/5.115 secs] "
+                + "[Times: user=14.57 sys=0.83, real=5.11 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, null, null));
+        String nextLogLine = " (concurrent mode failure): 8156K->36298K(7864320K), 1.0166580 secs] "
+                + "89705K->36298K(8336192K), [CMS Perm : 34431K->34268K(34548K)], 1.0172840 secs] "
+                + "[Times: user=0.86 sys=0.14, real=1.02 secs]";
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "2017-06-22T21:22:03.269-0400: 23.858: [Full GC 23.859: [CMS", event.getLogEntry());
+    }
+
     public void testLogLineCmsSerialOldMixedConcurrentSpaceAfterGC() {
         String logLine = "85238.030: [Full GC 85238.030: [CMS85238.672: [CMS-concurrent-mark: 0.666/0.686 secs] "
                 + "[Times: user=1.40 sys=0.01, real=0.69 secs]";

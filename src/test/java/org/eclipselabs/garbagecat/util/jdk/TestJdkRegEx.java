@@ -175,9 +175,15 @@ public class TestJdkRegEx extends TestCase {
         Assert.assertTrue("Datestamp not recognized.", datestamp.matches(JdkRegEx.DATESTAMP));
     }
 
-    public void testTimesBlock4Digits() {
-        String timesBlock = " [Times: user=2889.80 sys=2.42, real=2891.01 secs]";
+    public void testTimesBlock5Digits() {
+        String timesBlock = " [Times: user=29858.25 sys=2074.63, real=35140.48 secs]";
         Assert.assertTrue("'" + timesBlock + "' " + "is a valid times block.", timesBlock.matches(TimesData.REGEX));
+    }
+
+    public void testDurationFractionk5Digits() {
+        String durationFraction = "4.583/35144.874 secs";
+        Assert.assertTrue("'" + durationFraction + "' " + "is a valid duration fraction.",
+                durationFraction.matches(JdkRegEx.DURATION_FRACTION));
     }
 
     public void testSizeG1WholeBytes() {

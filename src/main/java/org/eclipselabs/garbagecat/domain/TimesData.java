@@ -29,8 +29,8 @@ public interface TimesData {
     /**
      * Regular expression for times data block.
      */
-    String REGEX = "( \\[Times: user=(\\d{1,4}[\\.\\,]\\d{2}) sys=\\d{1,4}[\\.\\,]\\d{2}, "
-            + "real=(\\d{1,4}[\\.\\,]\\d{2}) secs\\])";
+    String REGEX = "( \\[Times: user=(\\d{1,5}[\\.\\,]\\d{2}) sys=\\d{1,5}[\\.\\,]\\d{2}, "
+            + "real=(\\d{1,5}[\\.\\,]\\d{2}) secs\\])";
 
     /**
      * @return The time of all threads added together in centoseconds.

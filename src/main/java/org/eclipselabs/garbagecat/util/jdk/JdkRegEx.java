@@ -111,7 +111,7 @@ public class JdkRegEx {
      * 
      * For example: 2.272/29.793 secs
      */
-    public static final String DURATION_FRACTION = "(\\d{1,4}[\\.\\,]\\d{3}\\/\\d{1,4}[\\.\\,]\\d{3}) secs";
+    public static final String DURATION_FRACTION = "(\\d{1,4}[\\.\\,]\\d{3}\\/\\d{1,5}[\\.\\,]\\d{3}) secs";
 
     /**
      * Data when the CMS collector is run in incremental mode with the <code>-XX:+CMSIncrementalMode</code> JVM option.

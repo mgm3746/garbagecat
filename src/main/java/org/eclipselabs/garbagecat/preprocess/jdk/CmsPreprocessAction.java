@@ -235,14 +235,18 @@ public class CmsPreprocessAction implements PreprocessAction {
 
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD mixed with CMS_CONCURRENT collection.
+     * 
+     * 2017-06-22T21:22:03.269-0400: 23.858: [Full GC 23.859: [CMS CMS: abort preclean due to time
+     * 2017-06-22T21:22:03.269-0400: 23.859: [CMS-concurrent-abortable-preclean: 0.338/5.115 secs] [Times: user=14.57
+     * sys=0.83, real=5.11 secs]
      */
     private static final String REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
             + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
             + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)[ ]{0,1})?(" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[CMS)((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]"
-            + TimesData.REGEX + "?)[ ]*$";
+            + JdkRegEx.TIMESTAMP + ": \\[CMS)( CMS: abort preclean due to time )?((" + JdkRegEx.DATESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): "
+            + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD bailing out collection.
@@ -511,7 +515,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(29));
+                entangledLogLines.add(matcher.group(30));
             }
             // Output beginning of CMS_SERIAL_OLD line
             this.logEntry = matcher.group(1);
