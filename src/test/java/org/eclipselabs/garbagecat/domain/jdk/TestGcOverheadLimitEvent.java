@@ -40,4 +40,11 @@ public class TestGcOverheadLimitEvent extends TestCase {
         Assert.assertFalse(JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + " incorrectly indentified as blocking.",
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
+
+    public void testReportable() {
+        String logLine = "GC time would exceed GCTimeLimit of 98%";
+        Assert.assertFalse(
+                JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + " incorrectly indentified as reportable.",
+                JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
+    }
 }

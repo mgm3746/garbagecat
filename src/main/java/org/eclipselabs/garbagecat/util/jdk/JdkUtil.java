@@ -735,6 +735,7 @@ public class JdkUtil {
         case CLASS_UNLOADING:
         case FLS_STATISTICS:
         case GC_LOCKER:
+        case GC_OVERHEAD_LIMIT:
         case HEADER_COMMAND_LINE_FLAGS:
         case HEADER_MEMORY:
         case HEADER_VERSION:
