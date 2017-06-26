@@ -398,12 +398,19 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * 298.027: [Full GC (Metadata GC Threshold) [GC concurrent-root-region-scan-start]
      * 
-     * 2017-02-27T02:55:32.523+0300: 35911.404: [Full GC (Allocation Failure)2017-02-27T02:55:32.524+0300: 35911.405:
+     * 2017-02-27T02:55:32.523+`0300: 35911.404: [Full GC (Allocation Failure)2017-02-27T02:55:32.524+0300: 35911.405:
      * [GC concurrent-root-region-scan-end, 0.0127300 secs]
+     * 
+     * 2017-06-22T16:03:36.126+0530: 2017-06-22T16:03:36.126+0530: 79244.87279244.872: : [Full GC (Metadata GC
+     * Threshold) [GC concurrent-root-region-scan-start]
+     * 
+     * 2017-06-22T16:35:58.032+0530: 81186.777: 2017-06-22T16:35:58.032+0530: [Full GC (Metadata GC Threshold)
+     * 81186.777: [GC concurrent-root-region-scan-start]
+     * 
      */
     private static final String REGEX_RETAIN_BEGINNING_FULL_CONCURRENT = "^(" + JdkRegEx.DATESTAMP + ": )?("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + "?(: )?" + JdkRegEx.TIMESTAMP
-            + "?(:)?( )?(\\[Full GC \\((" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + "?(: )?" + JdkRegEx.TIMESTAMP + "?(:)?( )?(: )?("
+            + JdkRegEx.DATESTAMP + ": )?(\\[Full GC \\((" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
             + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\)[ ]{0,1})((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + "?(:)?( )?(\\[GC concurrent-root-region-scan-(start|end)(, " + JdkRegEx.DURATION + ")?\\]))[ ]*$";
 
@@ -667,45 +674,52 @@ public class G1PreprocessAction implements PreprocessAction {
             // Handle concurrent mixed with full collections. See dataset 74.
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_FULL_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
-            int indexConcurrentTimestamp = 42;
+            int indexG1FullDatestamp = 12;
             int indexG1FullTimestamp = 23;
+            int indexFullBlock = 40;
+            int indexConcurrentLine = 42;
+            int indexConcurrentDatestamp = 43;
+            int indexConcurrentTimestamp = 54;
+            int indexConcurrentBlock = 57;
             if (matcher.matches()) {
                 if (matcher.group(indexConcurrentTimestamp) != null) {
-                    entangledLogLines.add(matcher.group(30));
+                    entangledLogLines.add(matcher.group(indexConcurrentLine));
                 } else {
                     // G1_CONCURRENT timestamp missing. Use G1_FULL timestamp.
-                    if (matcher.group(12) != null) {
-                        entangledLogLines.add(
-                                matcher.group(12) + matcher.group(indexG1FullTimestamp) + ": " + matcher.group(45));
+                    if (matcher.group(indexG1FullDatestamp) != null) {
+                        entangledLogLines.add(matcher.group(indexG1FullDatestamp) + matcher.group(indexG1FullTimestamp)
+                                + ": " + matcher.group(indexConcurrentBlock));
                     } else {
                         if (matcher.group(1) != null) {
-                            entangledLogLines.add(
-                                    matcher.group(1) + matcher.group(indexG1FullTimestamp) + ": " + matcher.group(45));
+                            entangledLogLines.add(matcher.group(1) + matcher.group(indexG1FullTimestamp) + ": "
+                                    + matcher.group(indexConcurrentBlock));
                         } else {
-                            entangledLogLines.add(matcher.group(indexG1FullTimestamp) + ": " + matcher.group(45));
+                            entangledLogLines.add(
+                                    matcher.group(indexG1FullTimestamp) + ": " + matcher.group(indexConcurrentBlock));
                         }
                     }
                 }
             }
             // Output beginning of G1_FULL line
             if (matcher.group(indexG1FullTimestamp) != null) {
-                if (matcher.group(12) != null) {
-                    this.logEntry = matcher.group(12) + matcher.group(indexG1FullTimestamp) + ": " + matcher.group(28);
+                if (matcher.group(indexG1FullDatestamp) != null) {
+                    this.logEntry = matcher.group(indexG1FullDatestamp) + matcher.group(indexG1FullTimestamp) + ": "
+                            + matcher.group(indexFullBlock);
                 } else {
                     if (matcher.group(1) != null) {
                         this.logEntry = matcher.group(1) + matcher.group(indexG1FullTimestamp) + ": "
-                                + matcher.group(28);
+                                + matcher.group(indexFullBlock);
                     } else {
-                        this.logEntry = matcher.group(indexG1FullTimestamp) + ": " + matcher.group(28);
+                        this.logEntry = matcher.group(indexG1FullTimestamp) + ": " + matcher.group(indexFullBlock);
                     }
                 }
             } else {
                 // G1_FULL timestamp missing. Use G1_CONCURRENT timestamp.
-                if (matcher.group(31) != null) {
-                    this.logEntry = matcher.group(31) + matcher.group(indexConcurrentTimestamp) + ": "
-                            + matcher.group(28);
+                if (matcher.group(indexConcurrentDatestamp) != null) {
+                    this.logEntry = matcher.group(indexConcurrentDatestamp) + matcher.group(indexConcurrentTimestamp)
+                            + ": " + matcher.group(indexFullBlock);
                 } else {
-                    this.logEntry = matcher.group(indexConcurrentTimestamp) + ": " + matcher.group(28);
+                    this.logEntry = matcher.group(indexConcurrentTimestamp) + ": " + matcher.group(indexFullBlock);
                 }
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
