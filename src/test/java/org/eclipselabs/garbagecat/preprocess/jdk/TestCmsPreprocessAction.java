@@ -1530,8 +1530,8 @@ public class TestCmsPreprocessAction extends TestCase {
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 4, jvmRun.getEventTypes().size());
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_REMARK));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
     }
 
     public void testParNewConcurrentModeFailureMixedAbortPrecleanDueToTime() {
@@ -1613,15 +1613,17 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
     }
 
-    public void testCmsRemarkJdk8MixedHeapAtGc() {
+    public void testCmsScavengeBeforeRemarkJdk8MixedHeapAtGc() {
         File testFile = new File("src/test/data/dataset136.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertFalse(LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_REMARK.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_REMARK));
     }

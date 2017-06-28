@@ -54,23 +54,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 3) JDK8 with PAR_NEW ending.
- * </p>
- * 
- * <pre>
- * 4.506: [GC (CMS Final Remark) [YG occupancy: 100369 K (153344 K)]4.506: [GC (CMS Final Remark) 4.506: [ParNew: 100369K-&gt;10116K(153344K), 0.0724021 secs] 100369K-&gt;16685K(4177280K), 0.0724907 secs] [Times: user=0.13 sys=0.01, real=0.07 secs]
- * </pre>
- * 
- * <p>
- * 4) JDK8 without <code>-XX:+PrintGCDetails</code>.
- * </p>
- * 
- * <pre>
- * 2017-04-03T03:12:02.133-0500: 30.385: [GC (CMS Final Remark) 2017-04-03T03:12:02.134-0500: 30.385: [GC (CMS Final Remark) 890910K-&gt;620060K(7992832K), 0.1223879 secs] 620060K(7992832K), 0.2328529 secs]
- * </pre>
- * 
- * <p>
- * 5) With datestamp:
+ * 4) With datestamp:
  * </p>
  * 
  * <pre>
@@ -78,7 +62,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 6) JDK 1.6 with class unloading:
+ * 5) JDK 1.6 with class unloading:
  * </p>
  * 
  * <pre>
@@ -90,7 +74,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * 7) JDK 1.7 with class unloading with "scrub symbol table" and "scrub string table" vs.
+ * 6) JDK 1.7 with class unloading with "scrub symbol table" and "scrub string table" vs.
  * "scrub symbol &amp; string tables":
  * </p>
  * 
@@ -99,7 +83,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 8) JDK8 with class unloading with trigger and no space after "scrub symbol table":
+ * 7) JDK8 with class unloading with trigger and no space after "scrub symbol table":
  * </p>
  * 
  * <pre>
@@ -107,7 +91,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 9) JDK7 with class unloading with trigger with non-parallel rescan: "grey object" and "root" rescans:
+ * 8) JDK7 with class unloading with trigger with non-parallel rescan: "grey object" and "root" rescans:
  * </p>
  * 
  * <pre>
@@ -115,7 +99,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 10) JDK8 with class unloading without the initial GC|YG block:
+ * 9) JDK8 with class unloading without the initial GC|YG block:
  * </p>
  * 
  * <pre>
@@ -123,7 +107,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 11) JDK7 with class unloading with trigger with non-parallel rescan: "grey object" and "root" rescans:
+ * 10) JDK7 with class unloading with trigger with non-parallel rescan: "grey object" and "root" rescans:
  * </p>
  * 
  * <pre>
@@ -185,19 +169,6 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
-     * Regular expression for JDK8 logging with {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} from
-     * <code>-XX:+CMSScavengeBeforeRemark</code>.
-     */
-    private static final String REGEX_PARNEW = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC \\(("
-            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1}(\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
-            + JdkRegEx.SIZE + "\\)])?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC \\("
-            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\)[ ]{0,1}((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?:)? " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] (" + JdkRegEx.SIZE + "->)?"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
-            + TimesData.REGEX + "?[ ]*$";
-
-    /**
      * Regular expression for class unloading enabled with <code>-XX:+CMSClassUnloadingEnabled</code> .
      */
     private static final String REGEX_CLASS_UNLOADING = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
@@ -236,27 +207,6 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             if (matcher.group(70) != null) {
                 timeUser = JdkMath.convertSecsToCentos(matcher.group(71)).intValue();
                 timeReal = JdkMath.convertSecsToCentos(matcher.group(72)).intValue();
-            }
-        } else if (logEntry.matches(REGEX_PARNEW)) {
-            Pattern pattern = Pattern.compile(REGEX_PARNEW);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                if (matcher.group(43) != null) {
-                    trigger = matcher.group(43);
-                } else {
-                    trigger = matcher.group(13);
-                }
-                if (matcher.group(54) != null) {
-                    super.setIncrementalMode(true);
-                }
-                // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMillis(matcher.group(55)).intValue();
-            }
-            classUnloading = false;
-            if (matcher.group(58) != null) {
-                timeUser = JdkMath.convertSecsToCentos(matcher.group(59)).intValue();
-                timeReal = JdkMath.convertSecsToCentos(matcher.group(60)).intValue();
             }
         } else if (logEntry.matches(REGEX_CLASS_UNLOADING)) {
             Pattern pattern = Pattern.compile(REGEX_CLASS_UNLOADING);
@@ -341,6 +291,6 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX) || logLine.matches(REGEX_PARNEW) || logLine.matches(REGEX_CLASS_UNLOADING);
+        return logLine.matches(REGEX) || logLine.matches(REGEX_CLASS_UNLOADING);
     }
 }

@@ -301,6 +301,121 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Parallelism not calculated correctly.", 275, event.getParallelism());
     }
 
+    public void testLogLineTriggerCmsFinalRemarkJdk8() {
+        String logLine = "4.506: [GC (CMS Final Remark) [YG occupancy: 100369 K (153344 K)]"
+                + "4.506: [GC (CMS Final Remark) 4.506: [ParNew: 100369K->10116K(153344K), 0.0724021 secs] "
+                + "100369K->16685K(4177280K), 0.0724907 secs] [Times: user=0.13 sys=0.01, real=0.07 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                ParNewEvent.match(logLine));
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 4506, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        Assert.assertEquals("Young begin size not parsed correctly.", 100369, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 10116, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 153344, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", (100369 - 100369), event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", (16685 - 10116), event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", (4177280 - 153344), event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 72, event.getDuration());
+        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
+        Assert.assertEquals("User time not parsed correctly.", 13, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 7, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 186, event.getParallelism());
+    }
+
+    public void testLogLineTriggerCmsFinalRemarkJdk8WithTimeStamps() {
+        String logLine = "2017-01-07T22:02:15.504+0300: 66.504: [GC (CMS Final Remark)[YG occupancy: 4266790 K "
+                + "(8388608 K)]2017-01-07T22:02:15.504+0300: 66.504: [GC (CMS Final Remark)"
+                + "2017-01-07T22:02:15.504+0300: 66.504: [ParNew: 4266790K->922990K(8388608K), 0.6540990 secs] "
+                + "6417140K->3472610K(22020096K) icms_dc=35 , 0.6542370 secs] "
+                + "[Times: user=1.89 sys=0.01, real=0.66 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                ParNewEvent.match(logLine));
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 66504, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        Assert.assertEquals("Young begin size not parsed correctly.", 4266790, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 922990, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 8388608, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", (6417140 - 4266790), event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", (3472610 - 922990), event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", (22020096 - 8388608), event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 654, event.getDuration());
+        Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
+        Assert.assertEquals("User time not parsed correctly.", 189, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 66, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 287, event.getParallelism());
+    }
+
+    public void testLogLineNoSpaceAfterTrigger() {
+        String logLine = "78.251: [GC (CMS Final Remark)[YG occupancy: 2619547 K (8388608 K)]"
+                + "78.251: [GC (CMS Final Remark)78.251: [ParNew: 2619547K->569438K(8388608K), 0.3405110 secs] "
+                + "6555444K->5043068K(22020096K) icms_dc=100 , 0.3406250 secs] "
+                + "[Times: user=2.12 sys=0.01, real=0.34 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                ParNewEvent.match(logLine));
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 78251, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        Assert.assertEquals("Young begin size not parsed correctly.", 2619547, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 569438, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 8388608, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", (6555444 - 2619547), event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", (5043068 - 569438), event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", (22020096 - 8388608), event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 340, event.getDuration());
+        Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
+        Assert.assertEquals("User time not parsed correctly.", 212, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 34, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 624, event.getParallelism());
+    }
+
+    public void testLogLineTriggerPromotionFailed() {
+        String logLine = "58427.547: [GC (CMS Final Remark)[YG occupancy: 5117539 K (8388608 K)]"
+                + "58427.548: [GC (CMS Final Remark)58427.548: [ParNew (promotion failed): "
+                + "5117539K->5001473K(8388608K), 27.6557600 secs] 17958061K->18622281K(22020096K) icms_dc=57 , "
+                + "27.6560550 secs] [Times: user=49.10 sys=6.01, real=27.65 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                ParNewEvent.match(logLine));
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 58427547, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
+        Assert.assertEquals("Young begin size not parsed correctly.", 5117539, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 5001473, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 8388608, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", (17958061 - 5117539), event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", (18622281 - 5001473), event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", (22020096 - 8388608), event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 27656, event.getDuration());
+        Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
+        Assert.assertEquals("User time not parsed correctly.", 4910, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 2765, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 178, event.getParallelism());
+    }
+
+    public void testLogLineTriggerScavengeBeforeRemarkNoGcDetailsPreprocessed() {
+        String logLine = "2017-04-03T03:12:02.133-0500: 30.385: [GC (CMS Final Remark) 2017-04-03T03:12:02.134-0500: "
+                + "30.385: [GC (CMS Final Remark)  890910K->620060K(7992832K), 0.1223879 secs] 620060K(7992832K), "
+                + "0.2328529 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
+                ParNewEvent.match(logLine));
+        ParNewEvent event = new ParNewEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 30385, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        Assert.assertEquals("Young begin size not parsed correctly.", 890910, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 620060, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 7992832, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", (620060 - 620060), event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", (620060 - 620060), event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", (7992832 - 7992832), event.getOldSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 232, event.getDuration());
+    }
+
     /**
      * Test preprocessing a split <code>ParNewCmsConcurrentEvent</code> that does not include the
      * "concurrent mode failure" text.

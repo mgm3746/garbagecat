@@ -79,11 +79,29 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 6) With -XX:+CMSScavengeBeforeRemark:
+ * 6) Initiated by -XX:+CMSScavengeBeforeRemark:
  * </p>
  * 
  * <pre>
  * 7236.341: [GC[YG occupancy: 1388745 K (4128768 K)]7236.341: [GC7236.341: [ParNew: 1388745K-&gt;458752K(4128768K), 0.5246295 secs] 2977822K-&gt;2161212K(13172736K), 0.5248785 secs] [Times: user=0.92 sys=0.03, real=0.51 secs]
+ * </pre>
+ * 
+ *
+ * <p>
+ * 7) CMS Final Remark trigger initiated by -XX:+CMSScavengeBeforeRemark JDK8:
+ * </p>
+ * 
+ * <pre>
+ * 4.506: [GC (CMS Final Remark) [YG occupancy: 100369 K (153344 K)]4.506: [GC (CMS Final Remark) 4.506: [ParNew: 100369K-&gt;10116K(153344K), 0.0724021 secs] 100369K-&gt;16685K(4177280K), 0.0724907 secs] [Times: user=0.13 sys=0.01, real=0.07 secs]
+ * </pre>
+ * 
+ *
+ * <p>
+ * 8) CMS Final Remark trigger initiated by -XX:+CMSScavengeBeforeRemark JDK8 without <code>-XX:+PrintGCDetails</code>:
+ * </p>
+ * 
+ * <pre>
+ * 2017-04-03T03:12:02.133-0500: 30.385: [GC (CMS Final Remark) 2017-04-03T03:12:02.134-0500: 30.385: [GC (CMS Final Remark) 890910K-&gt;620060K(7992832K), 0.1223879 secs] 620060K(7992832K), 0.2328529 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -97,18 +115,20 @@ public class ParNewEvent extends CmsIncrementalModeCollector
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + "|"
+            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP
-            + ": \\[GC\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\])?(" + JdkRegEx.DATESTAMP
-            + ": )?" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( )?(\\(" + TRIGGER + "\\))?( )?(" + JdkRegEx.DATESTAMP
-            + ": )?(" + JdkRegEx.TIMESTAMP + ": )?\\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, "
-            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": \\[GC( \\("
+            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\)[ ]{0,1})?(\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
+            + JdkRegEx.SIZE + "\\)\\])?)?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[(Full )?GC( )?(\\(" + TRIGGER + "\\))?( )?((" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP
+            + ": )?\\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?:)? " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] (" + JdkRegEx.SIZE + "->)?"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
+            + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(ParNewEvent.REGEX);
     /**
@@ -181,26 +201,39 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(27)).longValue();
-            trigger = matcher.group(31);
-            young = Integer.parseInt(matcher.group(48));
-            youngEnd = Integer.parseInt(matcher.group(49));
-            youngAvailable = Integer.parseInt(matcher.group(50));
-            int totalBegin = Integer.parseInt(matcher.group(54));
-            old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(55));
+            if (matcher.group(13) != null) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(29)).longValue();
+            }
+            if (matcher.group(51) != null) {
+                trigger = matcher.group(51);
+            } else {
+                trigger = matcher.group(33);
+            }
+            young = Integer.parseInt(matcher.group(52));
+            youngEnd = Integer.parseInt(matcher.group(53));
+            youngAvailable = Integer.parseInt(matcher.group(54));
+            int totalEnd = Integer.parseInt(matcher.group(60));
             oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(56));
+            if (matcher.group(58) != null) {
+                int totalBegin = Integer.parseInt(matcher.group(59));
+                old = totalBegin - young;
+            } else {
+                // Set equal to old end
+                old = oldEnd;
+            }
+            int totalAllocation = Integer.parseInt(matcher.group(61));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(58)).intValue();
-            if (matcher.group(57) != null) {
+            duration = JdkMath.convertSecsToMillis(matcher.group(63)).intValue();
+            if (matcher.group(62) != null) {
                 super.setIncrementalMode(true);
             } else {
                 super.setIncrementalMode(false);
             }
-            if (matcher.group(61) != null) {
-                timeUser = JdkMath.convertSecsToCentos(matcher.group(62)).intValue();
-                timeReal = JdkMath.convertSecsToCentos(matcher.group(63)).intValue();
+            if (matcher.group(66) != null) {
+                timeUser = JdkMath.convertSecsToCentos(matcher.group(67)).intValue();
+                timeReal = JdkMath.convertSecsToCentos(matcher.group(68)).intValue();
             }
         }
     }

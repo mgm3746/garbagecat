@@ -25,9 +25,9 @@ import junit.framework.TestCase;
 public class TestCmsRemarkEvent extends TestCase {
 
     public void testIsBlocking() {
-        String logLine = "4.506: [GC (CMS Final Remark) [YG occupancy: 100369 K (153344 K)]"
-                + "4.506: [GC (CMS Final Remark) 4.506: [ParNew: 100369K->10116K(153344K), 0.0724021 secs] "
-                + "100369K->16685K(4177280K), 0.0724907 secs] [Times: user=0.13 sys=0.01, real=0.07 secs]";
+        String logLine = "253.103: [GC[YG occupancy: 16172 K (149120 K)]253.103: "
+                + "[Rescan (parallel) , 0.0226730 secs]253.126: [weak refs processing, 0.0624566 secs] "
+                + "[1 CMS-remark: 4173470K(8218240K)] 4189643K(8367360K), 0.0857010 secs]";
         Assert.assertTrue(JdkUtil.LogEventType.CMS_REMARK.toString() + " not indentified as blocking.",
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
@@ -87,82 +87,6 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("User time not parsed correctly.", 18, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 900, event.getParallelism());
-    }
-
-    public void testLogLineJdk8WithParNewEnd() {
-        String logLine = "4.506: [GC (CMS Final Remark) [YG occupancy: 100369 K (153344 K)]"
-                + "4.506: [GC (CMS Final Remark) 4.506: [ParNew: 100369K->10116K(153344K), 0.0724021 secs] "
-                + "100369K->16685K(4177280K), 0.0724907 secs] [Times: user=0.13 sys=0.01, real=0.07 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
-                CmsRemarkEvent.match(logLine));
-        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
-        Assert.assertEquals("Time stamp not parsed correctly.", 4506, event.getTimestamp());
-        Assert.assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
-        Assert.assertEquals("Duration not parsed correctly.", 72, event.getDuration());
-        Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
-        Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
-        Assert.assertEquals("User time not parsed correctly.", 13, event.getTimeUser());
-        Assert.assertEquals("Real time not parsed correctly.", 7, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 186, event.getParallelism());
-    }
-
-    public void testLogLineJdk8WithParNewEndWithTimeStamps() {
-        String logLine = "2017-01-07T22:02:15.504+0300: 66.504: [GC (CMS Final Remark)[YG occupancy: 4266790 K "
-                + "(8388608 K)]2017-01-07T22:02:15.504+0300: 66.504: [GC (CMS Final Remark)"
-                + "2017-01-07T22:02:15.504+0300: 66.504: [ParNew: 4266790K->922990K(8388608K), 0.6540990 secs] "
-                + "6417140K->3472610K(22020096K) icms_dc=35 , 0.6542370 secs] "
-                + "[Times: user=1.89 sys=0.01, real=0.66 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
-                CmsRemarkEvent.match(logLine));
-        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
-        Assert.assertEquals("Time stamp not parsed correctly.", 66504, event.getTimestamp());
-        Assert.assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
-        Assert.assertEquals("Duration not parsed correctly.", 654, event.getDuration());
-        Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
-        Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
-        Assert.assertEquals("User time not parsed correctly.", 189, event.getTimeUser());
-        Assert.assertEquals("Real time not parsed correctly.", 66, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 287, event.getParallelism());
-    }
-
-    public void testLogLineNoSpaceAfterTrigger() {
-        String logLine = "78.251: [GC (CMS Final Remark)[YG occupancy: 2619547 K (8388608 K)]"
-                + "78.251: [GC (CMS Final Remark)78.251: [ParNew: 2619547K->569438K(8388608K), 0.3405110 secs] "
-                + "6555444K->5043068K(22020096K) icms_dc=100 , 0.3406250 secs] "
-                + "[Times: user=2.12 sys=0.01, real=0.34 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
-                CmsRemarkEvent.match(logLine));
-        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
-        Assert.assertEquals("Time stamp not parsed correctly.", 78251, event.getTimestamp());
-        Assert.assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
-        Assert.assertEquals("Duration not parsed correctly.", 340, event.getDuration());
-        Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
-        Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
-        Assert.assertEquals("User time not parsed correctly.", 212, event.getTimeUser());
-        Assert.assertEquals("Real time not parsed correctly.", 34, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 624, event.getParallelism());
-    }
-
-    public void testLogLineParNewTrigger() {
-        String logLine = "58427.547: [GC (CMS Final Remark)[YG occupancy: 5117539 K (8388608 K)]"
-                + "58427.548: [GC (CMS Final Remark)58427.548: [ParNew (promotion failed): "
-                + "5117539K->5001473K(8388608K), 27.6557600 secs] 17958061K->18622281K(22020096K) icms_dc=57 , "
-                + "27.6560550 secs] [Times: user=49.10 sys=6.01, real=27.65 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
-                CmsRemarkEvent.match(logLine));
-        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
-        Assert.assertEquals("Time stamp not parsed correctly.", 58427547, event.getTimestamp());
-        Assert.assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
-        Assert.assertEquals("Duration not parsed correctly.", 27656, event.getDuration());
-        Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
-        Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
-        Assert.assertEquals("User time not parsed correctly.", 4910, event.getTimeUser());
-        Assert.assertEquals("Real time not parsed correctly.", 2765, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 178, event.getParallelism());
     }
 
     public void testLogLineDatestamp() {
@@ -371,19 +295,5 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("User time not parsed correctly.", 26, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 9, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 289, event.getParallelism());
-    }
-
-    public void testLogLineScavengeBeforeRemarkNoGcDetailsPreprocessed() {
-        String logLine = "2017-04-03T03:12:02.133-0500: 30.385: [GC (CMS Final Remark) 2017-04-03T03:12:02.134-0500: "
-                + "30.385: [GC (CMS Final Remark)  890910K->620060K(7992832K), 0.1223879 secs] 620060K(7992832K), "
-                + "0.2328529 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
-                CmsRemarkEvent.match(logLine));
-        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
-        Assert.assertEquals("Time stamp not parsed correctly.", 30385, event.getTimestamp());
-        Assert.assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
-        Assert.assertEquals("Duration not parsed correctly.", 232, event.getDuration());
-        Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
     }
 }
