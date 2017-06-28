@@ -1204,7 +1204,7 @@ public class TestAnalysis extends TestCase {
     }
 
     /**
-     * Test CMS initial mark serial.
+     * Test CMS initial mark low parallelism.
      */
     public void testCmsInitialMarkSerial() {
         // TODO: Create File in platform independent way.
@@ -1213,12 +1213,12 @@ public class TestAnalysis extends TestCase {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.WARN_CMS_INITIAL_MARK_SERIAL + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_SERIAL));
+        Assert.assertTrue(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM));
     }
 
     /**
-     * Test CMS remark serial.
+     * Test CMS remark low parallelism.
      */
     public void testCmsRemarkSerial() {
         // TODO: Create File in platform independent way.
@@ -1227,7 +1227,35 @@ public class TestAnalysis extends TestCase {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.WARN_CMS_REMARK_SERIAL + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_REMARK_SERIAL));
+        Assert.assertTrue(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM));
+    }
+
+    /**
+     * Test CMS remark low parallelism not reported with pause times less than zero.
+     */
+    public void testInitialMarkLowParallelismFalseReportZeroReal() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset137.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertFalse(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM));
+    }
+
+    /**
+     * Test CMS remark low parallelism not reported with pause times less than times data centosecond precision.
+     */
+    public void testInitialMarkLowParallelismFalseReportSmallPause() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset138.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertFalse(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM));
     }
 }

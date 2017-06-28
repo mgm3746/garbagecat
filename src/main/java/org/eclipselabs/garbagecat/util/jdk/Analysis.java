@@ -334,9 +334,9 @@ public enum Analysis {
     WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING("warn.cms.init.occupancy.only.missing"),
 
     /**
-     * Property key for evidence of single-threaded CMS initial mark.
+     * Property key for CMS initial mark low parallelism.
      */
-    WARN_CMS_INITIAL_MARK_SERIAL("warn.cms.initial.mark.serial"),
+    WARN_CMS_INITIAL_MARK_LOW_PARALLELISM("warn.cms.initial.mark.low.parallelism"),
 
     /**
      * Property key for PAR_NEW collector disabled.
@@ -344,9 +344,9 @@ public enum Analysis {
     WARN_CMS_PAR_NEW_DISABLED("warn.cms.par.new.disabled"),
 
     /**
-     * Property key for evidence of single-threaded CMS remark.
+     * Property key for CMS remark low parallelism.
      */
-    WARN_CMS_REMARK_SERIAL("warn.cms.remark.serial"),
+    WARN_CMS_REMARK_LOW_PARALLELISM("warn.cms.remark.low.parallelism"),
 
     /**
      * Property key for compressed class pointers disabled (-XX:-UseCompressedClassPointers), and heap size unknown.
