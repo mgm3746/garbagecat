@@ -382,7 +382,12 @@ public class Main {
                             "Max Perm/Metaspace Space: " + jvmRun.getMaxPermSpace() + "K" + Constants.LINE_SEPARATOR);
                 }
                 // GC throughput
-                bufferedWriter.write("GC Throughput: " + jvmRun.getGcThroughput() + "%" + Constants.LINE_SEPARATOR);
+                bufferedWriter.write("GC Throughput: ");
+                if (jvmRun.getGcThroughput() == 100 && jvmRun.getBlockingEventCount() > 0) {
+                    // Provide clue it's rounded to 100
+                    bufferedWriter.write("~");
+                }
+                bufferedWriter.write(jvmRun.getGcThroughput() + "%" + Constants.LINE_SEPARATOR);
                 // GC max pause
                 BigDecimal maxGcPause = JdkMath.convertMillisToSecs(jvmRun.getMaxGcPause());
                 bufferedWriter.write("GC Max Pause: " + maxGcPause.toString() + " secs" + Constants.LINE_SEPARATOR);
