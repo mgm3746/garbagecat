@@ -1,0 +1,4 @@
+2017-06-18T05:23:03.447-0500: 2.177: Total time for which application threads were stopped: 0.0002547 seconds, Stopping threads took: 0.0001440 seconds
+2017-06-18T05:23:03.452-0500: 2.182: 2017-06-18T05:23:03.452-0500: [CMS-concurrent-preclean: 0.016/0.048 secs]2.182: Application time: 0.0055079 seconds
+ [Times: user=0.15 sys=0.02, real=0.05 secs]
+2017-06-18T05:23:03.452-0500: 2.183: Total time for which application threads were stopped: 0.0002719 seconds, Stopping threads took: 0.0000607 seconds

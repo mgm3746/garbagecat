@@ -369,6 +369,15 @@ public class TestCmsPreprocessAction extends TestCase {
                 CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
     }
 
+    public void testLogLinePrintHeapAtGcBeginCmsRemarkJdk8() {
+        String priorLogLine = "";
+        String logLine = "2017-06-18T05:23:16.634-0500: 15.364: [GC (CMS Final Remark) [YG occupancy: 576424 K "
+                + "(1677760 K)]{Heap before GC invocations=8 (full 2):";
+        String nextLogLine = "";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+    }
+
     public void testLogMiddleSerialConcurrentPrecleanMixed() {
         String priorLogLine = "";
         String logLine = "28282.075: [CMS28284.687: [CMS-concurrent-preclean: 3.706/3.706 secs]";
@@ -999,6 +1008,48 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
 
+    public void testLogLineBeginningCmsConcurrentMixedApplicationConcurrentTime() {
+        String priorLogLine = "";
+        String logLine = "2017-06-18T05:23:03.452-0500: 2.182: 2017-06-18T05:23:03.452-0500: "
+                + "[CMS-concurrent-preclean: 0.016/0.048 secs]2.182: Application time: 0.0055079 seconds";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "2017-06-18T05:23:03.452-0500: 2.182: [CMS-concurrent-preclean: 0.016/0.048 secs]",
+                event.getLogEntry());
+    }
+
+    public void testLogLineEndTimesData() {
+        String priorLogLine = "2017-06-18T05:23:03.452-0500: 2.182: 2017-06-18T05:23:03.452-0500: "
+                + "[CMS-concurrent-preclean: 0.016/0.048 secs]2.182: Application time: 0.0055079 seconds";
+        String logLine = " [Times: user=0.15 sys=0.02, real=0.05 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+    }
+
+    public void testLogLineMiddleCmsRemarkJdk8() {
+        String priorLogLine = "";
+        String logLine = "2017-06-18T05:23:16.634-0500: 15.364: [GC (CMS Final Remark) 2017-06-18T05:23:16.634-0500: "
+                + "15.364: [ParNew";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+    }
+
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */
@@ -1541,5 +1592,37 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
         Assert.assertTrue(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE));
+    }
+
+    public void testCmsConcurrentMixedApplicationConcurrentTime() {
+        File testFile = new File("src/test/data/dataset135.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 3, jvmRun.getEventTypes().size());
+        Assert.assertFalse(LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
+    }
+
+    public void testCmsRemarkJdk8MixedHeapAtGc() {
+        File testFile = new File("src/test/data/dataset136.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_REMARK.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_REMARK));
     }
 }

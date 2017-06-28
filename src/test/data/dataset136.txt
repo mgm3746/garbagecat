@@ -1,0 +1,11 @@
+2017-06-18T05:23:16.634-0500: 15.364: [GC (CMS Final Remark) [YG occupancy: 576424 K (1677760 K)]{Heap before GC invocations=8 (full 2):
+ par new generation   total 1677760K, used 576424K [0x0000000680000000, 0x0000000700000000, 0x0000000700000000)
+  eden space 1258368K,  45% used [0x0000000680000000, 0x00000006a32ea010, 0x00000006ccce0000)
+  from space 419392K,   0% used [0x00000006ccce0000, 0x00000006ccce0000, 0x00000006e6670000)
+  to   space 419392K,   0% used [0x00000006e6670000, 0x00000006e6670000, 0x0000000700000000)
+ concurrent mark-sweep generation total 3145728K, used 831929K [0x0000000700000000, 0x00000007c0000000, 0x00000007c0000000)
+ Metaspace       used 156155K, capacity 163980K, committed 164344K, reserved 1191936K
+  class space    used 20368K, capacity 22549K, committed 22632K, reserved 1048576K
+2017-06-18T05:23:16.634-0500: 15.364: [GC (CMS Final Remark) 2017-06-18T05:23:16.634-0500: 15.364: [ParNew
+Desired survivor size 386511664 bytes, new threshold 0 (max 0)
+: 576424K->0K(1677760K), 0.0727407 secs] 1408353K->874059K(4823488K), 0.0729255 secs] [Times: user=0.31 sys=0.00, real=0.07 secs]

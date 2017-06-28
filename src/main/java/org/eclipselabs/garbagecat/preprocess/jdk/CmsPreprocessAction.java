@@ -272,10 +272,14 @@ public class CmsPreprocessAction implements PreprocessAction {
      * Regular expression for retained beginning PrintHeapAtGC collection.
      * 
      * 2017-04-03T08:55:45.544-0500: 20653.796: [GC (CMS Final Remark) {Heap before GC invocations=686 (full 15):
+     * 
+     * 2017-06-18T05:23:16.634-0500: 15.364: [GC (CMS Final Remark) [YG occupancy: 576424 K (1677760 K)]{Heap before GC
+     * invocations=8 (full 2):
      */
     private static final String REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC (\\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
-            + "\\) )?)\\{Heap before (gc|GC) invocations=\\d{1,10}( \\(full \\d{1,10}\\))?:[ ]*$";
+            + "\\) )?(\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE
+            + "\\)\\])?)\\{Heap before (gc|GC) invocations=\\d{1,10}( \\(full \\d{1,10}\\))?:[ ]*$";
 
     /**
      * Regular expression for retained beginning PAR_NEW bailing out collection.
@@ -284,6 +288,17 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: " + JdkRegEx.SIZE
             + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
             + ": \\[CMS(Java HotSpot\\(TM\\) Server VM warning: )?bailing out to foreground collection)[ ]*$";
+
+    /**
+     * Regular expression for retained beginning CMS_CONCURRENT mixed with APPLICATION_CONCURRENT_TIME collection.
+     * 
+     * 2017-06-18T05:23:03.452-0500: 2.182: 2017-06-18T05:23:03.452-0500: [CMS-concurrent-preclean: 0.016/0.048
+     * secs]2.182: Application time: 0.0055079 seconds
+     */
+    private static final String REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME = "^(("
+            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": )(" + JdkRegEx.DATESTAMP
+            + ": )?(\\[CMS-concurrent-preclean: " + JdkRegEx.DURATION_FRACTION + "\\])(" + JdkRegEx.TIMESTAMP
+            + ": Application time: \\d{1,4}\\.\\d{7} seconds)[ ]*$";
 
     /**
      * Regular expression for retained beginning concurrent mode failure.
@@ -399,10 +414,15 @@ public class CmsPreprocessAction implements PreprocessAction {
 
     /**
      * Regular expression for CMS_REMARK without <code>-XX:+PrintGCDetails</code>.
+     * 
+     * 2017-04-03T03:12:02.134-0500: 30.385: [GC (CMS Final Remark) 890910K->620060K(7992832K), 0.1223879 secs]
+     * 
+     * 2017-06-18T05:23:16.634-0500: 15.364: [GC (CMS Final Remark) 2017-06-18T05:23:16.634-0500: 15.364: [ParNew
      */
     private static final String REGEX_RETAIN_MIDDLE_CMS_REMARK = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[GC (\\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\))?  " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+            + JdkRegEx.TIMESTAMP + ": \\[GC (\\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\))?(  " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?( ("
+            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew)?)[ ]*$";
 
     /**
      * Regular expression for retained end.
@@ -428,8 +448,9 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 3576157.596: [ParNew: 147599K->17024K(153344K), 0.0795160 secs] 2371401K->2244459K(6274432K), 0.0810030 secs]
      * [Times: user=0.44 sys=0.00, real=0.08 secs]
      * 
+     * [Times: user=0.15 sys=0.02, real=0.05 secs]
      */
-    private static final String REGEX_RETAIN_END = "^((" + JdkRegEx.TIMESTAMP + ": \\[ParNew)?( \\("
+    private static final String REGEX_RETAIN_END = "^(((" + JdkRegEx.TIMESTAMP + ": \\[ParNew)?( \\("
             + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[CMS)?( \\(("
             + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|" + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED
@@ -441,7 +462,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])? (" + JdkRegEx.SIZE + "->)?"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(, \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION
-            + "\\]" + TimesData.REGEX + "?)[ ]*$";
+            + "\\])?" + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
@@ -568,6 +589,19 @@ public class CmsPreprocessAction implements PreprocessAction {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1) + matcher.group(25);
+                if (matcher.group(14) != null) {
+                    entangledLogLines.add(matcher.group(14) + matcher.group(27));
+                } else {
+                    entangledLogLines.add(matcher.group(27));
+                }
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
@@ -708,6 +742,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL) || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_BAILING)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_CONCURRENT)
@@ -757,6 +792,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL) || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_BAILING)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC);
+                || logLine.matches(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME);
     }
 }
