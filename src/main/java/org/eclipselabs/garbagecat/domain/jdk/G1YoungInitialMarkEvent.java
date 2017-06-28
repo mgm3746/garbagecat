@@ -90,10 +90,11 @@ public class G1YoungInitialMarkEvent extends G1Collector
             + ": \\[GC pause (\\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
             + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
             + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\(("
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?, " + JdkRegEx.DURATION + "\\](\\[Eden: " + JdkRegEx.SIZE_G1
-            + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\) Survivors: "
-            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\]" + TimesData.REGEX + "?)?[ ]*$";
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?(\\[Eden: "
+            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
+            + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: " + JdkRegEx.SIZE_G1 + "\\("
+            + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\]" + TimesData.REGEX
+            + "?)?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -176,17 +177,24 @@ public class G1YoungInitialMarkEvent extends G1Collector
                 } else if (matcher.group(17) != null) {
                     trigger = matcher.group(17);
                 }
-                duration = JdkMath.convertSecsToMillis(matcher.group(18)).intValue();
-                if (matcher.group(21) != null) {
-                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(40), matcher.group(42).charAt(0));
-                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(46),
-                            matcher.group(48).charAt(0));
-                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(49),
-                            matcher.group(51).charAt(0));
+                if (matcher.group(18) != null) {
+                    duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+                } else {
+                    if (matcher.group(53) != null) {
+                        // Use Times block duration
+                        duration = JdkMath.convertSecsToMillis(matcher.group(55)).intValue();
+                    }
                 }
-                if (matcher.group(52) != null) {
-                    timeUser = JdkMath.convertSecsToCentos(matcher.group(53)).intValue();
-                    timeReal = JdkMath.convertSecsToCentos(matcher.group(54)).intValue();
+                if (matcher.group(22) != null) {
+                    combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(41), matcher.group(43).charAt(0));
+                    combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(47),
+                            matcher.group(49).charAt(0));
+                    combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(50),
+                            matcher.group(52).charAt(0));
+                }
+                if (matcher.group(53) != null) {
+                    timeUser = JdkMath.convertSecsToCentos(matcher.group(54)).intValue();
+                    timeReal = JdkMath.convertSecsToCentos(matcher.group(55)).intValue();
                 }
             }
         }
