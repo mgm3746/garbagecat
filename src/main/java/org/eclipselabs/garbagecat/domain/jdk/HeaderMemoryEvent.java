@@ -29,8 +29,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Standard format:
+ * </p>
+ * 
  * <pre>
  * Memory: 4k page, physical 65806300k(58281908k free), swap 16777212k(16777212k free)
+ * </pre>
+ * 
+ * <p>
+ * 2) Without swap data:
+ * </p>
+ * 
+ * <pre>
+ * Memory: 8k page, physical 535035904k(398522432k free)
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -46,8 +58,8 @@ public class HeaderMemoryEvent implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^Memory: 4k page, physical " + SIZE + "\\(" + SIZE + " free\\), swap " + SIZE
-            + "\\(" + SIZE + " free\\)$";
+    private static final String REGEX = "^Memory: (4|8)k page, physical " + SIZE + "\\(" + SIZE + " free\\)(, swap "
+            + SIZE + "\\(" + SIZE + " free\\))?$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
@@ -92,10 +104,12 @@ public class HeaderMemoryEvent implements LogEvent {
         this.timestamp = 0L;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            physicalMemory = Integer.parseInt(matcher.group(1));
-            physicalMemoryFree = Integer.parseInt(matcher.group(2));
-            swap = Integer.parseInt(matcher.group(3));
-            swapFree = Integer.parseInt(matcher.group(4));
+            physicalMemory = Integer.parseInt(matcher.group(2));
+            physicalMemoryFree = Integer.parseInt(matcher.group(3));
+            if (matcher.group(4) != null) {
+                swap = Integer.parseInt(matcher.group(5));
+                swapFree = Integer.parseInt(matcher.group(6));
+            }
         }
     }
 

@@ -41,4 +41,17 @@ public class TestHeaderMemoryEvent extends TestCase {
         Assert.assertEquals("Swap free not parsed correctly.", 16777212, event.getSwapFree());
 
     }
+
+    public void testLineMemoryPage8kNoSwapData() {
+        String logLine = "Memory: 8k page, physical 535035904k(398522432k free)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEADER_MEMORY.toString() + ".",
+                HeaderMemoryEvent.match(logLine));
+        HeaderMemoryEvent event = new HeaderMemoryEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 0, event.getTimestamp());
+        Assert.assertEquals("Physical memory not parsed correctly.", 535035904, event.getPhysicalMemory());
+        Assert.assertEquals("Physical memory free not parsed correctly.", 398522432, event.getPhysicalMemoryFree());
+        Assert.assertEquals("Swap not parsed correctly.", 0, event.getSwap());
+        Assert.assertEquals("Swap free not parsed correctly.", 0, event.getSwapFree());
+    }
+
 }
