@@ -1023,6 +1023,15 @@ public class JvmRun {
                 && !analysis.contains(Analysis.ERROR_CMS_PARALLEL_REMARK_DISABLED)) {
             analysis.add(Analysis.ERROR_CMS_PARALLEL_REMARK_DISABLED);
         }
+
+        // Check if summarized remembered set processing information being output
+        if (collectorFamilies.contains(CollectorFamily.G1) && jvm.getG1SummarizeRSetStatsEnabled() != null
+                && jvm.getG1SummarizeRSetStatsPeriodValue() != null) {
+            int period = Integer.parseInt(jvm.getG1SummarizeRSetStatsPeriodValue());
+            if (period > 0) {
+                analysis.add(Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT);
+            }
+        }
     }
 
     /**

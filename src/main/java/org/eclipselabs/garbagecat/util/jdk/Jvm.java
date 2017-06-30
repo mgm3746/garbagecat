@@ -1324,6 +1324,55 @@ public class Jvm {
     }
 
     /**
+     * The option for enabling output of summarized remembered set processing info. For example:
+     * 
+     * <pre>
+     * -XX:+G1SummarizeRSetStats
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getG1SummarizeRSetStatsEnabled() {
+        String regex = "(-XX:\\+G1SummarizeRSetStats)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for setting the # of GCs to output update buffer processing info (0 = disabled). For example:
+     * 
+     * <pre>
+     * -XX:G1SummarizeRSetStatsPeriod=1
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getG1SummarizeRSetStatsPeriod() {
+        String regex = "(-XX:G1SummarizeRSetStatsPeriod=\\d{1,3})";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * @return The # of GCs to output buffer processing info. For example:
+     * 
+     *         <pre>
+     *         1
+     *         </pre>
+     */
+    public String getG1SummarizeRSetStatsPeriodValue() {
+        // Cannot use JdkUtil.getOptionValue() because the option name has a number in it.
+        String value = null;
+        if (getG1SummarizeRSetStatsPeriod() != null) {
+            String regex = "^-XX:G1SummarizeRSetStatsPeriod=(\\d{1,3})$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(getG1SummarizeRSetStatsPeriod());
+            if (matcher.find()) {
+                value = matcher.group(1);
+            }
+        }
+        return value;
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

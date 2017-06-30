@@ -818,4 +818,19 @@ public class TestJvm extends TestCase {
         Assert.assertEquals("-XX:-CMSParallelRemarkEnabled option incorrect.", "-XX:-CMSParallelRemarkEnabled",
                 jvm.getCmsParallelRemarkDisabled());
     }
+
+    public void testG1SummarizeRSetStatsEnabled() {
+        String jvmOptions = "-Xss128k -XX:+UnlockExperimentalVMOptions -XX:+G1SummarizeRSetStats -d64";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("-XX:+G1SummarizeRSetStats option incorrect.", "-XX:+G1SummarizeRSetStats",
+                jvm.getG1SummarizeRSetStatsEnabled());
+    }
+
+    public void testG1SummarizeRSetStatsPeriod() {
+        String jvmOptions = "-Xss128k -XX:+UnlockExperimentalVMOptions -XX:+G1SummarizeRSetStats "
+                + "-XX:G1SummarizeRSetStatsPeriod=1 -d64";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-XX:G1SummarizeRSetStatsPeriod=NNN not found.", jvm.getG1SummarizeRSetStatsPeriod());
+        Assert.assertEquals("G1SummarizeRSetStatsPeriod incorrect.", "1", jvm.getG1SummarizeRSetStatsPeriodValue());
+    }
 }

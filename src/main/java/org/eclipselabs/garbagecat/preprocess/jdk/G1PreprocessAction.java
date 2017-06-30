@@ -298,13 +298,15 @@ public class G1PreprocessAction implements PreprocessAction {
      * 2017-03-21T15:05:53.717+1100: 425001.630: [GC pause (G1 Evacuation Pause) (young)2017-03-21T15:05:53.717+1100:
      * 425001.630: 425001.630: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: 3, predicted base
      * time: 45.72 ms, remaining time: 304.28 ms, target pause time: 350.00 ms]
+     * 
+     * 0.449: [GC pause (G1 Evacuation Pause) (young)Before GC RS summary
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_PAUSE = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
             + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\))? \\(young\\)( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE
             + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, "
             + JdkRegEx.DURATION + "\\])?)((" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": )?( )?"
-            + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+)?[ ]*$";
+            + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_YOUNG_INITIAL_MARK collection.
@@ -316,7 +318,7 @@ public class G1PreprocessAction implements PreprocessAction {
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
             + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION
             + ")\\))? \\(young\\) \\(initial-mark\\)(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.TIMESTAMP
-            + ": \\[G1Ergonomics.+)?[ ]*$";
+            + ": \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_FULL_GC collection.
@@ -324,8 +326,8 @@ public class G1PreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_FULL_GC = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\((" + JdkRegEx.TRIGGER_SYSTEM_GC + "|"
             + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\)[ ]{1,2})?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1
-            + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\])[ ]*$";
+            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))?[ ]{0,2}(" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1
+            + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\])?)( Before GC RS summary)?[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_FULL_GC with PRINT_CLASS_HISTOGRAM collection.
@@ -438,9 +440,11 @@ public class G1PreprocessAction implements PreprocessAction {
      * Prepended with size information:
      * 
      * 1831M->1213M(5120M), 5.1353878 secs]
+     * 
+     * 390M->119M(512M)After GC RS summary
      */
     private static final String REGEX_RETAIN_MIDDLE_FULL = "^ (" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\])[ ]*$";
+            + JdkRegEx.SIZE_G1 + "\\)(, " + JdkRegEx.DURATION + "\\])?)(After GC RS summary)?[ ]*$";
 
     /**
      * Regular expression for retained middle.
@@ -593,7 +597,43 @@ public class G1PreprocessAction implements PreprocessAction {
             //
             "^   \\[Queue\\]$",
             //
-            "^      \\[Dropped:.+$" };
+            "^      \\[Dropped:.+$",
+            // Summarized remembered set processing info: -XX:+G1SummarizeRSetStats -XX:G1SummarizeRSetStatsPeriod=1
+            "^ Recent concurrent refinement statistics$",
+            //
+            "^  Processed.+$",
+            //
+            "^  Of \\d{1,3} completed buffers:$",
+            //
+            "^[ ]{10,12}\\d{1,3} \\([ ]{0,2}\\d{1,3}.\\d%\\) by (concurrent RS|mutator) threads\\.$",
+            //
+            "^  Did \\d coarsenings\\.$",
+            //
+            "^  Concurrent (RS|sampling) threads times \\(s\\)$",
+            //
+            "          \\d\\.\\d{2}(     \\d\\.\\d{2}     \\d\\.\\d{2}     \\d\\.\\d{2}     \\d\\.\\d{2}     "
+                    + "\\d\\.\\d{2}     \\d\\.\\d{2}     \\d\\.\\d{2})?",
+            //
+            "^ (Current rem set|Recent concurrent refinement) statistics$",
+            //
+            "^  Total per region rem sets sizes = \\d{1,4}K\\. Max = \\d{1,4}(B|K)\\.$",
+            //
+            "^[ ]{7,12}\\d{1,6}(B|K)? \\([ ]{0,2}\\d{1,3}\\.\\d%\\)( (entries|elements))? by \\d{1,3} "
+                    + "(Young|Humonguous|Free|Old) regions$",
+            //
+            "^   Static structures.+$",
+            //
+            "^    \\d{1,6} occupied cards represented\\.$",
+            //
+            "^    Region with largest (rem set|amount of code roots).+$",
+            //
+            "^    \\d{1,5} code roots represented.$",
+            //
+            "^  Total heap region code root sets sizes.+$",
+            //
+            "^After GC RS summary$",
+            //
+    };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

@@ -1,0 +1,104 @@
+OpenJDK 64-Bit Server VM (25.131-b12) for linux-amd64 JRE (1.8.0_131-b12), built on Jun 13 2017 11:27:53 by "mockbuild" with gcc 4.8.5 20150623 (Red Hat 4.8.5-16)
+Memory: 4k page, physical 16114616k(2375300k free), swap 8069116k(7237076k free)
+CommandLine flags: -XX:+G1SummarizeRSetStats -XX:G1SummarizeRSetStatsPeriod=1 -XX:InitialHeapSize=536870912 -XX:MaxHeapSize=1073741824 -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UnlockDiagnosticVMOptions -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseG1GC
+0.547: [GC pause (G1 Evacuation Pause) (young)Before GC RS summary
+
+ Recent concurrent refinement statistics
+  Processed 4159 cards
+  Of 20 completed buffers:
+           20 (100.0%) by concurrent RS threads.
+            0 (  0.0%) by mutator threads.
+  Did 0 coarsenings.
+  Concurrent RS threads times (s)
+          0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00
+  Concurrent sampling threads times (s)
+          0.00
+
+ Current rem set statistics
+  Total per region rem sets sizes = 1525K. Max = 9096B.
+          89K (  5.9%) by 25 Young regions
+           0B (  0.0%) by 0 Humonguous regions
+        1422K ( 93.3%) by 483 Free regions
+          13K (  0.9%) by 4 Old regions
+   Static structures = 64K, free_lists = 0B.
+    11718 occupied cards represented.
+         9596 ( 81.9%) entries by 25 Young regions
+            0 (  0.0%) entries by 0 Humonguous regions
+            0 (  0.0%) entries by 483 Free regions
+         2122 ( 18.1%) entries by 4 Old regions
+    Region with largest rem set = 486:(S)[0x00000000de600000,0x00000000de700000,0x00000000de700000], size = 9096B, occupied = 3501B.
+  Total heap region code root sets sizes = 13K.  Max = 5064B.
+        6064B ( 43.8%) by 25 Young regions
+           0B (  0.0%) by 0 Humonguous regions
+        7728B ( 55.8%) by 483 Free regions
+          64B (  0.5%) by 4 Old regions
+    229 code roots represented.
+          229 (100.0%) elements by 25 Young regions
+            0 (  0.0%) elements by 0 Humonguous regions
+            0 (  0.0%) elements by 483 Free regions
+            0 (  0.0%) elements by 4 Old regions
+    Region with largest amount of code roots = 486:(S)[0x00000000de600000,0x00000000de700000,0x00000000de700000], size = 5064B, num_elems = 208.
+After GC RS summary
+
+ Recent concurrent refinement statistics
+  Processed 1719 cards
+  Of 11 completed buffers:
+           11 (100.0%) by concurrent RS threads.
+            0 (  0.0%) by mutator threads.
+  Did 0 coarsenings.
+  Concurrent RS threads times (s)
+          0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00
+  Concurrent sampling threads times (s)
+          0.00
+
+ Current rem set statistics
+  Total per region rem sets sizes = 1515K. Max = 7776B.
+          12K (  0.8%) by 4 Young regions
+           0B (  0.0%) by 0 Humonguous regions
+        1452K ( 95.8%) by 493 Free regions
+          51K (  3.4%) by 15 Old regions
+   Static structures = 64K, free_lists = 10K.
+    2396 occupied cards represented.
+            0 (  0.0%) entries by 4 Young regions
+            0 (  0.0%) entries by 0 Humonguous regions
+            0 (  0.0%) entries by 493 Free regions
+         2396 (100.0%) entries by 15 Old regions
+    Region with largest rem set = 4:(O)[0x00000000c0400000,0x00000000c0500000,0x00000000c0500000], size = 7776B, occupied = 0B.
+  Total heap region code root sets sizes = 14K.  Max = 4776B.
+         344B (  2.4%) by 4 Young regions
+           0B (  0.0%) by 0 Humonguous regions
+        7888B ( 54.8%) by 493 Free regions
+        6160B ( 42.8%) by 15 Old regions
+    249 code roots represented.
+            7 (  2.8%) elements by 4 Young regions
+            0 (  0.0%) elements by 0 Humonguous regions
+            0 (  0.0%) elements by 493 Free regions
+          242 ( 97.2%) elements by 15 Old regions
+    Region with largest amount of code roots = 4:(O)[0x00000000c0400000,0x00000000c0500000,0x00000000c0500000], size = 4776B, num_elems = 196.
+, 0.0167272 secs]
+   [Parallel Time: 14.9 ms, GC Workers: 8]
+      [GC Worker Start (ms): Min: 547.4, Avg: 551.3, Max: 562.1, Diff: 14.7]
+      [Ext Root Scanning (ms): Min: 0.0, Avg: 0.2, Max: 0.7, Diff: 0.7, Sum: 1.6]
+      [Update RS (ms): Min: 0.0, Avg: 0.5, Max: 1.3, Diff: 1.3, Sum: 4.0]
+         [Processed Buffers: Min: 0, Avg: 1.4, Max: 4, Diff: 4, Sum: 11]
+      [Scan RS (ms): Min: 0.0, Avg: 0.9, Max: 1.6, Diff: 1.6, Sum: 7.6]
+      [Code Root Scanning (ms): Min: 0.0, Avg: 0.1, Max: 0.6, Diff: 0.6, Sum: 0.6]
+      [Object Copy (ms): Min: 0.0, Avg: 9.1, Max: 12.2, Diff: 12.2, Sum: 73.0]
+      [Termination (ms): Min: 0.0, Avg: 0.1, Max: 0.1, Diff: 0.1, Sum: 0.8]
+         [Termination Attempts: Min: 1, Avg: 57.2, Max: 97, Diff: 96, Sum: 458]
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+      [GC Worker Total (ms): Min: 0.1, Avg: 10.9, Max: 14.8, Diff: 14.7, Sum: 87.6]
+      [GC Worker End (ms): Min: 562.2, Avg: 562.2, Max: 562.2, Diff: 0.0]
+   [Code Root Fixup: 0.1 ms]
+   [Code Root Purge: 0.0 ms]
+   [Clear CT: 0.1 ms]
+   [Other: 1.6 ms]
+      [Choose CSet: 0.0 ms]
+      [Ref Proc: 1.1 ms]
+      [Ref Enq: 0.0 ms]
+      [Redirty Cards: 0.1 ms]
+      [Humongous Register: 0.0 ms]
+      [Humongous Reclaim: 0.0 ms]
+      [Free CSet: 0.0 ms]
+   [Eden: 21.0M(21.0M)->0.0B(26.0M) Survivors: 4096.0K->4096.0K Heap: 28.7M(512.0M)->18.3M(512.0M)]
+ [Times: user=0.12 sys=0.00, real=0.02 secs] 

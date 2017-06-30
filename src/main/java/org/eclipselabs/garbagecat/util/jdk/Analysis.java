@@ -191,6 +191,11 @@ public enum Analysis {
     INFO_G1_HUMONGOUS_ALLOCATION("info.g1.humongous.allocation"),
 
     /**
+     * Property key for summarized remembered set processing output.
+     */
+    INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT("info.g1.summarize.rset.stats.output"),
+
+    /**
      * Property key for GC log file rotation disabled (-XX:-UseGCLogFileRotation).
      */
     INFO_GC_LOG_FILE_ROTATION_DISABLED("info.gc.log.file.rotation.disabled"),
