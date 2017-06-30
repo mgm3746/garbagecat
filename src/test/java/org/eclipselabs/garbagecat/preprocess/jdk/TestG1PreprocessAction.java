@@ -1015,6 +1015,20 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertEquals("Log line not parsed correctly.", "390M->119M(512M)", event.getLogEntry());
     }
 
+    public void testLogLineG1MixedPauseMixedG1SummarizeRSetStatsBeforeRsSummary() {
+        String logLine = "2017-06-28T18:24:40.453-0400: 12289.351: [GC pause (G1 Evacuation Pause) (mixed)"
+                + "Before GC RS summary";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "2017-06-28T18:24:40.453-0400: 12289.351: [GC pause (G1 Evacuation Pause) (mixed)",
+                event.getLogEntry());
+    }
+
     public void testLogLineG1SummarizeRSetStatsRecentRefinementStats() {
         String logLine = " Recent concurrent refinement statistics";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
@@ -1028,7 +1042,7 @@ public class TestG1PreprocessAction extends TestCase {
     }
 
     public void testLogLineG1SummarizeRSetStatsCompletedBuffersHeading() {
-        String logLine = "  Of 0 completed buffers:";
+        String logLine = "  Of 2736 completed buffers:";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
                 G1PreprocessAction.match(logLine, null, null));
     }
@@ -1040,7 +1054,7 @@ public class TestG1PreprocessAction extends TestCase {
     }
 
     public void testLogLineG1SummarizeRSetStatsRsThreads() {
-        String logLine = "            0 (  0.0%) by concurrent RS threads.";
+        String logLine = "         2736 ( 94.3%) by concurrent RS threads.";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
                 G1PreprocessAction.match(logLine, null, null));
     }
@@ -1059,6 +1073,12 @@ public class TestG1PreprocessAction extends TestCase {
 
     public void testLogLineG1SummarizeRSetStatsCoarsenings() {
         String logLine = "  Did 0 coarsenings.";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
+    public void testLogLineG1SummarizeRSetStatsCoarseningsDigits3() {
+        String logLine = "  Did 239 coarsenings.";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
                 G1PreprocessAction.match(logLine, null, null));
     }
@@ -1087,6 +1107,12 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineG1SummarizeRSetStatsSamplingThreadTimesOutputDigits2() {
+        String logLine = "         13.33";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
     public void testLogLineG1SummarizeRSetStatsRSetHeading() {
         String logLine = " Current rem set statistics";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
@@ -1095,6 +1121,12 @@ public class TestG1PreprocessAction extends TestCase {
 
     public void testLogLineG1SummarizeRSetStatsRSetTotalKMaxB() {
         String logLine = "  Total per region rem sets sizes = 1513K. Max = 6336B.";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
+    public void testLogLineG1SummarizeRSetStatsRSetTotalMMaxK() {
+        String logLine = "  Total per region rem sets sizes = 38M. Max = 25K.";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
                 G1PreprocessAction.match(logLine, null, null));
     }
@@ -1123,6 +1155,12 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineG1SummarizeRSetStatsRSetFreeMDigits4() {
+        String logLine = "          36M ( 94.9%) by 3709 Free regions";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
     public void testLogLineG1SummarizeRSetStatsRSetOld() {
         String logLine = "           0B (  0.0%) by 0 Old regions";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
@@ -1141,8 +1179,8 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
-    public void testLogLineG1SummarizeRSetStatsOccupiedCardsDigits6() {
-        String logLine = "    121026 occupied cards represented.";
+    public void testLogLineG1SummarizeRSetStatsOccupiedCardsDigits9() {
+        String logLine = "    122457800 occupied cards represented.";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
                 G1PreprocessAction.match(logLine, null, null));
     }
@@ -1171,8 +1209,8 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
-    public void testLogLineG1SummarizeRSetStatsOccupiedCardsOldDigits6() {
-        String logLine = "       118259 ( 97.7%) entries by 34 Old regions";
+    public void testLogLineG1SummarizeRSetStatsOccupiedCardsOldDigits9() {
+        String logLine = "     122327000 (100.0%) entries by 1171 Old regions";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
                 G1PreprocessAction.match(logLine, null, null));
     }

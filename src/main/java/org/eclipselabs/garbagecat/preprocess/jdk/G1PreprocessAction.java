@@ -369,7 +369,7 @@ public class G1PreprocessAction implements PreprocessAction {
             + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
             + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\))? \\(mixed\\)( \\(("
             + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.TIMESTAMP
-            + ": \\[G1Ergonomics.+)?[ ]*$";
+            + ": \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_CLEANUP collection.
@@ -603,27 +603,27 @@ public class G1PreprocessAction implements PreprocessAction {
             //
             "^  Processed.+$",
             //
-            "^  Of \\d{1,3} completed buffers:$",
+            "^  Of \\d{1,4} completed buffers:$",
             //
-            "^[ ]{10,12}\\d{1,3} \\([ ]{0,2}\\d{1,3}.\\d%\\) by (concurrent RS|mutator) threads\\.$",
+            "^[ ]{9,12}\\d{1,4} \\([ ]{0,2}\\d{1,3}.\\d%\\) by (concurrent RS|mutator) threads\\.$",
             //
-            "^  Did \\d coarsenings\\.$",
+            "^  Did \\d{1,3} coarsenings\\.$",
             //
             "^  Concurrent (RS|sampling) threads times \\(s\\)$",
             //
-            "          \\d\\.\\d{2}(     \\d\\.\\d{2}     \\d\\.\\d{2}     \\d\\.\\d{2}     \\d\\.\\d{2}     "
-                    + "\\d\\.\\d{2}     \\d\\.\\d{2}     \\d\\.\\d{2})?",
+            "[ ]{9,10}\\d{1,2}\\.\\d{2}(     \\d{1,2}\\.\\d{2}     \\d{1,2}\\.\\d{2}     \\d{1,2}\\.\\d{2}     "
+                    + "\\d{1,2}\\.\\d{2}     \\d{1,2}\\.\\d{2}     \\d{1,2}\\.\\d{2}     \\d{1,2}\\.\\d{2})?",
             //
             "^ (Current rem set|Recent concurrent refinement) statistics$",
             //
-            "^  Total per region rem sets sizes = \\d{1,4}K\\. Max = \\d{1,4}(B|K)\\.$",
+            "^  Total per region rem sets sizes.+$",
             //
-            "^[ ]{7,12}\\d{1,6}(B|K)? \\([ ]{0,2}\\d{1,3}\\.\\d%\\)( (entries|elements))? by \\d{1,3} "
+            "^[ ]{5,12}\\d{1,9}(B|K|M)? \\([ ]{0,2}\\d{1,3}\\.\\d%\\)( (entries|elements))? by \\d{1,4} "
                     + "(Young|Humonguous|Free|Old) regions$",
             //
             "^   Static structures.+$",
             //
-            "^    \\d{1,6} occupied cards represented\\.$",
+            "^    \\d{1,9} occupied cards represented\\.$",
             //
             "^    Region with largest (rem set|amount of code roots).+$",
             //

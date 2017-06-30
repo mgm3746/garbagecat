@@ -779,7 +779,7 @@ public class JvmRun {
         }
 
         // Check for -XX:+PrintReferenceGC.
-        if (jvm.getPrintReferenceGC() != null) {
+        if (jvm.getPrintReferenceGC() != null && !analysis.contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED)) {
             analysis.add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
         }
 
