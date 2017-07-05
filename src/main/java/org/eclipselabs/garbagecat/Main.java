@@ -397,8 +397,12 @@ public class Main {
             }
             if (jvmRun.getStoppedTimeEventCount() > 0) {
                 // Stopped time throughput
-                bufferedWriter.write("Stopped Time Throughput: " + jvmRun.getStoppedTimeThroughput() + "%"
-                        + Constants.LINE_SEPARATOR);
+                bufferedWriter.write("Stopped Time Throughput: ");
+                if (jvmRun.getStoppedTimeThroughput() == 100 && jvmRun.getStoppedTimeEventCount() > 0) {
+                    // Provide clue it's rounded to 100
+                    bufferedWriter.write("~");
+                }
+                bufferedWriter.write(jvmRun.getStoppedTimeThroughput() + "%" + Constants.LINE_SEPARATOR);
                 // Max stopped time
                 BigDecimal maxStoppedPause = JdkMath.convertMillisToSecs(jvmRun.getMaxStoppedTime());
                 bufferedWriter.write(
