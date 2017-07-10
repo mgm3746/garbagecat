@@ -1063,6 +1063,19 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
 
+    public void testLogLineBeginningParNewMixedHeapAtGc() {
+        String priorLogLine = "";
+        String logLine = "4237.297: [GC[YG occupancy: 905227 K (4194240 K)]{Heap before GC invocations=85 (full 1):";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.", "4237.297: [GC[YG occupancy: 905227 K (4194240 K)]",
+                event.getLogEntry());
+    }
+
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */
@@ -1639,5 +1652,33 @@ public class TestCmsPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
         Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_REMARK.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_REMARK));
+    }
+
+    public void testCmsScavengeBeforeRemarkJMixedHeapAtGc() {
+        File testFile = new File("src/test/data/dataset140.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertFalse(LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.CMS_REMARK.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_REMARK));
+    }
+
+    public void testParNewMixedHeapAtGc() {
+        File testFile = new File("src/test/data/dataset141.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.PAR_NEW.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
     }
 }

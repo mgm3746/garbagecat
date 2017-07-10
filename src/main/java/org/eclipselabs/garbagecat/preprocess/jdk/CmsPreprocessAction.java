@@ -275,9 +275,11 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * 2017-06-18T05:23:16.634-0500: 15.364: [GC (CMS Final Remark) [YG occupancy: 576424 K (1677760 K)]{Heap before GC
      * invocations=8 (full 2):
+     * 
+     * 4237.297: [GC[YG occupancy: 905227 K (4194240 K)]{Heap before GC invocations=85 (full 1):
      */
     private static final String REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC (\\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
+            + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC[ ]{0,1}(\\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
             + "\\) )?(\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE
             + "\\)\\])?)\\{Heap before (gc|GC) invocations=\\d{1,10}( \\(full \\d{1,10}\\))?:[ ]*$";
 
@@ -463,6 +465,17 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(, \\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION
             + "\\])?" + TimesData.REGEX + "?)[ ]*$";
+
+    /**
+     * Regular expression for retained PAR_NEW end.
+     * 
+     * 4237.297: [GC 4237.297: [ParNew: 905227K->0K(4194240K), 0.0563254 secs] 5160073K->4271964K(12582848K), 0.0565896
+     * secs] [Times: user=0.59 sys=0.01, real=0.06 secs]
+     */
+    private static final String REGEX_RETAIN_END_PAR_NEW = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC " + JdkRegEx.TIMESTAMP
+            + ": \\[ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + ")[ ]*$";
 
     /**
      * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
@@ -703,6 +716,21 @@ public class CmsPreprocessAction implements PreprocessAction {
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_END_PAR_NEW)) {
+            // End of logging event
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_END_PAR_NEW);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            clearEntangledLines(entangledLogLines);
+            if (context.contains(TOKEN) && !priorLogEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT)) {
+                // End of multi-line event or PAR_NEW truncated
+                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            } else {
+                context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            }
+            context.remove(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_PAR_NEW)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_PAR_NEW);
             Matcher matcher = pattern.matcher(logEntry);
@@ -752,7 +780,8 @@ public class CmsPreprocessAction implements PreprocessAction {
                 || logLine.matches(REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_CMS_REMARK) || logLine.matches(REGEX_RETAIN_END)
-                || logLine.matches(REGEX_RETAIN_DURATION) || logLine.matches(REGEX_RETAIN_PAR_NEW);
+                || logLine.matches(REGEX_RETAIN_END_PAR_NEW) || logLine.matches(REGEX_RETAIN_DURATION)
+                || logLine.matches(REGEX_RETAIN_PAR_NEW);
     }
 
     /**
