@@ -228,10 +228,10 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 4147200K->4147200K(4147200K), 0.0677200 secs]2017-05-03T14:47:00.075-0400: 1784.735: [Class Histogram:
      */
     private static final String REGEX_RETAIN_BEGINNING_PARNEW = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC( )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(("
-            + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[Class Histogram:)?)[ ]*$";
+            + ": \\[GC( )?( \\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\) )?(" + JdkRegEx.DATESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?(: " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP
+            + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram:)?)[ ]*$";
 
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD mixed with CMS_CONCURRENT collection.
@@ -762,7 +762,6 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * @param entangledLogLines
      *            Log lines to be output out of order.
-     * @return
      */
     private final void clearEntangledLines(List<String> entangledLogLines) {
         if (entangledLogLines != null && entangledLogLines.size() > 0) {

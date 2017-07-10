@@ -160,7 +160,7 @@ public class GcManager {
                         entangledLogLines, context);
                 if (preprocessedLogLine != null) {
                     if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
-                            && !priorLogEntry.matches(Constants.LINE_SEPARATOR)) {
+                            && !priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
                         bufferedWriter.write(Constants.LINE_SEPARATOR + preprocessedLogLine);
                     } else {
                         bufferedWriter.write(preprocessedLogLine);
@@ -182,7 +182,7 @@ public class GcManager {
                     entangledLogLines, context);
             if (preprocessedLogLine != null) {
                 if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
-                        && !priorLogEntry.matches(Constants.LINE_SEPARATOR)) {
+                        && !priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
                     bufferedWriter.write(Constants.LINE_SEPARATOR + preprocessedLogLine);
                 } else {
                     bufferedWriter.write(preprocessedLogLine);
@@ -317,14 +317,18 @@ public class GcManager {
                 }
             }
             currentLogLine = null;
-        } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
+                && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
+                && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                 && !context.contains(G1PreprocessAction.TOKEN) && ParallelPreprocessAction.match(currentLogLine)) {
             ParallelPreprocessAction action = new ParallelPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                     entangledLogLines, context);
             if (action.getLogEntry() != null) {
                 preprocessedLogLine = action.getLogEntry();
             }
-        } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
+        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
+                && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
+                && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
                 && !context.contains(G1PreprocessAction.TOKEN)
                 && CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
             CmsPreprocessAction action = new CmsPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
@@ -332,18 +336,27 @@ public class GcManager {
             if (action.getLogEntry() != null) {
                 preprocessedLogLine = action.getLogEntry();
             }
-        } else if (ApplicationConcurrentTimePreprocessAction.match(currentLogLine, priorLogLine)) {
+        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
+                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(SerialPreprocessAction.TOKEN)
+                && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+                && ApplicationConcurrentTimePreprocessAction.match(currentLogLine, priorLogLine)) {
             ApplicationConcurrentTimePreprocessAction action = new ApplicationConcurrentTimePreprocessAction(
-                    currentLogLine);
+                    currentLogLine, context);
             if (action.getLogEntry() != null) {
                 preprocessedLogLine = action.getLogEntry();
             }
-        } else if (ApplicationStoppedTimePreprocessAction.match(currentLogLine, priorLogLine)) {
-            ApplicationStoppedTimePreprocessAction action = new ApplicationStoppedTimePreprocessAction(currentLogLine);
+        } else if (!context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
+                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(SerialPreprocessAction.TOKEN)
+                && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+                && ApplicationStoppedTimePreprocessAction.match(currentLogLine, priorLogLine)) {
+            ApplicationStoppedTimePreprocessAction action = new ApplicationStoppedTimePreprocessAction(currentLogLine,
+                    context);
             if (action.getLogEntry() != null) {
                 preprocessedLogLine = action.getLogEntry();
             }
-        } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
+        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
+                && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
+                && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
                 && !context.contains(CmsPreprocessAction.TOKEN)
                 && G1PreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
             G1PreprocessAction action = new G1PreprocessAction(priorLogLine, currentLogLine, nextLogLine,
@@ -351,7 +364,9 @@ public class GcManager {
             if (action.getLogEntry() != null) {
                 preprocessedLogLine = action.getLogEntry();
             }
-        } else if (!context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
+                && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
+                && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                 && !context.contains(G1PreprocessAction.TOKEN) && SerialPreprocessAction.match(currentLogLine)) {
             SerialPreprocessAction action = new SerialPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                     entangledLogLines, context);

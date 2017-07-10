@@ -1050,6 +1050,19 @@ public class TestCmsPreprocessAction extends TestCase {
         Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
 
+    public void testLogLineBeginningParNewTenuringDistribution() {
+        String priorLogLine = "";
+        String logLine = "2016-09-23T09:05:18.745-0700: 2.372: [GC (Allocation Failure) "
+                + "2016-09-23T09:05:18.745-0700: 2.372: [ParNew";
+        String nextLogLine = "Desired survivor size 78643200 bytes, new threshold 15 (max 15)";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.CMS.toString() + ".",
+                CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+    }
+
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */

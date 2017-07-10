@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <p>
  * APPLICATION_CONCURRENT_TIME
  * </p>
+ * 
+ * TODO: Move to CMS preprocessor.
  * 
  * <p>
  * Combined {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} and
@@ -73,13 +76,24 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
     private static final String REGEX_LINE1 = "^(" + JdkRegEx.TIMESTAMP
             + ")(: \\[CMS-concurrent-(abortable-preclean|mark|preclean): " + JdkRegEx.DURATION_FRACTION
             + "\\])?(Application time: \\d{1,4}\\.\\d{7} seconds)$";
-    private static final Pattern PATTERN1 = Pattern.compile(REGEX_LINE1);
 
     /**
      * Regular expressions defining the 2nd logging line.
      */
-    private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-mark-start\\])?" + TimesData.REGEX + "?[ ]*$";
-    private static final Pattern PATTERN2 = Pattern.compile(REGEX_LINE2);
+    private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-mark-start\\])[ ]*$";
+
+    /**
+     * Regular expression for retained end.
+     * 
+     * [Times: user=0.15 sys=0.02, real=0.05 secs]
+     */
+    private static final String REGEX_RETAIN_END = "^" + TimesData.REGEX + "[ ]*$";
+
+    /**
+     * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
+     * context is necessary to detangle multi-line events where logging patterns are shared among preprocessors.
+     */
+    public static final String TOKEN = "APPLICATION_CONCURRENT_TIME_PREPROCESS_ACTION_TOKEN";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -91,24 +105,39 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
      * 
      * @param logEntry
      *            The log entry for the event.
+     * @param context
+     *            Information to make preprocessing decisions.
      */
-    public ApplicationConcurrentTimePreprocessAction(String logEntry) {
-        Matcher matcher = PATTERN1.matcher(logEntry);
-        if (matcher.find()) {
-            this.logEntry = logEntry;
-            // Split line1 logging apart
-            if (matcher.group(6) != null) {
-                this.logEntry = matcher.group(6) + Constants.LINE_SEPARATOR;
-                if (matcher.group(1) != null) {
-                    this.logEntry = this.logEntry + matcher.group(1);
-                }
-                if (matcher.group(3) != null) {
-                    this.logEntry = this.logEntry + matcher.group(3);
+    public ApplicationConcurrentTimePreprocessAction(String logEntry, Set<String> context) {
+        if (logEntry.matches(REGEX_LINE1)) {
+            Pattern pattern = Pattern.compile(REGEX_LINE1);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                // Split line1 logging apart
+                if (matcher.group(6) != null) {
+                    this.logEntry = matcher.group(6) + Constants.LINE_SEPARATOR;
+                    if (matcher.group(1) != null) {
+                        this.logEntry = this.logEntry + matcher.group(1);
+                    }
+                    if (matcher.group(3) != null) {
+                        this.logEntry = this.logEntry + matcher.group(3);
+                    }
                 }
             }
-        } else {
-            // line2 logging
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_LINE2)) {
             this.logEntry = logEntry + Constants.LINE_SEPARATOR;
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_END)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_END);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(TOKEN);
         }
     }
 
@@ -130,7 +159,6 @@ public class ApplicationConcurrentTimePreprocessAction implements PreprocessActi
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine) {
-        return (PATTERN1.matcher(logLine).matches()
-                || (PATTERN2.matcher(logLine).matches() && PATTERN1.matcher(priorLogLine).matches()));
+        return logLine.matches(REGEX_LINE1) || logLine.matches(REGEX_LINE2) || logLine.matches(REGEX_RETAIN_END);
     }
 }

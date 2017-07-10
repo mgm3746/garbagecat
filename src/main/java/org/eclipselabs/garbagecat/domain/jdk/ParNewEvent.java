@@ -124,11 +124,11 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": \\[GC( \\("
             + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\)[ ]{0,1})?(\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
             + JdkRegEx.SIZE + "\\)\\])?)?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[(Full )?GC( )?(\\(" + TRIGGER + "\\))?( )?((" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP
-            + ": )?\\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?:)? " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] (" + JdkRegEx.SIZE + "->)?"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]"
-            + TimesData.REGEX + "?[ ]*$";
+            + ": \\[(Full)?[ ]{0,1}GC( )?(\\(" + TRIGGER + "\\))?( )?((" + JdkRegEx.DATESTAMP + ": )?("
+            + JdkRegEx.TIMESTAMP + ": )?\\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?:)? "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] ("
+            + JdkRegEx.SIZE + "->)?" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(ParNewEvent.REGEX);
     /**

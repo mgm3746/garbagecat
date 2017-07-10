@@ -239,7 +239,7 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
     }
 
-    public void testLogLineClassUnloadingJdk8NonInitialGcYgBlock() {
+    public void testLogLineJdk8NoGcYgBlockClassUnloading() {
         String logLine = "4.578: [Rescan (parallel) , 0.0185521 secs]4.597: [weak refs processing, 0.0008993 secs]"
                 + "4.598: [class unloading, 0.0046742 secs]4.603: [scrub symbol table, 0.0044444 secs]"
                 + "4.607: [scrub string table, 0.0005670 secs][1 CMS-remark: 6569K(4023936K)] 16685K(4177280K), "
@@ -253,6 +253,21 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("User time not parsed correctly.", 17, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 10, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 170, event.getParallelism());
+    }
+
+    public void testLogLineJdk8NoGcYgBlockNoClassUnloading() {
+        String logLine = "4237.354: [Rescan (parallel) , 0.1378986 secs]4237.492: [weak refs processing, "
+                + "0.1842394 secs] [1 CMS-remark: 4271964K(8388608K)] 4271964K(12582848K), 0.4124068 secs] "
+                + "[Times: user=2.82 sys=0.04, real=0.41 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
+                CmsRemarkEvent.match(logLine));
+        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 4237354, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 412, event.getDuration());
+        Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
+        Assert.assertEquals("User time not parsed correctly.", 282, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 41, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 688, event.getParallelism());
     }
 
     public void testLogLineClassUnloadingNoSpaceAfterTrigger() {
