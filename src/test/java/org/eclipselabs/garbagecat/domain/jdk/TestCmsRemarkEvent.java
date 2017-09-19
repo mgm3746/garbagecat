@@ -12,8 +12,16 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.io.File;
+
+import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -310,5 +318,40 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("User time not parsed correctly.", 26, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 9, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 289, event.getParallelism());
+    }
+
+    public void testLogLineTruncated() {
+        String logLine = "2017-09-15T09:53:41.262+0200: 19763.069: [GC (CMS Final Remark) "
+                + "[YG occupancy: 425526 K (613440 K)]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
+                CmsRemarkEvent.match(logLine));
+        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 19763069, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        Assert.assertEquals("Duration not parsed correctly.", 0, event.getDuration());
+        Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
+    }
+
+    public void testTruncatedPreprocessing() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset142.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertEquals("Event type count not correct.", 5, jvmRun.getEventTypes().size());
+        Assert.assertTrue(JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS));
+        Assert.assertTrue(JdkUtil.LogEventType.HEADER_MEMORY.toString() + " not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY));
+        Assert.assertTrue(JdkUtil.LogEventType.HEADER_VERSION.toString() + " not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION));
+        Assert.assertTrue(JdkUtil.LogEventType.PAR_NEW.toString() + " not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.PAR_NEW));
+        Assert.assertTrue(JdkUtil.LogEventType.CMS_REMARK.toString() + " not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.CMS_REMARK));
     }
 }

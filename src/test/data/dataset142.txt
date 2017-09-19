@@ -1,0 +1,22 @@
+Java HotSpot(TM) 64-Bit Server VM (25.121-b13) for solaris-amd64 JRE (1.8.0_121-b13), built on Dec 13 2016 00:03:39 by "java_re" with Sun Studio 12u1
+Memory: 4k page, physical 58195968k(6090152k free)
+CommandLine flags: -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -XX:+CMSScavengeBeforeRemark -XX:ConcGCThreads=4 -XX:InitialHeapSize=4294967296 -XX:MaxHeapSize=6442450944 -XX:MaxMetaspaceSize=536870912 -XX:MaxNewSize=697933824 -XX:MaxTenuringThreshold=6 -XX:MetaspaceSize=536870912 -XX:NewSize=697933824 -XX:OldPLABSize=16 -XX:OldSize=1395867648 -XX:+PrintGC -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -XX:+ScavengeBeforeFullGC -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseParNewGC
+2017-09-18T09:25:30.720+0200: 277273.925: [GC (CMS Final Remark) [YG occupancy: 379646 K (613440 K)]{Heap before GC invocations=21944 (full 79):
+ par new generation   total 613440K, used 379646K [0xfffffd7e6d400000, 0xfffffd7e96d90000, 0xfffffd7e96d90000)
+  eden space 545344K,  59% used [0xfffffd7e6d400000, 0xfffffd7e80fd21d8, 0xfffffd7e8e890000)
+  from space 68096K,  82% used [0xfffffd7e8e890000, 0xfffffd7e91f7d8e8, 0xfffffd7e92b10000)
+  to   space 68096K,   0% used [0xfffffd7e92b10000, 0xfffffd7e92b10000, 0xfffffd7e96d90000)
+ concurrent mark-sweep generation total 3512768K, used 2472561K [0xfffffd7e96d90000, 0xfffffd7f6d400000, 0xfffffd7fed400000)
+ Metaspace       used 352037K, capacity 381788K, committed 381952K, reserved 1388544K
+  class space    used 38212K, capacity 43751K, committed 43776K, reserved 1048576K
+2017-09-18T09:25:30.720+0200: 277273.925: [GC (CMS Final Remark) 2017-09-18T09:25:30.720+0200: 277273.926: [ParNew: 379646K->46711K(613440K), 0.2196929 secs] 2852207K->2539983K(4126208K), 0.2207345 secs] [Times: user=0.36 sys=0.18, real=0.22 secs]
+Heap after GC invocations=21945 (full 79):
+ par new generation   total 613440K, used 46711K [0xfffffd7e6d400000, 0xfffffd7e96d90000, 0xfffffd7e96d90000)
+  eden space 545344K,   0% used [0xfffffd7e6d400000, 0xfffffd7e6d400000, 0xfffffd7e8e890000)
+  from space 68096K,  68% used [0xfffffd7e92b10000, 0xfffffd7e958adca0, 0xfffffd7e96d90000)
+  to   space 68096K,   0% used [0xfffffd7e8e890000, 0xfffffd7e8e890000, 0xfffffd7e92b10000)
+ concurrent mark-sweep generation total 3512768K, used 2493272K [0xfffffd7e96d90000, 0xfffffd7f6d400000, 0xfffffd7fed400000)
+ Metaspace       used 352037K, capacity 381788K, committed 381952K, reserved 1388544K
+  class space    used 38212K, capacity 43751K, committed 43776K, reserved 1048576K
+}
+2017-09-18T09:25:30.941+0200: 277274.147: [Rescan (parallel) , 0.0646557 secs]2017-09-18T09:25:31.006+0200: 277274.211: [weak refs processing, 0.0193751 secs]2017-09-18T09:25:31.025+0200: 277274.231: [class unloading, 0.1384158 secs]2017-09-18T09:25:31.164+0200: 277274.369: [scrub symbol table, 0.0676102 secs]2017-09-18T09:25:31.231+0200: 277274.437: [scrub string table, 0.0065800 secs][1 CMS-remark: 2493272K(3512768K)] 2539983K(4126208K), 0.5207447 secs] [Times: user=0.85 sys=0.18, real=0.52 secs]

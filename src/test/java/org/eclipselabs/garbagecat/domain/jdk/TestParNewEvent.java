@@ -417,8 +417,8 @@ public class TestParNewEvent extends TestCase {
     }
 
     /**
-     * Test preprocessing a split <code>ParNewCmsConcurrentEvent</code> that does not include the
-     * "concurrent mode failure" text.
+     * Test preprocessing a split <code>ParNewCmsConcurrentEvent</code> that does not include the "concurrent mode
+     * failure" text.
      */
     public void testSplitParNewCmsConcurrentEventAbortablePrecleanLogging() {
         // TODO: Create File in platform independent way.

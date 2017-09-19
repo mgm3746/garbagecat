@@ -74,8 +74,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * 6) JDK 1.7 with class unloading with "scrub symbol table" and "scrub string table" vs.
- * "scrub symbol &amp; string tables":
+ * 6) JDK 1.7 with class unloading with "scrub symbol table" and "scrub string table" vs. "scrub symbol &amp; string
+ * tables":
  * </p>
  * 
  * <pre>
@@ -157,7 +157,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
     private int timeReal;
 
     /**
-     * Regular expressions defining the logging.
+     * Regular expression defining standard logging.
      */
     private static final String REGEX = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(("
             + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
@@ -186,6 +186,13 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             + ": )?" + JdkRegEx.TIMESTAMP + ": \\[scrub string table, " + JdkRegEx.DURATION
             + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+
+    /**
+     * Regular expression defining truncated logging due to -XX:+CMSScavengeBeforeRemark -XX:+PrintHeapAtGC:
+     */
+    private static final String REGEX_TRUNCATED = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE
+            + " \\(" + JdkRegEx.SIZE + "\\)\\]$";
 
     /**
      * Create event from log entry.
@@ -236,6 +243,14 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                 }
             }
             classUnloading = true;
+        } else if (logEntry.matches(REGEX_TRUNCATED)) {
+            Pattern pattern = Pattern.compile(REGEX_TRUNCATED);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                trigger = matcher.group(14);
+            }
+            classUnloading = false;
         }
     }
 
@@ -299,6 +314,6 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX) || logLine.matches(REGEX_CLASS_UNLOADING);
+        return logLine.matches(REGEX) || logLine.matches(REGEX_CLASS_UNLOADING) || logLine.matches(REGEX_TRUNCATED);
     }
 }
