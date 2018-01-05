@@ -73,9 +73,9 @@ public class G1YoungInitialMarkEvent extends G1Collector
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
             + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\) )?\\(young\\) \\(initial-mark\\) " + JdkRegEx.SIZE_G1
-            + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
-            + "?[ ]*$";
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE
+            + ")\\) )?\\(young\\) \\(initial-mark\\)(--)? " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
+            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression preprocessed.
@@ -156,14 +156,14 @@ public class G1YoungInitialMarkEvent extends G1Collector
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 trigger = matcher.group(14);
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(17).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)), matcher.group(20).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(21)),
-                        matcher.group(23).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(24)).intValue();
-                if (matcher.group(27) != null) {
-                    timeUser = JdkMath.convertSecsToCentos(matcher.group(28)).intValue();
-                    timeReal = JdkMath.convertSecsToCentos(matcher.group(29)).intValue();
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(18).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)),
+                        matcher.group(24).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(25)).intValue();
+                if (matcher.group(28) != null) {
+                    timeUser = JdkMath.convertSecsToCentos(matcher.group(29)).intValue();
+                    timeReal = JdkMath.convertSecsToCentos(matcher.group(30)).intValue();
                 }
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {

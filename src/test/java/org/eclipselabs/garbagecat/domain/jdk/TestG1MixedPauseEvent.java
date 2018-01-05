@@ -80,6 +80,40 @@ public class TestG1MixedPauseEvent extends TestCase {
         Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
     }
 
+    public void testTriggerG1EvacuationPause() {
+        String logLine = "81.757: [GC pause (G1 Evacuation Pause) (mixed) 1584M->1390M(8192M), 0.1472883 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
+                G1MixedPauseEvent.match(logLine));
+        G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 81757, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
+        Assert.assertEquals("Combined begin size not parsed correctly.", 1584 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 1390 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 8192 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 147, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
+    }
+
+    public void testTriggerG1EvacuationPauseDashDash() {
+        String logLine = "424692.063: [GC pause (G1 Evacuation Pause) (mixed)-- 8129M->7812M(8192M), 0.0890849 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
+                G1MixedPauseEvent.match(logLine));
+        G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 424692063, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
+        Assert.assertEquals("Combined begin size not parsed correctly.", 8129 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 7812 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 8192 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 89, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
+    }
+
     public void testLogLinePreprocessedTriggerBeforeG1EvacuationPause() {
         String logLine = "2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs]"
                 + "[Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: 12.9G(30.0G)->11.3G(30.0G)]"

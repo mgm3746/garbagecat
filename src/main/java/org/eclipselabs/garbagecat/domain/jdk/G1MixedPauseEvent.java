@@ -81,14 +81,14 @@ public class G1MixedPauseEvent extends G1Collector
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
             + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")";
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")";
 
     /**
      * Regular expression standard format.
      */
-    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause \\(mixed\\) " + JdkRegEx.SIZE_G1
-            + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
-            + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\(" + TRIGGER
+            + "\\))? \\(mixed\\)(--)? " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
+            + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression preprocessed.
@@ -159,14 +159,15 @@ public class G1MixedPauseEvent extends G1Collector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(2)), matcher.group(4).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
-                        matcher.group(10).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(11)).intValue();
-                if (matcher.group(14) != null) {
-                    timeUser = JdkMath.convertSecsToCentos(matcher.group(15)).intValue();
-                    timeReal = JdkMath.convertSecsToCentos(matcher.group(16)).intValue();
+                trigger = matcher.group(3);
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)), matcher.group(10).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)),
+                        matcher.group(13).charAt(0));
+                duration = JdkMath.convertSecsToMillis(matcher.group(14)).intValue();
+                if (matcher.group(17) != null) {
+                    timeUser = JdkMath.convertSecsToCentos(matcher.group(18)).intValue();
+                    timeReal = JdkMath.convertSecsToCentos(matcher.group(19)).intValue();
                 }
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
