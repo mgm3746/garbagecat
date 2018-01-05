@@ -30,6 +30,12 @@ public class TestG1FullGCEvent extends TestCase {
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
+    public void testNotVerboseGcOld() {
+        String logLine = "424753.957: [Full GC (Allocation Failure)  8184M->6998M(8192M), 24.1990452 secs]";
+        Assert.assertFalse("Log line recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".",
+                G1YoungPauseEvent.match(logLine));
+    }
+
     public void testLogLineTriggerSystemGC() {
         String logLine = "1302.524: [Full GC (System.gc()) 653M->586M(979M), 1.6364900 secs]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
@@ -44,6 +50,23 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 1636, event.getDuration());
+    }
+
+    public void testTriggerAllocationFailure() {
+        String logLine = "424753.957: [Full GC (Allocation Failure)  8184M->6998M(8192M), 24.1990452 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
+                G1FullGCEvent.match(logLine));
+        G1FullGCEvent event = new G1FullGCEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        Assert.assertEquals("Time stamp not parsed correctly.", 424753957, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 8184 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 6998 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 8192 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 0, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 24199, event.getDuration());
     }
 
     public void testLogLinePreprocessedDetailsTriggerToSpaceExhausted() {

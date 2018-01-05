@@ -77,8 +77,9 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
      * Regular expression standard format.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(("
-            + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\) )?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\))?[ ]{0,2}"
+            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION
+            + "\\]" + TimesData.REGEX + "?[ ]*$";
     /**
      * Regular expression preprocessed with G1 details.
      */
