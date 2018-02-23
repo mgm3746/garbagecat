@@ -21,7 +21,15 @@ A command line tool that parses Java garbage collection logging and does analysi
 
 ### RHEL 7
 
-More to come after https://bugzilla.redhat.com/show_bug.cgi?id=1429831 is completed. For now, Drop in the YUM repo file into your /etc/yum/repos.d/. Here's the repo file for [RHEL 7](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-7/bostrt-garbagecat-epel-7.repo).
+```
+# yum install yum-plugin-copr
+# yum copr enable bostrt/garbagecat
+# yum install garbagecat
+```
+
+### RHEL 7 Alternative
+
+Put the YUM repo file into your /etc/yum/repos.d/. Here's the repo file for [RHEL 7](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-7/bostrt-garbagecat-epel-7.repo).
 
 ## Building ##
 
