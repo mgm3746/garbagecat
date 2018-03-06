@@ -169,6 +169,22 @@ public class TestG1MixedPauseEvent extends TestCase {
         Assert.assertEquals("Parallelism not calculated correctly.", 717, event.getParallelism());
     }
 
+    public void testLogLineWithDatestamp() {
+        String logLine = "2018-03-02T07:08:35.683+0000: 47788.145: [GC pause (G1 Evacuation Pause) (mixed) "
+                + "1239M->949M(4096M), 0.0245500 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".",
+                G1MixedPauseEvent.match(logLine));
+        G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 47788145, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 1239 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 949 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 4096 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 24, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
+    }
+
     public void testLogLinePreprocessedWithDatestamp() {
         String logLine = "2016-02-09T23:27:04.149-0500: 3082.652: [GC pause (mixed), 0.0762060 secs]"
                 + "[Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: 40.0M->40.0M Heap: 11.8G(26.0G)->9058.4M(26.0G)] "
