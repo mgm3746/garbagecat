@@ -86,8 +86,10 @@ public class JdkRegEx {
      * Whole number examples: 2128K, 30M, 30G
      * 
      * Decimal examples: 0.0B, 8192.0K, 28.0M, 30.0G
+     * 
+     * With comma: 306,0M
      */
-    public static final String SIZE_G1 = "(\\d{1,8}(\\.\\d)?)([" + BYTES + KILOBYTES + MEGABYTES + GIGABYTES + "])";
+    public static final String SIZE_G1 = "(\\d{1,8}([\\.,]\\d)?)([" + BYTES + KILOBYTES + MEGABYTES + GIGABYTES + "])";
 
     /**
      * The size of memory in bytes. No units.

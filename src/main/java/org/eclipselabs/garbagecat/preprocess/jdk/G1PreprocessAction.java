@@ -453,6 +453,8 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * [Eden: 4096M(4096M)->0B(3528M) Survivors: 0B->568M Heap: 4096M(16384M)->567M(16384M)]
      * 
+     * [Eden: 306,0M(306,0M)->0,0B(266,0M) Survivors: 0,0B->40,0M Heap: 306,0M(6144,0M)->57,7M(6144,0M)]
+     * 
      */
     private static final String REGEX_RETAIN_MIDDLE = "^   (\\[Eden: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
             + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->"
@@ -488,8 +490,8 @@ public class G1PreprocessAction implements PreprocessAction {
             //
             "^   \\[Parallel Time:.+$",
             // Use complete pattern to identify mixed logging (e.g. stopped time at end)
-            "^      \\[GC Worker Start \\(ms\\): Min: \\d{1,10}\\.\\d, Avg: \\d{1,10}\\.\\d, Max: \\d{1,10}\\.\\d, "
-                    + "Diff: \\d{1,10}\\.\\d\\]$",
+            "^      \\[GC Worker Start \\(ms\\): Min: \\d{1,10}[\\.,]\\d, Avg: \\d{1,10}[\\.,]\\d, "
+                    + "Max: \\d{1,10}[\\.,]\\d, Diff: \\d{1,10}[\\.,]\\d\\]$",
             // JDK8 does not have "Time"
             "^      \\[GC Worker Start( Time)? \\(ms\\):(  \\d{1,10}(\\.|,)\\d)+(\\])?$",
             //

@@ -73,6 +73,12 @@ public class TestG1PreprocessAction extends TestCase {
                 G1PreprocessAction.match(logLine, null, null));
     }
 
+    public void testLogLineGcWorkerStartWithCommas() {
+        String logLine = "      [GC Worker Start (ms): Min: 6349,9, Avg: 6353,8, Max: 6355,9, Diff: 6,0]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+    }
+
     public void testLogLineExtRootScanning() {
         String logLine = "      [Ext Root Scanning (ms): Min: 2.7, Avg: 3.0, Max: 3.5, Diff: 0.8, Sum: 18.1]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
@@ -2015,5 +2021,19 @@ public class TestG1PreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE));
         Assert.assertTrue(Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT));
+    }
+
+    public void testPreprocessingWithCommas() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset143.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE));
     }
 }

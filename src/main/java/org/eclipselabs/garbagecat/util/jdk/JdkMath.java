@@ -183,14 +183,14 @@ public class JdkMath {
      * Convert SIZE_G1_DETAILS to kilobytes.
      * 
      * @param size
-     *            The size (e.g. '128.0').
+     *            The size (e.g. '128.0', 306,0).
      * @param units
      *            The units (e.g. 'G').
      * @return The size in Kilobytes.
      */
     public static int convertSizeG1DetailsToKilobytes(final String size, final char units) {
 
-        BigDecimal kilobytes = new BigDecimal(size);
+        BigDecimal kilobytes = new BigDecimal(size.replace(",", "."));
         BigDecimal kilo = new BigDecimal("1024");
 
         switch (units) {

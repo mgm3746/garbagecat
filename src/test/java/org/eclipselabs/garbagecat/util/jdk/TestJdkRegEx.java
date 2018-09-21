@@ -226,6 +226,11 @@ public class TestJdkRegEx extends TestCase {
         Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1));
     }
 
+    public void testSizeG1Comma() {
+        String size = "306,0M";
+        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1));
+    }
+
     public void testPercent() {
         String percent = "54.8%";
         Assert.assertTrue("'" + percent + "' " + "not a valid percent.", percent.matches(JdkRegEx.PERCENT));

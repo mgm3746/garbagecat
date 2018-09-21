@@ -104,6 +104,11 @@ public class G1YoungPauseEvent extends G1Collector
      * 
      * 44620.073: [GC pause (young), 0.2752700 secs][Eden: 11.3G(11.3G)->0.0B(11.3G) Survivors: 192.0M->176.0M Heap:
      * 23.0G(26.0G)->11.7G(26.0G)] [Times: user=1.09 sys=0.00, real=0.27 secs]
+     * 
+     * With commas:
+     * 
+     * 2018-09-20T14:57:22.095+0300: 6,350: [GC pause (young), 0,1275790 secs][Eden: 306,0M(306,0M)->0,0B(266,0M)
+     * Survivors: 0,0B->40,0M Heap: 306,0M(6144,0M)->57,7M(6144,0M)] [Times: user=0,25 sys=0,05, real=0,12 secs]
      */
     private static final String REGEX_PREPROCESSED_DETAILS = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC pause (\\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"

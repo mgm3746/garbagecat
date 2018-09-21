@@ -123,6 +123,13 @@ public class TestJdkMath extends TestCase {
                 JdkMath.convertSizeG1DetailsToKilobytes(size, units));
     }
 
+    public void testConvertSizeG1DetailsToKilobytesMWithComma() {
+        String size = "306,0";
+        char units = 'M';
+        Assert.assertEquals("G1 details not converted to kilobytes.", 313344,
+                JdkMath.convertSizeG1DetailsToKilobytes(size, units));
+    }
+
     public void testConvertSizeG1DetailsToKilobytesG() {
         String size = "100";
         char units = 'G';
