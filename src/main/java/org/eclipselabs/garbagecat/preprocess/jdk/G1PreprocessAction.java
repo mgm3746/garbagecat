@@ -386,12 +386,14 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * 2017-06-22T13:55:45.753+0530: 71574.499: [GC pause (G1 Humongous Allocation) (young)2017-06-22T13:55:45.771+0530:
      * 71574.517: [GC concurrent-root-region-scan-end, 0.0181265 secs]
+     * 
+     * 537.122: [GC pause (G1 Evacuation Pause) (young)537.123: [GC concurrent-root-region-scan-start]
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
             + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION
             + ")\\))? \\(young\\))((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC concurrent-(root-region-scan|cleanup|mark)-end, " + JdkRegEx.DURATION + "\\])[ ]*$";
+            + ": \\[GC concurrent-(root-region-scan|cleanup|mark)-(start|end)(, " + JdkRegEx.DURATION + ")?\\])[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_FULL_GC mixed with G1_CONCURRENT collection.
@@ -409,12 +411,22 @@ public class G1PreprocessAction implements PreprocessAction {
      * 2017-06-22T16:35:58.032+0530: 81186.777: 2017-06-22T16:35:58.032+0530: [Full GC (Metadata GC Threshold)
      * 81186.777: [GC concurrent-root-region-scan-start]
      * 
+     * 35420.674: [Full GC (Allocation Failure) 35420.734: [GC concurrent-mark-start]3035M->3030M(3072M), 21.7552521
+     * secs][Eden: 0.0B(153.0M)->0.0B(153.0M) Survivors: 0.0B->0.0B Heap: 3035.5M(3072.0M)->3030.4M(3072.0M)],
+     * [Metaspace: 93308K->93308K(352256K)] [Times: user=16.39 sys=0.04, real=21.75 secs]
+     * 
      */
     private static final String REGEX_RETAIN_BEGINNING_FULL_CONCURRENT = "^(" + JdkRegEx.DATESTAMP + ": )?("
             + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + "?(: )?" + JdkRegEx.TIMESTAMP + "?(:)?( )?(: )?("
             + JdkRegEx.DATESTAMP + ": )?(\\[Full GC \\((" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
             + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\)[ ]{0,1})((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + "?(:)?( )?(\\[GC concurrent-root-region-scan-(start|end)(, " + JdkRegEx.DURATION + ")?\\]))[ ]*$";
+            + "?(:)?( )?(\\[GC concurrent-(root-region-scan|mark)-(start|end)(, " + JdkRegEx.DURATION + ")?\\]))("
+            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION
+            + "\\]\\[Eden: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\("
+            + JdkRegEx.SIZE_G1 + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: "
+            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
+            + "\\)\\], \\[Metaspace: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
+            + "\\)\\]" + TimesData.REGEX + ")?[ ]*$";
 
     /**
      * Regular expression for retained middle G1_YOUNG_PAUSE collection.
@@ -480,6 +492,20 @@ public class G1PreprocessAction implements PreprocessAction {
      * [Times: user=0.01 sys=0.00, real=0.01 secs]
      */
     private static final String REGEX_RETAIN_END = "^(" + TimesData.REGEX + ")( )?[ ]*$";
+
+    /**
+     * Regular expression for retained end concurrent mixed with young pause.
+     * 
+     * 537.142: [GC concurrent-root-region-scan-end, 0.0189841 secs] (to-space exhausted), 0.3314995 secs][Eden:
+     * 0.0B(151.0M)->0.0B(153.0M) Survivors: 2048.0K->0.0B Heap: 3038.7M(3072.0M)->3038.7M(3072.0M)] [Times: user=0.20
+     * sys=0.00, real=0.33 secs]
+     */
+    private static final String REGEX_RETAIN_END_CONCURRENT_YOUNG = "^(" + JdkRegEx.TIMESTAMP
+            + ": \\[GC concurrent-root-region-scan-end, " + JdkRegEx.DURATION + "\\])(( \\("
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE_G1
+            + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\) Survivors: "
+            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
+            + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\]" + TimesData.REGEX + ")( )?[ ]*$";
 
     /**
      * Regular expressions for lines thrown away.
@@ -723,6 +749,7 @@ public class G1PreprocessAction implements PreprocessAction {
             int indexConcurrentDatestamp = 43;
             int indexConcurrentTimestamp = 54;
             int indexConcurrentBlock = 57;
+            int indexG1DetailsBlock = 64;
             if (matcher.matches()) {
                 if (matcher.group(indexConcurrentTimestamp) != null) {
                     entangledLogLines.add(matcher.group(indexConcurrentLine));
@@ -752,7 +779,12 @@ public class G1PreprocessAction implements PreprocessAction {
                         this.logEntry = matcher.group(1) + matcher.group(indexG1FullTimestamp) + ": "
                                 + matcher.group(indexFullBlock);
                     } else {
-                        this.logEntry = matcher.group(indexG1FullTimestamp) + ": " + matcher.group(indexFullBlock);
+                        if (matcher.group(indexG1DetailsBlock) != null) {
+                            this.logEntry = matcher.group(indexG1FullTimestamp) + ": " + matcher.group(indexFullBlock)
+                                    + matcher.group(indexG1DetailsBlock);
+                        } else {
+                            this.logEntry = matcher.group(indexG1FullTimestamp) + ": " + matcher.group(indexFullBlock);
+                        }
                     }
                 }
             } else {
@@ -880,6 +912,17 @@ public class G1PreprocessAction implements PreprocessAction {
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_END_CONCURRENT_YOUNG)) {
+            // End of logging event
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_END_CONCURRENT_YOUNG);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                entangledLogLines.add(matcher.group(1));
+                this.logEntry = matcher.group(6);
+            }
+            clearEntangledLines(entangledLogLines);
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(TOKEN);
         }
     }
 
@@ -917,7 +960,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK) || logLine.matches(REGEX_RETAIN_MIDDLE_FULL)
                 || logLine.matches(REGEX_RETAIN_MIDDLE) || logLine.matches(REGEX_RETAIN_MIDDLE_DURATION)
-                || logLine.matches(REGEX_RETAIN_END)) {
+                || logLine.matches(REGEX_RETAIN_END) || logLine.matches(REGEX_RETAIN_END_CONCURRENT_YOUNG)) {
             match = true;
         } else {
             // TODO: Get rid of this and make them throwaway events?

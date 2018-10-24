@@ -825,7 +825,7 @@ public class TestG1PreprocessAction extends TestCase {
         Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
 
-    public void testLogLineYoungPauseMixedConccurrentMarkEnd() {
+    public void testLogLineYoungPauseMixedConcurrentMarkEnd() {
         String priorLogLine = "";
         String logLine = "188935.313: [GC pause (G1 Evacuation Pause) (young)"
                 + "188935.321: [GC concurrent-mark-end, 0.4777427 secs]";
@@ -836,6 +836,57 @@ public class TestG1PreprocessAction extends TestCase {
         List<String> entangledLogLines = new ArrayList<String>();
         G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
         Assert.assertEquals("Log line not parsed correctly.", "188935.313: [GC pause (G1 Evacuation Pause) (young)",
+                event.getLogEntry());
+    }
+
+    public void testLogLineYoungPauseMixedConcurrentRootRegionScanStart() {
+        String priorLogLine = "";
+        String logLine = "537.122: [GC pause (G1 Evacuation Pause) (young)"
+                + "537.123: [GC concurrent-root-region-scan-start]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.", "537.122: [GC pause (G1 Evacuation Pause) (young)",
+                event.getLogEntry());
+    }
+
+    public void testLogLineConcurrentMixedYoungPauseToSpaceExhaustedEnd() {
+        String priorLogLine = "";
+        String logLine = "537.142: [GC concurrent-root-region-scan-end, 0.0189841 secs] (to-space exhausted), "
+                + "0.3314995 secs][Eden: 0.0B(151.0M)->0.0B(153.0M) Survivors: 2048.0K->0.0B Heap: "
+                + "3038.7M(3072.0M)->3038.7M(3072.0M)] [Times: user=0.20 sys=0.00, real=0.33 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                " (to-space exhausted), 0.3314995 secs][Eden: 0.0B(151.0M)->0.0B(153.0M) "
+                        + "Survivors: 2048.0K->0.0B Heap: 3038.7M(3072.0M)->3038.7M(3072.0M)] "
+                        + "[Times: user=0.20 sys=0.00, real=0.33 secs]" + Constants.LINE_SEPARATOR
+                        + "537.142: [GC concurrent-root-region-scan-end, 0.0189841 secs]",
+                event.getLogEntry());
+    }
+
+    public void testLogLineConcurrentMixedYoungPauseEndNoToSpaceExhausted() {
+        String priorLogLine = "";
+        String logLine = "2132.962: [GC concurrent-root-region-scan-end, 0.0001111 secs], 0.1083307 secs]"
+                + "[Eden: 0.0B(153.0M)->0.0B(153.0M) Survivors: 0.0B->0.0B Heap: 3035.6M(3072.0M)->3035.6M(3072.0M)] "
+                + "[Times: user=0.09 sys=0.00, real=0.11 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, priorLogLine, nextLogLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                ", 0.1083307 secs]" + "[Eden: 0.0B(153.0M)->0.0B(153.0M) Survivors: 0.0B->0.0B "
+                        + "Heap: 3035.6M(3072.0M)->3035.6M(3072.0M)] [Times: user=0.09 sys=0.00, real=0.11 secs]"
+                        + Constants.LINE_SEPARATOR + "2132.962: [GC concurrent-root-region-scan-end, 0.0001111 secs]",
                 event.getLogEntry());
     }
 
@@ -936,6 +987,26 @@ public class TestG1PreprocessAction extends TestCase {
         G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
         Assert.assertEquals("Log line not parsed correctly.",
                 "2017-06-22T16:35:58.032+0530: 81186.777: [Full GC (Metadata GC Threshold) ", event.getLogEntry());
+    }
+
+    public void testLogLineFullMixedConcurrentMiddle() {
+        String logLine = "35420.674: [Full GC (Allocation Failure) 35420.734: "
+                + "[GC concurrent-mark-start]3035M->3030M(3072M), 21.7552521 secs]"
+                + "[Eden: 0.0B(153.0M)->0.0B(153.0M) Survivors: 0.0B->0.0B Heap: 3035.5M(3072.0M)->3030.4M(3072.0M)], "
+                + "[Metaspace: 93308K->93308K(352256K)] [Times: user=16.39 sys=0.04, real=21.75 secs]";
+        String nextLogLine = "2132.960: [GC pause (G1 Evacuation Pause) (young)2132.962: "
+                + "[GC concurrent-root-region-scan-start]";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "35420.674: [Full GC (Allocation Failure) 3035M->3030M(3072M), 21.7552521 secs]"
+                        + "[Eden: 0.0B(153.0M)->0.0B(153.0M) Survivors: 0.0B->0.0B"
+                        + " Heap: 3035.5M(3072.0M)->3030.4M(3072.0M)], [Metaspace: 93308K->93308K(352256K)] "
+                        + "[Times: user=16.39 sys=0.04, real=21.75 secs]",
+                event.getLogEntry());
     }
 
     public void testLogLineConcurrentWithDatestamp() {
@@ -2035,5 +2106,37 @@ public class TestG1PreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE));
+    }
+
+    public void testPreprocessingYoungMixedConcurrent() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset144.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE));
+        Assert.assertTrue(JdkUtil.LogEventType.G1_CONCURRENT.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.G1_CONCURRENT));
+    }
+
+    public void testPreprocessingFullMixedConcurrent() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset145.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.G1_FULL_GC.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC));
+        Assert.assertTrue(JdkUtil.LogEventType.G1_CONCURRENT.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.G1_CONCURRENT));
     }
 }
