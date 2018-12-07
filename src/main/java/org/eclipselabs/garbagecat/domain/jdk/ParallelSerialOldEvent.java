@@ -61,6 +61,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 4.165: [Full GC (System) [PSYoungGen: 1784K-&gt;0K(12736K)] [PSOldGen: 1081K-&gt;2855K(116544K)] 2865K-&gt;2855K(129280K) [PSPermGen: 8600K-&gt;8600K(131072K)], 0.0427680 secs]
  * </pre>
  * 
+ * <p>
+ * 3) JDK8 with comman before Metaspace block:
+ * </p>
+ * 
+ * <pre>
+ * 2018-12-06T19:04:46.807-0500: 0.122: [Full GC (Ergonomics) [PSYoungGen: 508K-&gt;385K(1536K)] [PSOldGen: 408K-&gt;501K(2048K)] 916K-&gt;887K(3584K), [Metaspace: 3680K-&gt;3680K(1056768K)], 0.0030057 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
+ * </pre>
+ * 
  * TODO: Expand or extend {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent}.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -138,7 +146,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ERGONOMICS + ")";
 
     /**
      * Regular expressions defining the logging.
@@ -146,9 +154,9 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\("
             + TRIGGER + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
-            + "?[ ]*$";
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[,]{0,1} \\[(PSPermGen|Metaspace): "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
+            + TimesData.REGEX + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(ParallelSerialOldEvent.REGEX);
 
@@ -175,11 +183,11 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
             this.oldEnd = Integer.parseInt(matcher.group(20));
             this.oldAllocation = Integer.parseInt(matcher.group(21));
 
-            this.permGen = Integer.parseInt(matcher.group(25));
-            this.permGenEnd = Integer.parseInt(matcher.group(26));
-            this.permGenAllocation = Integer.parseInt(matcher.group(27));
+            this.permGen = Integer.parseInt(matcher.group(26));
+            this.permGenEnd = Integer.parseInt(matcher.group(27));
+            this.permGenAllocation = Integer.parseInt(matcher.group(28));
 
-            this.duration = JdkMath.convertSecsToMillis(matcher.group(28)).intValue();
+            this.duration = JdkMath.convertSecsToMillis(matcher.group(29)).intValue();
         }
     }
 

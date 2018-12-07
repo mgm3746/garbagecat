@@ -319,6 +319,22 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Parallelism not calculated correctly.", 209, event.getParallelism());
     }
 
+    public void testLogLinePreprocessedNoSpaceAfterYoung() {
+        String logLine = "2018-12-07T11:26:56.282-0500: 0.314: [GC pause (G1 Evacuation Pause) "
+                + "(young)3589K->2581K(6144K), 0.0063282 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                G1YoungPauseEvent.match(logLine));
+        G1YoungPauseEvent event = new G1YoungPauseEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 314, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 3589, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 2581, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 6144, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 6, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
+    }
+
     /**
      * Test preprocessing TRIGGER_TO_SPACE_OVERFLOW.
      * 
@@ -337,5 +353,25 @@ public class TestG1YoungPauseEvent extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE));
         Assert.assertTrue(Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_G1_EVACUATION_FAILURE));
+    }
+
+    /**
+     * Test preprocessing resulting in no space after (young).
+     * 
+     */
+    public void testPreprocessingNoSpaceAfterYoung() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset146.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.G1_CONCURRENT));
+        Assert.assertTrue(JdkUtil.LogEventType.G1_CONCURRENT.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE));
     }
 }

@@ -134,6 +134,12 @@ public class JdkUtil {
      */
     public static final LogEventType identifyEventType(String logLine) {
 
+        // Unknown
+        if (VerboseGcYoungEvent.match(logLine))
+            return LogEventType.VERBOSE_GC_YOUNG;
+        if (VerboseGcOldEvent.match(logLine))
+            return LogEventType.VERBOSE_GC_OLD;
+
         // In order of most common events to limit checking
         // G1
         if (G1YoungPauseEvent.match(logLine))
@@ -178,10 +184,6 @@ public class JdkUtil {
             return LogEventType.APPLICATION_CONCURRENT_TIME;
         if (ApplicationStoppedTimeEvent.match(logLine))
             return LogEventType.APPLICATION_STOPPED_TIME;
-        if (VerboseGcYoungEvent.match(logLine))
-            return LogEventType.VERBOSE_GC_YOUNG;
-        if (VerboseGcOldEvent.match(logLine))
-            return LogEventType.VERBOSE_GC_OLD;
         if (ReferenceGcEvent.match(logLine))
             return LogEventType.REFERENCE_GC;
         if (ClassUnloadingEvent.match(logLine))

@@ -1183,8 +1183,8 @@ public class TestAnalysis extends TestCase {
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         // VERGOSE_GC_OLD looks the same as G1_FULL without -XX:+PrintGCDetails
-        Assert.assertTrue(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1 + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1));
+        Assert.assertTrue(Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN));
     }
 
     /**

@@ -1021,6 +1021,19 @@ public class TestG1PreprocessAction extends TestCase {
                 "2017-02-27T02:55:32.524+0300: 35911.405: [GC concurrent-mark-start]", event.getLogEntry());
     }
 
+    public void testLogLineConcurrentDoubleDatestamp() {
+        String logLine = "2018-12-06T21:56:32.691-0500: 18.973"
+                + "2018-12-06T21:56:32.691-0500: : 18.973[GC concurrent-root-region-scan-start]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".",
+                G1PreprocessAction.match(logLine, null, null));
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        Assert.assertEquals("Log line not parsed correctly.",
+                "2018-12-06T21:56:32.691-0500: 18.973: [GC concurrent-root-region-scan-start]", event.getLogEntry());
+    }
+
     public void testLogLineMiddleInitialMark() {
         String logLine = " (initial-mark), 0.12895600 secs]";
         String nextLogLine = "";

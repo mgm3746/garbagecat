@@ -74,6 +74,28 @@ public class TestParallelSerialOldEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 42, event.getDuration());
     }
 
+    public void testLogLineTriggerErgonomicsWithMetaspace() {
+        String logLine = "2018-12-06T19:04:46.807-0500: 0.122: [Full GC (Ergonomics) [PSYoungGen: 508K->385K(1536K)] "
+                + "[PSOldGen: 408K->501K(2048K)] 916K->887K(3584K), "
+                + "[Metaspace: 3680K->3680K(1056768K)], 0.0030057 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
+                ParallelSerialOldEvent.match(logLine));
+        ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 122, event.getTimestamp());
+        Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.ERGONOMICS.toString() + ".",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_ERGONOMICS));
+        Assert.assertEquals("Young begin size not parsed correctly.", 508, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 385, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 1536, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 408, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 501, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 2048, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 3680, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 3680, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1056768, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 3, event.getDuration());
+    }
+
     public void testIsBlocking() {
         String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
                 + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "

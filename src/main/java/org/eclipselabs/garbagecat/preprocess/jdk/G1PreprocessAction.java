@@ -344,11 +344,14 @@ public class G1PreprocessAction implements PreprocessAction {
 
     /**
      * Regular expression for retained beginning G1_CONCURRENT collection.
+     * 
+     * 2018-12-06T21:56:32.691-0500: 18.9732018-12-06T21:56:32.691-0500: : 18.973[GC concurrent-root-region-scan-start]
      */
     private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(: )?(" + JdkRegEx.DATESTAMP + ": )?(("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": )(" + JdkRegEx.TIMESTAMP + "[:]{0,1}[ ]{0,1})?("
-            + JdkRegEx.DATESTAMP + ")?(\\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, "
-            + JdkRegEx.DURATION + ")?\\])[ ]*$";
+            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + "(" + JdkRegEx.DATESTAMP + ": )?: )("
+            + JdkRegEx.TIMESTAMP + "[:]{0,1}[ ]{0,1})?(" + JdkRegEx.DATESTAMP
+            + ")?(\\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, " + JdkRegEx.DURATION
+            + ")?\\])[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_REMARK collection.
@@ -807,23 +810,23 @@ public class G1PreprocessAction implements PreprocessAction {
                 if (!context.contains(TOKEN)) {
                     // Output now
                     if (matcher.group(2) != null && matcher.group(13) != null) {
-                        this.logEntry = matcher.group(2) + matcher.group(13) + matcher.group(39);
+                        this.logEntry = matcher.group(2) + matcher.group(25) + ": " + matcher.group(50);
                     } else {
                         if (matcher.group(13) != null) {
-                            this.logEntry = matcher.group(13) + matcher.group(39);
+                            this.logEntry = matcher.group(25) + ": " + matcher.group(50);
                         } else if (matcher.group(2) != null) {
-                            this.logEntry = matcher.group(13) + matcher.group(39);
+                            this.logEntry = matcher.group(25) + ": " + matcher.group(50);
                         }
                     }
                 } else {
                     // Output later
                     if (matcher.group(2) != null && matcher.group(13) != null) {
-                        entangledLogLines.add(matcher.group(2) + matcher.group(13) + matcher.group(39));
+                        entangledLogLines.add(matcher.group(2) + matcher.group(25) + ": " + matcher.group(50));
                     } else {
                         if (matcher.group(13) != null) {
-                            entangledLogLines.add(matcher.group(13) + matcher.group(39));
+                            entangledLogLines.add(matcher.group(25) + ": " + matcher.group(50));
                         } else if (matcher.group(2) != null) {
-                            entangledLogLines.add(matcher.group(2) + matcher.group(39));
+                            entangledLogLines.add(matcher.group(25) + ": " + matcher.group(50));
                         }
                     }
                 }
