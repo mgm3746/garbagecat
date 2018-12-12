@@ -50,6 +50,12 @@ public class TestUsingG1Event extends TestCase {
                 UsingG1Event.match(logLine));
     }
 
+    public void testLineDetailedLogging() {
+        String logLine = "[0.003s][info][gc     ] Using G1";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".",
+                UsingG1Event.match(logLine));
+    }
+
     /**
      * Test logging.
      */

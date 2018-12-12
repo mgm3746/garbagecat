@@ -31,8 +31,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) With <code>-Xlog:gc:file=&lt;file&gt;</code> (no details).
+ * </p>
+ * 
  * <pre>
  * [0.003s][info][gc] Using G1
+ * </pre>
+ * 
+ * <p>
+ * 2) With <code>-Xlog:gc*:file=&lt;file&gt;</code> (details).
+ * </p>
+ * 
+ * <pre>
+ * [0.003s][info][gc     ] Using G1
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -43,7 +55,7 @@ public class UsingG1Event implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] Using G1[ ]*$";
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc([ ]{5})?\\] Using G1[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
