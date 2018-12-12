@@ -15,7 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 
 /**
- * Unknown collector.
+ * Unknown gc event.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 

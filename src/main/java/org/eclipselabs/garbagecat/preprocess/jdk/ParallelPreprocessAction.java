@@ -64,7 +64,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 3) {@link org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent} with "GC time <em>is exceeding</em>
+ * 3) {@link org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent} with "GC time <em>is exceeding</em>
  * GCTimeLimit":
  * </p>
  * 
@@ -87,10 +87,10 @@ public class ParallelPreprocessAction implements PreprocessAction {
      * Regular expression GCTimeLimit exceeded logging.
      */
     private static final String REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[Full GC \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\] \\[(PS|Par)OldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + JdkRegEx.TIMESTAMP + ": \\[Full GC \\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\)\\] \\[(PS|Par)OldGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\) \\[PSPermGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
             + "\\)\\])(      |\t)(GC time (would exceed|is exceeding) GCTimeLimit of 98%)$";
 
     /**
@@ -111,11 +111,11 @@ public class ParallelPreprocessAction implements PreprocessAction {
      * 
      * , 33.6887649 secs] [Times: user=33.68 sys=0.02, real=33.69 secs]
      */
-    private static final String REGEX_RETAIN_END = "^(  | )?((\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\)\\]( \\[PSOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\])? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)( \\[PSPermGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?)?, "
-            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+    private static final String REGEX_RETAIN_END = "^(  | )?((\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\]( \\[PSOldGen: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\])? " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\)( \\[PSPermGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\)\\])?)?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
     /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This

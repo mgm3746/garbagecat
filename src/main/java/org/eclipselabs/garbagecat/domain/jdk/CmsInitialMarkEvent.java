@@ -51,6 +51,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 8.722: [GC (CMS Initial Mark) [1 CMS-initial-mark: 0K(989632K)] 187663K(1986432K), 0.0157899 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]
  * </pre>
  * 
+ * <p>
+ * 2) JDK9+:
+ * </p>
+ * 
+ * <pre>
+ * [0.132s][info][gc] GC(3) Pause Initial Mark 0M-&gt;0M(2M) 0.241ms
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -67,7 +75,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -87,13 +95,19 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
     private int timeReal;
 
     /**
-     * Regular expressions defining the logging.
+     * Regular expression defining the logging JDK8 and prior.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC (\\(("
-            + JdkRegEx.TRIGGER_CMS_INITIAL_MARK + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
-            + TimesData.REGEX + "?[ ]*$";
-    private static Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
+            + JdkRegEx.TRIGGER_CMS_INITIAL_MARK + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
+            + "\\]" + TimesData.REGEX + "?[ ]*$";
+
+    /**
+     * Regular expression defining the logging JDK9+.
+     */
+    private static final String REGEX_JDK9 = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Initial Mark " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 
     /**
      * Create event from log entry.
@@ -103,14 +117,25 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
      */
     public CmsInitialMarkEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
-        if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            trigger = matcher.group(14);
-            duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
-            if (matcher.group(22) != null) {
-                timeUser = JdkMath.convertSecsToCentos(matcher.group(23)).intValue();
-                timeReal = JdkMath.convertSecsToCentos(matcher.group(24)).intValue();
+        if (logEntry.matches(REGEX)) {
+            Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                trigger = matcher.group(14);
+                duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+                if (matcher.group(22) != null) {
+                    timeUser = JdkMath.convertSecsToCentos(matcher.group(23)).intValue();
+                    timeReal = JdkMath.convertSecsToCentos(matcher.group(24)).intValue();
+                }
+            }
+        } else if (logEntry.matches(REGEX_JDK9)) {
+            Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX_JDK9);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                duration = JdkMath.roundMillis(matcher.group(11)).intValue();
+                timestamp = endTimestamp - duration;
             }
         }
     }
@@ -121,7 +146,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */
@@ -171,6 +196,6 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return logLine.matches(REGEX_JDK9) || logLine.matches(REGEX);
     }
 }

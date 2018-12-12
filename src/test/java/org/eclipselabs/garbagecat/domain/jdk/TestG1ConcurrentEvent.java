@@ -210,4 +210,28 @@ public class TestG1ConcurrentEvent extends TestCase {
         G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 0, event.getTimestamp());
     }
+
+    public void testLogLineUnifiedConcurrentCycle() {
+        String logLine = "[14.859s][info][gc] GC(1083) Concurrent Cycle";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
+                G1ConcurrentEvent.match(logLine));
+        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 14859, event.getTimestamp());
+    }
+
+    public void testLogLineUnifiedConcurrentCycleWithDuration() {
+        String logLine = "[14.904s][info][gc] GC(1083) Concurrent Cycle 45.374ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
+                G1ConcurrentEvent.match(logLine));
+        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 14904 - 45, event.getTimestamp());
+    }
+
+    public void testLogLineUnifiedConcurrentPauseCleanup() {
+        String logLine = "[15.101s][info][gc] GC(1099) Pause Cleanup 30M->30M(44M) 0.058ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
+                G1ConcurrentEvent.match(logLine));
+        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 15101 - 0, event.getTimestamp());
+    }
 }

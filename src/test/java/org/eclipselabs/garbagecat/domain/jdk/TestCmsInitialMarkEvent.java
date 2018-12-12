@@ -87,4 +87,12 @@ public class TestCmsInitialMarkEvent extends TestCase {
         Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 300, event.getParallelism());
     }
+
+    public void testLogLineJdk9() {
+        String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
+        Assert.assertTrue("Log line not recognized as CMS Initial Mark event.", CmsInitialMarkEvent.match(logLine));
+        CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 178 - 0, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 0, event.getDuration());
+    }
 }

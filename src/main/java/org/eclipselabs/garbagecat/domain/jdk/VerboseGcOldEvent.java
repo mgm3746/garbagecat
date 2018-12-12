@@ -70,7 +70,7 @@ public class VerboseGcOldEvent extends UnknownCollector
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -105,8 +105,8 @@ public class VerboseGcOldEvent extends UnknownCollector
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC( \\("
-            + TRIGGER + "\\) )? (" + JdkRegEx.SIZE + "|" + JdkRegEx.SIZE_G1 + ")->(" + JdkRegEx.SIZE + "|"
-            + JdkRegEx.SIZE_G1 + ")\\((" + JdkRegEx.SIZE + "|" + JdkRegEx.SIZE_G1 + ")\\), " + JdkRegEx.DURATION
+            + TRIGGER + "\\) )? (" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")->(" + JdkRegEx.SIZE_K + "|"
+            + JdkRegEx.SIZE + ")\\((" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")\\), " + JdkRegEx.DURATION
             + "\\]?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(VerboseGcOldEvent.REGEX);
@@ -123,17 +123,17 @@ public class VerboseGcOldEvent extends UnknownCollector
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             trigger = matcher.group(14);
-            if (matcher.group(16).matches(JdkRegEx.SIZE)) {
+            if (matcher.group(16).matches(JdkRegEx.SIZE_K)) {
                 combinedBegin = Integer.parseInt(matcher.group(17));
             } else {
                 combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)), matcher.group(20).charAt(0));
             }
-            if (matcher.group(21).matches(JdkRegEx.SIZE)) {
+            if (matcher.group(21).matches(JdkRegEx.SIZE_K)) {
                 combinedEnd = Integer.parseInt(matcher.group(22));
             } else {
                 combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(23)), matcher.group(25).charAt(0));
             }
-            if (matcher.group(26).matches(JdkRegEx.SIZE)) {
+            if (matcher.group(26).matches(JdkRegEx.SIZE_K)) {
                 combinedAllocation = Integer.parseInt(matcher.group(27));
             } else {
                 combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)),
@@ -149,7 +149,7 @@ public class VerboseGcOldEvent extends UnknownCollector
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */
@@ -198,7 +198,7 @@ public class VerboseGcOldEvent extends UnknownCollector
      *            The log line to test.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
+    public static boolean match(String logLine) {
         return pattern.matcher(logLine).matches();
     }
 }

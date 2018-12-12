@@ -77,9 +77,9 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
      * Regular expression standard format.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(("
-            + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\))?[ ]{0,2}"
-            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION
-            + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\))?[ ]{0,2}" + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
+            + "?[ ]*$";
     /**
      * Regular expression preprocessed with G1 details.
      */
@@ -87,12 +87,11 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
             + ": \\[Full GC[ ]{0,1}(\\((" + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD
             + "|" + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION
             + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\)[ ]{0,2}|" + ClassHistogramEvent.REGEX_PREPROCESSED
-            + ")?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION
-            + "\\]\\[Eden: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: "
-            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)\\](, \\[(Perm|Metaspace): " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)\\])?" + TimesData.REGEX + "?[ ]*$";
+            + ")?" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
+            + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\](, \\[(Perm|Metaspace): "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -105,7 +104,7 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -176,10 +175,9 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
                 } else if (matcher.group(13) != null) {
                     trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
                 }
-                combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(65), matcher.group(67).charAt(0));
-                combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(71), matcher.group(73).charAt(0));
-                combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(74),
-                        matcher.group(76).charAt(0));
+                combined = JdkMath.convertSizeToKilobytes(matcher.group(65), matcher.group(67).charAt(0));
+                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(71), matcher.group(73).charAt(0));
+                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(74), matcher.group(76).charAt(0));
                 duration = JdkMath.convertSecsToMillis(matcher.group(44)).intValue();
                 if (matcher.group(77) != null) {
                     permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(79)), matcher.group(81).charAt(0));
@@ -198,7 +196,7 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */

@@ -69,8 +69,8 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup( "
-            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\))?, " + JdkRegEx.DURATION
-            + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?, " + JdkRegEx.DURATION + "\\]"
+            + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
     /**
@@ -84,7 +84,7 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -144,7 +144,7 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */

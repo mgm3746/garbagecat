@@ -503,7 +503,7 @@ public class JvmRun {
         }
 
         // 2) Check to see if -XX:+PrintGCApplicationStoppedTime enabled
-        if (!eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)) {
+        if (!eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME) && !JdkUtil.isUnifiedLogging(eventTypes)) {
             analysis.add(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING);
         }
 

@@ -214,4 +214,52 @@ public class TestCmsConcurrentEvent extends TestCase {
         Assert.assertFalse("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 CmsConcurrentEvent.match(logLine));
     }
+
+    public void testJdk9ConcurrentMark() {
+        String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testJdk9ConcurrentMarkWithDuration() {
+        String logLine = "[0.083s][info][gc] GC(1) Concurrent Mark 1.428ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testJdk9ConcurrentPreclean() {
+        String logLine = "[0.083s][info][gc] GC(1) Concurrent Preclean";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testJdk9ConcurrentPrecleanWithDuration() {
+        String logLine = "[0.083s][info][gc] GC(1) Concurrent Preclean 0.032ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testJdk9ConcurrentSweep() {
+        String logLine = "[0.084s][info][gc] GC(1) Concurrent Sweep";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testJdk9ConcurrentSweepWithDuration() {
+        String logLine = "[0.085s][info][gc] GC(1) Concurrent Sweep 0.364ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testJdk9ConcurrentReset() {
+        String logLine = "[0.085s][info][gc] GC(1) Concurrent Reset";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
+
+    public void testJdk9ConcurrentResetWithDuration() {
+        String logLine = "[0.086s][info][gc] GC(1) Concurrent Reset 0.841ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
+                CmsConcurrentEvent.match(logLine));
+    }
 }

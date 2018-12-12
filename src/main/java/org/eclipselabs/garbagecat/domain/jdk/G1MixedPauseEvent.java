@@ -87,18 +87,17 @@ public class G1MixedPauseEvent extends G1Collector
      * Regular expression standard format.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\("
-            + TRIGGER + "\\))? \\(mixed\\)(--)? " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + TRIGGER + "\\))? \\(mixed\\)(--)? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression preprocessed.
      */
     private static final String REGEX_PREPROCESSED = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC pause( \\(" + TRIGGER + "\\))? \\(mixed\\)( \\(" + TRIGGER + "\\))?, " + JdkRegEx.DURATION
-            + "\\]\\[Eden: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: "
-            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
+            + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -111,7 +110,7 @@ public class G1MixedPauseEvent extends G1Collector
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -183,10 +182,9 @@ public class G1MixedPauseEvent extends G1Collector
                     trigger = matcher.group(14);
                 }
                 duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
-                combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(38), matcher.group(40).charAt(0));
-                combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(44), matcher.group(46).charAt(0));
-                combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(47),
-                        matcher.group(49).charAt(0));
+                combined = JdkMath.convertSizeToKilobytes(matcher.group(38), matcher.group(40).charAt(0));
+                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(44), matcher.group(46).charAt(0));
+                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(47), matcher.group(49).charAt(0));
                 if (matcher.group(50) != null) {
                     timeUser = JdkMath.convertSecsToCentos(matcher.group(51)).intValue();
                     timeReal = JdkMath.convertSecsToCentos(matcher.group(52)).intValue();
@@ -201,7 +199,7 @@ public class G1MixedPauseEvent extends G1Collector
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */

@@ -84,8 +84,8 @@ public class G1YoungPauseEvent extends G1Collector
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC
-            + ")\\) )?\\(young\\)(--)?[ ]{0,1}" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + ")\\) )?\\(young\\)(--)?[ ]{0,1}" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression preprocessed with G1 details.
@@ -113,11 +113,10 @@ public class G1YoungPauseEvent extends G1Collector
     private static final String REGEX_PREPROCESSED_DETAILS = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC pause (\\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
             + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\) )?\\(young\\)( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED
-            + "|" + JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW + ")\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: "
-            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: " + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\]" + TimesData.REGEX
-            + "?[ ]*$";
+            + "|" + JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW + ")\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression preprocessed, no details.
@@ -126,8 +125,8 @@ public class G1YoungPauseEvent extends G1Collector
      * 
      */
     private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause \\(young\\), "
-            + JdkRegEx.DURATION + "\\]\\[ " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
+            + JdkRegEx.DURATION + "\\]\\[ " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]"
+            + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression preprocessed with G1 details with no duration. Get duration from times block.
@@ -140,10 +139,9 @@ public class G1YoungPauseEvent extends G1Collector
      */
     private static final String REGEX_PREPROCESSED_NO_DURATION = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC pause (\\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\) )?\\(young\\)\\[Eden: "
-            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: " + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\]" + TimesData.REGEX
-            + "[ ]*$";
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -156,7 +154,7 @@ public class G1YoungPauseEvent extends G1Collector
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -227,10 +225,9 @@ public class G1YoungPauseEvent extends G1Collector
                     trigger = matcher.group(14);
                 }
                 duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
-                combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(38), matcher.group(40).charAt(0));
-                combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(44), matcher.group(46).charAt(0));
-                combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(47),
-                        matcher.group(49).charAt(0));
+                combined = JdkMath.convertSizeToKilobytes(matcher.group(38), matcher.group(40).charAt(0));
+                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(44), matcher.group(46).charAt(0));
+                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(47), matcher.group(49).charAt(0));
                 if (matcher.group(50) != null) {
                     timeUser = JdkMath.convertSecsToCentos(matcher.group(51)).intValue();
                     timeReal = JdkMath.convertSecsToCentos(matcher.group(52)).intValue();
@@ -262,10 +259,9 @@ public class G1YoungPauseEvent extends G1Collector
                 }
                 // Get duration from times block
                 duration = JdkMath.convertSecsToMillis(matcher.group(47)).intValue();
-                combined = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(33), matcher.group(35).charAt(0));
-                combinedEnd = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(39), matcher.group(41).charAt(0));
-                combinedAvailable = JdkMath.convertSizeG1DetailsToKilobytes(matcher.group(42),
-                        matcher.group(44).charAt(0));
+                combined = JdkMath.convertSizeToKilobytes(matcher.group(33), matcher.group(35).charAt(0));
+                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(39), matcher.group(41).charAt(0));
+                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(42), matcher.group(44).charAt(0));
                 timeUser = JdkMath.convertSecsToCentos(matcher.group(46)).intValue();
                 timeReal = JdkMath.convertSecsToCentos(matcher.group(47)).intValue();
             }
@@ -278,7 +274,7 @@ public class G1YoungPauseEvent extends G1Collector
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */

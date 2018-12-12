@@ -36,13 +36,13 @@ public class TestJdkMath extends TestCase {
     /**
      * Durations are always rounded down.
      */
-    public void testConvertDurationToMillisRoundUp() {
+    public void testConvertDurationToMillisRoundDownOddFive() {
         String secs = "0.0975";
         Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 97,
                 JdkMath.convertSecsToMillis(secs).intValue());
     }
 
-    public void testConvertDurationToMillisRoundDown() {
+    public void testConvertDurationToMillisRoundDownEvenFive() {
         String secs = "0.0985";
         Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 98,
                 JdkMath.convertSecsToMillis(secs).intValue());
@@ -58,6 +58,18 @@ public class TestJdkMath extends TestCase {
         String secs = "0.0968485";
         Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 96848,
                 JdkMath.convertSecsToMicros(secs).intValue());
+    }
+
+    public void testRoundMillis() {
+        String millis = "2.169";
+        Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 2,
+                JdkMath.roundMillis(millis).intValue());
+    }
+
+    public void testRoundMillisDown() {
+        String millis = "2.969";
+        Assert.assertEquals("Secs not converted to milliseconds with expected rounding mode.", 2,
+                JdkMath.roundMillis(millis).intValue());
     }
 
     public void testThroughput() {
@@ -105,36 +117,35 @@ public class TestJdkMath extends TestCase {
     public void testConvertSizeG1DetailsToKilobytesB() {
         String size = "102400";
         char units = 'B';
-        Assert.assertEquals("G1 details not converted to kilobytes.", 100,
-                JdkMath.convertSizeG1DetailsToKilobytes(size, units));
+        Assert.assertEquals("G1 details not converted to kilobytes.", 100, JdkMath.convertSizeToKilobytes(size, units));
     }
 
     public void testConvertSizeG1DetailsToKilobytesK() {
         String size = "1234567";
         char units = 'K';
         Assert.assertEquals("G1 details not converted to kilobytes.", 1234567,
-                JdkMath.convertSizeG1DetailsToKilobytes(size, units));
+                JdkMath.convertSizeToKilobytes(size, units));
     }
 
     public void testConvertSizeG1DetailsToKilobytesM() {
         String size = "10";
         char units = 'M';
         Assert.assertEquals("G1 details not converted to kilobytes.", 10240,
-                JdkMath.convertSizeG1DetailsToKilobytes(size, units));
+                JdkMath.convertSizeToKilobytes(size, units));
     }
 
     public void testConvertSizeG1DetailsToKilobytesMWithComma() {
         String size = "306,0";
         char units = 'M';
         Assert.assertEquals("G1 details not converted to kilobytes.", 313344,
-                JdkMath.convertSizeG1DetailsToKilobytes(size, units));
+                JdkMath.convertSizeToKilobytes(size, units));
     }
 
     public void testConvertSizeG1DetailsToKilobytesG() {
         String size = "100";
         char units = 'G';
         Assert.assertEquals("G1 details not converted to kilobytes.", 104857600,
-                JdkMath.convertSizeG1DetailsToKilobytes(size, units));
+                JdkMath.convertSizeToKilobytes(size, units));
     }
 
     public void testCalcParallelism() {

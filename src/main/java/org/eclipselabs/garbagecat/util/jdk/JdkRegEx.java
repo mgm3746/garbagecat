@@ -52,8 +52,10 @@ public class JdkRegEx {
      * The size of memory in kilobytes. Sometimes there is a space between the number and the "K" units.
      * 
      * For example: 27808K, 16172 K
+     * 
+     * TODO: Combine with SIZE_K?
      */
-    public static final String SIZE = "(\\d{1,9})[ ]?K";
+    public static final String SIZE_K = "(\\d{1,9})[ ]?K";
 
     /**
      * Byte units identifier.
@@ -89,7 +91,7 @@ public class JdkRegEx {
      * 
      * With comma: 306,0M
      */
-    public static final String SIZE_G1 = "(\\d{1,8}([\\.,]\\d)?)([" + BYTES + KILOBYTES + MEGABYTES + GIGABYTES + "])";
+    public static final String SIZE = "(\\d{1,8}([\\.,]\\d)?)([" + BYTES + KILOBYTES + MEGABYTES + GIGABYTES + "])";
 
     /**
      * The size of memory in bytes. No units.
@@ -107,6 +109,20 @@ public class JdkRegEx {
      * For example: 0.0225213 secs, 0.00376500 secs
      */
     public static final String DURATION = "(\\d{1,4}[\\.\\,]\\d{7,8})( sec)?(s)?";
+
+    /**
+     * The duration of the event in milliseconds with 3 decimal places, introduced JDK9.
+     * 
+     * For example: 2.969ms
+     */
+    public static final String DURATION_JDK9 = "(\\d{1,7}[\\.\\,]\\d{3})ms";
+
+    /**
+     * The garbage collection event number in JDK9+ unified logging.
+     * 
+     * For example: GC(6)
+     */
+    public static final String GC_EVENT_NUMBER = "GC\\(\\d{1,7}\\)";
 
     /**
      * The duration of the event as a fraction of a time period.

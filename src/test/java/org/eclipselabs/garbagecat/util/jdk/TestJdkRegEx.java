@@ -62,37 +62,37 @@ public class TestJdkRegEx extends TestCase {
 
     public void testSizeWithoutUnits() {
         String size = "1234";
-        Assert.assertFalse("Size must have capital K (kilobytes).", size.matches(JdkRegEx.SIZE));
+        Assert.assertFalse("Size must have capital K (kilobytes).", size.matches(JdkRegEx.SIZE_K));
     }
 
     public void testZeroSize() {
         String size = "0K";
-        Assert.assertTrue("Zero sizes are valid.", size.matches(JdkRegEx.SIZE));
+        Assert.assertTrue("Zero sizes are valid.", size.matches(JdkRegEx.SIZE_K));
     }
 
     public void testSizeUnitsCase() {
         String size = "1234k";
-        Assert.assertFalse("Size must have capital K (kilobytes).", size.matches(JdkRegEx.SIZE));
+        Assert.assertFalse("Size must have capital K (kilobytes).", size.matches(JdkRegEx.SIZE_K));
     }
 
     public void testSizeWithDecimal() {
         String size = "1.234K";
-        Assert.assertFalse("Size is a whole number.", size.matches(JdkRegEx.SIZE));
+        Assert.assertFalse("Size is a whole number.", size.matches(JdkRegEx.SIZE_K));
     }
 
     public void testSizeValid() {
         String size = "1234K";
-        Assert.assertTrue("'1234K' is a valid size.", size.matches(JdkRegEx.SIZE));
+        Assert.assertTrue("'1234K' is a valid size.", size.matches(JdkRegEx.SIZE_K));
     }
 
     public void testSizeWithInvalidCharacter() {
         String size = "A234K";
-        Assert.assertFalse("Size is a decimal number.", size.matches(JdkRegEx.SIZE));
+        Assert.assertFalse("Size is a decimal number.", size.matches(JdkRegEx.SIZE_K));
     }
 
     public void testSizeWithNineTensPlaces() {
         String size = "129092672K";
-        Assert.assertTrue("'129092672K' is a valid size.", size.matches(JdkRegEx.SIZE));
+        Assert.assertTrue("'129092672K' is a valid size.", size.matches(JdkRegEx.SIZE_K));
     }
 
     public void testDurationWithCharacter() {
@@ -145,6 +145,21 @@ public class TestJdkRegEx extends TestCase {
         Assert.assertTrue("'0,0225213 secs' is a valid duration.", duration.matches(JdkRegEx.DURATION));
     }
 
+    public void testDurationJdk9() {
+        String duration = "2.969ms";
+        Assert.assertTrue("'" + duration + "' is a valid duration.", duration.matches(JdkRegEx.DURATION_JDK9));
+    }
+
+    public void testGcEventId() {
+        String id = "GC(1326)";
+        Assert.assertTrue("'" + id + "' is a valid GC event id.", id.matches(JdkRegEx.GC_EVENT_NUMBER));
+    }
+
+    public void testGcEventId7Digits() {
+        String id = "GC(1234567)";
+        Assert.assertTrue("'" + id + "' is a valid GC event id.", id.matches(JdkRegEx.GC_EVENT_NUMBER));
+    }
+
     public void testParallelScavengeValid() {
         String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
                 + "160183K->133159K(585088K), 0.0225213 secs]";
@@ -188,47 +203,47 @@ public class TestJdkRegEx extends TestCase {
 
     public void testSizeG1WholeBytes() {
         String size = "0B";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
     public void testSizeG1WholeKilobytes() {
         String size = "8192K";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
     public void testSizeG1WholeMegabytes() {
         String size = "28M";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
     public void testSizeG1WholeGigabytes() {
         String size = "30G";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
     public void testSizeG1DecimalBytes() {
         String size = "0.0B";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
     public void testSizeG1DecimalKilobytes() {
         String size = "8192.0K";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
     public void testSizeG1DecimalMegabytes() {
         String size = "28.0M";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE_G1));
+        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
     public void testSizeG1DecimalGigabytes() {
         String size = "30.0G";
-        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1));
+        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE));
     }
 
     public void testSizeG1Comma() {
         String size = "306,0M";
-        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE_G1));
+        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE));
     }
 
     public void testPercent() {

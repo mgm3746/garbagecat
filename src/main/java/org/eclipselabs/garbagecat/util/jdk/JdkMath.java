@@ -47,6 +47,23 @@ public class JdkMath {
     }
 
     /**
+     * Round milliseconds to whole number.
+     * 
+     * For example: Convert 2.969 to 2
+     * 
+     * @param millis
+     *            Milliseconds with decimal places.
+     * @return Milliseconds rounded to a whole number.
+     */
+    public static BigDecimal roundMillis(String millis) {
+        // BigDecimal does not accept decimal commas, only decimal periods
+        BigDecimal duration = new BigDecimal(millis.replace(",", "."));
+        // Round down to avoid TimeWarpExceptions when events are spaced close together
+        duration = duration.setScale(0, RoundingMode.DOWN);
+        return duration;
+    }
+
+    /**
      * Convert milliseconds to seconds.
      * 
      * For example: Convert 123456 123.456.
@@ -180,7 +197,7 @@ public class JdkMath {
     }
 
     /**
-     * Convert SIZE_G1_DETAILS to kilobytes.
+     * Convert SIZE to kilobytes.
      * 
      * @param size
      *            The size (e.g. '128.0', 306,0).
@@ -188,7 +205,7 @@ public class JdkMath {
      *            The units (e.g. 'G').
      * @return The size in Kilobytes.
      */
-    public static int convertSizeG1DetailsToKilobytes(final String size, final char units) {
+    public static int convertSizeToKilobytes(final String size, final char units) {
 
         BigDecimal kilobytes = new BigDecimal(size.replace(",", "."));
         BigDecimal kilo = new BigDecimal("1024");

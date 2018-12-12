@@ -41,7 +41,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Uses "PSOldGen" vs. {@link org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent} "ParOldGen".
+ * Uses "PSOldGen" vs. {@link org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent} "ParOldGen".
  * 
  * <h3>Example Logging</h3>
  * 
@@ -89,7 +89,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -152,11 +152,11 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\("
-            + TRIGGER + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[,]{0,1} \\[(PSPermGen|Metaspace): "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
-            + TimesData.REGEX + "?[ ]*$";
+            + TRIGGER + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] "
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\)[,]{0,1} \\[(PSPermGen|Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\)\\], " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(ParallelSerialOldEvent.REGEX);
 
@@ -197,7 +197,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */

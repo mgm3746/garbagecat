@@ -57,7 +57,7 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
@@ -460,7 +460,7 @@ public class GcManager {
                                     if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL)) {
                                         jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL);
                                     }
-                                } else if (event instanceof ParallelOldCompactingEvent) {
+                                } else if (event instanceof ParallelCompactingOldEvent) {
                                     if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_PARALLEL)) {
                                         jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_PARALLEL);
                                     }

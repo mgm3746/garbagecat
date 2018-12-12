@@ -244,17 +244,18 @@ public class HeapAtGcEvent implements ThrowAwayEvent {
      */
     private static final String[] REGEX = {
             //
-            "^ (PSYoungGen|PSOldGen|ParOldGen|PSPermGen)[ ]+total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + ".+$",
+            "^ (PSYoungGen|PSOldGen|ParOldGen|PSPermGen)[ ]+total " + JdkRegEx.SIZE_K + ", used " + JdkRegEx.SIZE_K
+                    + ".+$",
             //
             "^ ((par|def) new generation|concurrent mark-sweep generation|concurrent-mark-sweep perm gen"
-                    + "|tenured generation|compacting perm gen)" + "[ ]+total " + JdkRegEx.SIZE + ", used "
-                    + JdkRegEx.SIZE + ".+$",
+                    + "|tenured generation|compacting perm gen)" + "[ ]+total " + JdkRegEx.SIZE_K + ", used "
+                    + JdkRegEx.SIZE_K + ".+$",
             //
-            "^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE + ",[ ]+\\d{1,3}% used.+$",
+            "^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE_K + ",[ ]+\\d{1,3}% used.+$",
             //
             "^(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": )? (Metaspace| class space)[ ]+used "
-                    + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE + ", committed " + JdkRegEx.SIZE + ", reserved "
-                    + JdkRegEx.SIZE + "$",
+                    + JdkRegEx.SIZE_K + ", capacity " + JdkRegEx.SIZE_K + ", committed " + JdkRegEx.SIZE_K
+                    + ", reserved " + JdkRegEx.SIZE_K + "$",
             //
             "^}$",
             //
@@ -278,7 +279,7 @@ public class HeapAtGcEvent implements ThrowAwayEvent {
     private String logEntry;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 

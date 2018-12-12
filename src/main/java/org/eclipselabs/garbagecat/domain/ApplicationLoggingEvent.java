@@ -103,7 +103,7 @@ public class ApplicationLoggingEvent implements ThrowAwayEvent {
     private String logEntry;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 

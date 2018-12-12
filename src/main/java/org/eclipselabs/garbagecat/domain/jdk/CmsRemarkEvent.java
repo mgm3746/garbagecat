@@ -131,7 +131,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -160,13 +160,13 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * Regular expression defining standard logging.
      */
     private static final String REGEX = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC( \\(("
-            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
-            + JdkRegEx.SIZE + "\\)\\])?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
+            + JdkRegEx.SIZE_K + "\\)\\])?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]((" + JdkRegEx.DATESTAMP
             + ": )?" + JdkRegEx.TIMESTAMP + ": \\[scrub string table, " + JdkRegEx.DURATION
-            + "\\])?[ ]{0,1}\\[1 CMS-remark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + "\\])?[ ]{0,1}\\[1 CMS-remark: " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K
+            + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression for class unloading enabled with <code>-XX:+CMSClassUnloadingEnabled</code>.
@@ -174,8 +174,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * TODO: Combine with REGEX.
      */
     private static final String REGEX_CLASS_UNLOADING = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE
-            + " \\(" + JdkRegEx.SIZE + "\\)\\])?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K
+            + " \\(" + JdkRegEx.SIZE_K + "\\)\\])?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[Rescan \\((non-)?parallel\\) ((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[grey object rescan, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[root rescan, " + JdkRegEx.DURATION + "\\])?, " + JdkRegEx.DURATION + "\\]("
@@ -184,15 +184,15 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             + "\\](" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": ((\\[scrub symbol & string tables, "
             + JdkRegEx.DURATION + "\\])|(\\[scrub symbol table, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP
             + ": )?" + JdkRegEx.TIMESTAMP + ": \\[scrub string table, " + JdkRegEx.DURATION
-            + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K
+            + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression defining truncated logging due to -XX:+CMSScavengeBeforeRemark -XX:+PrintHeapAtGC:
      */
     private static final String REGEX_TRUNCATED = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE
-            + " \\(" + JdkRegEx.SIZE + "\\)\\]$";
+            + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K
+            + " \\(" + JdkRegEx.SIZE_K + "\\)\\]$";
 
     /**
      * Create event from log entry.
@@ -260,7 +260,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */

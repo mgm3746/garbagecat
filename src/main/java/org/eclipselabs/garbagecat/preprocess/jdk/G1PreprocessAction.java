@@ -326,8 +326,8 @@ public class G1PreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_FULL_GC = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\((" + JdkRegEx.TRIGGER_SYSTEM_GC + "|"
             + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))?[ ]{0,2}(" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1
-            + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\])?)( Before GC RS summary)?[ ]*$";
+            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))?[ ]{0,2}(" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?)( Before GC RS summary)?[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_FULL_GC with PRINT_CLASS_HISTOGRAM collection.
@@ -378,8 +378,7 @@ public class G1PreprocessAction implements PreprocessAction {
      * Regular expression for retained beginning G1_CLEANUP collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_CLEANUP = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup "
-            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION
-            + "\\])[ ]*$";
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_YOUNG_PAUSE mixed with G1_CONCURRENT collection.
@@ -424,20 +423,19 @@ public class G1PreprocessAction implements PreprocessAction {
             + JdkRegEx.DATESTAMP + ": )?(\\[Full GC \\((" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
             + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\)[ ]{0,1})((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + "?(:)?( )?(\\[GC concurrent-(root-region-scan|mark)-(start|end)(, " + JdkRegEx.DURATION + ")?\\]))("
-            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION
-            + "\\]\\[Eden: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: "
-            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)\\], \\[Metaspace: " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)\\]" + TimesData.REGEX + ")?[ ]*$";
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
+            + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], \\[Metaspace: " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + ")?[ ]*$";
 
     /**
      * Regular expression for retained middle G1_YOUNG_PAUSE collection.
      * 
      * [ 29M->2589K(59M)]
      */
-    private static final String REGEX_RETAIN_MIDDLE_YOUNG_PAUSE = "^   (\\[ " + JdkRegEx.SIZE_G1 + "->"
-            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\])[ ]*$";
+    private static final String REGEX_RETAIN_MIDDLE_YOUNG_PAUSE = "^   (\\[ " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)\\])[ ]*$";
 
     /**
      * Regular expression for retained middle G1_YOUNG_INTIAL_MARK collection.
@@ -458,8 +456,8 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * 390M->119M(512M)After GC RS summary
      */
-    private static final String REGEX_RETAIN_MIDDLE_FULL = "^ (" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\)(, " + JdkRegEx.DURATION + "\\])?)(After GC RS summary)?[ ]*$";
+    private static final String REGEX_RETAIN_MIDDLE_FULL = "^ (" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)(, " + JdkRegEx.DURATION + "\\])?)(After GC RS summary)?[ ]*$";
 
     /**
      * Regular expression for retained middle.
@@ -471,11 +469,11 @@ public class G1PreprocessAction implements PreprocessAction {
      * [Eden: 306,0M(306,0M)->0,0B(266,0M) Survivors: 0,0B->40,0M Heap: 306,0M(6144,0M)->57,7M(6144,0M)]
      * 
      */
-    private static final String REGEX_RETAIN_MIDDLE = "^   (\\[Eden: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\) Survivors: " + JdkRegEx.SIZE_G1 + "->"
-            + JdkRegEx.SIZE_G1 + " Heap: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1
-            + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\](, \\[(Perm|Metaspace): " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1
-            + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\])?)[ ]*$";
+    private static final String REGEX_RETAIN_MIDDLE = "^   (\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\](, \\[(Perm|Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\])?)[ ]*$";
 
     /**
      * Regular expression for retained middle duration.
@@ -505,10 +503,10 @@ public class G1PreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_END_CONCURRENT_YOUNG = "^(" + JdkRegEx.TIMESTAMP
             + ": \\[GC concurrent-root-region-scan-end, " + JdkRegEx.DURATION + "\\])(( \\("
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE_G1
-            + "\\(" + JdkRegEx.SIZE_G1 + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\) Survivors: "
-            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + " Heap: " + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1
-            + "\\)->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\)\\]" + TimesData.REGEX + ")( )?[ ]*$";
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + ")( )?[ ]*$";
 
     /**
      * Regular expressions for lines thrown away.

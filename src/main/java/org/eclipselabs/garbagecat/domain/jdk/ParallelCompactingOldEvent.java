@@ -30,7 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * PARALLEL_OLD_COMPACTING
+ * PARALLEL_COMPACTING_OLD
  * </p>
  * 
  * <p>
@@ -81,7 +81,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author jborelo
  * 
  */
-public class ParallelOldCompactingEvent extends ParallelCollector implements BlockingEvent, OldCollection,
+public class ParallelCompactingOldEvent extends ParallelCollector implements BlockingEvent, OldCollection,
         PermCollection, ParallelEvent, YoungData, OldData, PermData, TriggerData, TimesData {
 
     /**
@@ -95,7 +95,7 @@ public class ParallelOldCompactingEvent extends ParallelCollector implements Blo
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -171,13 +171,13 @@ public class ParallelOldCompactingEvent extends ParallelCollector implements Blo
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\("
-            + TRIGGER + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)\\] \\[ParOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)(,)? \\[(PSPermGen|Metaspace): "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
-            + TimesData.REGEX + "?[ ]*$";
+            + TRIGGER + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\)\\] \\[ParOldGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] "
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)(,)? \\[(PSPermGen|Metaspace): "
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\], " + JdkRegEx.DURATION
+            + "\\]" + TimesData.REGEX + "?[ ]*$";
 
-    private static Pattern pattern = Pattern.compile(ParallelOldCompactingEvent.REGEX);
+    private static Pattern pattern = Pattern.compile(ParallelCompactingOldEvent.REGEX);
 
     /**
      * Create event from log entry.
@@ -185,7 +185,7 @@ public class ParallelOldCompactingEvent extends ParallelCollector implements Blo
      * @param logEntry
      *            The log entry for the event.
      */
-    public ParallelOldCompactingEvent(String logEntry) {
+    public ParallelCompactingOldEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
@@ -215,11 +215,11 @@ public class ParallelOldCompactingEvent extends ParallelCollector implements Blo
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */
-    public ParallelOldCompactingEvent(String logEntry, long timestamp, int duration) {
+    public ParallelCompactingOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
@@ -262,7 +262,7 @@ public class ParallelOldCompactingEvent extends ParallelCollector implements Blo
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString();
+        return JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString();
     }
 
     public int getPermOccupancyInit() {

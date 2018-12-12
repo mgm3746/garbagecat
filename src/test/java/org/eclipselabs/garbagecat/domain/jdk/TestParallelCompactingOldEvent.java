@@ -22,15 +22,15 @@ import junit.framework.TestCase;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestParallelOldCompactingEvent extends TestCase {
+public class TestParallelCompactingOldEvent extends TestCase {
 
     public void testLogLine() {
         String logLine = "2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] "
                 + "[ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) "
                 + "[PSPermGen: 81960K->81783K(164352K)], 2.4749181 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
-                ParallelOldCompactingEvent.match(logLine));
-        ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".",
+                ParallelCompactingOldEvent.match(logLine));
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 2182541, event.getTimestamp());
         Assert.assertEquals("Young begin size not parsed correctly.", 1940, event.getYoungOccupancyInit());
         Assert.assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
@@ -48,17 +48,17 @@ public class TestParallelOldCompactingEvent extends TestCase {
         String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
                 + "[ParOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
                 + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]  ";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
-                ParallelOldCompactingEvent.match(logLine));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".",
+                ParallelCompactingOldEvent.match(logLine));
     }
 
     public void testLogLineJdk16() {
         String logLine = "2.417: [Full GC (System) [PSYoungGen: 1788K->0K(12736K)] "
                 + "[ParOldGen: 1084K->2843K(116544K)] 2872K->2843K(129280K) "
                 + "[PSPermGen: 8602K->8593K(131072K)], 0.1028360 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
-                ParallelOldCompactingEvent.match(logLine));
-        ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".",
+                ParallelCompactingOldEvent.match(logLine));
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 2417, event.getTimestamp());
         Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.SYSTEM_GC.toString() + ".",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
@@ -78,9 +78,9 @@ public class TestParallelOldCompactingEvent extends TestCase {
         String logLine = "1.234: [Full GC (Metadata GC Threshold) [PSYoungGen: 17779K->0K(1835008K)] "
                 + "[ParOldGen: 16K->16894K(4194304K)] 17795K->16894K(6029312K), [Metaspace: 19114K->19114K(1067008K)], "
                 + "0.0352132 secs] [Times: user=0.09 sys=0.00, real=0.04 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
-                ParallelOldCompactingEvent.match(logLine));
-        ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".",
+                ParallelCompactingOldEvent.match(logLine));
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 1234, event.getTimestamp());
         Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.METADATA_GC_THRESHOLD.toString() + ".",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
@@ -104,9 +104,9 @@ public class TestParallelOldCompactingEvent extends TestCase {
                 + "[ParOldGen: 773083K->773083K(4718592K)] 773083K->773083K(6287872K), "
                 + "[Metaspace: 4177368K->4177368K(4194304K)], 1.9708670 secs] "
                 + "[Times: user=4.41 sys=0.01, real=1.97 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
-                ParallelOldCompactingEvent.match(logLine));
-        ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".",
+                ParallelCompactingOldEvent.match(logLine));
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 372405718, event.getTimestamp());
         Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.LAST_DITCH_COLLECTION.toString() + ".",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION));
@@ -129,7 +129,7 @@ public class TestParallelOldCompactingEvent extends TestCase {
         String logLine = "2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] "
                 + "[ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) "
                 + "[PSPermGen: 81960K->81783K(164352K)], 2.4749181 secs]";
-        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + " not indentified as blocking.",
+        Assert.assertTrue(JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + " not indentified as blocking.",
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
@@ -138,9 +138,9 @@ public class TestParallelOldCompactingEvent extends TestCase {
                 + "[ParOldGen: 1390311K->861344K(1398272K)] 1496080K->861344K(1946112K), "
                 + "[Metaspace: 136339K->135256K(1177600K)], 3.4522057 secs] "
                 + "[Times: user=11.58 sys=0.64, real=3.45 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
-                ParallelOldCompactingEvent.match(logLine));
-        ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".",
+                ParallelCompactingOldEvent.match(logLine));
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 21415385, event.getTimestamp());
         Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.ERGONOMICS.toString() + ".",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_ERGONOMICS));
@@ -164,9 +164,9 @@ public class TestParallelOldCompactingEvent extends TestCase {
                 + "[ParOldGen: 2934846K->851463K(4718592K)] 2982516K->851463K(6233088K), "
                 + "[Metaspace: 3959933K->3959881K(3977216K)], 2.4308400 secs] "
                 + "[Times: user=6.95 sys=0.03, real=2.43 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
-                ParallelOldCompactingEvent.match(logLine));
-        ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".",
+                ParallelCompactingOldEvent.match(logLine));
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 285197105, event.getTimestamp());
         Assert.assertTrue(
                 "Trigger not recognized as " + JdkUtil.TriggerType.HEAP_INSPECTION_INITIATED_GC.toString() + ".",
@@ -191,9 +191,9 @@ public class TestParallelOldCompactingEvent extends TestCase {
                 + "[ParOldGen: 1398224K->1398199K(1398272K)] 1791707K->1791273K(1931264K), "
                 + "[Metaspace: 170955K->170731K(1220608K)], 3.5730395 secs] "
                 + "[Times: user=26.24 sys=0.09, real=3.57 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
-                ParallelOldCompactingEvent.match(logLine));
-        ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".",
+                ParallelCompactingOldEvent.match(logLine));
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", Long.parseLong("3203650654"), event.getTimestamp());
         Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.ALLOCATION_FAILURE.toString() + ".",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
@@ -217,9 +217,9 @@ public class TestParallelOldCompactingEvent extends TestCase {
                 + "[PSYoungGen: 33192K->0K(397312K)] [ParOldGen: 885002K->812903K(890368K)] "
                 + "918194K->812903K(1287680K), [Metaspace: 142181K->141753K(1185792K)], 2.3728899 secs] "
                 + "[Times: user=7.55 sys=0.60, real=2.37 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_OLD_COMPACTING.toString() + ".",
-                ParallelOldCompactingEvent.match(logLine));
-        ParallelOldCompactingEvent event = new ParallelOldCompactingEvent(logLine);
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".",
+                ParallelCompactingOldEvent.match(logLine));
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", Long.parseLong("1029482070"), event.getTimestamp());
         Assert.assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.HEAP_DUMP_INITIATED_GC.toString() + ".",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC));

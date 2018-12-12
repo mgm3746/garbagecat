@@ -74,9 +74,9 @@ public class SerialPreprocessAction implements PreprocessAction {
      * 
      * : 36825K->4352K(39424K), 0.0224830 secs] 44983K->14441K(126848K), 0.0225800 secs]
      */
-    private static final String REGEX_RETAIN_END = "^(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\])$";
+    private static final String REGEX_RETAIN_END = "^(: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])$";
 
     /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This

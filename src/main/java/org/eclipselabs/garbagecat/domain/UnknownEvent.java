@@ -34,7 +34,6 @@ public class UnknownEvent implements LogEvent {
      *            The log entry for the event.
      */
     public UnknownEvent(String logEntry) {
-        super();
         this.logEntry = logEntry;
     }
 

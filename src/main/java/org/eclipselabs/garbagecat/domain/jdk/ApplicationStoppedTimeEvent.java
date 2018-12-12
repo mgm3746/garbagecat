@@ -106,7 +106,7 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -147,7 +147,7 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in microseconds (rounded).
      */

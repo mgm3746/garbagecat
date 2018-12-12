@@ -147,7 +147,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -229,11 +229,11 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
     /**
      * Regular expression for CMS_REMARK block in some events.
      */
-    private static final String REMARK_BLOCK = "\\[YG occupancy: " + JdkRegEx.SIZE + " \\(" + JdkRegEx.SIZE + "\\)\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[class unloading, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION
-            + "\\]";
+    private static final String REMARK_BLOCK = "\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K
+            + "\\)\\]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
+            + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\]";
 
     /**
      * Regular expression defining the logging beginning with "Full GC".
@@ -242,26 +242,26 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
             + ": \\[Full GC( \\(" + TRIGGER_FULL_GC + "\\))?[ ]{0,1}(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?("
             + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": "
             + "\\[CMS(bailing out to foreground collection)?( \\(" + TRIGGER_CMS + "\\))?( \\(" + TRIGGER_CMS + "\\))?("
-            + REMARK_BLOCK + ")?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")? " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + "\\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION
-            + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + REMARK_BLOCK + ")?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
+            + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")? " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + "\\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE_K
+            + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression defining the logging beginning with "GC".
      */
     private static final String REGEX_GC = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC( \\("
             + TRIGGER_GC + "\\))?[ ]{0,1}(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew("
-            + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\(" + TRIGGER_PAR_NEW + "\\))?: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]("
+            + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\(" + TRIGGER_PAR_NEW + "\\))?: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]("
             + ClassHistogramEvent.REGEX_PREPROCESSED + ")?(((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[(CMS|Tenured))?(Java HotSpot\\(TM\\) Server VM warning: )?"
-            + "(bailing out to foreground collection)?( \\(" + TRIGGER_CMS + "\\))?(: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?)?("
-            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)(, \\[(CMS Perm |Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\])?"
+            + "(bailing out to foreground collection)?( \\(" + TRIGGER_CMS + "\\))?(: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?)?("
+            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?( " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\)(, \\[(CMS Perm |Perm |Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K
+            + "\\(" + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\])?"
             + TimesData.REGEX + "?[ ]*$";
 
     /**
@@ -366,7 +366,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */

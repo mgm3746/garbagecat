@@ -114,11 +114,16 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent, Parallel
     private static final String REGEX = "^(: )?(" + JdkRegEx.DATESTAMP + "(: )?)?(" + JdkRegEx.DATESTAMP
             + "(: )?)?(: )?" + JdkRegEx.TIMESTAMP + "?(: )?(" + JdkRegEx.DATESTAMP + ": )?(: )?(" + JdkRegEx.TIMESTAMP
             + ": )?(: )?\\[GC concurrent-(((root-region-scan|mark|cleanup)-(start|end|abort|reset-for-overflow))"
-            + "|string-deduplication)(\\])?(,)?( " + JdkRegEx.DURATION + ")?(\\])?( " + JdkRegEx.SIZE_G1 + "->"
-            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\))?(, avg " + JdkRegEx.PERCENT + ", " + JdkRegEx.DURATION
+            + "|string-deduplication)(\\])?(,)?( " + JdkRegEx.DURATION + ")?(\\])?( " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?(, avg " + JdkRegEx.PERCENT + ", " + JdkRegEx.DURATION
             + "\\])?" + TimesData.REGEX + "?[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * Regular expression defining the logging JDK9+.
+     */
+    private static final String REGEX_JDK9 = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
+            + JdkRegEx.GC_EVENT_NUMBER + " (Pause Cleanup|Concurrent Cycle)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\))?( " + JdkRegEx.DURATION_JDK9 + ")?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -126,7 +131,7 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent, Parallel
     private String logEntry;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -139,10 +144,24 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent, Parallel
     public G1ConcurrentEvent(String logEntry) {
         this.logEntry = logEntry;
 
-        Matcher matcher = pattern.matcher(logEntry);
-        if (matcher.find()) {
-            if (matcher.group(27) != null) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(27)).longValue();
+        if (logEntry.matches(REGEX)) {
+            Pattern pattern = Pattern.compile(REGEX);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                if (matcher.group(27) != null) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(27)).longValue();
+                }
+            }
+        } else if (logEntry.matches(REGEX_JDK9)) {
+            Pattern pattern = Pattern.compile(REGEX_JDK9);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                int duration = 0;
+                if (matcher.group(14) != null) {
+                    duration = JdkMath.roundMillis(matcher.group(14)).intValue();
+                }
+                timestamp = endTimestamp - duration;
             }
         }
     }
@@ -167,7 +186,6 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent, Parallel
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return logLine.matches(REGEX_JDK9) || logLine.matches(REGEX);
     }
-
 }

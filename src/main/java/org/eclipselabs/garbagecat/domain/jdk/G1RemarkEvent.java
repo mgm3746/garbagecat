@@ -73,7 +73,7 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -112,7 +112,7 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */

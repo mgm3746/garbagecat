@@ -384,7 +384,7 @@ public enum Analysis {
     WARN_EXPLICIT_GC_NOT_CONCURRENT("warn.explicit.gc.not.concurrent"),
 
     /**
-     * Property key for explicit garbage collection invoking the PARALLEL_OLD_COMPACTING collector.
+     * Property key for explicit garbage collection invoking the PARALLEL_COMPACTING_OLD collector.
      */
     WARN_EXPLICIT_GC_PARALLEL("warn.explicit.gc.parallel"),
 

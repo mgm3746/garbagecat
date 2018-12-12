@@ -97,7 +97,7 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -161,18 +161,18 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
      * Regular expression for SERIAL_NEW block in some events.
      */
     public static final String SERIAL_NEW_BLOCK = "(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[DefNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\) )?: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]";
+            + ": \\[DefNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\) )?: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]";
 
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( \\("
             + TRIGGER + "\\))?([ ]{0,1}" + SERIAL_NEW_BLOCK + ")?( )?(" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[Tenured: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\), \\[(Perm |Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], "
-            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + JdkRegEx.TIMESTAMP + ": \\[Tenured: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\), \\[(Perm |Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\)\\], " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(SerialOldEvent.REGEX);
 
@@ -221,7 +221,7 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */

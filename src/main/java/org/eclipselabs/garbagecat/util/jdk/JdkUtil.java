@@ -16,6 +16,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,7 +51,7 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.LogFileEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ParallelOldCompactingEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
@@ -57,6 +59,13 @@ import org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent;
+import org.eclipselabs.garbagecat.domain.jdk.UnifiedOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.UnifiedRemarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.UnifiedYoungEvent;
+import org.eclipselabs.garbagecat.domain.jdk.UsingCmsEvent;
+import org.eclipselabs.garbagecat.domain.jdk.UsingG1Event;
+import org.eclipselabs.garbagecat.domain.jdk.UsingParallelEvent;
+import org.eclipselabs.garbagecat.domain.jdk.UsingSerialEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcYoungEvent;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -76,19 +85,25 @@ public class JdkUtil {
      * Defined logging events.
      */
     public enum LogEventType {
-        SERIAL_OLD, SERIAL_NEW, PAR_NEW, PARALLEL_SERIAL_OLD, PARALLEL_SCAVENGE, PARALLEL_OLD_COMPACTING,
+        SERIAL_NEW, SERIAL_OLD,
+        //
+        PAR_NEW, PARALLEL_SCAVENGE, PARALLEL_SERIAL_OLD, PARALLEL_COMPACTING_OLD,
+        //
+        UNIFIED_YOUNG, UNIFIED_OLD, UNIFIED_REMARK,
         //
         CMS_SERIAL_OLD, CMS_REMARK, CMS_INITIAL_MARK, CMS_CONCURRENT,
         //
-        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD,
-        //
         G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
+        //
+        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD,
         //
         HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, REFERENCE_GC, CLASS_HISTOGRAM, HEAP_AT_GC,
         //
         CLASS_UNLOADING, APPLICATION_LOGGING, THREAD_DUMP, BLANK_LINE, GC_OVERHEAD_LIMIT, LOG_FILE, FLS_STATISTICS,
         //
-        GC_LOCKER, TENURING_DISTRIBUTION
+        GC_LOCKER, TENURING_DISTRIBUTION,
+        //
+        USING_SERIAL, USING_PARALLEL, USING_CMS, USING_G1
     };
 
     /**
@@ -134,6 +149,14 @@ public class JdkUtil {
      */
     public static final LogEventType identifyEventType(String logLine) {
 
+        // Unified
+        if (UnifiedYoungEvent.match(logLine))
+            return LogEventType.UNIFIED_YOUNG;
+        if (UnifiedOldEvent.match(logLine))
+            return LogEventType.UNIFIED_OLD;
+        if (UnifiedRemarkEvent.match(logLine))
+            return LogEventType.UNIFIED_REMARK;
+
         // Unknown
         if (VerboseGcYoungEvent.match(logLine))
             return LogEventType.VERBOSE_GC_YOUNG;
@@ -141,7 +164,10 @@ public class JdkUtil {
             return LogEventType.VERBOSE_GC_OLD;
 
         // In order of most common events to limit checking
+
         // G1
+        if (UsingG1Event.match(logLine))
+            return LogEventType.USING_G1;
         if (G1YoungPauseEvent.match(logLine))
             return LogEventType.G1_YOUNG_PAUSE;
         if (G1MixedPauseEvent.match(logLine))
@@ -156,7 +182,10 @@ public class JdkUtil {
             return LogEventType.G1_FULL_GC;
         if (G1CleanupEvent.match(logLine))
             return LogEventType.G1_CLEANUP;
+
         // CMS
+        if (UsingCmsEvent.match(logLine))
+            return LogEventType.USING_CMS;
         if (ParNewEvent.match(logLine))
             return LogEventType.PAR_NEW;
         if (CmsSerialOldEvent.match(logLine))
@@ -167,18 +196,25 @@ public class JdkUtil {
             return LogEventType.CMS_REMARK;
         if (CmsConcurrentEvent.match(logLine))
             return LogEventType.CMS_CONCURRENT;
+
         // Parallel
+        if (UsingParallelEvent.match(logLine))
+            return LogEventType.USING_PARALLEL;
         if (ParallelScavengeEvent.match(logLine))
             return LogEventType.PARALLEL_SCAVENGE;
         if (ParallelSerialOldEvent.match(logLine))
             return LogEventType.PARALLEL_SERIAL_OLD;
-        if (ParallelOldCompactingEvent.match(logLine))
-            return LogEventType.PARALLEL_OLD_COMPACTING;
+        if (ParallelCompactingOldEvent.match(logLine))
+            return LogEventType.PARALLEL_COMPACTING_OLD;
+
         // Serial
+        if (UsingSerialEvent.match(logLine))
+            return LogEventType.USING_SERIAL;
         if (SerialOldEvent.match(logLine))
             return LogEventType.SERIAL_OLD;
         if (SerialNewEvent.match(logLine))
             return LogEventType.SERIAL_NEW;
+
         // Other
         if (ApplicationConcurrentTimeEvent.match(logLine))
             return LogEventType.APPLICATION_CONCURRENT_TIME;
@@ -230,7 +266,20 @@ public class JdkUtil {
         LogEventType eventType = identifyEventType(logLine);
         LogEvent event = null;
         switch (eventType) {
+        // Unified
+        case UNIFIED_YOUNG:
+            event = new UnifiedYoungEvent(logLine);
+            break;
+        case UNIFIED_OLD:
+            event = new UnifiedOldEvent(logLine);
+            break;
+        case UNIFIED_REMARK:
+            event = new UnifiedRemarkEvent(logLine);
+            break;
         // G1
+        case USING_G1:
+            event = new UsingG1Event(logLine);
+            break;
         case G1_CLEANUP:
             event = new G1CleanupEvent(logLine);
             break;
@@ -253,6 +302,9 @@ public class JdkUtil {
             event = new G1YoungPauseEvent(logLine);
             break;
         // CMS
+        case USING_CMS:
+            event = new UsingCmsEvent(logLine);
+            break;
         case PAR_NEW:
             event = new ParNewEvent(logLine);
             break;
@@ -269,8 +321,11 @@ public class JdkUtil {
             event = new CmsSerialOldEvent(logLine);
             break;
         // Parallel
-        case PARALLEL_OLD_COMPACTING:
-            event = new ParallelOldCompactingEvent(logLine);
+        case USING_PARALLEL:
+            event = new UsingParallelEvent(logLine);
+            break;
+        case PARALLEL_COMPACTING_OLD:
+            event = new ParallelCompactingOldEvent(logLine);
             break;
         case PARALLEL_SCAVENGE:
             event = new ParallelScavengeEvent(logLine);
@@ -279,6 +334,9 @@ public class JdkUtil {
             event = new ParallelSerialOldEvent(logLine);
             break;
         // Serial
+        case USING_SERIAL:
+            event = new UsingSerialEvent(logLine);
+            break;
         case SERIAL_NEW:
             event = new SerialNewEvent(logLine);
             break;
@@ -369,6 +427,17 @@ public class JdkUtil {
             int duration) {
         BlockingEvent event = null;
         switch (eventType) {
+        // Unified
+        case UNIFIED_YOUNG:
+            event = new UnifiedYoungEvent(logEntry, timestamp, duration);
+            break;
+        case UNIFIED_OLD:
+            event = new UnifiedOldEvent(logEntry, timestamp, duration);
+            break;
+        case UNIFIED_REMARK:
+            event = new UnifiedRemarkEvent(logEntry, timestamp, duration);
+            break;
+
         // G1
         case G1_YOUNG_PAUSE:
             event = new G1YoungPauseEvent(logEntry, timestamp, duration);
@@ -408,8 +477,8 @@ public class JdkUtil {
         case PARALLEL_SERIAL_OLD:
             event = new ParallelSerialOldEvent(logEntry, timestamp, duration);
             break;
-        case PARALLEL_OLD_COMPACTING:
-            event = new ParallelOldCompactingEvent(logEntry, timestamp, duration);
+        case PARALLEL_COMPACTING_OLD:
+            event = new ParallelCompactingOldEvent(logEntry, timestamp, duration);
             break;
         // Serial
         case SERIAL_OLD:
@@ -459,6 +528,10 @@ public class JdkUtil {
         case REFERENCE_GC:
         case THREAD_DUMP:
         case TENURING_DISTRIBUTION:
+        case USING_SERIAL:
+        case USING_PARALLEL:
+        case USING_CMS:
+        case USING_G1:
         case UNKNOWN:
             isBlocking = false;
         default:
@@ -630,7 +703,7 @@ public class JdkUtil {
     }
 
     /**
-     * Convert SIZE_G1_DETAILS to SIZE_G1.
+     * Convert SIZE_G1_DETAILS to SIZE.
      * 
      * @param size
      *            The size (e.g. '128.0').
@@ -752,5 +825,33 @@ public class JdkUtil {
         }
 
         return reportable;
+    }
+
+    /**
+     * @param eventTypes
+     *            The JVM event types.
+     * @return True if the JVM events indicate unified logging (JDK9+), false otherwise.
+     */
+    public static final boolean isUnifiedLogging(List<LogEventType> eventTypes) {
+        boolean isUnifiedLogging = false;
+        if (eventTypes.size() > 0) {
+            Iterator<LogEventType> iterator = eventTypes.iterator();
+            while (iterator.hasNext() && !isUnifiedLogging) {
+                LogEventType eventType = iterator.next();
+                switch (eventType) {
+                case USING_SERIAL:
+                case USING_PARALLEL:
+                case USING_CMS:
+                case USING_G1:
+                case UNIFIED_YOUNG:
+                case UNIFIED_OLD:
+                case UNIFIED_REMARK:
+                    isUnifiedLogging = true;
+                    break;
+                default:
+                }
+            }
+        }
+        return isUnifiedLogging;
     }
 }

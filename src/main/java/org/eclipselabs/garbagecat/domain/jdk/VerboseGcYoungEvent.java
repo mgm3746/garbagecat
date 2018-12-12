@@ -78,7 +78,7 @@ public class VerboseGcYoungEvent extends UnknownCollector
     private int duration;
 
     /**
-     * The time when the GC event happened in milliseconds after JVM startup.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
@@ -114,7 +114,7 @@ public class VerboseGcYoungEvent extends UnknownCollector
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC(--)?( \\("
-            + TRIGGER + "\\) )? (" + JdkRegEx.SIZE + "->)?" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + TRIGGER + "\\) )? (" + JdkRegEx.SIZE_K + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
             + JdkRegEx.DURATION + "\\]?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
@@ -149,7 +149,7 @@ public class VerboseGcYoungEvent extends UnknownCollector
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event happened in milliseconds after JVM startup.
+     *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */
