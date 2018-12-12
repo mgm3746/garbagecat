@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -22,12 +22,6 @@ import junit.framework.TestCase;
  * 
  */
 public class TestUnifiedRemarkEvent extends TestCase {
-
-    public void testIsBlocking() {
-        String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
-        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
-    }
 
     public void testLogLine() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
@@ -42,5 +36,17 @@ public class TestUnifiedRemarkEvent extends TestCase {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms           ";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".",
                 UnifiedRemarkEvent.match(logLine));
+    }
+
+    public void testIdentity() {
+        String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
+        Assert.assertEquals(JdkUtil.LogEventType.UNIFIED_REMARK + "not identified.",
+                JdkUtil.LogEventType.UNIFIED_REMARK, JdkUtil.identifyEventType(logLine));
+    }
+
+    public void testIsBlocking() {
+        String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 }

@@ -104,12 +104,12 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
     private int combinedAvailable;
 
     /**
-     * The time of all threads added together in centoseconds.
+     * The time of all threads added together in centiseconds.
      */
     private int timeUser;
 
     /**
-     * The wall (clock) time in centoseconds.
+     * The wall (clock) time in centiseconds.
      */
     private int timeReal;
 
@@ -132,8 +132,8 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
             }
             duration = JdkMath.convertSecsToMillis(matcher.group(23)).intValue();
             if (matcher.group(26) != null) {
-                timeUser = JdkMath.convertSecsToCentos(matcher.group(27)).intValue();
-                timeReal = JdkMath.convertSecsToCentos(matcher.group(28)).intValue();
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(27)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
             }
         }
     }
@@ -202,6 +202,6 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return pattern.matcher(logLine).matches();
     }
 }

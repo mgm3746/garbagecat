@@ -131,12 +131,12 @@ public class G1YoungInitialMarkEvent extends G1Collector
     private String trigger;
 
     /**
-     * The time of all threads added together in centoseconds.
+     * The time of all threads added together in centiseconds.
      */
     private int timeUser;
 
     /**
-     * The wall (clock) time in centoseconds.
+     * The wall (clock) time in centiseconds.
      */
     private int timeReal;
 
@@ -161,8 +161,8 @@ public class G1YoungInitialMarkEvent extends G1Collector
                         matcher.group(24).charAt(0));
                 duration = JdkMath.convertSecsToMillis(matcher.group(25)).intValue();
                 if (matcher.group(28) != null) {
-                    timeUser = JdkMath.convertSecsToCentos(matcher.group(29)).intValue();
-                    timeReal = JdkMath.convertSecsToCentos(matcher.group(30)).intValue();
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
                 }
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
@@ -190,8 +190,8 @@ public class G1YoungInitialMarkEvent extends G1Collector
                     combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(50), matcher.group(52).charAt(0));
                 }
                 if (matcher.group(53) != null) {
-                    timeUser = JdkMath.convertSecsToCentos(matcher.group(54)).intValue();
-                    timeReal = JdkMath.convertSecsToCentos(matcher.group(55)).intValue();
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(54)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(55)).intValue();
                 }
             }
         }

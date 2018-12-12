@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.io.File;
 
@@ -32,12 +32,6 @@ import junit.framework.TestCase;
  */
 public class TestUnifiedYoungEvent extends TestCase {
 
-    public void testIsBlocking() {
-        String logLine = "[1.102s][info][gc] GC(48) Pause Young (Allocation Failure) 23M->3M(25M) 0.409ms";
-        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
-    }
-
     public void testLogLine() {
         String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".",
@@ -57,6 +51,18 @@ public class TestUnifiedYoungEvent extends TestCase {
         String logLine = "[1.102s][info][gc] GC(48) Pause Young (Allocation Failure) 23M->3M(25M) 0.409ms     ";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".",
                 UnifiedYoungEvent.match(logLine));
+    }
+
+    public void testIdentity() {
+        String logLine = "[1.102s][info][gc] GC(48) Pause Young (Allocation Failure) 23M->3M(25M) 0.409ms";
+        Assert.assertEquals(JdkUtil.LogEventType.UNIFIED_YOUNG + "not identified.", JdkUtil.LogEventType.UNIFIED_YOUNG,
+                JdkUtil.identifyEventType(logLine));
+    }
+
+    public void testIsBlocking() {
+        String logLine = "[1.102s][info][gc] GC(48) Pause Young (Allocation Failure) 23M->3M(25M) 0.409ms";
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
     public void testTriggerExplicitGc() {

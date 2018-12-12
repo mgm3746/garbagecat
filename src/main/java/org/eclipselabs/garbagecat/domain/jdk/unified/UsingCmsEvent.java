@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +22,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * USING_G1
+ * USING_CMS
  * </p>
  * 
  * <p>
@@ -31,31 +31,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
- * <p>
- * 1) With <code>-Xlog:gc:file=&lt;file&gt;</code> (no details).
- * </p>
- * 
  * <pre>
- * [0.003s][info][gc] Using G1
- * </pre>
- * 
- * <p>
- * 2) With <code>-Xlog:gc*:file=&lt;file&gt;</code> (details).
- * </p>
- * 
- * <pre>
- * [0.003s][info][gc     ] Using G1
+ * [0.002s][info][gc] Using Concurrent Mark Sweep
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UsingG1Event implements LogEvent {
+public class UsingCmsEvent implements UnifiedLogging, LogEvent {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc([ ]{5})?\\] Using G1[ ]*$";
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP
+            + "s\\]\\[info\\]\\[gc\\] Using Concurrent Mark Sweep[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
@@ -75,7 +64,7 @@ public class UsingG1Event implements LogEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public UsingG1Event(String logEntry) {
+    public UsingCmsEvent(String logEntry) {
         this.logEntry = logEntry;
 
         if (logEntry.matches(REGEX)) {
@@ -92,7 +81,7 @@ public class UsingG1Event implements LogEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.USING_G1.toString();
+        return JdkUtil.LogEventType.USING_CMS.toString();
     }
 
     public long getTimestamp() {

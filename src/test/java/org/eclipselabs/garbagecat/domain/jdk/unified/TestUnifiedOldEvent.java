@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.io.File;
 
@@ -32,12 +32,6 @@ import junit.framework.TestCase;
  */
 public class TestUnifiedOldEvent extends TestCase {
 
-    public void testIsBlocking() {
-        String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
-        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
-    }
-
     public void testLogLine() {
         String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".",
@@ -56,6 +50,18 @@ public class TestUnifiedOldEvent extends TestCase {
         String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms     ";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".",
                 UnifiedOldEvent.match(logLine));
+    }
+
+    public void testIdentity() {
+        String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
+        Assert.assertEquals(JdkUtil.LogEventType.UNIFIED_OLD + "not identified.", JdkUtil.LogEventType.UNIFIED_OLD,
+                JdkUtil.identifyEventType(logLine));
+    }
+
+    public void testIsBlocking() {
+        String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
     public void testUnifiedOldStandardLogging() {

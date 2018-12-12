@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.util.regex.Pattern;
+
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
@@ -29,11 +31,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <h3>Example Logging</h3>
- * 
- * <p>
- * 1) JDK8 and prior logging:
- * </p>
- * 
+ *
  * <pre>
  * 251.781: [CMS-concurrent-mark-start]
  * </pre>
@@ -74,61 +72,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 258.265: [CMS-concurrent-reset-start]
  * </pre>
  * 
- * <p>
- * 2) JDK9+:
- * </p>
- * 
- * <pre>
- * [0.082s][info][gc] GC(1) Concurrent Mark
- * </pre>
- * 
- * <pre>
- * [0.083s][info][gc] GC(1) Concurrent Mark 1.428ms
- * </pre>
- * 
- * <pre>
- * [0.083s][info][gc] GC(1) Concurrent Preclean
- * </pre>
- * 
- * <pre>
- * [0.083s][info][gc] GC(1) Concurrent Preclean 0.032ms
- * </pre>
- * 
- * <pre>
- * [0.084s][info][gc] GC(1) Concurrent Sweep
- * </pre>
- * 
- * <pre>
- * [0.085s][info][gc] GC(1) Concurrent Sweep 0.364ms
- * </pre>
- * 
- * <pre>
- * [0.085s][info][gc] GC(1) Concurrent Reset
- * </pre>
- * 
- * <pre>
- * [0.086s][info][gc] GC(1) Concurrent Reset 0.841ms
- * </pre>
- * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
 public class CmsConcurrentEvent extends CmsCollector implements LogEvent, ParallelEvent {
 
     /**
-     * Regular expression defining the logging JDK8 and prior.
+     * Regular expression defining the logging.
      */
     private static final String REGEX = "^( CMS: abort preclean due to time )?(" + JdkRegEx.TIMESTAMP + ": \\[CMS)?("
             + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-"
             + "(abortable-preclean|abortable-preclean-start|mark|mark-start|preclean|preclean-start|reset|"
             + "reset-start|sweep|sweep-start)(: " + JdkRegEx.DURATION_FRACTION + ")?\\]" + TimesData.REGEX + "?[ ]*$";
 
-    /**
-     * Regular expression defining the logging JDK9+.
-     */
-    private static final String REGEX_JDK9 = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Concurrent (Mark|Preclean|Sweep|Reset)( " + JdkRegEx.DURATION_JDK9
-            + ")?[ ]*$";
+    private static Pattern pattern = Pattern.compile(REGEX);
 
     public String getLogEntry() {
         throw new UnsupportedOperationException("Event does not include log entry information");
@@ -150,7 +107,7 @@ public class CmsConcurrentEvent extends CmsCollector implements LogEvent, Parall
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX_JDK9) || logLine.matches(REGEX);
+        return pattern.matcher(logLine).matches();
     }
 
 }

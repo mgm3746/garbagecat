@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.io.File;
 
@@ -28,26 +28,38 @@ import junit.framework.TestCase;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUsingSerialEvent extends TestCase {
-
-    public void testNotBlocking() {
-        String logLine = "[0.003s][info][gc] Using Serial";
-        Assert.assertFalse(JdkUtil.LogEventType.USING_SERIAL.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
-    }
+public class TestUsingG1Event extends TestCase {
 
     public void testLine() {
-        String logLine = "[0.003s][info][gc] Using Serial";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_SERIAL.toString() + ".",
-                UsingSerialEvent.match(logLine));
-        UsingSerialEvent event = new UsingSerialEvent(logLine);
-        Assert.assertEquals("Time stamp not parsed correctly.", 3, event.getTimestamp());
+        String logLine = "[0.005s][info][gc] Using G1";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".",
+                UsingG1Event.match(logLine));
+        UsingG1Event event = new UsingG1Event(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 5, event.getTimestamp());
     }
 
     public void testLineWithSpaces() {
-        String logLine = "[0.003s][info][gc] Using Serial     ";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_SERIAL.toString() + ".",
-                UsingSerialEvent.match(logLine));
+        String logLine = "[0.005s][info][gc] Using G1   ";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".",
+                UsingG1Event.match(logLine));
+    }
+
+    public void testIdentity() {
+        String logLine = "[0.005s][info][gc] Using G1";
+        Assert.assertEquals(JdkUtil.LogEventType.USING_G1 + "not identified.", JdkUtil.LogEventType.USING_G1,
+                JdkUtil.identifyEventType(logLine));
+    }
+
+    public void testNotBlocking() {
+        String logLine = "[0.005s][info][gc] Using G1";
+        Assert.assertFalse(JdkUtil.LogEventType.USING_G1.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
+    public void testLineDetailedLogging() {
+        String logLine = "[0.003s][info][gc     ] Using G1";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".",
+                UsingG1Event.match(logLine));
     }
 
     /**
@@ -55,7 +67,7 @@ public class TestUsingSerialEvent extends TestCase {
      */
     public void testLog() {
         // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset147.txt");
+        File testFile = new File("src/test/data/dataset152.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -63,7 +75,7 @@ public class TestUsingSerialEvent extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_SERIAL.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_SERIAL));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_G1));
     }
 }

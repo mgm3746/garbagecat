@@ -10,51 +10,52 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
+import org.eclipselabs.garbagecat.domain.YoungCollection;
+import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * CMS_INITIAL_MARK
+ * UNIFIED_YOUNG
  * </p>
  * 
  * <p>
- * A stop-the-world phase of the concurrent low pause collector that identifies the initial set of live objects directly
- * reachable from GC roots. This event does not do any garbage collection, only marking of objects.
+ * Young collection JDK9+ with <code>-Xlog:gc:file=&lt;file&gt;</code> (no details).
+ * </p>
+ * 
+ * <p>
+ * Collector is one of the following: (1) {@link org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent}, (2)
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent}, (3)
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent},
+ * {@link org.eclipselabs.garbagecat.domain.jdk.G1YoungPauseEvent}(4).
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
- * <p>
- * 1) Standard format:
- * </p>
- * 
  * <pre>
- * 251.763: [GC [1 CMS-initial-mark: 4133273K(8218240K)] 4150346K(8367360K), 0.0174433 secs]
+ * [0.053s][info][gc] GC(0) Pause Young (Allocation Failure) 0M-&gt;0M(1M) 0.914ms
  * </pre>
  * 
- * <p>
- * 2) JDK8 with trigger:
- * </p>
- * 
  * <pre>
- * 8.722: [GC (CMS Initial Mark) [1 CMS-initial-mark: 0K(989632K)] 187663K(1986432K), 0.0157899 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]
+ * [18.406s][info][gc] GC(1012) Pause Young (Normal) (G1 Evacuation Pause) 38M-&gt;19M(46M) 1.815ms
  * </pre>
+ * 
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, TriggerData, ParallelEvent, TimesData {
+public class UnifiedYoungEvent extends UnknownCollector
+        implements UnifiedLogging, BlockingEvent, YoungCollection, CombinedData, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -72,55 +73,62 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
     private long timestamp;
 
     /**
+     * Combined young + old generation size (kilobytes) at beginning of GC event.
+     */
+    private int combinedBegin;
+
+    /**
+     * Combined young + old generation size (kilobytes) at end of GC event.
+     */
+    private int combinedEnd;
+
+    /**
+     * Combined young + old generation allocation (kilobytes).
+     */
+    private int combinedAllocation;
+
+    /**
      * The trigger for the GC event.
      */
     private String trigger;
 
     /**
-     * The time of all threads added together in centiseconds.
+     * Trigger(s) regular expression(s).
      */
-    private int timeUser;
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_SYSTEM_GC
+            + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")";
 
     /**
-     * The wall (clock) time in centiseconds.
+     * Regular expression defining the logging.
      */
-    private int timeReal;
-
-    /**
-     * Regular expressions defining the logging JDK8 and prior.
-     */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC (\\(("
-            + JdkRegEx.TRIGGER_CMS_INITIAL_MARK + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
-            + "\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + TRIGGER + "\\) "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
     /**
-     * Create event from log entry.
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public CmsInitialMarkEvent(String logEntry) {
+    public UnifiedYoungEvent(String logEntry) {
         this.logEntry = logEntry;
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                trigger = matcher.group(14);
-                duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
-                if (matcher.group(22) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(23)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(24)).intValue();
-                }
-            }
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            trigger = matcher.group(4);
+            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(8).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)), matcher.group(11).charAt(0));
+            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(12)),
+                    matcher.group(14).charAt(0));
+            duration = JdkMath.roundMillis(matcher.group(15)).intValue();
+            timestamp = endTimestamp - duration;
         }
     }
 
     /**
-     * Alternate constructor. Create CMS Initial Mark from values.
+     * Alternate constructor. Create serial logging event from values.
      * 
      * @param logEntry
      *            The log entry for the event.
@@ -129,10 +137,14 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */
-    public CmsInitialMarkEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedYoungEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
+    }
+
+    public String getName() {
+        return JdkUtil.LogEventType.UNIFIED_YOUNG.toString();
     }
 
     public String getLogEntry() {
@@ -147,24 +159,20 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
         return timestamp;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.CMS_INITIAL_MARK.toString();
+    public int getCombinedOccupancyInit() {
+        return combinedBegin;
+    }
+
+    public int getCombinedOccupancyEnd() {
+        return combinedEnd;
+    }
+
+    public int getCombinedSpace() {
+        return combinedAllocation;
     }
 
     public String getTrigger() {
         return trigger;
-    }
-
-    public int getTimeUser() {
-        return timeUser;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
-    }
-
-    public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     /**

@@ -114,13 +114,13 @@ public class JdkMath {
     }
 
     /**
-     * Convert seconds to centoseconds. For example: Convert 1.02 to 102.
+     * Convert seconds to centiseconds. For example: Convert 1.02 to 102.
      * 
      * @param secs
      *            Seconds as a number with 2 decimal places.
      * @return Centoseconds.
      */
-    public static BigDecimal convertSecsToCentos(String secs) {
+    public static BigDecimal convertSecsToCentis(String secs) {
         // BigDecimal does not accept decimal commas, only decimal periods
         BigDecimal duration = new BigDecimal(secs.replace(",", "."));
         duration = duration.movePointRight(2);
@@ -235,9 +235,9 @@ public class JdkMath {
      * Calculate parallelism, the ratio of user to wall (real) time.
      * 
      * @param timeUser
-     *            The wall (clock) time in centoseconds.
+     *            The wall (clock) time in centiseconds.
      * @param timeReal
-     *            The wall (clock) time in centoseconds.
+     *            The wall (clock) time in centiseconds.
      * 
      * @return Percent user:real time rounded up the the nearest whole number.
      */

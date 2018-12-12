@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.io.File;
 
@@ -28,26 +28,32 @@ import junit.framework.TestCase;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUsingParallelEvent extends TestCase {
-
-    public void testNotBlocking() {
-        String logLine = "[0.002s][info][gc] Using Parallel";
-        Assert.assertFalse(JdkUtil.LogEventType.USING_PARALLEL.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
-    }
+public class TestUsingCmsEvent extends TestCase {
 
     public void testLine() {
-        String logLine = "[0.002s][info][gc] Using Parallel";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".",
-                UsingParallelEvent.match(logLine));
-        UsingParallelEvent event = new UsingParallelEvent(logLine);
-        Assert.assertEquals("Time stamp not parsed correctly.", 2, event.getTimestamp());
+        String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_CMS.toString() + ".",
+                UsingCmsEvent.match(logLine));
+        UsingCmsEvent event = new UsingCmsEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 3, event.getTimestamp());
     }
 
     public void testLineWithSpaces() {
-        String logLine = "[0.002s][info][gc] Using Parallel     ";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".",
-                UsingParallelEvent.match(logLine));
+        String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep     ";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_CMS.toString() + ".",
+                UsingCmsEvent.match(logLine));
+    }
+
+    public void testIdentity() {
+        String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
+        Assert.assertEquals(JdkUtil.LogEventType.USING_CMS + "not identified.", JdkUtil.LogEventType.USING_CMS,
+                JdkUtil.identifyEventType(logLine));
+    }
+
+    public void testNotBlocking() {
+        String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
+        Assert.assertFalse(JdkUtil.LogEventType.USING_CMS.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
     /**
@@ -55,7 +61,7 @@ public class TestUsingParallelEvent extends TestCase {
      */
     public void testLog() {
         // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset150.txt");
+        File testFile = new File("src/test/data/dataset151.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -63,7 +69,7 @@ public class TestUsingParallelEvent extends TestCase {
         Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_PARALLEL));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_CMS.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_CMS));
     }
 }

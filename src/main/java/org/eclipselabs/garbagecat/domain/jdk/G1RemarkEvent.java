@@ -78,12 +78,12 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
     private long timestamp;
 
     /**
-     * The time of all threads added together in centoseconds.
+     * The time of all threads added together in centiseconds.
      */
     private int timeUser;
 
     /**
-     * The wall (clock) time in centoseconds.
+     * The wall (clock) time in centiseconds.
      */
     private int timeReal;
 
@@ -100,8 +100,8 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             duration = JdkMath.convertSecsToMillis(matcher.group(13)).intValue();
             if (matcher.group(16) != null) {
-                timeUser = JdkMath.convertSecsToCentos(matcher.group(17)).intValue();
-                timeReal = JdkMath.convertSecsToCentos(matcher.group(18)).intValue();
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(17)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(18)).intValue();
             }
         }
     }
@@ -158,6 +158,6 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return pattern.matcher(logLine).matches();
     }
 }

@@ -10,47 +10,51 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.CombinedData;
-import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.TriggerData;
+import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * PARALLEL_OLD_TERSE
+ * UNIFIED_REMARK
  * </p>
  * 
  * <p>
- * Either {@link org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent} or
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent}.
+ * Remark collection JDK9+ with <code>-Xlog:gc:file=&lt;file&gt;</code> (no details).
  * </p>
  * 
  * <p>
- * Both {@link org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent} and
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent} use the same logging pattern in JDK9+ when
- * logging without details (<code>-Xlog:gc:file=&lt;file&gt;</code>).
+ * Collector is one of the following: (1) {@link org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent}, (2)
+ * {@link org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent}.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * [0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M-&gt;1M(7M) 2.969ms
+ * [4.353s][info][gc] GC(3130) Pause Remark 5M-&gt;5M(7M) 1.398ms
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedOldEvent extends UnknownCollector
-        implements BlockingEvent, OldCollection, CombinedData, TriggerData, ParallelEvent {
+public class UnifiedRemarkEvent extends UnknownCollector implements UnifiedLogging, BlockingEvent, ParallelEvent {
+
+    /**
+     * Regular expressions defining the logging JDK9+.
+     */
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Remark " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+
+    private static final Pattern pattern = Pattern.compile(REGEX);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -68,64 +72,23 @@ public class UnifiedOldEvent extends UnknownCollector
     private long timestamp;
 
     /**
-     * Combined young + old generation size (kilobytes) at beginning of GC event.
-     */
-    private int combinedBegin;
-
-    /**
-     * Combined young + old generation size (kilobytes) at end of GC event.
-     */
-    private int combinedEnd;
-
-    /**
-     * Combined young + old generation allocation (kilobytes).
-     */
-    private int combinedAllocation;
-
-    /**
-     * The trigger for the GC event.
-     */
-    private String trigger;
-
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_ERGONOMICS + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
-
-    /**
-     * Regular expressions defining the logging.
-     */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Full \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
-
-    private static Pattern pattern = Pattern.compile(UnifiedOldEvent.REGEX);
-
-    /**
      * Create event from log entry.
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public UnifiedOldEvent(String logEntry) {
+    public UnifiedRemarkEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(2);
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(6).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(9).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(10)),
-                    matcher.group(12).charAt(0));
-            duration = JdkMath.roundMillis(matcher.group(13)).intValue();
+            duration = JdkMath.roundMillis(matcher.group(11)).intValue();
             timestamp = endTimestamp - duration;
         }
     }
 
     /**
-     * Alternate constructor. Create logging event from values.
+     * Alternate constructor. Create detail logging event from values.
      * 
      * @param logEntry
      *            The log entry for the event.
@@ -134,14 +97,10 @@ public class UnifiedOldEvent extends UnknownCollector
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */
-    public UnifiedOldEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedRemarkEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_OLD.toString();
     }
 
     public String getLogEntry() {
@@ -156,20 +115,8 @@ public class UnifiedOldEvent extends UnknownCollector
         return timestamp;
     }
 
-    public int getCombinedOccupancyInit() {
-        return combinedBegin;
-    }
-
-    public int getCombinedOccupancyEnd() {
-        return combinedEnd;
-    }
-
-    public int getCombinedSpace() {
-        return combinedAllocation;
-    }
-
-    public String getTrigger() {
-        return trigger;
+    public String getName() {
+        return JdkUtil.LogEventType.UNIFIED_REMARK.toString();
     }
 
     /**

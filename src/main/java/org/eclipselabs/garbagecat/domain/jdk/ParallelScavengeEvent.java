@@ -128,12 +128,12 @@ public class ParallelScavengeEvent extends ParallelCollector
     private String trigger;
 
     /**
-     * The time of all threads added together in centoseconds.
+     * The time of all threads added together in centiseconds.
      */
     private int timeUser;
 
     /**
-     * The wall (clock) time in centoseconds.
+     * The wall (clock) time in centiseconds.
      */
     private int timeReal;
 
@@ -178,8 +178,8 @@ public class ParallelScavengeEvent extends ParallelCollector
             oldAllocation = totalAllocation - youngAvailable;
             duration = JdkMath.convertSecsToMillis(matcher.group(24)).intValue();
             if (matcher.group(27) != null) {
-                timeUser = JdkMath.convertSecsToCentos(matcher.group(28)).intValue();
-                timeReal = JdkMath.convertSecsToCentos(matcher.group(29)).intValue();
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
             }
         }
     }

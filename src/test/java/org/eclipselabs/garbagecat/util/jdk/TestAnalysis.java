@@ -1258,7 +1258,7 @@ public class TestAnalysis extends TestCase {
     }
 
     /**
-     * Test CMS remark low parallelism not reported with pause times less than times data centosecond precision.
+     * Test CMS remark low parallelism not reported with pause times less than times data centisecond precision.
      */
     public void testInitialMarkLowParallelismFalseReportSmallPause() {
         // TODO: Create File in platform independent way.

@@ -147,12 +147,12 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
     private boolean classUnloading;
 
     /**
-     * The time of all threads added together in centoseconds.
+     * The time of all threads added together in centiseconds.
      */
     private int timeUser;
 
     /**
-     * The wall (clock) time in centoseconds.
+     * The wall (clock) time in centiseconds.
      */
     private int timeReal;
 
@@ -218,8 +218,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                 // The last duration is the total duration for the phase.
                 duration = JdkMath.convertSecsToMillis(matcher.group(68)).intValue();
                 if (matcher.group(71) != null) {
-                    timeUser = JdkMath.convertSecsToCentos(matcher.group(72)).intValue();
-                    timeReal = JdkMath.convertSecsToCentos(matcher.group(73)).intValue();
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(72)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(73)).intValue();
                 }
             }
             classUnloading = false;
@@ -238,8 +238,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                 // The last duration is the total duration for the phase.
                 duration = JdkMath.convertSecsToMillis(matcher.group(136)).intValue();
                 if (matcher.group(139) != null) {
-                    timeUser = JdkMath.convertSecsToCentos(matcher.group(140)).intValue();
-                    timeReal = JdkMath.convertSecsToCentos(matcher.group(141)).intValue();
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(140)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(141)).intValue();
                 }
             }
             classUnloading = true;

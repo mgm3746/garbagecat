@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +22,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * USING_SERIAL
+ * USING_PARALLEL
  * </p>
  * 
  * <p>
@@ -32,18 +32,18 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * [0.003s][info][gc] Using Serial
+ * [0.002s][info][gc] Using Parallel
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UsingSerialEvent implements LogEvent {
+public class UsingParallelEvent implements UnifiedLogging, LogEvent {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] Using Serial[ ]*$";
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] Using Parallel[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
@@ -63,7 +63,7 @@ public class UsingSerialEvent implements LogEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public UsingSerialEvent(String logEntry) {
+    public UsingParallelEvent(String logEntry) {
         this.logEntry = logEntry;
 
         if (logEntry.matches(REGEX)) {
@@ -80,7 +80,7 @@ public class UsingSerialEvent implements LogEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.USING_SERIAL.toString();
+        return JdkUtil.LogEventType.USING_PARALLEL.toString();
     }
 
     public long getTimestamp() {

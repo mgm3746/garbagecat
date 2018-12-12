@@ -10,51 +10,48 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.OldCollection;
+import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TriggerData;
-import org.eclipselabs.garbagecat.domain.YoungCollection;
+import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * UNIFIED_YOUNG
+ * UNIFIED_OLD
  * </p>
  * 
  * <p>
- * Young collection JDK9+ with <code>-Xlog:gc:file=&lt;file&gt;</code> (no details).
+ * Either {@link org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent} or
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent}.
  * </p>
  * 
  * <p>
- * Collector is one of the following: (1) {@link org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent}, (2)
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent}, (3)
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent},
- * {@link org.eclipselabs.garbagecat.domain.jdk.G1YoungPauseEvent}(4).
+ * Both {@link org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent} and
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent} use the same logging pattern in JDK9+ when
+ * logging without details (<code>-Xlog:gc:file=&lt;file&gt;</code>).
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * [0.053s][info][gc] GC(0) Pause Young (Allocation Failure) 0M-&gt;0M(1M) 0.914ms
+ * [0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M-&gt;1M(7M) 2.969ms
  * </pre>
- * 
- * <pre>
- * [18.406s][info][gc] GC(1012) Pause Young (Normal) (G1 Evacuation Pause) 38M-&gt;19M(46M) 1.815ms
- * </pre>
- * 
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedYoungEvent extends UnknownCollector
-        implements BlockingEvent, YoungCollection, CombinedData, TriggerData {
+public class UnifiedOldEvent extends UnknownCollector
+        implements UnifiedLogging, BlockingEvent, OldCollection, CombinedData, TriggerData, ParallelEvent {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -94,40 +91,42 @@ public class UnifiedYoungEvent extends UnknownCollector
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_SYSTEM_GC
-            + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")";
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+            + JdkRegEx.TRIGGER_ERGONOMICS + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
 
     /**
-     * Regular expression defining the logging.
+     * Regular expressions defining the logging.
      */
     private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + TRIGGER + "\\) "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Full \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(UnifiedYoungEvent.REGEX);
+    private static final Pattern pattern = Pattern.compile(REGEX);
 
     /**
+     * Create event from log entry.
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public UnifiedYoungEvent(String logEntry) {
+    public UnifiedOldEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(4);
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(8).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)), matcher.group(11).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(12)),
-                    matcher.group(14).charAt(0));
-            duration = JdkMath.roundMillis(matcher.group(15)).intValue();
+            trigger = matcher.group(2);
+            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(6).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(9).charAt(0));
+            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(10)),
+                    matcher.group(12).charAt(0));
+            duration = JdkMath.roundMillis(matcher.group(13)).intValue();
             timestamp = endTimestamp - duration;
         }
     }
 
     /**
-     * Alternate constructor. Create serial logging event from values.
+     * Alternate constructor. Create logging event from values.
      * 
      * @param logEntry
      *            The log entry for the event.
@@ -136,14 +135,14 @@ public class UnifiedYoungEvent extends UnknownCollector
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */
-    public UnifiedYoungEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_YOUNG.toString();
+        return JdkUtil.LogEventType.UNIFIED_OLD.toString();
     }
 
     public String getLogEntry() {

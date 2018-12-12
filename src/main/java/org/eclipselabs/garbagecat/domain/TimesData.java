@@ -33,12 +33,12 @@ public interface TimesData {
             + "real=(\\d{1,5}[\\.\\,]\\d{2}) secs\\])";
 
     /**
-     * @return The time of all threads added together in centoseconds.
+     * @return The time of all threads added together in centiseconds.
      */
     int getTimeUser();
 
     /**
-     * @return The wall (clock) time in centoseconds.
+     * @return The wall (clock) time in centiseconds.
      */
     int getTimeReal();
 
