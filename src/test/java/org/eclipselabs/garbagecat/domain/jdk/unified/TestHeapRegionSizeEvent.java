@@ -25,52 +25,41 @@ import junit.framework.TestCase;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestCmsInitialMarkEvent extends TestCase {
+public class TestHeapRegionSizeEvent extends TestCase {
 
-    public void testLogLine() {
-        String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".",
-                UnifiedCmsInitialMarkEvent.match(logLine));
-        UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
-        Assert.assertEquals("Time stamp not parsed correctly.", 178 - 0, event.getTimestamp());
-        Assert.assertEquals("Duration not parsed correctly.", 0, event.getDuration());
+    public void testLine() {
+        String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + ".",
+                HeapRegionSizeEvent.match(logLine));
     }
 
     public void testIdentityEventType() {
-        String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        Assert.assertEquals(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK + "not identified.",
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK, JdkUtil.identifyEventType(logLine));
+        String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
+        Assert.assertEquals(JdkUtil.LogEventType.HEAP_REGION_SIZE + "not identified.",
+                JdkUtil.LogEventType.HEAP_REGION_SIZE, JdkUtil.identifyEventType(logLine));
     }
 
     public void testParseLogLine() {
-        String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not parsed.",
-                JdkUtil.parseLogLine(logLine) instanceof UnifiedCmsInitialMarkEvent);
+        String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
+        Assert.assertTrue(JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " not parsed.",
+                JdkUtil.parseLogLine(logLine) instanceof HeapRegionSizeEvent);
     }
 
-    public void testBlocking() {
-        String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as blocking.",
+    public void testNotBlocking() {
+        String logLine = "[25.016s][info][gc,heap,exit  ] Heap";
+        Assert.assertFalse(JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " incorrectly indentified as blocking.",
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
     public void testReportable() {
-        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as reportable.",
-                JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK));
+        Assert.assertFalse(JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " incorrectly indentified as reportable.",
+                JdkUtil.isReportable(JdkUtil.LogEventType.HEAP_REGION_SIZE));
     }
 
     public void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_CMS_INITIAL_MARK);
-        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as unified.",
+        eventTypes.add(LogEventType.HEAP_REGION_SIZE);
+        Assert.assertTrue(JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " not indentified as unified.",
                 JdkUtil.isUnifiedLogging(eventTypes));
-    }
-
-    public void testLogLineWhitespaceAtEnd() {
-        String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms     ";
-        Assert.assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".",
-                UnifiedCmsInitialMarkEvent.match(logLine));
     }
 }

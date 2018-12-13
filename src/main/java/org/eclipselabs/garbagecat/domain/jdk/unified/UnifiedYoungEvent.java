@@ -36,8 +36,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <p>
  * Collector is one of the following: (1) {@link org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent}, (2)
  * {@link org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent}, (3)
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent},
- * {@link org.eclipselabs.garbagecat.domain.jdk.G1YoungPauseEvent}(4).
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent}.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -45,11 +44,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <pre>
  * [0.053s][info][gc] GC(0) Pause Young (Allocation Failure) 0M-&gt;0M(1M) 0.914ms
  * </pre>
- * 
- * <pre>
- * [18.406s][info][gc] GC(1012) Pause Young (Normal) (G1 Evacuation Pause) 38M-&gt;19M(46M) 1.815ms
- * </pre>
- * 
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
@@ -96,14 +90,14 @@ public class UnifiedYoungEvent extends UnknownCollector
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_SYSTEM_GC
-            + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")";
+            + ")";
 
     /**
      * Regular expression defining the logging.
      */
     private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + TRIGGER + "\\) "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -117,12 +111,12 @@ public class UnifiedYoungEvent extends UnknownCollector
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(4);
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(8).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)), matcher.group(11).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(12)),
-                    matcher.group(14).charAt(0));
-            duration = JdkMath.roundMillis(matcher.group(15)).intValue();
+            trigger = matcher.group(2);
+            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(6).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(9).charAt(0));
+            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(10)),
+                    matcher.group(12).charAt(0));
+            duration = JdkMath.roundMillis(matcher.group(13)).intValue();
             timestamp = endTimestamp - duration;
         }
     }

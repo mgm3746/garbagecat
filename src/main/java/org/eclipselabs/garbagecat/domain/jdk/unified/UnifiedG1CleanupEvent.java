@@ -16,60 +16,60 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
-import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
+import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * UNIFIED_REMARK
+ * G1_CLEANUP
  * </p>
  * 
  * <p>
- * Collector is one of the following: (1) {@link org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent}, (2)
- * {@link org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent}.
+ * {@link org.eclipselabs.garbagecat.domain.jdk.G1CleanupEvent} with unified logging (JDK9+).
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
  * <p>
- * 1) Without detailed logging:
+ * 1) Logging without details:
  * </p>
  * 
  * <pre>
- * [4.353s][info][gc] GC(3130) Pause Remark 5M-&gt;5M(7M) 1.398ms
+ * [15.101s][info][gc] GC(1099) Pause Cleanup 30M-&gt;30M(44M) 0.058ms
  * </pre>
  * 
  * <p>
- * 2) Preprocessed detailed logging:
+ * 2) Preprocessed from logging with details:
  * </p>
  * 
  * <pre>
- * [16.053s][info][gc            ] GC(969) Pause Remark 29M-&gt;29M(46M) 2.328ms User=0.01s Sys=0.00s Real=0.00s
+ * [16.082s][info][gc            ] GC(969) Pause Cleanup 28M-&gt;28M(46M) 0.064ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedRemarkEvent extends UnknownCollector
-        implements UnifiedLogging, BlockingEvent, ParallelEvent, TimesData {
+public class UnifiedG1CleanupEvent extends G1Collector
+        implements UnifiedLogging, BlockingEvent, ParallelEvent, CombinedData, TimesData {
 
     /**
-     * Regular expressions defining the logging JDK9+.
+     * Regular expressions defining the logging.
      */
     private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Remark " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Cleanup " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 
     /**
      * Regular expression defining preprocessed logging.
      */
     private static final String REGEX_PREPROCESSED = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc            \\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Remark " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Cleanup " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -87,6 +87,21 @@ public class UnifiedRemarkEvent extends UnknownCollector
     private long timestamp;
 
     /**
+     * Combined young + old generation size (kilobytes) at beginning of GC event.
+     */
+    private int combinedBegin;
+
+    /**
+     * Combined young + old generation size (kilobytes) at end of GC event.
+     */
+    private int combinedEnd;
+
+    /**
+     * Combined young + old generation allocation (kilobytes).
+     */
+    private int combinedAllocation;
+
+    /**
      * The time of all threads added together in centiseconds.
      */
     private int timeUser;
@@ -102,13 +117,17 @@ public class UnifiedRemarkEvent extends UnknownCollector
      * @param logEntry
      *            The log entry for the event.
      */
-    public UnifiedRemarkEvent(String logEntry) {
+    public UnifiedG1CleanupEvent(String logEntry) {
         this.logEntry = logEntry;
         if (logEntry.matches(REGEX)) {
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(2)), matcher.group(4).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
+                        matcher.group(10).charAt(0));
                 duration = JdkMath.roundMillis(matcher.group(11)).intValue();
                 timestamp = endTimestamp - duration;
                 timeUser = TimesData.NO_DATA;
@@ -119,6 +138,10 @@ public class UnifiedRemarkEvent extends UnknownCollector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(2)), matcher.group(4).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
+                        matcher.group(10).charAt(0));
                 duration = JdkMath.roundMillis(matcher.group(11)).intValue();
                 timestamp = endTimestamp - duration;
                 if (matcher.group(12) != null) {
@@ -142,10 +165,14 @@ public class UnifiedRemarkEvent extends UnknownCollector
      * @param duration
      *            The elapsed clock time for the GC event in milliseconds.
      */
-    public UnifiedRemarkEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedG1CleanupEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
+    }
+
+    public String getName() {
+        return JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString();
     }
 
     public String getLogEntry() {
@@ -160,8 +187,16 @@ public class UnifiedRemarkEvent extends UnknownCollector
         return timestamp;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_REMARK.toString();
+    public int getCombinedOccupancyInit() {
+        return combinedBegin;
+    }
+
+    public int getCombinedOccupancyEnd() {
+        return combinedEnd;
+    }
+
+    public int getCombinedSpace() {
+        return combinedAllocation;
     }
 
     public int getTimeUser() {

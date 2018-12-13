@@ -354,8 +354,9 @@ public class Main {
                     }
                 }
                 bufferedWriter.write(Constants.LINE_SEPARATOR);
-                // Inverted parallelism. Only report if we have Serial/Parallel/CMS/G1 events.
-                if (jvmRun.getCollectorFamilies() != null && jvmRun.getCollectorFamilies().size() > 0) {
+                // Inverted parallelism. Only report if we have Serial/Parallel/CMS/G1 events with times data.
+                if (jvmRun.getCollectorFamilies() != null && jvmRun.getCollectorFamilies().size() > 0
+                        && jvmRun.getParallelCount() > 0) {
                     bufferedWriter.write("# Parallel Events: " + jvmRun.getParallelCount() + Constants.LINE_SEPARATOR);
                     bufferedWriter.write("# Inverted Parallelism: " + jvmRun.getInvertedParallelismCount()
                             + Constants.LINE_SEPARATOR);

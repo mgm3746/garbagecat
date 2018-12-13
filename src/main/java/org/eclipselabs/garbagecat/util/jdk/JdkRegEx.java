@@ -113,9 +113,9 @@ public class JdkRegEx {
     /**
      * The duration of the event in milliseconds with 3 decimal places, introduced JDK9.
      * 
-     * For example: 2.969ms
+     * For example: 2.969ms, 0.2ms
      */
-    public static final String DURATION_JDK9 = "(\\d{1,7}[\\.\\,]\\d{3})ms";
+    public static final String DURATION_JDK9 = "(\\d{1,7}[\\.\\,]\\d{1,3})ms";
 
     /**
      * The garbage collection event number in JDK9+ unified logging.

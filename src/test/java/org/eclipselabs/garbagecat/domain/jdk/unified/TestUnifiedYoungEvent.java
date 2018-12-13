@@ -13,6 +13,8 @@
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
@@ -47,22 +49,40 @@ public class TestUnifiedYoungEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 1, event.getDuration());
     }
 
-    public void testLogLineWhitespaceAtEnd() {
-        String logLine = "[1.102s][info][gc] GC(48) Pause Young (Allocation Failure) 23M->3M(25M) 0.409ms     ";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".",
-                UnifiedYoungEvent.match(logLine));
-    }
-
-    public void testIdentity() {
-        String logLine = "[1.102s][info][gc] GC(48) Pause Young (Allocation Failure) 23M->3M(25M) 0.409ms";
+    public void testIdentityEventType() {
+        String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
         Assert.assertEquals(JdkUtil.LogEventType.UNIFIED_YOUNG + "not identified.", JdkUtil.LogEventType.UNIFIED_YOUNG,
                 JdkUtil.identifyEventType(logLine));
     }
 
+    public void testParseLogLine() {
+        String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not parsed.",
+                JdkUtil.parseLogLine(logLine) instanceof UnifiedYoungEvent);
+    }
+
     public void testIsBlocking() {
-        String logLine = "[1.102s][info][gc] GC(48) Pause Young (Allocation Failure) 23M->3M(25M) 0.409ms";
+        String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not indentified as blocking.",
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
+    public void testReportable() {
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not indentified as reportable.",
+                JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_YOUNG));
+    }
+
+    public void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.UNIFIED_YOUNG);
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not indentified as unified.",
+                JdkUtil.isUnifiedLogging(eventTypes));
+    }
+
+    public void testLogLineWhitespaceAtEnd() {
+        String logLine = "[1.102s][info][gc] GC(48) Pause Young (Allocation Failure) 23M->3M(25M) 0.409ms     ";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".",
+                UnifiedYoungEvent.match(logLine));
     }
 
     public void testTriggerExplicitGc() {
@@ -77,38 +97,6 @@ public class TestUnifiedYoungEvent extends TestCase {
         Assert.assertEquals("Combined end size not parsed correctly.", 10 * 1024, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 36 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 0, event.getDuration());
-    }
-
-    public void testG1NormalTriggerEvacuationPause() {
-        String logLine = "[27.091s][info][gc] GC(1515) Pause Young (Normal) (G1 Evacuation Pause) "
-                + "43M->26M(52M) 0.941ms";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".",
-                UnifiedYoungEvent.match(logLine));
-        UnifiedYoungEvent event = new UnifiedYoungEvent(logLine);
-        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_YOUNG.toString(), event.getName());
-        Assert.assertEquals("Time stamp not parsed correctly.", 27091 - 0, event.getTimestamp());
-        Assert.assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
-        Assert.assertEquals("Combined begin size not parsed correctly.", 43 * 1024, event.getCombinedOccupancyInit());
-        Assert.assertEquals("Combined end size not parsed correctly.", 26 * 1024, event.getCombinedOccupancyEnd());
-        Assert.assertEquals("Combined allocation size not parsed correctly.", 52 * 1024, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 0, event.getDuration());
-    }
-
-    public void testG1ConcurrentStartTriggerEvacuationPause() {
-        String logLine = "[22.879s][info][gc] GC(1277) Pause Young (Concurrent Start) (G1 Evacuation Pause)"
-                + " 43M->23M(52M) 1.100ms";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".",
-                UnifiedYoungEvent.match(logLine));
-        UnifiedYoungEvent event = new UnifiedYoungEvent(logLine);
-        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_YOUNG.toString(), event.getName());
-        Assert.assertEquals("Time stamp not parsed correctly.", 22879 - 1, event.getTimestamp());
-        Assert.assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
-        Assert.assertEquals("Combined begin size not parsed correctly.", 43 * 1024, event.getCombinedOccupancyInit());
-        Assert.assertEquals("Combined end size not parsed correctly.", 23 * 1024, event.getCombinedOccupancyEnd());
-        Assert.assertEquals("Combined allocation size not parsed correctly.", 52 * 1024, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 1, event.getDuration());
     }
 
     public void testUnifiedYoungStandardLogging() {
@@ -129,7 +117,7 @@ public class TestUnifiedYoungEvent extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING));
     }
 
-    public void testUnifiedOldExplictGc() {
+    public void testUnifiedYoungExplictGc() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset154.txt");
         GcManager gcManager = new GcManager();

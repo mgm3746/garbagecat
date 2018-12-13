@@ -18,8 +18,20 @@ package org.eclipselabs.garbagecat.domain;
  * <h3>Example Logging</h3>
  * 
  * <p>
- * [Times: user=0.31 sys=0.00, real=0.04 secs]
+ * JDK8 and prior:
  * </p>
+ * 
+ * <pre>
+ * [Times: user=0.31 sys=0.00, real=0.04 secs]
+ * </pre>
+ * 
+ * <p>
+ * JDK9+:
+ * </p>
+ * 
+ * <pre>
+ * User=0.00s Sys=0.00s Real=0.00s
+ * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
@@ -29,8 +41,19 @@ public interface TimesData {
     /**
      * Regular expression for times data block.
      */
-    String REGEX = "( \\[Times: user=(\\d{1,5}[\\.\\,]\\d{2}) sys=\\d{1,5}[\\.\\,]\\d{2}, "
+    public static final String REGEX = "( \\[Times: user=(\\d{1,5}[\\.\\,]\\d{2}) sys=\\d{1,5}[\\.\\,]\\d{2}, "
             + "real=(\\d{1,5}[\\.\\,]\\d{2}) secs\\])";
+
+    /**
+     * Regular expression for times data block JDK9+.
+     */
+    public static final String REGEX_JDK9 = "( User=(\\d{1,5}[\\.\\,]\\d{2})s Sys=\\d{1,5}[\\.\\,]\\d{2}s "
+            + "Real=(\\d{1,5}[\\.\\,]\\d{2})s)";
+
+    /**
+     * Use for logging events that do not include times data.
+     */
+    public static final int NO_DATA = -Integer.MIN_VALUE;
 
     /**
      * @return The time of all threads added together in centiseconds.

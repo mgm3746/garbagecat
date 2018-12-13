@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
+import org.eclipselabs.garbagecat.domain.TimesData;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -182,6 +184,12 @@ public class TestJdkMath extends TestCase {
     public void testCalcParallelismUserZeroRealZero() {
         int timeUser = 0;
         int timeReal = 0;
+        Assert.assertEquals("Parallelism not calculated correctly.", 100, JdkMath.calcParallelism(timeUser, timeReal));
+    }
+
+    public void testCalcParallelismNoData() {
+        int timeUser = TimesData.NO_DATA;
+        int timeReal = TimesData.NO_DATA;
         Assert.assertEquals("Parallelism not calculated correctly.", 100, JdkMath.calcParallelism(timeUser, timeReal));
     }
 

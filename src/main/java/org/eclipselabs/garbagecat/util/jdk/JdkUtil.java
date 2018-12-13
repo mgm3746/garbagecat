@@ -61,9 +61,14 @@ import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcYoungEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.FooterHeapEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.HeapAddressEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.HeapRegionSizeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsInitialMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1ConcurrentEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent;
@@ -88,34 +93,37 @@ public class JdkUtil {
      * Defined logging events.
      */
     public enum LogEventType {
-        SERIAL_NEW, SERIAL_OLD,
-        //
-        PAR_NEW, PARALLEL_SCAVENGE, PARALLEL_SERIAL_OLD, PARALLEL_COMPACTING_OLD,
-        //
+        // unified
         UNIFIED_YOUNG, UNIFIED_OLD,
         //
-        UNIFIED_REMARK, UNIFIED_CMS_INITIAL_MARK, UNIFIED_CMS_CONCURRENT, UNIFIED_G1_CONCURRENT,
+        UNIFIED_REMARK, UNIFIED_CMS_INITIAL_MARK, UNIFIED_CMS_CONCURRENT,
         //
+        UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_CLEANUP, UNIFIED_G1_CONCURRENT,
+        //
+        USING_SERIAL, USING_PARALLEL, USING_CMS, USING_G1, FOOTER_HEAP, HEAP_REGION_SIZE, HEAP_ADDRESS,
+        // serial
+        SERIAL_NEW, SERIAL_OLD,
+        // parallel
+        PAR_NEW, PARALLEL_SCAVENGE, PARALLEL_SERIAL_OLD, PARALLEL_COMPACTING_OLD,
+        // cms
         CMS_SERIAL_OLD, CMS_REMARK, CMS_INITIAL_MARK, CMS_CONCURRENT,
-        //
+        // g1
         G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
-        //
+        // other
         APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, UNKNOWN, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD,
         //
         HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, REFERENCE_GC, CLASS_HISTOGRAM, HEAP_AT_GC,
         //
         CLASS_UNLOADING, APPLICATION_LOGGING, THREAD_DUMP, BLANK_LINE, GC_OVERHEAD_LIMIT, LOG_FILE, FLS_STATISTICS,
         //
-        GC_LOCKER, TENURING_DISTRIBUTION,
-        //
-        USING_SERIAL, USING_PARALLEL, USING_CMS, USING_G1
+        GC_LOCKER, TENURING_DISTRIBUTION
     };
 
     /**
      * Defined preprocessing actions.
      */
     public enum PreprocessActionType {
-        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, DATE_STAMP, G1, CMS, PARALLEL, SERIAL
+        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, DATE_STAMP, G1, CMS, PARALLEL, SERIAL, UNIFIED_G1
     };
 
     /**
@@ -155,12 +163,22 @@ public class JdkUtil {
     public static final LogEventType identifyEventType(String logLine) {
 
         // Unified (alphabetical)
+        if (FooterHeapEvent.match(logLine))
+            return LogEventType.FOOTER_HEAP;
+        if (HeapAddressEvent.match(logLine))
+            return LogEventType.HEAP_ADDRESS;
+        if (HeapRegionSizeEvent.match(logLine))
+            return LogEventType.HEAP_REGION_SIZE;
         if (UnifiedCmsConcurrentEvent.match(logLine))
             return LogEventType.UNIFIED_CMS_CONCURRENT;
         if (UnifiedCmsInitialMarkEvent.match(logLine))
             return LogEventType.UNIFIED_CMS_INITIAL_MARK;
+        if (UnifiedG1CleanupEvent.match(logLine))
+            return LogEventType.UNIFIED_G1_CLEANUP;
         if (UnifiedG1ConcurrentEvent.match(logLine))
             return LogEventType.UNIFIED_G1_CONCURRENT;
+        if (UnifiedG1YoungPauseEvent.match(logLine))
+            return LogEventType.UNIFIED_G1_YOUNG_PAUSE;
         if (UnifiedOldEvent.match(logLine))
             return LogEventType.UNIFIED_OLD;
         if (UnifiedRemarkEvent.match(logLine))
@@ -286,14 +304,29 @@ public class JdkUtil {
         LogEvent event = null;
         switch (eventType) {
         // Unified (alphabetical)
+        case FOOTER_HEAP:
+            event = new FooterHeapEvent(logLine);
+            break;
+        case HEAP_ADDRESS:
+            event = new HeapAddressEvent(logLine);
+            break;
+        case HEAP_REGION_SIZE:
+            event = new HeapRegionSizeEvent(logLine);
+            break;
         case UNIFIED_CMS_CONCURRENT:
             event = new UnifiedCmsConcurrentEvent();
             break;
         case UNIFIED_CMS_INITIAL_MARK:
             event = new UnifiedCmsInitialMarkEvent(logLine);
             break;
+        case UNIFIED_G1_CLEANUP:
+            event = new UnifiedG1CleanupEvent(logLine);
+            break;
         case UNIFIED_G1_CONCURRENT:
-            event = new UnifiedG1ConcurrentEvent(logLine);
+            event = new UnifiedG1ConcurrentEvent();
+            break;
+        case UNIFIED_G1_YOUNG_PAUSE:
+            event = new UnifiedG1YoungPauseEvent(logLine);
             break;
         case UNIFIED_OLD:
             event = new UnifiedOldEvent(logLine);
@@ -339,6 +372,7 @@ public class JdkUtil {
         case G1_YOUNG_PAUSE:
             event = new G1YoungPauseEvent(logLine);
             break;
+
         // CMS
         case PAR_NEW:
             event = new ParNewEvent(logLine);
@@ -355,6 +389,7 @@ public class JdkUtil {
         case CMS_SERIAL_OLD:
             event = new CmsSerialOldEvent(logLine);
             break;
+
         // Parallel
         case PARALLEL_COMPACTING_OLD:
             event = new ParallelCompactingOldEvent(logLine);
@@ -365,6 +400,7 @@ public class JdkUtil {
         case PARALLEL_SERIAL_OLD:
             event = new ParallelSerialOldEvent(logLine);
             break;
+
         // Serial
         case SERIAL_NEW:
             event = new SerialNewEvent(logLine);
@@ -372,6 +408,7 @@ public class JdkUtil {
         case SERIAL_OLD:
             event = new SerialOldEvent(logLine);
             break;
+
         // Other
         case APPLICATION_CONCURRENT_TIME:
             event = new ApplicationConcurrentTimeEvent();
@@ -456,9 +493,13 @@ public class JdkUtil {
             int duration) {
         BlockingEvent event = null;
         switch (eventType) {
-        // Unified
-        case UNIFIED_YOUNG:
-            event = new UnifiedYoungEvent(logEntry, timestamp, duration);
+
+        // Unified (alphabetical)
+        case UNIFIED_CMS_INITIAL_MARK:
+            event = new UnifiedCmsInitialMarkEvent(logEntry, timestamp, duration);
+            break;
+        case UNIFIED_G1_CLEANUP:
+            event = new UnifiedG1CleanupEvent(logEntry, timestamp, duration);
             break;
         case UNIFIED_OLD:
             event = new UnifiedOldEvent(logEntry, timestamp, duration);
@@ -466,8 +507,11 @@ public class JdkUtil {
         case UNIFIED_REMARK:
             event = new UnifiedRemarkEvent(logEntry, timestamp, duration);
             break;
-        case UNIFIED_CMS_INITIAL_MARK:
-            event = new UnifiedCmsInitialMarkEvent(logEntry, timestamp, duration);
+        case UNIFIED_YOUNG:
+            event = new UnifiedYoungEvent(logEntry, timestamp, duration);
+            break;
+        case UNIFIED_G1_YOUNG_PAUSE:
+            event = new UnifiedG1YoungPauseEvent(logEntry, timestamp, duration);
             break;
 
         // G1
@@ -549,13 +593,16 @@ public class JdkUtil {
         case CLASS_UNLOADING:
         case CMS_CONCURRENT:
         case FLS_STATISTICS:
+        case FOOTER_HEAP:
         case GC_LOCKER:
         case GC_OVERHEAD_LIMIT:
         case G1_CONCURRENT:
         case HEADER_COMMAND_LINE_FLAGS:
         case HEADER_MEMORY:
         case HEADER_VERSION:
+        case HEAP_ADDRESS:
         case HEAP_AT_GC:
+        case HEAP_REGION_SIZE:
         case LOG_FILE:
         case REFERENCE_GC:
         case THREAD_DUMP:
@@ -843,14 +890,17 @@ public class JdkUtil {
         case CLASS_HISTOGRAM:
         case CLASS_UNLOADING:
         case FLS_STATISTICS:
+        case FOOTER_HEAP:
         case GC_LOCKER:
         case GC_OVERHEAD_LIMIT:
         case HEADER_COMMAND_LINE_FLAGS:
         case HEADER_MEMORY:
         case HEADER_VERSION:
+        case HEAP_ADDRESS:
         case HEAP_AT_GC:
-        case REFERENCE_GC:
+        case HEAP_REGION_SIZE:
         case LOG_FILE:
+        case REFERENCE_GC:
         case UNKNOWN:
             reportable = false;
             break;
@@ -873,9 +923,14 @@ public class JdkUtil {
             while (iterator.hasNext() && !isUnifiedLogging) {
                 LogEventType eventType = iterator.next();
                 switch (eventType) {
+                case FOOTER_HEAP:
+                case HEAP_ADDRESS:
+                case HEAP_REGION_SIZE:
                 case UNIFIED_CMS_CONCURRENT:
                 case UNIFIED_CMS_INITIAL_MARK:
+                case UNIFIED_G1_CLEANUP:
                 case UNIFIED_G1_CONCURRENT:
+                case UNIFIED_G1_YOUNG_PAUSE:
                 case UNIFIED_OLD:
                 case UNIFIED_REMARK:
                 case UNIFIED_YOUNG:

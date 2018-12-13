@@ -13,6 +13,8 @@
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
@@ -38,22 +40,40 @@ public class TestUsingParallelEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 2, event.getTimestamp());
     }
 
-    public void testLineWithSpaces() {
-        String logLine = "[0.002s][info][gc] Using Parallel     ";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".",
-                UsingParallelEvent.match(logLine));
-    }
-
-    public void testIdentity() {
+    public void testIdentityEventType() {
         String logLine = "[0.002s][info][gc] Using Parallel";
         Assert.assertEquals(JdkUtil.LogEventType.USING_PARALLEL + "not identified.",
                 JdkUtil.LogEventType.USING_PARALLEL, JdkUtil.identifyEventType(logLine));
+    }
+
+    public void testParseLogLine() {
+        String logLine = "[0.002s][info][gc] Using Parallel";
+        Assert.assertTrue(JdkUtil.LogEventType.USING_PARALLEL.toString() + " not parsed.",
+                JdkUtil.parseLogLine(logLine) instanceof UsingParallelEvent);
     }
 
     public void testNotBlocking() {
         String logLine = "[0.002s][info][gc] Using Parallel";
         Assert.assertFalse(JdkUtil.LogEventType.USING_PARALLEL.toString() + " incorrectly indentified as blocking.",
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
+    public void testReportable() {
+        Assert.assertTrue(JdkUtil.LogEventType.USING_PARALLEL.toString() + " not indentified as reportable.",
+                JdkUtil.isReportable(JdkUtil.LogEventType.USING_PARALLEL));
+    }
+
+    public void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.USING_PARALLEL);
+        Assert.assertTrue(JdkUtil.LogEventType.USING_PARALLEL.toString() + " not indentified as unified.",
+                JdkUtil.isUnifiedLogging(eventTypes));
+    }
+
+    public void testLineWithSpaces() {
+        String logLine = "[0.002s][info][gc] Using Parallel     ";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".",
+                UsingParallelEvent.match(logLine));
     }
 
     /**

@@ -201,47 +201,52 @@ public class TestJdkRegEx extends TestCase {
                 durationFraction.matches(JdkRegEx.DURATION_FRACTION));
     }
 
-    public void testSizeG1WholeBytes() {
+    public void testSizeWholeBytes() {
         String size = "0B";
         Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
-    public void testSizeG1WholeKilobytes() {
+    public void testSizeWholeKilobytes() {
         String size = "8192K";
         Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
-    public void testSizeG1WholeMegabytes() {
+    public void testSizeWholeMegabytes() {
         String size = "28M";
         Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
-    public void testSizeG1WholeGigabytes() {
+    public void testSizeWholeGigabytes() {
         String size = "30G";
         Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
-    public void testSizeG1DecimalBytes() {
+    public void testSizeDecimalBytes() {
         String size = "0.0B";
         Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
-    public void testSizeG1DecimalKilobytes() {
+    public void testSizeDecimalKilobytes() {
         String size = "8192.0K";
         Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
-    public void testSizeG1DecimalMegabytes() {
+    public void testSizeDecimalMegabytes() {
         String size = "28.0M";
         Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
-    public void testSizeG1DecimalGigabytes() {
+    public void testMegabytesM() {
+        String unit = "M";
+        Assert.assertTrue("'" + unit + "' " + "is a valid unit.", unit.matches(JdkRegEx.MEGABYTES));
+    }
+
+    public void testSizeDecimalGigabytes() {
         String size = "30.0G";
         Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE));
     }
 
-    public void testSizeG1Comma() {
+    public void testSizeComma() {
         String size = "306,0M";
         Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE));
     }

@@ -10,93 +10,75 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
-import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * CMS_CONCURRENT
+ * HEAP_ADDRESS
  * </p>
  * 
  * <p>
- * Any number of events that happen concurrently with the JVM's execution of application threads. These events are not
- * included in the GC analysis since there is no application pause time.
+ * Heap address information printed at the beginning gc logging with unified detailed logging
+ * (<code>-Xlog:gc*:file=&lt;file&gt;</code>).
  * </p>
  * 
  * <h3>Example Logging</h3>
- *
- * <pre>
- * 251.781: [CMS-concurrent-mark-start]
- * </pre>
  * 
  * <pre>
- * 252.707: [CMS-concurrent-mark: 0.796/0.926 secs] [Times: user=6.04 sys=0.14, real=0.93 secs]
- * </pre>
- * 
- * <pre>
- * 252.707: [CMS-concurrent-preclean-start]
- * </pre>
- * 
- * <pre>
- * 252.888: [CMS-concurrent-preclean: 0.141/0.182 secs] [Times: user=0.86 sys=0.03, real=0.18 secs]
- * </pre>
- * 
- * <pre>
- * 252.889: [CMS-concurrent-abortable-preclean-start]
- * </pre>
- * 
- * <pre>
- * 253.102: [CMS-concurrent-abortable-preclean: 0.083/0.214 secs] [Times: user=1.23 sys=0.02, real=0.21 secs]
- * </pre>
- * 
- * <pre>
- * CMS: abort preclean due to time 32633.935: [CMS-concurrent-abortable-preclean: 0.622/5.054 secs] [Times: user=2.42 sys=0.01, real=5.05 secs]
- * </pre>
- * 
- * <pre>
- * 253.189: [CMS-concurrent-sweep-start]
- * </pre>
- * 
- * <pre>
- * 258.265: [CMS-concurrent-sweep: 4.134/5.076 secs] [Times: user=31.65 sys=1.01, real=5.08 secs]
- * </pre>
- * 
- * <pre>
- * 258.265: [CMS-concurrent-reset-start]
+ * [0.004s][info][gc,heap,coops] Heap address: 0x00000000fc000000, size: 64 MB, Compressed Oops mode: 32-bit
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class CmsConcurrentEvent extends CmsCollector implements LogEvent, ParallelEvent {
+public class HeapAddressEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent {
 
     /**
-     * Regular expression defining the logging.
+     * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^( CMS: abort preclean due to time )?(" + JdkRegEx.TIMESTAMP + ": \\[CMS)?("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-"
-            + "(abortable-preclean|abortable-preclean-start|mark|mark-start|preclean|preclean-start|reset|"
-            + "reset-start|sweep|sweep-start)(: " + JdkRegEx.DURATION_FRACTION + ")?\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap,coops\\] Heap address: "
+            + JdkRegEx.ADDRESS + ", size: \\d{1,8} MB, Compressed Oops mode: 32-bit$";
 
-    private static Pattern pattern = Pattern.compile(REGEX);
+    private static final Pattern pattern = Pattern.compile(REGEX);
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
+
+    /**
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
+     */
+    public HeapAddressEvent(String logEntry) {
+        this.logEntry = logEntry;
+        this.timestamp = 0L;
+    }
 
     public String getLogEntry() {
-        throw new UnsupportedOperationException("Event does not include log entry information");
+        return logEntry;
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.CMS_CONCURRENT.toString();
+        return JdkUtil.LogEventType.HEAP_ADDRESS.toString();
     }
 
     public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
+        return timestamp;
     }
 
     /**

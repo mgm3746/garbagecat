@@ -12,7 +12,11 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -27,6 +31,37 @@ public class TestUnifiedCmsConcurrentEvent extends TestCase {
         String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + ".",
                 UnifiedCmsConcurrentEvent.match(logLine));
+    }
+
+    public void testIdentityEventType() {
+        String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
+        Assert.assertEquals(JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT + "not identified.",
+                JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT, JdkUtil.identifyEventType(logLine));
+    }
+
+    public void testParseLogLine() {
+        String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + " not parsed.",
+                JdkUtil.parseLogLine(logLine) instanceof UnifiedCmsConcurrentEvent);
+    }
+
+    public void testNotBlocking() {
+        String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
+        Assert.assertFalse(
+                JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + " incorrectly indentified as blocking.",
+                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+    }
+
+    public void testReportable() {
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + " not indentified as reportable.",
+                JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT));
+    }
+
+    public void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.UNIFIED_CMS_CONCURRENT);
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + " not indentified as unified.",
+                JdkUtil.isUnifiedLogging(eventTypes));
     }
 
     public void testConcurrentMarkWithDuration() {
@@ -70,18 +105,4 @@ public class TestUnifiedCmsConcurrentEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + ".",
                 UnifiedCmsConcurrentEvent.match(logLine));
     }
-
-    public void testIdentity() {
-        String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
-        Assert.assertEquals(JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT + "not identified.",
-                JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT, JdkUtil.identifyEventType(logLine));
-    }
-
-    public void testNotBlocking() {
-        String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
-        Assert.assertFalse(
-                JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
-    }
-
 }
