@@ -48,8 +48,20 @@ public class TestUnifiedG1PreprocessAction extends TestCase {
                 UnifiedG1PreprocessAction.match(logLine));
     }
 
+    public void testLogLineStartPauseYoungNoTrigger() {
+        String logLine = "[0.333s][info][gc,start     ] GC(0) Pause Young (G1 Evacuation Pause)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
     public void testLogLineUsingWorkersForEvacuation() {
         String logLine = "[0.100s][info][gc,task      ] GC(0) Using 2 workers of 4 for evacuation";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
+    public void testLogLineUsingWorkersForEvacuation2Digits() {
+        String logLine = "[0.333s][info][gc,task      ] GC(0) Using 10 workers of 10 for evacuation";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
                 UnifiedG1PreprocessAction.match(logLine));
     }
@@ -114,8 +126,8 @@ public class TestUnifiedG1PreprocessAction extends TestCase {
                 UnifiedG1PreprocessAction.match(logLine));
     }
 
-    public void testLogLineEden2Digits() {
-        String logLine = "[11.018s][info][gc,heap      ] GC(686) Eden regions: 18->0(18)";
+    public void testLogLineEden3Digits() {
+        String logLine = "[0.335s][info][gc,heap      ] GC(0) Eden regions: 24->0(149)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
                 UnifiedG1PreprocessAction.match(logLine));
     }

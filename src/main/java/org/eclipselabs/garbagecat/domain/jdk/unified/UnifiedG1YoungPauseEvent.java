@@ -80,7 +80,7 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
      * Regular expression defining preprocessed logging.
      */
     private static final String REGEX_PREPROCESSED = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc[ ]{11,12}\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\((Normal|Concurrent Start)\\) \\(" + TRIGGER + "\\) "
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + TRIGGER + "\\) "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9
             + TimesData.REGEX_JDK9 + "[ ]*$";
 
@@ -157,16 +157,16 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                trigger = matcher.group(3);
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(6).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(9).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(10)),
-                        matcher.group(12).charAt(0));
-                duration = JdkMath.roundMillis(matcher.group(13)).intValue();
+                trigger = matcher.group(4);
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)), matcher.group(10).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)),
+                        matcher.group(13).charAt(0));
+                duration = JdkMath.roundMillis(matcher.group(14)).intValue();
                 timestamp = endTimestamp - duration;
-                if (matcher.group(14) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(15)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(16)).intValue();
+                if (matcher.group(15) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(16)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(17)).intValue();
                 } else {
                     timeUser = TimesData.NO_DATA;
                     timeReal = TimesData.NO_DATA;

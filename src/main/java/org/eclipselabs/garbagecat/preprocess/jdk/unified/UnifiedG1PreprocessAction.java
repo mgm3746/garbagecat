@@ -146,17 +146,17 @@ public class UnifiedG1PreprocessAction implements PreprocessAction {
     private static final String[] REGEX_THROWAWAY = {
 
             "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,start[ ]{5,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pause Young \\((Normal|Concurrent Start)\\) \\(G1 Evacuation Pause\\)$",
+                    + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(G1 Evacuation Pause\\)$",
             //
             "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,task[ ]{6,7}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Using \\d workers of \\d for (evacuation|marking)$",
+                    + " Using \\d{1,2} workers of \\d{1,2} for (evacuation|marking)$",
             //
             "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,phases[ ]{4,5}\\] " + JdkRegEx.GC_EVENT_NUMBER
                     + "   ((Pre Evacuate|Evacuate|Post Evacuate|Other) Collection Set|Other): " + JdkRegEx.DURATION_JDK9
                     + "$",
             //
             "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap[ ]{6,7}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " (Eden|Survivor|Old|Humongous) regions: \\d{1,2}->\\d{1,2}(\\(\\d{1,2}\\))?$",
+                    + " (Eden|Survivor|Old|Humongous) regions: \\d{1,3}->\\d{1,3}(\\(\\d{1,3}\\))?$",
             //
             "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,metaspace[ ]{1,2}\\] " + JdkRegEx.GC_EVENT_NUMBER
                     + " Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)$",

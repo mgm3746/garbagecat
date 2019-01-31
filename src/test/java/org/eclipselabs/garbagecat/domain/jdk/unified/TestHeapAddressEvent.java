@@ -66,4 +66,11 @@ public class TestHeapAddressEvent extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not indentified as unified.",
                 JdkUtil.isUnifiedLogging(eventTypes));
     }
+
+    public void testCompressedOops() {
+        String logLine = "[0.019s][info][gc,heap,coops] Heap address: 0x00000006c2800000, size: 4056 MB, "
+                + "Compressed Oops mode: Zero based, Oop shift amount: 3";
+        Assert.assertTrue(JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not parsed.",
+                JdkUtil.parseLogLine(logLine) instanceof HeapAddressEvent);
+    }
 }

@@ -35,6 +35,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * [0.004s][info][gc,heap,coops] Heap address: 0x00000000fc000000, size: 64 MB, Compressed Oops mode: 32-bit
  * </pre>
  * 
+ * <pre>
+ * [0.019s][info][gc,heap,coops] Heap address: 0x00000006c2800000, size: 4056 MB, Compressed Oops mode: Zero based, Oop shift amount: 3
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -44,7 +48,8 @@ public class HeapAddressEvent implements UnifiedLogging, LogEvent, ThrowAwayEven
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap,coops\\] Heap address: "
-            + JdkRegEx.ADDRESS + ", size: \\d{1,8} MB, Compressed Oops mode: 32-bit$";
+            + JdkRegEx.ADDRESS
+            + ", size: \\d{1,8} MB, Compressed Oops mode: (32-bit|Zero based, Oop shift amount: \\d)$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
