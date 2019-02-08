@@ -50,7 +50,7 @@ public class TestSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 49152, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 49154, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 49158, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 692, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 692925, event.getDuration());
     }
 
     public void testLogLineWhitespaceAtEnd() {
@@ -79,7 +79,7 @@ public class TestSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 8602, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 8604, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 49, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 49088, event.getDuration());
     }
 
     public void testLogLineWithSerialNewBlock() {
@@ -99,7 +99,7 @@ public class TestSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 54745, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 54745, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 54784, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 44750, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 44750188, event.getDuration());
     }
 
     public void testLogLineWithDateStamps() {
@@ -120,7 +120,7 @@ public class TestSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 15599, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 15599, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 65536, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 114, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 114868, event.getDuration());
     }
 
     public void testLogLineFullGcWithMetadatGcThresholdTrigger() {
@@ -142,7 +142,7 @@ public class TestSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 20526, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 20526, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1069056, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 124, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 124944, event.getDuration());
     }
 
     public void testLogLineGcWithAllocationFailureTrigger() {
@@ -165,7 +165,7 @@ public class TestSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 68373, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 68373, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1114112, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 288, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 288130, event.getDuration());
     }
 
     public void testLogLineGcPromotionFailedTrigger() {
@@ -188,6 +188,6 @@ public class TestSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 65384, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 65384, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1114112, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 680, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 680424, event.getDuration());
     }
 }

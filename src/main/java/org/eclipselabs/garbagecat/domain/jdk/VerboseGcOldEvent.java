@@ -65,7 +65,7 @@ public class VerboseGcOldEvent extends UnknownCollector
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -139,7 +139,7 @@ public class VerboseGcOldEvent extends UnknownCollector
                 combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)),
                         matcher.group(30).charAt(0));
             }
-            duration = JdkMath.convertSecsToMillis(matcher.group(31)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(31)).intValue();
         }
     }
 
@@ -151,7 +151,7 @@ public class VerboseGcOldEvent extends UnknownCollector
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public VerboseGcOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

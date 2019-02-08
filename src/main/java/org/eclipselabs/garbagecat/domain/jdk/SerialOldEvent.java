@@ -92,7 +92,7 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -211,7 +211,7 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
             permGen = Integer.parseInt(matcher.group(61));
             permGenEnd = Integer.parseInt(matcher.group(62));
             permGenAllocation = Integer.parseInt(matcher.group(63));
-            duration = JdkMath.convertSecsToMillis(matcher.group(64)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(64)).intValue();
         }
     }
 
@@ -223,7 +223,7 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public SerialOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

@@ -90,7 +90,7 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -147,8 +147,8 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
                 combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(9).charAt(0));
                 combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(10)),
                         matcher.group(12).charAt(0));
-                duration = JdkMath.roundMillis(matcher.group(13)).intValue();
-                timestamp = endTimestamp - duration;
+                duration = JdkMath.convertMillisToMicros(matcher.group(13)).intValue();
+                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
             }
@@ -162,8 +162,8 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
                 combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)), matcher.group(10).charAt(0));
                 combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)),
                         matcher.group(13).charAt(0));
-                duration = JdkMath.roundMillis(matcher.group(14)).intValue();
-                timestamp = endTimestamp - duration;
+                duration = JdkMath.convertMillisToMicros(matcher.group(14)).intValue();
+                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 if (matcher.group(15) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(16)).intValue();
                     timeReal = JdkMath.convertSecsToCentis(matcher.group(17)).intValue();
@@ -183,7 +183,7 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public UnifiedG1YoungPauseEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

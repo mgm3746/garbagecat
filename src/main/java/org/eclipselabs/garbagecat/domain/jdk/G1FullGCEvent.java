@@ -99,7 +99,7 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -163,7 +163,7 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
                 combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
                 combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)),
                         matcher.group(24).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(25)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
             Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
@@ -178,7 +178,7 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
                 combined = JdkMath.convertSizeToKilobytes(matcher.group(65), matcher.group(67).charAt(0));
                 combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(71), matcher.group(73).charAt(0));
                 combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(74), matcher.group(76).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(44)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(44)).intValue();
                 if (matcher.group(77) != null) {
                     permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(79)), matcher.group(81).charAt(0));
                     permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(82)),
@@ -198,7 +198,7 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public G1FullGCEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

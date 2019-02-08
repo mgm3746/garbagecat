@@ -149,7 +149,7 @@ public class G1YoungPauseEvent extends G1Collector
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -206,7 +206,7 @@ public class G1YoungPauseEvent extends G1Collector
                 combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
                 combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)),
                         matcher.group(24).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(25)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
                 if (matcher.group(28) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
                     timeReal = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
@@ -224,7 +224,7 @@ public class G1YoungPauseEvent extends G1Collector
                     // trigger before (young):
                     trigger = matcher.group(14);
                 }
-                duration = JdkMath.convertSecsToMillis(matcher.group(17)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(17)).intValue();
                 combined = JdkMath.convertSizeToKilobytes(matcher.group(38), matcher.group(40).charAt(0));
                 combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(44), matcher.group(46).charAt(0));
                 combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(47), matcher.group(49).charAt(0));
@@ -238,7 +238,7 @@ public class G1YoungPauseEvent extends G1Collector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                duration = JdkMath.convertSecsToMillis(matcher.group(2)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(2)).intValue();
                 combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
                 combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)), matcher.group(10).charAt(0));
                 combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)),
@@ -258,7 +258,7 @@ public class G1YoungPauseEvent extends G1Collector
                     trigger = matcher.group(14);
                 }
                 // Get duration from times block
-                duration = JdkMath.convertSecsToMillis(matcher.group(47)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(47)).intValue();
                 combined = JdkMath.convertSizeToKilobytes(matcher.group(33), matcher.group(35).charAt(0));
                 combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(39), matcher.group(41).charAt(0));
                 combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(42), matcher.group(44).charAt(0));
@@ -276,7 +276,7 @@ public class G1YoungPauseEvent extends G1Collector
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public G1YoungPauseEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

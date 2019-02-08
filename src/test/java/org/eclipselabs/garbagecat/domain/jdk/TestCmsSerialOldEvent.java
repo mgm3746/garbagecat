@@ -58,7 +58,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 13140, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 13124, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 89, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 89127, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -88,7 +88,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 8602, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 8593, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 82, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 82809, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -108,7 +108,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 68021, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 67965, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 1118, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 1118602, event.getDuration());
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -142,7 +142,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 83805, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 80520, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 83968, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 1365, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 1365942, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -166,7 +166,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 252246, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 252202, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 42907, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 42907027, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -190,7 +190,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 73362, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 73362, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1118208, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 855, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 855335, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -213,7 +213,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 206989, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 206977, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 79935, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 79935662, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -238,7 +238,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 72496, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 72496, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1118208, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 11677, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 11677083, event.getDuration());
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -263,7 +263,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 851635, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 408849, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1048576, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 94911, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 94911621, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -290,7 +290,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 260428, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 260406, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 516, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 516760, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -315,7 +315,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 851635, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 408849, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1048576, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 94911, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 94911621, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -338,7 +338,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 256586, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 256586, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1230848, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 234, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 234309, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -361,7 +361,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 256586, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 256586, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1230848, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 210, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 210863, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -385,7 +385,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 256552, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 256552, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1230848, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 262, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 262479, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -407,7 +407,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 0, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 3708, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 3708405, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -421,7 +421,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         Assert.assertEquals("Time stamp not parsed correctly.", 159275552, event.getTimestamp());
-        Assert.assertEquals("Duration not parsed correctly.", 4339, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 4339851, event.getDuration());
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -444,7 +444,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 0, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 9256, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 9256447, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -457,7 +457,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         Assert.assertEquals("Time stamp not parsed correctly.", 5881424, event.getTimestamp());
-        Assert.assertEquals("Duration not parsed correctly.", 214, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 214385, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -483,7 +483,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 887439, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 893801, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 907264, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 9641, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 9641918, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -506,7 +506,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 1281600, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 978341, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 1281600, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 3793, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 3793020, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -530,7 +530,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 83780, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 83711, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 3003, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 3003904, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -554,7 +554,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 201541, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 201494, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 524288, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 5042, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 5042168, event.getDuration());
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -578,7 +578,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 227503, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 226115, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 378908, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 15192, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 15192712, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -603,7 +603,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 682507, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 442221, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1048576, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 107655, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 107655371, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -624,7 +624,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 1141548, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 1078465, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 1179648, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 7383, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 7383839, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -644,7 +644,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 1048384, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 1015603, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 1179648, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 7855, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 7855766, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -666,7 +666,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 2818067, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 2769354, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 5120000, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 4284, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 4284796, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -686,7 +686,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 1082057, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 934941, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 1082084, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 6558, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 6558777, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -709,7 +709,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 43759, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 43759, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 277, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 277307, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -733,7 +733,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 72200, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 72200, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1118208, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 8798, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 8798675, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -758,7 +758,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 206688, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 206662, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 79050, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 79050959, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -780,7 +780,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 1794415, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 909664, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 1835008, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 124596, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 124596332, event.getDuration());
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -804,7 +804,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Metaspace begin size not parsed correctly.", 72175, event.getPermOccupancyInit());
         Assert.assertEquals("Metaspace end size not parsed correctly.", 72175, event.getPermOccupancyEnd());
         Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1118208, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 12348, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 12348057, event.getDuration());
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -828,7 +828,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Metaspace begin size not parsed correctly.", 72111, event.getPermOccupancyInit());
         Assert.assertEquals("Metaspace end size not parsed correctly.", 72111, event.getPermOccupancyEnd());
         Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1118208, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 9361, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 9361008, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -854,7 +854,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Metaspace begin size not parsed correctly.", 500357, event.getPermOccupancyInit());
         Assert.assertEquals("Metaspace end size not parsed correctly.", 443269, event.getPermOccupancyEnd());
         Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1048576, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 97218, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 97218882, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -880,7 +880,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Metaspace begin size not parsed correctly.", 498279, event.getPermOccupancyInit());
         Assert.assertEquals("Metaspace end size not parsed correctly.", 443366, event.getPermOccupancyEnd());
         Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1048576, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 83677, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 83677520, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -905,7 +905,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm begin size not parsed correctly.", 1257346, event.getPermOccupancyInit());
         Assert.assertEquals("Perm end size not parsed correctly.", 1257346, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm allocation size not parsed correctly.", 2097152, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 23183, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 23183850, event.getDuration());
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -930,7 +930,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm begin size not parsed correctly.", 473438, event.getPermOccupancyInit());
         Assert.assertEquals("Perm end size not parsed correctly.", 450663, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm allocation size not parsed correctly.", 771512, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 102335, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 102335790, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -957,7 +957,7 @@ public class TestCmsSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm begin size not parsed correctly.", 376898, event.getPermOccupancyInit());
         Assert.assertEquals("Perm end size not parsed correctly.", 376894, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm allocation size not parsed correctly.", 524288, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 88278, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 88278527, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 

@@ -84,7 +84,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -187,7 +187,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
             this.permGenEnd = Integer.parseInt(matcher.group(27));
             this.permGenAllocation = Integer.parseInt(matcher.group(28));
 
-            this.duration = JdkMath.convertSecsToMillis(matcher.group(29)).intValue();
+            this.duration = JdkMath.convertSecsToMicros(matcher.group(29)).intValue();
         }
     }
 
@@ -199,7 +199,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public ParallelSerialOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

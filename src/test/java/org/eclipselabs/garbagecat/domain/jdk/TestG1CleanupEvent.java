@@ -38,7 +38,7 @@ public class TestG1CleanupEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 304128, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 241664, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 524288, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 1, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 1469, event.getDuration());
     }
 
     public void testCleanupWhiteSpacesAtEnd() {
@@ -56,7 +56,7 @@ public class TestG1CleanupEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 13631488, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 12582912, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 31457280, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 35, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 35874, event.getDuration());
     }
 
     public void testLogLineWithTimesData() {
@@ -70,7 +70,7 @@ public class TestG1CleanupEvent extends TestCase {
         Assert.assertEquals("Combined end size not parsed correctly.", 3592 * 1024, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 12 * 1024 * 1024,
                 event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 15, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 15449, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 19, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 1900, event.getParallelism());
@@ -86,7 +86,7 @@ public class TestG1CleanupEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 0, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 0, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 0, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 0, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 91, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());

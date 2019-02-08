@@ -41,7 +41,7 @@ public class TestParallelCompactingOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 81960, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 81783, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 164352, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 2474, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 2474918, event.getDuration());
     }
 
     public void testLogLineWhiteSpaceAtEnd() {
@@ -71,7 +71,7 @@ public class TestParallelCompactingOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 8602, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 8593, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 102, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 102836, event.getDuration());
     }
 
     public void testLogLineJdk8() {
@@ -93,7 +93,7 @@ public class TestParallelCompactingOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 19114, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 19114, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1067008, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 35, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 35213, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 9, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 4, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 225, event.getParallelism());
@@ -119,7 +119,7 @@ public class TestParallelCompactingOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 4177368, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 4177368, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 4194304, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 1970, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 1970867, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 441, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 197, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 224, event.getParallelism());
@@ -153,7 +153,7 @@ public class TestParallelCompactingOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 136339, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 135256, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1177600, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 3452, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 3452205, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 1158, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 345, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 336, event.getParallelism());
@@ -180,7 +180,7 @@ public class TestParallelCompactingOldEvent extends TestCase {
         Assert.assertEquals("Metaspace begin size not parsed correctly.", 3959933, event.getPermOccupancyInit());
         Assert.assertEquals("Metaspace end size not parsed correctly.", 3959881, event.getPermOccupancyEnd());
         Assert.assertEquals("Metaspace allocation size not parsed correctly.", 3977216, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 2430, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 2430840, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 695, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 243, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 287, event.getParallelism());
@@ -206,7 +206,7 @@ public class TestParallelCompactingOldEvent extends TestCase {
         Assert.assertEquals("Metaspace begin size not parsed correctly.", 170955, event.getPermOccupancyInit());
         Assert.assertEquals("Metaspace end size not parsed correctly.", 170731, event.getPermOccupancyEnd());
         Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1220608, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 3573, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 3573039, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 2624, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 357, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 736, event.getParallelism());
@@ -232,7 +232,7 @@ public class TestParallelCompactingOldEvent extends TestCase {
         Assert.assertEquals("Metaspace begin size not parsed correctly.", 142181, event.getPermOccupancyInit());
         Assert.assertEquals("Metaspace end size not parsed correctly.", 141753, event.getPermOccupancyEnd());
         Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1185792, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 2372, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 2372889, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 755, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 237, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 319, event.getParallelism());

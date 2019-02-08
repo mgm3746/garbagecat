@@ -150,6 +150,11 @@ public class TestJdkRegEx extends TestCase {
         Assert.assertTrue("'" + duration + "' is a valid duration.", duration.matches(JdkRegEx.DURATION_JDK9));
     }
 
+    public void testDurationJdk9WithSpace() {
+        String duration = "15.91 ms";
+        Assert.assertTrue("'" + duration + "' is a valid duration.", duration.matches(JdkRegEx.DURATION_JDK9));
+    }
+
     public void testGcEventId() {
         String id = "GC(1326)";
         Assert.assertTrue("'" + id + "' is a valid GC event id.", id.matches(JdkRegEx.GC_EVENT_NUMBER));

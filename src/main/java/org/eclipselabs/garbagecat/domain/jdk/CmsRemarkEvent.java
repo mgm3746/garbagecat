@@ -126,7 +126,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -216,7 +216,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(29)).longValue();
                 }
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMillis(matcher.group(68)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(68)).intValue();
                 if (matcher.group(71) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(72)).intValue();
                     timeReal = JdkMath.convertSecsToCentis(matcher.group(73)).intValue();
@@ -236,7 +236,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(29)).longValue();
                 }
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMillis(matcher.group(136)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(136)).intValue();
                 if (matcher.group(139) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(140)).intValue();
                     timeReal = JdkMath.convertSecsToCentis(matcher.group(141)).intValue();
@@ -262,7 +262,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public CmsRemarkEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

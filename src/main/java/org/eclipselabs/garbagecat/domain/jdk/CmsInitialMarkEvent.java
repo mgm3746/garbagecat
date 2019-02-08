@@ -62,7 +62,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -110,7 +110,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 trigger = matcher.group(14);
-                duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(19)).intValue();
                 if (matcher.group(22) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(23)).intValue();
                     timeReal = JdkMath.convertSecsToCentis(matcher.group(24)).intValue();
@@ -127,7 +127,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public CmsInitialMarkEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

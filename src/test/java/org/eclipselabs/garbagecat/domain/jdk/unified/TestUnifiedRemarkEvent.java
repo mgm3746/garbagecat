@@ -33,7 +33,7 @@ public class TestUnifiedRemarkEvent extends TestCase {
                 UnifiedRemarkEvent.match(logLine));
         UnifiedRemarkEvent event = new UnifiedRemarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 7944 - 1, event.getTimestamp());
-        Assert.assertEquals("Duration not parsed correctly.", 1, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 1767, event.getDuration());
     }
 
     public void testIdentityEventType() {
@@ -79,7 +79,7 @@ public class TestUnifiedRemarkEvent extends TestCase {
                 UnifiedRemarkEvent.match(logLine));
         UnifiedRemarkEvent event = new UnifiedRemarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 16053 - 2, event.getTimestamp());
-        Assert.assertEquals("Duration not parsed correctly.", 2, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 2328, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 1, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", Integer.MAX_VALUE, event.getParallelism());

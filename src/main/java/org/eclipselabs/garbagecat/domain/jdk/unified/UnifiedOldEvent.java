@@ -59,7 +59,7 @@ public class UnifiedOldEvent extends UnknownCollector
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -120,8 +120,8 @@ public class UnifiedOldEvent extends UnknownCollector
             combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(9).charAt(0));
             combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(10)),
                     matcher.group(12).charAt(0));
-            duration = JdkMath.roundMillis(matcher.group(13)).intValue();
-            timestamp = endTimestamp - duration;
+            duration = JdkMath.convertMillisToMicros(matcher.group(13)).intValue();
+            timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
         }
     }
 
@@ -133,7 +133,7 @@ public class UnifiedOldEvent extends UnknownCollector
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public UnifiedOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

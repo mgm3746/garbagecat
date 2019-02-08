@@ -68,7 +68,7 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -98,7 +98,7 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            duration = JdkMath.convertSecsToMillis(matcher.group(13)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(13)).intValue();
             if (matcher.group(16) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(17)).intValue();
                 timeReal = JdkMath.convertSecsToCentis(matcher.group(18)).intValue();
@@ -114,7 +114,7 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public G1RemarkEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

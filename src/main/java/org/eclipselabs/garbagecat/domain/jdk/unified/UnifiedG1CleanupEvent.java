@@ -77,7 +77,7 @@ public class UnifiedG1CleanupEvent extends G1Collector
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -129,7 +129,7 @@ public class UnifiedG1CleanupEvent extends G1Collector
                 combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
                         matcher.group(10).charAt(0));
                 duration = JdkMath.roundMillis(matcher.group(11)).intValue();
-                timestamp = endTimestamp - duration;
+                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
             }
@@ -143,7 +143,7 @@ public class UnifiedG1CleanupEvent extends G1Collector
                 combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
                         matcher.group(10).charAt(0));
                 duration = JdkMath.roundMillis(matcher.group(11)).intValue();
-                timestamp = endTimestamp - duration;
+                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 if (matcher.group(12) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(13)).intValue();
                     timeReal = JdkMath.convertSecsToCentis(matcher.group(14)).intValue();
@@ -163,7 +163,7 @@ public class UnifiedG1CleanupEvent extends G1Collector
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public UnifiedG1CleanupEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

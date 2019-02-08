@@ -40,7 +40,7 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 1726387, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 773247, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 3097984, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 231, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 231803, event.getDuration());
     }
 
     public void testLogLineWhitespaceAtEnd() {
@@ -60,7 +60,7 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 876593, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 876593, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 1851392, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 70, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 70178, event.getDuration());
     }
 
     public void testLogLineTriggerAllocationFailure() {
@@ -75,7 +75,7 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 136320, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 18558, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 102, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 102816, event.getDuration());
     }
 
     public void testLogLineTriggerCmsInitialMark() {
@@ -91,7 +91,7 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 59894, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 59894, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 5, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 5884, event.getDuration());
     }
 
     public void testLogLineTriggerCmsFinalRemark() {
@@ -107,7 +107,7 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 521627, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 521627, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 248, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 248127, event.getDuration());
     }
 
     public void testLogLineTriggerGcLockerInitiatedGc() {
@@ -122,7 +122,7 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 128035, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 124539, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 71, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 71349, event.getDuration());
     }
 
     public void testLogLineWithDashes() {
@@ -135,7 +135,7 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 5524217, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 5911480, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 5911488, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 1556, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 1556436, event.getDuration());
     }
 
     public void testLogLineWithDatestamp() {
@@ -149,7 +149,7 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 136320, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 18558, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 102, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 102816, event.getDuration());
     }
 
     public void testLogLineTriggerMetadataGcThreshold() {
@@ -164,7 +164,7 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 288163, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 251266, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 1253376, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 18, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 18304, event.getDuration());
     }
 
     public void testLogLineTriggerExplicitGc() {
@@ -178,6 +178,6 @@ public class TestVerboseGcYoungEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 525225, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 457601, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 939520, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 32, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 32544, event.getDuration());
     }
 }

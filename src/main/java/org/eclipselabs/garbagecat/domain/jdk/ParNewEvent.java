@@ -137,7 +137,7 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -225,7 +225,7 @@ public class ParNewEvent extends CmsIncrementalModeCollector
             }
             int totalAllocation = Integer.parseInt(matcher.group(61));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(63)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(63)).intValue();
             if (matcher.group(62) != null) {
                 super.setIncrementalMode(true);
             } else {
@@ -246,7 +246,7 @@ public class ParNewEvent extends CmsIncrementalModeCollector
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public ParNewEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

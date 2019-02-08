@@ -79,7 +79,7 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -130,7 +130,7 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
                 combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(20)),
                         matcher.group(22).charAt(0));
             }
-            duration = JdkMath.convertSecsToMillis(matcher.group(23)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(23)).intValue();
             if (matcher.group(26) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(27)).intValue();
                 timeReal = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
@@ -146,7 +146,7 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public G1CleanupEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

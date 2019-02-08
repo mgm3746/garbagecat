@@ -678,7 +678,7 @@ public class GcManager {
 
                     // 16) Check for CMS initial mark low parallelism
                     if (event instanceof CmsInitialMarkEvent && ((TimesData) event).getTimeUser() > 0
-                            && ((TimesData) event).getTimeReal() > 0 && ((BlockingEvent) event).getDuration() >= 10
+                            && ((TimesData) event).getTimeReal() > 0 && ((BlockingEvent) event).getDuration() >= 10000
                             && JdkMath.isLowParallelism(((TimesData) event).getParallelism())) {
                         if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM)) {
                             jvmDao.addAnalysis(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM);
@@ -687,7 +687,7 @@ public class GcManager {
 
                     // 17) Check for CMS remark low parallelism
                     if (event instanceof CmsRemarkEvent && ((TimesData) event).getTimeUser() > 0
-                            && ((TimesData) event).getTimeReal() > 0 && ((BlockingEvent) event).getDuration() >= 10
+                            && ((TimesData) event).getTimeReal() > 0 && ((BlockingEvent) event).getDuration() >= 10000
                             && JdkMath.isLowParallelism(((TimesData) event).getParallelism())) {
                         if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM)) {
                             jvmDao.addAnalysis(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM);

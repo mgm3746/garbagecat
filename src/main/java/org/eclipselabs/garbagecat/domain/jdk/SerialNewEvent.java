@@ -82,7 +82,7 @@ public class SerialNewEvent extends SerialCollector
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -164,7 +164,7 @@ public class SerialNewEvent extends SerialCollector
             oldEnd = totalEnd - youngEnd;
             int totalAllocation = Integer.parseInt(matcher.group(37));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(38)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(38)).intValue();
         }
     }
 
@@ -176,7 +176,7 @@ public class SerialNewEvent extends SerialCollector
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public SerialNewEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

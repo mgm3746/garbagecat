@@ -77,7 +77,7 @@ public class UnifiedRemarkEvent extends UnknownCollector
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -109,8 +109,8 @@ public class UnifiedRemarkEvent extends UnknownCollector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                duration = JdkMath.roundMillis(matcher.group(11)).intValue();
-                timestamp = endTimestamp - duration;
+                duration = JdkMath.convertMillisToMicros(matcher.group(11)).intValue();
+                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
             }
@@ -119,8 +119,8 @@ public class UnifiedRemarkEvent extends UnknownCollector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                duration = JdkMath.roundMillis(matcher.group(11)).intValue();
-                timestamp = endTimestamp - duration;
+                duration = JdkMath.convertMillisToMicros(matcher.group(11)).intValue();
+                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 if (matcher.group(12) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(13)).intValue();
                     timeReal = JdkMath.convertSecsToCentis(matcher.group(14)).intValue();
@@ -140,7 +140,7 @@ public class UnifiedRemarkEvent extends UnknownCollector
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public UnifiedRemarkEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

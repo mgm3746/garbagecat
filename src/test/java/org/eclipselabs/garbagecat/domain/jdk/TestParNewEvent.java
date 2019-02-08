@@ -53,7 +53,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 3200, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 3201, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 815616, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 38, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 38707, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
 
@@ -71,7 +71,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 3908656, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 3913030, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 8218240, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 46, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 46144, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 34, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 5, event.getTimeReal());
@@ -92,7 +92,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (417639 - 54564), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (364081 - 1006), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (1828480 - 59008), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 22, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 22509, event.getDuration());
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 5, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
@@ -136,7 +136,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (886080 - 886080), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (11485 - 11485), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (1986432 - 996800), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 19, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 19837, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 9, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
@@ -158,7 +158,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (136576 - 136576), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (19515 - 17023), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (494976 - 153600), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 30, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 30536, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 10, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 3, event.getTimeReal());
@@ -181,7 +181,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (1228800 - 1228800), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (30695 - 30695), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (8235008 - 1382400), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 39, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 39798, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 23, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 4, event.getTimeReal());
@@ -202,7 +202,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (2977822 - 1388745), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (2161212 - 458752), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (13172736 - 4128768), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 524, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 524878, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 92, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 51, event.getTimeReal());
@@ -223,7 +223,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (5606646 - 925502), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (4742781 - 58125), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (8277888 - 996800), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 13, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 13829, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 14, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
@@ -244,7 +244,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (7385012 - 476295), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (7555732 - 476295), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (13172736 - 4128768), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 519, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 519641, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 92, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 55, event.getTimeReal());
@@ -265,7 +265,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (273152 - 273152), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (858 - 858), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (980352 - 341376), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 3, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 3118, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
@@ -294,7 +294,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (272640 - 272640), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (33532 - 33532), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (1014528 - 306688), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 38, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 38330, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 11, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 4, event.getTimeReal());
@@ -317,7 +317,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (100369 - 100369), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (16685 - 10116), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (4177280 - 153344), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 72, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 72490, event.getDuration());
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 13, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 7, event.getTimeReal());
@@ -342,7 +342,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (6417140 - 4266790), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (3472610 - 922990), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (22020096 - 8388608), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 654, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 654237, event.getDuration());
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 189, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 66, event.getTimeReal());
@@ -366,7 +366,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (6555444 - 2619547), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (5043068 - 569438), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (22020096 - 8388608), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 340, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 340625, event.getDuration());
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 212, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 34, event.getTimeReal());
@@ -390,7 +390,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (17958061 - 5117539), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (18622281 - 5001473), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (22020096 - 8388608), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 27656, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 27656055, event.getDuration());
         Assert.assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertEquals("User time not parsed correctly.", 4910, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 2765, event.getTimeReal());
@@ -413,7 +413,7 @@ public class TestParNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", (620060 - 620060), event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", (620060 - 620060), event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", (7992832 - 7992832), event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 232, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 232852, event.getDuration());
     }
 
     /**

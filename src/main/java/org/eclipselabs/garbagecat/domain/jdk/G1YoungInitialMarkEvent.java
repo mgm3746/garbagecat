@@ -101,7 +101,7 @@ public class G1YoungInitialMarkEvent extends G1Collector
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -159,7 +159,7 @@ public class G1YoungInitialMarkEvent extends G1Collector
                 combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
                 combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)),
                         matcher.group(24).charAt(0));
-                duration = JdkMath.convertSecsToMillis(matcher.group(25)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
                 if (matcher.group(28) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
                     timeReal = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
@@ -177,11 +177,11 @@ public class G1YoungInitialMarkEvent extends G1Collector
                     trigger = matcher.group(17);
                 }
                 if (matcher.group(18) != null) {
-                    duration = JdkMath.convertSecsToMillis(matcher.group(19)).intValue();
+                    duration = JdkMath.convertSecsToMicros(matcher.group(19)).intValue();
                 } else {
                     if (matcher.group(53) != null) {
                         // Use Times block duration
-                        duration = JdkMath.convertSecsToMillis(matcher.group(55)).intValue();
+                        duration = JdkMath.convertSecsToMicros(matcher.group(55)).intValue();
                     }
                 }
                 if (matcher.group(22) != null) {
@@ -205,7 +205,7 @@ public class G1YoungInitialMarkEvent extends G1Collector
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public G1YoungInitialMarkEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

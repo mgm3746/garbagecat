@@ -43,7 +43,7 @@ public class TestSerialNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 4505, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 6683, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 87424, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 21, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 21021, event.getDuration());
     }
 
     public void testLogLineWhitespaceAtEnd() {
@@ -66,7 +66,7 @@ public class TestSerialNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 68160 - 68160, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 11664 - 8512, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 1325760 - 76672, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 53, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 53064, event.getDuration());
     }
 
     public void testLogLineDatestamp() {
@@ -83,7 +83,7 @@ public class TestSerialNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 68160 - 68160, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 4425 - 4425, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 3137216 - 76672, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 36, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 36058, event.getDuration());
     }
 
     public void testLogLineWithTrigger() {
@@ -99,6 +99,6 @@ public class TestSerialNewEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 209792 - 209792, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 15933 - 15933, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 760256 - 235968, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 84, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 84924, event.getDuration());
     }
 }

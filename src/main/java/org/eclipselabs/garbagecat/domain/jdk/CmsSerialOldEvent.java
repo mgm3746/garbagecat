@@ -142,7 +142,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in micriseconds (rounded).
      */
     private int duration;
 
@@ -300,7 +300,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
                 if (matcher.group(105) != null) {
                     super.setIncrementalMode(true);
                 }
-                this.duration = JdkMath.convertSecsToMillis(matcher.group(106)).intValue();
+                this.duration = JdkMath.convertSecsToMicros(matcher.group(106)).intValue();
             }
         } else if (logEntry.matches(REGEX_GC)) {
             Pattern pattern = Pattern.compile(REGEX_GC);
@@ -325,7 +325,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
 
                 // use young block duration for truncated events
                 if (matcher.group(113) == null) {
-                    this.duration = JdkMath.convertSecsToMillis(matcher.group(34)).intValue();
+                    this.duration = JdkMath.convertSecsToMicros(matcher.group(34)).intValue();
                 }
 
                 // old block after young
@@ -354,7 +354,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
                     super.setIncrementalMode(true);
                 }
                 if (matcher.group(113) != null) {
-                    this.duration = JdkMath.convertSecsToMillis(matcher.group(113)).intValue();
+                    this.duration = JdkMath.convertSecsToMicros(matcher.group(113)).intValue();
                 }
             }
         }
@@ -368,7 +368,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public CmsSerialOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

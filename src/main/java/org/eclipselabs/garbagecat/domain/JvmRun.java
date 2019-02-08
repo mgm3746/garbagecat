@@ -81,9 +81,9 @@ public class JvmRun {
     private int maxGcPause;
 
     /**
-     * Total GC pause duration (milliseconds).
+     * Total GC pause duration (microseconds).
      */
-    private int totalGcPause;
+    private long totalGcPause;
 
     /**
      * The first blocking event.
@@ -260,11 +260,11 @@ public class JvmRun {
         this.maxGcPause = maxPause;
     }
 
-    public int getTotalGcPause() {
+    public long getTotalGcPause() {
         return totalGcPause;
     }
 
-    public void setTotalGcPause(int totalGcPause) {
+    public void setTotalGcPause(long totalGcPause) {
         this.totalGcPause = totalGcPause;
     }
 
@@ -1119,7 +1119,7 @@ public class JvmRun {
         if (lastStoppedEventTimestamp > lastGcEventTimeStamp) {
             end = lastStoppedEventTimestamp + JdkMath.convertMicrosToMillis(lastStoppedEventDuration).longValue();
         } else {
-            end = lastGcEventTimeStamp + new Long(lastGcEventDuration).longValue();
+            end = lastGcEventTimeStamp + JdkMath.convertMicrosToMillis(lastGcEventDuration).longValue();
         }
 
         return end - start;

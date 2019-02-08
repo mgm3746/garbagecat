@@ -90,7 +90,7 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -201,7 +201,7 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
             permGen = Integer.parseInt(matcher.group(27));
             permGenEnd = Integer.parseInt(matcher.group(28));
             permGenAllocation = Integer.parseInt(matcher.group(29));
-            duration = JdkMath.convertSecsToMillis(matcher.group(30)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(30)).intValue();
             if (matcher.group(33) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
                 timeReal = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
@@ -217,7 +217,7 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public ParallelCompactingOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

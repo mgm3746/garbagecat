@@ -34,7 +34,7 @@ public class TestCmsInitialMarkEvent extends TestCase {
                 UnifiedCmsInitialMarkEvent.match(logLine));
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 178 - 0, event.getTimestamp());
-        Assert.assertEquals("Duration not parsed correctly.", 0, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 157, event.getDuration());
     }
 
     public void testIdentityEventType() {

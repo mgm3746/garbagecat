@@ -41,7 +41,7 @@ public class TestParallelSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 13092, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 13094, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 69, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 69936, event.getDuration());
     }
 
     public void testLogLineWhiteSpaceAtEnd() {
@@ -71,7 +71,7 @@ public class TestParallelSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 8600, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 8600, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 42, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 42768, event.getDuration());
     }
 
     public void testLogLineTriggerErgonomicsWithMetaspace() {
@@ -93,7 +93,7 @@ public class TestParallelSerialOldEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 3680, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 3680, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1056768, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 3, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 3005, event.getDuration());
     }
 
     public void testIsBlocking() {

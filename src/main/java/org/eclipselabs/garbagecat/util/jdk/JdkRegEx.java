@@ -28,6 +28,13 @@ public class JdkRegEx {
     public static final String TIMESTAMP = "(\\d{0,12}[\\.\\,]\\d{3})";
 
     /**
+     * The duration of the event in milliseconds as a whole number.
+     * 
+     * For example: 3ms
+     */
+    public static final String TIMESTAMP_MILLIS = "(\\d{1,7})ms";
+
+    /**
      * Datestamp. Absolute date/time the JVM uses with <code>-XX:+PrintGCDateStamps</code>.
      * 
      * For example:
@@ -113,9 +120,9 @@ public class JdkRegEx {
     /**
      * The duration of the event in milliseconds with 3 decimal places, introduced JDK9.
      * 
-     * For example: 2.969ms, 0.2ms
+     * For example: 2.969ms, 0.2ms, 15.91 ms
      */
-    public static final String DURATION_JDK9 = "(\\d{1,7}[\\.\\,]\\d{1,3})ms";
+    public static final String DURATION_JDK9 = "(\\d{1,7}[\\.\\,]\\d{1,3})[ ]{0,1}ms";
 
     /**
      * The garbage collection event number in JDK9+ unified logging.
@@ -164,6 +171,13 @@ public class JdkRegEx {
      * For example: avg 54.8%
      */
     public static final String PERCENT = "\\d{1,3}\\.\\d%";
+
+    /**
+     * Allocation rate.
+     * 
+     * For example: 328.75 MB/s
+     */
+    public static final String ALLOCATION_RATE = "\\d{1,4}\\.\\d{2} MB\\/s";
 
     /**
      * System.gc() trigger. Explicit garbage collection invoked.

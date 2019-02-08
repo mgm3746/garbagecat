@@ -429,7 +429,7 @@ public class JvmDao {
                 BlockingEvent event = blockingBatch.get(i);
                 pst.setLong(TIME_STAMP_INDEX, event.getTimestamp());
                 pst.setString(EVENT_NAME_INDEX, event.getName());
-                pst.setInt(DURATION_INDEX, event.getDuration());
+                pst.setLong(DURATION_INDEX, event.getDuration());
                 if (event instanceof YoungData) {
                     pst.setInt(YOUNG_SPACE_INDEX, ((YoungData) event).getYoungSpace());
                     pst.setInt(YOUNG_OCCUPANCY_INIT_INDEX, ((YoungData) event).getYoungOccupancyInit());
@@ -529,7 +529,7 @@ public class JvmDao {
             statement = connection.createStatement();
             rs = statement.executeQuery("select max(duration) from blocking_event");
             if (rs.next()) {
-                maxPause = rs.getInt(1);
+                maxPause = JdkMath.convertMicrosToMillis(rs.getInt(1)).intValue();
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -556,15 +556,15 @@ public class JvmDao {
      * 
      * @return total pause duration (milliseconds).
      */
-    public synchronized int getTotalGcPause() {
-        int totalPause = 0;
+    public synchronized long getTotalGcPause() {
+        long totalPause = 0;
         Statement statement = null;
         ResultSet rs = null;
         try {
             statement = connection.createStatement();
             rs = statement.executeQuery("select sum(duration) from blocking_event");
             if (rs.next()) {
-                totalPause = rs.getInt(1);
+                totalPause = JdkMath.convertMicrosToMillis(rs.getLong(1)).longValue();
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());

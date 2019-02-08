@@ -39,11 +39,11 @@ public class JdkMath {
      */
     public static BigDecimal convertSecsToMillis(String secs) {
         // BigDecimal does not accept decimal commas, only decimal periods
-        BigDecimal duration = new BigDecimal(secs.replace(",", "."));
-        duration = duration.movePointRight(3);
+        BigDecimal millis = new BigDecimal(secs.replace(",", "."));
+        millis = millis.movePointRight(3);
         // Round down to avoid TimeWarpExceptions when events are spaced close together
-        duration = duration.setScale(0, RoundingMode.DOWN);
-        return duration;
+        millis = millis.setScale(0, RoundingMode.DOWN);
+        return millis;
     }
 
     /**
@@ -57,10 +57,10 @@ public class JdkMath {
      */
     public static BigDecimal roundMillis(String millis) {
         // BigDecimal does not accept decimal commas, only decimal periods
-        BigDecimal duration = new BigDecimal(millis.replace(",", "."));
+        BigDecimal rounded = new BigDecimal(millis.replace(",", "."));
         // Round down to avoid TimeWarpExceptions when events are spaced close together
-        duration = duration.setScale(0, RoundingMode.DOWN);
-        return duration;
+        rounded = rounded.setScale(0, RoundingMode.DOWN);
+        return rounded;
     }
 
     /**
@@ -73,10 +73,10 @@ public class JdkMath {
      * @return Seconds rounded to 3 decimal places.
      */
     public static BigDecimal convertMillisToSecs(long millis) {
-        BigDecimal duration = new BigDecimal(millis);
-        duration = duration.movePointLeft(3);
-        duration = duration.setScale(3, RoundingMode.HALF_EVEN);
-        return duration;
+        BigDecimal secs = new BigDecimal(millis);
+        secs = secs.movePointLeft(3);
+        secs = secs.setScale(3, RoundingMode.HALF_EVEN);
+        return secs;
     }
 
     /**
@@ -90,8 +90,26 @@ public class JdkMath {
      */
     public static BigDecimal convertSecsToMicros(String secs) {
         // BigDecimal does not accept decimal commas, only decimal periods
-        BigDecimal duration = new BigDecimal(secs.replace(",", "."));
-        duration = duration.movePointRight(6);
+        BigDecimal micros = new BigDecimal(secs.replace(",", "."));
+        micros = micros.movePointRight(6);
+        // Round down to avoid TimeWarpExceptions when events are spaced close together
+        micros = micros.setScale(0, RoundingMode.DOWN);
+        return micros;
+    }
+
+    /**
+     * Convert milliseconds to microseconds.
+     * 
+     * For example: Convert 0.003 to 3
+     * 
+     * @param millis
+     *            Milliseconds as a whole number or decimal.
+     * @return Microseconds rounded to a whole number.
+     */
+    public static BigDecimal convertMillisToMicros(String millis) {
+        // BigDecimal does not accept decimal commas, only decimal periods
+        BigDecimal duration = new BigDecimal(millis.replace(",", "."));
+        duration = duration.movePointRight(3);
         // Round down to avoid TimeWarpExceptions when events are spaced close together
         duration = duration.setScale(0, RoundingMode.DOWN);
         return duration;

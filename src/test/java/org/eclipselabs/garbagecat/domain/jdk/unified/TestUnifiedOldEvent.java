@@ -45,7 +45,7 @@ public class TestUnifiedOldEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 1 * 1024, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 1 * 1024, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 7 * 1024, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 2, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 2969, event.getDuration());
     }
 
     public void testIdentityEventType() {

@@ -44,7 +44,7 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 132375, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 132527, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 557056, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 22, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 22521, event.getDuration());
     }
 
     public void testLogLineWhitespaceAtEnd() {
@@ -67,7 +67,7 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 565806, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 699071, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 699072, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 956, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 956194, event.getDuration());
     }
 
     public void testSizeWithNineTensPlacesLogLine() {
@@ -83,7 +83,7 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 119561147 - 61139904, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 80396669 - 20643840, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 129092672 - 67413056, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 3899, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 3899346, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 6640, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 389, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 1707, event.getParallelism());
@@ -104,7 +104,7 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 1226834 - 1226834, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 17795 - 17779, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 6029312 - 1835008, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 14, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 14491, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 4, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 400, event.getParallelism());
@@ -125,7 +125,7 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 673650 - 649034, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 138909 - 114285, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 4019712 - 1223168, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 71, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 71141, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 24, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 8, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 300, event.getParallelism());
@@ -146,7 +146,7 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 1118082 - 1048576, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 201204 - 131690, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 4019712 - 1223168, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 65, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 65742, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 13, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 7, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 186, event.getParallelism());
@@ -167,7 +167,7 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 773083 - 0, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 773083 - 0, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 6287872 - 1569280, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 221, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 221706, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 76, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 22, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 346, event.getParallelism());
@@ -189,7 +189,7 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 4407360 - 1475708, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 2982516 - 47669, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 6233088 - 1514496, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 263, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 263594, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 86, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 27, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 319, event.getParallelism());
@@ -210,7 +210,7 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 2900456 - 553672, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 2372732 - 22188, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 6191104 - 1472512, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 166, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 166827, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 58, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 17, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 342, event.getParallelism());
@@ -232,7 +232,7 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 1220565 - 335699, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 918194 - 33192, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 1287680 - 397312, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 24, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 24342, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 7, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 3, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 234, event.getParallelism());
@@ -254,7 +254,7 @@ public class TestParallelScavengeEvent extends TestCase {
         Assert.assertEquals("Old begin size not parsed correctly.", 1271095 - 385537, event.getOldOccupancyInit());
         Assert.assertEquals("Old end size not parsed correctly.", 1275901 - 385537, event.getOldOccupancyEnd());
         Assert.assertEquals("Old allocation size not parsed correctly.", 1288192 - 397824, event.getOldSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 167, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 167461, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 24, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 17, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 142, event.getParallelism());

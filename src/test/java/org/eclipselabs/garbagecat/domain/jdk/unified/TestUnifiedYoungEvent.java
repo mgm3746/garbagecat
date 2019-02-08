@@ -46,7 +46,7 @@ public class TestUnifiedYoungEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 32 * 1024, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 12 * 1024, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 38 * 1024, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 1, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 1812, event.getDuration());
     }
 
     public void testIdentityEventType() {
@@ -96,7 +96,7 @@ public class TestUnifiedYoungEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 16 * 1024, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 10 * 1024, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 36 * 1024, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 0, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 940, event.getDuration());
     }
 
     public void testUnifiedYoungStandardLogging() {

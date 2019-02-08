@@ -370,10 +370,15 @@ public class Main {
                     bufferedWriter.write("NewRatio: " + jvmRun.getNewRatio() + Constants.LINE_SEPARATOR);
                 }
                 // Max heap occupancy.
-                bufferedWriter
-                        .write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K" + Constants.LINE_SEPARATOR);
+                if (jvmRun.getMaxHeapOccupancy() > 0) {
+                    bufferedWriter.write(
+                            "Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K" + Constants.LINE_SEPARATOR);
+                }
                 // Max heap space.
-                bufferedWriter.write("Max Heap Space: " + jvmRun.getMaxHeapSpace() + "K" + Constants.LINE_SEPARATOR);
+                if (jvmRun.getMaxHeapSpace() > 0) {
+                    bufferedWriter
+                            .write("Max Heap Space: " + jvmRun.getMaxHeapSpace() + "K" + Constants.LINE_SEPARATOR);
+                }
                 if (jvmRun.getMaxPermSpace() > 0) {
                     // Max perm occupancy.
                     bufferedWriter.write("Max Perm/Metaspace Occupancy: " + jvmRun.getMaxPermOccupancy() + "K"

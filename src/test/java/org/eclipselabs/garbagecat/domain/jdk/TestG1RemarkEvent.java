@@ -35,7 +35,7 @@ public class TestG1RemarkEvent extends TestCase {
                 G1RemarkEvent.match(logLine));
         G1RemarkEvent event = new G1RemarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 106129, event.getTimestamp());
-        Assert.assertEquals("Duration not parsed correctly.", 45, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 45017, event.getDuration());
     }
 
     public void TestG1RemarkPreprocessedEvent() {
@@ -57,7 +57,7 @@ public class TestG1RemarkEvent extends TestCase {
                 G1RemarkEvent.match(logLine));
         G1RemarkEvent event = new G1RemarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 35563088, event.getTimestamp());
-        Assert.assertEquals("Duration not parsed correctly.", 82, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 82721, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 37, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 8, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 463, event.getParallelism());

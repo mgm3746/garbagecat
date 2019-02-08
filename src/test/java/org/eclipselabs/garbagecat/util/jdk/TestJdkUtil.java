@@ -54,13 +54,13 @@ public class TestJdkUtil extends TestCase {
 
         String logLine1 = "test1";
         long timestamp1 = 10000L;
-        int duration1 = 500;
+        int duration1 = 500000;
         BlockingEvent priorEvent = new ParallelScavengeEvent(logLine1, timestamp1, duration1);
 
         // 1 second between GCs with duration of .5 seconds
         String logLine2 = "test2";
         long timestamp2 = 11000L;
-        int duration2 = 500;
+        int duration2 = 500000;
         BlockingEvent gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
 
         // Test boundary
@@ -69,7 +69,7 @@ public class TestJdkUtil extends TestCase {
                 JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
 
         // Test bottleneck
-        duration2 = 501;
+        duration2 = 501000;
         gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
         Assert.assertTrue("Event should have been flagged as a bottleneck.",
                 JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold));
@@ -80,13 +80,13 @@ public class TestJdkUtil extends TestCase {
 
         String logLine1 = "test1";
         long timestamp1 = 10000L;
-        int duration1 = 100;
+        int duration1 = 100000;
         BlockingEvent priorEvent = new ParallelScavengeEvent(logLine1, timestamp1, duration1);
 
         // 123 ms between GCs with duration of 33 ms
         String logLine2 = "test2";
         long timestamp2 = 10123L;
-        int duration2 = 33;
+        int duration2 = 33000;
         BlockingEvent gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
 
         // Test boundary
@@ -116,13 +116,13 @@ public class TestJdkUtil extends TestCase {
     public void testTimeWarp() {
         String logLine1 = "test1";
         long timestamp1 = 10000L;
-        int duration1 = 1000;
+        int duration1 = 1000000;
         BlockingEvent priorEvent = new ParallelScavengeEvent(logLine1, timestamp1, duration1);
 
         // 2nd event starts immediately after the first
         String logLine2 = "test2";
         long timestamp2 = 11000L;
-        int duration2 = 500;
+        int duration2 = 500000;
         BlockingEvent gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
 
         // Test boundary

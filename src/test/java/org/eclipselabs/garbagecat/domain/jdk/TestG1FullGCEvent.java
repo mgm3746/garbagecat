@@ -49,7 +49,7 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 0, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 1636, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 1636490, event.getDuration());
     }
 
     public void testTriggerAllocationFailure() {
@@ -66,7 +66,7 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 0, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 24199, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 24199045, event.getDuration());
     }
 
     public void testLogLinePreprocessedDetailsTriggerToSpaceExhausted() {
@@ -85,7 +85,7 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 0, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 5539, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 5539016, event.getDuration());
     }
 
     public void testLogLinePreprocessedDetailsNoTriggerPerm() {
@@ -104,7 +104,7 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 175031, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 175031, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 175104, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 3426, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 3426206, event.getDuration());
     }
 
     public void testLogLinePreprocessedDetailsPermNoSpaceAfterTriggerWithDatestamp() {
@@ -126,7 +126,7 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 1252884, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 1252884, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 2097152, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 40678, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 40678289, event.getDuration());
     }
 
     public void testLogLinePreprocessedDetailsTriggerMetadatGcThresholdMetaspace() {
@@ -146,7 +146,7 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 396834, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 324903, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1511424, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 5135, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 5135387, event.getDuration());
     }
 
     public void testLogLinePreprocessedDetailsTriggerLastDitchCollection2SpacesAfterTrigger() {
@@ -166,7 +166,7 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 324984, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 323866, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1511424, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 4462, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 4462862, event.getDuration());
     }
 
     public void testLogLinePreprocessedDetailsTriggerJvmTi() {
@@ -186,7 +186,7 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 323874, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 323874, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1511424, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 3895, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 3895477, event.getDuration());
     }
 
     public void testLogLinePreprocessedClassHistogram() {
@@ -205,7 +205,7 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 730823, event.getPermOccupancyInit());
         Assert.assertEquals("Perm gen end size not parsed correctly.", 730823, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 2097152, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 19818, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 19818562, event.getDuration());
     }
 
     public void testLogLinePreprocessedDetailsTriggerAllocationFailure() {
@@ -225,7 +225,7 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Metaspace begin size not parsed correctly.", 65867, event.getPermOccupancyInit());
         Assert.assertEquals("Metaspace end size not parsed correctly.", 65277, event.getPermOccupancyEnd());
         Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1112064, event.getPermSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 1182, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 1182163, event.getDuration());
     }
 
     public void testLogLinePreprocessedNoDetailsNoTrigger() {
@@ -239,6 +239,6 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Combined begin size not parsed correctly.", 1630 * 1024, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 1281 * 1024, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 3072 * 1024, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 4155, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 4155525, event.getDuration());
     }
 }

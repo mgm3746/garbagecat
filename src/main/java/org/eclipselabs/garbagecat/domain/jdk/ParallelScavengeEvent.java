@@ -83,7 +83,7 @@ public class ParallelScavengeEvent extends ParallelCollector
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -176,7 +176,7 @@ public class ParallelScavengeEvent extends ParallelCollector
             oldEnd = totalEnd - youngEnd;
             int totalAllocation = Integer.parseInt(matcher.group(23));
             oldAllocation = totalAllocation - youngAvailable;
-            duration = JdkMath.convertSecsToMillis(matcher.group(24)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(24)).intValue();
             if (matcher.group(27) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
                 timeReal = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
@@ -192,7 +192,7 @@ public class ParallelScavengeEvent extends ParallelCollector
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public ParallelScavengeEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

@@ -53,7 +53,7 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector implements UnifiedL
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in milliseconds (rounded).
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private int duration;
 
@@ -84,8 +84,8 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector implements UnifiedL
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                duration = JdkMath.roundMillis(matcher.group(11)).intValue();
-                timestamp = endTimestamp - duration;
+                duration = JdkMath.convertMillisToMicros(matcher.group(11)).intValue();
+                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             }
         }
     }
@@ -98,7 +98,7 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector implements UnifiedL
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in milliseconds.
+     *            The elapsed clock time for the GC event in microseconds.
      */
     public UnifiedCmsInitialMarkEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;

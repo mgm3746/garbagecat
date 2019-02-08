@@ -38,7 +38,7 @@ public class TestCmsInitialMarkEvent extends TestCase {
                 CmsInitialMarkEvent.match(logLine));
         CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 251763, event.getTimestamp());
-        Assert.assertEquals("Duration not parsed correctly.", 17, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 17443, event.getDuration());
     }
 
     public void testLogLineWhitespaceAtEnd() {
@@ -54,7 +54,7 @@ public class TestCmsInitialMarkEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as CMS Initial Mark event.", CmsInitialMarkEvent.match(logLine));
         CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 251763, event.getTimestamp());
-        Assert.assertEquals("Duration not parsed correctly.", 17, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 17443, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 2, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
@@ -68,7 +68,7 @@ public class TestCmsInitialMarkEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 8722, event.getTimestamp());
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK));
-        Assert.assertEquals("Duration not parsed correctly.", 15, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 15789, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 6, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 300, event.getParallelism());
@@ -82,7 +82,7 @@ public class TestCmsInitialMarkEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 3065, event.getTimestamp());
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK));
-        Assert.assertEquals("Duration not parsed correctly.", 9, event.getDuration());
+        Assert.assertEquals("Duration not parsed correctly.", 9198, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 3, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 300, event.getParallelism());
