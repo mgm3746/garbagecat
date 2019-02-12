@@ -1,0 +1,3 @@
+[69.644s][info][gc,start     ] GC(2582) Pause Final Update Refs
+[69.644s][info][gc,task      ] GC(2582) Using 2 of 4 workers for final reference update
+[69.644s][info][gc           ] GC(2582) Pause Final Update Refs 0.302ms

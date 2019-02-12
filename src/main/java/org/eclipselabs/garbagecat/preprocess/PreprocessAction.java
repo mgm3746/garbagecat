@@ -13,7 +13,7 @@
 package org.eclipselabs.garbagecat.preprocess;
 
 /**
- * Base preprocessing action.
+ * Base preprocessing action: (1) Separate entangled logging. (2) Condense multiple lines to a single line.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 

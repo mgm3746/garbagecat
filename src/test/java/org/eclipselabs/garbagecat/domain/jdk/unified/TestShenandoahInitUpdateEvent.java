@@ -80,4 +80,13 @@ public class TestShenandoahInitUpdateEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".",
                 ShenandoahInitUpdateEvent.match(logLine));
     }
+
+    public void testLogLineDetailed() {
+        String logLine = "[69.612s][info][gc           ] GC(2582) Pause Init Update Refs 0.036ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".",
+                ShenandoahInitUpdateEvent.match(logLine));
+        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 69612 - 0, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 36, event.getDuration());
+    }
 }

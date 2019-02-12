@@ -45,7 +45,7 @@ public class ShenandoahCancellingGcEvent extends ShenandoahCollector
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc\\] Cancelling GC: Stopping VM[ ]*$";
+            + "s\\]\\[info\\]\\[gc[ ]{0,11}\\] Cancelling GC: Stopping VM[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 

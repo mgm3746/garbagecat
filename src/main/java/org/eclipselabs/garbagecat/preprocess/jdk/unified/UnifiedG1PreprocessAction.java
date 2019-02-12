@@ -247,7 +247,7 @@ public class UnifiedG1PreprocessAction implements PreprocessAction {
     }
 
     public String getName() {
-        return JdkUtil.PreprocessActionType.G1.toString();
+        return JdkUtil.PreprocessActionType.UNIFIED_G1.toString();
     }
 
     /**

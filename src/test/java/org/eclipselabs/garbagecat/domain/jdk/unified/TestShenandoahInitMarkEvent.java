@@ -105,5 +105,16 @@ public class TestShenandoahInitMarkEvent extends TestCase {
                 ShenandoahInitMarkEvent.match(logLine));
         ShenandoahInitMarkEvent event = new ShenandoahInitMarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 11006 - 0, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 266, event.getDuration());
+    }
+
+    public void testLogLineDetailed() {
+        String logLine = "[41.893s][info][gc           ] GC(1500) Pause Init Mark (update refs) "
+                + "(process weakrefs) 0.295ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".",
+                ShenandoahInitMarkEvent.match(logLine));
+        ShenandoahInitMarkEvent event = new ShenandoahInitMarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 41893 - 0, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 295, event.getDuration());
     }
 }

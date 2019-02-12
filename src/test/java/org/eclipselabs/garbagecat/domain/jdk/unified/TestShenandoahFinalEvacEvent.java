@@ -80,4 +80,13 @@ public class TestShenandoahFinalEvacEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".",
                 ShenandoahFinalEvacEvent.match(logLine));
     }
+
+    public void testLogLineDetailed() {
+        String logLine = "[41.912s][info][gc           ] GC(1500) Pause Final Evac 0.022ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".",
+                ShenandoahFinalEvacEvent.match(logLine));
+        ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 41912 - 0, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 22, event.getDuration());
+    }
 }

@@ -111,4 +111,17 @@ public class TestShenandoahConcurrentEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
                 ShenandoahConcurrentEvent.match(logLine));
     }
+
+    public void testLoggingDetailsResetNoSizes() {
+        String logLine = "[41.892s][info][gc,start     ] GC(1500) Concurrent reset";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
+                ShenandoahConcurrentEvent.match(logLine));
+    }
+
+    public void testLoggingDetailsReset() {
+        String logLine = "[41.893s][info][gc           ] GC(1500) Concurrent reset 50M->50M(64M) 0.126ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
+                ShenandoahConcurrentEvent.match(logLine));
+    }
+
 }

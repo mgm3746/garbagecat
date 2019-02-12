@@ -1,0 +1,3 @@
+[69.612s][info][gc,start     ] GC(2582) Pause Init Update Refs
+[69.612s][info][gc,ergo      ] GC(2582) Pacer for Update Refs. Used: 49M, Free: 11M, Non-Taxable: 1M, Alloc Tax Rate: 5.4x
+[69.612s][info][gc           ] GC(2582) Pause Init Update Refs 0.036ms

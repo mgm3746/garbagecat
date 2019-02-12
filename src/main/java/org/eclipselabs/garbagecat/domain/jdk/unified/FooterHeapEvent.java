@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import java.util.regex.Pattern;
+
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -29,6 +31,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) G1:
+ * </p>
+ * 
  * <pre>
  * [25.016s][info][gc,heap,exit  ] Heap
  * [25.016s][info][gc,heap,exit  ]  garbage-first heap   total 59392K, used 38015K [0x00000000fc000000, 0x0000000100000000)
@@ -37,43 +43,34 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * [25.016s][info][gc,heap,exit  ]   class space    used 909K, capacity 995K, committed 1024K, reserved 1048576K
  * </pre>
  * 
+ * <p>
+ * 2) Shenandoah:
+ * </p>
+ * 
+ * <pre>
+ * [69.946s][info][gc,heap,exit ] Heap
+ * [69.946s][info][gc,heap,exit ] Shenandoah Heap
+ * [69.946s][info][gc,heap,exit ]  65536K total, 65536K committed, 55031K used
+ * [69.946s][info][gc,heap,exit ]  256 x 256K regions
+ * [69.946s][info][gc,heap,exit ] Status: cancelled
+ * [69.946s][info][gc,heap,exit ] Reserved region:
+ * [69.946s][info][gc,heap,exit ]  - [0x00000000fc000000, 0x0000000100000000)
+ * [69.946s][info][gc,heap,exit ]
+ * [69.946s][info][gc,heap,exit ]  Metaspace       used 4066K, capacity 7271K, committed 7296K, reserved 1056768K
+ * [69.946s][info][gc,heap,exit ]   class space    used 299K, capacity 637K, committed 640K, reserved 1048576K
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
 public class FooterHeapEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent {
 
     /**
-     * Regular expression for heap line.
+     * Regular expression defining the logging.
      */
-    private static final String REGEX_HEAP = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap,exit  \\] Heap$";
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap,exit[ ]{1,2}\\].*$";
 
-    /**
-     * Regular expression for garbage-first line.
-     */
-    private static final String REGEX_GARBAGE_FIRST = "^\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc,heap,exit  \\]  garbage-first heap   total " + JdkRegEx.SIZE + ", used "
-            + JdkRegEx.SIZE + " \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)$";
-
-    /**
-     * Regular expression for region line.
-     */
-    private static final String REGEX_REGION = "^\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc,heap,exit  \\]   region size " + JdkRegEx.SIZE + ", \\d{1,2} young \\("
-            + JdkRegEx.SIZE + "\\), \\d{1} survivors \\(" + JdkRegEx.SIZE + "\\)$";
-
-    /**
-     * Regular expression for metaspace line.
-     */
-    private static final String REGEX_METASPACE = "^\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc,heap,exit  \\]  Metaspace       used " + JdkRegEx.SIZE + ", capacity "
-            + JdkRegEx.SIZE + ", committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$";
-
-    /**
-     * Regular expression for class line.
-     */
-    private static final String REGEX_CLASS = "^\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc,heap,exit  \\]   class space    used " + JdkRegEx.SIZE + ", capacity "
-            + JdkRegEx.SIZE + ", committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$";
+    private static final Pattern pattern = Pattern.compile(REGEX);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -116,7 +113,6 @@ public class FooterHeapEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return (logLine.matches(REGEX_HEAP) || logLine.matches(REGEX_GARBAGE_FIRST) || logLine.matches(REGEX_REGION)
-                || logLine.matches(REGEX_METASPACE) || logLine.matches(REGEX_CLASS));
+        return pattern.matcher(logLine).matches();
     }
 }

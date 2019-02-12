@@ -76,10 +76,10 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector implements Un
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc(,start)?[ ]{0,11}\\] "
             + JdkRegEx.GC_EVENT_NUMBER + " Concurrent (reset|marking( \\(update refs\\))?( \\(process weakrefs\\))?|"
-            + "precleaning|evacuation|update references|cleanup) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+            + "precleaning|evacuation|update references|cleanup)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 

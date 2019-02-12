@@ -85,7 +85,7 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc[ ]{0,11}\\] "
             + JdkRegEx.GC_EVENT_NUMBER + " Pause Init Mark( \\(update refs\\))?( \\(process weakrefs\\))? "
             + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 

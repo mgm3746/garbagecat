@@ -62,6 +62,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcYoungEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.FooterHeapEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.FooterStatsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.HeapAddressEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.HeapRegionSizeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahCancellingGcEvent;
@@ -118,7 +119,7 @@ public class JdkUtil {
         //
         USING_SERIAL, USING_PARALLEL, USING_CMS, USING_G1, USING_SHENANDOAH,
         //
-        FOOTER_HEAP, HEAP_REGION_SIZE, HEAP_ADDRESS,
+        FOOTER_HEAP, FOOTER_STATS, HEAP_REGION_SIZE, HEAP_ADDRESS,
         // serial
         SERIAL_NEW, SERIAL_OLD,
         // parallel
@@ -141,7 +142,9 @@ public class JdkUtil {
      * Defined preprocessing actions.
      */
     public enum PreprocessActionType {
-        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, DATE_STAMP, G1, CMS, PARALLEL, SERIAL, UNIFIED_G1
+        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, DATE_STAMP, G1, CMS, PARALLEL, SERIAL, SHENANDOAH,
+        //
+        UNIFIED_G1
     };
 
     /**
@@ -183,6 +186,8 @@ public class JdkUtil {
         // Unified (alphabetical)
         if (FooterHeapEvent.match(logLine))
             return LogEventType.FOOTER_HEAP;
+        if (FooterStatsEvent.match(logLine))
+            return LogEventType.FOOTER_STATS;
         if (HeapAddressEvent.match(logLine))
             return LogEventType.HEAP_ADDRESS;
         if (HeapRegionSizeEvent.match(logLine))
@@ -344,6 +349,9 @@ public class JdkUtil {
         // Unified (alphabetical)
         case FOOTER_HEAP:
             event = new FooterHeapEvent(logLine);
+            break;
+        case FOOTER_STATS:
+            event = new FooterStatsEvent(logLine);
             break;
         case HEAP_ADDRESS:
             event = new HeapAddressEvent(logLine);
@@ -678,6 +686,7 @@ public class JdkUtil {
 
         case FLS_STATISTICS:
         case FOOTER_HEAP:
+        case FOOTER_STATS:
         case GC_LOCKER:
         case GC_OVERHEAD_LIMIT:
         case G1_CONCURRENT:
@@ -981,6 +990,7 @@ public class JdkUtil {
         case CLASS_UNLOADING:
         case FLS_STATISTICS:
         case FOOTER_HEAP:
+        case FOOTER_STATS:
         case GC_LOCKER:
         case GC_OVERHEAD_LIMIT:
         case HEADER_COMMAND_LINE_FLAGS:
@@ -1018,6 +1028,7 @@ public class JdkUtil {
                 switch (eventType) {
                 case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
                 case FOOTER_HEAP:
+                case FOOTER_STATS:
                 case HEAP_ADDRESS:
                 case HEAP_REGION_SIZE:
                 case SHENANDOAH_CANCELLING_GC:
