@@ -12,11 +12,16 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -27,7 +32,7 @@ import junit.framework.TestCase;
  */
 public class TestFooterStatsEvent extends TestCase {
 
-    public void testLineHeap() {
+    public void testLine() {
         String logLine = "[69.946s][info][gc,stats     ]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".",
                 FooterStatsEvent.match(logLine));
@@ -61,5 +66,20 @@ public class TestFooterStatsEvent extends TestCase {
         eventTypes.add(LogEventType.FOOTER_STATS);
         Assert.assertTrue(JdkUtil.LogEventType.FOOTER_STATS.toString() + " not indentified as unified.",
                 JdkUtil.isUnifiedLogging(eventTypes));
+    }
+
+    /**
+     * Test logging.
+     */
+    public void testUptimeMillis() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset165.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 0, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
     }
 }

@@ -25,14 +25,25 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Heap region size information printed at the beginning gc logging with unified detailed logging
- * (<code>-Xlog:gc*:file=&lt;file&gt;</code>).
+ * Heap region size information printed at the beginning gc logging.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) With <code>-Xlog:gc*:file=&lt;file&gt;</code>:
+ * </p>
+ * 
  * <pre>
  * [0.003s][info][gc,heap] Heap region size: 1M
+ * </pre>
+ * 
+ * <p>
+ * 2) Shenandoah with <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>.
+ * </p>
+ * 
+ * <pre>
+ * [2019-02-05T14:47:31.091-0200][3ms] Regions: 2606 x 512K
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -43,8 +54,9 @@ public class HeapRegionSizeEvent implements UnifiedLogging, LogEvent, ThrowAwayE
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap\\] Heap region size: "
-            + JdkRegEx.SIZE + "$";
+    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|("
+            + JdkRegEx.TIMESTAMP_MILLIS
+            + "))\\](\\[info\\])?(\\[gc,heap\\])? (Heap )?[r|R]egion(s)?( size)?:( \\d{1,4} x)? " + JdkRegEx.SIZE + "$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 

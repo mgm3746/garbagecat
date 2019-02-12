@@ -89,4 +89,13 @@ public class TestShenandoahInitUpdateEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 69612 - 0, event.getTimestamp());
         Assert.assertEquals("Duration not parsed correctly.", 36, event.getDuration());
     }
+
+    public void testLogLineUptimeMillis() {
+        String logLine = "[2019-02-05T14:47:34.229-0200][3141ms] GC(0) Pause Init Update Refs 0.092ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".",
+                ShenandoahInitUpdateEvent.match(logLine));
+        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 3141 - 0, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 92, event.getDuration());
+    }
 }

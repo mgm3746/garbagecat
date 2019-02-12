@@ -73,4 +73,11 @@ public class TestHeapAddressEvent extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not parsed.",
                 JdkUtil.parseLogLine(logLine) instanceof HeapAddressEvent);
     }
+
+    public void testTimeUptimemillis() {
+        String logLine = "[2019-02-05T14:47:31.092-0200][4ms] Heap address: 0x00000000ae900000, size: 1303 MB, "
+                + "Compressed Oops mode: 32-bit";
+        Assert.assertTrue(JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not parsed.",
+                JdkUtil.parseLogLine(logLine) instanceof HeapAddressEvent);
+    }
 }

@@ -118,4 +118,12 @@ public class TestShenandoahFinalMarkEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 429, event.getDuration());
     }
 
+    public void testLogLineUptimeMillis() {
+        String logLine = "[2019-02-05T14:47:34.202-0200][3114ms] GC(0) Pause Final Mark (process weakrefs) 2.517ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".",
+                ShenandoahFinalMarkEvent.match(logLine));
+        ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 3114 - 2, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 2517, event.getDuration());
+    }
 }

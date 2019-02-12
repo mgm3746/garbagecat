@@ -72,4 +72,11 @@ public class TestShenandoahCancellingGcEvent extends TestCase {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CANCELLING_GC.toString() + ".",
                 ShenandoahCancellingGcEvent.match(logLine));
     }
+
+    public void testUptimeMillis() {
+        String logLine = "[2019-02-05T15:10:08.997-0200][1357909ms] Cancelling GC: Stopping VM";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CANCELLING_GC.toString() + ".",
+                ShenandoahCancellingGcEvent.match(logLine));
+    }
 }

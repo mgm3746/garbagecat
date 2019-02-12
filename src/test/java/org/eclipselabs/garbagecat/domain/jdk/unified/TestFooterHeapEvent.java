@@ -33,6 +33,12 @@ public class TestFooterHeapEvent extends TestCase {
                 FooterHeapEvent.match(logLine));
     }
 
+    public void testLineHeapUptimeMillis() {
+        String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] Heap";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
     public void testLineHeap1SpaceAfterExit() {
         String logLine = "[69.946s][info][gc,heap,exit ] Heap";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
@@ -82,8 +88,20 @@ public class TestFooterHeapEvent extends TestCase {
                 FooterHeapEvent.match(logLine));
     }
 
+    public void testLineShenandoahUptimeMillis() {
+        String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] Shenandoah Heap";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
     public void testLineShenandoahTotalCommittedUsed() {
         String logLine = "[69.946s][info][gc,heap,exit ]  65536K total, 65536K committed, 55031K used";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineShenandoahTotalCommittedUsedUptimeMillis() {
+        String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]  1334272K total, 107008K committed, 80727K used";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
                 FooterHeapEvent.match(logLine));
     }
@@ -94,8 +112,20 @@ public class TestFooterHeapEvent extends TestCase {
                 FooterHeapEvent.match(logLine));
     }
 
+    public void testLineShenandoahRegionsUptimeMillis() {
+        String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]  2606 x 512K regions";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
     public void testLineStatus() {
         String logLine = "[69.946s][info][gc,heap,exit ] Status: cancelled";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineStatusUptimeMillis() {
+        String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] Status: cancelled";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
                 FooterHeapEvent.match(logLine));
     }
@@ -106,8 +136,20 @@ public class TestFooterHeapEvent extends TestCase {
                 FooterHeapEvent.match(logLine));
     }
 
+    public void testLineReservedRegionUptimeMillis() {
+        String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] Reserved region:";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
     public void testLineReservedRegionAddress() {
         String logLine = "[69.946s][info][gc,heap,exit ]  - [0x00000000fc000000, 0x0000000100000000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineReservedRegionAddressUptimeMillis() {
+        String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]  - [0x00000000ae900000, 0x0000000100000000) ";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
                 FooterHeapEvent.match(logLine));
     }
@@ -131,6 +173,13 @@ public class TestFooterHeapEvent extends TestCase {
                 FooterHeapEvent.match(logLine));
     }
 
+    public void testLineMetaspaceUptimeMillis() {
+        String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]  Metaspace       used 80841K, capacity 89293K, "
+                + "committed 89600K, reserved 331776K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
     public void testLineMetaspace1SpaceAfterExit() {
         String logLine = "[69.946s][info][gc,heap,exit ]  Metaspace       used 4066K, capacity 7271K, committed "
                 + "7296K, reserved 1056768K";
@@ -141,6 +190,13 @@ public class TestFooterHeapEvent extends TestCase {
     public void testLineClass() {
         String logLine = "[25.016s][info][gc,heap,exit  ]   class space    used 909K, capacity 995K, committed 1024K, "
                 + "reserved 1048576K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineClassUptimeMillis() {
+        String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]   class space    used 10193K, capacity 13027K, "
+                + "committed 13056K, reserved 253952K";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
                 FooterHeapEvent.match(logLine));
     }

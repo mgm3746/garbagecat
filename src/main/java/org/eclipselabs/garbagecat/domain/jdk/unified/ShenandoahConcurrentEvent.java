@@ -33,7 +33,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <p>
- * Standard logging:
+ * 1) Standard logging:
  * </p>
  * 
  * <pre>
@@ -68,6 +68,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * [0.528s][info][gc] GC(1) Concurrent marking 16M-&gt;17M(64M) 7.045ms
  * </pre>
  * 
+ * <p>
+ * 2) Shenandoah with <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>.
+ * </p>
+ * 
+ * <pre>
+ * [2019-02-05T14:47:34.156-0200][3068ms] GC(0) Concurrent reset
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -76,8 +84,9 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector implements Un
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc(,start)?[ ]{0,11}\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Concurrent (reset|marking( \\(update refs\\))?( \\(process weakrefs\\))?|"
+    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|("
+            + JdkRegEx.TIMESTAMP_MILLIS + "))\\](\\[info\\])?(\\[gc(,start)?[ ]{0,11}\\])?( " + JdkRegEx.GC_EVENT_NUMBER
+            + ")? Concurrent (reset|uncommit|marking( \\(update refs\\))?( \\(process weakrefs\\))?|"
             + "precleaning|evacuation|update references|cleanup)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")?[ ]*$";
 

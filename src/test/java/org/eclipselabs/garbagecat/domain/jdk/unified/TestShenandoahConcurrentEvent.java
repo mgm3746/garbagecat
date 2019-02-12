@@ -124,4 +124,21 @@ public class TestShenandoahConcurrentEvent extends TestCase {
                 ShenandoahConcurrentEvent.match(logLine));
     }
 
+    public void testLoggingUptimeMillis() {
+        String logLine = "[2019-02-05T14:47:34.156-0200][3068ms] GC(0) Concurrent reset";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
+                ShenandoahConcurrentEvent.match(logLine));
+    }
+
+    public void testLoggingUncommitUptimeMillis() {
+        String logLine = "[2019-02-05T14:52:31.138-0200][300050ms] Concurrent uncommit 874M->874M(1303M) 5.654ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
+                ShenandoahConcurrentEvent.match(logLine));
+    }
+
+    public void testLoggingUncommitUptimeMillisNoGcEventNumber() {
+        String logLine = "[2019-02-05T14:52:31.132-0200][300044ms] Concurrent uncommit";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
+                ShenandoahConcurrentEvent.match(logLine));
+    }
 }

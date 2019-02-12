@@ -62,4 +62,10 @@ public class TestHeapRegionSizeEvent extends TestCase {
         Assert.assertTrue(JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " not indentified as unified.",
                 JdkUtil.isUnifiedLogging(eventTypes));
     }
+
+    public void testUptimeMillis() {
+        String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Regions: 2606 x 512K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + ".",
+                HeapRegionSizeEvent.match(logLine));
+    }
 }

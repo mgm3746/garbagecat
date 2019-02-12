@@ -33,8 +33,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) With <code>-Xlog:gc*:file=&lt;file&gt;</code>:
+ * </p>
+ * 
  * <pre>
  * [[0.001s][info][gc] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are observed on class-unloading sensitive workloads
+ * </pre>
+ * 
+ * <p>
+ * 2) With <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>.
+ * </p>
+ * 
+ * <pre>
+ * [2019-02-05T14:47:31.090-0200][2ms] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are observed on class-unloading sensitive workloads
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -46,8 +58,9 @@ public class ShenandoahConsiderClassUnloadingConcMarkEvent extends ShenandoahCol
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc\\] Consider -XX:\\+ClassUnloadingWithConcurrentMark if large pause times are "
+    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|("
+            + JdkRegEx.TIMESTAMP_MILLIS
+            + "))\\](\\[info\\])?(\\[gc\\])? Consider -XX:\\+ClassUnloadingWithConcurrentMark if large pause times are "
             + "observed on class-unloading sensitive workloads[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
@@ -75,7 +88,12 @@ public class ShenandoahConsiderClassUnloadingConcMarkEvent extends ShenandoahCol
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                if (matcher.group(12).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                    //
+                    timestamp = Long.parseLong(matcher.group(16));
+                } else {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                }
             }
         }
     }

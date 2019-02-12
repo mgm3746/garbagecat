@@ -25,11 +25,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Heap address information printed at the beginning gc logging with unified detailed logging
- * (<code>-Xlog:gc*:file=&lt;file&gt;</code>).
+ * Heap address information printed at the beginning of gc logging.
  * </p>
  * 
  * <h3>Example Logging</h3>
+ * 
+ * <p>
+ * 1) With <code>-Xlog:gc*:file=&lt;file&gt;</code>:
+ * </p>
  * 
  * <pre>
  * [0.004s][info][gc,heap,coops] Heap address: 0x00000000fc000000, size: 64 MB, Compressed Oops mode: 32-bit
@@ -37,6 +40,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <pre>
  * [0.019s][info][gc,heap,coops] Heap address: 0x00000006c2800000, size: 4056 MB, Compressed Oops mode: Zero based, Oop shift amount: 3
+ * </pre>
+ * 
+ * <p>
+ * 2) With <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>:
+ * </p>
+ * 
+ * <pre>
+ * [2019-02-05T14:47:31.092-0200][4ms] Heap address: 0x00000000ae900000, size: 1303 MB, Compressed Oops mode: 32-bit
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -47,8 +58,8 @@ public class HeapAddressEvent implements UnifiedLogging, LogEvent, ThrowAwayEven
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap,coops\\] Heap address: "
-            + JdkRegEx.ADDRESS
+    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|("
+            + JdkRegEx.TIMESTAMP_MILLIS + "))\\](\\[info\\])?(\\[gc,heap,coops\\])? Heap address: " + JdkRegEx.ADDRESS
             + ", size: \\d{1,8} MB, Compressed Oops mode: (32-bit|Zero based, Oop shift amount: \\d)$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);

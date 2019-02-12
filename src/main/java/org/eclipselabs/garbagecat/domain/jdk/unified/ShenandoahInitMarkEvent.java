@@ -61,6 +61,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *[10.453s][info][gc] GC(279) Pause Init Mark (update refs) 0.244ms
  * </pre>
  * 
+ * <p>
+ * 4) With <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>:
+ * </p>
+ * 
+ * <pre>
+ * [2019-02-05T14:47:34.178-0200][3090ms] GC(0) Pause Init Mark (process weakrefs) 2.904ms
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -85,9 +93,9 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc[ ]{0,11}\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Init Mark( \\(update refs\\))?( \\(process weakrefs\\))? "
-            + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|("
+            + JdkRegEx.TIMESTAMP_MILLIS + "))\\](\\[info\\]\\[gc[ ]{0,11}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+            + " Pause Init Mark( \\(update refs\\))?( \\(process weakrefs\\))? " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -103,8 +111,13 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                duration = JdkMath.convertMillisToMicros(matcher.group(4)).intValue();
+                long endTimestamp;
+                if (matcher.group(12).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(16));
+                } else {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                }
+                duration = JdkMath.convertMillisToMicros(matcher.group(20)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             }
         }

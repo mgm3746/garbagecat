@@ -12,8 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import java.util.regex.Pattern;
-
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -30,6 +28,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <h3>Example Logging</h3>
+ * 
+ * <p>
+ * 1) Standard format:
+ * </p>
  * 
  * <pre>
  * [69.946s][info][gc,stats     ] 
@@ -149,17 +151,234 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * [69.948s][info][gc,stats     ]   Allocation tracing is disabled, use -XX:+ShenandoahAllocationTrace to enable.
  * </pre>
  * 
+ * <p>
+ * 2) With <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>:
+ * </p>
+ * 
+ * <pre>
+ * [2019-02-05T15:10:08.998-0200][1357910ms] GC STATISTICS:
+ * [2019-02-05T15:10:08.998-0200][1357910ms]   "(G)" (gross) pauses include VM time: time to notify and block threads, do the pre-
+ * [2019-02-05T15:10:08.998-0200][1357910ms]         and post-safepoint housekeeping. Use -XX:+PrintSafepointStatistics to dissect.
+ * [2019-02-05T15:10:08.998-0200][1357910ms]   "(N)" (net) pauses are the times spent in the actual GC code.
+ * [2019-02-05T15:10:08.998-0200][1357910ms]   "a" is average time for each phase, look at levels to see if average makes sense.
+ * [2019-02-05T15:10:08.998-0200][1357910ms]   "lvls" are quantiles: 0% (minimum), 25%, 50% (median), 75%, 100% (maximum).
+ * [2019-02-05T15:10:08.998-0200][1357910ms] 
+ * [2019-02-05T15:10:08.998-0200][1357910ms] Total Pauses (G)            =     0.46 s (a =     3009 us) (n =   152) (lvls, us =      189,     1367,     2598,     4141,    14005)
+ * [2019-02-05T15:10:08.998-0200][1357910ms] Total Pauses (N)            =     0.36 s (a =     2386 us) (n =   152) (lvls, us =       57,      916,     1973,     3203,    11509)
+ * [2019-02-05T15:10:08.998-0200][1357910ms] Pause Init Mark (G)         =     0.29 s (a =     4199 us) (n =    68) (lvls, us =     1406,     2715,     3516,     4863,    13992)
+ * [2019-02-05T15:10:08.998-0200][1357910ms] Pause Init Mark (N)         =     0.24 s (a =     3564 us) (n =    68) (lvls, us =     1172,     2266,     2949,     4160,    11502)
+ * [2019-02-05T15:10:08.998-0200][1357910ms]   Accumulate Stats          =     0.00 s (a =       19 us) (n =    68) (lvls, us =        5,       12,       17,       23,       54)
+ * [2019-02-05T15:10:08.998-0200][1357910ms]   Make Parsable             =     0.00 s (a =       19 us) (n =    68) (lvls, us =        5,       10,       14,       19,      158)
+ * [2019-02-05T15:10:08.998-0200][1357910ms]   Clear Liveness            =     0.01 s (a =      190 us) (n =    68) (lvls, us =       73,      121,      166,      219,      738)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]   Scan Roots                =     0.21 s (a =     3059 us) (n =    68) (lvls, us =     1016,     1855,     2539,     3555,    10222)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     S: Thread Roots         =     0.01 s (a =      188 us) (n =    68) (lvls, us =       65,      102,      131,      170,     1230)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     S: String Table Roots   =     0.05 s (a =      705 us) (n =    68) (lvls, us =      242,      426,      576,      832,     1948)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     S: Universe Roots       =     0.00 s (a =        3 us) (n =    68) (lvls, us =        1,        2,        3,        4,       11)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     S: JNI Roots            =     0.00 s (a =        3 us) (n =    68) (lvls, us =        1,        2,        2,        3,       29)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     S: JNI Weak Roots       =     0.02 s (a =      232 us) (n =    68) (lvls, us =        0,      125,      219,      307,      684)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     S: Synchronizer Roots   =     0.00 s (a =        0 us) (n =    68) (lvls, us =        0,        0,        0,        0,        1)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     S: Management Roots     =     0.00 s (a =        3 us) (n =    68) (lvls, us =        1,        2,        2,        4,        7)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     S: System Dict Roots    =     0.00 s (a =       25 us) (n =    68) (lvls, us =        8,       14,       20,       28,      128)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     S: CLDG Roots           =     0.05 s (a =      792 us) (n =    68) (lvls, us =      299,      494,      641,      865,     2989)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     S: JVMTI Roots          =     0.00 s (a =        1 us) (n =    68) (lvls, us =        0,        1,        1,        1,        2)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]   Resize TLABs              =     0.00 s (a =       16 us) (n =    68) (lvls, us =        4,        9,       13,       17,      138)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Pause Final Mark (G)        =     0.14 s (a =     2125 us) (n =    68) (lvls, us =      420,     1016,     1465,     2617,     7942)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Pause Final Mark (N)        =     0.11 s (a =     1606 us) (n =    68) (lvls, us =      260,      613,     1191,     2109,     7431)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]   Finish Queues             =     0.05 s (a =      777 us) (n =    68) (lvls, us =       47,      154,      418,      926,     4835)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]   Weak References           =     0.01 s (a =      846 us) (n =    14) (lvls, us =      244,      410,      602,     1113,     1964)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     Process                 =     0.01 s (a =      840 us) (n =    14) (lvls, us =      240,      404,      598,     1113,     1953)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]   Complete Liveness         =     0.01 s (a =       96 us) (n =    68) (lvls, us =       24,       50,       69,      119,      431)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]   Prepare Evacuation        =     0.02 s (a =      240 us) (n =    68) (lvls, us =       91,      141,      197,      295,      881)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]   Initial Evacuation        =     0.01 s (a =      876 us) (n =     8) (lvls, us =      371,      418,      564,      895,     2090)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     E: Thread Roots         =     0.00 s (a =      350 us) (n =     8) (lvls, us =       41,       45,       88,      363,     1565)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     E: Code Cache Roots     =     0.00 s (a =      255 us) (n =     8) (lvls, us =       88,       93,      238,      357,      423)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Pause Init  Update Refs (G) =     0.01 s (a =      821 us) (n =     8) (lvls, us =      189,      193,      285,      803,     3564)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Pause Init  Update Refs (N) =     0.00 s (a =      115 us) (n =     8) (lvls, us =       56,       72,      111,      125,      210)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Pause Final Update Refs (G) =     0.02 s (a =     2569 us) (n =     8) (lvls, us =      771,      953,     1562,     2578,     5644)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Pause Final Update Refs (N) =     0.01 s (a =     1257 us) (n =     8) (lvls, us =      650,      803,     1133,     1328,     2061)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]   Update Roots              =     0.01 s (a =     1061 us) (n =     8) (lvls, us =      545,      691,      977,     1172,     1642)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     UR: Thread Roots        =     0.00 s (a =       94 us) (n =     8) (lvls, us =       37,       50,       81,      123,      172)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     UR: String Table Roots  =     0.00 s (a =      170 us) (n =     8) (lvls, us =      109,      109,      121,      197,      275)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     UR: Universe Roots      =     0.00 s (a =        1 us) (n =     8) (lvls, us =        1,        1,        1,        1,        1)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     UR: JNI Roots           =     0.00 s (a =        1 us) (n =     8) (lvls, us =        1,        1,        1,        1,        2)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     UR: JNI Weak Roots      =     0.00 s (a =       79 us) (n =     8) (lvls, us =       52,       55,       58,       94,      141)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     UR: Synchronizer Roots  =     0.00 s (a =        0 us) (n =     8) (lvls, us =        0,        0,        0,        0,        0)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     UR: Management Roots    =     0.00 s (a =        2 us) (n =     8) (lvls, us =        1,        1,        1,        1,        5)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     UR: System Dict Roots   =     0.00 s (a =        9 us) (n =     8) (lvls, us =        7,        7,        7,        9,       14)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     UR: CLDG Roots          =     0.00 s (a =      277 us) (n =     8) (lvls, us =      141,      154,      264,      334,      492)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     UR: JVMTI Roots         =     0.00 s (a =        1 us) (n =     8) (lvls, us =        0,        0,        0,        1,        1)
+ * [2019-02-05T15:10:08.999-0200][1357911ms]   Recycle                   =     0.00 s (a =       78 us) (n =     8) (lvls, us =       52,       55,       64,       66,      178)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Concurrent Reset            =     0.12 s (a =     1790 us) (n =    68) (lvls, us =      258,      977,     1465,     1895,    18874)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Concurrent Marking          =     2.92 s (a =    42992 us) (n =    68) (lvls, us =    20703,    34766,    39062,    50195,    84271)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Concurrent Precleaning      =     0.03 s (a =     1941 us) (n =    14) (lvls, us =      607,      625,     1113,     1445,     8060)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Concurrent Evacuation       =     0.06 s (a =     7618 us) (n =     8) (lvls, us =       93,      119,      516,     5176,    27570)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Concurrent Update Refs      =     0.18 s (a =    22825 us) (n =     8) (lvls, us =    14062,    14258,    18164,    25391,    42718)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Concurrent Cleanup          =     0.05 s (a =      614 us) (n =    76) (lvls, us =      215,      371,      471,      699,     2993)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Concurrent Uncommit         =     0.17 s (a =    34042 us) (n =     5) (lvls, us =     1445,     1445,     5391,     7812,    82719)
+ * [2019-02-05T15:10:08.999-0200][1357911ms] 
+ * [2019-02-05T15:10:08.999-0200][1357911ms] 
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Under allocation pressure, concurrent cycles may cancel, and either continue cycle
+ * [2019-02-05T15:10:08.999-0200][1357911ms] under stop-the-world pause or result in stop-the-world Full GC. Increase heap size,
+ * [2019-02-05T15:10:08.999-0200][1357911ms] tune GC heuristics, set more aggressive pacing delay, or lower allocation rate
+ * [2019-02-05T15:10:08.999-0200][1357911ms] to avoid Degenerated and Full GC cycles.
+ * [2019-02-05T15:10:08.999-0200][1357911ms] 
+ * [2019-02-05T15:10:08.999-0200][1357911ms]    68 successful concurrent GCs
+ * [2019-02-05T15:10:08.999-0200][1357911ms]       0 invoked explicitly
+ * [2019-02-05T15:10:08.999-0200][1357911ms] 
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     0 Degenerated GCs
+ * [2019-02-05T15:10:08.999-0200][1357911ms]       0 caused by allocation failure
+ * [2019-02-05T15:10:08.999-0200][1357911ms]       0 upgraded to Full GC
+ * [2019-02-05T15:10:08.999-0200][1357911ms] 
+ * [2019-02-05T15:10:08.999-0200][1357911ms]     0 Full GCs
+ * [2019-02-05T15:10:08.999-0200][1357911ms]       0 invoked explicitly
+ * [2019-02-05T15:10:08.999-0200][1357911ms]       0 caused by allocation failure
+ * [2019-02-05T15:10:08.999-0200][1357911ms]       0 upgraded from Degenerated GC
+ * [2019-02-05T15:10:08.999-0200][1357911ms] 
+ * [2019-02-05T15:10:08.999-0200][1357911ms] 
+ * [2019-02-05T15:10:08.999-0200][1357911ms] ALLOCATION PACING:
+ * [2019-02-05T15:10:08.999-0200][1357911ms] 
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Max pacing delay is set for 10 ms.
+ * [2019-02-05T15:10:08.999-0200][1357911ms] 
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Higher delay would prevent application outpacing the GC, but it will hide the GC latencies
+ * [2019-02-05T15:10:08.999-0200][1357911ms] from the STW pause times. Pacing affects the individual threads, and so it would also be
+ * [2019-02-05T15:10:08.999-0200][1357911ms] invisible to the usual profiling tools, but would add up to end-to-end application latency.
+ * [2019-02-05T15:10:08.999-0200][1357911ms] Raise max pacing delay with care.
+ * [2019-02-05T15:10:08.999-0200][1357911ms] 
+ * [2019-02-05T15:10:09.000-0200][1357912ms] Actual pacing delays histogram:
+ * [2019-02-05T15:10:09.000-0200][1357912ms] 
+ * [2019-02-05T15:10:09.000-0200][1357912ms]       From -         To         Count         Sum
+ * [2019-02-05T15:10:09.000-0200][1357912ms]       1 ms -       2 ms:           15           7 ms
+ * [2019-02-05T15:10:09.000-0200][1357912ms]       2 ms -       4 ms:           11          11 ms
+ * [2019-02-05T15:10:09.000-0200][1357912ms]       4 ms -       8 ms:           20          40 ms
+ * [2019-02-05T15:10:09.000-0200][1357912ms]       8 ms -      16 ms:          172         688 ms
+ * [2019-02-05T15:10:09.000-0200][1357912ms]      16 ms -      32 ms:           14         112 ms
+ * [2019-02-05T15:10:09.000-0200][1357912ms]                   Total:          232         858 ms
+ * [2019-02-05T15:10:09.000-0200][1357912ms] 
+ * [2019-02-05T15:10:09.000-0200][1357912ms] 
+ * [2019-02-05T15:10:09.000-0200][1357912ms] 
+ * [2019-02-05T15:10:09.000-0200][1357912ms]   Allocation tracing is disabled, use -XX:+ShenandoahAllocationTrace to enable.
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
 public class FooterStatsEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent {
 
     /**
-     * Regular expression defining the logging.
+     * Regular expression defining standard logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,stats[ ]{5}\\].*$";
-
-    private static final Pattern pattern = Pattern.compile(REGEX);
+    private static final String REGEX[] = {
+            //
+            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,stats[ ]{5}\\].*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] GC STATISTICS:$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\]   \"\\(G\\)\" \\(gross\\) pauses include VM time: time to notify and block threads, do the "
+                    + "pre-$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\]         and post-safepoint housekeeping. Use -XX:\\+PrintSafepointStatistics to dissect.$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\]   \"\\(N\\)\" \\(net\\) pauses are the times spent in the actual GC code.$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\]   \"a\" is average time for each phase, look at levels to see if average makes sense.$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\]   \"lvls\" are quantiles: 0% \\(minimum\\), 25%, 50% \\(median\\), 75%, 100% "
+                    + "\\(maximum\\).$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Total Pauses \\([G|N]\\).*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] Pause (Init[ ]{0,1}|Final) (Mark|Update Refs) \\([G|N]\\).*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   Accumulate Stats.*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   Make Parsable .*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   (Clear|Complete) Liveness.*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   (Scan|Update) Roots.*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\]     (S|E|UR): (Thread|String Table|Universe|JNI|JNI Weak|Synchronizer|Management|"
+                    + "System Dict|CLDG|JVMTI|Code Cache) Roots.*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   Resize TLABs.*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   Finish Queues.*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   Weak References.*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]     Process.*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\]   (Prepare|Initial) Evacuation.*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   Recycle.*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] Concurrent (Reset|Marking|Precleaning|Evacuation|Update Refs|Cleanup|Uncommit).*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] Under allocation pressure, concurrent cycles may cancel, and either continue cycle$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] under stop-the-world pause or result in stop-the-world Full GC. Increase heap size,$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] tune GC heuristics, set more aggressive pacing delay, or lower allocation rate$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] to avoid Degenerated and Full GC cycles.$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\][ ]{4,7}\\d{1,7} (successful concurrent|Degenerated|Full|upgraded to Full) GC(s)?$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\]       \\d{1,7} invoked explicitly$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\]       \\d{1,7} caused by allocation failure$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\]       \\d{1,7} upgraded from Degenerated GC$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] ALLOCATION PACING:$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] Max pacing delay is set for 10 ms.$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] Higher delay would prevent application outpacing the GC, but it will hide the GC latencies$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] from the STW pause times. Pacing affects the individual threads, and so it would also be$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] invisible to the usual profiling tools, but would add up to end-to-end application "
+                    + "latency.$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] Raise max pacing delay with care.$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Actual pacing delays histogram:$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\]       From -         To         Count         Sum$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\][ ]{6,7}\\d{1,2} ms -[ ]{6,7}\\d{1,2} ms:[ ]{10,11}\\d{1,3}[ ]{9,11}\\d{1,3} ms$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]                   Total:.*$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\]   Allocation tracing is disabled, use -XX:\\+ShenandoahAllocationTrace to enable.$"
+            //
+    };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -202,6 +421,13 @@ public class FooterStatsEvent implements UnifiedLogging, LogEvent, ThrowAwayEven
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        boolean match = false;
+        for (int i = 0; i < REGEX.length; i++) {
+            if (logLine.matches(REGEX[i])) {
+                match = true;
+                break;
+            }
+        }
+        return match;
     }
 }

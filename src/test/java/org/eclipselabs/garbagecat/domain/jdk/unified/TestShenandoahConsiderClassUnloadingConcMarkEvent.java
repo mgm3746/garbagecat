@@ -85,4 +85,16 @@ public class TestShenandoahConsiderClassUnloadingConcMarkEvent extends TestCase 
                         + JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString() + ".",
                 ShenandoahConsiderClassUnloadingConcMarkEvent.match(logLine));
     }
+
+    public void testLineTimeUptimemillis() {
+        String logLine = "[2019-02-05T14:47:31.090-0200][2ms] Consider -XX:+ClassUnloadingWithConcurrentMark if large "
+                + "pause times are observed on class-unloading sensitive workloads";
+        Assert.assertTrue(
+                "Log line not recognized as "
+                        + JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString() + ".",
+                ShenandoahConsiderClassUnloadingConcMarkEvent.match(logLine));
+        ShenandoahConsiderClassUnloadingConcMarkEvent event = new ShenandoahConsiderClassUnloadingConcMarkEvent(
+                logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 2, event.getTimestamp());
+    }
 }

@@ -19,79 +19,71 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * FOOTER_HEAP
+ * GC_INFO
  * </p>
  * 
  * <p>
- * Heap information printed at the end of gc logging with unified detailed logging
- * (<code>-Xlog:gc*:file=&lt;file&gt;</code>).
+ * Information printed at the beginning of gc logging with <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
- * <p>
- * 1) G1:
- * </p>
- * 
  * <pre>
- * [25.016s][info][gc,heap,exit  ] Heap
- * [25.016s][info][gc,heap,exit  ]  garbage-first heap   total 59392K, used 38015K [0x00000000fc000000, 0x0000000100000000)
- * [25.016s][info][gc,heap,exit  ]   region size 1024K, 13 young (13312K), 1 survivors (1024K)
- * [25.016s][info][gc,heap,exit  ]  Metaspace       used 11079K, capacity 11287K, committed 11520K, reserved 1060864K
- * [25.016s][info][gc,heap,exit  ]   class space    used 909K, capacity 995K, committed 1024K, reserved 1048576K
- * </pre>
- * 
- * <p>
- * 2) Shenandoah:
- * </p>
- * 
- * <pre>
- * [69.946s][info][gc,heap,exit ] Heap
- * [69.946s][info][gc,heap,exit ] Shenandoah Heap
- * [69.946s][info][gc,heap,exit ]  65536K total, 65536K committed, 55031K used
- * [69.946s][info][gc,heap,exit ]  256 x 256K regions
- * [69.946s][info][gc,heap,exit ] Status: cancelled
- * [69.946s][info][gc,heap,exit ] Reserved region:
- * [69.946s][info][gc,heap,exit ]  - [0x00000000fc000000, 0x0000000100000000)
- * [69.946s][info][gc,heap,exit ]
- * [69.946s][info][gc,heap,exit ]  Metaspace       used 4066K, capacity 7271K, committed 7296K, reserved 1056768K
- * [69.946s][info][gc,heap,exit ]   class space    used 299K, capacity 637K, committed 640K, reserved 1048576K
+ * [2019-02-05T14:47:31.091-0200][3ms] Humongous object threshold: 512K
+ * [2019-02-05T14:47:31.091-0200][3ms] Max TLAB size: 512K
+ * [2019-02-05T14:47:31.091-0200][3ms] GC threads: 4 parallel, 4 concurrent
+ * [2019-02-05T14:47:31.091-0200][3ms] Reference processing: parallel
+ * [2019-02-05T14:47:31.091-0200][3ms] Shenandoah heuristics: adaptive
+ * [2019-02-05T14:47:31.091-0200][3ms] Initialize Shenandoah heap with initial size 1366294528 bytes
+ * [2019-02-05T14:47:31.091-0200][3ms] Pacer for Idle. Initial: 26M, Alloc Tax Rate: 1.0x
+ * [2019-02-05T14:47:31.092-0200][4ms] Safepointing mechanism: global-page poll
+ * [2019-02-05T14:47:34.156-0200][3068ms] Trigger: Learning 1 of 5. Free (912M) is below initial threshold (912M)
+ * [2019-02-05T14:47:34.156-0200][3068ms] Free: 912M (1824 regions), Max regular: 512K, Max humongous: 933376K, External frag: 1%, Internal frag: 0%
+ * [2019-02-05T14:47:34.156-0200][3068ms] Evacuation Reserve: 65M (131 regions), Max regular: 512K
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class FooterHeapEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent {
+public class GcInfoEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX[] = {
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap,exit[ ]{1,2}\\].*$",
-            //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]  - \\[" + JdkRegEx.ADDRESS + ", "
-                    + JdkRegEx.ADDRESS + "\\)[ ]*$",
-            //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]( Shenandoah)? [h|H]eap$",
-            //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]  " + JdkRegEx.SIZE + " total, "
-                    + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
-            //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]  Metaspace       used "
-                    + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE + ", committed " + JdkRegEx.SIZE + ", reserved "
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Humongous object threshold: "
                     + JdkRegEx.SIZE + "$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]  \\d{1,4} x " + JdkRegEx.SIZE
-                    + " regions$",
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Max TLAB size: " + JdkRegEx.SIZE
+                    + "$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   class space    used "
-                    + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE + ", " + "committed " + JdkRegEx.SIZE
-                    + ", reserved " + JdkRegEx.SIZE + "$",
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] GC threads: \\d parallel, \\d concurrent$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Status: cancelled$",
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Reference processing: parallel$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Reserved region:$"
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Shenandoah heuristics: adaptive$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] Initialize Shenandoah heap with initial size \\d{10} bytes$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Pacer for Idle. Initial: "
+                    + JdkRegEx.SIZE + ", Alloc Tax Rate: \\d\\.\\dx$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] Safepointing mechanism: global-page poll$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "\\] Trigger: Learning \\d of \\d\\. Free \\(" + JdkRegEx.SIZE
+                    + "\\) is below initial threshold \\(" + JdkRegEx.SIZE + "\\)$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Free: " + JdkRegEx.SIZE
+                    + " \\(\\d{1,4} regions\\), Max regular: " + JdkRegEx.SIZE + ", Max humongous: " + JdkRegEx.SIZE
+                    + ", External frag: \\d%, Internal frag: \\d%$",
+            //
+            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Evacuation Reserve: "
+                    + JdkRegEx.SIZE + " \\(\\d{1,3} regions\\), Max regular: " + JdkRegEx.SIZE + "$"
             //
     };
 
@@ -111,7 +103,7 @@ public class FooterHeapEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent
      * @param logEntry
      *            The log entry for the event.
      */
-    public FooterHeapEvent(String logEntry) {
+    public GcInfoEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
     }
@@ -121,7 +113,7 @@ public class FooterHeapEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.FOOTER_HEAP.toString();
+        return JdkUtil.LogEventType.GC_INFO.toString();
     }
 
     public long getTimestamp() {
