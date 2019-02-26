@@ -164,4 +164,16 @@ public class TestUnifiedG1ConcurrentEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_CONCURRENT.toString() + ".",
                 UnifiedG1ConcurrentEvent.match(logLine));
     }
+
+    public void testCreateLiveData() {
+        String logLine = "[2.730s][info][gc,marking    ] GC(52) Concurrent Create Live Data";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_CONCURRENT.toString() + ".",
+                UnifiedG1ConcurrentEvent.match(logLine));
+    }
+
+    public void testCreateLiveDataWithDuration() {
+        String logLine = "[2.731s][info][gc,marking    ] GC(52) Concurrent Create Live Data 0.483ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_CONCURRENT.toString() + ".",
+                UnifiedG1ConcurrentEvent.match(logLine));
+    }
 }

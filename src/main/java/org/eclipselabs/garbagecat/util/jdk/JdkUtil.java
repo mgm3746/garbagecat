@@ -79,6 +79,8 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1ConcurrentEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1InfoEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedRemarkEvent;
@@ -110,7 +112,9 @@ public class JdkUtil {
         //
         UNIFIED_REMARK, UNIFIED_CMS_INITIAL_MARK, UNIFIED_CMS_CONCURRENT,
         //
-        UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_CLEANUP, UNIFIED_G1_CONCURRENT,
+        UNIFIED_G1_CLEANUP, UNIFIED_G1_CONCURRENT, UNIFIED_G1_INFO, UNIFIED_G1_YOUNG_INITIAL_MARK,
+        //
+        UNIFIED_G1_YOUNG_PAUSE,
         //
         SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK, SHENANDOAH_CONCURRENT, SHENANDOAH_TRIGGER,
         //
@@ -221,6 +225,10 @@ public class JdkUtil {
             return LogEventType.UNIFIED_G1_CLEANUP;
         if (UnifiedG1ConcurrentEvent.match(logLine))
             return LogEventType.UNIFIED_G1_CONCURRENT;
+        if (UnifiedG1InfoEvent.match(logLine))
+            return LogEventType.UNIFIED_G1_INFO;
+        if (UnifiedG1YoungInitialMarkEvent.match(logLine))
+            return LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK;
         if (UnifiedG1YoungPauseEvent.match(logLine))
             return LogEventType.UNIFIED_G1_YOUNG_PAUSE;
         if (UnifiedOldEvent.match(logLine))
@@ -397,6 +405,12 @@ public class JdkUtil {
             break;
         case UNIFIED_G1_CONCURRENT:
             event = new UnifiedG1ConcurrentEvent();
+            break;
+        case UNIFIED_G1_INFO:
+            event = new UnifiedG1InfoEvent(logLine);
+            break;
+        case UNIFIED_G1_YOUNG_INITIAL_MARK:
+            event = new UnifiedG1YoungInitialMarkEvent(logLine);
             break;
         case UNIFIED_G1_YOUNG_PAUSE:
             event = new UnifiedG1YoungPauseEvent(logLine);
@@ -607,6 +621,9 @@ public class JdkUtil {
         case UNIFIED_YOUNG:
             event = new UnifiedYoungEvent(logEntry, timestamp, duration);
             break;
+        case UNIFIED_G1_YOUNG_INITIAL_MARK:
+            event = new UnifiedG1YoungInitialMarkEvent(logEntry, timestamp, duration);
+            break;
         case UNIFIED_G1_YOUNG_PAUSE:
             event = new UnifiedG1YoungPauseEvent(logEntry, timestamp, duration);
             break;
@@ -712,6 +729,7 @@ public class JdkUtil {
         case TENURING_DISTRIBUTION:
         case UNIFIED_CMS_CONCURRENT:
         case UNIFIED_G1_CONCURRENT:
+        case UNIFIED_G1_INFO:
         case UNKNOWN:
         case USING_SERIAL:
         case USING_PARALLEL:
@@ -1011,6 +1029,7 @@ public class JdkUtil {
         case SHENANDOAH_CANCELLING_GC:
         case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
         case SHENANDOAH_TRIGGER:
+        case UNIFIED_G1_INFO:
         case UNKNOWN:
             reportable = false;
             break;
@@ -1051,6 +1070,8 @@ public class JdkUtil {
                 case UNIFIED_CMS_INITIAL_MARK:
                 case UNIFIED_G1_CLEANUP:
                 case UNIFIED_G1_CONCURRENT:
+                case UNIFIED_G1_INFO:
+                case UNIFIED_G1_YOUNG_INITIAL_MARK:
                 case UNIFIED_G1_YOUNG_PAUSE:
                 case UNIFIED_OLD:
                 case UNIFIED_REMARK:

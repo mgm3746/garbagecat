@@ -113,8 +113,8 @@ public class UnifiedG1ConcurrentEvent extends G1Collector implements UnifiedLogg
             // gc, marking
             "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,marking[ ]{3,4}\\] " + JdkRegEx.GC_EVENT_NUMBER
                     + " Concurrent (Clear Claimed Marks|Scan Root Regions|Mark|Mark From Roots|Preclean|"
-                    + "Rebuild Remembered Sets|Cleanup for Next Mark)( \\(" + JdkRegEx.TIMESTAMP + "s(, "
-                    + JdkRegEx.TIMESTAMP + "s)?\\))?( " + JdkRegEx.DURATION_JDK9 + ")?$",
+                    + "Rebuild Remembered Sets|Cleanup for Next Mark|Create Live Data)( \\(" + JdkRegEx.TIMESTAMP
+                    + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + JdkRegEx.DURATION_JDK9 + ")?$",
             // gc, task
             "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,task      \\] " + JdkRegEx.GC_EVENT_NUMBER
                     + " Using \\d workers of \\d for marking$"
