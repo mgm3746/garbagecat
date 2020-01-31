@@ -15,7 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 
 /**
- * CMS collector.
+ * Concurrent Mark Sweep (CMS) collector.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 

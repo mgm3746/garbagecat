@@ -508,11 +508,27 @@ public class TestAnalysis extends TestCase {
     /**
      * Test PrintCommandLineFlags missing.
      */
+    public void testPrintCommandlineFlagsNoGcLogging() {
+        String jvmOptions = "MGM";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_COMMANDLINE_FLAGS));
+    }
+
+    /**
+     * Test PrintCommandLineFlags missing.
+     */
     public void testPrintCommandlineFlagsMissing() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.UNKNOWN);
+        jvmRun.setEventTypes(eventTypes);
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_COMMANDLINE_FLAGS));

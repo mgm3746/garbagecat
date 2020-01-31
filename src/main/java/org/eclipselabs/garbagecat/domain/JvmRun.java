@@ -741,7 +741,7 @@ public class JvmRun {
         }
 
         // Check for command line flags output.
-        if (jvm.getPrintCommandLineFlagsOption() == null
+        if (jvm.getPrintCommandLineFlagsOption() == null && getEventTypes().size() > 0
                 && !getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS)) {
             analysis.add(Analysis.WARN_PRINT_COMMANDLINE_FLAGS);
         }
