@@ -124,6 +124,12 @@ public enum Analysis {
     ERROR_METASPACE_ALLOCATION_FAILURE("error.metaspace.allocation.failure"),
 
     /**
+     * Property key for when MaxMetaspaceSize is less than CompressedClassSpaceSize. MaxMetaspaceSize includes
+     * CompressedClassSpaceSize, so MaxMetaspaceSize should be larger than CompressedClassSpaceSize.
+     */
+    ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE("error.metaspace.size.lt.comp.class.size"),
+
+    /**
      * Property key for insufficient physical memory.
      */
     ERROR_PHYSICAL_MEMORY("error.physical.memory"),

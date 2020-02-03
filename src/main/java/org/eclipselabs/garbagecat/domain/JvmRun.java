@@ -1032,6 +1032,12 @@ public class JvmRun {
                 analysis.add(Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT);
             }
         }
+
+        // Check if MaxMetaspaceSize is less than CompressedClassSpaceSize.
+        if (jvm.getMaxMetaspaceOption() != null && jvm.getCompressedClassSpaceSizeOption() != null
+                && jvm.getMaxMetaspaceBytes() < jvm.getCompressedClassSpaceSizeBytes()) {
+            analysis.add(Analysis.ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE);
+        }
     }
 
     /**

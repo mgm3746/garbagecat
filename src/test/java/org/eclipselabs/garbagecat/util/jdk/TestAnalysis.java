@@ -444,6 +444,18 @@ public class TestAnalysis extends TestCase {
     }
 
     /**
+     * Test MaxMetaspaceSize is less than CompressedClassSpaceSize.
+     */
+    public void testMetaspaceSizeLtCompClassSize() {
+        String jvmOptions = "-XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=512M -XX:CompressedClassSpaceSize=1024M";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE));
+    }
+
+    /**
      * Test analysis explicit GC not concurrent.
      */
     public void testExplicitGcNotConcurrentG1() {
