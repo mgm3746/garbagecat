@@ -155,7 +155,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED)) {
-            // Remove UseGCOverheadLimit output
+            // Remove GCTimeLimit output
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
@@ -165,7 +165,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE)) {
-            // Remove UseGCOverheadLimit output
+            // Remove beginning PARALLEL_SCAVENGE output
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
