@@ -30,7 +30,7 @@ Note: The Fedora and RHEL installs are release dependent. To ensure you have the
 ### RHEL 7
 
 ```
-# yum install yum-plugin-copr
+# yum install yum-plugin-copr --enablerepo=rhel-7-server-optional-rpms
 # yum copr enable bostrt/garbagecat
 # yum install garbagecat
 ```
@@ -102,6 +102,7 @@ usage: garbagecat [OPTION]... [FILE]
 ```
 
 Notes:
+  1. The Fedora/RHEL install allows garbagecat to be run as an executable file. For example: `garbagecat --help`.
   1. JVM options are can be passed in if they are not present in the gc logging header. Specifying the JVM options used during the JVM run allows for more detailed analysis.
   1. By default a report called report.txt is created in the directory where the **garbagecat** tool is run. Specifying a custom name for the output file is useful when analyzing multiple gc logs.
   1. Version information is included in the report by using the version and.or latest version options.
