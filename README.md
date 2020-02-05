@@ -12,6 +12,8 @@ A command line tool that parses Java garbage collection logging and does analysi
 
 ## Installation ##
 
+Note: The Fedora and RHEL installs are release dependent. To ensure you have the latest code, [build garbagecat](https://github.com/mgm3746/garbagecat#building).
+
 ### Fedora 
 
 ```
