@@ -27,7 +27,7 @@ Note: The Fedora and RHEL installs are release dependent. To ensure you have the
 # dnf install garbagecat
 ```
 
-### RHEL 7
+### RHEL 7 Method #1
 
 ```
 # yum install yum-plugin-copr --enablerepo=rhel-7-server-optional-rpms
@@ -35,7 +35,7 @@ Note: The Fedora and RHEL installs are release dependent. To ensure you have the
 # yum install garbagecat
 ```
 
-### RHEL 7 Alternative
+### RHEL 7 Method #2
 
 Put the YUM repo file into your /etc/yum/repos.d/. Here's the repo file for [RHEL 7](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-7/bostrt-garbagecat-epel-7.repo).
 
