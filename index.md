@@ -8,9 +8,17 @@ A command line tool that parses Java garbage collection logging and does analysi
   * Sun/Oracle JDK 1.5 and higher
   * Best utilized with the following GC logging options:
 
+JDK5 - JDK8:
+
 >-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime
 
+JDK9+:
+
+>-Xlog:gc*:file=gc.log
+
 ## Installation ##
+
+Note: The Fedora and RHEL installs are release dependent. To ensure you have the latest code, [build garbagecat](https://github.com/mgm3746/garbagecat#building).
 
 ### Fedora 
 
@@ -19,9 +27,17 @@ A command line tool that parses Java garbage collection logging and does analysi
 # dnf install garbagecat
 ```
 
-### RHEL 7
+### RHEL 7 Method #1
 
-More to come after https://bugzilla.redhat.com/show_bug.cgi?id=1429831 is completed. For now, Drop in the YUM repo file into your /etc/yum/repos.d/. Here's the repo file for [RHEL 7](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-7/bostrt-garbagecat-epel-7.repo).
+```
+# yum install yum-plugin-copr --enablerepo=rhel-7-server-optional-rpms
+# yum copr enable bostrt/garbagecat
+# yum install garbagecat
+```
+
+### RHEL 7 Method #2
+
+Put the YUM repo file into your /etc/yum/repos.d/. Here's the repo file for [RHEL 7](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-7/bostrt-garbagecat-epel-7.repo).
 
 ## Building ##
 
@@ -70,10 +86,11 @@ mvn -U -fn clean install
 ## Usage ##
 
 ```
-java -jar garbagecat-2.0.9-SNAPSHOT.jar --help
+java -jar garbagecat-3.0.1-SNAPSHOT.jar --help
 usage: garbagecat [OPTION]... [FILE]
  -h,--help                  help
- -j,--jvmoptions <arg>      JVM options used during JVM run 
+ -j,--jvmoptions <arg>      JVM options used during JVM run
+ -l,--latest                latest version 
  -o,--output <arg>          output file name (default report.txt)
  -p,--preprocess            do preprocessing
  -r,--reorder               reorder logging by timestamp
@@ -85,8 +102,10 @@ usage: garbagecat [OPTION]... [FILE]
 ```
 
 Notes:
+  1. The Fedora/RHEL install allows garbagecat to be run as an executable file. For example: `garbagecat --help`.
   1. JVM options are can be passed in if they are not present in the gc logging header. Specifying the JVM options used during the JVM run allows for more detailed analysis.
   1. By default a report called report.txt is created in the directory where the **garbagecat** tool is run. Specifying a custom name for the output file is useful when analyzing multiple gc logs.
+  1. Version information is included in the report by using the version and.or latest version options.
   1. Preprocessing is sometimes required (e.g. when non-standard JVM options are used). It removes extraneous logging and makes any format adjustments needed for parsing (e.g. combining logging that the JVM sometimes splits across multiple lines). 
   1. When preprocessing is enabled, a preprocessed file will be created in the same location as the input file with a ".pp" file extension added. 
   1. Reordering is for gc logging that has gotten out of time/date order. Very rare, but some logging management systems/processes are susceptible to this happening (e.g. logging stored in a central repository).
@@ -97,6 +116,9 @@ Notes:
 ## Report ##
 
 ```
+========================================
+Running garbagecat version: 3.0.2-SNAPSHOT
+Latest garbagecat version/tag: v3.0.1
 ========================================
 Throughput less than 90%
 ----------------------------------------
@@ -159,7 +181,7 @@ info
 ```
 
 Notes:
-  1. The report contains five sections: (1) Bottlenecks, (2) JVM, (3) Summary, (4) Analysis, and (5) Unidentified log lines.
+  1. The report contains six sections: (1) Version, (2) Bottlenecks, (3) JVM, (4) Summary, (5) Analysis, and (6) Unidentified log lines.
   1. A bottleneck is when throughput between two consecutive blocking gc events is less than the specified throughput threshold.
   1. An ellipsis (...) between log lines in the bottleneck section indicates time periods when throughput was above the threshold.
   1. If the bottleneck section is missing, then no bottlenecks were found for the given threshold.
@@ -260,5 +282,4 @@ info
 ----------------------------------------
 *When UseCompressedOops and UseCompressedClassesPointers (JDK 1.8 u40+) are enabled (default) the Metaspace reported in the GC logging is the sum of two native memory spaces: (1) class metadata. (2) compressed class pointers. It is recommended to explicitly set the compressed class pointers space. For example: -XX:CompressedClassSpaceSize=1G.
 *GC log file rotation is not enabled. Consider enabling rotation (-XX:+UseGCLogFileRotation -XX:GCLogFileSize=N -XX:NumberOfGCLogFiles=N) to protect disk space.
-========================================
-```
+========================================```
