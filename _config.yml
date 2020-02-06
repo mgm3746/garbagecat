@@ -1,5 +1,5 @@
 title: garbagecat
-description: Parses Java garbage collection logging and provides analysis to support JVM tuning and troubleshooting for OpenJDK and Sun JDK.
+description: Parses Java garbage collection logging and analyzes collectors, triggers, JVM version, JVM options, and OS information and reports error/warn/info level analysis and recommendations to support JVM tuning and troubleshooting for OpenJDK and Sun/Oracle JDK.
 google_analytics: 
 show_downloads: true
 theme: jekyll-theme-minimal
