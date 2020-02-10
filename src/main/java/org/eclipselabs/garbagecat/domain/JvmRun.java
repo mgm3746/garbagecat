@@ -176,6 +176,16 @@ public class JvmRun {
     private LogEvent worstInvertedParallelismEvent;
 
     /**
+     * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
+     */
+    private int maxHeapSpaceNonBlocking;
+
+    /**
+     * Used for tracking max heap occupancy outside of <code>BlockingEvent</code>s.
+     */
+    private int maxHeapOccupancyNonBlocking;
+
+    /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
      * 
      * @param throughputThreshold
@@ -412,6 +422,22 @@ public class JvmRun {
         this.worstInvertedParallelismEvent = worstInvertedParallelismEvent;
     }
 
+    public int getMaxHeapSpaceNonBlocking() {
+        return maxHeapSpaceNonBlocking;
+    }
+
+    public void setMaxHeapSpaceNonBlocking(int maxHeapSpaceNonBlocking) {
+        this.maxHeapSpaceNonBlocking = maxHeapSpaceNonBlocking;
+    }
+
+    public int getMaxHeapOccupancyNonBlocking() {
+        return maxHeapOccupancyNonBlocking;
+    }
+
+    public void setMaxHeapOccupancyNonBlocking(int maxHeapOccupancyNonBlocking) {
+        this.maxHeapOccupancyNonBlocking = maxHeapOccupancyNonBlocking;
+    }
+
     /**
      * @return Throughput based only on garbage collection as a percent rounded to the nearest integer. CG throughput is
      *         the percent of time not spent doing GC. 0 means all time was spent doing GC. 100 means no time was spent
@@ -497,72 +523,7 @@ public class JvmRun {
             doJvmOptionsAnalysis();
         }
 
-        // 1) Check for partial log
-        if (firstGcEvent != null && GcUtil.isPartialLog(firstGcEvent.getTimestamp())) {
-            analysis.add(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
-        }
-
-        // 2) Check to see if -XX:+PrintGCApplicationStoppedTime enabled
-        if (!eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME) && !JdkUtil.isUnifiedLogging(eventTypes)) {
-            analysis.add(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING);
-        }
-
-        // 3) Check for significant stopped time unrelated to GC
-        if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
-                && getGcStoppedRatio() < Constants.GC_STOPPED_RATIO_THRESHOLD
-                && getStoppedTimeThroughput() != getGcThroughput()) {
-            analysis.add(Analysis.WARN_GC_STOPPED_RATIO);
-        }
-
-        // 4) Check if logging indicates gc details missing
-        if (!analysis.contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING)
-                && !analysis.contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED)) {
-            if (getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)
-                    || getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG)) {
-                analysis.add(Analysis.WARN_PRINT_GC_DETAILS_MISSING);
-            }
-        }
-
-        // 5) Check for -XX:+PrintReferenceGC by event type
-        if (!analysis.contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED)) {
-            if (getEventTypes().contains(LogEventType.REFERENCE_GC)) {
-                analysis.add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
-            }
-        }
-
-        // 6) Check for PAR_NEW disabled.
-        if (getEventTypes().contains(LogEventType.SERIAL_NEW) && collectorFamilies.contains(CollectorFamily.CMS)) {
-            // Replace general gc.serial analysis
-            if (analysis.contains(Analysis.ERROR_SERIAL_GC)) {
-                analysis.remove(Analysis.ERROR_SERIAL_GC);
-            }
-            if (!analysis.contains(Analysis.WARN_CMS_PAR_NEW_DISABLED)) {
-                analysis.add(Analysis.WARN_CMS_PAR_NEW_DISABLED);
-            }
-        }
-
-        // 7) Check for swappiness
-        if (getJvm().getPercentSwapFree() < 95) {
-            analysis.add(Analysis.INFO_SWAPPING);
-        }
-
-        // 8) Check for insufficient physical memory
-        if (getJvm().getPhysicalMemory() > 0) {
-            Long jvmMemory;
-            if (jvm.getUseCompressedOopsDisabled() == null && jvm.getUseCompressedClassPointersDisabled() == null) {
-                // Using compressed class pointers space
-                jvmMemory = getJvm().getMaxHeapBytes() + getJvm().getMaxPermBytes() + getJvm().getMaxMetaspaceBytes()
-                        + getJvm().getCompressedClassSpaceSizeBytes();
-            } else {
-                // Not using compressed class pointers space
-                jvmMemory = getJvm().getMaxHeapBytes() + getJvm().getMaxPermBytes() + getJvm().getMaxMetaspaceBytes();
-            }
-            if (jvmMemory > getJvm().getPhysicalMemory()) {
-                analysis.add(Analysis.ERROR_PHYSICAL_MEMORY);
-            }
-        }
-
-        // 9) Unidentified logging lines
+        // Unidentified logging lines
         if (getUnidentifiedLogLines().size() > 0) {
             if (!preprocessed) {
                 analysis.add(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE);
@@ -586,28 +547,8 @@ public class JvmRun {
             }
         }
 
-        // 10) Check for humongous allocations on old JDK not able to fully reclaim them in a young collection
-        if (collectorFamilies.contains(CollectorFamily.G1) && analysis.contains(Analysis.INFO_G1_HUMONGOUS_ALLOCATION)
-                && (jvm.JdkNumber() == 7 || (jvm.JdkNumber() == 8 && jvm.JdkUpdate() < 60))) {
-            // Don't double report
-            analysis.remove(Analysis.INFO_G1_HUMONGOUS_ALLOCATION);
-            analysis.add(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD);
-        }
-
-        // Check for using G1 collecgtor JDK < u40
-        if ((collectorFamilies.contains(CollectorFamily.G1) || jvm.getUseG1Gc() != null) && jvm.JdkNumber() == 8
-                && jvm.JdkUpdate() < 40) {
-            analysis.add(Analysis.WARN_G1_JDK8_PRIOR_U40);
-        }
-
-        // Check for young space > old space
-        if (maxYoungSpace > 0 && maxOldSpace > 0 && maxYoungSpace >= maxOldSpace) {
-            analysis.add(Analysis.INFO_NEW_RATIO_INVERTED);
-        }
-
-        // Check for inverted parallelism
-        if (getInvertedParallelismCount() > 0) {
-            analysis.add(Analysis.WARN_PARALLELISM_INVERTED);
+        if (haveData()) {
+            doDataAnalysis();
         }
     }
 
@@ -1041,6 +982,100 @@ public class JvmRun {
     }
 
     /**
+     * Do data analysis.
+     */
+    private void doDataAnalysis() {
+        // Check for partial log
+        if (firstGcEvent != null && GcUtil.isPartialLog(firstGcEvent.getTimestamp())) {
+            analysis.add(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
+        }
+
+        // Check to see if -XX:+PrintGCApplicationStoppedTime enabled
+        if (!eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME) && !JdkUtil.isUnifiedLogging(eventTypes)) {
+            analysis.add(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING);
+        }
+
+        // Check for significant stopped time unrelated to GC
+        if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
+                && getGcStoppedRatio() < Constants.GC_STOPPED_RATIO_THRESHOLD
+                && getStoppedTimeThroughput() != getGcThroughput()) {
+            analysis.add(Analysis.WARN_GC_STOPPED_RATIO);
+        }
+
+        // Check if logging indicates gc details missing
+        if (!analysis.contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING)
+                && !analysis.contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED)) {
+            if (getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)
+                    || getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG)) {
+                analysis.add(Analysis.WARN_PRINT_GC_DETAILS_MISSING);
+            }
+        }
+
+        // Check for -XX:+PrintReferenceGC by event type
+        if (!analysis.contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED)) {
+            if (getEventTypes().contains(LogEventType.REFERENCE_GC)) {
+                analysis.add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
+            }
+        }
+
+        // Check for PAR_NEW disabled.
+        if (getEventTypes().contains(LogEventType.SERIAL_NEW) && collectorFamilies.contains(CollectorFamily.CMS)) {
+            // Replace general gc.serial analysis
+            if (analysis.contains(Analysis.ERROR_SERIAL_GC)) {
+                analysis.remove(Analysis.ERROR_SERIAL_GC);
+            }
+            if (!analysis.contains(Analysis.WARN_CMS_PAR_NEW_DISABLED)) {
+                analysis.add(Analysis.WARN_CMS_PAR_NEW_DISABLED);
+            }
+        }
+
+        // Check for swappiness
+        if (getJvm().getPercentSwapFree() < 95) {
+            analysis.add(Analysis.INFO_SWAPPING);
+        }
+
+        // Check for insufficient physical memory
+        if (getJvm().getPhysicalMemory() > 0) {
+            Long jvmMemory;
+            if (jvm.getUseCompressedOopsDisabled() == null && jvm.getUseCompressedClassPointersDisabled() == null) {
+                // Using compressed class pointers space
+                jvmMemory = getJvm().getMaxHeapBytes() + getJvm().getMaxPermBytes() + getJvm().getMaxMetaspaceBytes()
+                        + getJvm().getCompressedClassSpaceSizeBytes();
+            } else {
+                // Not using compressed class pointers space
+                jvmMemory = getJvm().getMaxHeapBytes() + getJvm().getMaxPermBytes() + getJvm().getMaxMetaspaceBytes();
+            }
+            if (jvmMemory > getJvm().getPhysicalMemory()) {
+                analysis.add(Analysis.ERROR_PHYSICAL_MEMORY);
+            }
+        }
+
+        // Check for humongous allocations on old JDK not able to fully reclaim them in a young collection
+        if (collectorFamilies.contains(CollectorFamily.G1) && analysis.contains(Analysis.INFO_G1_HUMONGOUS_ALLOCATION)
+                && (jvm.JdkNumber() == 7 || (jvm.JdkNumber() == 8 && jvm.JdkUpdate() < 60))) {
+            // Don't double report
+            analysis.remove(Analysis.INFO_G1_HUMONGOUS_ALLOCATION);
+            analysis.add(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD);
+        }
+
+        // Check for using G1 collecgtor JDK < u40
+        if ((collectorFamilies.contains(CollectorFamily.G1) || jvm.getUseG1Gc() != null) && jvm.JdkNumber() == 8
+                && jvm.JdkUpdate() < 40) {
+            analysis.add(Analysis.WARN_G1_JDK8_PRIOR_U40);
+        }
+
+        // Check for young space > old space
+        if (maxYoungSpace > 0 && maxOldSpace > 0 && maxYoungSpace >= maxOldSpace) {
+            analysis.add(Analysis.INFO_NEW_RATIO_INVERTED);
+        }
+
+        // Check for inverted parallelism
+        if (getInvertedParallelismCount() > 0) {
+            analysis.add(Analysis.WARN_PARALLELISM_INVERTED);
+        }
+    }
+
+    /**
      * @return The first gc or stopped event.
      */
     public LogEvent getFirstEvent() {
@@ -1129,5 +1164,16 @@ public class JvmRun {
         }
 
         return end - start;
+    }
+
+    /**
+     * @return true if there is data, false otherwise (e.g. no logging lines recognized).
+     */
+    public boolean haveData() {
+        boolean haveData = true;
+        if (getEventTypes().size() < 2 && getEventTypes().contains(LogEventType.UNKNOWN)) {
+            haveData = false;
+        }
+        return haveData;
     }
 }

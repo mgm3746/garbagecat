@@ -51,15 +51,25 @@ public class ShenandoahTriggerEvent extends ShenandoahCollector implements Unifi
      */
     private static final String[] REGEX = {
             // Learning
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] Trigger: Learning \\d of \\d. Free \\("
-                    + JdkRegEx.SIZE + "\\) is below initial threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "))\\]\\[info\\]\\[gc([ ]{11})?\\] Trigger: Learning \\d of \\d. Free \\(" + JdkRegEx.SIZE
+                    + "\\) is below initial threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             // Average
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] Trigger: Average GC time \\(" + JdkRegEx.DURATION_JDK9
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "))\\](\\[info\\]\\[gc([ ]{11})?\\])? Trigger: Average GC time \\(" + JdkRegEx.DURATION_JDK9
                     + "\\) is above the time for allocation rate \\(" + JdkRegEx.ALLOCATION_RATE
                     + "\\) to deplete free headroom \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             // Free
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] Trigger: Free \\(" + JdkRegEx.SIZE
-                    + "\\) is below minimum threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$"
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "))\\](\\[info\\]\\[gc([ ]{11})?\\])? Trigger: Free \\(" + JdkRegEx.SIZE
+                    + "\\) is below minimum threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
+            // Time
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "))\\](\\[info\\]\\[gc([ ]{11})?\\])? Trigger: Time since last GC \\(\\d{1,7} ms\\) is larger "
+                    + "than guaranteed interval \\(\\d{1,7} ms\\)[ ]*$",
+            // Allocation Failure
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
+                    + "))\\](\\[info\\]\\[gc([ ]{11})?\\])? Trigger: Handle Allocation Failure[ ]*$"
             //
     };
 

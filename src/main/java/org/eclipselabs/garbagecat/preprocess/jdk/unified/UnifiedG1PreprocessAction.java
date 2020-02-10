@@ -108,11 +108,15 @@ public class UnifiedG1PreprocessAction implements PreprocessAction {
      * [0.101s][info][gc ] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 0M-&gt;0M(2M) 1.371ms
      * 
      * [16.601s][info][gc ] GC(1032) Pause Young (Concurrent Start) (G1 Evacuation Pause) 38M-&gt;20M(46M) 0.772ms
+     * 
+     * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 65M-&gt;8M(1304M)
+     * 57.263ms
      */
-    private static final String REGEX_RETAIN_PAUSE_YOUNG = "^(\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc           \\] " + JdkRegEx.GC_EVENT_NUMBER
-            + " Pause Young \\((Normal|Concurrent Start)\\) \\(G1 Evacuation Pause\\) " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")$";
+    private static final String REGEX_RETAIN_PAUSE_YOUNG = "^((\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
+            + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc           \\])? "
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\((Normal|Concurrent Start)\\) \\(("
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\) "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")$";
 
     /**
      * Regular expression for retained beginning UNIFIED_G1_CLEANUP collection.
@@ -136,30 +140,39 @@ public class UnifiedG1PreprocessAction implements PreprocessAction {
      * Regular expression for retained end times data.
      * 
      * [16.601s][info][gc,cpu ] GC(1032) User=0.00s Sys=0.00s Real=0.00s
+     * 
+     * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) User=0.02s Sys=0.01s Real=0.06s
      */
-    private static final String REGEX_RETAIN_END_TIMES_DATA = "^\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc,cpu[ ]{7,8}\\] " + JdkRegEx.GC_EVENT_NUMBER + TimesData.REGEX_JDK9 + "$";
+    private static final String REGEX_RETAIN_END_TIMES_DATA = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
+            + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc,cpu[ ]{7,8}\\])? "
+            + JdkRegEx.GC_EVENT_NUMBER + TimesData.REGEX_JDK9 + "$";
 
     /**
      * Regular expressions for lines thrown away.
      */
     private static final String[] REGEX_THROWAWAY = {
 
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,start[ ]{5,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(G1 Evacuation Pause\\)$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,start[ ]{5,6}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+                    + " Pause Young( \\((Normal|Concurrent Start)\\))? " + "\\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE
+                    + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)$",
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,task[ ]{6,7}\\] " + JdkRegEx.GC_EVENT_NUMBER
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,task[ ]{6,7}\\])? " + JdkRegEx.GC_EVENT_NUMBER
                     + " Using \\d{1,2} workers of \\d{1,2} for (evacuation|marking)$",
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,phases[ ]{4,5}\\] " + JdkRegEx.GC_EVENT_NUMBER
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,phases[ ]{4,5}\\])? " + JdkRegEx.GC_EVENT_NUMBER
                     + "   ((Pre Evacuate|Evacuate|Post Evacuate|Other) Collection Set|Other): " + JdkRegEx.DURATION_JDK9
                     + "$",
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap[ ]{6,7}\\] " + JdkRegEx.GC_EVENT_NUMBER
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,heap[ ]{6,7}\\])? " + JdkRegEx.GC_EVENT_NUMBER
                     + " (Eden|Survivor|Old|Humongous) regions: \\d{1,3}->\\d{1,3}(\\(\\d{1,3}\\))?$",
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,metaspace[ ]{1,2}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,metaspace[ ]{1,2}\\])? " + JdkRegEx.GC_EVENT_NUMBER + " Metaspace: "
+                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)$",
             //
             "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,start[ ]{5,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
                     + " Pause Remark$",
@@ -234,7 +247,7 @@ public class UnifiedG1PreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(2);
+                this.logEntry = matcher.group(16);
             }
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);

@@ -54,35 +54,66 @@ public class TestShenandoahPreprocessAction extends TestCase {
                 ShenandoahPreprocessAction.match(logLine));
     }
 
-    public void testLogLineInitMarkUsingWorkers() {
+    public void testLogLineDegeneratedGc() {
+        String logLine = "[52.883s][info][gc,start     ] GC(1632) Pause Degenerated GC (Mark)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineUsingWorkersInitMark() {
         String logLine = "[41.893s][info][gc,task      ] GC(1500) Using 2 of 4 workers for init marking";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
                 ShenandoahPreprocessAction.match(logLine));
     }
 
-    public void testLogLineInitMarkUsingWorkersUptimeMillis() {
+    public void testLogLineUsingWorkersInitMarkUptimeMillis() {
         String logLine = "[2019-02-05T14:47:34.175-0200][3087ms] GC(0) Using 4 of 4 workers for init marking";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
                 ShenandoahPreprocessAction.match(logLine));
     }
 
-    public void testLogLineInitMarkPacer() {
+    public void testLogLineUsingWorkersDegeneratedGc() {
+        String logLine = "[52.883s][info][gc,task      ] GC(1632) Using 2 of 2 workers for stw degenerated gc";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineGoodProgressFreeSpaceDegeneratedGc() {
+        String logLine = "[52.937s][info][gc,ergo      ] GC(1632) Good progress for free space: 31426K, need 655K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineGoodProgressUsedSpaceDegeneratedGc() {
+        String logLine = "[52.937s][info][gc,ergo      ] GC(1632) Good progress for used space: 31488K, need 256K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
+    public void testLogLinePacerForMark() {
         String logLine = "[41.893s][info][gc,ergo      ] GC(1500) Pacer for Mark. Expected Live: 22M, Free: 9M, "
                 + "Non-Taxable: 0M, Alloc Tax Rate: 8.5x";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
                 ShenandoahPreprocessAction.match(logLine));
     }
 
-    public void testLogLineInitMarkPacerUptimeMillis() {
+    public void testLogLinePacerForMarkUptimeMillis() {
         String logLine = "[2019-02-05T14:47:34.178-0200][3090ms] GC(0) Pacer for Mark. Expected Live: 130M, "
                 + "Free: 911M, Non-Taxable: 91M, Alloc Tax Rate: 0.5x";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
                 ShenandoahPreprocessAction.match(logLine));
     }
 
-    public void testLogLineInitMarkPacerPercent2Digit() {
+    public void testLogLinePacerForMaxkPercent2Digit() {
         String logLine = "[42.019s][info][gc,ergo      ] GC(1505) Pacer for Mark. Expected Live: 22M, Free: 7M, "
                 + "Non-Taxable: 0M, Alloc Tax Rate: 11.5x";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
+    public void testLogLinePacerForMarkPercentInf() {
+        String logLine = "[52.875s][info][gc,ergo      ] GC(1631) Pacer for Mark. Expected Live: 19163K, Free: 0B, "
+                + "Non-Taxable: 0B, Alloc Tax Rate: infx";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
                 ShenandoahPreprocessAction.match(logLine));
     }
@@ -290,40 +321,6 @@ public class TestShenandoahPreprocessAction extends TestCase {
                 ShenandoahPreprocessAction.match(logLine));
     }
 
-    public void testLogLineTriggerAverageGc() {
-        String logLine = "[41.917s][info][gc           ] Trigger: Average GC time (26.32 ms) is above the time for "
-                + "allocation rate (324.68 MB/s) to deplete free headroom (8M)";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
-                ShenandoahPreprocessAction.match(logLine));
-    }
-
-    public void testLogLineTriggerAverageGcUptimeMillis() {
-        String logLine = "[2019-02-05T14:48:05.666-0200][34578ms] Trigger: Average GC time (52.77 ms) is above the "
-                + "time for allocation rate (1313.84 MB/s) to deplete free headroom (67M)";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
-                ShenandoahPreprocessAction.match(logLine));
-    }
-
-    public void testLogLineTriggerFree() {
-        String logLine = "[49.186s][info][gc           ] Trigger: Free (6M) is below minimum threshold (6M)";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
-                ShenandoahPreprocessAction.match(logLine));
-    }
-
-    public void testLogLineTriggerFreeUptimeMillis() {
-        String logLine = "[2019-02-05T14:47:49.297-0200][18209ms] Trigger: Free (128M) is below minimum threshold "
-                + "(130M)";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
-                ShenandoahPreprocessAction.match(logLine));
-    }
-
-    public void testLogFreeTimeSinceLastGcUptimeMillis() {
-        String logLine = "[2019-02-05T15:10:00.671-0200][1349583ms] Trigger: Time since last GC (300004 ms) is larger "
-                + "than guaranteed interval (300000 ms)";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
-                ShenandoahPreprocessAction.match(logLine));
-    }
-
     public void testLogFreeHeadroom() {
         String logLine = "[41.917s][info][gc,ergo      ] Free headroom: 11M (free) - 3M (spike) - 0M (penalties) = 8M";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
@@ -346,6 +343,18 @@ public class TestShenandoahPreprocessAction extends TestCase {
 
     public void testBlankLineUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] ";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
+    public void testFailedToAllocate() {
+        String logLine = "[52.872s][info][gc           ] Failed to allocate 256K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
+    public void testCancellingGcAllocationFailure() {
+        String logLine = "[52.872s][info][gc           ] Cancelling GC: Allocation Failure";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
                 ShenandoahPreprocessAction.match(logLine));
     }

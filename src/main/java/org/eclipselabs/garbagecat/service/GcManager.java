@@ -61,6 +61,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
@@ -737,6 +738,15 @@ public class GcManager {
                     if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED)) {
                         jvmDao.addAnalysis(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED);
                     }
+                } else if (event instanceof ShenandoahConcurrentEvent) {
+                    if (((ShenandoahConcurrentEvent) event).getCombinedOccupancyInit() > jvmDao
+                            .getMaxHeapOccupancyNonBlocking()) {
+                        jvmDao.setMaxHeapOccupancyNonBlocking(
+                                ((ShenandoahConcurrentEvent) event).getCombinedOccupancyInit());
+                    }
+                    if (((ShenandoahConcurrentEvent) event).getCombinedSpace() > jvmDao.getMaxHeapSpaceNonBlocking()) {
+                        jvmDao.setMaxHeapSpaceNonBlocking(((ShenandoahConcurrentEvent) event).getCombinedSpace());
+                    }
                 } else if (event instanceof UnknownEvent) {
                     // Don't count reportable events with datestamp only as unidentified
                     Date jvmStartDate = GcUtil.parseStartDateTime("2000-01-01 00:00:00,000");
@@ -912,6 +922,8 @@ public class GcManager {
         jvmRun.setParallelCount(jvmDao.getParallelCount());
         jvmRun.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount());
         jvmRun.setWorstInvertedParallelismEvent(jvmDao.getWorstInvertedParallelismEvent());
+        jvmRun.setMaxHeapOccupancyNonBlocking(jvmDao.getMaxHeapOccupancyNonBlocking());
+        jvmRun.setMaxHeapSpaceNonBlocking(jvmDao.getMaxHeapSpaceNonBlocking());
         jvmRun.doAnalysis();
         return jvmRun;
     }

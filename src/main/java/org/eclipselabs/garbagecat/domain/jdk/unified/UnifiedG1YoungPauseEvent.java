@@ -43,7 +43,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h3>Example Logging</h3>
  * 
  * <p>
- * Standard format:
+ * 1) Standard format:
  * </p>
  * 
  * <pre>
@@ -51,11 +51,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * Preprocessed from logging with details:
+ * 2) Preprocessed from logging with details:
  * </p>
  * 
  * <pre>
  * [0.101s][info][gc           ] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 0M-&gt;0M(2M) 1.371ms User=0.00s Sys=0.00s Real=0.00s
+ * </pre>
+ * 
+ * <p>
+ * 3) Preprocessed from logging with details with datestamp and milliseconds:
+ * </p>
+ * 
+ * <pre>
+ * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 65M-&gt;8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -67,7 +75,8 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")";
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
 
     /**
      * Regular expression defining standard logging (no details).
@@ -79,10 +88,10 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
     /**
      * Regular expression defining preprocessed logging.
      */
-    private static final String REGEX_PREPROCESSED = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc[ ]{11,12}\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + TRIGGER + "\\) "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9
-            + TimesData.REGEX_JDK9 + "[ ]*$";
+    private static final String REGEX_PREPROCESSED = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP
+            + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc[ ]{11,12}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+            + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -156,17 +165,23 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
             Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                trigger = matcher.group(4);
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)), matcher.group(10).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)),
-                        matcher.group(13).charAt(0));
-                duration = JdkMath.convertMillisToMicros(matcher.group(14)).intValue();
+                long endTimestamp;
+                if (matcher.group(12).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(14));
+
+                } else {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                }
+                trigger = matcher.group(18);
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)), matcher.group(24).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)),
+                        matcher.group(27).charAt(0));
+                duration = JdkMath.convertMillisToMicros(matcher.group(28)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                if (matcher.group(15) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(16)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(17)).intValue();
+                if (matcher.group(29) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(31)).intValue();
                 } else {
                     timeUser = TimesData.NO_DATA;
                     timeReal = TimesData.NO_DATA;

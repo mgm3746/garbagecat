@@ -82,6 +82,14 @@ public class TestUsingG1Event extends TestCase {
                 UsingG1Event.match(logLine));
     }
 
+    public void testLineDatestampMillisNoLevelNoGc() {
+        String logLine = "[2019-05-09T01:38:55.426+0000][18ms] Using G1";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".",
+                UsingG1Event.match(logLine));
+        UsingG1Event event = new UsingG1Event(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 18, event.getTimestamp());
+    }
+
     /**
      * Test logging.
      */

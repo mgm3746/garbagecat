@@ -69,6 +69,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.HeapRegionSizeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahCancellingGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahConsiderClassUnloadingConcMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalEvacEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalUpdateEvent;
@@ -120,7 +121,7 @@ public class JdkUtil {
         //
         SHENANDOAH_INIT_MARK, SHENANDOAH_FINAL_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_FINAL_UPDATE,
         //
-        SHENANDOAH_FINAL_EVAC, SHENANDOAH_CANCELLING_GC,
+        SHENANDOAH_FINAL_EVAC, SHENANDOAH_CANCELLING_GC, SHENANDOAH_DEGENERATED_GC_MARK,
         //
         USING_SERIAL, USING_PARALLEL, USING_CMS, USING_G1, USING_SHENANDOAH,
         //
@@ -205,6 +206,8 @@ public class JdkUtil {
             return LogEventType.SHENANDOAH_CONCURRENT;
         if (ShenandoahConsiderClassUnloadingConcMarkEvent.match(logLine))
             return LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK;
+        if (ShenandoahDegeneratedGcMarkEvent.match(logLine))
+            return LogEventType.SHENANDOAH_DEGENERATED_GC_MARK;
         if (ShenandoahFinalMarkEvent.match(logLine))
             return LogEventType.SHENANDOAH_FINAL_MARK;
         if (ShenandoahFinalEvacEvent.match(logLine))
@@ -374,7 +377,10 @@ public class JdkUtil {
             event = new ShenandoahConsiderClassUnloadingConcMarkEvent(logLine);
             break;
         case SHENANDOAH_CONCURRENT:
-            event = new ShenandoahConcurrentEvent();
+            event = new ShenandoahConcurrentEvent(logLine);
+            break;
+        case SHENANDOAH_DEGENERATED_GC_MARK:
+            event = new ShenandoahDegeneratedGcMarkEvent(logLine);
             break;
         case SHENANDOAH_FINAL_EVAC:
             event = new ShenandoahFinalEvacEvent(logLine);
@@ -591,6 +597,9 @@ public class JdkUtil {
         switch (eventType) {
 
         // Unified (alphabetical)
+        case SHENANDOAH_DEGENERATED_GC_MARK:
+            event = new ShenandoahDegeneratedGcMarkEvent(logEntry, timestamp, duration);
+            break;
         case SHENANDOAH_FINAL_EVAC:
             event = new ShenandoahFinalEvacEvent(logEntry, timestamp, duration);
             break;
@@ -1060,6 +1069,7 @@ public class JdkUtil {
                 case HEAP_REGION_SIZE:
                 case SHENANDOAH_CANCELLING_GC:
                 case SHENANDOAH_CONCURRENT:
+                case SHENANDOAH_DEGENERATED_GC_MARK:
                 case SHENANDOAH_FINAL_EVAC:
                 case SHENANDOAH_FINAL_MARK:
                 case SHENANDOAH_FINAL_UPDATE:

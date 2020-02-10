@@ -54,6 +54,24 @@ public class TestUnifiedG1PreprocessAction extends TestCase {
                 UnifiedG1PreprocessAction.match(logLine));
     }
 
+    public void testLogLineStartPauseYoungNormalDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.763+0000][5355ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
+    public void testLogLineStartPauseYoungNormalTriggerGcLocker() {
+        String logLine = "[2019-05-09T01:39:07.136+0000][11728ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
+    public void testLogLineStartPauseYoungNormalMillis8Digits() {
+        String logLine = "[2019-05-09T04:31:19.449+0000][10344041ms] GC(9) Pause Young (Normal) (G1 Evacuation Pause)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
     public void testLogLineUsingWorkersForEvacuation() {
         String logLine = "[0.100s][info][gc,task      ] GC(0) Using 2 workers of 4 for evacuation";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
@@ -68,6 +86,12 @@ public class TestUnifiedG1PreprocessAction extends TestCase {
 
     public void testLogLineUsingWorkersForEvacuation7Spaces() {
         String logLine = "[16.070s][info][gc,task       ] GC(971) Using 2 workers of 4 for evacuation";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
+    public void testLogLineUsingWorkersForEvacuationDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.763+0000][5355ms] GC(0) Using 1 workers of 1 for evacuation";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
                 UnifiedG1PreprocessAction.match(logLine));
     }
@@ -90,8 +114,20 @@ public class TestUnifiedG1PreprocessAction extends TestCase {
                 UnifiedG1PreprocessAction.match(logLine));
     }
 
+    public void testLogLinePreEvacuateDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.820+0000][5412ms] GC(0)   Pre Evacuate Collection Set: 0.0ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
     public void testLogLineEvacuate() {
         String logLine = "[0.101s][info][gc,phases    ] GC(0)   Evacuate Collection Set: 1.0ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
+    public void testLogLineEvacuateDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.820+0000][5412ms] GC(0)   Evacuate Collection Set: 56.4ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
                 UnifiedG1PreprocessAction.match(logLine));
     }
@@ -108,8 +144,20 @@ public class TestUnifiedG1PreprocessAction extends TestCase {
                 UnifiedG1PreprocessAction.match(logLine));
     }
 
+    public void testLogLinePostEvacuateDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.820+0000][5412ms] GC(0)   Post Evacuate Collection Set: 0.5ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
     public void testLogLineOther() {
         String logLine = "[0.101s][info][gc,phases    ] GC(0)   Other: 0.2ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
+    public void testLogLineOtherDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.820+0000][5412ms] GC(0)   Other: 0.3ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
                 UnifiedG1PreprocessAction.match(logLine));
     }
@@ -132,8 +180,20 @@ public class TestUnifiedG1PreprocessAction extends TestCase {
                 UnifiedG1PreprocessAction.match(logLine));
     }
 
+    public void testLogLineEdenDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Eden regions: 65->0(56)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
     public void testLogLineSurvivor() {
         String logLine = "[0.101s][info][gc,heap      ] GC(0) Survivor regions: 0->1(1)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
+    public void testLogLineSurvivorDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Survivor regions: 0->9(9)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
                 UnifiedG1PreprocessAction.match(logLine));
     }
@@ -156,8 +216,20 @@ public class TestUnifiedG1PreprocessAction extends TestCase {
                 UnifiedG1PreprocessAction.match(logLine));
     }
 
+    public void testLogLineOldDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Old regions: 0->0";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
     public void testLogLineHumongous() {
         String logLine = "[0.101s][info][gc,heap      ] GC(0) Humongous regions: 0->0";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
+    public void testLogLineHumongousDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Humongous regions: 0->0";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
                 UnifiedG1PreprocessAction.match(logLine));
     }
@@ -174,9 +246,29 @@ public class TestUnifiedG1PreprocessAction extends TestCase {
                 UnifiedG1PreprocessAction.match(logLine));
     }
 
+    public void testLogLineMetaspaceDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Metaspace: 26116K->26116K(278528K)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
     public void testLogLineGcPauseYoungNormal() {
         String logLine = "[0.101s][info][gc           ] GC(0) Pause Young (Normal) "
                 + "(G1 Evacuation Pause) 0M->0M(2M) 1.371ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
+    public void testLogLineGcPauseYoungNormalDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) "
+                + "65M->8M(1304M) 57.263ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
+    public void testLogLineGcPauseYoungNormalTriggerGcLocker() {
+        String logLine = "[2019-05-09T01:39:07.172+0000][11764ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC) "
+                + "78M->22M(1304M) 35.722ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
                 UnifiedG1PreprocessAction.match(logLine));
     }
@@ -196,6 +288,12 @@ public class TestUnifiedG1PreprocessAction extends TestCase {
 
     public void testLogLineTimesData8Spaces() {
         String logLine = "[16.053s][info][gc,cpu        ] GC(969) User=0.01s Sys=0.00s Real=0.00s";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
+    public void testLogLineTimesDataDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) User=0.02s Sys=0.01s Real=0.06s";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
                 UnifiedG1PreprocessAction.match(logLine));
     }

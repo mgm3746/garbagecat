@@ -373,11 +373,17 @@ public class Main {
                 if (jvmRun.getMaxHeapOccupancy() > 0) {
                     bufferedWriter.write(
                             "Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K" + Constants.LINE_SEPARATOR);
+                } else if (jvmRun.getMaxHeapOccupancyNonBlocking() > 0) {
+                    bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancyNonBlocking() + "K"
+                            + Constants.LINE_SEPARATOR);
                 }
                 // Max heap space.
                 if (jvmRun.getMaxHeapSpace() > 0) {
                     bufferedWriter
                             .write("Max Heap Space: " + jvmRun.getMaxHeapSpace() + "K" + Constants.LINE_SEPARATOR);
+                } else if (jvmRun.getMaxHeapSpaceNonBlocking() > 0) {
+                    bufferedWriter.write(
+                            "Max Heap Space: " + jvmRun.getMaxHeapSpaceNonBlocking() + "K" + Constants.LINE_SEPARATOR);
                 }
                 if (jvmRun.getMaxPermSpace() > 0) {
                     // Max perm occupancy.

@@ -147,9 +147,63 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Parallelism not calculated correctly.", 0, event.getParallelism());
     }
 
+    public void testLogLinePreprocessedDatestampMillis() {
+        String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) "
+                + "65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".",
+                UnifiedG1YoungPauseEvent.match(logLine));
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(),
+                event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 5413 - 57, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
+        Assert.assertEquals("Combined begin size not parsed correctly.", 65 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 8 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 1304 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 57263, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 2, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 6, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 34, event.getParallelism());
+    }
+
+    public void testLogLinePreprocessedTriggerGcLocker() {
+        String logLine = "[2019-05-09T01:39:07.172+0000][11764ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC) "
+                + "78M->22M(1304M) 35.722ms User=0.02s Sys=0.00s Real=0.04s";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".",
+                UnifiedG1YoungPauseEvent.match(logLine));
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(),
+                event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 11764 - 35, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
+        Assert.assertEquals("Combined begin size not parsed correctly.", 78 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 22 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 1304 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 35722, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 2, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 4, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 50, event.getParallelism());
+    }
+
     public void testUnifiedG1YoungPauseJdk9() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset158.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE));
+    }
+
+    public void testUnifiedG1YoungPauseDatestampMillis() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset166.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

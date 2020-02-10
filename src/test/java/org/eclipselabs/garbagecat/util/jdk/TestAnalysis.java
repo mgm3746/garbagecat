@@ -873,6 +873,20 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT));
     }
 
+    public void testApplicationStoppedTimeMissingNoData() {
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(null, null);
+
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.UNKNOWN);
+        jvmRun.setEventTypes(eventTypes);
+        jvmRun.getAnalysis().clear();
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING));
+    }
+
     public void testHeaderLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset42.txt");

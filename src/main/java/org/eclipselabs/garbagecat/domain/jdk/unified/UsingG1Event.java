@@ -48,6 +48,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * [0.003s][info][gc     ] Using G1
  * </pre>
  * 
+ * <p>
+ * 3) With datestamp, no gc, no logging level, ms (JDK11).
+ * </p>
+ * 
+ * <pre>
+ * [2019-05-09T01:38:55.426+0000][18ms] Using G1
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -56,7 +64,8 @@ public class UsingG1Event extends G1Collector implements UnifiedLogging, LogEven
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc([ ]{5})?\\] Using G1[ ]*$";
+    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|"
+            + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc([ ]{5})?\\])? Using G1[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
@@ -83,7 +92,11 @@ public class UsingG1Event extends G1Collector implements UnifiedLogging, LogEven
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                if (matcher.group(12).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                    timestamp = Long.parseLong(matcher.group(14));
+                } else {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                }
             }
         }
     }

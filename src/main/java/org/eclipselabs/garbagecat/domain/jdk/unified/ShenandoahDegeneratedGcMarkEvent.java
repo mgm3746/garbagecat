@@ -15,8 +15,8 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
-import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -25,82 +25,36 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * SHENANDOAH_CONCURRENT
+ * SHENANDOAH_DEGENERATED_GC_MARK
  * </p>
  * 
  * <p>
- * Any number of events that happen concurrently with the JVM's execution of application threads. These events are not
- * included in the GC analysis since there is no application pause time; however, they are used to determine max heap
- * space and occupancy.
+ * When allocation failure occurs, degenerated GC continues the in-progress "concurrent" cycle under stop-the-world.[1].
+ * 
+ * [1]<a href="https://wiki.openjdk.java.net/display/shenandoah/Main">Shenandoah GC</a>
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
- * <p>
- * 1) Standard logging:
- * </p>
- * 
  * <pre>
- * [0.437s][info][gc] GC(0) Concurrent reset 15M-&gt;16M(64M) 4.701ms
- * </pre>
- * 
- * <pre>
- * [0.528s][info][gc] GC(1) Concurrent marking 16M-&gt;17M(64M) 7.045ms
- * </pre>
- * 
- * <pre>
- * [0.454s][info][gc] GC(0) Concurrent marking (process weakrefs) 17M-&gt;19M(64M) 15.264ms
- * </pre>
- * 
- * <pre>
- * [0.455s][info][gc] GC(0) Concurrent precleaning 19M-&gt;19M(64M) 0.202ms
- * </pre>
- * 
- * <pre>
- * [0.465s][info][gc] GC(0) Concurrent evacuation 17M-&gt;19M(64M) 6.528ms
- * </pre>
- * 
- * <pre>
- * [0.470s][info][gc] GC(0) Concurrent update references 19M-&gt;19M(64M) 4.708ms
- * </pre>
- * 
- * <pre>
- * [0.472s][info][gc] GC(0) Concurrent cleanup 18M-&gt;15M(64M) 0.036ms
- * </pre>
- * 
- * <pre>
- * [0.528s][info][gc] GC(1) Concurrent marking 16M-&gt;17M(64M) 7.045ms
- * </pre>
- * 
- * <p>
- * 2) Shenandoah with <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>.
- * </p>
- * 
- * <pre>
- * [2019-02-05T14:47:34.156-0200][3068ms] GC(0) Concurrent reset
+ * [52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M-&gt;30M(64M) 53.697ms
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahConcurrentEvent extends ShenandoahCollector
-        implements UnifiedLogging, LogEvent, ParallelEvent, CombinedData {
-
-    /**
-     * Regular expressions defining the logging.
-     */
-    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|"
-            + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\])?(\\[gc(,start)?[ ]{0,11}\\])?( " + JdkRegEx.GC_EVENT_NUMBER
-            + ")? Concurrent (reset|uncommit|marking( \\(update refs\\))?( \\(process weakrefs\\))?|"
-            + "precleaning|evacuation|update references|cleanup)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")?[ ]*$";
-
-    private static Pattern pattern = Pattern.compile(REGEX);
+public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
+        implements UnifiedLogging, BlockingEvent, ParallelEvent, CombinedData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
+
+    /**
+     * The elapsed clock time for the GC event in microseconds (rounded).
+     */
+    private int duration;
 
     /**
      * The time when the GC event started in milliseconds after JVM startup.
@@ -123,12 +77,22 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
     private int combinedAvailable;
 
     /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|("
+            + JdkRegEx.TIMESTAMP_MILLIS + "))\\](\\[info\\]\\[gc[ ]{0,11}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+            + " Pause Degenerated GC \\(Mark\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+
+    private static final Pattern pattern = Pattern.compile(REGEX);
+
+    /**
      * Create event from log entry.
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public ShenandoahConcurrentEvent(String logEntry) {
+    public ShenandoahDegeneratedGcMarkEvent(String logEntry) {
         this.logEntry = logEntry;
         if (logEntry.matches(REGEX)) {
             Pattern pattern = Pattern.compile(REGEX);
@@ -136,29 +100,42 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
             if (matcher.find()) {
                 long endTimestamp;
                 if (matcher.group(12).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(14));
+                    endTimestamp = Long.parseLong(matcher.group(16));
                 } else {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
                 }
-                int duration = 0;
-                if (matcher.group(32) != null) {
-                    duration = JdkMath.convertMillisToMicros(matcher.group(32)).intValue();
-                }
+                duration = JdkMath.convertMillisToMicros(matcher.group(27)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                if (matcher.group(22) != null) {
-                    combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(23)), matcher.group(25).charAt(0));
-                    combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)),
-                            matcher.group(28).charAt(0));
-                    combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)),
-                            matcher.group(31).charAt(0));
-
-                }
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)), matcher.group(20).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(21)), matcher.group(23).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)),
+                        matcher.group(26).charAt(0));
             }
         }
     }
 
+    /**
+     * Alternate constructor. Create event from values.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
+     * @param timestamp
+     *            The time when the GC event started in milliseconds after JVM startup.
+     * @param duration
+     *            The elapsed clock time for the GC event in microseconds.
+     */
+    public ShenandoahDegeneratedGcMarkEvent(String logEntry, long timestamp, int duration) {
+        this.logEntry = logEntry;
+        this.timestamp = timestamp;
+        this.duration = duration;
+    }
+
     public String getLogEntry() {
         return logEntry;
+    }
+
+    public int getDuration() {
+        return duration;
     }
 
     public long getTimestamp() {
@@ -178,7 +155,7 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString();
+        return JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC_MARK.toString();
     }
 
     /**

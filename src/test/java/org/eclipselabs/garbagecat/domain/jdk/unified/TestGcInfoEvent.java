@@ -45,14 +45,45 @@ public class TestGcInfoEvent extends TestCase {
                 GcInfoEvent.match(logLine));
     }
 
+    public void testGcThreadsInfo() {
+        String logLine = "[0.006s][info][gc,init] GC threads: 2 parallel, 1 concurrent";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
     public void testReferenceProcessing() {
         String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Reference processing: parallel";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
                 GcInfoEvent.match(logLine));
     }
 
+    public void testReferenceProcessingInfo() {
+        String logLine = "[0.006s][info][gc,init] Reference processing: parallel";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
+    public void testHeuristicsExplicitGcInvokesConcurrent() {
+        String logLine = "[0.006s][info][gc     ] Heuristics ergonomically sets -XX:+ExplicitGCInvokesConcurrent";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
+    public void testHeuristicsShenandoahImplicitGcInvokesConcurrent() {
+        String logLine = "[0.006s][info][gc     ] Heuristics ergonomically sets "
+                + "-XX:+ShenandoahImplicitGCInvokesConcurrent";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
     public void testShanandoahHeuristics() {
         String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Shenandoah heuristics: adaptive";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
+    public void testShanandoahHeuristicsInfo() {
+        String logLine = "[0.006s][info][gc,init] Shenandoah heuristics: adaptive";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
                 GcInfoEvent.match(logLine));
     }
@@ -64,14 +95,32 @@ public class TestGcInfoEvent extends TestCase {
                 GcInfoEvent.match(logLine));
     }
 
+    public void testInitializeShenandoahHeapInfo() {
+        String logLine = "[0.007s][info][gc,init] Initialize Shenandoah heap: 32768K initial, 32768K min, 65536K max";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
     public void testPacerForIdle() {
         String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Pacer for Idle. Initial: 26M, Alloc Tax Rate: 1.0x";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
                 GcInfoEvent.match(logLine));
     }
 
+    public void testPacerForIdleInfo() {
+        String logLine = "[0.007s][info][gc,ergo] Pacer for Idle. Initial: 1310K, Alloc Tax Rate: 1.0x";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
     public void testSafepointingMechanism() {
         String logLine = "[2019-02-05T14:47:31.092-0200][4ms] Safepointing mechanism: global-page poll";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
+    public void testSafepointingMechanismInfo() {
+        String logLine = "[0.007s][info][gc,init] Safepointing mechanism: global-page poll";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
                 GcInfoEvent.match(logLine));
     }
@@ -93,6 +142,24 @@ public class TestGcInfoEvent extends TestCase {
     public void testEvacuationReserve() {
         String logLine = "[2019-02-05T14:47:34.156-0200][3068ms] Evacuation Reserve: 65M (131 regions), Max regular: "
                 + "512K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
+    public void testRegions() {
+        String logLine = "[0.006s][info][gc,init] Regions: 256 x 256K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
+    public void testHumongous() {
+        String logLine = "[0.006s][info][gc,init] Humongous object threshold: 256K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
+    public void testMaxTlab() {
+        String logLine = "[0.006s][info][gc,init] Max TLAB size: 256K";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
                 GcInfoEvent.match(logLine));
     }

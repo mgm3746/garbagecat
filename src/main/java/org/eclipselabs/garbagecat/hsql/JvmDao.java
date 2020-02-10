@@ -158,6 +158,16 @@ public class JvmDao {
      */
     private LogEvent worstInvertedParallelismEvent;
 
+    /**
+     * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
+     */
+    private int maxHeapSpaceNonBlocking;
+
+    /**
+     * Used for tracking max heap occupancy outside of <code>BlockingEvent</code>s.
+     */
+    private int maxHeapOccupancyNonBlocking;
+
     public JvmDao() {
         try {
             // Load database driver.
@@ -396,6 +406,36 @@ public class JvmDao {
      */
     public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {
         this.worstInvertedParallelismEvent = worstInvertedParallelismEvent;
+    }
+
+    /**
+     * @return The maximum heap space in non <code>BlockingEvent</code>s.
+     */
+    public int getMaxHeapSpaceNonBlocking() {
+        return maxHeapSpaceNonBlocking;
+    }
+
+    /**
+     * @param maxHeapSpaceNonBlocking
+     *            The maximum heap space in non <code>BlockingEvent</code>s.
+     */
+    public void setMaxHeapSpaceNonBlocking(int maxHeapSpaceNonBlocking) {
+        this.maxHeapSpaceNonBlocking = maxHeapSpaceNonBlocking;
+    }
+
+    /**
+     * @return The maximum heap occupancy in non <code>BlockingEvent</code>s.
+     */
+    public int getMaxHeapOccupancyNonBlocking() {
+        return maxHeapOccupancyNonBlocking;
+    }
+
+    /**
+     * @param maxHeapOccupancyNonBlocking
+     *            The maximum heap occupancy in non <code>BlockingEvent</code>s.
+     */
+    public void setMaxHeapOccupancyNonBlocking(int maxHeapOccupancyNonBlocking) {
+        this.maxHeapOccupancyNonBlocking = maxHeapOccupancyNonBlocking;
     }
 
     /**

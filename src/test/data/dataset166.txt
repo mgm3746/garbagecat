@@ -1,0 +1,13 @@
+[2019-05-09T01:39:00.763+0000][5355ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+[2019-05-09T01:39:00.763+0000][5355ms] GC(0) Using 1 workers of 1 for evacuation
+[2019-05-09T01:39:00.820+0000][5412ms] GC(0)   Pre Evacuate Collection Set: 0.0ms
+[2019-05-09T01:39:00.820+0000][5412ms] GC(0)   Evacuate Collection Set: 56.4ms
+[2019-05-09T01:39:00.820+0000][5412ms] GC(0)   Post Evacuate Collection Set: 0.5ms
+[2019-05-09T01:39:00.820+0000][5412ms] GC(0)   Other: 0.3ms
+[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Eden regions: 65->0(56)
+[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Survivor regions: 0->9(9)
+[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Old regions: 0->0
+[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Humongous regions: 0->0
+[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Metaspace: 26116K->26116K(278528K)
+[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 65M->8M(1304M) 57.263ms
+[2019-05-09T01:39:00.821+0000][5413ms] GC(0) User=0.02s Sys=0.01s Real=0.06s

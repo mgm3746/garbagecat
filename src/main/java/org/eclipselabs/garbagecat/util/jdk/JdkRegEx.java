@@ -32,7 +32,7 @@ public class JdkRegEx {
      * 
      * For example: 3ms
      */
-    public static final String TIMESTAMP_MILLIS = "(\\d{1,7})ms";
+    public static final String TIMESTAMP_MILLIS = "(\\d{1,8})ms";
 
     /**
      * Datestamp. Absolute date/time the JVM uses with <code>-XX:+PrintGCDateStamps</code>.
@@ -177,7 +177,7 @@ public class JdkRegEx {
      * 
      * For example: 328.75 MB/s
      */
-    public static final String ALLOCATION_RATE = "\\d{1,4}\\.\\d{2} MB\\/s";
+    public static final String ALLOCATION_RATE = "\\d{1,6}(\\.\\d{2})? [KM]B\\/s";
 
     /**
      * System.gc() trigger. Explicit garbage collection invoked.

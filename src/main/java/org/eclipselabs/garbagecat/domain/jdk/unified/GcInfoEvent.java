@@ -28,6 +28,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) First observed format:
+ * </p>
+ * 
  * <pre>
  * [2019-02-05T14:47:31.091-0200][3ms] Humongous object threshold: 512K
  * [2019-02-05T14:47:31.091-0200][3ms] Max TLAB size: 512K
@@ -42,6 +46,24 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * [2019-02-05T14:47:34.156-0200][3068ms] Evacuation Reserve: 65M (131 regions), Max regular: 512K
  * </pre>
  * 
+ * <p>
+ * 2) RHEL JDK11:
+ * </p>
+ * 
+ * <pre>
+ * [0.006s][info][gc,init] Regions: 256 x 256K
+ * [0.006s][info][gc,init] Humongous object threshold: 256K
+ * [0.006s][info][gc,init] Max TLAB size: 256K
+ * [0.006s][info][gc,init] GC threads: 2 parallel, 1 concurrent
+ * [0.006s][info][gc,init] Reference processing: parallel
+ * [0.006s][info][gc     ] Heuristics ergonomically sets -XX:+ExplicitGCInvokesConcurrent
+ * [0.006s][info][gc     ] Heuristics ergonomically sets -XX:+ShenandoahImplicitGCInvokesConcurrent
+ * [0.006s][info][gc,init] Shenandoah heuristics: adaptive
+ * [0.007s][info][gc,ergo] Pacer for Idle. Initial: 1310K, Alloc Tax Rate: 1.0x
+ * [0.007s][info][gc,init] Initialize Shenandoah heap: 32768K initial, 32768K min, 65536K max
+ * [0.007s][info][gc,init] Safepointing mechanism: global-page poll
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -52,38 +74,53 @@ public class GcInfoEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent {
      */
     private static final String REGEX[] = {
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Humongous object threshold: "
-                    + JdkRegEx.SIZE + "$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\] Humongous object threshold: " + JdkRegEx.SIZE + "$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Max TLAB size: " + JdkRegEx.SIZE
-                    + "$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,init\\])? Max TLAB size: " + JdkRegEx.SIZE + "$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] GC threads: \\d parallel, \\d concurrent$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,init\\])? GC threads: \\d parallel, \\d concurrent$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Reference processing: parallel$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,init\\])? Reference processing: parallel$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Shenandoah heuristics: adaptive$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,init\\])? Shenandoah heuristics: adaptive$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] Initialize Shenandoah heap with initial size \\d{10} bytes$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,init\\])? Initialize Shenandoah heap( with initial size \\d{10} bytes|: "
+                    + JdkRegEx.SIZE + " initial, " + JdkRegEx.SIZE + " min, " + JdkRegEx.SIZE + " max)$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Pacer for Idle. Initial: "
-                    + JdkRegEx.SIZE + ", Alloc Tax Rate: \\d\\.\\dx$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,ergo\\])? Pacer for Idle. Initial: " + JdkRegEx.SIZE
+                    + ", Alloc Tax Rate: \\d\\.\\dx$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] Safepointing mechanism: global-page poll$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,init\\])? Safepointing mechanism: global-page poll$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] Trigger: Learning \\d of \\d\\. Free \\(" + JdkRegEx.SIZE
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\] Trigger: Learning \\d of \\d\\. Free \\(" + JdkRegEx.SIZE
                     + "\\) is below initial threshold \\(" + JdkRegEx.SIZE + "\\)$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Free: " + JdkRegEx.SIZE
-                    + " \\(\\d{1,4} regions\\), Max regular: " + JdkRegEx.SIZE + ", Max humongous: " + JdkRegEx.SIZE
-                    + ", External frag: \\d%, Internal frag: \\d%$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\] Free: " + JdkRegEx.SIZE + " \\(\\d{1,4} regions\\), Max regular: " + JdkRegEx.SIZE
+                    + ", Max humongous: " + JdkRegEx.SIZE + ", External frag: \\d%, Internal frag: \\d%$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Evacuation Reserve: "
-                    + JdkRegEx.SIZE + " \\(\\d{1,3} regions\\), Max regular: " + JdkRegEx.SIZE + "$"
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\] Evacuation Reserve: " + JdkRegEx.SIZE + " \\(\\d{1,3} regions\\), Max regular: "
+                    + JdkRegEx.SIZE + "$",
+            //
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\]\\[info\\]\\[gc,init\\] Regions: \\d{1,3} x " + JdkRegEx.SIZE + "$",
+            //
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\]\\[info\\]\\[gc,init\\] Humongous object threshold: " + JdkRegEx.SIZE + "$",
+            //
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\]\\[info\\]\\[gc     \\] Heuristics ergonomically sets "
+                    + "(-XX:\\+ExplicitGCInvokesConcurrent|-XX:\\+ShenandoahImplicitGCInvokesConcurrent)$"
             //
     };
 
