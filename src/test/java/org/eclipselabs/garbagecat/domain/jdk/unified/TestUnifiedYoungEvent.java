@@ -99,6 +99,22 @@ public class TestUnifiedYoungEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 940, event.getDuration());
     }
 
+    public void testTimesData() {
+        String logLine = "[0.042s][info][gc           ] GC(0) Pause Young (Allocation Failure) 0M->0M(1M) 1.393ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".",
+                UnifiedYoungEvent.match(logLine));
+        UnifiedYoungEvent event = new UnifiedYoungEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_YOUNG.toString(), event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 42 - 1, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        Assert.assertEquals("Combined begin size not parsed correctly.", 0 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 0 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 1 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 1393, event.getDuration());
+    }
+
     public void testUnifiedYoungStandardLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset149.txt");
