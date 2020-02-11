@@ -71,6 +71,16 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
+    public void testHydration() {
+        LogEventType eventType = JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE;
+        String logLine = "[27.091s][info][gc] GC(1515) Pause Young (Normal) (G1 Evacuation Pause) "
+                + "43M->26M(52M) 0.941ms";
+        long timestamp = 27091;
+        int duration = 0;
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " not parsed.", JdkUtil
+                .hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof UnifiedG1YoungPauseEvent);
+    }
+
     public void testReportable() {
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " not indentified as reportable.",
                 JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE));

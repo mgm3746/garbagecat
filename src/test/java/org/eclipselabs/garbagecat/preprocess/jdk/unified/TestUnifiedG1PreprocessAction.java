@@ -42,6 +42,18 @@ public class TestUnifiedG1PreprocessAction extends TestCase {
                 UnifiedG1PreprocessAction.match(logLine));
     }
 
+    public void testLogLineStartPauseYoungPreparedMixed() {
+        String logLine = "[15.108s][info][gc,start      ] GC(1194) Pause Young (Prepare Mixed) (G1 Evacuation Pause)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
+    public void testLogLineStartMixedPause() {
+        String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",
+                UnifiedG1PreprocessAction.match(logLine));
+    }
+
     public void testLogLineStartPauseYoungConcurrentStart() {
         String logLine = "[16.600s][info][gc,start     ] GC(1032) Pause Young (Concurrent Start) (G1 Evacuation Pause)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED_G1.toString() + ".",

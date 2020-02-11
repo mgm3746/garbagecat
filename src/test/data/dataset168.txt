@@ -1,0 +1,13 @@
+[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause)
+[16.627s][info][gc,task       ] GC(1354) Using 2 workers of 4 for evacuation
+[16.627s][info][gc,phases     ] GC(1354)   Pre Evacuate Collection Set: 0.0ms
+[16.627s][info][gc,phases     ] GC(1354)   Evacuate Collection Set: 0.2ms
+[16.627s][info][gc,phases     ] GC(1354)   Post Evacuate Collection Set: 0.0ms
+[16.627s][info][gc,phases     ] GC(1354)   Other: 0.1ms
+[16.627s][info][gc,heap       ] GC(1354) Eden regions: 11->0(2)
+[16.627s][info][gc,heap       ] GC(1354) Survivor regions: 1->1(2)
+[16.628s][info][gc,heap       ] GC(1354) Old regions: 14->14
+[16.628s][info][gc,heap       ] GC(1354) Humongous regions: 0->0
+[16.628s][info][gc,metaspace  ] GC(1354) Metaspace: 3801K->3801K(1056768K)
+[16.628s][info][gc            ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) 24M->13M(31M) 0.361ms
+[16.628s][info][gc,cpu        ] GC(1354) User=0.00s Sys=0.00s Real=0.00s

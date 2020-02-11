@@ -81,8 +81,10 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1ConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1InfoEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1MixedPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPrepareMixedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent;
@@ -113,9 +115,9 @@ public class JdkUtil {
         //
         UNIFIED_REMARK, UNIFIED_CMS_INITIAL_MARK, UNIFIED_CMS_CONCURRENT,
         //
-        UNIFIED_G1_CLEANUP, UNIFIED_G1_CONCURRENT, UNIFIED_G1_INFO, UNIFIED_G1_YOUNG_INITIAL_MARK,
+        UNIFIED_G1_CLEANUP, UNIFIED_G1_CONCURRENT, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE,
         //
-        UNIFIED_G1_YOUNG_PAUSE,
+        UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
         //
         SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK, SHENANDOAH_CONCURRENT, SHENANDOAH_TRIGGER,
         //
@@ -230,10 +232,14 @@ public class JdkUtil {
             return LogEventType.UNIFIED_G1_CONCURRENT;
         if (UnifiedG1InfoEvent.match(logLine))
             return LogEventType.UNIFIED_G1_INFO;
+        if (UnifiedG1MixedPauseEvent.match(logLine))
+            return LogEventType.UNIFIED_G1_MIXED_PAUSE;
         if (UnifiedG1YoungInitialMarkEvent.match(logLine))
             return LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK;
         if (UnifiedG1YoungPauseEvent.match(logLine))
             return LogEventType.UNIFIED_G1_YOUNG_PAUSE;
+        if (UnifiedG1YoungPrepareMixedEvent.match(logLine))
+            return LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
         if (UnifiedOldEvent.match(logLine))
             return LogEventType.UNIFIED_OLD;
         if (UnifiedRemarkEvent.match(logLine))
@@ -415,11 +421,17 @@ public class JdkUtil {
         case UNIFIED_G1_INFO:
             event = new UnifiedG1InfoEvent(logLine);
             break;
+        case UNIFIED_G1_MIXED_PAUSE:
+            event = new UnifiedG1MixedPauseEvent(logLine);
+            break;
         case UNIFIED_G1_YOUNG_INITIAL_MARK:
             event = new UnifiedG1YoungInitialMarkEvent(logLine);
             break;
         case UNIFIED_G1_YOUNG_PAUSE:
             event = new UnifiedG1YoungPauseEvent(logLine);
+            break;
+        case UNIFIED_G1_YOUNG_PREPARE_MIXED:
+            event = new UnifiedG1YoungPrepareMixedEvent(logLine);
             break;
         case UNIFIED_OLD:
             event = new UnifiedOldEvent(logLine);
@@ -621,6 +633,18 @@ public class JdkUtil {
         case UNIFIED_G1_CLEANUP:
             event = new UnifiedG1CleanupEvent(logEntry, timestamp, duration);
             break;
+        case UNIFIED_G1_YOUNG_INITIAL_MARK:
+            event = new UnifiedG1YoungInitialMarkEvent(logEntry, timestamp, duration);
+            break;
+        case UNIFIED_G1_MIXED_PAUSE:
+            event = new UnifiedG1MixedPauseEvent(logEntry, timestamp, duration);
+            break;
+        case UNIFIED_G1_YOUNG_PAUSE:
+            event = new UnifiedG1YoungPauseEvent(logEntry, timestamp, duration);
+            break;
+        case UNIFIED_G1_YOUNG_PREPARE_MIXED:
+            event = new UnifiedG1YoungPrepareMixedEvent(logEntry, timestamp, duration);
+            break;
         case UNIFIED_OLD:
             event = new UnifiedOldEvent(logEntry, timestamp, duration);
             break;
@@ -629,12 +653,6 @@ public class JdkUtil {
             break;
         case UNIFIED_YOUNG:
             event = new UnifiedYoungEvent(logEntry, timestamp, duration);
-            break;
-        case UNIFIED_G1_YOUNG_INITIAL_MARK:
-            event = new UnifiedG1YoungInitialMarkEvent(logEntry, timestamp, duration);
-            break;
-        case UNIFIED_G1_YOUNG_PAUSE:
-            event = new UnifiedG1YoungPauseEvent(logEntry, timestamp, duration);
             break;
 
         // G1
@@ -1081,8 +1099,10 @@ public class JdkUtil {
                 case UNIFIED_G1_CLEANUP:
                 case UNIFIED_G1_CONCURRENT:
                 case UNIFIED_G1_INFO:
+                case UNIFIED_G1_MIXED_PAUSE:
                 case UNIFIED_G1_YOUNG_INITIAL_MARK:
                 case UNIFIED_G1_YOUNG_PAUSE:
+                case UNIFIED_G1_YOUNG_PREPARE_MIXED:
                 case UNIFIED_OLD:
                 case UNIFIED_REMARK:
                 case UNIFIED_YOUNG:

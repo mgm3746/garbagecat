@@ -154,8 +154,8 @@ public class UnifiedG1PreprocessAction implements PreprocessAction {
 
             "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
                     + ")\\](\\[info\\]\\[gc,start[ ]{5,6}\\])? " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pause Young( \\((Normal|Concurrent Start)\\))? " + "\\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE
-                    + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)$",
+                    + " Pause Young( \\((Normal|Concurrent Start|Prepare Mixed|Mixed)\\))? " + "\\(("
+                    + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)$",
             //
             "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
                     + ")\\](\\[info\\]\\[gc,task[ ]{6,7}\\])? " + JdkRegEx.GC_EVENT_NUMBER
