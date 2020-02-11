@@ -45,6 +45,12 @@ public class TestFooterHeapEvent extends TestCase {
                 FooterHeapEvent.match(logLine));
     }
 
+    public void testLineHeap3SpacesAfterExit() {
+        String logLine = "[32.839s][info][gc,heap,exit   ] Heap";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
     public void testIdentityEventType() {
         String logLine = "[25.016s][info][gc,heap,exit  ] Heap";
         Assert.assertEquals(JdkUtil.LogEventType.FOOTER_HEAP + "not identified.", JdkUtil.LogEventType.FOOTER_HEAP,
@@ -187,6 +193,13 @@ public class TestFooterHeapEvent extends TestCase {
                 FooterHeapEvent.match(logLine));
     }
 
+    public void testLineMetaspace3SpacesAfterExit() {
+        String logLine = "[32.839s][info][gc,heap,exit   ]  Metaspace       used 4109K, capacity 7271K, committed "
+                + "7296K, reserved 1056768K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
     public void testLineClass() {
         String logLine = "[25.016s][info][gc,heap,exit  ]   class space    used 909K, capacity 995K, committed 1024K, "
                 + "reserved 1048576K";
@@ -204,6 +217,48 @@ public class TestFooterHeapEvent extends TestCase {
     public void testLineClass1SpaceAfterExit() {
         String logLine = "[69.946s][info][gc,heap,exit ]   class space    used 299K, capacity 637K, committed 640K, "
                 + "reserved 1048576K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineDefNew() {
+        String logLine = "[32.839s][info][gc,heap,exit   ]  def new generation   total 11456K, used 4604K "
+                + "[0x00000000fc000000, 0x00000000fcc60000, 0x00000000fd550000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testEden() {
+        String logLine = "[32.839s][info][gc,heap,exit   ]   eden space 10240K,  43% used [0x00000000fc000000, "
+                + "0x00000000fc463ed8, 0x00000000fca00000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testFromSpace() {
+        String logLine = "[32.839s][info][gc,heap,exit   ]   from space 1216K,   8% used [0x00000000fca00000, "
+                + "0x00000000fca1b280, 0x00000000fcb30000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testToSpace() {
+        String logLine = "[32.839s][info][gc,heap,exit   ]   to   space 1216K,   0% used [0x00000000fcb30000, "
+                + "0x00000000fcb30000, 0x00000000fcc60000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testTenured() {
+        String logLine = "[32.839s][info][gc,heap,exit   ]  tenured generation   total 25240K, used 24218K "
+                + "[0x00000000fd550000, 0x00000000fedf6000, 0x0000000100000000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testTheSpace() {
+        String logLine = "[32.839s][info][gc,heap,exit   ]    the space 25240K,  95% used [0x00000000fd550000, "
+                + "0x00000000fecf6b58, 0x00000000fecf6c00, 0x00000000fedf6000)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
                 FooterHeapEvent.match(logLine));
     }

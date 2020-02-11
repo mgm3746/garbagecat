@@ -152,7 +152,7 @@ public class JdkUtil {
     public enum PreprocessActionType {
         APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, DATE_STAMP, G1, CMS, PARALLEL, SERIAL, SHENANDOAH,
         //
-        UNIFIED_G1
+        UNIFIED, UNIFIED_G1
     };
 
     /**

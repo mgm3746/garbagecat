@@ -195,8 +195,9 @@ public class UnifiedG1PreprocessAction implements PreprocessAction {
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
      * context is necessary to detangle multi-line events where logging patterns are shared among preprocessors.
      * 
-     * For example, it is used with the <code>G1PreprocessAction</code> to identify concurrent events intermingled with
-     * non-concurrent events to store them in the intermingled log lines list for output after the non-concurrent event.
+     * For example, it is used with the <code>UnifiedG1PreprocessAction</code> to identify concurrent events
+     * intermingled with non-concurrent events to store them in the intermingled log lines list for output after the
+     * non-concurrent event.
      */
     public static final String TOKEN = "UNIFIED_G1_PREPROCESS_ACTION_TOKEN";
 

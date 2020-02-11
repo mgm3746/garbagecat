@@ -42,8 +42,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Standard format:
+ * </p>
+ * 
  * <pre>
  * [0.053s][info][gc] GC(0) Pause Young (Allocation Failure) 0M-&gt;0M(1M) 0.914ms
+ * </pre>
+ * 
+ * <p>
+ * 2) Preprocessed:
+ * </p>
+ * 
+ * <pre>
+ * [0.112s][info][gc             ] GC(3) Pause Young (Allocation Failure) 1M-&gt;1M(2M) 0.700ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -106,7 +118,7 @@ public class UnifiedYoungEvent extends UnknownCollector
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc([ ]{11})?\\] "
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc([ ]{11,13})?\\] "
             + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "?[ ]*$";
 

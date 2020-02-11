@@ -58,6 +58,22 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * [69.946s][info][gc,heap,exit ]   class space    used 299K, capacity 637K, committed 640K, reserved 1048576K
  * </pre>
  * 
+ * <p>
+ * 3) Serial:
+ * </p>
+ * 
+ * <pre>
+ * [32.839s][info][gc,heap,exit   ] Heap
+ * [32.839s][info][gc,heap,exit   ]  def new generation   total 11456K, used 4604K [0x00000000fc000000, 0x00000000fcc60000, 0x00000000fd550000)
+ * [32.839s][info][gc,heap,exit   ]   eden space 10240K,  43% used [0x00000000fc000000, 0x00000000fc463ed8, 0x00000000fca00000)
+ * [32.839s][info][gc,heap,exit   ]   from space 1216K,   8% used [0x00000000fca00000, 0x00000000fca1b280, 0x00000000fcb30000)
+ * [32.839s][info][gc,heap,exit   ]   to   space 1216K,   0% used [0x00000000fcb30000, 0x00000000fcb30000, 0x00000000fcc60000)
+ * [32.839s][info][gc,heap,exit   ]  tenured generation   total 25240K, used 24218K [0x00000000fd550000, 0x00000000fedf6000, 0x0000000100000000)
+ * [32.839s][info][gc,heap,exit   ]    the space 25240K,  95% used [0x00000000fd550000, 0x00000000fecf6b58, 0x00000000fecf6c00, 0x00000000fedf6000)
+ * [32.839s][info][gc,heap,exit   ]  Metaspace       used 4109K, capacity 7271K, committed 7296K, reserved 1056768K
+ * [32.839s][info][gc,heap,exit   ]   class space    used 299K, capacity 637K, committed 640K, reserved 1048576K
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -68,7 +84,7 @@ public class FooterHeapEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent
      */
     private static final String REGEX[] = {
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap,exit[ ]{1,2}\\].*$",
+            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap,exit[ ]{1,3}\\].*$",
             //
             "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]  - \\[" + JdkRegEx.ADDRESS + ", "
                     + JdkRegEx.ADDRESS + "\\)[ ]*$",
