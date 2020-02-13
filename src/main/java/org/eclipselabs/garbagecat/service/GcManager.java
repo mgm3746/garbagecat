@@ -72,7 +72,6 @@ import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ParallelPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.SerialPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.unified.ShenandoahPreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedG1PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
@@ -327,7 +326,6 @@ public class GcManager {
                 && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
                 && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                 && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                && !context.contains(UnifiedG1PreprocessAction.TOKEN)
                 && !context.contains(UnifiedPreprocessAction.TOKEN)
                 && ShenandoahPreprocessAction.match(currentLogLine)) {
             ShenandoahPreprocessAction action = new ShenandoahPreprocessAction(priorLogLine, currentLogLine,
@@ -340,19 +338,6 @@ public class GcManager {
                 && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                 && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
                 && !context.contains(ShenandoahPreprocessAction.TOKEN)
-                && !context.contains(UnifiedPreprocessAction.TOKEN)
-                && UnifiedG1PreprocessAction.match(currentLogLine)) {
-            UnifiedG1PreprocessAction action = new UnifiedG1PreprocessAction(priorLogLine, currentLogLine, nextLogLine,
-                    entangledLogLines, context);
-            if (action.getLogEntry() != null) {
-                preprocessedLogLine = action.getLogEntry();
-            }
-        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                && !context.contains(ShenandoahPreprocessAction.TOKEN)
-                && !context.contains(UnifiedG1PreprocessAction.TOKEN)
                 && UnifiedPreprocessAction.match(currentLogLine)) {
             UnifiedPreprocessAction action = new UnifiedPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                     entangledLogLines, context);
@@ -362,9 +347,8 @@ public class GcManager {
         } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
                 && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
                 && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(UnifiedG1PreprocessAction.TOKEN)
-                && !context.contains(ShenandoahPreprocessAction.TOKEN)
-                && !context.contains(UnifiedPreprocessAction.TOKEN) && ParallelPreprocessAction.match(currentLogLine)) {
+                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(UnifiedPreprocessAction.TOKEN)
+                && ParallelPreprocessAction.match(currentLogLine)) {
             ParallelPreprocessAction action = new ParallelPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                     entangledLogLines, context);
             if (action.getLogEntry() != null) {
@@ -373,8 +357,7 @@ public class GcManager {
         } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
                 && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
                 && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(UnifiedG1PreprocessAction.TOKEN)
-                && !context.contains(ShenandoahPreprocessAction.TOKEN)
+                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ShenandoahPreprocessAction.TOKEN)
                 && !context.contains(UnifiedPreprocessAction.TOKEN)
                 && CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
             CmsPreprocessAction action = new CmsPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
@@ -383,9 +366,9 @@ public class GcManager {
                 preprocessedLogLine = action.getLogEntry();
             }
         } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(UnifiedG1PreprocessAction.TOKEN)
-                && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                && !context.contains(CmsPreprocessAction.TOKEN) && !context.contains(ShenandoahPreprocessAction.TOKEN)
+                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(SerialPreprocessAction.TOKEN)
+                && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+                && !context.contains(ShenandoahPreprocessAction.TOKEN)
                 && !context.contains(UnifiedPreprocessAction.TOKEN)
                 && ApplicationConcurrentTimePreprocessAction.match(currentLogLine, priorLogLine)) {
             ApplicationConcurrentTimePreprocessAction action = new ApplicationConcurrentTimePreprocessAction(
@@ -394,8 +377,7 @@ public class GcManager {
                 preprocessedLogLine = action.getLogEntry();
             }
         } else if (!context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(UnifiedG1PreprocessAction.TOKEN)
-                && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
+                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
                 && !context.contains(CmsPreprocessAction.TOKEN) && !context.contains(ShenandoahPreprocessAction.TOKEN)
                 && !context.contains(UnifiedPreprocessAction.TOKEN)
                 && ApplicationStoppedTimePreprocessAction.match(currentLogLine, priorLogLine)) {
@@ -407,8 +389,7 @@ public class GcManager {
         } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
                 && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
                 && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                && !context.contains(CmsPreprocessAction.TOKEN) && !context.contains(UnifiedG1PreprocessAction.TOKEN)
-                && !context.contains(ShenandoahPreprocessAction.TOKEN)
+                && !context.contains(CmsPreprocessAction.TOKEN) && !context.contains(ShenandoahPreprocessAction.TOKEN)
                 && !context.contains(UnifiedPreprocessAction.TOKEN)
                 && G1PreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
             G1PreprocessAction action = new G1PreprocessAction(priorLogLine, currentLogLine, nextLogLine,
@@ -419,8 +400,7 @@ public class GcManager {
         } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
                 && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
                 && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(UnifiedG1PreprocessAction.TOKEN)
-                && !context.contains(ShenandoahPreprocessAction.TOKEN)
+                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ShenandoahPreprocessAction.TOKEN)
                 && !context.contains(UnifiedPreprocessAction.TOKEN) && SerialPreprocessAction.match(currentLogLine)) {
             SerialPreprocessAction action = new SerialPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                     entangledLogLines, context);

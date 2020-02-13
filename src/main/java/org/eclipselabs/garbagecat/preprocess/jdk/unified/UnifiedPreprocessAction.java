@@ -26,13 +26,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * Unified logging preprocessing.
+ * Generic unified logging preprocessing.
  * </p>
  *
  * <h3>Example Logging</h3>
  * 
  * <p>
- * 1) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent}:
+ * 1) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialNewEvent}:
  * </p>
  *
  * <pre>
@@ -49,31 +49,31 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * [0.112s][info][gc             ] GC(3) Pause Young (Allocation Failure) 1M-&gt;1M(2M) 0.700ms User=0.00s Sys=0.00s Real=0.00s
+ * [0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: 512K-&gt;464K(1024K) PSOldGen: 0K-&gt;8K(512K) Metaspace: 120K-&gt;120K(1056768K) 0M-&gt;0M(1M) 1.195ms User=0.01s Sys=0.01s Real=0.00s
  * </pre>
  * 
  * <p>
- * 2) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent} mixed in @link
- * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent}:
+ * 2) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent} triggered by a@link
+ * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent} young generation guarantee:
  * </p>
  *
  * <pre>
- * [4.057s][info][gc,start       ] GC(2263) Pause Young (Allocation Failure)
- * [4.057s][info][gc,start       ] GC(2264) Pause Full (Allocation Failure)
- * [4.057s][info][gc,phases,start] GC(2264) Phase 1: Mark live objects
- * [4.062s][info][gc,phases      ] GC(2264) Phase 1: Mark live objects 4.352ms
- * [4.062s][info][gc,phases,start] GC(2264) Phase 2: Compute new object addresses
- * [4.063s][info][gc,phases      ] GC(2264) Phase 2: Compute new object addresses 1.165ms
- * [4.063s][info][gc,phases,start] GC(2264) Phase 3: Adjust pointers
- * [4.065s][info][gc,phases      ] GC(2264) Phase 3: Adjust pointers 2.453ms
- * [4.065s][info][gc,phases,start] GC(2264) Phase 4: Move objects
- * [4.067s][info][gc,phases      ] GC(2264) Phase 4: Move objects 1.248ms
- * [4.067s][info][gc             ] GC(2264) Pause Full (Allocation Failure) 5M-&gt;5M(8M) 9.355ms
- * [4.067s][info][gc,heap        ] GC(2263) DefNew: 2377K-&gt;0K(2624K)
- * [4.067s][info][gc,heap        ] GC(2263) Tenured: 5622K-&gt;5442K(5632K)
- * [4.067s][info][gc,metaspace   ] GC(2263) Metaspace: 3623K-&gt;3623K(1056768K)
- * [4.067s][info][gc             ] GC(2263) Pause Young (Allocation Failure) 7M-&gt;5M(12M) 9.636ms
- * [4.067s][info][gc,cpu         ] GC(2263) User=0.01s Sys=0.00s Real=0.01s
+ * [0.073s][info][gc,start     ] GC(1) Pause Young (Allocation Failure)
+ * [0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure)
+ * [0.075s][info][gc,phases,start] GC(2) Phase 1: Mark live objects
+ * [0.076s][info][gc,phases      ] GC(2) Phase 1: Mark live objects 0.875ms
+ * [0.076s][info][gc,phases,start] GC(2) Phase 2: Compute new object addresses
+ * [0.076s][info][gc,phases      ] GC(2) Phase 2: Compute new object addresses 0.167ms
+ * [0.076s][info][gc,phases,start] GC(2) Phase 3: Adjust pointers
+ * [0.076s][info][gc,phases      ] GC(2) Phase 3: Adjust pointers 0.474ms
+ * [0.076s][info][gc,phases,start] GC(2) Phase 4: Move objects
+ * [0.076s][info][gc,phases      ] GC(2) Phase 4: Move objects 0.084ms
+ * [0.076s][info][gc             ] GC(2) Pause Full (Allocation Failure) 0M-&gt;0M(2M) 1.699ms
+ * [0.076s][info][gc,heap        ] GC(1) DefNew: 1152K-&gt;0K(1152K)
+ * [0.076s][info][gc,heap        ] GC(1) Tenured: 458K-&gt;929K(960K)
+ * [0.076s][info][gc,metaspace   ] GC(1) Metaspace: 697K-&gt;697K(1056768K)
+ * [0.076s][info][gc             ] GC(1) Pause Young (Allocation Failure) 1M-&gt;0M(2M) 3.061ms
+ * [0.076s][info][gc,cpu         ] GC(1) User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  *
  * <p>
@@ -81,8 +81,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * [4.067s][info][gc             ] GC(2264) Pause Full (Allocation Failure) 5M-&gt;5M(8M) 9.355ms
- * [4.067s][info][gc             ] GC(2263) Pause Young (Allocation Failure) 7M-&gt;5M(12M) 9.636ms User=0.01s Sys=0.00s Real=0.01s
+ * [0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: 1152K-&gt;0K(1152K) Tenured: 458K-&gt;929K(960K) Metaspace: 697K-&gt;697K(1056768K) 1M-&gt;0M(2M) 3.061ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -91,63 +90,164 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class UnifiedPreprocessAction implements PreprocessAction {
 
     /**
-     * Regular expression for retained beginning UNIFIED_YOUNG_PAUSE collection.
+     * Regular expression for retained beginning @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent}.
+     * 
+     * <pre>
+     * [0.112s][info][gc,start       ] GC(3) Pause Young (Allocation Failure)
+     * </pre>
+     */
+    private static final String REGEX_RETAIN_BEGINNING_PAUSE_YOUNG = "^((\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
+            + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\]\\[info\\]\\[gc,start[ ]{0,7}\\] "
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))$";
+
+    /**
+     * Regular expression for retained beginning @link
+     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialOldEvent}.
+     * 
+     * <pre>
+     * [0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure)
+     * </pre>
+     */
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL_OLD = "^(\\[" + JdkRegEx.TIMESTAMP
+            + "s\\]\\[info\\]\\[gc,start[ ]{0,7}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Full \\("
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))$";
+
+    /**
+     * Regular expression for retained beginning @link
+     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent}.
+     * 
+     * <pre>
+     * [16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause)
+     * 
+     * [15.069s][info][gc,start     ] GC(1190) Pause Young (Concurrent Start) (G1 Evacuation Pause)
+     * 
+     * [2019-05-09T01:39:00.763+0000][5355ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+     * 
+     * [2019-05-09T01:39:07.136+0000][11728ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC)
+     * 
+     * [16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause)
+     * </pre>
+     */
+    private static final String REGEX_RETAIN_BEGINNING_G1_YOUNG = "^((\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
+            + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc,start[ ]{0,7}\\])? "
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Young( \\((Normal|Prepare Mixed|Mixed|Concurrent Start)\\))? \\(("
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\))$";
+
+    /**
+     * Regular expression for retained space data.
+     * 
+     * <pre>
+     * [0.112s][info][gc,heap        ] GC(3) DefNew: 1016K-&gt;128K(1152K)
+     * [0.112s][info][gc,heap        ] GC(3) Tenured: 929K-&gt;1044K(1552K)
+     * [0.032s][info][gc,heap      ] GC(0) PSYoungGen: 512K->464K(1024K)
+     * [0.032s][info][gc,heap      ] GC(0) PSOldGen: 0K->8K(512K)
+     * [0.032s][info][gc,metaspace ] GC(0) Metaspace: 120K->120K(1056768K)
+     * 
+     * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) Metaspace: 26116K->26116K(278528K)
+     * </pre>
+     */
+    private static final String REGEX_RETAIN_MIDDLE_SPACE_DATA = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
+            + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+            + ")\\](\\[info\\]\\[gc,(heap|metaspace)[ ]{0,8}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+            + "( (DefNew|Tenured|PSYoungGen|PSOldGen|Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\))$";
+
+    /**
+     * Regular expression for retained Pause Young data.
      * 
      * <pre>
      * [0.112s][info][gc             ] GC(3) Pause Young (Allocation Failure) 1M->1M(2M) 0.700ms
      * </pre>
      */
-    private static final String REGEX_RETAIN_PAUSE_YOUNG = "^(\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc             \\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+    private static final String REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA = "^\\[" + JdkRegEx.TIMESTAMP
+            + "s\\]\\[info\\]\\[gc[ ]{0,13}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\("
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")$";
+
+    /**
+     * Regular expression for retained Pause Full data.
+     * 
+     * <pre>
+     * [0.076s][info][gc             ] GC(2) Pause Full (Allocation Failure) 0M->0M(2M) 1.699ms
+     * </pre>
+     */
+    private static final String REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA = "^\\[" + JdkRegEx.TIMESTAMP
+            + "s\\]\\[info\\]\\[gc[ ]{0,13}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Full \\(Allocation Failure\\)( "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")$";
+
+    /**
+     * Regular expression for retained Pause Young data.
+     * 
+     * [15.060s][info][gc ] GC(1189) Pause Young (Normal) (G1 Evacuation Pause) 25M->13M(31M) 0.355ms
+     * 
+     * [0.337s][info][gc ] GC(0) Pause Young (G1 Evacuation Pause) 25M->4M(254M) 3.523ms
+     * 
+     * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 65M->8M(1304M) 57.263ms
+     * 
+     * [2019-05-09T01:39:07.172+0000][11764ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC) 78M->22M(1304M)
+     * 35.722ms
+     * 
+     * [16.630s][info][gc ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) 15M->12M(31M) 1.202ms
+     */
+    private static final String REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
+            + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc[ ]{0,13}\\])? "
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Young( \\((Normal|Mixed|Prepare Mixed|Concurrent Start)\\))? \\(("
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)( "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")$";
 
     /**
      * Regular expression for retained end times data.
      * 
      * <pre>
      * [0.112s][info][gc,cpu         ] GC(3) User=0.00s Sys=0.00s Real=0.00s
+     * 
+     * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) User=0.02s Sys=0.01s Real=0.06s
      * </pre>
      */
-    private static final String REGEX_RETAIN_END_TIMES_DATA = "^\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc,cpu         \\] " + JdkRegEx.GC_EVENT_NUMBER + TimesData.REGEX_JDK9 + "$";
+    private static final String REGEX_RETAIN_END_TIMES_DATA = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
+            + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc,cpu[ ]{0,9}\\])? "
+            + JdkRegEx.GC_EVENT_NUMBER + TimesData.REGEX_JDK9 + "$";
 
     /**
      * Regular expressions for lines thrown away.
      * 
      * <pre>
-     * [0.112s][info][gc,start       ] GC(3) Pause Young (Allocation Failure)
-     * [0.112s][info][gc,heap        ] GC(3) DefNew: 1016K->128K(1152K)
-     * [0.112s][info][gc,heap        ] GC(3) Tenured: 929K->1044K(1552K)
-     * [0.112s][info][gc,metaspace   ] GC(3) Metaspace: 1222K->1222K(1056768K)
+     * [4.057s][info][gc,phases,start] GC(2264) Phase 1: Mark live objects
+     * [4.062s][info][gc,phases      ] GC(2264) Phase 1: Mark live objects 4.352ms
+     * [4.062s][info][gc,phases,start] GC(2264) Phase 2: Compute new object addresses
+     * [4.063s][info][gc,phases      ] GC(2264) Phase 2: Compute new object addresses 1.165ms
+     * [4.063s][info][gc,phases,start] GC(2264) Phase 3: Adjust pointers
+     * [4.065s][info][gc,phases      ] GC(2264) Phase 3: Adjust pointers 2.453ms
+     * [4.065s][info][gc,phases,start] GC(2264) Phase 4: Move objects
+     * [4.067s][info][gc,phases      ] GC(2264) Phase 4: Move objects 1.248ms
      * </pre>
      */
     private static final String[] REGEX_THROWAWAY = {
-
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,start[ ]{5,7}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pause (Young|Full) \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\)$",
-            //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,(heap|metaspace)[ ]{3,8}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " (DefNew|Tenured|Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-                    + "\\)$",
-            //
+            // SERIAL
             "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,phases(,start)?[ ]{0,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Phase 1: Mark live objects( " + JdkRegEx.DURATION_JDK9 + ")?$",
+                    + " Phase \\d: .+?$",
+            // G1
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,task[ ]{6,7}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+                    + " Using \\d{1,2} workers of \\d{1,2} for (evacuation|marking)$",
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,phases(,start)?[ ]{0,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Phase 2: Compute new object addresses( " + JdkRegEx.DURATION_JDK9 + ")?$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,phases[ ]{4,5}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+                    + "   ((Pre Evacuate|Evacuate|Post Evacuate|Other) Collection Set|Other): " + JdkRegEx.DURATION_JDK9
+                    + "$",
             //
-
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,phases(,start)?[ ]{0,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Phase 3: Adjust pointers( " + JdkRegEx.DURATION_JDK9 + ")?$",
+            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
+                    + ")\\](\\[info\\]\\[gc,heap[ ]{6,7}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+                    + " (Eden|Survivor|Old|Humongous) regions: \\d{1,3}->\\d{1,3}(\\(\\d{1,3}\\))?$",
+            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,start[ ]{5,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
+                    + " Pause Remark$",
             //
-
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,phases(,start)?[ ]{0,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Phase 4: Move objects( " + JdkRegEx.DURATION_JDK9 + ")?$",
-            // Discard intermingled UNIFIED_OLD, as the data/time is included in UNIFIED_YOUNG.
-            "^(\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc             \\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pause Full \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\) " + JdkRegEx.SIZE + "->"
-                    + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")$"
+            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,stringtable\\] " + JdkRegEx.GC_EVENT_NUMBER
+                    + " Cleaned string and symbol table, strings: \\d{1,4} processed, \\d removed, "
+                    + "symbols: \\d{1,5} processed, \\d{1,2} removed$",
+            //
+            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,start      \\] " + JdkRegEx.GC_EVENT_NUMBER
+                    + " Pause Cleanup$"
             //
     };
 
@@ -182,22 +282,65 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     public UnifiedPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
             List<String> entangledLogLines, Set<String> context) {
-
         // Beginning logging
-        if (logEntry.matches(REGEX_RETAIN_PAUSE_YOUNG)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_PAUSE_YOUNG);
+        if (logEntry.matches(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG)) {
+            // Only report young collections that do not trigger an old collection
+            if (!nextLogEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_OLD)) {
+                Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG);
+                Matcher matcher = pattern.matcher(logEntry);
+                if (matcher.matches()) {
+                    this.logEntry = matcher.group(1);
+                }
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_G1_YOUNG)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_G1_YOUNG);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_END_TIMES_DATA)) {
-            // End of logging event
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_OLD)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_OLD);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_SPACE_DATA)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_SPACE_DATA);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(17);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(2);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA)) {
+            // Throw away and get data from Pause Young wrapping Pause Old
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA)) {
+            // Middle logging
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(19);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_END_TIMES_DATA)) {
+            // End logging
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(16);
             }
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
@@ -220,7 +363,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        if (logLine.matches(REGEX_RETAIN_PAUSE_YOUNG) || logLine.matches(REGEX_RETAIN_END_TIMES_DATA)) {
+        if (logLine.matches(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG) || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_OLD)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_G1_YOUNG)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_SPACE_DATA) || logLine.matches(REGEX_RETAIN_END_TIMES_DATA)) {
             match = true;
         } else {
             // TODO: Get rid of this and make them throwaway events?

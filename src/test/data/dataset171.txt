@@ -1,0 +1,6 @@
+[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure)
+[0.042s][info][gc,heap      ] GC(0) DefNew: 983K->128K(1152K)
+[0.042s][info][gc,heap      ] GC(0) Tenured: 0K->458K(768K)
+[0.042s][info][gc,metaspace ] GC(0) Metaspace: 246K->246K(1056768K)
+[0.042s][info][gc           ] GC(0) Pause Young (Allocation Failure) 0M->0M(1M) 1.393ms
+[0.042s][info][gc,cpu       ] GC(0) User=0.00s Sys=0.00s Real=0.00s

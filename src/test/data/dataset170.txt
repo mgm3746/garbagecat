@@ -1,16 +1,13 @@
-[4.057s][info][gc,start       ] GC(2263) Pause Young (Allocation Failure)
-[4.057s][info][gc,start       ] GC(2264) Pause Full (Allocation Failure)
-[4.057s][info][gc,phases,start] GC(2264) Phase 1: Mark live objects
-[4.062s][info][gc,phases      ] GC(2264) Phase 1: Mark live objects 4.352ms
-[4.062s][info][gc,phases,start] GC(2264) Phase 2: Compute new object addresses
-[4.063s][info][gc,phases      ] GC(2264) Phase 2: Compute new object addresses 1.165ms
-[4.063s][info][gc,phases,start] GC(2264) Phase 3: Adjust pointers
-[4.065s][info][gc,phases      ] GC(2264) Phase 3: Adjust pointers 2.453ms
-[4.065s][info][gc,phases,start] GC(2264) Phase 4: Move objects
-[4.067s][info][gc,phases      ] GC(2264) Phase 4: Move objects 1.248ms
-[4.067s][info][gc             ] GC(2264) Pause Full (Allocation Failure) 5M->5M(8M) 9.355ms
-[4.067s][info][gc,heap        ] GC(2263) DefNew: 2377K->0K(2624K)
-[4.067s][info][gc,heap        ] GC(2263) Tenured: 5622K->5442K(5632K)
-[4.067s][info][gc,metaspace   ] GC(2263) Metaspace: 3623K->3623K(1056768K)
-[4.067s][info][gc             ] GC(2263) Pause Young (Allocation Failure) 7M->5M(12M) 9.636ms
-[4.067s][info][gc,cpu         ] GC(2263) User=0.01s Sys=0.00s Real=0.01s
+[2019-05-09T01:39:07.136+0000][11728ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC)
+[2019-05-09T01:39:07.136+0000][11728ms] GC(3) Using 1 workers of 1 for evacuation
+[2019-05-09T01:39:07.171+0000][11763ms] GC(3)   Pre Evacuate Collection Set: 0.0ms
+[2019-05-09T01:39:07.171+0000][11763ms] GC(3)   Evacuate Collection Set: 34.9ms
+[2019-05-09T01:39:07.171+0000][11763ms] GC(3)   Post Evacuate Collection Set: 0.4ms
+[2019-05-09T01:39:07.171+0000][11763ms] GC(3)   Other: 0.2ms
+[2019-05-09T01:39:07.171+0000][11763ms] GC(3) Eden regions: 62->0(56)
+[2019-05-09T01:39:07.171+0000][11763ms] GC(3) Survivor regions: 4->9(9)
+[2019-05-09T01:39:07.171+0000][11763ms] GC(3) Old regions: 13->13
+[2019-05-09T01:39:07.171+0000][11763ms] GC(3) Humongous regions: 1->1
+[2019-05-09T01:39:07.171+0000][11763ms] GC(3) Metaspace: 35318K->35318K(288768K)
+[2019-05-09T01:39:07.172+0000][11764ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC) 78M->22M(1304M) 35.722ms
+[2019-05-09T01:39:07.172+0000][11764ms] GC(3) User=0.02s Sys=0.00s Real=0.04s

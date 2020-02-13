@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
+import org.eclipselabs.garbagecat.domain.PermData;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
@@ -69,8 +70,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedG1YoungPauseEvent extends G1Collector
-        implements UnifiedLogging, BlockingEvent, YoungCollection, ParallelEvent, CombinedData, TriggerData, TimesData {
+public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogging, BlockingEvent, YoungCollection,
+        ParallelEvent, PermData, CombinedData, TriggerData, TimesData {
 
     /**
      * Trigger(s) regular expression(s).
@@ -87,11 +88,15 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
 
     /**
      * Regular expression defining preprocessed logging.
+     * 
+     * [0.333s][info][gc,start ] GC(0) Pause Young (G1 Evacuation Pause) Metaspace: 6591K-&gt;6591K(1056768K)
+     * 25M-&gt;4M(254M) 3.523ms User=0.00s Sys=0.00s Real=0.00s
      */
     private static final String REGEX_PREPROCESSED = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP
-            + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc[ ]{11,12}\\])? " + JdkRegEx.GC_EVENT_NUMBER
-            + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
+            + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc,start[ ]{0,6}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+            + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + TRIGGER + "\\) Metaspace: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -122,6 +127,21 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
      * Combined young + old generation allocation (kilobytes).
      */
     private int combinedAllocation;
+
+    /**
+     * Permanent generation size (kilobytes) at beginning of GC event.
+     */
+    private int permGen;
+
+    /**
+     * Permanent generation size (kilobytes) at end of GC event.
+     */
+    private int permGenEnd;
+
+    /**
+     * Space allocated to permanent generation (kilobytes).
+     */
+    private int permGenAllocation;
 
     /**
      * The trigger for the GC event.
@@ -173,15 +193,19 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
                     endTimestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
                 }
                 trigger = matcher.group(18);
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)), matcher.group(24).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)),
+                permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
+                permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)), matcher.group(24).charAt(0));
+                permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)),
                         matcher.group(27).charAt(0));
-                duration = JdkMath.convertMillisToMicros(matcher.group(28)).intValue();
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)), matcher.group(33).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(34)),
+                        matcher.group(36).charAt(0));
+                duration = JdkMath.convertMillisToMicros(matcher.group(37)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                if (matcher.group(29) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(31)).intValue();
+                if (matcher.group(38) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(39)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(40)).intValue();
                 } else {
                     timeUser = TimesData.NO_DATA;
                     timeReal = TimesData.NO_DATA;
@@ -204,10 +228,6 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString();
     }
 
     public String getLogEntry() {
@@ -234,8 +254,36 @@ public class UnifiedG1YoungPauseEvent extends G1Collector
         return combinedAllocation;
     }
 
+    public int getPermOccupancyInit() {
+        return permGen;
+    }
+
+    protected void setPermOccupancyInit(int permGen) {
+        this.permGen = permGen;
+    }
+
+    public int getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    protected void setPermOccupancyEnd(int permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    public int getPermSpace() {
+        return permGenAllocation;
+    }
+
+    protected void setPermSpace(int permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
+    }
+
     public String getTrigger() {
         return trigger;
+    }
+
+    public String getName() {
+        return JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString();
     }
 
     public int getTimeUser() {

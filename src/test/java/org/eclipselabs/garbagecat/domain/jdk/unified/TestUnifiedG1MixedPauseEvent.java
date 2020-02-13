@@ -34,50 +34,53 @@ import junit.framework.TestCase;
 public class TestUnifiedG1MixedPauseEvent extends TestCase {
 
     public void testLogLinePreprocessed() {
-        String logLine = "[15.114s][info][gc            ] GC(1195) Pause Young (Mixed) (G1 Evacuation Pause) "
-                + "15M->12M(31M) 4.194ms User=0.01s Sys=0.00s Real=0.00s";
+        String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
+                + "Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".",
                 UnifiedG1MixedPauseEvent.match(logLine));
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
         Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString(),
                 event.getName());
-        Assert.assertEquals("Time stamp not parsed correctly.", 15114 - 4, event.getTimestamp());
+        Assert.assertEquals("Time stamp not parsed correctly.", 16629 - 1, event.getTimestamp());
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 3801, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 3801, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1056768, event.getPermSpace());
         Assert.assertEquals("Combined begin size not parsed correctly.", 15 * 1024, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 12 * 1024, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 31 * 1024, event.getCombinedSpace());
-        Assert.assertEquals("Duration not parsed correctly.", 4194, event.getDuration());
-        Assert.assertEquals("User time not parsed correctly.", 1, event.getTimeUser());
+        Assert.assertEquals("Duration not parsed correctly.", 1202, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", Integer.MAX_VALUE, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
     }
 
     public void testIdentityEventType() {
-        String logLine = "[15.114s][info][gc            ] GC(1195) Pause Young (Mixed) (G1 Evacuation Pause) "
-                + "15M->12M(31M) 4.194ms User=0.01s Sys=0.00s Real=0.00s";
+        String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
+                + "Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
         Assert.assertEquals(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE + "not identified.",
                 JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE, JdkUtil.identifyEventType(logLine));
     }
 
     public void testParseLogLine() {
-        String logLine = "[15.114s][info][gc            ] GC(1195) Pause Young (Mixed) (G1 Evacuation Pause) "
-                + "15M->12M(31M) 4.194ms User=0.01s Sys=0.00s Real=0.00s";
+        String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
+                + "Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not parsed.",
                 JdkUtil.parseLogLine(logLine) instanceof UnifiedG1MixedPauseEvent);
     }
 
     public void testIsBlocking() {
-        String logLine = "[15.114s][info][gc            ] GC(1195) Pause Young (Mixed) (G1 Evacuation Pause) "
-                + "15M->12M(31M) 4.194ms User=0.01s Sys=0.00s Real=0.00s";
+        String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
+                + "Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as blocking.",
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
     public void testHydration() {
         LogEventType eventType = JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE;
-        String logLine = "[15.114s][info][gc            ] GC(1195) Pause Young (Mixed) (G1 Evacuation Pause) "
-                + "15M->12M(31M) 4.194ms User=0.01s Sys=0.00s Real=0.00s";
+        String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
+                + "Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
         long timestamp = 15108;
         int duration = 0;
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not parsed.", JdkUtil
@@ -97,8 +100,9 @@ public class TestUnifiedG1MixedPauseEvent extends TestCase {
     }
 
     public void testLogLineWhitespaceAtEnd() {
-        String logLine = "[15.114s][info][gc            ] GC(1195) Pause Young (Mixed) (G1 Evacuation Pause) "
-                + "15M->12M(31M) 4.194ms User=0.01s Sys=0.00s Real=0.00s      ";
+        String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
+                + "Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s     ";
+        ;
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".",
                 UnifiedG1MixedPauseEvent.match(logLine));
     }

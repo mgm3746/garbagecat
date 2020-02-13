@@ -87,6 +87,8 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPrepareMixedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedRemarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialNewEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingCmsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingG1Event;
@@ -110,24 +112,22 @@ public class JdkUtil {
      * Defined logging events.
      */
     public enum LogEventType {
-        // unified
-        UNIFIED_YOUNG, UNIFIED_OLD,
-        //
-        UNIFIED_REMARK, UNIFIED_CMS_INITIAL_MARK, UNIFIED_CMS_CONCURRENT,
-        //
-        UNIFIED_G1_CLEANUP, UNIFIED_G1_CONCURRENT, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE,
-        //
-        UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
-        //
-        SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK, SHENANDOAH_CONCURRENT, SHENANDOAH_TRIGGER,
-        //
-        SHENANDOAH_INIT_MARK, SHENANDOAH_FINAL_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_FINAL_UPDATE,
-        //
-        SHENANDOAH_FINAL_EVAC, SHENANDOAH_CANCELLING_GC, SHENANDOAH_DEGENERATED_GC_MARK,
-        //
-        USING_SERIAL, USING_PARALLEL, USING_CMS, USING_G1, USING_SHENANDOAH,
-        //
+        // unified (alphabetical order)
         FOOTER_HEAP, FOOTER_STATS, HEAP_REGION_SIZE, HEAP_ADDRESS, GC_INFO,
+        //
+        SHENANDOAH_CANCELLING_GC, SHENANDOAH_CONCURRENT, SHENANDOAH_DEGENERATED_GC_MARK,
+        //
+        SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_UPDATE, SHENANDOAH_INIT_MARK,
+        //
+        SHENANDOAH_INIT_UPDATE, SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK, SHENANDOAH_TRIGGER,
+        //
+        UNIFIED_CMS_CONCURRENT, UNIFIED_CMS_INITIAL_MARK, UNIFIED_G1_CLEANUP, UNIFIED_G1_CONCURRENT, UNIFIED_G1_INFO,
+        //
+        UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
+        //
+        UNIFIED_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG,
+        //
+        USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH,
         // serial
         SERIAL_NEW, SERIAL_OLD,
         // parallel
@@ -244,18 +244,22 @@ public class JdkUtil {
             return LogEventType.UNIFIED_OLD;
         if (UnifiedRemarkEvent.match(logLine))
             return LogEventType.UNIFIED_REMARK;
+        if (UnifiedSerialNewEvent.match(logLine))
+            return LogEventType.UNIFIED_SERIAL_NEW;
+        if (UnifiedSerialOldEvent.match(logLine))
+            return LogEventType.UNIFIED_SERIAL_OLD;
         if (UnifiedYoungEvent.match(logLine))
             return LogEventType.UNIFIED_YOUNG;
         if (UsingCmsEvent.match(logLine))
             return LogEventType.USING_CMS;
         if (UsingG1Event.match(logLine))
             return LogEventType.USING_G1;
-        if (UsingShenandoahEvent.match(logLine))
-            return LogEventType.USING_SHENANDOAH;
         if (UsingParallelEvent.match(logLine))
             return LogEventType.USING_PARALLEL;
         if (UsingSerialEvent.match(logLine))
             return LogEventType.USING_SERIAL;
+        if (UsingShenandoahEvent.match(logLine))
+            return LogEventType.USING_SHENANDOAH;
 
         // Unknown
         if (VerboseGcYoungEvent.match(logLine))
@@ -438,6 +442,12 @@ public class JdkUtil {
             break;
         case UNIFIED_REMARK:
             event = new UnifiedRemarkEvent(logLine);
+            break;
+        case UNIFIED_SERIAL_NEW:
+            event = new UnifiedSerialNewEvent(logLine);
+            break;
+        case UNIFIED_SERIAL_OLD:
+            event = new UnifiedSerialOldEvent(logLine);
             break;
         case UNIFIED_YOUNG:
             event = new UnifiedYoungEvent(logLine);
@@ -650,6 +660,12 @@ public class JdkUtil {
             break;
         case UNIFIED_REMARK:
             event = new UnifiedRemarkEvent(logEntry, timestamp, duration);
+            break;
+        case UNIFIED_SERIAL_NEW:
+            event = new UnifiedSerialNewEvent(logEntry, timestamp, duration);
+            break;
+        case UNIFIED_SERIAL_OLD:
+            event = new UnifiedSerialOldEvent(logEntry, timestamp, duration);
             break;
         case UNIFIED_YOUNG:
             event = new UnifiedYoungEvent(logEntry, timestamp, duration);
@@ -1105,6 +1121,8 @@ public class JdkUtil {
                 case UNIFIED_G1_YOUNG_PREPARE_MIXED:
                 case UNIFIED_OLD:
                 case UNIFIED_REMARK:
+                case UNIFIED_SERIAL_NEW:
+                case UNIFIED_SERIAL_OLD:
                 case UNIFIED_YOUNG:
                 case USING_CMS:
                 case USING_G1:

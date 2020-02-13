@@ -16,61 +16,44 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.CombinedData;
-import org.eclipselabs.garbagecat.domain.ParallelEvent;
+import org.eclipselabs.garbagecat.domain.OldCollection;
+import org.eclipselabs.garbagecat.domain.OldData;
+import org.eclipselabs.garbagecat.domain.PermCollection;
 import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
-import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
+import org.eclipselabs.garbagecat.domain.YoungData;
+import org.eclipselabs.garbagecat.domain.jdk.SerialCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * UNIFIED_G1_MIXED_PAUSE
+ * UNIFIED_SERIAL_OLD
  * </p>
  * 
  * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.G1MixedPauseEvent} with unified logging (JDK9+).
- * </p>
- * 
- * <p>
- * G1 mixed generation collection. Performed at the same time as a young collection, so it is a collection of the young
- * space and the low liveness regions of the old space. The <code>-XX:InitiatingHeapOccupancyPercent</code> defines the
- * heap occupancy threshold for initiating a mixed pause.
+ * {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent} with unified logging (JDK9+).
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
  * <p>
- * Preprocessed:
+ * Preprocessed with {@link org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction}:
  * </p>
  * 
  * <pre>
- * [15.114s][info][gc            ] GC(1195) Pause Young (Mixed) (G1 Evacuation Pause) 15M-&gt;12M(31M) 4.194ms User=0.01s Sys=0.00s Real=0.00s
+ * [0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: 1152K-&gt;0K(1152K) Tenured: 458K-&gt;929K(960K) Metaspace: 697K-&gt;697K(1056768K) 1M-&gt;0M(2M) 3.061ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogging, BlockingEvent, YoungCollection,
-        ParallelEvent, PermData, CombinedData, TriggerData, TimesData {
-
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")";
-
-    /**
-     * Regular expression defining preprocessed logging.
-     */
-    private static final String REGEX_PREPROCESSED = "^\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc,start[ ]{0,6}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\(Mixed\\) \\("
-            + TRIGGER + "\\) Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9
-            + TimesData.REGEX_JDK9 + "[ ]*$";
+public class UnifiedSerialOldEvent extends SerialCollector implements BlockingEvent, YoungCollection, OldCollection,
+        PermCollection, SerialCollection, YoungData, OldData, PermData, TriggerData, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -88,19 +71,34 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
     private long timestamp;
 
     /**
-     * Combined young + old generation size (kilobytes) at beginning of GC event.
+     * Young generation size (kilobytes) at beginning of GC event.
      */
-    private int combinedBegin;
+    private int young;
 
     /**
-     * Combined young + old generation size (kilobytes) at end of GC event.
+     * Young generation size (kilobytes) at end of GC event.
      */
-    private int combinedEnd;
+    private int youngEnd;
 
     /**
-     * Combined young + old generation allocation (kilobytes).
+     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
      */
-    private int combinedAllocation;
+    private int youngAvailable;
+
+    /**
+     * Old generation size (kilobytes) at beginning of GC event.
+     */
+    private int old;
+
+    /**
+     * Old generation size (kilobytes) at end of GC event.
+     */
+    private int oldEnd;
+
+    /**
+     * Space allocated to old generation (kilobytes).
+     */
+    private int oldAllocation;
 
     /**
      * Permanent generation size (kilobytes) at beginning of GC event.
@@ -133,40 +131,50 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
     private int timeReal;
 
     /**
-     * Create event from log entry.
+     * Trigger(s) regular expression(s).
+     */
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
+
+    /**
+     * Regular expression defining the logging.
+     */
+    private static final String REGEX_PREPROCESSED = "\\[" + JdkRegEx.TIMESTAMP
+            + "s\\]\\[info\\]\\[gc,start[ ]{0,7}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Full \\(" + TRIGGER
+            + "\\) \\DefNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Tenured: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
+
+    private static final Pattern pattern = Pattern.compile(UnifiedSerialOldEvent.REGEX_PREPROCESSED);
+
+    /**
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public UnifiedG1MixedPauseEvent(String logEntry) {
+    public UnifiedSerialOldEvent(String logEntry) {
         this.logEntry = logEntry;
-
-        Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             trigger = matcher.group(2);
-            permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(3)), matcher.group(5).charAt(0));
-            permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(8).charAt(0));
-            permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)), matcher.group(11).charAt(0));
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(12)), matcher.group(14).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(17).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)),
-                    matcher.group(20).charAt(0));
-            duration = JdkMath.convertMillisToMicros(matcher.group(21)).intValue();
-            timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-            if (matcher.group(22) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(23)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(24)).intValue();
-            } else {
-                timeUser = TimesData.NO_DATA;
-                timeReal = TimesData.NO_DATA;
-            }
+            young = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(3)), matcher.group(5).charAt(0));
+            youngEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(8).charAt(0));
+            youngAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)), matcher.group(11).charAt(0));
+            old = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(12)), matcher.group(14).charAt(0));
+            oldEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(17).charAt(0));
+            oldAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)), matcher.group(20).charAt(0));
+            permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(21)), matcher.group(23).charAt(0));
+            permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
+            permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)), matcher.group(29).charAt(0));
+            duration = JdkMath.convertMillisToMicros(matcher.group(39)).intValue();
+            timeUser = JdkMath.convertSecsToCentis(matcher.group(41)).intValue();
+            timeReal = JdkMath.convertSecsToCentis(matcher.group(42)).intValue();
         }
     }
 
     /**
-     * Alternate constructor. Create detail logging event from values.
+     * Alternate constructor. Create serial logging event from values.
      * 
      * @param logEntry
      *            The log entry for the event.
@@ -175,14 +183,10 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
      * @param duration
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public UnifiedG1MixedPauseEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedSerialOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString();
     }
 
     public String getLogEntry() {
@@ -197,16 +201,28 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
         return timestamp;
     }
 
-    public int getCombinedOccupancyInit() {
-        return combinedBegin;
+    public int getYoungOccupancyInit() {
+        return young;
     }
 
-    public int getCombinedOccupancyEnd() {
-        return combinedEnd;
+    public int getYoungOccupancyEnd() {
+        return youngEnd;
     }
 
-    public int getCombinedSpace() {
-        return combinedAllocation;
+    public int getYoungSpace() {
+        return youngAvailable;
+    }
+
+    public int getOldOccupancyInit() {
+        return old;
+    }
+
+    public int getOldOccupancyEnd() {
+        return oldEnd;
+    }
+
+    public int getOldSpace() {
+        return oldAllocation;
     }
 
     public int getPermOccupancyInit() {
@@ -233,8 +249,16 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
         this.permGenAllocation = permGenAllocation;
     }
 
+    public String getName() {
+        return JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString();
+    }
+
     public String getTrigger() {
         return trigger;
+    }
+
+    protected void setTrigger(String trigger) {
+        this.trigger = trigger;
     }
 
     public int getTimeUser() {
@@ -257,6 +281,6 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX_PREPROCESSED);
+        return pattern.matcher(logLine).matches();
     }
 }

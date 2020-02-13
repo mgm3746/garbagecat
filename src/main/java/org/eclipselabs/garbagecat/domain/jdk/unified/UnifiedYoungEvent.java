@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
-import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
@@ -42,27 +41,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
- * <p>
- * 1) Standard format:
- * </p>
- * 
  * <pre>
  * [0.053s][info][gc] GC(0) Pause Young (Allocation Failure) 0M-&gt;0M(1M) 0.914ms
- * </pre>
- * 
- * <p>
- * 2) Preprocessed:
- * </p>
- * 
- * <pre>
- * [0.112s][info][gc             ] GC(3) Pause Young (Allocation Failure) 1M-&gt;1M(2M) 0.700ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
 public class UnifiedYoungEvent extends UnknownCollector
-        implements UnifiedLogging, BlockingEvent, YoungCollection, CombinedData, TriggerData, TimesData {
+        implements UnifiedLogging, BlockingEvent, YoungCollection, CombinedData, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -100,16 +87,6 @@ public class UnifiedYoungEvent extends UnknownCollector
     private String trigger;
 
     /**
-     * The time of all threads added together in centiseconds.
-     */
-    private int timeUser;
-
-    /**
-     * The wall (clock) time in centiseconds.
-     */
-    private int timeReal;
-
-    /**
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_SYSTEM_GC
@@ -118,9 +95,9 @@ public class UnifiedYoungEvent extends UnknownCollector
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc([ ]{11,13})?\\] "
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
             + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "?[ ]*$";
+            + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -134,20 +111,13 @@ public class UnifiedYoungEvent extends UnknownCollector
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(3);
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)), matcher.group(10).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(11)),
-                    matcher.group(13).charAt(0));
-            duration = JdkMath.convertMillisToMicros(matcher.group(14)).intValue();
+            trigger = matcher.group(2);
+            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(6).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(9).charAt(0));
+            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(10)),
+                    matcher.group(12).charAt(0));
+            duration = JdkMath.convertMillisToMicros(matcher.group(13)).intValue();
             timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-            if (matcher.group(15) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(16)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(17)).intValue();
-            } else {
-                timeUser = TimesData.NO_DATA;
-                timeReal = TimesData.NO_DATA;
-            }
         }
     }
 
@@ -197,18 +167,6 @@ public class UnifiedYoungEvent extends UnknownCollector
 
     public String getTrigger() {
         return trigger;
-    }
-
-    public int getTimeUser() {
-        return timeUser;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
-    }
-
-    public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     /**
