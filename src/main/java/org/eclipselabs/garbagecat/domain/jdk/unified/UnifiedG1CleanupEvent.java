@@ -123,6 +123,7 @@ public class UnifiedG1CleanupEvent extends G1Collector
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
+                // TODO: Is this correct?
                 long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(2)), matcher.group(4).charAt(0));
                 combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
@@ -137,13 +138,12 @@ public class UnifiedG1CleanupEvent extends G1Collector
             Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(2)), matcher.group(4).charAt(0));
                 combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
                 combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
                         matcher.group(10).charAt(0));
                 duration = JdkMath.roundMillis(matcher.group(11)).intValue();
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 if (matcher.group(12) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(13)).intValue();
                     timeReal = JdkMath.convertSecsToCentis(matcher.group(14)).intValue();

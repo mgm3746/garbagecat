@@ -41,7 +41,7 @@ public class TestUnifiedG1MixedPauseEvent extends TestCase {
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
         Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString(),
                 event.getName());
-        Assert.assertEquals("Time stamp not parsed correctly.", 16629 - 1, event.getTimestamp());
+        Assert.assertEquals("Time stamp not parsed correctly.", 16629, event.getTimestamp());
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 3801, event.getPermOccupancyInit());

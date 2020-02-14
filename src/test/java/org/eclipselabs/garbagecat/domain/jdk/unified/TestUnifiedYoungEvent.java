@@ -103,8 +103,8 @@ public class TestUnifiedYoungEvent extends TestCase {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset149.txt");
         GcManager gcManager = new GcManager();
-        // Doesn't need preprocessing
-        gcManager.store(testFile, false);
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
@@ -121,8 +121,8 @@ public class TestUnifiedYoungEvent extends TestCase {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset154.txt");
         GcManager gcManager = new GcManager();
-        // Doesn't need preprocessing
-        gcManager.store(testFile, false);
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",

@@ -170,6 +170,7 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
+                // TODO: Is this correct?
                 long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 trigger = matcher.group(3);
                 combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(6).charAt(0));
@@ -185,12 +186,11 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
             Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                long endTimestamp;
                 if (matcher.group(12).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(14));
+                    timestamp = Long.parseLong(matcher.group(14));
 
                 } else {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
                 }
                 trigger = matcher.group(18);
                 permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
@@ -202,7 +202,6 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
                 combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(34)),
                         matcher.group(36).charAt(0));
                 duration = JdkMath.convertMillisToMicros(matcher.group(37)).intValue();
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 if (matcher.group(38) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(39)).intValue();
                     timeReal = JdkMath.convertSecsToCentis(matcher.group(40)).intValue();

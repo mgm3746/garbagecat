@@ -144,7 +144,7 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
         Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             trigger = matcher.group(2);
             permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(3)), matcher.group(5).charAt(0));
             permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(8).charAt(0));
@@ -154,7 +154,6 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
             combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)),
                     matcher.group(20).charAt(0));
             duration = JdkMath.convertMillisToMicros(matcher.group(21)).intValue();
-            timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             if (matcher.group(22) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(23)).intValue();
                 timeReal = JdkMath.convertSecsToCentis(matcher.group(24)).intValue();

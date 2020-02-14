@@ -359,6 +359,13 @@ public class TestShenandoahPreprocessAction extends TestCase {
                 ShenandoahPreprocessAction.match(logLine));
     }
 
+    public void testLogLineUsingParallel() {
+        String logLine = "[0.003s][info][gc] Using Parallel";
+        Assert.assertFalse(
+                "Log line incorrectly recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
     public void testPreprocessingInitialMark() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset160.txt");

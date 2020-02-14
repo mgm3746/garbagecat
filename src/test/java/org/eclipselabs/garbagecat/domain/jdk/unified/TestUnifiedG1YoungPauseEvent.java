@@ -111,7 +111,7 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
         Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(),
                 event.getName());
-        Assert.assertEquals("Time stamp not parsed correctly.", 5355 - 57, event.getTimestamp());
+        Assert.assertEquals("Time stamp not parsed correctly.", 5355, event.getTimestamp());
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 26116, event.getPermOccupancyInit());
@@ -134,7 +134,7 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
         Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(),
                 event.getName());
-        Assert.assertEquals("Time stamp not parsed correctly.", 11728 - 35, event.getTimestamp());
+        Assert.assertEquals("Time stamp not parsed correctly.", 11728, event.getTimestamp());
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
         Assert.assertEquals("Perm gen begin size not parsed correctly.", 35318, event.getPermOccupancyInit());

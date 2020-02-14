@@ -138,12 +138,11 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements Unif
         Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            long endTimestamp;
             if (matcher.group(12).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                endTimestamp = Long.parseLong(matcher.group(14));
+                timestamp = Long.parseLong(matcher.group(14));
 
             } else {
-                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
             }
             trigger = matcher.group(15);
             permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(18).charAt(0));
@@ -154,7 +153,7 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements Unif
             combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)),
                     matcher.group(33).charAt(0));
             duration = JdkMath.convertMillisToMicros(matcher.group(34)).intValue();
-            timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+
             if (matcher.group(35) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
                 timeReal = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();

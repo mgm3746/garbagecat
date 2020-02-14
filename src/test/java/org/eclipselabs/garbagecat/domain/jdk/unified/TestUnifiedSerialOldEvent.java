@@ -118,4 +118,30 @@ public class TestUnifiedSerialOldEvent extends TestCase {
                 UnifiedSerialOldEvent.match(logLine));
     }
 
+    public void testPreprocessedTriggerErgonomics() {
+        String logLine = "[0.091s][info][gc,start     ] GC(3) Pause Full (Ergonomics) PSYoungGen: 502K->436K(1536K) "
+                + "PSOldGen: 460K->511K(2048K) Metaspace: 701K->701K(1056768K) 0M->0M(3M) 1.849ms "
+                + "User=0.01s Sys=0.00s Real=0.00s";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + ".",
+                UnifiedSerialOldEvent.match(logLine));
+        UnifiedSerialOldEvent event = new UnifiedSerialOldEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString(),
+                event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 91, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ERGONOMICS));
+        Assert.assertEquals("Young begin size not parsed correctly.", 502, event.getYoungOccupancyInit());
+        Assert.assertEquals("Young end size not parsed correctly.", 436, event.getYoungOccupancyEnd());
+        Assert.assertEquals("Young available size not parsed correctly.", 1536, event.getYoungSpace());
+        Assert.assertEquals("Old begin size not parsed correctly.", 460, event.getOldOccupancyInit());
+        Assert.assertEquals("Old end size not parsed correctly.", 511, event.getOldOccupancyEnd());
+        Assert.assertEquals("Old allocation size not parsed correctly.", 2048, event.getOldSpace());
+        Assert.assertEquals("Perm gen begin size not parsed correctly.", 701, event.getPermOccupancyInit());
+        Assert.assertEquals("Perm gen end size not parsed correctly.", 701, event.getPermOccupancyEnd());
+        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1056768, event.getPermSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 1849, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 1, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", Integer.MAX_VALUE, event.getParallelism());
+    }
+
 }

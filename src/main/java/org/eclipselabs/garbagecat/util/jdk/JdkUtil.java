@@ -86,6 +86,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEv
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPrepareMixedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelScavengeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialOldEvent;
@@ -242,6 +243,8 @@ public class JdkUtil {
             return LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
         if (UnifiedOldEvent.match(logLine))
             return LogEventType.UNIFIED_OLD;
+        if (UnifiedParallelScavengeEvent.match(logLine))
+            return LogEventType.UNIFIED_PARALLEL_SCAVENGE;
         if (UnifiedRemarkEvent.match(logLine))
             return LogEventType.UNIFIED_REMARK;
         if (UnifiedSerialNewEvent.match(logLine))
@@ -439,6 +442,9 @@ public class JdkUtil {
             break;
         case UNIFIED_OLD:
             event = new UnifiedOldEvent(logLine);
+            break;
+        case UNIFIED_PARALLEL_SCAVENGE:
+            event = new UnifiedParallelScavengeEvent(logLine);
             break;
         case UNIFIED_REMARK:
             event = new UnifiedRemarkEvent(logLine);
@@ -657,6 +663,9 @@ public class JdkUtil {
             break;
         case UNIFIED_OLD:
             event = new UnifiedOldEvent(logEntry, timestamp, duration);
+            break;
+        case UNIFIED_PARALLEL_SCAVENGE:
+            event = new UnifiedParallelScavengeEvent(logEntry, timestamp, duration);
             break;
         case UNIFIED_REMARK:
             event = new UnifiedRemarkEvent(logEntry, timestamp, duration);
@@ -1121,6 +1130,7 @@ public class JdkUtil {
                 case UNIFIED_G1_YOUNG_PREPARE_MIXED:
                 case UNIFIED_OLD:
                 case UNIFIED_REMARK:
+                case UNIFIED_PARALLEL_SCAVENGE:
                 case UNIFIED_SERIAL_NEW:
                 case UNIFIED_SERIAL_OLD:
                 case UNIFIED_YOUNG:

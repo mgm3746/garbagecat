@@ -83,6 +83,7 @@ public class ShenandoahInitUpdateEvent extends ShenandoahCollector
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
+                // TODO: Is this correct?
                 long endTimestamp;
                 if (matcher.group(12).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
                     endTimestamp = Long.parseLong(matcher.group(16));

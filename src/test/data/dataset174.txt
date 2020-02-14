@@ -1,0 +1,14 @@
+[0.091s][info][gc,start     ] GC(3) Pause Full (Ergonomics)
+[0.091s][info][gc,phases,start] GC(3) Phase 1: Mark live objects
+[0.091s][info][gc,phases      ] GC(3) Phase 1: Mark live objects 0.865ms
+[0.091s][info][gc,phases,start] GC(3) Phase 2: Compute new object addresses
+[0.092s][info][gc,phases      ] GC(3) Phase 2: Compute new object addresses 0.143ms
+[0.092s][info][gc,phases,start] GC(3) Phase 3: Adjust pointers
+[0.092s][info][gc,phases      ] GC(3) Phase 3: Adjust pointers 0.522ms
+[0.092s][info][gc,phases,start] GC(3) Phase 4: Move objects
+[0.092s][info][gc,phases      ] GC(3) Phase 4: Move objects 0.165ms
+[0.092s][info][gc,heap        ] GC(3) PSYoungGen: 502K->436K(1536K)
+[0.092s][info][gc,heap        ] GC(3) PSOldGen: 460K->511K(2048K)
+[0.092s][info][gc,metaspace   ] GC(3) Metaspace: 701K->701K(1056768K)
+[0.092s][info][gc             ] GC(3) Pause Full (Ergonomics) 0M->0M(3M) 1.849ms
+[0.092s][info][gc,cpu         ] GC(3) User=0.01s Sys=0.00s Real=0.00s

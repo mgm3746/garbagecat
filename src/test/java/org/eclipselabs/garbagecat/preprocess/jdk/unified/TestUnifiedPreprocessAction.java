@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -165,12 +166,27 @@ public class TestUnifiedPreprocessAction extends TestCase {
         String logLine = "[0.112s][info][gc             ] GC(3) Pause Young (Allocation Failure) 1M->1M(2M) 0.700ms";
         String nextLogLine = "";
         Set<String> context = new HashSet<String>();
+        context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        context.add(UnifiedPreprocessAction.TOKEN);
         Assert.assertTrue("Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".",
                 UnifiedPreprocessAction.match(logLine));
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
         Assert.assertEquals("Log line not parsed correctly.", " 1M->1M(2M) 0.700ms", event.getLogEntry());
+    }
+
+    public void testLogLinePauseYoungInfoStandAlone() {
+        String logLine = "[1.507s][info][gc] GC(77) Pause Young (Allocation Failure) 24M->4M(25M) 0.509ms";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.", Constants.LINE_SEPARATOR + logLine, event.getLogEntry());
     }
 
     public void testLogLineG1PauseYoungInfo() {
@@ -535,15 +551,46 @@ public class TestUnifiedPreprocessAction extends TestCase {
                 UnifiedPreprocessAction.match(logLine));
     }
 
+    public void testLogLineSerialOldStart7SpacesAfterStart() {
+        String logLine = "[0.119s][info][gc,start       ] GC(5) Pause Full (Allocation Failure)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
     public void testLogLineSerialOldInfo() {
         String logLine = "[0.076s][info][gc             ] GC(2) Pause Full (Allocation Failure) 0M->0M(2M) 1.699ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
                 UnifiedPreprocessAction.match(logLine));
     }
 
-    public void testLogLineSerialOldInfo7SpacesAfterStart() {
-        String logLine = "[0.119s][info][gc,start       ] GC(5) Pause Full (Allocation Failure)";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+    public void testLogLineSerialOldInfoTriggerErgonomics() {
+        String logLine = "[0.092s][info][gc             ] GC(3) Pause Full (Ergonomics) 0M->0M(3M) 1.849ms";
+        String nextLogLine = "[0.092s][info][gc,cpu         ] GC(3) User=0.01s Sys=0.00s Real=0.00s";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.", " 0M->0M(3M) 1.849ms", event.getLogEntry());
+    }
+
+    public void testLogLineUnifiedYoungSingleLine() {
+        String logLine = "[1.507s][info][gc] GC(77) Pause Young (Allocation Failure) 24M->4M(25M) 0.509ms";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.", Constants.LINE_SEPARATOR + logLine, event.getLogEntry());
+    }
+
+    public void testLogLineUsingParallel() {
+        String logLine = "[0.003s][info][gc] Using Parallel";
+        Assert.assertFalse(
+                "Log line incorrectly recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
                 UnifiedPreprocessAction.match(logLine));
     }
 
@@ -629,5 +676,33 @@ public class TestUnifiedPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SERIAL_OLD));
+    }
+
+    public void testPreprocessingSerialOldTriggerErgonomics() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset174.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SERIAL_OLD));
+    }
+
+    public void testPreprocessingParallelScavenge() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset173.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE));
     }
 }

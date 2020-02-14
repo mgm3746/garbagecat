@@ -1,0 +1,6 @@
+[15.030s][info][gc,start       ] GC(1199) Pause Young (Allocation Failure)
+[15.031s][info][gc,heap        ] GC(1199) PSYoungGen: 20544K->64K(20992K)
+[15.031s][info][gc,heap        ] GC(1199) PSOldGen: 15496K->15504K(17920K)
+[15.031s][info][gc,metaspace   ] GC(1199) Metaspace: 3779K->3779K(1056768K)
+[15.031s][info][gc             ] GC(1199) Pause Young (Allocation Failure) 35M->15M(38M) 0.402ms
+[15.031s][info][gc,cpu         ] GC(1199) User=0.00s Sys=0.00s Real=0.00s

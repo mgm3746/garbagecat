@@ -78,6 +78,7 @@ public class ShenandoahFinalEvacEvent extends ShenandoahCollector
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
+                // TODO: Is this correct?
                 long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 duration = JdkMath.convertMillisToMicros(matcher.group(2)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
