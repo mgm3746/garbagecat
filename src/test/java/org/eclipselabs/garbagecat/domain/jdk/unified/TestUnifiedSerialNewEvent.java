@@ -50,9 +50,6 @@ public class TestUnifiedSerialNewEvent extends TestCase {
         Assert.assertEquals("Perm gen end size not parsed correctly.", 246, event.getPermOccupancyEnd());
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1056768, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 1393, event.getDuration());
-        Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
-        Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
     }
 
     public void testIdentityEventType() {

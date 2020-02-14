@@ -25,7 +25,7 @@ import junit.framework.TestCase;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestCmsInitialMarkEvent extends TestCase {
+public class TestUnifiedCmsInitialMarkEvent extends TestCase {
 
     public void testLogLine() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
@@ -35,6 +35,9 @@ public class TestCmsInitialMarkEvent extends TestCase {
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
         Assert.assertEquals("Time stamp not parsed correctly.", 178 - 0, event.getTimestamp());
         Assert.assertEquals("Duration not parsed correctly.", 157, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
     }
 
     public void testIdentityEventType() {
@@ -72,5 +75,19 @@ public class TestCmsInitialMarkEvent extends TestCase {
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".",
                 UnifiedCmsInitialMarkEvent.match(logLine));
+    }
+
+    public void testLogLineWithTimesData() {
+        String logLine = "[0.053s][info][gc           ] GC(1) Pause Initial Mark 0M->0M(2M) 0.278ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".",
+                UnifiedCmsInitialMarkEvent.match(logLine));
+        UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 53 - 0, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 278, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
     }
 }

@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.jdk.CmsCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -46,11 +47,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <pre>
+ * [0.054s][info][gc           ] GC(1) Concurrent Mark 1.260ms User=0.00s Sys=0.00s Real=0.00s
+ * </pre>
+ * 
+ * <pre>
  * [0.083s][info][gc] GC(1) Concurrent Preclean
  * </pre>
  * 
  * <pre>
  * [0.083s][info][gc] GC(1) Concurrent Preclean 0.032ms
+ * </pre>
+ * 
+ * <pre>
+ * [0.054s][info][gc           ] GC(1) Concurrent Preclean 0.033ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * <pre>
@@ -62,11 +71,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <pre>
+ * [0.055s][info][gc           ] GC(1) Concurrent Sweep 0.298ms User=0.00s Sys=0.00s Real=0.00s
+ * </pre>
+ * 
+ * <pre>
  * [0.085s][info][gc] GC(1) Concurrent Reset
  * </pre>
  * 
  * <pre>
  * [0.086s][info][gc] GC(1) Concurrent Reset 0.841ms
+ * </pre>
+ * 
+ * <pre>
+ * [0.056s][info][gc           ] GC(1) Concurrent Reset 0.693ms User=0.01s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -77,9 +94,9 @@ public class UnifiedCmsConcurrentEvent extends CmsCollector implements UnifiedLo
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Concurrent (Mark|Preclean|Sweep|Reset)( " + JdkRegEx.DURATION_JDK9
-            + ")?[ ]*$";
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc[ ]{0,11}\\] "
+            + JdkRegEx.GC_EVENT_NUMBER + " Concurrent (Mark|Preclean|Sweep|Reset)( " + JdkRegEx.DURATION_JDK9 + ")?"
+            + TimesData.REGEX_JDK9 + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 

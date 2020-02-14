@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.jdk.CmsCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -38,14 +39,27 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Without times data:
+ * </p>
+ * 
  * <pre>
  * [0.132s][info][gc] GC(3) Pause Initial Mark 0M-&gt;0M(2M) 0.241ms
+ * </pre>
+ * 
+ * <p>
+ * 1) With times data:
+ * </p>
+ * 
+ * <pre>
+ * [0.053s][info][gc           ] GC(1) Pause Initial Mark 0M-&gt;0M(2M) 0.278ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedCmsInitialMarkEvent extends CmsCollector implements UnifiedLogging, BlockingEvent, ParallelEvent {
+public class UnifiedCmsInitialMarkEvent extends CmsCollector
+        implements UnifiedLogging, BlockingEvent, ParallelEvent, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -63,11 +77,21 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector implements UnifiedL
     private long timestamp;
 
     /**
+     * The time of all threads added together in centiseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
+
+    /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
+    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc[ ]{0,11}\\] "
             + JdkRegEx.GC_EVENT_NUMBER + " Pause Initial Mark " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -87,6 +111,10 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector implements UnifiedL
                 long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 duration = JdkMath.convertMillisToMicros(matcher.group(11)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+                if (matcher.group(12) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(13)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(14)).intValue();
+                }
             }
         }
     }
@@ -117,6 +145,18 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector implements UnifiedL
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public int getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     public String getName() {

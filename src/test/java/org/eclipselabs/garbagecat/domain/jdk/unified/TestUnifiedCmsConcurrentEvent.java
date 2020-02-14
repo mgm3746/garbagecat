@@ -70,6 +70,12 @@ public class TestUnifiedCmsConcurrentEvent extends TestCase {
                 UnifiedCmsConcurrentEvent.match(logLine));
     }
 
+    public void testConcurrentMarkWithTimesData() {
+        String logLine = "[0.054s][info][gc           ] GC(1) Concurrent Mark 1.260ms User=0.00s Sys=0.00s Real=0.00s";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + ".",
+                UnifiedCmsConcurrentEvent.match(logLine));
+    }
+
     public void testConcurrentPreclean() {
         String logLine = "[0.083s][info][gc] GC(1) Concurrent Preclean";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + ".",
@@ -78,6 +84,13 @@ public class TestUnifiedCmsConcurrentEvent extends TestCase {
 
     public void testConcurrentPrecleanWithDuration() {
         String logLine = "[0.083s][info][gc] GC(1) Concurrent Preclean 0.032ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + ".",
+                UnifiedCmsConcurrentEvent.match(logLine));
+    }
+
+    public void testConcurrentPrecleanWithTimesData() {
+        String logLine = "[0.054s][info][gc           ] GC(1) Concurrent Preclean 0.033ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + ".",
                 UnifiedCmsConcurrentEvent.match(logLine));
     }
@@ -94,6 +107,13 @@ public class TestUnifiedCmsConcurrentEvent extends TestCase {
                 UnifiedCmsConcurrentEvent.match(logLine));
     }
 
+    public void testConcurrentSweepWithTimesData() {
+        String logLine = "[0.055s][info][gc           ] GC(1) Concurrent Sweep 0.298ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + ".",
+                UnifiedCmsConcurrentEvent.match(logLine));
+    }
+
     public void testConcurrentReset() {
         String logLine = "[0.085s][info][gc] GC(1) Concurrent Reset";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + ".",
@@ -102,6 +122,13 @@ public class TestUnifiedCmsConcurrentEvent extends TestCase {
 
     public void testConcurrentResetWithDuration() {
         String logLine = "[0.086s][info][gc] GC(1) Concurrent Reset 0.841ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + ".",
+                UnifiedCmsConcurrentEvent.match(logLine));
+    }
+
+    public void testConcurrentResetWithTimesData() {
+        String logLine = "[0.056s][info][gc           ] GC(1) Concurrent Reset 0.693ms "
+                + "User=0.01s Sys=0.00s Real=0.00s";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + ".",
                 UnifiedCmsConcurrentEvent.match(logLine));
     }

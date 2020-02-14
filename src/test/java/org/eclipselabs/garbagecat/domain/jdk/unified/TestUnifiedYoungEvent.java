@@ -99,6 +99,12 @@ public class TestUnifiedYoungEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 940, event.getDuration());
     }
 
+    public void testNoData() {
+        String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure)";
+        Assert.assertEquals(JdkUtil.LogEventType.UNKNOWN + "not identified.", JdkUtil.LogEventType.UNKNOWN,
+                JdkUtil.identifyEventType(logLine));
+    }
+
     public void testUnifiedYoungStandardLogging() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset149.txt");

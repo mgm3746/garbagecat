@@ -57,7 +57,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class UnifiedSerialOldEvent extends SerialCollector implements BlockingEvent, YoungCollection, OldCollection,
-        PermCollection, SerialCollection, YoungData, OldData, PermData, TriggerData, TimesData {
+        PermCollection, SerialCollection, YoungData, OldData, PermData, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -125,16 +125,6 @@ public class UnifiedSerialOldEvent extends SerialCollector implements BlockingEv
     private String trigger;
 
     /**
-     * The time of all threads added together in centiseconds.
-     */
-    private int timeUser;
-
-    /**
-     * The wall (clock) time in centiseconds.
-     */
-    private int timeReal;
-
-    /**
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_ERGONOMICS
@@ -174,8 +164,6 @@ public class UnifiedSerialOldEvent extends SerialCollector implements BlockingEv
             permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)), matcher.group(28).charAt(0));
             permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)), matcher.group(31).charAt(0));
             duration = JdkMath.convertMillisToMicros(matcher.group(41)).intValue();
-            timeUser = JdkMath.convertSecsToCentis(matcher.group(43)).intValue();
-            timeReal = JdkMath.convertSecsToCentis(matcher.group(44)).intValue();
         }
     }
 
@@ -265,18 +253,6 @@ public class UnifiedSerialOldEvent extends SerialCollector implements BlockingEv
 
     protected void setTrigger(String trigger) {
         this.trigger = trigger;
-    }
-
-    public int getTimeUser() {
-        return timeUser;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
-    }
-
-    public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     /**

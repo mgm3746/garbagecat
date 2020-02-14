@@ -1,0 +1,26 @@
+[0.053s][info][gc,start     ] GC(1) Pause Initial Mark
+[0.053s][info][gc           ] GC(1) Pause Initial Mark 0M->0M(2M) 0.278ms
+[0.053s][info][gc,cpu       ] GC(1) User=0.00s Sys=0.00s Real=0.00s
+[0.053s][info][gc           ] GC(1) Concurrent Mark 
+[0.054s][info][gc           ] GC(1) Concurrent Mark 1.260ms
+[0.054s][info][gc,cpu       ] GC(1) User=0.00s Sys=0.00s Real=0.00s
+[0.054s][info][gc           ] GC(1) Concurrent Preclean
+[0.054s][info][gc           ] GC(1) Concurrent Preclean 0.033ms
+[0.055s][info][gc,cpu       ] GC(1) User=0.00s Sys=0.00s Real=0.00s
+[0.055s][info][gc,start     ] GC(1) Pause Remark
+[0.055s][info][gc           ] GC(1) Pause Remark 0M->0M(2M) 0.332ms
+[0.055s][info][gc,cpu       ] GC(1) User=0.00s Sys=0.00s Real=0.00s
+[0.055s][info][gc           ] GC(1) Concurrent Sweep
+[0.055s][info][gc           ] GC(1) Concurrent Sweep 0.298ms
+[0.055s][info][gc,cpu       ] GC(1) User=0.00s Sys=0.00s Real=0.00s
+[0.055s][info][gc           ] GC(1) Concurrent Reset
+[0.056s][info][gc           ] GC(1) Concurrent Reset 0.693ms
+[0.056s][info][gc,cpu       ] GC(1) User=0.01s Sys=0.00s Real=0.00s
+[0.056s][info][gc,heap      ] GC(1) Old: 518K->518K(960K)
+[0.087s][info][gc,start     ] GC(2) Pause Young (Allocation Failure)
+[0.087s][info][gc,task      ] GC(2) Using 2 workers of 4 for evacuation
+[0.089s][info][gc,heap      ] GC(2) ParNew: 1152K->128K(1152K)
+[0.089s][info][gc,heap      ] GC(2) CMS: 518K->871K(1152K)
+[0.089s][info][gc,metaspace ] GC(2) Metaspace: 694K->694K(1056768K)
+[0.089s][info][gc           ] GC(2) Pause Young (Allocation Failure) 1M->0M(2M) 1.541ms
+[0.089s][info][gc,cpu       ] GC(2) User=0.00s Sys=0.00s Real=0.00s

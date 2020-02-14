@@ -17,24 +17,24 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
+import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.PermData;
-import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
-import org.eclipselabs.garbagecat.domain.jdk.SerialCollector;
+import org.eclipselabs.garbagecat.domain.jdk.ParallelCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * UNIFIED_SERIAL_NEW
+ * UNIFIED_PAR_NEW
  * </p>
  * 
  * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent} with unified logging (JDK9+).
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} with unified logging (JDK9+).
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -44,14 +44,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * [0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) DefNew: 983K-&gt;128K(1152K) Tenured: 0K-&gt;458K(768K) Metaspace: 246K-&gt;246K(1056768K) 0M-&gt;0M(1M) 1.393ms User=0.00s Sys=0.00s Real=0.00s
+ * [0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: 974K-&gt;128K(1152K) CMS: 0K-&gt;518K(960K) Metaspace: 250K-&gt;250K(1056768K) 0M-&gt;0M(2M) 3.544ms User=0.01s Sys=0.01s Real=0.01s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedSerialNewEvent extends SerialCollector
-        implements BlockingEvent, YoungCollection, SerialCollection, YoungData, OldData, PermData, TriggerData {
+public class UnifiedParNewEvent extends ParallelCollector
+        implements BlockingEvent, YoungCollection, ParallelEvent, YoungData, OldData, PermData, TriggerData, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -119,6 +119,16 @@ public class UnifiedSerialNewEvent extends SerialCollector
     private String trigger;
 
     /**
+     * The time of all threads added together in centiseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
+
+    /**
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
@@ -127,20 +137,20 @@ public class UnifiedSerialNewEvent extends SerialCollector
      * Regular expression defining the logging.
      */
     private static final String REGEX_PREPROCESSED = "\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc,start[ ]{0,7}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\(" + TRIGGER
-            + "\\) \\DefNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Tenured: "
+            + "s\\]\\[info\\]\\[gc,start[ ]{0,5}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\(" + TRIGGER
+            + "\\) ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) CMS: "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(UnifiedSerialNewEvent.REGEX_PREPROCESSED);
+    private static final Pattern pattern = Pattern.compile(UnifiedParNewEvent.REGEX_PREPROCESSED);
 
     /**
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public UnifiedSerialNewEvent(String logEntry) {
+    public UnifiedParNewEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
@@ -156,6 +166,8 @@ public class UnifiedSerialNewEvent extends SerialCollector
             permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
             permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)), matcher.group(29).charAt(0));
             duration = JdkMath.convertMillisToMicros(matcher.group(39)).intValue();
+            timeUser = JdkMath.convertSecsToCentis(matcher.group(41)).intValue();
+            timeReal = JdkMath.convertSecsToCentis(matcher.group(42)).intValue();
         }
     }
 
@@ -169,7 +181,7 @@ public class UnifiedSerialNewEvent extends SerialCollector
      * @param duration
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public UnifiedSerialNewEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedParNewEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
@@ -236,7 +248,7 @@ public class UnifiedSerialNewEvent extends SerialCollector
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString();
+        return JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString();
     }
 
     public String getTrigger() {
@@ -245,6 +257,18 @@ public class UnifiedSerialNewEvent extends SerialCollector
 
     protected void setTrigger(String trigger) {
         this.trigger = trigger;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public int getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeReal);
     }
 
     /**

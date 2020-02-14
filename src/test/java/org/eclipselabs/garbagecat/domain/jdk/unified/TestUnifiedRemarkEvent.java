@@ -72,7 +72,7 @@ public class TestUnifiedRemarkEvent extends TestCase {
                 UnifiedRemarkEvent.match(logLine));
     }
 
-    public void testLogLineDetailedPreprocessed() {
+    public void testLogLinePreprocessedWithTimesData() {
         String logLine = "[16.053s][info][gc            ] GC(969) Pause Remark 29M->29M(46M) 2.328ms "
                 + "User=0.01s Sys=0.00s Real=0.00s";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".",
@@ -84,4 +84,12 @@ public class TestUnifiedRemarkEvent extends TestCase {
         Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", Integer.MAX_VALUE, event.getParallelism());
     }
+
+    public void testLogLinePreprocessedWithTimesData12SpacesAfterGc() {
+        String logLine = "[0.091s][info][gc           ] GC(3) Pause Remark 0M->0M(2M) 0.414ms User=0.00s "
+                + "Sys=0.00s Real=0.00s";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".",
+                UnifiedRemarkEvent.match(logLine));
+    }
+
 }

@@ -292,13 +292,17 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) Metaspace: 26116K-&gt;26116K(278528K)
      * 
      * [0.030s][info][gc,heap      ] GC(0) ParOldGen: 0K-&gt;8K(512K)
+     * 
+     * [0.053s][info][gc,heap      ] GC(0) ParNew: 974K-&gt;128K(1152K)
+     * 
+     * [0.053s][info][gc,heap      ] GC(0) CMS: 0K-&gt;518K(960K)
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_SPACE_DATA = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
             + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
             + ")\\](\\[info\\]\\[gc,(heap|metaspace)[ ]{0,8}\\])? " + JdkRegEx.GC_EVENT_NUMBER
-            + "( (DefNew|Tenured|PSYoungGen|PSOldGen|ParOldGen|Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\))$";
+            + "( (CMS|DefNew|Metaspace|ParNew|PSYoungGen|PSOldGen|ParOldGen|Tenured): " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))$";
 
     /**
      * Regular expression for retained Pause Young data.
@@ -402,6 +406,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.087s][info][gc,phases,start] GC(3) Post Compact
      * 
      * [0.087s][info][gc,phases      ] GC(3) Post Compact 0.012ms
+     * 
+     * CMS:
+     * 
+     * [0.053s][info][gc,start     ] GC(1) Pause Initial Mark
+     * 
+     * [0.056s][info][gc,heap      ] GC(1) Old: 518K->518K(960K)
      * </pre>
      */
     private static final String[] REGEX_THROWAWAY = {
@@ -432,8 +442,14 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + " Pause Cleanup$",
             // Parallel
             "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,phases(,start)?[ ]{0,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " (Marking Phase|Summary Phase|Adjust Roots|Compaction Phase|Post Compact)( "
-                    + JdkRegEx.DURATION_JDK9 + ")?$"
+                    + " (Adjust Roots|Compaction Phase|Marking Phase|Post Compact|Summary Phase)( "
+                    + JdkRegEx.DURATION_JDK9 + ")?$",
+            // CMS
+            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,start[ ]{0,5}\\] " + JdkRegEx.GC_EVENT_NUMBER
+                    + " Pause Initial Mark?$",
+            //
+            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap[ ]{0,6}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Old: "
+                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)$"
             //
     };
 
