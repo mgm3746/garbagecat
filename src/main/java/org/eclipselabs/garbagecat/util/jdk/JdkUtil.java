@@ -86,6 +86,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEv
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPrepareMixedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelCompactingOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelScavengeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialNewEvent;
@@ -126,7 +127,9 @@ public class JdkUtil {
         //
         UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
         //
-        UNIFIED_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG,
+        UNIFIED_OLD, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SERIAL_NEW,
+        //
+        UNIFIED_SERIAL_OLD, UNIFIED_YOUNG,
         //
         USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH,
         // serial
@@ -243,6 +246,8 @@ public class JdkUtil {
             return LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
         if (UnifiedOldEvent.match(logLine))
             return LogEventType.UNIFIED_OLD;
+        if (UnifiedParallelCompactingOldEvent.match(logLine))
+            return LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD;
         if (UnifiedParallelScavengeEvent.match(logLine))
             return LogEventType.UNIFIED_PARALLEL_SCAVENGE;
         if (UnifiedRemarkEvent.match(logLine))
@@ -442,6 +447,9 @@ public class JdkUtil {
             break;
         case UNIFIED_OLD:
             event = new UnifiedOldEvent(logLine);
+            break;
+        case UNIFIED_PARALLEL_COMPACTING_OLD:
+            event = new UnifiedParallelCompactingOldEvent(logLine);
             break;
         case UNIFIED_PARALLEL_SCAVENGE:
             event = new UnifiedParallelScavengeEvent(logLine);
@@ -663,6 +671,9 @@ public class JdkUtil {
             break;
         case UNIFIED_OLD:
             event = new UnifiedOldEvent(logEntry, timestamp, duration);
+            break;
+        case UNIFIED_PARALLEL_COMPACTING_OLD:
+            event = new UnifiedParallelCompactingOldEvent(logEntry, timestamp, duration);
             break;
         case UNIFIED_PARALLEL_SCAVENGE:
             event = new UnifiedParallelScavengeEvent(logEntry, timestamp, duration);
@@ -1130,6 +1141,7 @@ public class JdkUtil {
                 case UNIFIED_G1_YOUNG_PREPARE_MIXED:
                 case UNIFIED_OLD:
                 case UNIFIED_REMARK:
+                case UNIFIED_PARALLEL_COMPACTING_OLD:
                 case UNIFIED_PARALLEL_SCAVENGE:
                 case UNIFIED_SERIAL_NEW:
                 case UNIFIED_SERIAL_OLD:

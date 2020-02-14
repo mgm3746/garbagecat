@@ -85,7 +85,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 3) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelScavengeEvent}:
+ * 3) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelScavengeEvent} in combination with @link
+ * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialOldEvent}:
  * </p>
  * 
  * <pre>
@@ -105,8 +106,63 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * [0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: 512K-&gt;464K(1024K) PSOldGen: 0K-&gt;8K(512K) Metaspace: 120K-&gt;120K(1056768K) 0M-&gt;0M(1M) 1.195ms User=0.01s Sys=0.01s Real=0.00s
  * </pre>
  * 
+ * *
  * <p>
- * 4) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent}:
+ * 4) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelScavengeEvent} in combination with @link
+ * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelCompactingOldEvent}:
+ * </p>
+ * 
+ * <pre>
+ * [0.029s][info][gc,start     ] GC(0) Pause Young (Allocation Failure)
+ * [0.030s][info][gc,heap      ] GC(0) PSYoungGen: 512K-&gt;432K(1024K)
+ * [0.030s][info][gc,heap      ] GC(0) ParOldGen: 0K-&gt;8K(512K)
+ * [0.030s][info][gc,metaspace ] GC(0) Metaspace: 121K-&gt;121K(1056768K)
+ * [0.030s][info][gc           ] GC(0) Pause Young (Allocation Failure) 0M-&gt;0M(1M) 0.762ms
+ * [0.030s][info][gc,cpu       ] GC(0) User=0.00s Sys=0.00s Real=0.00s
+ * </pre>
+ * 
+ * <p>
+ * Preprocessed:
+ * </p>
+ *
+ * <pre>
+ * [0.029s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: 512K-&gt;432K(1024K) ParOldGen: 0K-&gt;8K(512K) Metaspace: 121K-&gt;121K(1056768K) 0M-&gt;0M(1M) 0.762ms User=0.00s Sys=0.00s Real=0.00s
+ * </pre>
+ * 
+ * *
+ * <p>
+ * 5) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelCompactingOldEvent}:
+ * </p>
+ * 
+ * <pre>
+ * [0.083s][info][gc,start     ] GC(3) Pause Full (Ergonomics)
+ * [0.083s][info][gc,phases,start] GC(3) Marking Phase
+ * [0.084s][info][gc,phases      ] GC(3) Marking Phase 1.032ms
+ * [0.084s][info][gc,phases,start] GC(3) Summary Phase
+ * [0.084s][info][gc,phases      ] GC(3) Summary Phase 0.005ms
+ * [0.084s][info][gc,phases,start] GC(3) Adjust Roots
+ * [0.084s][info][gc,phases      ] GC(3) Adjust Roots 0.666ms
+ * [0.084s][info][gc,phases,start] GC(3) Compaction Phase
+ * [0.087s][info][gc,phases      ] GC(3) Compaction Phase 2.540ms
+ * [0.087s][info][gc,phases,start] GC(3) Post Compact
+ * [0.087s][info][gc,phases      ] GC(3) Post Compact 0.012ms
+ * [0.087s][info][gc,heap        ] GC(3) PSYoungGen: 502K-&gt;496K(1536K)
+ * [0.087s][info][gc,heap        ] GC(3) ParOldGen: 472K-&gt;432K(2048K)
+ * [0.087s][info][gc,metaspace   ] GC(3) Metaspace: 701K-&gt;701K(1056768K)
+ * [0.087s][info][gc             ] GC(3) Pause Full (Ergonomics) 0M-&gt;0M(3M) 4.336ms
+ * [0.087s][info][gc,cpu         ] GC(3) User=0.01s Sys=0.00s Real=0.01s
+ * </pre>
+ * 
+ * <p>
+ * Preprocessed:
+ * </p>
+ *
+ * <pre>
+ * [0.083s][info][gc,start     ] GC(3) Pause Full (Ergonomics) PSYoungGen: 502K-&gt;496K(1536K) ParOldGen: 472K-&gt;432K(2048K) Metaspace: 701K-&gt;701K(1056768K) 0M-&gt;0M(3M) 4.336ms User=0.01s Sys=0.00s Real=0.01s
+ * </pre>
+ * 
+ * <p>
+ * 6) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent}:
  * </p>
  * 
  * <pre>
@@ -134,7 +190,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 5) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedRemarkEvent}:
+ * 7) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedRemarkEvent}:
  * </p>
  * 
  * <pre>
@@ -153,7 +209,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 6) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent}:
+ * 8) @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent}:
  * </p>
  * 
  * <pre>
@@ -227,20 +283,22 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [0.112s][info][gc,heap        ] GC(3) Tenured: 929K-&gt;1044K(1552K)
      * 
-     * [0.032s][info][gc,heap      ] GC(0) PSYoungGen: 512K->464K(1024K)
+     * [0.032s][info][gc,heap      ] GC(0) PSYoungGen: 512K-&gt;464K(1024K)
      * 
-     * [0.032s][info][gc,heap      ] GC(0) PSOldGen: 0K->8K(512K)
+     * [0.032s][info][gc,heap      ] GC(0) PSOldGen: 0K-&gt;8K(512K)
      * 
-     * [0.032s][info][gc,metaspace ] GC(0) Metaspace: 120K->120K(1056768K)
+     * [0.032s][info][gc,metaspace ] GC(0) Metaspace: 120K-&gt;120K(1056768K)
      * 
-     * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) Metaspace: 26116K->26116K(278528K)
+     * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) Metaspace: 26116K-&gt;26116K(278528K)
+     * 
+     * [0.030s][info][gc,heap      ] GC(0) ParOldGen: 0K-&gt;8K(512K)
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_SPACE_DATA = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
             + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
             + ")\\](\\[info\\]\\[gc,(heap|metaspace)[ ]{0,8}\\])? " + JdkRegEx.GC_EVENT_NUMBER
-            + "( (DefNew|Tenured|PSYoungGen|PSOldGen|Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\))$";
+            + "( (DefNew|Tenured|PSYoungGen|PSOldGen|ParOldGen|Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\))$";
 
     /**
      * Regular expression for retained Pause Young data.
@@ -305,14 +363,45 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * Regular expressions for lines thrown away.
      * 
      * <pre>
+     * G1:
+     * 
      * [4.057s][info][gc,phases,start] GC(2264) Phase 1: Mark live objects
+     * 
      * [4.062s][info][gc,phases      ] GC(2264) Phase 1: Mark live objects 4.352ms
+     * 
      * [4.062s][info][gc,phases,start] GC(2264) Phase 2: Compute new object addresses
+     * 
      * [4.063s][info][gc,phases      ] GC(2264) Phase 2: Compute new object addresses 1.165ms
+     * 
      * [4.063s][info][gc,phases,start] GC(2264) Phase 3: Adjust pointers
+     * 
      * [4.065s][info][gc,phases      ] GC(2264) Phase 3: Adjust pointers 2.453ms
+     * 
      * [4.065s][info][gc,phases,start] GC(2264) Phase 4: Move objects
+     * 
      * [4.067s][info][gc,phases      ] GC(2264) Phase 4: Move objects 1.248ms
+     * 
+     * PARALLEL_COMPACTING_OLD:
+     * 
+     * [0.083s][info][gc,phases,start] GC(3) Marking Phase
+     * 
+     * [0.084s][info][gc,phases      ] GC(3) Marking Phase 1.032ms
+     * 
+     * [0.084s][info][gc,phases,start] GC(3) Summary Phase
+     * 
+     * [0.084s][info][gc,phases      ] GC(3) Summary Phase 0.005ms
+     * 
+     * [0.084s][info][gc,phases,start] GC(3) Adjust Roots
+     * 
+     * [0.084s][info][gc,phases      ] GC(3) Adjust Roots 0.666ms
+     * 
+     * [0.084s][info][gc,phases,start] GC(3) Compaction Phase
+     * 
+     * [0.087s][info][gc,phases      ] GC(3) Compaction Phase 2.540ms
+     * 
+     * [0.087s][info][gc,phases,start] GC(3) Post Compact
+     * 
+     * [0.087s][info][gc,phases      ] GC(3) Post Compact 0.012ms
      * </pre>
      */
     private static final String[] REGEX_THROWAWAY = {
@@ -340,7 +429,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + "symbols: \\d{1,5} processed, \\d{1,2} removed$",
             //
             "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,start      \\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pause Cleanup$"
+                    + " Pause Cleanup$",
+            // Parallel
+            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,phases(,start)?[ ]{0,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
+                    + " (Marking Phase|Summary Phase|Adjust Roots|Compaction Phase|Post Compact)( "
+                    + JdkRegEx.DURATION_JDK9 + ")?$"
             //
     };
 

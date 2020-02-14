@@ -16,12 +16,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
+import org.eclipselabs.garbagecat.domain.PermCollection;
 import org.eclipselabs.garbagecat.domain.PermData;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
-import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -30,11 +31,11 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * UNIFIED_PARALLEL_SCAVENGE
+ * UNIFIED_PARALLEL_COMPACTING_OLD
  * </p>
  * 
  * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent} with unified logging (JDK9+).
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent} with unified logging (JDK9+).
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -43,27 +44,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * Preprocessed with {@link org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction}:
  * </p>
  * 
- * <p>
- * 1) When in combination with {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialOldEvent}:
- * </p>
- * 
  * <pre>
- * [0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: 512K-&gt;464K(1024K) PSOldGen: 0K-&gt;8K(512K) Metaspace: 120K-&gt;120K(1056768K) 0M-&gt;0M(1M) 1.195ms User=0.01s Sys=0.01s Real=0.00s
- * </pre>
- * 
- * <p>
- * 2) When in combination with {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelCompactingOldEvent}:
- * </p>
- * 
- * <pre>
- * [0.029s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: 512K-&gt;432K(1024K) ParOldGen: 0K-&gt;8K(512K) Metaspace: 121K-&gt;121K(1056768K) 0M-&gt;0M(1M) 0.762ms User=0.00s Sys=0.00s Real=0.00s
+ * [0.083s][info][gc,start     ] GC(3) Pause Full (Ergonomics) PSYoungGen: 502K-&gt;496K(1536K) ParOldGen: 472K-&gt;432K(2048K) Metaspace: 701K-&gt;701K(1056768K) 0M-&gt;0M(3M) 4.336ms User=0.01s Sys=0.00s Real=0.01s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedParallelScavengeEvent extends ParallelCollector
-        implements BlockingEvent, YoungCollection, ParallelEvent, YoungData, OldData, PermData, TriggerData, TimesData {
+public class UnifiedParallelCompactingOldEvent extends ParallelCollector implements BlockingEvent, OldCollection,
+        PermCollection, ParallelEvent, YoungData, OldData, PermData, TriggerData, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -143,26 +132,26 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ERGONOMICS + ")";
 
     /**
      * Regular expression defining the logging.
      */
     private static final String REGEX_PREPROCESSED = "\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc,start[ ]{0,7}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\(" + TRIGGER
-            + "\\) PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) (PS|Par)OldGen: "
+            + "s\\]\\[info\\]\\[gc,start[ ]{0,7}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Full \\(" + TRIGGER
+            + "\\) PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) ParOldGen: "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(UnifiedParallelScavengeEvent.REGEX_PREPROCESSED);
+    private static final Pattern pattern = Pattern.compile(UnifiedParallelCompactingOldEvent.REGEX_PREPROCESSED);
 
     /**
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public UnifiedParallelScavengeEvent(String logEntry) {
+    public UnifiedParallelCompactingOldEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
@@ -171,15 +160,15 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector
             young = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(3)), matcher.group(5).charAt(0));
             youngEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(8).charAt(0));
             youngAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)), matcher.group(11).charAt(0));
-            old = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(15).charAt(0));
-            oldEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(18).charAt(0));
-            oldAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
-            permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)), matcher.group(24).charAt(0));
-            permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
-            permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
-            duration = JdkMath.convertMillisToMicros(matcher.group(40)).intValue();
-            timeUser = JdkMath.convertSecsToCentis(matcher.group(42)).intValue();
-            timeReal = JdkMath.convertSecsToCentis(matcher.group(43)).intValue();
+            old = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(12)), matcher.group(14).charAt(0));
+            oldEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(15)), matcher.group(17).charAt(0));
+            oldAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)), matcher.group(20).charAt(0));
+            permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(21)), matcher.group(23).charAt(0));
+            permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
+            permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)), matcher.group(29).charAt(0));
+            duration = JdkMath.convertMillisToMicros(matcher.group(39)).intValue();
+            timeUser = JdkMath.convertSecsToCentis(matcher.group(41)).intValue();
+            timeReal = JdkMath.convertSecsToCentis(matcher.group(42)).intValue();
         }
     }
 
@@ -193,7 +182,7 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector
      * @param duration
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public UnifiedParallelScavengeEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedParallelCompactingOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
@@ -260,7 +249,7 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString();
+        return JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString();
     }
 
     public String getTrigger() {

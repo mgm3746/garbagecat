@@ -156,6 +156,18 @@ public class TestUnifiedPreprocessAction extends TestCase {
                 UnifiedPreprocessAction.match(logLine));
     }
 
+    public void testLogLineParOldGenData() {
+        String logLine = "[0.030s][info][gc,heap      ] GC(0) ParOldGen: 0K->8K(512K)";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        Assert.assertEquals("Log line not parsed correctly.", " ParOldGen: 0K->8K(512K)", event.getLogEntry());
+    }
+
     public void testLogLineMetaspaceDatestampMillis() {
         String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Metaspace: 26116K->26116K(278528K)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
@@ -563,6 +575,66 @@ public class TestUnifiedPreprocessAction extends TestCase {
                 UnifiedPreprocessAction.match(logLine));
     }
 
+    public void testLogLineParallelCompactingOldMarkingPhaseStart() {
+        String logLine = "[0.083s][info][gc,phases,start] GC(3) Marking Phase";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineParallelCompactingOldMarkingPhase() {
+        String logLine = "[0.084s][info][gc,phases      ] GC(3) Marking Phase 1.032ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineParallelCompactingOlSummaryPhaseStart() {
+        String logLine = "[0.084s][info][gc,phases,start] GC(3) Summary Phase";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineParallelCompactingOldSummaryPhase() {
+        String logLine = "[0.084s][info][gc,phases      ] GC(3) Summary Phase 0.005ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineParallelCompactingOldAdjustRootsStart() {
+        String logLine = "[0.084s][info][gc,phases,start] GC(3) Adjust Roots";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineParallelCompactingOldAdjustRoots() {
+        String logLine = "[0.084s][info][gc,phases      ] GC(3) Adjust Roots 0.666ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineParallelCompactingOldCompactionPhaseStart() {
+        String logLine = "[0.084s][info][gc,phases,start] GC(3) Compaction Phase";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineParallelCompactingOldCompactionPhase() {
+        String logLine = "[0.087s][info][gc,phases      ] GC(3) Compaction Phase 2.540ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineParallelCompactingOldPostStart() {
+        String logLine = "[0.087s][info][gc,phases,start] GC(3) Post Compact";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineParallelCompactingOldPostCompact() {
+        String logLine = "[0.087s][info][gc,phases      ] GC(3) Post Compact 0.012ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
     public void testLogLineSerialOldInfoTriggerErgonomics() {
         String logLine = "[0.092s][info][gc             ] GC(3) Pause Full (Ergonomics) 0M->0M(3M) 1.849ms";
         String nextLogLine = "[0.092s][info][gc,cpu         ] GC(3) User=0.01s Sys=0.00s Real=0.00s";
@@ -692,7 +764,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SERIAL_OLD));
     }
 
-    public void testPreprocessingParallelScavenge() {
+    public void testPreprocessingParallelScavengeSerialOld() {
         // TODO: Create File in platform independent way.
         File testFile = new File("src/test/data/dataset173.txt");
         GcManager gcManager = new GcManager();
@@ -704,5 +776,34 @@ public class TestUnifiedPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE));
+    }
+
+    public void testPreprocessingParallelScavengeParallelCompactingOld() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset175.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE));
+    }
+
+    public void testPreprocessingParallelCompactingOld() {
+        // TODO: Create File in platform independent way.
+        File testFile = new File("src/test/data/dataset176.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(
+                JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD));
     }
 }

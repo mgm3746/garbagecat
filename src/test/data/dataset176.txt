@@ -1,0 +1,16 @@
+[0.083s][info][gc,start     ] GC(3) Pause Full (Ergonomics)
+[0.083s][info][gc,phases,start] GC(3) Marking Phase
+[0.084s][info][gc,phases      ] GC(3) Marking Phase 1.032ms
+[0.084s][info][gc,phases,start] GC(3) Summary Phase
+[0.084s][info][gc,phases      ] GC(3) Summary Phase 0.005ms
+[0.084s][info][gc,phases,start] GC(3) Adjust Roots
+[0.084s][info][gc,phases      ] GC(3) Adjust Roots 0.666ms
+[0.084s][info][gc,phases,start] GC(3) Compaction Phase
+[0.087s][info][gc,phases      ] GC(3) Compaction Phase 2.540ms
+[0.087s][info][gc,phases,start] GC(3) Post Compact
+[0.087s][info][gc,phases      ] GC(3) Post Compact 0.012ms
+[0.087s][info][gc,heap        ] GC(3) PSYoungGen: 502K->496K(1536K)
+[0.087s][info][gc,heap        ] GC(3) ParOldGen: 472K->432K(2048K)
+[0.087s][info][gc,metaspace   ] GC(3) Metaspace: 701K->701K(1056768K)
+[0.087s][info][gc             ] GC(3) Pause Full (Ergonomics) 0M->0M(3M) 4.336ms
+[0.087s][info][gc,cpu         ] GC(3) User=0.01s Sys=0.00s Real=0.01s
