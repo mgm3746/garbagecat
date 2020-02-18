@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedLogging;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -238,8 +239,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.112s][info][gc,start       ] GC(3) Pause Young (Allocation Failure)
      * </pre>
      */
-    private static final String REGEX_RETAIN_BEGINNING_PAUSE_YOUNG = "^((\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
-            + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\]\\[info\\]\\[gc,start[ ]{0,7}\\] "
+    private static final String REGEX_RETAIN_BEGINNING_PAUSE_YOUNG = "^(" + UnifiedLogging.DECORATOR + " "
             + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))$";
 
     /**
@@ -250,9 +250,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure)
      * </pre>
      */
-    private static final String REGEX_RETAIN_BEGINNING_SERIAL_OLD = "^(\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc,start[ ]{0,7}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Full \\("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))$";
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL_OLD = "^(" + UnifiedLogging.DECORATOR + " "
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Full \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))$";
 
     /**
      * Regular expression for retained beginning @link
@@ -270,8 +269,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause)
      * </pre>
      */
-    private static final String REGEX_RETAIN_BEGINNING_G1_YOUNG = "^((\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
-            + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc,start[ ]{0,7}\\])? "
+    private static final String REGEX_RETAIN_BEGINNING_G1_YOUNG = "^(" + UnifiedLogging.DECORATOR + " "
             + JdkRegEx.GC_EVENT_NUMBER + " Pause Young( \\((Normal|Prepare Mixed|Mixed|Concurrent Start)\\))? \\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\))$";
 
@@ -298,11 +296,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.053s][info][gc,heap      ] GC(0) CMS: 0K-&gt;518K(960K)
      * </pre>
      */
-    private static final String REGEX_RETAIN_MIDDLE_SPACE_DATA = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
-            + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
-            + ")\\](\\[info\\]\\[gc,(heap|metaspace)[ ]{0,8}\\])? " + JdkRegEx.GC_EVENT_NUMBER
-            + "( (CMS|DefNew|Metaspace|ParNew|PSYoungGen|PSOldGen|ParOldGen|Tenured): " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))$";
+    private static final String REGEX_RETAIN_MIDDLE_SPACE_DATA = "^" + UnifiedLogging.DECORATOR + " "
+            + JdkRegEx.GC_EVENT_NUMBER + "( (CMS|DefNew|Metaspace|ParNew|PSYoungGen|PSOldGen|ParOldGen|Tenured): "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))$";
 
     /**
      * Regular expression for retained Pause Young data.
@@ -311,10 +307,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.112s][info][gc             ] GC(3) Pause Young (Allocation Failure) 1M->1M(2M) 0.700ms
      * </pre>
      */
-    private static final String REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA = "^\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc[ ]{0,13}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")$";
+    private static final String REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA = "^" + UnifiedLogging.DECORATOR + " "
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\)( "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")$";
 
     /**
      * Regular expression for retained Pause Full data.
@@ -325,10 +320,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.092s][info][gc             ] GC(3) Pause Full (Ergonomics) 0M->0M(3M) 1.849ms
      * </pre>
      */
-    private static final String REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA = "^\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc[ ]{0,13}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Full \\(("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_ERGONOMICS + ")\\)( " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")$";
+    private static final String REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA = "^" + UnifiedLogging.DECORATOR + " "
+            + JdkRegEx.GC_EVENT_NUMBER + " Pause Full \\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+            + JdkRegEx.TRIGGER_ERGONOMICS + ")\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) " + JdkRegEx.DURATION_JDK9 + ")$";
 
     /**
      * Regular expression for retained Pause Young data.
@@ -344,8 +339,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [16.630s][info][gc ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) 15M->12M(31M) 1.202ms
      */
-    private static final String REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
-            + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc[ ]{0,13}\\])? "
+    private static final String REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA = "^" + UnifiedLogging.DECORATOR + " "
             + JdkRegEx.GC_EVENT_NUMBER + " Pause Young( \\((Normal|Mixed|Prepare Mixed|Concurrent Start)\\))? \\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)( "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")$";
@@ -359,8 +353,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) User=0.02s Sys=0.01s Real=0.06s
      * </pre>
      */
-    private static final String REGEX_RETAIN_END_TIMES_DATA = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[("
-            + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc,cpu[ ]{0,9}\\])? "
+    private static final String REGEX_RETAIN_END_TIMES_DATA = "^" + UnifiedLogging.DECORATOR + " "
             + JdkRegEx.GC_EVENT_NUMBER + TimesData.REGEX_JDK9 + "$";
 
     /**
@@ -416,40 +409,33 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     private static final String[] REGEX_THROWAWAY = {
             // SERIAL
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,phases(,start)?[ ]{0,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Phase \\d: .+?$",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Phase \\d: .+?$",
             // G1
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
-                    + ")\\](\\[info\\]\\[gc,task[ ]{6,7}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
                     + " Using \\d{1,2} workers of \\d{1,2} for (evacuation|marking)$",
             //
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
-                    + ")\\](\\[info\\]\\[gc,phases[ ]{4,5}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
                     + "   ((Pre Evacuate|Evacuate|Post Evacuate|Other) Collection Set|Other): " + JdkRegEx.DURATION_JDK9
                     + "$",
             //
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|" + JdkRegEx.TIMESTAMP_MILLIS
-                    + ")\\](\\[info\\]\\[gc,heap[ ]{6,7}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
                     + " (Eden|Survivor|Old|Humongous) regions: \\d{1,3}->\\d{1,3}(\\(\\d{1,3}\\))?$",
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,start[ ]{5,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pause Remark$",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Pause Remark$",
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,stringtable\\] " + JdkRegEx.GC_EVENT_NUMBER
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
                     + " Cleaned string and symbol table, strings: \\d{1,4} processed, \\d removed, "
                     + "symbols: \\d{1,5} processed, \\d{1,2} removed$",
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,start      \\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pause Cleanup$",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Pause Cleanup$",
             // Parallel
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,phases(,start)?[ ]{0,6}\\] " + JdkRegEx.GC_EVENT_NUMBER
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
                     + " (Adjust Roots|Compaction Phase|Marking Phase|Post Compact|Summary Phase)( "
                     + JdkRegEx.DURATION_JDK9 + ")?$",
             // CMS
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,start[ ]{0,5}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pause Initial Mark?$",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Pause Initial Mark?$",
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap[ ]{0,6}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Old: "
-                    + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)$"
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Old: " + JdkRegEx.SIZE + "->"
+                    + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)$"
             //
     };
 
@@ -516,7 +502,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_SPACE_DATA);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(17);
+                this.logEntry = matcher.group(21);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA)) {
@@ -524,7 +510,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 if (context.contains(TOKEN)) {
-                    this.logEntry = matcher.group(2);
+                    this.logEntry = matcher.group(21);
                 } else {
                     // Single line event
                     this.logEntry = Constants.LINE_SEPARATOR + logEntry;
@@ -536,7 +522,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA);
                 Matcher matcher = pattern.matcher(logEntry);
                 if (matcher.matches()) {
-                    this.logEntry = matcher.group(3);
+                    this.logEntry = matcher.group(22);
                 }
             } else if (!context.contains(TOKEN)) {
                 // Single line event
@@ -548,7 +534,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(19);
+                this.logEntry = matcher.group(24);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_END_TIMES_DATA)) {
@@ -556,7 +542,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(16);
+                this.logEntry = matcher.group(21);
             }
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);

@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -24,7 +23,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Trigger information logging.
+ * Trigger information logging. Broken out from {@link org.eclipselabs.garbagecat.domain.jdk.unified.GcInfoEvent} for
+ * possible future analysis.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -44,32 +44,27 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahTriggerEvent extends ShenandoahCollector implements UnifiedLogging, LogEvent, ThrowAwayEvent {
+public class ShenandoahTriggerEvent extends ShenandoahCollector implements UnifiedLogging, ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
      */
     private static final String[] REGEX = {
             // Learning
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\]\\[info\\]\\[gc([ ]{11})?\\] Trigger: Learning \\d of \\d. Free \\(" + JdkRegEx.SIZE
+            "^" + UnifiedLogging.DECORATOR + " Trigger: Learning \\d of \\d. Free \\(" + JdkRegEx.SIZE
                     + "\\) is below initial threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             // Average
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc([ ]{11})?\\])? Trigger: Average GC time \\(" + JdkRegEx.DURATION_JDK9
+            "^" + UnifiedLogging.DECORATOR + " Trigger: Average GC time \\(" + JdkRegEx.DURATION_JDK9
                     + "\\) is above the time for allocation rate \\(" + JdkRegEx.ALLOCATION_RATE
                     + "\\) to deplete free headroom \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             // Free
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc([ ]{11})?\\])? Trigger: Free \\(" + JdkRegEx.SIZE
-                    + "\\) is below minimum threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
+            "^" + UnifiedLogging.DECORATOR + " Trigger: Free \\(" + JdkRegEx.SIZE + "\\) is below minimum threshold \\("
+                    + JdkRegEx.SIZE + "\\)[ ]*$",
             // Time
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc([ ]{11})?\\])? Trigger: Time since last GC \\(\\d{1,7} ms\\) is larger "
+            "^" + UnifiedLogging.DECORATOR + " Trigger: Time since last GC \\(\\d{1,7} ms\\) is larger "
                     + "than guaranteed interval \\(\\d{1,7} ms\\)[ ]*$",
             // Allocation Failure
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc([ ]{11})?\\])? Trigger: Handle Allocation Failure[ ]*$"
+            "^" + UnifiedLogging.DECORATOR + " Trigger: Handle Allocation Failure[ ]*$"
             //
     };
 

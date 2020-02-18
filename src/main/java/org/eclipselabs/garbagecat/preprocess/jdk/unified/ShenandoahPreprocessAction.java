@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.preprocess.jdk.unified;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedLogging;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -131,96 +132,72 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
     private static final String[] REGEX_THROWAWAY = {
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitMarkEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,start[ ]{5}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
                     + " Pause (Init|Final) Mark( \\(update refs\\))?( \\(process weakrefs\\))?$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitMarkEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalUpdateEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,task[ ]{6}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
                     + " Using \\d of \\d workers for (init|final) (marking|reference update)$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcMarkEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,task[ ]{6}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
                     + " Using \\d of \\d workers for stw degenerated gc$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcMarkEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,ergo[ ]{6}\\])? " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Good progress for (free|used) space: " + JdkRegEx.SIZE + ", need " + JdkRegEx.SIZE + "$",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Good progress for (free|used) space: "
+                    + JdkRegEx.SIZE + ", need " + JdkRegEx.SIZE + "$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitMarkEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,ergo[ ]{6}\\])? " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pacer for Mark. Expected Live: " + JdkRegEx.SIZE + ", Free: " + JdkRegEx.SIZE
-                    + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: (inf|\\d{1,2}\\.\\d)x$",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Pacer for Mark. Expected Live: "
+                    + JdkRegEx.SIZE + ", Free: " + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE
+                    + ", Alloc Tax Rate: (inf|\\d{1,2}\\.\\d)x$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,start[ ]{5}\\])? " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pause Degenerated GC \\(Mark\\)$",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Pause Degenerated GC \\(Mark\\)$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,ergo[ ]{6}\\])? " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Adaptive CSet Selection. Target Free: " + JdkRegEx.SIZE + ", Actual Free: " + JdkRegEx.SIZE
-                    + ", Max CSet: " + JdkRegEx.SIZE + ", Min Garbage: " + JdkRegEx.SIZE,
+            "" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Adaptive CSet Selection. Target Free: "
+                    + JdkRegEx.SIZE + ", Actual Free: " + JdkRegEx.SIZE + ", Max CSet: " + JdkRegEx.SIZE
+                    + ", Min Garbage: " + JdkRegEx.SIZE,
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,ergo[ ]{6}\\])? " + JdkRegEx.GC_EVENT_NUMBER + " Collectable Garbage: "
-                    + JdkRegEx.SIZE + " \\(\\d{1,2}% of total\\), " + JdkRegEx.SIZE + " CSet, \\d{1,3} CSet regions",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Collectable Garbage: " + JdkRegEx.SIZE
+                    + " \\(\\d{1,2}% of total\\), " + JdkRegEx.SIZE + " CSet, \\d{1,3} CSet regions",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,ergo[ ]{6}\\])? " + JdkRegEx.GC_EVENT_NUMBER + " Immediate Garbage: "
-                    + JdkRegEx.SIZE + " \\(\\d{1,2}% of total\\), \\d{1,4} regions",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Immediate Garbage: " + JdkRegEx.SIZE
+                    + " \\(\\d{1,2}% of total\\), \\d{1,4} regions",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalEvacEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,ergo[ ]{6}\\])? " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pacer for Evacuation. Used CSet: " + JdkRegEx.SIZE + ", Free: " + JdkRegEx.SIZE
-                    + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: \\d\\.\\dx$",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Pacer for Evacuation. Used CSet: "
+                    + JdkRegEx.SIZE + ", Free: " + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE
+                    + ", Alloc Tax Rate: \\d\\.\\dx$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalEvacEvent}
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,start[ ]{5}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pause Final Evac$",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Pause Final Evac$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitUpdateEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalUpdateEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,start[ ]{5}\\])? " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pause (Init|Final) Update Refs",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Pause (Init|Final) Update Refs",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitUpdateEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,ergo[ ]{6}\\])? " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Pacer for Update Refs. Used: " + JdkRegEx.SIZE + ", Free: " + JdkRegEx.SIZE + ", Non-Taxable: "
-                    + JdkRegEx.SIZE + ", Alloc Tax Rate: \\d\\.\\dx",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Pacer for Update Refs. Used: "
+                    + JdkRegEx.SIZE + ", Free: " + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE
+                    + ", Alloc Tax Rate: \\d\\.\\dx",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahConcurrentEvent}
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,task[ ]{6}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
                     + " Using \\d{1,2} of \\d{1,2} workers for concurrent "
                     + "(reset|marking|preclean|evacuation|reference update)$",
             //
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,ergo[ ]{6}\\])?( " + JdkRegEx.GC_EVENT_NUMBER + ")? Free: " + JdkRegEx.SIZE
+            "^" + UnifiedLogging.DECORATOR + "( " + JdkRegEx.GC_EVENT_NUMBER + ")? Free: " + JdkRegEx.SIZE
                     + " \\(\\d{1,4} regions\\), Max regular: " + JdkRegEx.SIZE + ", Max humongous: " + JdkRegEx.SIZE
                     + ", External frag: \\d{1,3}%, Internal frag: \\d{1,2}%$",
             //
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,ergo[ ]{6}\\])?( " + JdkRegEx.GC_EVENT_NUMBER + ")? Evacuation Reserve: "
-                    + JdkRegEx.SIZE + " \\(\\d{1,3} regions\\), Max regular: " + JdkRegEx.SIZE + "$",
+            "^" + UnifiedLogging.DECORATOR + "( " + JdkRegEx.GC_EVENT_NUMBER + ")? Evacuation Reserve: " + JdkRegEx.SIZE
+                    + " \\(\\d{1,3} regions\\), Max regular: " + JdkRegEx.SIZE + "$",
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,ergo[ ]{6}\\] Pacer for Idle. Initial: " + JdkRegEx.SIZE
+            "^" + UnifiedLogging.DECORATOR + " Pacer for Idle. Initial: " + JdkRegEx.SIZE
                     + ", Alloc Tax Rate: \\d\\.\\dx$",
             //
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,ergo[ ]{6}\\])? Free headroom: " + JdkRegEx.SIZE + " \\(free\\) - "
-                    + JdkRegEx.SIZE + " \\(spike\\) - " + JdkRegEx.SIZE + " \\(penalties\\) = " + JdkRegEx.SIZE + "$",
+            "^" + UnifiedLogging.DECORATOR + " Free headroom: " + JdkRegEx.SIZE + " \\(free\\) - " + JdkRegEx.SIZE
+                    + " \\(spike\\) - " + JdkRegEx.SIZE + " \\(penalties\\) = " + JdkRegEx.SIZE + "$",
             //
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\](\\[info\\]\\[gc,ergo[ ]{6}\\])? Uncommitted " + JdkRegEx.SIZE + ". Heap: " + JdkRegEx.SIZE
+            "^" + UnifiedLogging.DECORATOR + " Uncommitted " + JdkRegEx.SIZE + ". Heap: " + JdkRegEx.SIZE
                     + " reserved, " + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
             //
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\]\\[info\\]\\[gc           \\] Failed to allocate " + JdkRegEx.SIZE + "$",
+            "^" + UnifiedLogging.DECORATOR + " Failed to allocate " + JdkRegEx.SIZE + "$",
             //
-            "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|(" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "))\\]\\[info\\]\\[gc           \\] Cancelling GC: Allocation Failure$",
-            // Blank line
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\][ ]*$"
+            "^" + UnifiedLogging.DECORATOR + " Cancelling GC: Allocation Failure$",
             //
     };
 

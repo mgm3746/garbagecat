@@ -15,7 +15,6 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -53,14 +52,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class ShenandoahConsiderClassUnloadingConcMarkEvent extends ShenandoahCollector
-        implements UnifiedLogging, LogEvent, ThrowAwayEvent {
+        implements UnifiedLogging, ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|("
-            + JdkRegEx.TIMESTAMP_MILLIS
-            + "))\\](\\[info\\])?(\\[gc\\])? Consider -XX:\\+ClassUnloadingWithConcurrentMark if large pause times are "
+    private static final String REGEX = "^" + UnifiedLogging.DECORATOR
+            + " Consider -XX:\\+ClassUnloadingWithConcurrentMark if large pause times are "
             + "observed on class-unloading sensitive workloads[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
@@ -88,9 +86,9 @@ public class ShenandoahConsiderClassUnloadingConcMarkEvent extends ShenandoahCol
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                if (matcher.group(12).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
                     //
-                    timestamp = Long.parseLong(matcher.group(16));
+                    timestamp = Long.parseLong(matcher.group(15));
                 } else {
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
                 }

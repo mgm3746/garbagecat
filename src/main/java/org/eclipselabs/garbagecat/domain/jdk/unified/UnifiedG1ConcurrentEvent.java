@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -101,23 +100,22 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedG1ConcurrentEvent extends G1Collector implements UnifiedLogging, LogEvent, ParallelEvent {
+public class UnifiedG1ConcurrentEvent extends G1Collector implements UnifiedLogging, ParallelEvent {
 
     /**
      * Regular expressions defining the logging.
      */
     private static final String[] REGEX = {
             // gc
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc[ ]{0,12}\\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Concurrent Cycle( " + JdkRegEx.DURATION_JDK9 + ")?$",
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Concurrent Cycle( "
+                    + JdkRegEx.DURATION_JDK9 + ")?$",
             // gc, marking
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,marking[ ]{3,4}\\] " + JdkRegEx.GC_EVENT_NUMBER
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
                     + " Concurrent (Clear Claimed Marks|Scan Root Regions|Mark|Mark From Roots|Preclean|"
                     + "Rebuild Remembered Sets|Cleanup for Next Mark|Create Live Data)( \\(" + JdkRegEx.TIMESTAMP
                     + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + JdkRegEx.DURATION_JDK9 + ")?$",
             // gc, task
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,task      \\] " + JdkRegEx.GC_EVENT_NUMBER
-                    + " Using \\d workers of \\d for marking$"
+            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Using \\d workers of \\d for marking$"
             //
     };
 

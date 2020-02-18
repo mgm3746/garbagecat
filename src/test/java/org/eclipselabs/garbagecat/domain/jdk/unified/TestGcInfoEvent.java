@@ -125,13 +125,6 @@ public class TestGcInfoEvent extends TestCase {
                 GcInfoEvent.match(logLine));
     }
 
-    public void testTrigger() {
-        String logLine = "[2019-02-05T14:47:34.156-0200][3068ms] Trigger: Learning 1 of 5. Free (912M) is below "
-                + "initial threshold (912M)";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
-                GcInfoEvent.match(logLine));
-    }
-
     public void testFree() {
         String logLine = "[2019-02-05T14:47:34.156-0200][3068ms] Free: 912M (1824 regions), Max regular: 512K, Max "
                 + "humongous: 933376K, External frag: 1%, Internal frag: 0%";

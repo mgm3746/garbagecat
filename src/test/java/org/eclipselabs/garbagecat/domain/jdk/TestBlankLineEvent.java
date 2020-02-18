@@ -10,8 +10,9 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain;
+package org.eclipselabs.garbagecat.domain.jdk;
 
+import org.eclipselabs.garbagecat.domain.BlankLineEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 import junit.framework.Assert;
@@ -22,6 +23,12 @@ import junit.framework.TestCase;
  * 
  */
 public class TestBlankLineEvent extends TestCase {
+
+    public void testIdentityEventType() {
+        String logLine = "";
+        Assert.assertEquals(JdkUtil.LogEventType.BLANK_LINE + "not identified.", JdkUtil.LogEventType.BLANK_LINE,
+                JdkUtil.identifyEventType(logLine));
+    }
 
     public void testReportable() {
         String logLine = "";

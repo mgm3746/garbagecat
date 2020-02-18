@@ -14,7 +14,6 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -49,14 +48,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class HeapRegionSizeEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent {
+public class HeapRegionSizeEvent implements UnifiedLogging, ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|("
-            + JdkRegEx.TIMESTAMP_MILLIS
-            + "))\\](\\[info\\])?(\\[gc,heap\\])? (Heap )?[r|R]egion(s)?( size)?:( \\d{1,4} x)? " + JdkRegEx.SIZE + "$";
+    private static final String REGEX = "^" + UnifiedLogging.DECORATOR
+            + " (Heap )?[r|R]egion(s)?( size)?:( \\d{1,4} x)? " + JdkRegEx.SIZE + "$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 

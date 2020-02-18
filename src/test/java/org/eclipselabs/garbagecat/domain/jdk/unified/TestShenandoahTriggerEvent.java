@@ -138,4 +138,10 @@ public class TestShenandoahTriggerEvent extends TestCase {
                 ShenandoahTriggerEvent.match(logLine));
     }
 
+    public void testTrigger() {
+        String logLine = "[2019-02-05T14:47:34.156-0200][3068ms] Trigger: Learning 1 of 5. Free (912M) is below "
+                + "initial threshold (912M)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".",
+                ShenandoahTriggerEvent.match(logLine));
+    }
 }

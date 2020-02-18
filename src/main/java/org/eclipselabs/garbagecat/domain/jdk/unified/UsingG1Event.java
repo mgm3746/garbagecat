@@ -15,7 +15,6 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -59,13 +58,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UsingG1Event extends G1Collector implements UnifiedLogging, LogEvent {
+public class UsingG1Event extends G1Collector implements UnifiedLogging {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[(" + JdkRegEx.TIMESTAMP + "s|"
-            + JdkRegEx.TIMESTAMP_MILLIS + ")\\](\\[info\\]\\[gc([ ]{5})?\\])? Using G1[ ]*$";
+    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " Using G1[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
@@ -92,10 +90,10 @@ public class UsingG1Event extends G1Collector implements UnifiedLogging, LogEven
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                if (matcher.group(12).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                    timestamp = Long.parseLong(matcher.group(14));
+                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                    timestamp = Long.parseLong(matcher.group(15));
                 } else {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
                 }
             }
         }

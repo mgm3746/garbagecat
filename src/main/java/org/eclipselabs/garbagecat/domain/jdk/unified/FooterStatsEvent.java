@@ -12,9 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -262,121 +260,121 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class FooterStatsEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent {
+public class FooterStatsEvent implements UnifiedLogging, ThrowAwayEvent {
 
     /**
      * Regular expression defining standard logging.
      */
     private static final String REGEX[] = {
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,stats[ ]{5}\\].*$",
+            "^" + UnifiedLogging.DECORATOR + " GC STATISTICS:$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] GC STATISTICS:$",
-            //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\]   \"\\(G\\)\" \\(gross\\) pauses include VM time: time to notify and block threads, do the "
+            "^" + UnifiedLogging.DECORATOR
+                    + "   \"\\(G\\)\" \\(gross\\) pauses include VM time: time to notify and block threads, do the "
                     + "pre-$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\]         and post-safepoint housekeeping. Use -XX:\\+PrintSafepointStatistics to dissect.$",
+            "^" + UnifiedLogging.DECORATOR
+                    + "         and post-safepoint housekeeping. Use -XX:\\+PrintSafepointStatistics to dissect.$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\]   \"\\(N\\)\" \\(net\\) pauses are the times spent in the actual GC code.$",
+            "^" + UnifiedLogging.DECORATOR
+                    + "   \"\\(N\\)\" \\(net\\) pauses are the times spent in the actual GC code.$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\]   \"a\" is average time for each phase, look at levels to see if average makes sense.$",
+            "^" + UnifiedLogging.DECORATOR
+                    + "   \"a\" is average time for each phase, look at levels to see if average makes sense.$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\]   \"lvls\" are quantiles: 0% \\(minimum\\), 25%, 50% \\(median\\), 75%, 100% "
+            "^" + UnifiedLogging.DECORATOR
+                    + "   \"lvls\" are quantiles: 0% \\(minimum\\), 25%, 50% \\(median\\), 75%, 100% "
                     + "\\(maximum\\).$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Total Pauses \\([G|N]\\).*$",
+            "^" + UnifiedLogging.DECORATOR + " Total Pauses \\([G|N]\\).*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] Pause (Init[ ]{0,1}|Final) (Mark|Update Refs) \\([G|N]\\).*$",
+            "^" + UnifiedLogging.DECORATOR + " Pause (Init[ ]{0,1}|Final) (Mark|Update Refs|Evac) \\([G|N]\\).*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   Accumulate Stats.*$",
+            "^" + UnifiedLogging.DECORATOR + "   Accumulate Stats.*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   Make Parsable .*$",
+            "^" + UnifiedLogging.DECORATOR + "   Make Parsable .*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   (Clear|Complete) Liveness.*$",
+            "^" + UnifiedLogging.DECORATOR + "   (Clear|Complete) Liveness.*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   (Scan|Update) Roots.*$",
+            "^" + UnifiedLogging.DECORATOR + "   (Scan|Update) Roots.*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\]     (S|E|UR): (Thread|String Table|Universe|JNI|JNI Weak|Synchronizer|Management|"
-                    + "System Dict|CLDG|JVMTI|Code Cache) Roots.*$",
+            "^" + UnifiedLogging.DECORATOR
+                    + "     (E|S|U|UR): (CLDG|Code Cache|JNI|JNI Weak|Management|String Table|Synchronizer|System Dict"
+                    + "|Thread|Universe|JVMTI) Roots.*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   Resize TLABs.*$",
+            "^" + UnifiedLogging.DECORATOR + "   (Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs).*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   Finish Queues.*$",
+            "^" + UnifiedLogging.DECORATOR + "   Finish Queues.*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   Weak References.*$",
+            "^" + UnifiedLogging.DECORATOR + "   Weak References.*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]     Process.*$",
+            "^" + UnifiedLogging.DECORATOR + "     Process.*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\]   (Prepare|Initial) Evacuation.*$",
+            "^" + UnifiedLogging.DECORATOR + "   (Initial|Prepare)( Evacuation)?.*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   Recycle.*$",
+            "^" + UnifiedLogging.DECORATOR + "   Recycle.*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] Concurrent (Reset|Marking|Precleaning|Evacuation|Update Refs|Cleanup|Uncommit).*$",
+            "^" + UnifiedLogging.DECORATOR
+                    + " Concurrent (Reset|Marking|Precleaning|Evacuation|Update Refs|Cleanup|Uncommit).*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] Under allocation pressure, concurrent cycles may cancel, and either continue cycle$",
+            "^" + UnifiedLogging.DECORATOR
+                    + " Under allocation pressure, concurrent cycles may cancel, and either continue cycle$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] under stop-the-world pause or result in stop-the-world Full GC. Increase heap size,$",
+            "^" + UnifiedLogging.DECORATOR
+                    + " under stop-the-world pause or result in stop-the-world Full GC. Increase heap size,$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] tune GC heuristics, set more aggressive pacing delay, or lower allocation rate$",
+            "^" + UnifiedLogging.DECORATOR
+                    + " tune GC heuristics, set more aggressive pacing delay, or lower allocation rate$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] to avoid Degenerated and Full GC cycles.$",
+            "^" + UnifiedLogging.DECORATOR + " to avoid Degenerated and Full GC cycles.$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\][ ]{4,7}\\d{1,7} (successful concurrent|Degenerated|Full|upgraded to Full) GC(s)?$",
+            "^" + UnifiedLogging.DECORATOR
+                    + "[ ]{2,7}\\d{1,7} (successful concurrent|Degenerated|Full|upgraded to Full) GC(s)?$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\]       \\d{1,7} invoked explicitly$",
+            "^" + UnifiedLogging.DECORATOR + "       \\d{1,7} invoked (ex|im)plicitly$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\]       \\d{1,7} caused by allocation failure$",
+            "^" + UnifiedLogging.DECORATOR + "       \\d{1,7} caused by allocation failure$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\]       \\d{1,7} upgraded from Degenerated GC$",
+            "^" + UnifiedLogging.DECORATOR + "       \\d{1,7} upgraded from Degenerated GC$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] ALLOCATION PACING:$",
+            "^" + UnifiedLogging.DECORATOR + " ALLOCATION PACING:$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] Max pacing delay is set for 10 ms.$",
+            "^" + UnifiedLogging.DECORATOR + " Max pacing delay is set for 10 ms.$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] Higher delay would prevent application outpacing the GC, but it will hide the GC latencies$",
+            "^" + UnifiedLogging.DECORATOR
+                    + " Higher delay would prevent application outpacing the GC, but it will hide the GC latencies$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] from the STW pause times. Pacing affects the individual threads, and so it would also be$",
+            "^" + UnifiedLogging.DECORATOR
+                    + " from the STW pause times. Pacing affects the individual threads, and so it would also be$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] invisible to the usual profiling tools, but would add up to end-to-end application "
+            "^" + UnifiedLogging.DECORATOR
+                    + " invisible to the usual profiling tools, but would add up to end-to-end application "
                     + "latency.$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\] Raise max pacing delay with care.$",
+            "^" + UnifiedLogging.DECORATOR + " Raise max pacing delay with care.$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Actual pacing delays histogram:$",
+            "^" + UnifiedLogging.DECORATOR + " Actual pacing delays histogram:$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\]       From -         To         Count         Sum$",
+            "^" + UnifiedLogging.DECORATOR + "       From -         To         Count         Sum$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\][ ]{6,7}\\d{1,2} ms -[ ]{6,7}\\d{1,2} ms:[ ]{10,11}\\d{1,3}[ ]{9,11}\\d{1,3} ms$",
+            "^" + UnifiedLogging.DECORATOR
+                    + "[ ]{6,7}\\d{1,2} ms -[ ]{6,7}\\d{1,2} ms:[ ]{9,12}\\d{1,4}[ ]{7,11}\\d{1,5} ms$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]                   Total:.*$",
+            "^" + UnifiedLogging.DECORATOR + "                   Total:.*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS
-                    + "\\]   Allocation tracing is disabled, use -XX:\\+ShenandoahAllocationTrace to enable.$"
+            "^" + UnifiedLogging.DECORATOR
+                    + "   Allocation tracing is disabled, use -XX:\\+ShenandoahAllocationTrace to enable.$",
+            //
+            "^" + UnifiedLogging.DECORATOR
+                    + " Pacing delays are measured from entering the pacing code till exiting it. Therefore,$",
+            //
+            "^" + UnifiedLogging.DECORATOR
+                    + " observed pacing delays may be higher than the threshold when paced thread spent more$",
+            //
+            "^" + UnifiedLogging.DECORATOR
+                    + " time in the pacing code. It usually happens when thread is de-scheduled while paced,$",
+            //
+            "^" + UnifiedLogging.DECORATOR + " OS takes longer to unblock the thread, or JVM experiences an STW pause.$"
             //
     };
 

@@ -15,7 +15,6 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -39,12 +38,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UsingSerialEvent extends SerialCollector implements UnifiedLogging, LogEvent {
+public class UsingSerialEvent extends SerialCollector implements UnifiedLogging {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] Using Serial[ ]*$";
+    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " Using Serial[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
@@ -71,7 +70,11 @@ public class UsingSerialEvent extends SerialCollector implements UnifiedLogging,
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                    timestamp = Long.parseLong(matcher.group(15));
+                } else {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                }
             }
         }
     }

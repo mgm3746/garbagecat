@@ -98,9 +98,9 @@ public class UnifiedOldEvent extends UnknownCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Full \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
+            + " Pause Full \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -114,13 +114,18 @@ public class UnifiedOldEvent extends UnknownCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(2);
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(4)), matcher.group(6).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(7)), matcher.group(9).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(10)),
-                    matcher.group(12).charAt(0));
-            duration = JdkMath.convertMillisToMicros(matcher.group(13)).intValue();
+            long endTimestamp;
+            if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                endTimestamp = Long.parseLong(matcher.group(15));
+            } else {
+                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+            }
+            trigger = matcher.group(21);
+            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(23)), matcher.group(25).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)), matcher.group(28).charAt(0));
+            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)),
+                    matcher.group(31).charAt(0));
+            duration = JdkMath.convertMillisToMicros(matcher.group(32)).intValue();
             timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
         }
     }

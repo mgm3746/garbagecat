@@ -89,9 +89,9 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc[ ]{0,11}\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Initial Mark " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "?[ ]*$";
+    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
+            + " Pause Initial Mark " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
+            + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -108,12 +108,17 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 // TODO: Is this correct?
-                long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                duration = JdkMath.convertMillisToMicros(matcher.group(11)).intValue();
+                long endTimestamp;
+                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(15));
+                } else {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                }
+                duration = JdkMath.convertMillisToMicros(matcher.group(30)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                if (matcher.group(12) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(13)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(14)).intValue();
+                if (matcher.group(31) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(32)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(33)).intValue();
                 }
             }
         }

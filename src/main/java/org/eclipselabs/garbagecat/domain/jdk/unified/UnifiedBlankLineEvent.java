@@ -12,40 +12,23 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.eclipselabs.garbagecat.domain.jdk.CmsCollector;
-import org.eclipselabs.garbagecat.util.jdk.JdkMath;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * USING_CMS
+ * UNIFIED_BLANK_LINE
  * </p>
- * 
- * <p>
- * Initial line of JDK9+ logging indicating collector family.
- * </p>
- * 
- * <h3>Example Logging</h3>
- * 
- * <pre>
- * [0.002s][info][gc] Using Concurrent Mark Sweep
- * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UsingCmsEvent extends CmsCollector implements UnifiedLogging {
+public class UnifiedBlankLineEvent implements ThrowAwayEvent {
 
     /**
-     * Regular expressions defining the logging.
+     * Regular expression defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " Using Concurrent Mark Sweep[ ]*$";
-
-    private static Pattern pattern = Pattern.compile(REGEX);
+    private static final String REGEX = UnifiedLogging.BLANK_LINE;
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -63,20 +46,9 @@ public class UsingCmsEvent extends CmsCollector implements UnifiedLogging {
      * @param logEntry
      *            The log entry for the event.
      */
-    public UsingCmsEvent(String logEntry) {
+    public UnifiedBlankLineEvent(String logEntry) {
         this.logEntry = logEntry;
-
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.find()) {
-                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                    timestamp = Long.parseLong(matcher.group(15));
-                } else {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
-                }
-            }
-        }
+        this.timestamp = 0L;
     }
 
     public String getLogEntry() {
@@ -84,7 +56,7 @@ public class UsingCmsEvent extends CmsCollector implements UnifiedLogging {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.USING_CMS.toString();
+        return JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString();
     }
 
     public long getTimestamp() {
@@ -99,6 +71,6 @@ public class UsingCmsEvent extends CmsCollector implements UnifiedLogging {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return logLine.matches(REGEX);
     }
 }

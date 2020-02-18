@@ -12,59 +12,42 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import java.util.regex.Pattern;
-
-import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
- * <p>
- * SHENANDOAH_CANCELLING_GC
- * </p>
- * 
- * <p>
- * Cancelling GC information logging.
- * </p>
- * 
- * <h3>Example Logging</h3>
- * 
- * <pre>
- * [72.659s][info][gc] Cancelling GC: Stopping VM
- * </pre>
- * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahCancellingGcEvent extends ShenandoahCollector implements UnifiedLogging, ThrowAwayEvent {
+public class TestUnifiedLogging extends TestCase {
 
-    /**
-     * Regular expressions defining the logging.
-     */
-    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " Cancelling GC: Stopping VM[ ]*$";
-
-    private static Pattern pattern = Pattern.compile(REGEX);
-
-    public String getLogEntry() {
-        throw new UnsupportedOperationException("Event does not include log entry information");
+    public void testDecoratorUptime() {
+        String decorator = "[25.016s]";
+        Assert.assertTrue("Time decorator " + decorator + " not recognized.",
+                decorator.matches(UnifiedLogging.DECORATOR));
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_CANCELLING_GC.toString();
+    public void testDecoratorUptimeMillis() {
+        String decorator = "[25016ms]";
+        Assert.assertTrue("Time decorator " + decorator + " not recognized.",
+                decorator.matches(UnifiedLogging.DECORATOR));
     }
 
-    public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
+    public void testDecoratorTime() {
+        String decorator = "[2020-02-14T15:21:55.207-0500]";
+        Assert.assertTrue("Time decorator " + decorator + " not recognized.",
+                decorator.matches(UnifiedLogging.DECORATOR));
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public void testDecoratorTimeUptime() {
+        String decorator = "[2020-02-14T15:21:55.207-0500][25.016s]";
+        Assert.assertTrue("Time decorator " + decorator + " not recognized.",
+                decorator.matches(UnifiedLogging.DECORATOR));
+    }
+
+    public void testDecoratorTimeUptimemillis() {
+        String decorator = "[2020-02-14T15:21:55.207-0500][25016ms]";
+        Assert.assertTrue("Time decorator " + decorator + " not recognized.",
+                decorator.matches(UnifiedLogging.DECORATOR));
     }
 }

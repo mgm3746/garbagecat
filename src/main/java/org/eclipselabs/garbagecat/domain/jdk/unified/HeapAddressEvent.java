@@ -14,7 +14,6 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -53,13 +52,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class HeapAddressEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent {
+public class HeapAddressEvent implements UnifiedLogging, ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|("
-            + JdkRegEx.TIMESTAMP_MILLIS + "))\\](\\[info\\])?(\\[gc,heap,coops\\])? Heap address: " + JdkRegEx.ADDRESS
+    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " Heap address: " + JdkRegEx.ADDRESS
             + ", size: \\d{1,8} MB, Compressed Oops mode: (32-bit|Zero based, Oop shift amount: \\d)$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);

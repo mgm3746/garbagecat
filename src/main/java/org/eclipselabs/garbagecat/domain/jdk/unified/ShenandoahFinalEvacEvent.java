@@ -61,8 +61,8 @@ public class ShenandoahFinalEvacEvent extends ShenandoahCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc[ ]{0,11}\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Final Evac " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
+            + " Pause Final Evac " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -79,8 +79,8 @@ public class ShenandoahFinalEvacEvent extends ShenandoahCollector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 // TODO: Is this correct?
-                long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                duration = JdkMath.convertMillisToMicros(matcher.group(2)).intValue();
+                long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(21)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             }
         }

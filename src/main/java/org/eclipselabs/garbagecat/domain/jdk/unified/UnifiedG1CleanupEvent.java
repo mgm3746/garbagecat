@@ -60,16 +60,16 @@ public class UnifiedG1CleanupEvent extends G1Collector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc\\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Cleanup " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
+            + " Pause Cleanup " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
+            + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 
     /**
      * Regular expression defining preprocessed logging.
      */
-    private static final String REGEX_PREPROCESSED = "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc            \\] "
-            + JdkRegEx.GC_EVENT_NUMBER + " Pause Cleanup " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
+    private static final String REGEX_PREPROCESSED = "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
+            + " Pause Cleanup " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
+            + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -124,12 +124,17 @@ public class UnifiedG1CleanupEvent extends G1Collector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 // TODO: Is this correct?
-                long endTimestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(2)), matcher.group(4).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
-                        matcher.group(10).charAt(0));
-                duration = JdkMath.roundMillis(matcher.group(11)).intValue();
+                long endTimestamp;
+                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(15));
+                } else {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                }
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(21)), matcher.group(23).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)),
+                        matcher.group(29).charAt(0));
+                duration = JdkMath.roundMillis(matcher.group(30)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
@@ -138,15 +143,19 @@ public class UnifiedG1CleanupEvent extends G1Collector
             Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(2)), matcher.group(4).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(5)), matcher.group(7).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(8)),
-                        matcher.group(10).charAt(0));
-                duration = JdkMath.roundMillis(matcher.group(11)).intValue();
-                if (matcher.group(12) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(13)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(14)).intValue();
+                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                    timestamp = Long.parseLong(matcher.group(15));
+                } else {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                }
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(21)), matcher.group(23).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)),
+                        matcher.group(29).charAt(0));
+                duration = JdkMath.roundMillis(matcher.group(30)).intValue();
+                if (matcher.group(31) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(32)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(33)).intValue();
                 } else {
                     timeUser = TimesData.NO_DATA;
                     timeReal = TimesData.NO_DATA;

@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -46,16 +45,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * [69.946s][info][gc,heap,exit ] Heap
- * [69.946s][info][gc,heap,exit ] Shenandoah Heap
- * [69.946s][info][gc,heap,exit ]  65536K total, 65536K committed, 55031K used
- * [69.946s][info][gc,heap,exit ]  256 x 256K regions
- * [69.946s][info][gc,heap,exit ] Status: cancelled
- * [69.946s][info][gc,heap,exit ] Reserved region:
- * [69.946s][info][gc,heap,exit ]  - [0x00000000fc000000, 0x0000000100000000)
- * [69.946s][info][gc,heap,exit ]
- * [69.946s][info][gc,heap,exit ]  Metaspace       used 4066K, capacity 7271K, committed 7296K, reserved 1056768K
- * [69.946s][info][gc,heap,exit ]   class space    used 299K, capacity 637K, committed 640K, reserved 1048576K
+ * [103.682s][info][gc,heap,exit ] Heap
+ * [103.682s][info][gc,heap,exit ] Shenandoah Heap
+ * [103.682s][info][gc,heap,exit ]  65536K total, 65536K committed, 50162K used
+ * [103.682s][info][gc,heap,exit ]  256 x 256K regions
+ * [103.682s][info][gc,heap,exit ] Status: has forwarded objects, cancelled
+ * [103.682s][info][gc,heap,exit ] Reserved region:
+ * [103.682s][info][gc,heap,exit ]  - [0x00000000fc000000, 0x0000000100000000)
+ * [103.682s][info][gc,heap,exit ] Collection set:
+ * [103.683s][info][gc,heap,exit ]  - map (vanilla): 0x00007fa7ea119f00
+ * [103.683s][info][gc,heap,exit ]  - map (biased):  0x00007fa7ea116000
+ * [103.683s][info][gc,heap,exit ]
+ * [103.683s][info][gc,heap,exit ]  Metaspace       used 4230K, capacity 7436K, committed 7680K, reserved 1056768K
+ * [103.683s][info][gc,heap,exit ]   class space    used 309K, capacity 671K, committed 768K, reserved 1048576K
  * </pre>
  * 
  * <p>
@@ -74,40 +76,100 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * [32.839s][info][gc,heap,exit   ]   class space    used 299K, capacity 637K, committed 640K, reserved 1048576K
  * </pre>
  * 
+ * <p>
+ * 3) Parallel Serial:
+ * </p>
+ * 
+ * <pre>
+ * [37.098s][info][gc,heap,exit   ] Heap
+ * [37.098s][info][gc,heap,exit   ]  PSYoungGen      total 20992K, used 7054K [0x00000000feb00000, 0x0000000100000000, 0x0000000100000000)
+ * [37.098s][info][gc,heap,exit   ]   eden space 20480K, 33% used [0x00000000feb00000,0x00000000ff1cb940,0x00000000fff00000)
+ * [37.098s][info][gc,heap,exit   ]   from space 512K, 18% used [0x00000000fff80000,0x00000000fff98000,0x0000000100000000)
+ * [37.098s][info][gc,heap,exit   ]   to   space 512K, 0% used [0x00000000fff00000,0x00000000fff00000,0x00000000fff80000)
+ * [37.098s][info][gc,heap,exit   ]  PSOldGen        total 32768K, used 27239K [0x00000000fc000000, 0x00000000fe000000, 0x00000000feb00000)
+ * [37.098s][info][gc,heap,exit   ]   object space 32768K, 83% used [0x00000000fc000000,0x00000000fda99f58,0x00000000fe000000)
+ * [37.098s][info][gc,heap,exit   ]  Metaspace       used 4222K, capacity 7436K, committed 7680K, reserved 1056768K
+ * [37.098s][info][gc,heap,exit   ]   class space    used 309K, capacity 671K, committed 768K, reserved 1048576K
+ * </pre>
+ * 
+ * <p>
+ * 4) Parallel Serial Compacting:
+ * </p>
+ * 
+ * <pre>
+ * [37.742s][info][gc,heap,exit   ] Heap
+ * [37.742s][info][gc,heap,exit   ]  PSYoungGen      total 20992K, used 7500K [0x00000000feb00000, 0x0000000100000000, 0x0000000100000000)
+ * [37.742s][info][gc,heap,exit   ]   eden space 20480K, 35% used [0x00000000feb00000,0x00000000ff233060,0x00000000fff00000)
+ * [37.742s][info][gc,heap,exit   ]   from space 512K, 25% used [0x00000000fff80000,0x00000000fffa0000,0x0000000100000000)
+ * [37.742s][info][gc,heap,exit   ]   to   space 512K, 0% used [0x00000000fff00000,0x00000000fff00000,0x00000000fff80000)
+ * [37.742s][info][gc,heap,exit   ]  ParOldGen       total 30720K, used 27745K [0x00000000fc000000, 0x00000000fde00000, 0x00000000feb00000)
+ * [37.742s][info][gc,heap,exit   ]   object space 30720K, 90% used [0x00000000fc000000,0x00000000fdb18680,0x00000000fde00000)
+ * [37.742s][info][gc,heap,exit   ]  Metaspace       used 4218K, capacity 7436K, committed 7680K, reserved 1056768K
+ * [37.742s][info][gc,heap,exit   ]   class space    used 309K, capacity 671K, committed 768K, reserved 1048576K
+ * </pre>
+ * 
+ * <p>
+ * 4) CMS:
+ * </p>
+ * 
+ * <pre>
+ * [59.713s][info][gc,heap,exit ] Heap
+ * [59.713s][info][gc,heap,exit ]  par new generation   total 1152K, used 713K [0x00000000fc000000, 0x00000000fc140000, 0x00000000fd550000)
+ * [59.713s][info][gc,heap,exit ]   eden space 1024K,  67% used [0x00000000fc000000, 0x00000000fc0ac590, 0x00000000fc100000)
+ * [59.713s][info][gc,heap,exit ]   from space 128K,  18% used [0x00000000fc120000, 0x00000000fc1260c0, 0x00000000fc140000)
+ * [59.713s][info][gc,heap,exit ]   to   space 128K,   0% used [0x00000000fc100000, 0x00000000fc100000, 0x00000000fc120000)
+ * [59.713s][info][gc,heap,exit ]  concurrent mark-sweep generation total 31228K, used 25431K [0x00000000fd550000, 0x00000000ff3cf000, 0x0000000100000000)
+ * [59.713s][info][gc,heap,exit ]  Metaspace       used 4223K, capacity 7436K, committed 7680K, reserved 1056768K
+ * [59.713s][info][gc,heap,exit ]   class space    used 309K, capacity 671K, committed 768K, reserved 1048576K
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class FooterHeapEvent implements UnifiedLogging, LogEvent, ThrowAwayEvent {
+public class FooterHeapEvent implements UnifiedLogging, ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX[] = {
             //
-            "^\\[" + JdkRegEx.TIMESTAMP + "s\\]\\[info\\]\\[gc,heap,exit[ ]{1,3}\\].*$",
+            "^" + UnifiedLogging.DECORATOR + "  garbage-first heap   total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE
+                    + " \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]  - \\[" + JdkRegEx.ADDRESS + ", "
-                    + JdkRegEx.ADDRESS + "\\)[ ]*$",
+            "^" + UnifiedLogging.DECORATOR + "   region size " + JdkRegEx.SIZE + ", \\d{1,2} young \\(" + JdkRegEx.SIZE
+                    + "\\), \\d survivors \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]( Shenandoah)? [h|H]eap$",
+            "^" + UnifiedLogging.DECORATOR + "  - \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]  " + JdkRegEx.SIZE + " total, "
-                    + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
+            "^" + UnifiedLogging.DECORATOR + "( Shenandoah)? [h|H]eap$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]  Metaspace       used "
-                    + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE + ", committed " + JdkRegEx.SIZE + ", reserved "
-                    + JdkRegEx.SIZE + "$",
+            "^" + UnifiedLogging.DECORATOR + "  " + JdkRegEx.SIZE + " total, " + JdkRegEx.SIZE + " committed, "
+                    + JdkRegEx.SIZE + " used$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]  \\d{1,4} x " + JdkRegEx.SIZE
-                    + " regions$",
+            "^" + UnifiedLogging.DECORATOR + "  Metaspace       used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
+                    + ", committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\]   class space    used "
-                    + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE + ", " + "committed " + JdkRegEx.SIZE
-                    + ", reserved " + JdkRegEx.SIZE + "$",
+            "^" + UnifiedLogging.DECORATOR + "  \\d{1,4} x " + JdkRegEx.SIZE + " regions$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Status: cancelled$",
+            "^" + UnifiedLogging.DECORATOR + "   class space    used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
+                    + ", " + "committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
             //
-            "^\\[" + JdkRegEx.DATESTAMP + "\\]\\[" + JdkRegEx.TIMESTAMP_MILLIS + "\\] Reserved region:$"
+            "^" + UnifiedLogging.DECORATOR
+                    + "  ((concurrent mark-sweep|def new|par new|tenured) generation|ParOldGen|PSOldGen|PSYoungGen)"
+                    + "[ ]{1,8}total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + " " + "\\[" + JdkRegEx.ADDRESS
+                    + ", " + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)$",
+            //
+            "^" + UnifiedLogging.DECORATOR + "   (eden|from|object| the|to  ) space " + JdkRegEx.SIZE
+                    + ",[ ]{1,3}\\d{1,3}% used \\[" + JdkRegEx.ADDRESS + ",[ ]{0,1}" + JdkRegEx.ADDRESS + ",[ ]{0,1}"
+                    + JdkRegEx.ADDRESS + "(,[ ]{0,1}" + JdkRegEx.ADDRESS + ")?\\)$",
+            //
+            "^" + UnifiedLogging.DECORATOR + " Status: (has forwarded objects, )?cancelled$",
+            //
+            "^" + UnifiedLogging.DECORATOR + " Reserved region:$",
+            //
+            "^" + UnifiedLogging.DECORATOR + " Collection set:$",
+            //
+            "^" + UnifiedLogging.DECORATOR + "  - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$"
             //
     };
 

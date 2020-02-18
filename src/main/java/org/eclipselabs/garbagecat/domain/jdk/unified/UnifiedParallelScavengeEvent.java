@@ -62,8 +62,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedParallelScavengeEvent extends ParallelCollector
-        implements BlockingEvent, YoungCollection, ParallelEvent, YoungData, OldData, PermData, TriggerData, TimesData {
+public class UnifiedParallelScavengeEvent extends ParallelCollector implements UnifiedLogging, BlockingEvent,
+        YoungCollection, ParallelEvent, YoungData, OldData, PermData, TriggerData, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -148,12 +148,12 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX_PREPROCESSED = "\\[" + JdkRegEx.TIMESTAMP
-            + "s\\]\\[info\\]\\[gc,start[ ]{0,7}\\] " + JdkRegEx.GC_EVENT_NUMBER + " Pause Young \\(" + TRIGGER
-            + "\\) PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) (PS|Par)OldGen: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
+    private static final String REGEX_PREPROCESSED = "" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
+            + " Pause Young \\(" + TRIGGER + "\\) PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) (PS|Par)OldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9
+            + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(UnifiedParallelScavengeEvent.REGEX_PREPROCESSED);
 
@@ -166,20 +166,24 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-            trigger = matcher.group(2);
-            young = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(3)), matcher.group(5).charAt(0));
-            youngEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(6)), matcher.group(8).charAt(0));
-            youngAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(9)), matcher.group(11).charAt(0));
-            old = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(13)), matcher.group(15).charAt(0));
-            oldEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(18).charAt(0));
-            oldAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
-            permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)), matcher.group(24).charAt(0));
-            permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
-            permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
-            duration = JdkMath.convertMillisToMicros(matcher.group(40)).intValue();
-            timeUser = JdkMath.convertSecsToCentis(matcher.group(42)).intValue();
-            timeReal = JdkMath.convertSecsToCentis(matcher.group(43)).intValue();
+            if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                timestamp = Long.parseLong(matcher.group(15));
+            } else {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+            }
+            trigger = matcher.group(21);
+            young = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)), matcher.group(24).charAt(0));
+            youngEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
+            youngAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
+            old = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(32)), matcher.group(34).charAt(0));
+            oldEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(35)), matcher.group(37).charAt(0));
+            oldAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(38)), matcher.group(40).charAt(0));
+            permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(41)), matcher.group(43).charAt(0));
+            permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(44)), matcher.group(46).charAt(0));
+            permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(47)), matcher.group(49).charAt(0));
+            duration = JdkMath.convertMillisToMicros(matcher.group(59)).intValue();
+            timeUser = JdkMath.convertSecsToCentis(matcher.group(61)).intValue();
+            timeReal = JdkMath.convertSecsToCentis(matcher.group(62)).intValue();
         }
     }
 

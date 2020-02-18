@@ -136,6 +136,12 @@ public class TestFooterHeapEvent extends TestCase {
                 FooterHeapEvent.match(logLine));
     }
 
+    public void testLineStatusHasForwarded() {
+        String logLine = "[103.682s][info][gc,heap,exit ] Status: has forwarded objects, cancelled";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
     public void testLineReservedRegion() {
         String logLine = "[69.946s][info][gc,heap,exit ] Reserved region:";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
@@ -156,12 +162,6 @@ public class TestFooterHeapEvent extends TestCase {
 
     public void testLineReservedRegionAddressUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]  - [0x00000000ae900000, 0x0000000100000000) ";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
-                FooterHeapEvent.match(logLine));
-    }
-
-    public void testLineBlank() {
-        String logLine = "[69.946s][info][gc,heap,exit ]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
                 FooterHeapEvent.match(logLine));
     }
@@ -228,37 +228,104 @@ public class TestFooterHeapEvent extends TestCase {
                 FooterHeapEvent.match(logLine));
     }
 
-    public void testEden() {
+    public void testLineEden() {
         String logLine = "[32.839s][info][gc,heap,exit   ]   eden space 10240K,  43% used [0x00000000fc000000, "
                 + "0x00000000fc463ed8, 0x00000000fca00000)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
                 FooterHeapEvent.match(logLine));
     }
 
-    public void testFromSpace() {
+    public void testLineEdenNoSpacesBetweenAddresses() {
+        String logLine = "[37.098s][info][gc,heap,exit   ]   eden space 20480K, 33% used [0x00000000feb00000,"
+                + "0x00000000ff1cb940,0x00000000fff00000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineFromSpace() {
         String logLine = "[32.839s][info][gc,heap,exit   ]   from space 1216K,   8% used [0x00000000fca00000, "
                 + "0x00000000fca1b280, 0x00000000fcb30000)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
                 FooterHeapEvent.match(logLine));
     }
 
-    public void testToSpace() {
+    public void testLineToSpace() {
         String logLine = "[32.839s][info][gc,heap,exit   ]   to   space 1216K,   0% used [0x00000000fcb30000, "
                 + "0x00000000fcb30000, 0x00000000fcc60000)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
                 FooterHeapEvent.match(logLine));
     }
 
-    public void testTenured() {
+    public void testLineTenured() {
         String logLine = "[32.839s][info][gc,heap,exit   ]  tenured generation   total 25240K, used 24218K "
                 + "[0x00000000fd550000, 0x00000000fedf6000, 0x0000000100000000)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
                 FooterHeapEvent.match(logLine));
     }
 
-    public void testTheSpace() {
+    public void testLineTheSpace() {
         String logLine = "[32.839s][info][gc,heap,exit   ]    the space 25240K,  95% used [0x00000000fd550000, "
                 + "0x00000000fecf6b58, 0x00000000fecf6c00, 0x00000000fedf6000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLinePsYoungGen() {
+        String logLine = "[37.098s][info][gc,heap,exit   ]  PSYoungGen      total 20992K, used 7054K "
+                + "[0x00000000feb00000, 0x0000000100000000, 0x0000000100000000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLinePsOldGen() {
+        String logLine = "[37.098s][info][gc,heap,exit   ]  PSOldGen        total 32768K, used 27239K "
+                + "[0x00000000fc000000, 0x00000000fe000000, 0x00000000feb00000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineParOldGen() {
+        String logLine = "[37.742s][info][gc,heap,exit   ]  ParOldGen       total 30720K, used 27745K "
+                + "[0x00000000fc000000, 0x00000000fde00000, 0x00000000feb00000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineObjectSpace() {
+        String logLine = "[37.098s][info][gc,heap,exit   ]   object space 32768K, 83% used [0x00000000fc000000,"
+                + "0x00000000fda99f58,0x00000000fe000000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineParNewGeneration() {
+        String logLine = "[59.713s][info][gc,heap,exit ]  par new generation   total 1152K, used 713K "
+                + "[0x00000000fc000000, 0x00000000fc140000, 0x00000000fd550000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineParCmsGeneration() {
+        String logLine = "[59.713s][info][gc,heap,exit ]  concurrent mark-sweep generation total 31228K, used 25431K "
+                + "[0x00000000fd550000, 0x00000000ff3cf000, 0x0000000100000000)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineCollection() {
+        String logLine = "[103.682s][info][gc,heap,exit ] Collection set:";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineMapVanilla() {
+        String logLine = "[103.683s][info][gc,heap,exit ]  - map (vanilla): 0x00007fa7ea119f00";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
+    public void testLineMapBiased() {
+        String logLine = "[103.683s][info][gc,heap,exit ]  - map (biased):  0x00007fa7ea116000";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
                 FooterHeapEvent.match(logLine));
     }

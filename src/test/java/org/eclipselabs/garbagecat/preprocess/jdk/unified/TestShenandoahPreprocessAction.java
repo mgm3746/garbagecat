@@ -341,12 +341,6 @@ public class TestShenandoahPreprocessAction extends TestCase {
                 ShenandoahPreprocessAction.match(logLine));
     }
 
-    public void testBlankLineUptimeMillis() {
-        String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] ";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
-                ShenandoahPreprocessAction.match(logLine));
-    }
-
     public void testFailedToAllocate() {
         String logLine = "[52.872s][info][gc           ] Failed to allocate 256K";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",

@@ -65,8 +65,7 @@ public class ShenandoahInitUpdateEvent extends ShenandoahCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|("
-            + JdkRegEx.TIMESTAMP_MILLIS + "))\\](\\[info\\]\\[gc[ ]{0,11}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
             + " Pause Init Update Refs " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
@@ -85,12 +84,12 @@ public class ShenandoahInitUpdateEvent extends ShenandoahCollector
             if (matcher.find()) {
                 // TODO: Is this correct?
                 long endTimestamp;
-                if (matcher.group(12).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(16));
+                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(15));
                 } else {
                     endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(18)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(21)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             }
         }

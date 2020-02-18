@@ -79,8 +79,7 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(\\[" + JdkRegEx.DATESTAMP + "\\])?\\[((" + JdkRegEx.TIMESTAMP + "s)|("
-            + JdkRegEx.TIMESTAMP_MILLIS + "))\\](\\[info\\]\\[gc[ ]{0,11}\\])? " + JdkRegEx.GC_EVENT_NUMBER
+    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
             + " Pause Degenerated GC \\(Mark\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
 
@@ -100,17 +99,17 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
             if (matcher.find()) {
                 // TODO: Is this correct?
                 long endTimestamp;
-                if (matcher.group(12).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(16));
+                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(15));
                 } else {
                     endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(27)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(30)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(18)), matcher.group(20).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(21)), matcher.group(23).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)),
-                        matcher.group(26).charAt(0));
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(21)), matcher.group(23).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)),
+                        matcher.group(29).charAt(0));
             }
         }
     }

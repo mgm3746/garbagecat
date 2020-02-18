@@ -76,6 +76,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalUpdateEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitUpdateEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahTriggerEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent;
@@ -124,15 +125,15 @@ public class JdkUtil {
         //
         SHENANDOAH_INIT_UPDATE, SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK, SHENANDOAH_TRIGGER,
         //
-        UNIFIED_CMS_CONCURRENT, UNIFIED_CMS_INITIAL_MARK, UNIFIED_G1_CLEANUP, UNIFIED_G1_CONCURRENT, UNIFIED_G1_INFO,
+        UNIFIED_BLANK_LINE, UNIFIED_CMS_CONCURRENT, UNIFIED_CMS_INITIAL_MARK, UNIFIED_G1_CLEANUP,
         //
-        UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
+        UNIFIED_G1_CONCURRENT, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK,
         //
-        UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
+        UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_OLD, UNIFIED_PAR_NEW,
         //
-        UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG,
+        UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SERIAL_NEW,
         //
-        USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH,
+        UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH,
         // serial
         SERIAL_NEW, SERIAL_OLD,
         // parallel
@@ -227,6 +228,8 @@ public class JdkUtil {
             return LogEventType.SHENANDOAH_INIT_UPDATE;
         if (ShenandoahTriggerEvent.match(logLine))
             return LogEventType.SHENANDOAH_TRIGGER;
+        if (UnifiedBlankLineEvent.match(logLine) && !BlankLineEvent.match(logLine))
+            return LogEventType.UNIFIED_BLANK_LINE;
         if (UnifiedCmsConcurrentEvent.match(logLine))
             return LogEventType.UNIFIED_CMS_CONCURRENT;
         if (UnifiedCmsInitialMarkEvent.match(logLine))
@@ -420,6 +423,9 @@ public class JdkUtil {
             break;
         case SHENANDOAH_TRIGGER:
             event = new ShenandoahTriggerEvent();
+            break;
+        case UNIFIED_BLANK_LINE:
+            event = new UnifiedBlankLineEvent(logLine);
             break;
         case UNIFIED_CMS_CONCURRENT:
             event = new UnifiedCmsConcurrentEvent();
@@ -1101,6 +1107,7 @@ public class JdkUtil {
         case SHENANDOAH_CANCELLING_GC:
         case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
         case SHENANDOAH_TRIGGER:
+        case UNIFIED_BLANK_LINE:
         case UNIFIED_G1_INFO:
         case UNKNOWN:
             reportable = false;
@@ -1139,6 +1146,7 @@ public class JdkUtil {
                 case SHENANDOAH_INIT_MARK:
                 case SHENANDOAH_INIT_UPDATE:
                 case SHENANDOAH_TRIGGER:
+                case UNIFIED_BLANK_LINE:
                 case UNIFIED_CMS_CONCURRENT:
                 case UNIFIED_CMS_INITIAL_MARK:
                 case UNIFIED_G1_CLEANUP:
