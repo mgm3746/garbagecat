@@ -24,6 +24,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -75,7 +76,7 @@ public class TestUnifiedOldEvent extends TestCase {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_OLD);
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not indentified as unified.",
-                JdkUtil.isUnifiedLogging(eventTypes));
+                UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
     public void testLogLineWhitespaceAtEnd() {

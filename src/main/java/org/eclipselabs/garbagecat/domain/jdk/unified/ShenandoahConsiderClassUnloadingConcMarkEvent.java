@@ -18,8 +18,9 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -57,7 +58,7 @@ public class ShenandoahConsiderClassUnloadingConcMarkEvent extends ShenandoahCol
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedLogging.DECORATOR
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR
             + " Consider -XX:\\+ClassUnloadingWithConcurrentMark if large pause times are "
             + "observed on class-unloading sensitive workloads[ ]*$";
 
@@ -86,11 +87,21 @@ public class ShenandoahConsiderClassUnloadingConcMarkEvent extends ShenandoahCol
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                    //
-                    timestamp = Long.parseLong(matcher.group(15));
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    timestamp = Long.parseLong(matcher.group(13));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 } else {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                    if (matcher.group(15) != null) {
+                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            timestamp = Long.parseLong(matcher.group(17));
+                        } else {
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                    }
                 }
             }
         }

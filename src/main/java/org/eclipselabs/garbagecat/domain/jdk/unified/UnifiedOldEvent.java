@@ -24,6 +24,8 @@ import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -98,9 +100,9 @@ public class UnifiedOldEvent extends UnknownCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
             + " Pause Full \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+            + "\\) " + UnifiedRegEx.DURATION + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -115,17 +117,28 @@ public class UnifiedOldEvent extends UnknownCollector
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             long endTimestamp;
-            if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                endTimestamp = Long.parseLong(matcher.group(15));
+            if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                endTimestamp = Long.parseLong(matcher.group(13));
+            } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             } else {
-                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                if (matcher.group(15) != null) {
+                    if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        endTimestamp = Long.parseLong(matcher.group(17));
+                    } else {
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                    }
+                } else {
+                    // Datestamp only.
+                    endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                }
             }
-            trigger = matcher.group(21);
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(23)), matcher.group(25).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)), matcher.group(28).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)),
-                    matcher.group(31).charAt(0));
-            duration = JdkMath.convertMillisToMicros(matcher.group(32)).intValue();
+            trigger = matcher.group(23);
+            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
+            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)),
+                    matcher.group(33).charAt(0));
+            duration = JdkMath.convertMillisToMicros(matcher.group(34)).intValue();
             timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
         }
     }

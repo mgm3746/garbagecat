@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -74,7 +75,7 @@ public class TestShenandoahConsiderClassUnloadingConcMarkEvent extends TestCase 
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK);
         Assert.assertTrue(JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString()
-                + " not indentified as unified.", JdkUtil.isUnifiedLogging(eventTypes));
+                + " not indentified as unified.", UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
     public void testLineWithSpaces() {

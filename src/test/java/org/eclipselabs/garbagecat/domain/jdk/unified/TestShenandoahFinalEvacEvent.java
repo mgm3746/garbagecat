@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -72,7 +73,7 @@ public class TestShenandoahFinalEvacEvent extends TestCase {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_FINAL_EVAC);
         Assert.assertTrue(JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not indentified as unified.",
-                JdkUtil.isUnifiedLogging(eventTypes));
+                UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
     public void testLogLineWhitespaceAtEnd() {

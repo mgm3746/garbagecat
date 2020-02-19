@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -103,7 +104,7 @@ public class TestUnifiedParallelCompactingOldEvent extends TestCase {
         eventTypes.add(LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD);
         Assert.assertTrue(
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " not indentified as unified.",
-                JdkUtil.isUnifiedLogging(eventTypes));
+                UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
     public void testLogLineWhitespaceAtEnd() {

@@ -16,8 +16,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1117,64 +1115,5 @@ public class JdkUtil {
         }
 
         return reportable;
-    }
-
-    /**
-     * @param eventTypes
-     *            The JVM event types.
-     * @return True if the JVM events indicate unified logging (JDK9+), false otherwise.
-     */
-    public static final boolean isUnifiedLogging(List<LogEventType> eventTypes) {
-        boolean isUnifiedLogging = false;
-        if (eventTypes.size() > 0) {
-            Iterator<LogEventType> iterator = eventTypes.iterator();
-            while (iterator.hasNext() && !isUnifiedLogging) {
-                LogEventType eventType = iterator.next();
-                switch (eventType) {
-                case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
-                case FOOTER_HEAP:
-                case FOOTER_STATS:
-                case GC_INFO:
-                case HEAP_ADDRESS:
-                case HEAP_REGION_SIZE:
-                case SHENANDOAH_CANCELLING_GC:
-                case SHENANDOAH_CONCURRENT:
-                case SHENANDOAH_DEGENERATED_GC_MARK:
-                case SHENANDOAH_FINAL_EVAC:
-                case SHENANDOAH_FINAL_MARK:
-                case SHENANDOAH_FINAL_UPDATE:
-                case SHENANDOAH_INIT_MARK:
-                case SHENANDOAH_INIT_UPDATE:
-                case SHENANDOAH_TRIGGER:
-                case UNIFIED_BLANK_LINE:
-                case UNIFIED_CMS_CONCURRENT:
-                case UNIFIED_CMS_INITIAL_MARK:
-                case UNIFIED_G1_CLEANUP:
-                case UNIFIED_G1_CONCURRENT:
-                case UNIFIED_G1_INFO:
-                case UNIFIED_G1_MIXED_PAUSE:
-                case UNIFIED_G1_YOUNG_INITIAL_MARK:
-                case UNIFIED_G1_YOUNG_PAUSE:
-                case UNIFIED_G1_YOUNG_PREPARE_MIXED:
-                case UNIFIED_OLD:
-                case UNIFIED_REMARK:
-                case UNIFIED_PARALLEL_COMPACTING_OLD:
-                case UNIFIED_PARALLEL_SCAVENGE:
-                case UNIFIED_PAR_NEW:
-                case UNIFIED_SERIAL_NEW:
-                case UNIFIED_SERIAL_OLD:
-                case UNIFIED_YOUNG:
-                case USING_CMS:
-                case USING_G1:
-                case USING_SHENANDOAH:
-                case USING_PARALLEL:
-                case USING_SERIAL:
-                    isUnifiedLogging = true;
-                    break;
-                default:
-                }
-            }
-        }
-        return isUnifiedLogging;
     }
 }

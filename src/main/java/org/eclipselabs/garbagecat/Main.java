@@ -49,6 +49,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.json.JSONObject;
 
 /**
@@ -116,6 +117,7 @@ public class Main {
                 if (cmd.hasOption(Constants.OPTION_STARTDATETIME_LONG)) {
                     jvmStartDate = GcUtil.parseStartDateTime(cmd.getOptionValue(Constants.OPTION_STARTDATETIME_SHORT));
                 }
+
                 String jvmOptions = null;
                 if (cmd.hasOption(Constants.OPTION_JVMOPTIONS_LONG)) {
                     jvmOptions = cmd.getOptionValue(Constants.OPTION_JVMOPTIONS_SHORT);
@@ -438,10 +440,12 @@ public class Main {
                     bufferedWriter.write(firstEventDatestamp);
                     bufferedWriter.write(Constants.LINE_SEPARATOR);
                 }
-                bufferedWriter.write("First Timestamp: ");
-                BigDecimal firstEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getFirstEvent().getTimestamp());
-                bufferedWriter.write(firstEventTimestamp.toString());
-                bufferedWriter.write(" secs" + Constants.LINE_SEPARATOR);
+                if (!jvmRun.getFirstEvent().getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
+                    bufferedWriter.write("First Timestamp: ");
+                    BigDecimal firstEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getFirstEvent().getTimestamp());
+                    bufferedWriter.write(firstEventTimestamp.toString());
+                    bufferedWriter.write(" secs" + Constants.LINE_SEPARATOR);
+                }
                 // Last event
                 String lastEventDatestamp = JdkUtil.getDateStamp(jvmRun.getLastEvent().getLogEntry());
                 if (lastEventDatestamp != null) {
@@ -449,10 +453,12 @@ public class Main {
                     bufferedWriter.write(lastEventDatestamp);
                     bufferedWriter.write(Constants.LINE_SEPARATOR);
                 }
-                bufferedWriter.write("Last Timestamp: ");
-                BigDecimal lastEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getLastEvent().getTimestamp());
-                bufferedWriter.write(lastEventTimestamp.toString());
-                bufferedWriter.write(" secs" + Constants.LINE_SEPARATOR);
+                if (!jvmRun.getLastEvent().getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
+                    bufferedWriter.write("Last Timestamp: ");
+                    BigDecimal lastEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getLastEvent().getTimestamp());
+                    bufferedWriter.write(lastEventTimestamp.toString());
+                    bufferedWriter.write(" secs" + Constants.LINE_SEPARATOR);
+                }
             }
 
             bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);

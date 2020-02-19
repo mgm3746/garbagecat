@@ -22,6 +22,7 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -65,7 +66,7 @@ public class TestFooterStatsEvent extends TestCase {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.FOOTER_STATS);
         Assert.assertTrue(JdkUtil.LogEventType.FOOTER_STATS.toString() + " not indentified as unified.",
-                JdkUtil.isUnifiedLogging(eventTypes));
+                UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
     public void testLineUThreadRoots() {

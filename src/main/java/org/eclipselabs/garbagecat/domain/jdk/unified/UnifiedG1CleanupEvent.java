@@ -23,6 +23,8 @@ import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -60,16 +62,16 @@ public class UnifiedG1CleanupEvent extends G1Collector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
             + " Pause Cleanup " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
-            + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+            + UnifiedRegEx.DURATION + "[ ]*$";
 
     /**
      * Regular expression defining preprocessed logging.
      */
-    private static final String REGEX_PREPROCESSED = "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
+    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
             + " Pause Cleanup " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
-            + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
+            + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -125,16 +127,27 @@ public class UnifiedG1CleanupEvent extends G1Collector
             if (matcher.find()) {
                 // TODO: Is this correct?
                 long endTimestamp;
-                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(15));
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(13));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 } else {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                    if (matcher.group(15) != null) {
+                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            endTimestamp = Long.parseLong(matcher.group(17));
+                        } else {
+                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                    }
                 }
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(21)), matcher.group(23).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)),
-                        matcher.group(29).charAt(0));
-                duration = JdkMath.roundMillis(matcher.group(30)).intValue();
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(23)), matcher.group(25).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)), matcher.group(28).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)),
+                        matcher.group(31).charAt(0));
+                duration = JdkMath.roundMillis(matcher.group(32)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
@@ -143,19 +156,30 @@ public class UnifiedG1CleanupEvent extends G1Collector
             Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                    timestamp = Long.parseLong(matcher.group(15));
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    timestamp = Long.parseLong(matcher.group(13));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 } else {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                    if (matcher.group(15) != null) {
+                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            timestamp = Long.parseLong(matcher.group(17));
+                        } else {
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                    }
                 }
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(21)), matcher.group(23).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)),
-                        matcher.group(29).charAt(0));
-                duration = JdkMath.roundMillis(matcher.group(30)).intValue();
-                if (matcher.group(31) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(32)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(33)).intValue();
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(23)), matcher.group(25).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)), matcher.group(28).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)),
+                        matcher.group(31).charAt(0));
+                duration = JdkMath.roundMillis(matcher.group(32)).intValue();
+                if (matcher.group(33) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
                 } else {
                     timeUser = TimesData.NO_DATA;
                     timeReal = TimesData.NO_DATA;

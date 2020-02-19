@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
@@ -89,36 +90,36 @@ public class GcInfoEvent implements UnifiedLogging, ThrowAwayEvent {
      */
     private static final String REGEX[] = {
             //
-            "^" + UnifiedLogging.DECORATOR + " Humongous object threshold: " + JdkRegEx.SIZE + "$",
+            "^" + UnifiedRegEx.DECORATOR + " Humongous object threshold: " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Max TLAB size: " + JdkRegEx.SIZE + "$",
+            "^" + UnifiedRegEx.DECORATOR + " Max TLAB size: " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedLogging.DECORATOR + " GC threads: \\d parallel, \\d concurrent$",
+            "^" + UnifiedRegEx.DECORATOR + " GC threads: \\d parallel, \\d concurrent$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Reference processing: parallel$",
+            "^" + UnifiedRegEx.DECORATOR + " Reference processing: parallel$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Shenandoah heuristics: adaptive$",
+            "^" + UnifiedRegEx.DECORATOR + " Shenandoah heuristics: adaptive$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Initialize Shenandoah heap( with initial size \\d{10} bytes|: "
+            "^" + UnifiedRegEx.DECORATOR + " Initialize Shenandoah heap( with initial size \\d{10} bytes|: "
                     + JdkRegEx.SIZE + " initial, " + JdkRegEx.SIZE + " min, " + JdkRegEx.SIZE + " max)$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Pacer for Idle. Initial: " + JdkRegEx.SIZE
+            "^" + UnifiedRegEx.DECORATOR + " Pacer for Idle. Initial: " + JdkRegEx.SIZE
                     + ", Alloc Tax Rate: \\d\\.\\dx$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Safepointing mechanism: global-page poll$",
+            "^" + UnifiedRegEx.DECORATOR + " Safepointing mechanism: global-page poll$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Free: " + JdkRegEx.SIZE + " \\(\\d{1,4} regions\\), Max regular: "
+            "^" + UnifiedRegEx.DECORATOR + " Free: " + JdkRegEx.SIZE + " \\(\\d{1,4} regions\\), Max regular: "
                     + JdkRegEx.SIZE + ", Max humongous: " + JdkRegEx.SIZE
                     + ", External frag: \\d%, Internal frag: \\d%$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Evacuation Reserve: " + JdkRegEx.SIZE
+            "^" + UnifiedRegEx.DECORATOR + " Evacuation Reserve: " + JdkRegEx.SIZE
                     + " \\(\\d{1,3} regions\\), Max regular: " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Regions: \\d{1,3} x " + JdkRegEx.SIZE + "$",
+            "^" + UnifiedRegEx.DECORATOR + " Regions: \\d{1,3} x " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Humongous object threshold: " + JdkRegEx.SIZE + "$",
+            "^" + UnifiedRegEx.DECORATOR + " Humongous object threshold: " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Heuristics ergonomically sets (-XX:\\+ExplicitGCInvokesConcurrent|"
+            "^" + UnifiedRegEx.DECORATOR + " Heuristics ergonomically sets (-XX:\\+ExplicitGCInvokesConcurrent|"
                     + "-XX:\\+ShenandoahImplicitGCInvokesConcurrent)$"
             //
     };

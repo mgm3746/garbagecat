@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -100,7 +101,7 @@ public class TestUnifiedParallelScavengeEvent extends TestCase {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_PARALLEL_SCAVENGE);
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not indentified as unified.",
-                JdkUtil.isUnifiedLogging(eventTypes));
+                UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
     public void testLogLineWhitespaceAtEnd() {

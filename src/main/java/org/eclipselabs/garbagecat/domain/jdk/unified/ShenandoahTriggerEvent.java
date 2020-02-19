@@ -16,6 +16,7 @@ import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
@@ -51,20 +52,20 @@ public class ShenandoahTriggerEvent extends ShenandoahCollector implements Unifi
      */
     private static final String[] REGEX = {
             // Learning
-            "^" + UnifiedLogging.DECORATOR + " Trigger: Learning \\d of \\d. Free \\(" + JdkRegEx.SIZE
+            "^" + UnifiedRegEx.DECORATOR + " Trigger: Learning \\d of \\d. Free \\(" + JdkRegEx.SIZE
                     + "\\) is below initial threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             // Average
-            "^" + UnifiedLogging.DECORATOR + " Trigger: Average GC time \\(" + JdkRegEx.DURATION_JDK9
+            "^" + UnifiedRegEx.DECORATOR + " Trigger: Average GC time \\(" + UnifiedRegEx.DURATION
                     + "\\) is above the time for allocation rate \\(" + JdkRegEx.ALLOCATION_RATE
                     + "\\) to deplete free headroom \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             // Free
-            "^" + UnifiedLogging.DECORATOR + " Trigger: Free \\(" + JdkRegEx.SIZE + "\\) is below minimum threshold \\("
+            "^" + UnifiedRegEx.DECORATOR + " Trigger: Free \\(" + JdkRegEx.SIZE + "\\) is below minimum threshold \\("
                     + JdkRegEx.SIZE + "\\)[ ]*$",
             // Time
-            "^" + UnifiedLogging.DECORATOR + " Trigger: Time since last GC \\(\\d{1,7} ms\\) is larger "
+            "^" + UnifiedRegEx.DECORATOR + " Trigger: Time since last GC \\(\\d{1,7} ms\\) is larger "
                     + "than guaranteed interval \\(\\d{1,7} ms\\)[ ]*$",
             // Allocation Failure
-            "^" + UnifiedLogging.DECORATOR + " Trigger: Handle Allocation Failure[ ]*$"
+            "^" + UnifiedRegEx.DECORATOR + " Trigger: Handle Allocation Failure[ ]*$"
             //
     };
 

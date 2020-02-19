@@ -22,6 +22,7 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -67,13 +68,21 @@ public class TestUsingParallelEvent extends TestCase {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.USING_PARALLEL);
         Assert.assertTrue(JdkUtil.LogEventType.USING_PARALLEL.toString() + " not indentified as unified.",
-                JdkUtil.isUnifiedLogging(eventTypes));
+                UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
     public void testLineWithSpaces() {
         String logLine = "[0.002s][info][gc] Using Parallel     ";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".",
                 UsingParallelEvent.match(logLine));
+    }
+
+    public void testLineUptimemillsis() {
+        String logLine = "[18ms][info][gc] Using Parallel";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".",
+                UsingParallelEvent.match(logLine));
+        UsingParallelEvent event = new UsingParallelEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 18, event.getTimestamp());
     }
 
     /**

@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -44,7 +45,7 @@ public class TestUnifiedBlankLineEvent extends TestCase {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_BLANK_LINE);
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " not indentified as unified.",
-                JdkUtil.isUnifiedLogging(eventTypes));
+                UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
     public void testLineUnifiedFooterStats() {
@@ -59,8 +60,14 @@ public class TestUnifiedBlankLineEvent extends TestCase {
                 UnifiedBlankLineEvent.match(logLine));
     }
 
-    public void testLineUptimeMillis() {
+    public void testLineTimeUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".",
+                UnifiedBlankLineEvent.match(logLine));
+    }
+
+    public void testLineUptimeMillis() {
+        String logLine = "[1357910ms]";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".",
                 UnifiedBlankLineEvent.match(logLine));
     }

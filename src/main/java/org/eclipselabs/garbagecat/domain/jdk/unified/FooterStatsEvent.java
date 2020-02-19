@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
@@ -267,114 +268,114 @@ public class FooterStatsEvent implements UnifiedLogging, ThrowAwayEvent {
      */
     private static final String REGEX[] = {
             //
-            "^" + UnifiedLogging.DECORATOR + " GC STATISTICS:$",
+            "^" + UnifiedRegEx.DECORATOR + " GC STATISTICS:$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + "   \"\\(G\\)\" \\(gross\\) pauses include VM time: time to notify and block threads, do the "
                     + "pre-$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + "         and post-safepoint housekeeping. Use -XX:\\+PrintSafepointStatistics to dissect.$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + "   \"\\(N\\)\" \\(net\\) pauses are the times spent in the actual GC code.$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + "   \"a\" is average time for each phase, look at levels to see if average makes sense.$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + "   \"lvls\" are quantiles: 0% \\(minimum\\), 25%, 50% \\(median\\), 75%, 100% "
                     + "\\(maximum\\).$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Total Pauses \\([G|N]\\).*$",
+            "^" + UnifiedRegEx.DECORATOR + " Total Pauses \\([G|N]\\).*$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Pause (Init[ ]{0,1}|Final) (Mark|Update Refs|Evac) \\([G|N]\\).*$",
+            "^" + UnifiedRegEx.DECORATOR + " Pause (Init[ ]{0,1}|Final) (Mark|Update Refs|Evac) \\([G|N]\\).*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "   Accumulate Stats.*$",
+            "^" + UnifiedRegEx.DECORATOR + "   Accumulate Stats.*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "   Make Parsable .*$",
+            "^" + UnifiedRegEx.DECORATOR + "   Make Parsable .*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "   (Clear|Complete) Liveness.*$",
+            "^" + UnifiedRegEx.DECORATOR + "   (Clear|Complete) Liveness.*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "   (Scan|Update) Roots.*$",
+            "^" + UnifiedRegEx.DECORATOR + "   (Scan|Update) Roots.*$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + "     (E|S|U|UR): (CLDG|Code Cache|JNI|JNI Weak|Management|String Table|Synchronizer|System Dict"
                     + "|Thread|Universe|JVMTI) Roots.*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "   (Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs).*$",
+            "^" + UnifiedRegEx.DECORATOR + "   (Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs).*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "   Finish Queues.*$",
+            "^" + UnifiedRegEx.DECORATOR + "   Finish Queues.*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "   Weak References.*$",
+            "^" + UnifiedRegEx.DECORATOR + "   Weak References.*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "     Process.*$",
+            "^" + UnifiedRegEx.DECORATOR + "     Process.*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "   (Initial|Prepare)( Evacuation)?.*$",
+            "^" + UnifiedRegEx.DECORATOR + "   (Initial|Prepare)( Evacuation)?.*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "   Recycle.*$",
+            "^" + UnifiedRegEx.DECORATOR + "   Recycle.*$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + " Concurrent (Reset|Marking|Precleaning|Evacuation|Update Refs|Cleanup|Uncommit).*$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + " Under allocation pressure, concurrent cycles may cancel, and either continue cycle$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + " under stop-the-world pause or result in stop-the-world Full GC. Increase heap size,$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + " tune GC heuristics, set more aggressive pacing delay, or lower allocation rate$",
             //
-            "^" + UnifiedLogging.DECORATOR + " to avoid Degenerated and Full GC cycles.$",
+            "^" + UnifiedRegEx.DECORATOR + " to avoid Degenerated and Full GC cycles.$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + "[ ]{2,7}\\d{1,7} (successful concurrent|Degenerated|Full|upgraded to Full) GC(s)?$",
             //
-            "^" + UnifiedLogging.DECORATOR + "       \\d{1,7} invoked (ex|im)plicitly$",
+            "^" + UnifiedRegEx.DECORATOR + "       \\d{1,7} invoked (ex|im)plicitly$",
             //
-            "^" + UnifiedLogging.DECORATOR + "       \\d{1,7} caused by allocation failure$",
+            "^" + UnifiedRegEx.DECORATOR + "       \\d{1,7} caused by allocation failure$",
             //
-            "^" + UnifiedLogging.DECORATOR + "       \\d{1,7} upgraded from Degenerated GC$",
+            "^" + UnifiedRegEx.DECORATOR + "       \\d{1,7} upgraded from Degenerated GC$",
             //
-            "^" + UnifiedLogging.DECORATOR + " ALLOCATION PACING:$",
+            "^" + UnifiedRegEx.DECORATOR + " ALLOCATION PACING:$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Max pacing delay is set for 10 ms.$",
+            "^" + UnifiedRegEx.DECORATOR + " Max pacing delay is set for 10 ms.$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + " Higher delay would prevent application outpacing the GC, but it will hide the GC latencies$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + " from the STW pause times. Pacing affects the individual threads, and so it would also be$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + " invisible to the usual profiling tools, but would add up to end-to-end application "
                     + "latency.$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Raise max pacing delay with care.$",
+            "^" + UnifiedRegEx.DECORATOR + " Raise max pacing delay with care.$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Actual pacing delays histogram:$",
+            "^" + UnifiedRegEx.DECORATOR + " Actual pacing delays histogram:$",
             //
-            "^" + UnifiedLogging.DECORATOR + "       From -         To         Count         Sum$",
+            "^" + UnifiedRegEx.DECORATOR + "       From -         To         Count         Sum$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + "[ ]{6,7}\\d{1,2} ms -[ ]{6,7}\\d{1,2} ms:[ ]{9,12}\\d{1,4}[ ]{7,11}\\d{1,5} ms$",
             //
-            "^" + UnifiedLogging.DECORATOR + "                   Total:.*$",
+            "^" + UnifiedRegEx.DECORATOR + "                   Total:.*$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + "   Allocation tracing is disabled, use -XX:\\+ShenandoahAllocationTrace to enable.$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + " Pacing delays are measured from entering the pacing code till exiting it. Therefore,$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + " observed pacing delays may be higher than the threshold when paced thread spent more$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + " time in the pacing code. It usually happens when thread is de-scheduled while paced,$",
             //
-            "^" + UnifiedLogging.DECORATOR + " OS takes longer to unblock the thread, or JVM experiences an STW pause.$"
+            "^" + UnifiedRegEx.DECORATOR + " OS takes longer to unblock the thread, or JVM experiences an STW pause.$"
             //
     };
 

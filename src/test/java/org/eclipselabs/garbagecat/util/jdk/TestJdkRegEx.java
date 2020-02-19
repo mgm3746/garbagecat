@@ -13,7 +13,6 @@
 package org.eclipselabs.garbagecat.util.jdk;
 
 import org.eclipselabs.garbagecat.domain.TimesData;
-import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -52,12 +51,12 @@ public class TestJdkRegEx extends TestCase {
 
     public void testTimestampValid() {
         String timestamp = "1.123";
-        Assert.assertTrue("'1.123' is a valid timestamp.", timestamp.matches(JdkRegEx.TIMESTAMP));
+        Assert.assertTrue("'" + timestamp + "' is a valid timestamp.", timestamp.matches(JdkRegEx.TIMESTAMP));
     }
 
     public void testTimestampDecimalComma() {
         String timestamp = "1,123";
-        Assert.assertTrue("'1,123' is a valid timestamp.", timestamp.matches(JdkRegEx.TIMESTAMP));
+        Assert.assertTrue("'" + timestamp + "' is a valid timestamp.", timestamp.matches(JdkRegEx.TIMESTAMP));
     }
 
     public void testSizeWithoutUnits() {
@@ -143,34 +142,6 @@ public class TestJdkRegEx extends TestCase {
     public void testDurationDecimalComma() {
         String duration = "0,0225213 secs";
         Assert.assertTrue("'0,0225213 secs' is a valid duration.", duration.matches(JdkRegEx.DURATION));
-    }
-
-    public void testDurationJdk9() {
-        String duration = "2.969ms";
-        Assert.assertTrue("'" + duration + "' is a valid duration.", duration.matches(JdkRegEx.DURATION_JDK9));
-    }
-
-    public void testDurationJdk9WithSpace() {
-        String duration = "15.91 ms";
-        Assert.assertTrue("'" + duration + "' is a valid duration.", duration.matches(JdkRegEx.DURATION_JDK9));
-    }
-
-    public void testGcEventId() {
-        String id = "GC(1326)";
-        Assert.assertTrue("'" + id + "' is a valid GC event id.", id.matches(JdkRegEx.GC_EVENT_NUMBER));
-    }
-
-    public void testGcEventId7Digits() {
-        String id = "GC(1234567)";
-        Assert.assertTrue("'" + id + "' is a valid GC event id.", id.matches(JdkRegEx.GC_EVENT_NUMBER));
-    }
-
-    public void testParallelScavengeValid() {
-        String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
-                + "160183K->133159K(585088K), 0.0225213 secs]";
-        Assert.assertTrue("'19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
-                + "160183K->133159K(585088K), 0.0225213 secs]' " + "is a valid parallel scavenge log entry.",
-                ParallelScavengeEvent.match(logLine));
     }
 
     public void testUnloadingClassBlock() {

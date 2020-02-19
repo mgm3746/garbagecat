@@ -23,6 +23,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -93,7 +94,7 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_G1_YOUNG_PAUSE);
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " not indentified as unified.",
-                JdkUtil.isUnifiedLogging(eventTypes));
+                UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
     public void testLogLineWhitespaceAtEnd() {
@@ -126,7 +127,7 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Parallelism not calculated correctly.", 34, event.getParallelism());
     }
 
-    public void testLogLinePreprocessedTriggerGcLocker() {
+    public void testLogLinePreprocessedTimeUptimemillisTriggerGcLocker() {
         String logLine = "[2019-05-09T01:39:07.136+0000][11728ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC) "
                 + "Metaspace: 35318K->35318K(288768K) 78M->22M(1304M) 35.722ms User=0.02s Sys=0.00s Real=0.04s";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".",

@@ -16,6 +16,7 @@ import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
@@ -107,15 +108,15 @@ public class UnifiedG1ConcurrentEvent extends G1Collector implements UnifiedLogg
      */
     private static final String[] REGEX = {
             // gc
-            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Concurrent Cycle( "
-                    + JdkRegEx.DURATION_JDK9 + ")?$",
+            "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER + " Concurrent Cycle( "
+                    + UnifiedRegEx.DURATION + ")?$",
             // gc, marking
-            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
+            "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
                     + " Concurrent (Clear Claimed Marks|Scan Root Regions|Mark|Mark From Roots|Preclean|"
                     + "Rebuild Remembered Sets|Cleanup for Next Mark|Create Live Data)( \\(" + JdkRegEx.TIMESTAMP
-                    + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + JdkRegEx.DURATION_JDK9 + ")?$",
+                    + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + UnifiedRegEx.DURATION + ")?$",
             // gc, task
-            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Using \\d workers of \\d for marking$"
+            "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER + " Using \\d workers of \\d for marking$"
             //
     };
 

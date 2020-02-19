@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
@@ -41,7 +42,7 @@ public class ShenandoahCancellingGcEvent extends ShenandoahCollector implements 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " Cancelling GC: Stopping VM[ ]*$";
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Cancelling GC: Stopping VM[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 

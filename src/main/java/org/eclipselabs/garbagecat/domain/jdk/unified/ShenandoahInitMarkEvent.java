@@ -19,8 +19,9 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -93,8 +94,8 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
-            + " Pause Init Mark( \\(update refs\\))?( \\(process weakrefs\\))? " + JdkRegEx.DURATION_JDK9 + "[ ]*$";
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
+            + " Pause Init Mark( \\(update refs\\))?( \\(process weakrefs\\))? " + UnifiedRegEx.DURATION + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -112,12 +113,23 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector
             if (matcher.find()) {
                 // TODO: Is this correct?
                 long endTimestamp;
-                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(15));
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(13));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 } else {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                    if (matcher.group(15) != null) {
+                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            endTimestamp = Long.parseLong(matcher.group(17));
+                        } else {
+                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                    }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(23)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(25)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             }
         }

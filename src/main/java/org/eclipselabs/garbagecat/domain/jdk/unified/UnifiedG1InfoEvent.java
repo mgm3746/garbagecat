@@ -13,8 +13,8 @@
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
@@ -41,7 +41,7 @@ public class UnifiedG1InfoEvent implements UnifiedLogging, ThrowAwayEvent {
      */
     private static final String REGEX[] = {
             //
-            "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER + " Pause Initial Mark \\("
+            "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER + " Pause Initial Mark \\("
                     + UnifiedG1YoungInitialMarkEvent.TRIGGER + "\\)$",
             //
     };

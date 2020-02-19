@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
@@ -133,43 +134,43 @@ public class FooterHeapEvent implements UnifiedLogging, ThrowAwayEvent {
      */
     private static final String REGEX[] = {
             //
-            "^" + UnifiedLogging.DECORATOR + "  garbage-first heap   total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE
+            "^" + UnifiedRegEx.DECORATOR + "  garbage-first heap   total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE
                     + " \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "   region size " + JdkRegEx.SIZE + ", \\d{1,2} young \\(" + JdkRegEx.SIZE
+            "^" + UnifiedRegEx.DECORATOR + "   region size " + JdkRegEx.SIZE + ", \\d{1,2} young \\(" + JdkRegEx.SIZE
                     + "\\), \\d survivors \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "  - \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
+            "^" + UnifiedRegEx.DECORATOR + "  - \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
             //
-            "^" + UnifiedLogging.DECORATOR + "( Shenandoah)? [h|H]eap$",
+            "^" + UnifiedRegEx.DECORATOR + "( Shenandoah)? [h|H]eap$",
             //
-            "^" + UnifiedLogging.DECORATOR + "  " + JdkRegEx.SIZE + " total, " + JdkRegEx.SIZE + " committed, "
+            "^" + UnifiedRegEx.DECORATOR + "  " + JdkRegEx.SIZE + " total, " + JdkRegEx.SIZE + " committed, "
                     + JdkRegEx.SIZE + " used$",
             //
-            "^" + UnifiedLogging.DECORATOR + "  Metaspace       used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
+            "^" + UnifiedRegEx.DECORATOR + "  Metaspace       used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
                     + ", committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedLogging.DECORATOR + "  \\d{1,4} x " + JdkRegEx.SIZE + " regions$",
+            "^" + UnifiedRegEx.DECORATOR + "  \\d{1,4} x " + JdkRegEx.SIZE + " regions$",
             //
-            "^" + UnifiedLogging.DECORATOR + "   class space    used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
+            "^" + UnifiedRegEx.DECORATOR + "   class space    used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
                     + ", " + "committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedLogging.DECORATOR
+            "^" + UnifiedRegEx.DECORATOR
                     + "  ((concurrent mark-sweep|def new|par new|tenured) generation|ParOldGen|PSOldGen|PSYoungGen)"
                     + "[ ]{1,8}total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + " " + "\\[" + JdkRegEx.ADDRESS
                     + ", " + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)$",
             //
-            "^" + UnifiedLogging.DECORATOR + "   (eden|from|object| the|to  ) space " + JdkRegEx.SIZE
+            "^" + UnifiedRegEx.DECORATOR + "   (eden|from|object| the|to  ) space " + JdkRegEx.SIZE
                     + ",[ ]{1,3}\\d{1,3}% used \\[" + JdkRegEx.ADDRESS + ",[ ]{0,1}" + JdkRegEx.ADDRESS + ",[ ]{0,1}"
                     + JdkRegEx.ADDRESS + "(,[ ]{0,1}" + JdkRegEx.ADDRESS + ")?\\)$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Status: (has forwarded objects, )?cancelled$",
+            "^" + UnifiedRegEx.DECORATOR + " Status: (has forwarded objects, )?cancelled$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Reserved region:$",
+            "^" + UnifiedRegEx.DECORATOR + " Reserved region:$",
             //
-            "^" + UnifiedLogging.DECORATOR + " Collection set:$",
+            "^" + UnifiedRegEx.DECORATOR + " Collection set:$",
             //
-            "^" + UnifiedLogging.DECORATOR + "  - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$"
+            "^" + UnifiedRegEx.DECORATOR + "  - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$"
             //
     };
 

@@ -28,13 +28,6 @@ public class JdkRegEx {
     public static final String TIMESTAMP = "(\\d{0,12}[\\.\\,]\\d{3})";
 
     /**
-     * The duration of the event in milliseconds as a whole number.
-     * 
-     * For example: 3ms
-     */
-    public static final String TIMESTAMP_MILLIS = "(\\d{1,8})ms";
-
-    /**
      * Datestamp. Absolute date/time the JVM uses with <code>-XX:+PrintGCDateStamps</code>.
      * 
      * For example:
@@ -116,20 +109,6 @@ public class JdkRegEx {
      * For example: 0.0225213 secs, 0.00376500 secs
      */
     public static final String DURATION = "(\\d{1,4}[\\.\\,]\\d{7,8})( sec)?(s)?";
-
-    /**
-     * The duration of the event in milliseconds with 3 decimal places, introduced JDK9.
-     * 
-     * For example: 2.969ms, 0.2ms, 15.91 ms
-     */
-    public static final String DURATION_JDK9 = "(\\d{1,7}[\\.\\,]\\d{1,3})[ ]{0,1}ms";
-
-    /**
-     * The garbage collection event number in JDK9+ unified logging.
-     * 
-     * For example: GC(6)
-     */
-    public static final String GC_EVENT_NUMBER = "GC\\(\\d{1,7}\\)";
 
     /**
      * The duration of the event as a fraction of a time period.

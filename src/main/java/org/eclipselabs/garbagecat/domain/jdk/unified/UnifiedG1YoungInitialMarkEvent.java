@@ -25,6 +25,8 @@ import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -60,9 +62,9 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
     /**
      * Regular expression defining standard logging (no details).
      */
-    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + " " + JdkRegEx.GC_EVENT_NUMBER
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
             + " Pause Initial Mark \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + TimesData.REGEX_JDK9 + "[ ]*$";
+            + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -123,20 +125,31 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
             if (matcher.find()) {
                 // TODO: Is this correct?
                 long endTimestamp;
-                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(15));
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(13));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 } else {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                    if (matcher.group(15) != null) {
+                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            endTimestamp = Long.parseLong(matcher.group(17));
+                        } else {
+                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                    }
                 }
-                trigger = matcher.group(21);
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)), matcher.group(24).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)),
-                        matcher.group(30).charAt(0));
-                duration = JdkMath.convertMillisToMicros(matcher.group(31)).intValue();
+                trigger = matcher.group(23);
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)), matcher.group(29).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(30)),
+                        matcher.group(32).charAt(0));
+                duration = JdkMath.convertMillisToMicros(matcher.group(33)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(33)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
             }
         }
     }

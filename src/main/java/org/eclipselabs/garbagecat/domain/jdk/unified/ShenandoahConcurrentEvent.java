@@ -21,6 +21,8 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -88,10 +90,10 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedLogging.DECORATOR + "( " + JdkRegEx.GC_EVENT_NUMBER
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + "( " + UnifiedRegEx.GC_EVENT_NUMBER
             + ")? Concurrent (reset|uncommit|marking( \\(update refs\\))?( \\(process weakrefs\\))?|"
             + "precleaning|evacuation|update references|cleanup)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_JDK9 + ")?[ ]*$";
+            + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + ")?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
@@ -134,23 +136,33 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
             if (matcher.find()) {
                 // TODO: Is this correct?
                 long endTimestamp;
-                if (matcher.group(13).matches(JdkRegEx.TIMESTAMP_MILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(15));
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(13));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 } else {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+                    if (matcher.group(15) != null) {
+                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            endTimestamp = Long.parseLong(matcher.group(17));
+                        } else {
+                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                    }
                 }
                 int duration = 0;
-                if (matcher.group(35) != null) {
-                    duration = JdkMath.convertMillisToMicros(matcher.group(35)).intValue();
+                if (matcher.group(37) != null) {
+                    duration = JdkMath.convertMillisToMicros(matcher.group(37)).intValue();
                 }
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                if (matcher.group(25) != null) {
-                    combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)), matcher.group(28).charAt(0));
-                    combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)),
-                            matcher.group(31).charAt(0));
-                    combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(32)),
-                            matcher.group(34).charAt(0));
-
+                if (matcher.group(27) != null) {
+                    combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
+                    combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)),
+                            matcher.group(33).charAt(0));
+                    combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(34)),
+                            matcher.group(36).charAt(0));
                 }
             }
         }

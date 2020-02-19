@@ -25,6 +25,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * JVM run data.
@@ -986,12 +988,13 @@ public class JvmRun {
      */
     private void doDataAnalysis() {
         // Check for partial log
-        if (firstGcEvent != null && GcUtil.isPartialLog(firstGcEvent.getTimestamp())) {
+        if (firstGcEvent != null && !firstGcEvent.getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)
+                && GcUtil.isPartialLog(firstGcEvent.getTimestamp())) {
             analysis.add(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
         }
 
         // Check to see if -XX:+PrintGCApplicationStoppedTime enabled
-        if (!eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME) && !JdkUtil.isUnifiedLogging(eventTypes)) {
+        if (!eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME) && !UnifiedUtil.isUnifiedLogging(eventTypes)) {
             analysis.add(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING);
         }
 
