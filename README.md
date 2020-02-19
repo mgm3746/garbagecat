@@ -6,7 +6,8 @@ A command line tool that parses Java garbage collection logging and does analysi
 
   * OpenJDK
   * Sun/Oracle JDK 1.5 and higher
-  * Best utilized with the following GC logging options:
+
+### Recommended GC Logging Options ###
 
 JDK5 - JDK8:
 
@@ -14,20 +15,58 @@ JDK5 - JDK8:
 
 JDK9+:
 
->-Xlog:gc*:file=gc.log
+1) uptime
+
+```
+-Xlog:gc*:file=gc.log:uptime:filecount=4,filesize=50M
+
+[0.052s] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+```
+
+2) uptimemillis
+
+```
+-Xlog:gc*:file=gc.log:uptimemillis:filecount=4,filesize=50M
+
+[052ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+```
+
+3) time
+
+```
+-Xlog:gc*:file=gc.log:time:filecount=4,filesize=50M
+
+[2020-02-14T15:21:55.207-0500] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+```
+
+4) time,uptime
+
+```
+-Xlog:gc*:file=gc.log:time,uptime:filecount=4,filesize=50M
+
+[2020-02-14T15:21:55.207-0500][0.052s] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+```
+
+5) time,uptimemillis
+
+```
+-Xlog:gc*:file=gc.log:time,uptimemillis:filecount=4,filesize=50M
+
+[2020-02-14T15:21:55.207-0500][052ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+```
 
 ## Installation ##
 
 Note: The Fedora and RHEL installs are release dependent. To ensure you have the latest code, [build garbagecat](https://github.com/mgm3746/garbagecat#building).
 
-### Fedora 
+### Fedora ###
 
 ```
 # dnf copr enable bostrt/garbagecat
 # dnf install garbagecat
 ```
 
-### RHEL 7 Method #1
+### RHEL 7 Method #1 ###
 
 ```
 # yum install yum-plugin-copr --enablerepo=rhel-7-server-optional-rpms
@@ -35,7 +74,7 @@ Note: The Fedora and RHEL installs are release dependent. To ensure you have the
 # yum install garbagecat
 ```
 
-### RHEL 7 Method #2
+### RHEL 7 Method #2 ###
 
 Put the YUM repo file into your /etc/yum/repos.d/. Here's the repo file for [RHEL 7](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-7/bostrt-garbagecat-epel-7.repo).
 
