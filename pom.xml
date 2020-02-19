@@ -5,7 +5,7 @@
 	<groupId>garbagecat</groupId>
 	<artifactId>garbagecat</artifactId>
 	<name>garbagecat</name>
-	<version>3.0.3</version>
+	<version>3.0.4-SNAPSHOT</version>
 	<description>Java garbage collection analyzer tool.</description>
 	<url>https://github.com/mgm3746/garbagecat</url>
 	<developers>
