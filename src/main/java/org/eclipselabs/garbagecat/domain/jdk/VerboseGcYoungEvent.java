@@ -113,8 +113,8 @@ public class VerboseGcYoungEvent extends UnknownCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC(--)?( \\("
-            + TRIGGER + "\\) )? (" + JdkRegEx.SIZE_K + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC( \\("
+            + TRIGGER + "\\) )?(--)? (" + JdkRegEx.SIZE_K + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
             + JdkRegEx.DURATION + "\\]?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
@@ -130,7 +130,7 @@ public class VerboseGcYoungEvent extends UnknownCollector
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            trigger = matcher.group(15);
+            trigger = matcher.group(14);
             if (matcher.group(17) != null) {
                 combinedBegin = Integer.parseInt(matcher.group(18));
             } else {
