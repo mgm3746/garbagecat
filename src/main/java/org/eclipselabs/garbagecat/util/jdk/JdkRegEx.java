@@ -258,7 +258,21 @@ public class JdkRegEx {
     public static final String TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION = "JvmtiEnv ForceGarbageCollection";
 
     /**
-     * Ergonomics trigger
+     * <p>
+     * Ergonomics trigger. GC happens for a heuristics reason. A heuristic is a rule of thumb or pattern the JVM uses to
+     * achieve a performance goal or improve performance.
+     * </p>
+     * 
+     * <p>
+     * For example:
+     * </p>
+     * 
+     * <ol>
+     * <li>There is not enough old space to handle a young collection, based on promotion statistics. A full collection
+     * is done in an attempt to free space.</li>
+     * <li>The young and/or old spaces need to be resized in an effort to meet a maximum pause time or throughput goal.
+     * A full collection is needed to do the resizing.
+     * </ol>
      */
     public static final String TRIGGER_ERGONOMICS = "Ergonomics";
 
