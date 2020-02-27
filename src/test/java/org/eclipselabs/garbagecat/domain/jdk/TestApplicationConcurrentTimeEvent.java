@@ -71,4 +71,44 @@ public class TestApplicationConcurrentTimeEvent extends TestCase {
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
                 ApplicationConcurrentTimeEvent.match(logLine));
     }
+
+    public void testLogLineDatestampTimestampDatestamp() {
+        String logLine = "2020-02-19T07:18:10.490-0500: 698914.875: 2020-02-19T07:18:10.490-0500: Application time: "
+                + "0.0000605 seconds";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                ApplicationConcurrentTimeEvent.match(logLine));
+    }
+
+    public void testLogLineDatestampTimestampDatestampMissingColonSpace() {
+        String logLine = "2020-02-19T11:46:53.624-0500: 715038.009: 2020-02-19T11:46:53.624-0500Application time: "
+                + "0.0001082 seconds";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                ApplicationConcurrentTimeEvent.match(logLine));
+    }
+
+    public void testLogLineDatestampDatestampTimestamp() {
+        String logLine = "2020-02-19T12:41:32.898-0500: 2020-02-19T12:41:32.898-0500: 718317.283: Application time: "
+                + "0.0000496 seconds";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                ApplicationConcurrentTimeEvent.match(logLine));
+    }
+
+    public void testLogLineDatestampDatestampTimestampTimestamp() {
+        String logLine = "2020-02-19T10:24:29.418-0500: 2020-02-19T10:24:29.418-0500: 710093.803: 710093.803: "
+                + "Application time: 0.0000610 seconds";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                ApplicationConcurrentTimeEvent.match(logLine));
+    }
+
+    public void testLogLineDatestampDatestampTimestampTimestampMisplacedSemicolons() {
+        String logLine = "2020-02-19T10:09:47.141-05002020-02-19T10:09:47.141-0500: : 709211.526: "
+                + "709211.526Application time: 0.0000505 seconds";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+                ApplicationConcurrentTimeEvent.match(logLine));
+    }
 }
