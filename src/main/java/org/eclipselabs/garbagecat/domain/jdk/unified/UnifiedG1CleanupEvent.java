@@ -125,7 +125,6 @@ public class UnifiedG1CleanupEvent extends G1Collector
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                // TODO: Is this correct?
                 long endTimestamp;
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                     endTimestamp = Long.parseLong(matcher.group(13));
