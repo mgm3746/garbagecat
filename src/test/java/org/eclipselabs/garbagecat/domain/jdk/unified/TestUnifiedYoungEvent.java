@@ -107,8 +107,7 @@ public class TestUnifiedYoungEvent extends TestCase {
     }
 
     public void testUnifiedYoungStandardLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset149.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset149.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -125,8 +124,7 @@ public class TestUnifiedYoungEvent extends TestCase {
     }
 
     public void testUnifiedYoungExplictGc() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset154.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset154.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

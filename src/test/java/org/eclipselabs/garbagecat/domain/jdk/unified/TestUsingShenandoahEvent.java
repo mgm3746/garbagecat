@@ -95,8 +95,7 @@ public class TestUsingShenandoahEvent extends TestCase {
      * Test logging.
      */
     public void testLog() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset159.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset159.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

@@ -106,8 +106,7 @@ public class TestParallelPreprocessAction extends TestCase {
      * Test preprocessing <code>GcTimeLimitExceededEvent</code>.
      */
     public void testSplitParallelSerialOldEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset9.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset9.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -128,8 +127,7 @@ public class TestParallelPreprocessAction extends TestCase {
      * <code>ParallelSerialOldEvent</code>.
      */
     public void testUnloadingClassPreprocessActionParallelSerialOldEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset24.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset24.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -144,8 +142,7 @@ public class TestParallelPreprocessAction extends TestCase {
      * <code>ParallelScavengeEvent</code>.
      */
     public void testSplitParallelScavengeEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset30.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset30.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -161,8 +158,7 @@ public class TestParallelPreprocessAction extends TestCase {
      * Test preprocessing <code>GcTimeLimitExceededEvent</code> with logging mixed across multiple lines.
      */
     public void testParallelSerialOldAcrossMultipleLinesMixedGcTimeLimitLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset132.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset132.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

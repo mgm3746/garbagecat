@@ -86,8 +86,7 @@ public class TestUnifiedOldEvent extends TestCase {
     }
 
     public void testUnifiedOldStandardLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset148.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset148.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -104,8 +103,7 @@ public class TestUnifiedOldEvent extends TestCase {
     }
 
     public void testUnifiedOldExplictGc() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset153.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset153.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

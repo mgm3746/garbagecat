@@ -151,8 +151,7 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
     }
 
     public void testUnifiedG1YoungPauseJdk9() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset158.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset158.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -165,8 +164,7 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
     }
 
     public void testUnifiedG1YoungPauseDatestampMillis() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset166.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset166.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

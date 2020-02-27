@@ -962,8 +962,7 @@ public class TestCmsSerialOldEvent extends TestCase {
     }
 
     public void testSplitParNewPromotionFailedCmsConcurrentModeFailure() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset5.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset5.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -987,8 +986,7 @@ public class TestCmsSerialOldEvent extends TestCase {
      * Test preprocessing <code>HeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */
     public void testSplitPrintHeapAtGcParNewConcurrentModeFailureEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset7.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset7.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1007,8 +1005,7 @@ public class TestCmsSerialOldEvent extends TestCase {
     }
 
     public void testSplitParNewPromotionFailedCmsConcurrentModeFailurePermData() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset12.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset12.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1025,8 +1022,7 @@ public class TestCmsSerialOldEvent extends TestCase {
     }
 
     public void testSplitParNewCmsConcurrentModeFailurePermData() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset13.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset13.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1041,8 +1037,7 @@ public class TestCmsSerialOldEvent extends TestCase {
     }
 
     public void testSplit3LinesParNewPromotionFailedCmsConcurrentModeFailurePermDataEventMarkLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset16.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset16.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1063,8 +1058,7 @@ public class TestCmsSerialOldEvent extends TestCase {
      * 
      */
     public void testSplit3LinesParNewConcurrentModeFailureEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset29.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset29.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1081,8 +1075,7 @@ public class TestCmsSerialOldEvent extends TestCase {
     }
 
     public void testParNewConcurrentModeFailureMixedCmsConcurrentJdk8() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset70.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset70.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1105,8 +1098,7 @@ public class TestCmsSerialOldEvent extends TestCase {
      * 
      */
     public void testHeapInspectionInitiatedGcAnalysis() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset72.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset72.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1127,8 +1119,7 @@ public class TestCmsSerialOldEvent extends TestCase {
      * 
      */
     public void testParNewPromotionFailedCmsSerialOldPermDataPrintClassHistogramTriggerAcross6Lines() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset82.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset82.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1149,8 +1140,7 @@ public class TestCmsSerialOldEvent extends TestCase {
      * 
      */
     public void testLogLineTriggerHeapDumpedInitiatedGc() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset92.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset92.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

@@ -888,8 +888,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testHeaderLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset42.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset42.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -910,8 +909,7 @@ public class TestAnalysis extends TestCase {
      * 
      */
     public void testAnalysisPermMetaspaceNotSet() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset60.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset60.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -927,8 +925,7 @@ public class TestAnalysis extends TestCase {
      * <code>Analysis.KEY_SERIAL_GC_CMS</code>.
      */
     public void testCmsSerialOldExplicitGc() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset85.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset85.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -950,8 +947,7 @@ public class TestAnalysis extends TestCase {
      * Test PARALLEL_COMPACTING_OLD caused by <code>Analysis.KEY_EXPLICIT_GC_SERIAL</code>.
      */
     public void testParallelOldCompactingExplicitGc() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset86.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset86.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -971,8 +967,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testThreadStackSizeAnalysis32Bit() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset87.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset87.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -982,8 +977,7 @@ public class TestAnalysis extends TestCase {
     }
 
     public void testMetaspaceSizeNotSet() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset95.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset95.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -996,8 +990,7 @@ public class TestAnalysis extends TestCase {
      * Test PAR_NEW disabled with -XX:-UseParNewGC.
      */
     public void testParNewDisabled() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset101.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset101.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1025,8 +1018,7 @@ public class TestAnalysis extends TestCase {
      * Test compressed oops disabled with heap >= 32G.
      */
     public void testCompressedOopsDisabledLargeHeap() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset106.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset106.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1044,8 +1036,7 @@ public class TestAnalysis extends TestCase {
      * Test physical memory less than heap + perm/metaspace.
      */
     public void testPhysicalMemoryLessThanJvmMemoryWithoutCompressedClassPointerSpace() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset106.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset106.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1065,8 +1056,7 @@ public class TestAnalysis extends TestCase {
      * Test PrintGCDetails disabled with VERBOSE_GC logging.
      */
     public void testPrintGcDetailsDisabledWithVerboseGc() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset107.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset107.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1083,8 +1073,7 @@ public class TestAnalysis extends TestCase {
      * Test physical memory less than heap + perm/metaspace.
      */
     public void testPhysicalMemoryLessThanJvmMemoryWithCompressedClassPointerSpace() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset107.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset107.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1103,8 +1092,7 @@ public class TestAnalysis extends TestCase {
      * Test physical memory less than heap + perm/metaspace.
      */
     public void testPhysicalMemoryLessThanHeapAllocation() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset109.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset109.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1122,8 +1110,7 @@ public class TestAnalysis extends TestCase {
      * Test CMS class unloading disabled.
      */
     public void testCmsClassunloadingDisabled() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset110.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset110.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1142,8 +1129,7 @@ public class TestAnalysis extends TestCase {
      * Test application/gc logging mixed.
      */
     public void testApplicationLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset114.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset114.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1160,8 +1146,7 @@ public class TestAnalysis extends TestCase {
      * Test <code>-XX:PrintFLSStatistics</code> and <code>-XX:PrintPromotionFailure</code>.
      */
     public void testPrintFlsStatisticsPrintPromotionFailure() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset115.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset115.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1180,8 +1165,7 @@ public class TestAnalysis extends TestCase {
      * Test humongous allocations on old JDK not able to reclaim humongous objects during young collections.
      */
     public void testHumongousAllocationsNotCollectedYoung() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset118.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset118.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1200,8 +1184,7 @@ public class TestAnalysis extends TestCase {
      * Test CMS_SERIAL_OLD triggered by GCLocker promotion failure.
      */
     public void testCmsSerialOldGcLocker() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset119.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset119.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1218,8 +1201,7 @@ public class TestAnalysis extends TestCase {
      * Test VERBOSE_GC_OLD triggered by explicit GC.
      */
     public void testVerboseGcOldExplicitGc() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset125.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset125.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1233,8 +1215,7 @@ public class TestAnalysis extends TestCase {
      * Test VERBOSE_GC_YOUNG triggered by explicit GC.
      */
     public void testVerboseGcYoungExplicitGc() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset126.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset126.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1247,8 +1228,7 @@ public class TestAnalysis extends TestCase {
      * Test serial promotion failed is not reported as cms promotion failed.
      */
     public void testSerialPromotionFailed() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset129.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset129.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1261,8 +1241,7 @@ public class TestAnalysis extends TestCase {
      * Test CMS initial mark low parallelism.
      */
     public void testCmsInitialMarkSerial() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset130.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset130.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1275,8 +1254,7 @@ public class TestAnalysis extends TestCase {
      * Test CMS remark low parallelism.
      */
     public void testCmsRemarkSerial() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset131.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset131.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1289,8 +1267,7 @@ public class TestAnalysis extends TestCase {
      * Test CMS remark low parallelism not reported with pause times less than zero.
      */
     public void testInitialMarkLowParallelismFalseReportZeroReal() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset137.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset137.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1303,8 +1280,7 @@ public class TestAnalysis extends TestCase {
      * Test CMS remark low parallelism not reported with pause times less than times data centisecond precision.
      */
     public void testInitialMarkLowParallelismFalseReportSmallPause() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset138.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset138.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

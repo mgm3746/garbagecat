@@ -184,8 +184,7 @@ public class TestJvmRun extends TestCase {
     }
 
     public void testSummaryStatsParallel() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset1.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset1.txt");
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -210,9 +209,7 @@ public class TestJvmRun extends TestCase {
     }
 
     public void testSummaryStatsParNew() {
-
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset2.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset2.txt");
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -238,8 +235,7 @@ public class TestJvmRun extends TestCase {
      * Test parsing logging with -XX:+PrintGCApplicationConcurrentTime and -XX:+PrintGCApplicationStoppedTime output.
      */
     public void testParseLoggingWithApplicationTime() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset3.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset3.txt");
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -264,8 +260,7 @@ public class TestJvmRun extends TestCase {
      * .
      */
     public void testSplitParallelOldCompactingEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset28.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset28.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -286,8 +281,7 @@ public class TestJvmRun extends TestCase {
      * split across 2 lines.
      */
     public void testCombinedCmsConcurrentApplicationConcurrentTimeLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset19.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset19.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -302,8 +296,7 @@ public class TestJvmRun extends TestCase {
      * across 2 lines.
      */
     public void testCombinedCmsConcurrentApplicationStoppedTimeLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset27.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset27.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -317,8 +310,7 @@ public class TestJvmRun extends TestCase {
     }
 
     public void testRemoveBlankLines() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset20.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset20.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -335,8 +327,7 @@ public class TestJvmRun extends TestCase {
      * Test <code>DateStampPreprocessAction</code>.
      */
     public void testDateStampPreprocessActionLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset25.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset25.txt");
         GcManager gcManager = new GcManager();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 2010);
@@ -355,8 +346,7 @@ public class TestJvmRun extends TestCase {
     }
 
     public void testSummaryStatsStoppedTime() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset41.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset41.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -389,8 +379,7 @@ public class TestJvmRun extends TestCase {
      * 
      */
     public void testExplicitGcAnalsysisParallelSerialOld() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset56.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset56.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -411,8 +400,7 @@ public class TestJvmRun extends TestCase {
      * 
      */
     public void testHeaders() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset59.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset59.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -435,8 +423,7 @@ public class TestJvmRun extends TestCase {
      * 
      */
     public void testPrintTenuringDistributionPreprocessActionNoSpaceAfterGc() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset66.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset66.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -450,8 +437,7 @@ public class TestJvmRun extends TestCase {
      * Test application stopped time w/o timestamps.
      */
     public void testApplicationStoppedTimeNoTimestamps() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset96.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset96.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -477,9 +463,7 @@ public class TestJvmRun extends TestCase {
      * dataset41.txt with 1000 seconds added to each timestamp.
      */
     public void testSummaryStatsPartialLog() {
-
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset98.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset98.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -510,9 +494,7 @@ public class TestJvmRun extends TestCase {
      * Test summary stats with batching.
      */
     public void testStoppedTime() {
-
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset103.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset103.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -542,9 +524,7 @@ public class TestJvmRun extends TestCase {
      * Test no gc logging events, only stopped time events.
      */
     public void testStoppedTimeWithoutGcEvents() {
-
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset108.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset108.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -557,8 +537,7 @@ public class TestJvmRun extends TestCase {
      * Test identifying <code>ParNewEvent</code> running in incremental mode.
      */
     public void testPrintGcApplicationConcurrentTimeAnalysis() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset104.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset104.txt");
         Jvm jvm = new Jvm(null, null);
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

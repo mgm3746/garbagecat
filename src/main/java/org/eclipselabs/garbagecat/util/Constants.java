@@ -161,6 +161,12 @@ public class Constants {
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     /**
+     * Test data directory.
+     */
+    public static final String TEST_DATA_DIR = "src" + System.getProperty("file.separator") + "test"
+            + System.getProperty("file.separator") + "data" + System.getProperty("file.separator");
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private Constants() {

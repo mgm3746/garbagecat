@@ -333,8 +333,7 @@ public class TestCmsRemarkEvent extends TestCase {
     }
 
     public void testTruncatedPreprocessing() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset142.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset142.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

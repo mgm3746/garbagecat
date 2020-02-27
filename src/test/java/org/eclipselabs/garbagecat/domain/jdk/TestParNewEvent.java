@@ -421,8 +421,7 @@ public class TestParNewEvent extends TestCase {
      * failure" text.
      */
     public void testSplitParNewCmsConcurrentEventAbortablePrecleanLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset15.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset15.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -438,8 +437,7 @@ public class TestParNewEvent extends TestCase {
      * Test identifying <code>ParNewEvent</code> running in incremental mode.
      */
     public void testCmsIncrementalModeAnalysis() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset68.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset68.txt");
         String jvmOptions = "Xss128k -XX:+CMSIncrementalMode -XX:CMSInitiatingOccupancyFraction=70 -Xms2048M";
         Jvm jvm = new Jvm(jvmOptions, null);
         GcManager gcManager = new GcManager();
@@ -456,8 +454,7 @@ public class TestParNewEvent extends TestCase {
      * Test datestamp only logging without passing in JVM start datetime.
      */
     public void testParNewDatestampNoTimestampNoJvmStartDate() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset113.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset113.txt");
         Jvm jvm = new Jvm(null, null);
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -478,8 +475,7 @@ public class TestParNewEvent extends TestCase {
      * Test datestamp only logging with passing in JVM start datetime.
      */
     public void testParNewDatestampNoTimestampJvmStartDate() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset113.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset113.txt");
         Date jvmStartDate = GcUtil.parseStartDateTime("2017-02-28 11:26:24,135");
         Jvm jvm = new Jvm(null, jvmStartDate);
         GcManager gcManager = new GcManager();

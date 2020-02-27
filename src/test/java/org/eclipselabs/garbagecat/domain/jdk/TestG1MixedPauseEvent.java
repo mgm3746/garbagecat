@@ -267,8 +267,7 @@ public class TestG1MixedPauseEvent extends TestCase {
      * 
      */
     public void testPreprocessingTriggerToSpaceExhausted() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset99.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset99.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -287,8 +286,7 @@ public class TestG1MixedPauseEvent extends TestCase {
      * 
      */
     public void testPreprocessingDoubleTriggerG1EvacuationPauseToSpaceExhausted() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset102.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset102.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -307,8 +305,7 @@ public class TestG1MixedPauseEvent extends TestCase {
      * 
      */
     public void testPreprocessingDoubleTriggerHumongousAllocationToSpaceExhausted() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset133.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset133.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

@@ -715,8 +715,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingG1YoungPauseNormalCollection() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset155.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset155.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -729,8 +728,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingG1Remark() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset156.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset156.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -743,8 +741,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingG1Cleanup() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset157.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset157.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -757,8 +754,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingG1YoungPauseNormalTriggerGcLockerWithDatestamps() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset170.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset170.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -771,8 +767,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingSerialNew() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset171.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset171.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -785,8 +780,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingSerialOld() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset172.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset172.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -799,8 +793,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingSerialOldTriggerErgonomics() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset174.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset174.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -813,8 +806,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingParallelScavengeSerialOld() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset173.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset173.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -827,8 +819,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingParallelScavengeParallelCompactingOld() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset175.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset175.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -841,8 +832,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingParallelCompactingOld() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset176.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset176.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -856,8 +846,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingParNew() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset177.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset177.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -870,8 +859,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingCms() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset178.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset178.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

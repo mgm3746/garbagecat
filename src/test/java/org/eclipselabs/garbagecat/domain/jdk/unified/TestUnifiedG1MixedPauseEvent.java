@@ -109,8 +109,7 @@ public class TestUnifiedG1MixedPauseEvent extends TestCase {
     }
 
     public void testPreprocessing() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset169.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset169.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

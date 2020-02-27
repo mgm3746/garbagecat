@@ -1080,8 +1080,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */
     public void testSplitPrintHeapAtGcCmsSerialOldLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset6.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset6.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1097,8 +1096,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * Test with underlying <code>CmsSerialOld</code> triggered by concurrent mode failure.
      */
     public void testSplitPrintHeapAtGcCmsSerialOldConcurrentModeFailureLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset8.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset8.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1118,8 +1116,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * Test <code>CmsPreprocessAction</code>: split <code>CmsSerialOldEvent</code> and <code>CmsConcurrentEvent</code>.
      */
     public void testSplitCmsConcurrentModeFailureEventMarkLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset10.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset10.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1139,8 +1136,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * Test <code>CmsPreprocessAction</code>: split <code>CmsSerialOldEvent</code> and <code>CmsConcurrentEvent</code>.
      */
     public void testSplitCmsConcurrentModeFailureEventAbortablePrecleanLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset11.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset11.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1160,8 +1156,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * Test preprocessing <code>CmsSerialOldConcurrentModeFailureEvent</code> split over 3 lines.
      */
     public void testSplit3LinesCmsConcurrentModeFailureEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset14.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset14.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1180,8 +1175,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * -XX:+PrintTenuringDistribution logging between the initial and final lines.
      */
     public void testSplitMixedTenuringParNewPromotionFailedEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset18.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset18.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1199,8 +1193,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>ParNewConcurrentModeFailureEvent</code>.
      */
     public void testSplitPrintHeapAtGcParNewPromotionFailedCmsConcurrentModeFailureEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset21.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset21.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1217,8 +1210,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testParNewPromotionFailedTruncatedEventLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset23.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset23.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1241,8 +1233,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * 
      */
     public void testParNewMixedCmsConcurrent() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset58.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset58.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1261,8 +1252,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * 
      */
     public void testCmsSerialConcurrentModeFailureMixedCmsConcurrent() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset61.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset61.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1283,8 +1273,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * and final lines.
      */
     public void testSplitMixedTenuringParNewPromotionEventWithTriggerLogging() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset67.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset67.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1299,8 +1288,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * 
      */
     public void testCmsSerialConcurrentModeFailureMixedCmsConcurrentJdk8() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset69.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset69.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1323,8 +1311,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * 
      */
     public void testCmsSerialOldConcurrentModeInterruptedMixedCmsConcurrent() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset71.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset71.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1345,8 +1332,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * 
      */
     public void testCmsSerialOldPrintClassHistogramTriggerAcross5Lines() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset81.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset81.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1363,8 +1349,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * 
      */
     public void testParNewPrintHeapAtGc() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset83.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset83.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1383,8 +1368,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * 
      */
     public void testParNewPrefixed() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset89.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset89.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1401,8 +1385,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * 
      */
     public void testCmsSerialOldTriggerJvmtiEnvForceGarbageCollectionWithConcurrentModeInterrupted() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset90.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset90.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1423,8 +1406,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * 
      */
     public void testCmsSerialOldTriggerMetadataGcThresholdWithConcurrentModeInterrupted() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset91.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset91.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1445,8 +1427,7 @@ public class TestCmsPreprocessAction extends TestCase {
      * 
      */
     public void testParNewWithFlsStatistics() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset94.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset94.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1461,8 +1442,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testBeginningParNewWithNoParNewWithCmsConcurrentPreclean() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset105.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset105.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1483,8 +1463,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testUnknownWithCmsConcurrent() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset111.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset111.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1504,8 +1483,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testParNewCmsConcurrentOver3Lines() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset112.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset112.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1520,8 +1498,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testPrintPromotionFailure() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset115.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset115.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1534,8 +1511,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testPrintFLSStatistics2ParNewOver4Lines() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset117.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset117.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1550,7 +1526,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testCmsScavengeBeforeRemarkNoPrintGcDetails() {
-        File testFile = new File("src/test/data/dataset120.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset120.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1561,7 +1537,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testParNewConcurrentModeFailureMixedAbortPrecleanDueToTime() {
-        File testFile = new File("src/test/data/dataset121.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset121.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1576,7 +1552,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testParNewConcurrentModeFailureMixedConcurrentPreclean() {
-        File testFile = new File("src/test/data/dataset122.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset122.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1591,7 +1567,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testParNewConcurrentModeFailureMixedConcurrentMark() {
-        File testFile = new File("src/test/data/dataset123.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset123.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1606,7 +1582,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testCmsSerialOldConcurrentModeFailureMixedConcurrentMark() {
-        File testFile = new File("src/test/data/dataset124.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset124.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1621,7 +1597,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testCmsConcurrentMixedApplicationConcurrentTime() {
-        File testFile = new File("src/test/data/dataset135.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset135.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1640,7 +1616,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testCmsScavengeBeforeRemarkJdk8MixedHeapAtGc() {
-        File testFile = new File("src/test/data/dataset136.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset136.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1655,7 +1631,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testCmsScavengeBeforeRemarkJMixedHeapAtGc() {
-        File testFile = new File("src/test/data/dataset140.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset140.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1670,7 +1646,7 @@ public class TestCmsPreprocessAction extends TestCase {
     }
 
     public void testParNewMixedHeapAtGc() {
-        File testFile = new File("src/test/data/dataset141.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset141.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

@@ -14,6 +14,8 @@ package org.eclipselabs.garbagecat.service;
 
 import java.io.File;
 
+import org.eclipselabs.garbagecat.util.Constants;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -28,8 +30,7 @@ public class TestGcManager extends TestCase {
      * http://code.google.com/a/eclipselabs.org/p/garbagecat/issues/detail?id=17
      */
     public void testNullPointerExceptionNotRaised() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset31.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset31.txt");
         GcManager gcManager = new GcManager();
         try {
             gcManager.preprocess(testFile, null);

@@ -361,8 +361,7 @@ public class TestShenandoahPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingInitialMark() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset160.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset160.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -375,8 +374,7 @@ public class TestShenandoahPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingFinalMark() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset161.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset161.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -389,8 +387,7 @@ public class TestShenandoahPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingFinalEvac() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset162.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset162.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -403,8 +400,7 @@ public class TestShenandoahPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingInitUpdate() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset163.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset163.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -417,8 +413,7 @@ public class TestShenandoahPreprocessAction extends TestCase {
     }
 
     public void testPreprocessingFinalUpdate() {
-        // TODO: Create File in platform independent way.
-        File testFile = new File("src/test/data/dataset164.txt");
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset164.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
