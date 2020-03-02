@@ -89,11 +89,12 @@ public class G1YoungInitialMarkEvent extends G1Collector
     private static final String REGEX_PREPROCESSED = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC pause (\\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
             + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\(("
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?(\\[Eden: " + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?)?[ ]*$";
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_SYSTEM_GC
+            + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, "
+            + JdkRegEx.DURATION + "\\])?(\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: "
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]"
+            + TimesData.REGEX + "?)?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -173,25 +174,25 @@ public class G1YoungInitialMarkEvent extends G1Collector
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 if (matcher.group(14) != null) {
                     trigger = matcher.group(14);
-                } else if (matcher.group(17) != null) {
-                    trigger = matcher.group(17);
+                } else if (matcher.group(18) != null) {
+                    trigger = matcher.group(18);
                 }
-                if (matcher.group(18) != null) {
-                    duration = JdkMath.convertSecsToMicros(matcher.group(19)).intValue();
+                if (matcher.group(19) != null) {
+                    duration = JdkMath.convertSecsToMicros(matcher.group(20)).intValue();
                 } else {
-                    if (matcher.group(53) != null) {
+                    if (matcher.group(54) != null) {
                         // Use Times block duration
-                        duration = JdkMath.convertSecsToMicros(matcher.group(55)).intValue();
+                        duration = JdkMath.convertSecsToMicros(matcher.group(56)).intValue();
                     }
                 }
-                if (matcher.group(22) != null) {
-                    combined = JdkMath.convertSizeToKilobytes(matcher.group(41), matcher.group(43).charAt(0));
-                    combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(47), matcher.group(49).charAt(0));
-                    combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(50), matcher.group(52).charAt(0));
+                if (matcher.group(23) != null) {
+                    combined = JdkMath.convertSizeToKilobytes(matcher.group(42), matcher.group(44).charAt(0));
+                    combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(48), matcher.group(50).charAt(0));
+                    combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(51), matcher.group(53).charAt(0));
                 }
-                if (matcher.group(53) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(54)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(55)).intValue();
+                if (matcher.group(54) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(55)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
                 }
             }
         }

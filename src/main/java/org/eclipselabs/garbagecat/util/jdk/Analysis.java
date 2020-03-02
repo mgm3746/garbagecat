@@ -380,6 +380,11 @@ public enum Analysis {
     WARN_EXPLICIT_GC_DISABLED_CONCURRENT("warn.explicit.gc.disabled.concurrent"),
 
     /**
+     * Property key for explicit garbage collection invoking the G1_YOUNG_INITIAL_MARK collector.
+     */
+    WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK("warn.explicit.gc.g1.young.initial.mark"),
+
+    /**
      * Property key for JVM TI initiated gc.
      */
     WARN_EXPLICIT_GC_JVMTI("warn.explicit.gc.jvmti"),

@@ -12,8 +12,16 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.io.File;
+
+import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -201,6 +209,24 @@ public class TestG1YoungInitialMarkEvent extends TestCase {
         Assert.assertEquals("Parallelism not calculated correctly.", 700, event.getParallelism());
     }
 
+    public void testLogLinePreprocessedTriggerSystemGc() {
+        String logLine = "2020-02-26T17:18:26.505+0000: 130.241: [GC pause (System.gc()) (young) (initial-mark), "
+                + "0.1009346 secs][Eden: 220.0M(241.0M)->0.0B(277.0M) Survivors: 28.0M->34.0M "
+                + "Heap: 924.5M(2362.0M)->713.5M(2362.0M)] [Times: user=0.19 sys=0.00, real=0.10 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
+                G1YoungInitialMarkEvent.match(logLine));
+        G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 130241, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
+        Assert.assertEquals("Combined begin size not parsed correctly.", 946688, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 730624, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 2362 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 100934, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 19, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 10, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 190, event.getParallelism());
+    }
+
     public void testLogLinePreprocessedNoTriggerWholeNumberSizes() {
         String logLine = "449391.255: [GC pause (young) (initial-mark), 0.02147900 secs]"
                 + "[Eden: 1792M(1792M)->0B(2044M) Survivors: 256M->4096K Heap: 7582M(12288M)->5537M(12288M)] "
@@ -297,5 +323,23 @@ public class TestG1YoungInitialMarkEvent extends TestCase {
         Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
         Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
+    }
+
+    public void testAnalysisExplicitGc() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset179.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".",
+                jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_INITIAL_MARK));
+        Assert.assertFalse(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1 + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1));
+        Assert.assertTrue(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK));
+
     }
 }

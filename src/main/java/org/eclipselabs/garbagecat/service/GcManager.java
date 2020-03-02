@@ -50,6 +50,7 @@ import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcLockerEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
@@ -477,8 +478,13 @@ public class GcManager {
 
                             switch (collectorFamily) {
                             case G1:
-                                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1)) {
+                                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1)
+                                        && event instanceof G1FullGCEvent) {
                                     jvmDao.addAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1);
+                                } else if (!jvmDao.getAnalysis()
+                                        .contains(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK)
+                                        && event instanceof G1YoungInitialMarkEvent) {
+                                    jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK);
                                 }
                                 break;
                             case CMS:
