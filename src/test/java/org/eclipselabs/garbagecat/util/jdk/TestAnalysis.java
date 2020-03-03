@@ -898,7 +898,7 @@ public class TestAnalysis extends TestCase {
      * Test analysis perm gen or metaspace size not set.
      * 
      */
-    public void testAnalysisPermMetaspaceNotSet() {
+    public void testAnalysisPermSizeNotSet() {
         File testFile = new File(Constants.TEST_DATA_DIR + "dataset60.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

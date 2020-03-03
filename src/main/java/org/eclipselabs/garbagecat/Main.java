@@ -388,12 +388,21 @@ public class Main {
                             "Max Heap Space: " + jvmRun.getMaxHeapSpaceNonBlocking() + "K" + Constants.LINE_SEPARATOR);
                 }
                 if (jvmRun.getMaxPermSpace() > 0) {
-                    // Max perm occupancy.
-                    bufferedWriter.write("Max Perm/Metaspace Occupancy: " + jvmRun.getMaxPermOccupancy() + "K"
-                            + Constants.LINE_SEPARATOR);
-                    // Max perm space.
-                    bufferedWriter.write(
-                            "Max Perm/Metaspace Space: " + jvmRun.getMaxPermSpace() + "K" + Constants.LINE_SEPARATOR);
+                    if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(Analysis.INFO_PERM_GEN)) {
+                        // Max perm occupancy.
+                        bufferedWriter.write("Max Perm Gen Occupancy: " + jvmRun.getMaxPermOccupancy() + "K"
+                                + Constants.LINE_SEPARATOR);
+                        // Max perm space.
+                        bufferedWriter.write(
+                                "Max Perm Gen Space: " + jvmRun.getMaxPermSpace() + "K" + Constants.LINE_SEPARATOR);
+                    } else {
+                        // Max perm occupancy.
+                        bufferedWriter.write("Max Metaspace Occupancy: " + jvmRun.getMaxPermOccupancy() + "K"
+                                + Constants.LINE_SEPARATOR);
+                        // Max perm space.
+                        bufferedWriter.write(
+                                "Max Metaspace Space: " + jvmRun.getMaxPermSpace() + "K" + Constants.LINE_SEPARATOR);
+                    }
                 }
                 // GC throughput
                 bufferedWriter.write("GC Throughput: ");
