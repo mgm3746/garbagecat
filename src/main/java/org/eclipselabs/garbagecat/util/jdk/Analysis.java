@@ -469,6 +469,11 @@ public enum Analysis {
     WARN_HEAP_DUMP_ON_OOME_MISSING("warn.heap.dump.on.oome.missing"),
 
     /**
+     * Property key for heap dump filename specified.
+     */
+    WARN_HEAP_DUMP_PATH_FILENAME("warn.heap.dump.path.filename"),
+
+    /**
      * Property key for heap inspection initiated gc.
      */
     WARN_HEAP_INSPECTION_INITIATED_GC("warn.heap.inspection.initiated.gc"),

@@ -962,6 +962,11 @@ public class JvmRun {
                 && jvm.getMaxMetaspaceBytes() < jvm.getCompressedClassSpaceSizeBytes()) {
             analysis.add(Analysis.ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE);
         }
+
+        // Check if heap dump filename specified
+        if (jvm.getHeapDumpPathValue() != null && !jvm.getHeapDumpPathValue().matches("^\\s*[\\//]$")) {
+            analysis.add(Analysis.WARN_HEAP_DUMP_PATH_FILENAME);
+        }
     }
 
     /**

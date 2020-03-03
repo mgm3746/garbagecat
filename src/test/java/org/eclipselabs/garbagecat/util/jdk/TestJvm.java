@@ -807,4 +807,18 @@ public class TestJvm extends TestCase {
         Assert.assertNotNull("-XX:G1SummarizeRSetStatsPeriod=NNN not found.", jvm.getG1SummarizeRSetStatsPeriod());
         Assert.assertEquals("G1SummarizeRSetStatsPeriod incorrect.", "1", jvm.getG1SummarizeRSetStatsPeriodValue());
     }
+
+    public void testHeapDumpPathDir() {
+        String jvmOptions = "-Xss128k -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/path/";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-XX:HeapDumpPath=/path/ not found.", jvm.getHeapDumpPathOption());
+        Assert.assertEquals("Heap dump path value incorrect.", "/path/", jvm.getHeapDumpPathValue());
+    }
+
+    public void testHeapDumpPathFilename() {
+        String jvmOptions = "-Xss128k -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/path/to/heap.dump";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertNotNull("-XX:HeapDumpPath=/path/to/heap.dump not found.", jvm.getHeapDumpPathOption());
+        Assert.assertEquals("Heap dump path value incorrect.", "/path/to/heap.dump", jvm.getHeapDumpPathValue());
+    }
 }

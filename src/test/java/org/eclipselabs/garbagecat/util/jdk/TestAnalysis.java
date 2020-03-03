@@ -966,13 +966,14 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET));
     }
 
-    public void testNothing() {
+    public void testHeapDumpPathFilename() {
         File testFile = new File(Constants.TEST_DATA_DIR + "dataset95.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        // TODO: Reuse for future analysis.
+        Assert.assertTrue(Analysis.WARN_HEAP_DUMP_PATH_FILENAME + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_PATH_FILENAME));
     }
 
     /**

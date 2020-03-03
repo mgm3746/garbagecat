@@ -482,6 +482,41 @@ public class Jvm {
     }
 
     /**
+     * The option to specify the location where a a heap dump will be written on OutOfMemoryError. For example:
+     * 
+     * <pre>
+     * -XX:HeapDumpPath=/mydir/
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getHeapDumpPathOption() {
+        String regex = "(-XX:HeapDumpPath=\\S+)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * @return The heap dump path value, or null if not set. For example:
+     * 
+     *         <pre>
+     * /mydir/
+     *         </pre>
+     */
+    public String getHeapDumpPathValue() {
+        String option = getHeapDumpPathOption();
+        String value = null;
+        if (option != null) {
+            String regex = "(-XX:HeapDumpPath=(\\S+))";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(option);
+            if (matcher.find()) {
+                value = matcher.group(2);
+            }
+        }
+        return value;
+    }
+
+    /**
      * -javaagent instrumentation option. For example:
      * 
      * <pre>
