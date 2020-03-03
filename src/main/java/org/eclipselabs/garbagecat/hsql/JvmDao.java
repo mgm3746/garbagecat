@@ -1006,9 +1006,9 @@ public class JvmDao {
     }
 
     /**
-     * The maximum perm gen space size during the JVM run.
+     * The maximum perm/metaspace size during the JVM run.
      * 
-     * @return maximum perm gen space footprint (kilobytes).
+     * @return maximum perm/metaspace footprint (kilobytes).
      */
     public synchronized int getMaxPermSpace() {
         int space = 0;
@@ -1041,9 +1041,9 @@ public class JvmDao {
     }
 
     /**
-     * The maximum perm gen occupancy during the JVM run.
+     * The maximum perm/metaspace occupancy during the JVM run.
      * 
-     * @return maximum perm gen occupancy (kilobytes).
+     * @return maximum perm/metaspac occupancy (kilobytes).
      */
     public synchronized int getMaxPermOccupancy() {
         int occupancy = 0;

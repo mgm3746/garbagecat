@@ -33,6 +33,7 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
+import org.eclipselabs.garbagecat.domain.PermData;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
@@ -716,6 +717,14 @@ public class GcManager {
                             && JdkMath.isLowParallelism(((TimesData) event).getParallelism())) {
                         if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM)) {
                             jvmDao.addAnalysis(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM);
+                        }
+                    }
+
+                    // 18) Check for old JDKs using perm gen
+                    if (event instanceof PermData && event.getLogEntry() != null
+                            && event.getLogEntry().matches("^.*Perm.*$")) {
+                        if (!jvmDao.getAnalysis().contains(Analysis.INFO_PERM_GEN)) {
+                            jvmDao.addAnalysis(Analysis.INFO_PERM_GEN);
                         }
                     }
 

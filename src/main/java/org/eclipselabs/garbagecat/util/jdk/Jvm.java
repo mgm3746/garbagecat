@@ -1383,16 +1383,6 @@ public class Jvm {
     }
 
     /**
-     * 
-     * @return True if the minimum and maximum Metaspace are set equal.
-     */
-    public boolean isMinAndMaxMetaspaceEqual() {
-        return (getMinMetaspaceValue() == null && getMaxMetaspaceValue() == null) || (getMinMetaspaceValue() != null
-                && getMaxMetaspaceValue() != null && JdkUtil.convertOptionSizeToBytes(getMinMetaspaceValue()) == JdkUtil
-                        .convertOptionSizeToBytes(getMaxMetaspaceValue()));
-    }
-
-    /**
      * @param regex
      *            The option regular expression.
      * @return The JVM option, or null if not explicitly set.

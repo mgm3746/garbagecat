@@ -247,16 +247,6 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_FLS_STATISTICS));
     }
 
-    public void testPermMetatspaceNotSet() {
-        String jvmOptions = "-Xss128k -Xms2048M";
-        GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.WARN_PERM_METASPACE_SIZE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PERM_METASPACE_SIZE_NOT_SET));
-    }
-
     public void testTieredCompilation() {
         String jvmOptions = "-Xss128k -XX:+TieredCompilation -Xms2048M";
         GcManager gcManager = new GcManager();
@@ -976,14 +966,13 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET));
     }
 
-    public void testMetaspaceSizeNotSet() {
+    public void testNothing() {
         File testFile = new File(Constants.TEST_DATA_DIR + "dataset95.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.WARN_METASPACE_SIZE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_METASPACE_SIZE_NOT_SET));
+        // TODO: Reuse for future analysis.
     }
 
     /**

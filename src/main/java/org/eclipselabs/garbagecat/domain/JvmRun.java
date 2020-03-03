@@ -574,29 +574,10 @@ public class JvmRun {
             analysis.add(Analysis.WARN_PERM_MIN_NOT_EQUAL_MAX);
         }
 
-        // Check to see if min and max metaspace sizes are the same
-        if (!jvm.isMinAndMaxMetaspaceEqual()) {
-            analysis.add(Analysis.WARN_METASPACE_MIN_NOT_EQUAL_MAX);
-        }
-
-        // Check to see if permanent generation or metaspace size explicitly set
-        switch (jvm.JdkNumber()) {
-        case 5:
-        case 6:
-        case 7:
+        // Check to see if perm gen explicitly set
+        if (analysis.contains(Analysis.INFO_PERM_GEN)) {
             if (jvm.getMinPermOption() == null && jvm.getMaxPermOption() == null) {
                 analysis.add(Analysis.WARN_PERM_SIZE_NOT_SET);
-            }
-            break;
-        case 8:
-            if (jvm.getMinMetaspaceOption() == null && jvm.getMaxMetaspaceOption() == null) {
-                analysis.add(Analysis.WARN_METASPACE_SIZE_NOT_SET);
-            }
-            break;
-        default:
-            if (jvm.getMinPermOption() == null && jvm.getMaxPermOption() == null && jvm.getMinMetaspaceOption() == null
-                    && jvm.getMaxMetaspaceOption() == null) {
-                analysis.add(Analysis.WARN_PERM_METASPACE_SIZE_NOT_SET);
             }
         }
 

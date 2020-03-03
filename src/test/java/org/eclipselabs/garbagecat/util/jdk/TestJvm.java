@@ -406,32 +406,6 @@ public class TestJvm extends TestCase {
         Assert.assertEquals("Max Metaspace generation value incorrect.", "1G", jvm.getMaxMetaspaceValue());
     }
 
-    public void testIsMinAndMaxMetaspaceSpaceEqual() {
-        Jvm jvm = new Jvm("-XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256M", null);
-        Assert.assertTrue("Min and max metaspace are equal.", jvm.isMinAndMaxMetaspaceEqual());
-        jvm = new Jvm("-Xms1G -Xmx2G -XX:MetaspaceSize=256m", null);
-        Assert.assertFalse("Min and max metaspace are equal.", jvm.isMinAndMaxMetaspaceEqual());
-        jvm = new Jvm("-Xms1G -Xmx2G", null);
-        Assert.assertTrue("Min and max metaspace are equal.", jvm.isMinAndMaxMetaspaceEqual());
-        jvm = new Jvm("-XX:MaxMetaspaceSize=256M", null);
-        Assert.assertFalse("Min and max metaspace are not equal.", jvm.isMinAndMaxMetaspaceEqual());
-        jvm = new Jvm("-XX:MetaspaceSize=128k -XX:MaxMetaspaceSize=256K", null);
-        Assert.assertFalse("Min and max metaspace are not equal.", jvm.isMinAndMaxMetaspaceEqual());
-        jvm = new Jvm("-XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256M", null);
-        Assert.assertFalse("Min and max metaspace are not equal.", jvm.isMinAndMaxMetaspaceEqual());
-        jvm = new Jvm("-XX:MetaspaceSize=2048k -XX:MaxMetaspaceSize=2M", null);
-        Assert.assertTrue("Min and max metaspace are equal.", jvm.isMinAndMaxMetaspaceEqual());
-        jvm = new Jvm("-XX:MetaspaceSize=1024m -XX:MaxMetaspaceSize=1g", null);
-        Assert.assertTrue("Min and max metaspace are equal.", jvm.isMinAndMaxMetaspaceEqual());
-    }
-
-    public void testIsMinAndMaxMetaspaceSpaceEqualVerboseOptions() {
-        Jvm jvm = new Jvm("-XX:MaxMetaspaceSize=1234567890 -XX:MetaspaceSize=1234567890", null);
-        Assert.assertTrue("Min and max metaspace are equal.", jvm.isMinAndMaxMetaspaceEqual());
-        jvm = new Jvm("-XX:MaxMetaspaceSize=1234567890 -XX:MetaspaceSize=1234567891", null);
-        Assert.assertFalse("Min and max metaspace are not equal.", jvm.isMinAndMaxMetaspaceEqual());
-    }
-
     public void testDisableExplicitGc() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:MetaspaceSize=1G -XX:MaxMetaspaceSize=1G "
                 + "-XX:+DisableExplicitGC";

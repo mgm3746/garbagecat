@@ -236,6 +236,11 @@ public enum Analysis {
     INFO_NEW_RATIO_INVERTED("info.new.ratio.inverted"),
 
     /**
+     * Property key for a very old JDK with a permanent generation.
+     */
+    INFO_PERM_GEN("info.perm.gen"),
+
+    /**
      * Property key for disabling Adaptive Resize Policy output with -XX:-PrintAdaptiveSizePolicy.
      */
     INFO_PRINT_ADAPTIVE_RESIZE_PLCY_DISABLED("info.print.adaptive.resize.plcy.disabled"),
@@ -474,24 +479,9 @@ public enum Analysis {
     WARN_HEAP_MIN_NOT_EQUAL_MAX("warn.heap.min.not.equal.max"),
 
     /**
-     * Property key for metaspace not equal to max metaspace.
-     */
-    WARN_METASPACE_MIN_NOT_EQUAL_MAX("warn.metaspace.min.not.equal.max"),
-
-    /**
-     * Property key for metaspace size not explicitly set.
-     */
-    WARN_METASPACE_SIZE_NOT_SET("warn.metaspace.size.not.set"),
-
-    /**
      * Property key for inverted parallelism.
      */
     WARN_PARALLELISM_INVERTED("warn.parallelism.inverted"),
-
-    /**
-     * Property key for perm gen or metaspace size not explicitly set.
-     */
-    WARN_PERM_METASPACE_SIZE_NOT_SET("warn.perm.metaspace.size.not.set"),
 
     /**
      * Property key for min perm not equal to max perm.
