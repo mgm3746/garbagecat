@@ -172,11 +172,6 @@ public enum Analysis {
     INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED("info.comp.class.size.comp.oops.disabled"),
 
     /**
-     * Property key for the compressed class space size not set.
-     */
-    INFO_COMP_CLASS_SIZE_NOT_SET("info.comp.class.size.not.set"),
-
-    /**
      * Property key for -XX:-ExplicitGCInvokesConcurrentAndUnloadsClasses in combination with -XX:+DisableExplicitGC.
      */
     INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA("info.cruft.exp.gc.inv.con.and.unl.cla"),

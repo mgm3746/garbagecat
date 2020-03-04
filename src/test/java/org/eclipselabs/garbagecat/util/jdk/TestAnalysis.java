@@ -113,24 +113,12 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING));
     }
 
-    public void testCompressedClassSpaceSize() {
-        String jvmOptions = "-Xss128k -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -Xms2048M";
-        GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET));
-    }
-
     public void testCompressedClassPointersEnabledCompressedOopsDisabledHeapUnknown() {
         String jvmOptions = "-Xss128k -XX:+UseCompressedClassPointers -XX:-UseCompressedOops -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET));
         Assert.assertTrue(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK));
     }
@@ -141,8 +129,6 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertFalse(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET));
         Assert.assertTrue(Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G));
     }
@@ -173,8 +159,6 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertFalse(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET));
         Assert.assertTrue(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK));
         Assert.assertTrue(Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED + " analysis not identified.",
@@ -187,8 +171,6 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertFalse(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET));
         Assert.assertTrue(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK));
         Assert.assertTrue(Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED + " analysis not identified.",

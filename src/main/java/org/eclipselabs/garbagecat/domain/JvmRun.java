@@ -808,10 +808,6 @@ public class JvmRun {
                     analysis.add(Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED);
                 }
             }
-
-            if (jvm.getUseCompressedClassPointersEnabled() != null && jvm.getCompressedClassSpaceSizeOption() == null) {
-                analysis.add(Analysis.INFO_COMP_CLASS_SIZE_NOT_SET);
-            }
         } else {
             // Should not use compressed object pointers
             if (jvm.getUseCompressedOopsEnabled() != null) {
