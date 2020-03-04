@@ -15,7 +15,17 @@ JDK5 - JDK8:
 
 JDK9+:
 
-1) uptime
+1) uptime,level,tags (default)
+     
+```
+-Xlog:gc*:file=gc.log::filecount=4,filesize=50M
+-or-
+-Xlog:gc*:file=gc.log:uptime,level,tags:filecount=4,filesize=50M
+
+[0.052s][info][gc,start ] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+```
+
+2) uptime
 
 ```
 -Xlog:gc*:file=gc.log:uptime:filecount=4,filesize=50M
@@ -23,7 +33,7 @@ JDK9+:
 [0.052s] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
 
-2) uptimemillis
+3) uptimemillis
 
 ```
 -Xlog:gc*:file=gc.log:uptimemillis:filecount=4,filesize=50M
@@ -31,7 +41,7 @@ JDK9+:
 [052ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
 
-3) time
+4) time
 
 ```
 -Xlog:gc*:file=gc.log:time:filecount=4,filesize=50M
@@ -39,7 +49,7 @@ JDK9+:
 [2020-02-14T15:21:55.207-0500] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
 
-4) time,uptime
+5) time,uptime
 
 ```
 -Xlog:gc*:file=gc.log:time,uptime:filecount=4,filesize=50M
@@ -47,7 +57,7 @@ JDK9+:
 [2020-02-14T15:21:55.207-0500][0.052s] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
 
-5) time,uptimemillis
+6) time,uptimemillis
 
 ```
 -Xlog:gc*:file=gc.log:time,uptimemillis:filecount=4,filesize=50M
