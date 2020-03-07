@@ -245,6 +245,25 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Parallelism not calculated correctly.", 558, event.getParallelism());
     }
 
+    public void testLogLinePreprocessedTriggerHumongousAllocatioin() {
+        String logLine = "2020-02-16T23:24:09.668+0000: 880272.698: [GC pause (G1 Humongous Allocation) (young) "
+                + "(to-space exhausted), 0.6167306 secs][Eden: 545.0M(1691.0M)->0.0B(1691.0M) "
+                + "Survivors: 0.0B->1024.0K Heap: 3038.2M(3072.0M)->2748.7M(3072.0M)] "
+                + "[Times: user=1.08 sys=0.01, real=0.62 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".",
+                G1YoungPauseEvent.match(logLine));
+        G1YoungPauseEvent event = new G1YoungPauseEvent(logLine);
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED));
+        Assert.assertEquals("Time stamp not parsed correctly.", 880272698, event.getTimestamp());
+        Assert.assertEquals("Combined end size not parsed correctly.", 2814669, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 3072 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 616730, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 108, event.getTimeUser());
+        Assert.assertEquals("Real time not parsed correctly.", 62, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 175, event.getParallelism());
+    }
+
     public void testLogLinePreprocessedDatestamp() {
         String logLine = "2016-12-21T14:28:11.672-0500: 0.823: [GC pause (G1 Evacuation Pause) (young), "
                 + "0.0124023 secs][Eden: 75.0M(75.0M)->0.0B(66.0M) Survivors: 0.0B->9216.0K "

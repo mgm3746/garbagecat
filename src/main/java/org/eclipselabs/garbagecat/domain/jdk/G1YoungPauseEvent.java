@@ -112,8 +112,9 @@ public class G1YoungPauseEvent extends G1Collector
      */
     private static final String REGEX_PREPROCESSED_DETAILS = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC pause (\\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\) )?\\(young\\)( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED
-            + "|" + JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW + ")\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION
+            + ")\\) )?\\(young\\)( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|"
+            + JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW + ")\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
