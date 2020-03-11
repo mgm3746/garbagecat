@@ -121,9 +121,14 @@ public class UnifiedParNewEvent extends ParallelCollector implements UnifiedLogg
     private String trigger;
 
     /**
-     * The time of all threads added together in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
     private int timeUser;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -183,7 +188,8 @@ public class UnifiedParNewEvent extends ParallelCollector implements UnifiedLogg
             permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(49)), matcher.group(51).charAt(0));
             duration = JdkMath.convertMillisToMicros(matcher.group(61)).intValue();
             timeUser = JdkMath.convertSecsToCentis(matcher.group(63)).intValue();
-            timeReal = JdkMath.convertSecsToCentis(matcher.group(64)).intValue();
+            timeSys = JdkMath.convertSecsToCentis(matcher.group(64)).intValue();
+            timeReal = JdkMath.convertSecsToCentis(matcher.group(65)).intValue();
         }
     }
 
@@ -279,12 +285,16 @@ public class UnifiedParNewEvent extends ParallelCollector implements UnifiedLogg
         return timeUser;
     }
 
+    public int getTimeSys() {
+        return timeSys;
+    }
+
     public int getTimeReal() {
         return timeReal;
     }
 
     public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     /**

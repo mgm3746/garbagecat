@@ -150,9 +150,14 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
     private String trigger;
 
     /**
-     * The time of all threads added together in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
     private int timeUser;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -204,7 +209,8 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
             duration = JdkMath.convertSecsToMicros(matcher.group(30)).intValue();
             if (matcher.group(33) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
             }
         }
     }
@@ -285,12 +291,16 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
         return timeUser;
     }
 
+    public int getTimeSys() {
+        return timeSys;
+    }
+
     public int getTimeReal() {
         return timeReal;
     }
 
     public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     /**

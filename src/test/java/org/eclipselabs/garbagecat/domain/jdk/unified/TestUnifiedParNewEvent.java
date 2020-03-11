@@ -51,8 +51,9 @@ public class TestUnifiedParNewEvent extends TestCase {
         Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1056768, event.getPermSpace());
         Assert.assertEquals("Duration not parsed correctly.", 3544, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 1, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 200, event.getParallelism());
     }
 
     public void testIdentityEventType() {
@@ -109,11 +110,4 @@ public class TestUnifiedParNewEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + ".",
                 UnifiedParNewEvent.match(logLine));
     }
-    /*
-     * public void testLogLine7SpacesAfterStart() { String logLine =
-     * "[15.030s][info][gc,start       ] GC(1199) Pause Young (Allocation Failure) PSYoungGen: " +
-     * "20544K->64K(20992K) PSOldGen: 15496K->15504K(17920K) Metaspace: 3779K->3779K(1056768K) " +
-     * "35M->15M(38M) 0.402ms User=0.00s Sys=0.00s Real=0.00s"; Assert.assertTrue("Log line not recognized as " +
-     * JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + ".", UnifiedParNewEvent.match(logLine)); }
-     */
 }

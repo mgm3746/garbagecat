@@ -15,6 +15,8 @@ package org.eclipselabs.garbagecat.util.jdk;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import org.eclipselabs.garbagecat.domain.TimesData;
+
 /**
  * Math utility methods and constants for OpenJDK and Sun JDK.
  * 
@@ -253,16 +255,18 @@ public class JdkMath {
      * Calculate parallelism, the ratio of user to wall (real) time.
      * 
      * @param timeUser
-     *            The wall (clock) time in centiseconds.
+     *            The user (non-kernel) time in centiseconds.
+     * @param timeSys
+     *            The sys (kernel) time in centiseconds.
      * @param timeReal
      *            The wall (clock) time in centiseconds.
      * 
      * @return Percent user:real time rounded up the the nearest whole number.
      */
-    public static int calcParallelism(final int timeUser, final int timeReal) {
+    public static int calcParallelism(final int timeUser, final int timeSys, final int timeReal) {
         int calc;
-        if (timeReal == 0) {
-            if (timeUser == 0) {
+        if (timeReal == 0 || timeReal == TimesData.NO_DATA) {
+            if ((timeUser == 0 && timeSys == 0) || (timeUser == TimesData.NO_DATA || timeSys == TimesData.NO_DATA)) {
                 // Undefined (no times data) or explicitly equal to zero.
                 calc = 100;
             } else {
@@ -270,6 +274,7 @@ public class JdkMath {
             }
         } else {
             BigDecimal parallelism = new BigDecimal(timeUser);
+            parallelism = parallelism.add(new BigDecimal(timeSys));
             BigDecimal hundred = new BigDecimal("100");
             parallelism = parallelism.multiply(hundred);
             parallelism = parallelism.divide(new BigDecimal(timeReal), 0, RoundingMode.CEILING);

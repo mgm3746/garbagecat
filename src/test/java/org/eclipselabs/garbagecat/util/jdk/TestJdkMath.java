@@ -157,46 +157,59 @@ public class TestJdkMath extends TestCase {
     }
 
     public void testCalcParallelism() {
-        int timeUser = 100;
+        int timeUser = 90;
+        int timeSys = 10;
         int timeReal = 10;
-        Assert.assertEquals("Parallelism not calculated correctly.", 1000, JdkMath.calcParallelism(timeUser, timeReal));
+        Assert.assertEquals("Parallelism not calculated correctly.", 1000,
+                JdkMath.calcParallelism(timeUser, timeSys, timeReal));
     }
 
     public void testCalcParallelismRounded() {
-        int timeUser = 100;
+        int timeUser = 90;
+        int timeSys = 10;
         int timeReal = 1000;
-        Assert.assertEquals("Parallelism not calculated correctly.", 10, JdkMath.calcParallelism(timeUser, timeReal));
+        Assert.assertEquals("Parallelism not calculated correctly.", 10,
+                JdkMath.calcParallelism(timeUser, timeSys, timeReal));
     }
 
     public void testCalcParallelismRoundedUp() {
-        int timeUser = 100;
+        int timeUser = 90;
+        int timeSys = 10;
         int timeReal = 199;
-        Assert.assertEquals("Parallelism not calculated correctly.", 51, JdkMath.calcParallelism(timeUser, timeReal));
+        Assert.assertEquals("Parallelism not calculated correctly.", 51,
+                JdkMath.calcParallelism(timeUser, timeSys, timeReal));
     }
 
     public void testCalcParallelismUserZero() {
         int timeUser = 0;
+        int timeSys = 0;
         int timeReal = 100;
-        Assert.assertEquals("Parallelism not calculated correctly.", 0, JdkMath.calcParallelism(timeUser, timeReal));
+        Assert.assertEquals("Parallelism not calculated correctly.", 0,
+                JdkMath.calcParallelism(timeUser, timeSys, timeReal));
     }
 
     public void testCalcParallelismRealZero() {
         int timeUser = 100;
+        int timeSys = 0;
         int timeReal = 0;
         Assert.assertEquals("Parallelism not calculated correctly.", Integer.MAX_VALUE,
-                JdkMath.calcParallelism(timeUser, timeReal));
+                JdkMath.calcParallelism(timeUser, timeSys, timeReal));
     }
 
     public void testCalcParallelismUserZeroRealZero() {
         int timeUser = 0;
+        int timeSys = 0;
         int timeReal = 0;
-        Assert.assertEquals("Parallelism not calculated correctly.", 100, JdkMath.calcParallelism(timeUser, timeReal));
+        Assert.assertEquals("Parallelism not calculated correctly.", 100,
+                JdkMath.calcParallelism(timeUser, timeSys, timeReal));
     }
 
     public void testCalcParallelismNoData() {
         int timeUser = TimesData.NO_DATA;
+        int timeSys = TimesData.NO_DATA;
         int timeReal = TimesData.NO_DATA;
-        Assert.assertEquals("Parallelism not calculated correctly.", 100, JdkMath.calcParallelism(timeUser, timeReal));
+        Assert.assertEquals("Parallelism not calculated correctly.", 100,
+                JdkMath.calcParallelism(timeUser, timeSys, timeReal));
     }
 
     public void testParallelism() {

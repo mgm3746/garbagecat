@@ -62,6 +62,7 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 60416, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 7814, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 1, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 50, event.getParallelism());
     }
@@ -79,6 +80,7 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 8192 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 50011, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
     }
@@ -98,6 +100,7 @@ public class TestG1YoungPauseEvent extends TestCase {
                 event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 134397, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
     }
@@ -115,6 +118,7 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 8192 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 458973, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
     }
@@ -147,6 +151,7 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 59 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 2902, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 1, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
     }
@@ -167,6 +172,7 @@ public class TestG1YoungPauseEvent extends TestCase {
                 event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 17686, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 1, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 50, event.getParallelism());
     }
@@ -187,8 +193,9 @@ public class TestG1YoungPauseEvent extends TestCase {
                 event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 120874, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 41, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 2, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 12, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 342, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 359, event.getParallelism());
     }
 
     public void testLogLinePreprocessedNoTrigger() {
@@ -207,6 +214,7 @@ public class TestG1YoungPauseEvent extends TestCase {
                 event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 275270, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 109, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 27, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 404, event.getParallelism());
     }
@@ -241,6 +249,7 @@ public class TestG1YoungPauseEvent extends TestCase {
                 event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 3171358, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 1773, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 318, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 558, event.getParallelism());
     }
@@ -260,8 +269,9 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 3072 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 616730, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 108, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 62, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 175, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 176, event.getParallelism());
     }
 
     public void testLogLinePreprocessedDatestamp() {
@@ -279,6 +289,7 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 1500 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 12402, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 3, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 150, event.getParallelism());
     }
@@ -298,6 +309,7 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 8192 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 110000, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 22, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 11, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 200, event.getParallelism());
     }
@@ -317,8 +329,9 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 3072 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 771214, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 151, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 14, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 77, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 197, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 215, event.getParallelism());
     }
 
     public void testLogLinePreprocessedWithCommas() {
@@ -334,8 +347,9 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 6144 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 127579, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 25, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 5, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 12, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 209, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 250, event.getParallelism());
     }
 
     public void testLogLinePreprocessedNoSpaceAfterYoung() {
@@ -350,6 +364,7 @@ public class TestG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 6144, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 6328, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
     }

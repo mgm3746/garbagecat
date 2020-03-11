@@ -147,9 +147,14 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
     private boolean classUnloading;
 
     /**
-     * The time of all threads added together in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
     private int timeUser;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -219,7 +224,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                 duration = JdkMath.convertSecsToMicros(matcher.group(68)).intValue();
                 if (matcher.group(71) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(72)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(73)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(73)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(74)).intValue();
                 }
             }
             classUnloading = false;
@@ -239,7 +245,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                 duration = JdkMath.convertSecsToMicros(matcher.group(136)).intValue();
                 if (matcher.group(139) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(140)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(141)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(141)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(142)).intValue();
                 }
             }
             classUnloading = true;
@@ -298,12 +305,16 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
         return timeUser;
     }
 
+    public int getTimeSys() {
+        return timeSys;
+    }
+
     public int getTimeReal() {
         return timeReal;
     }
 
     public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     /**

@@ -118,9 +118,14 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements Unif
     private String trigger;
 
     /**
-     * The time of all threads added together in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
     private int timeUser;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -166,7 +171,8 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements Unif
             duration = JdkMath.convertMillisToMicros(matcher.group(43)).intValue();
             if (matcher.group(44) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(45)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(46)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(46)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(47)).intValue();
             } else {
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
@@ -250,12 +256,16 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements Unif
         return timeUser;
     }
 
+    public int getTimeSys() {
+        return timeSys;
+    }
+
     public int getTimeReal() {
         return timeReal;
     }
 
     public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     /**

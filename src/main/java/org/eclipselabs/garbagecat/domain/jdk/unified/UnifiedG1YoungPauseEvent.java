@@ -150,9 +150,14 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
     private String trigger;
 
     /**
-     * The time of all threads added together in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
     private int timeUser;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -230,7 +235,8 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
                 duration = JdkMath.convertMillisToMicros(matcher.group(45)).intValue();
                 if (matcher.group(46) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(47)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(48)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(48)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(49)).intValue();
                 } else {
                     timeUser = TimesData.NO_DATA;
                     timeReal = TimesData.NO_DATA;
@@ -315,12 +321,16 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
         return timeUser;
     }
 
+    public int getTimeSys() {
+        return timeSys;
+    }
+
     public int getTimeReal() {
         return timeReal;
     }
 
     public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     /**

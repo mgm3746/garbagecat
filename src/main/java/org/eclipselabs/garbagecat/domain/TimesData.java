@@ -43,7 +43,7 @@ public interface TimesData {
      * 
      * [Times: user=0.44 sys=0.00, real=0.08 secs]
      */
-    public static final String REGEX = "( \\[Times: user=(\\d{1,5}[\\.\\,]\\d{2}) sys=\\d{1,5}[\\.\\,]\\d{2}, "
+    public static final String REGEX = "( \\[Times: user=(\\d{1,5}[\\.\\,]\\d{2}) sys=(\\d{1,5}[\\.\\,]\\d{2}), "
             + "real=(\\d{1,5}[\\.\\,]\\d{2}) secs\\])";
 
     /**
@@ -51,7 +51,7 @@ public interface TimesData {
      * 
      * User=0.00s Sys=0.00s Real=0.00s
      */
-    public static final String REGEX_JDK9 = "( User=(\\d{1,5}[\\.\\,]\\d{2})s Sys=\\d{1,5}[\\.\\,]\\d{2}s "
+    public static final String REGEX_JDK9 = "( User=(\\d{1,5}[\\.\\,]\\d{2})s Sys=(\\d{1,5}[\\.\\,]\\d{2})s "
             + "Real=(\\d{1,5}[\\.\\,]\\d{2})s)";
 
     /**
@@ -60,9 +60,14 @@ public interface TimesData {
     public static final int NO_DATA = -Integer.MIN_VALUE;
 
     /**
-     * @return The time of all threads added together in centiseconds.
+     * @return The user (non-kernll) time of all threads added together in centiseconds.
      */
     int getTimeUser();
+
+    /**
+     * @return The system (kernel) time of all threads added together in centiseconds.
+     */
+    int getTimeSys();
 
     /**
      * @return The wall (clock) time in centiseconds.
@@ -70,8 +75,8 @@ public interface TimesData {
     int getTimeReal();
 
     /**
-     * @return Percent user:real time rounded up the the nearest whole number. With good parallelism, the user time will
-     *         be (# threads) x (real time).
+     * @return Percent (user+sys):real time rounded up the the nearest whole number. With good parallelism, the user+sys
+     *         time will be (# threads) x (real time).
      */
     int getParallelism();
 }

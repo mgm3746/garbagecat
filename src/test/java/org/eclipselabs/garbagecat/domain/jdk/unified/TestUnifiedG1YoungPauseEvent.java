@@ -123,8 +123,9 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined allocation size not parsed correctly.", 1304 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 57263, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 2, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 6, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 34, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 50, event.getParallelism());
     }
 
     public void testLogLinePreprocessedTimeUptimemillisTriggerGcLocker() {
@@ -146,6 +147,7 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Combined allocation size not parsed correctly.", 1304 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 35722, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 2, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 4, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 50, event.getParallelism());
     }

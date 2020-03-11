@@ -36,7 +36,7 @@ java -Xms1m -Xmx96m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-g1-details.log -XX
 
 java -Xms1m -Xmx96m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-shenandoah.log -XX:+UseShenandoahGC -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
 
-java -Xms1m -Xmx96m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-shenandoah-details.log -XX:+UseShenandoahGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
+java -Xms8m -Xmx128m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-shenandoah-details.log -XX:+UseShenandoahGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
 
 ##### Analyze GC Logging #####
 

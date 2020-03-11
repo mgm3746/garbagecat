@@ -182,9 +182,14 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     private String trigger;
 
     /**
-     * The time of all threads added together in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
     private int timeUser;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -233,7 +238,8 @@ public class ParNewEvent extends CmsIncrementalModeCollector
             }
             if (matcher.group(66) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(67)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(68)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(68)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(69)).intValue();
             }
         }
     }
@@ -302,12 +308,16 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         return timeUser;
     }
 
+    public int getTimeSys() {
+        return timeSys;
+    }
+
     public int getTimeReal() {
         return timeReal;
     }
 
     public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     /**

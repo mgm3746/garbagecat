@@ -73,8 +73,9 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
         Assert.assertEquals("User time not parsed correctly.", 15, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 9, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 167, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 178, event.getParallelism());
     }
 
     public void testLogLineJdk8WithTriggerAndDatestamps() {
@@ -92,6 +93,7 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
         Assert.assertEquals("User time not parsed correctly.", 18, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 900, event.getParallelism());
     }
@@ -109,8 +111,9 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
         Assert.assertEquals("User time not parsed correctly.", 23, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 2300, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 2400, event.getParallelism());
     }
 
     public void testLogLineAllDatestamps() {
@@ -128,8 +131,9 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
         Assert.assertEquals("User time not parsed correctly.", 98, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 31, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 317, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 320, event.getParallelism());
     }
 
     public void testLogLineSpaceBeforeYgBlockAndNoSpaceBeforeCmsRemarkBlock() {
@@ -144,6 +148,7 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
         Assert.assertEquals("User time not parsed correctly.", 12, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 4, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 300, event.getParallelism());
     }
@@ -224,6 +229,7 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 43034, event.getDuration());
         Assert.assertTrue("Class unloading not parsed correctly.", event.isClassUnloading());
         Assert.assertEquals("User time not parsed correctly.", 36, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 4, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 900, event.getParallelism());
     }
@@ -242,8 +248,9 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 37531, event.getDuration());
         Assert.assertTrue("Class unloading not parsed correctly.", event.isClassUnloading());
         Assert.assertEquals("User time not parsed correctly.", 3, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 3, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 134, event.getParallelism());
     }
 
     public void testLogLineJdk8NoGcYgBlockClassUnloading() {
@@ -258,8 +265,9 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 102510, event.getDuration());
         Assert.assertTrue("Class unloading not parsed correctly.", event.isClassUnloading());
         Assert.assertEquals("User time not parsed correctly.", 17, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 10, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 170, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 180, event.getParallelism());
     }
 
     public void testLogLineJdk8NoGcYgBlockNoClassUnloading() {
@@ -273,8 +281,9 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 412406, event.getDuration());
         Assert.assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
         Assert.assertEquals("User time not parsed correctly.", 282, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 4, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 41, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 688, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 698, event.getParallelism());
     }
 
     public void testLogLineClassUnloadingNoSpaceAfterTrigger() {
@@ -293,8 +302,9 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 589380, event.getDuration());
         Assert.assertTrue("Class unloading not parsed correctly.", event.isClassUnloading());
         Assert.assertEquals("User time not parsed correctly.", 392, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 4, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 59, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 665, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 672, event.getParallelism());
     }
 
     public void testLogLineClassUnloadingDatestamp() {
@@ -315,8 +325,9 @@ public class TestCmsRemarkEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 93573, event.getDuration());
         Assert.assertTrue("Class unloading not parsed correctly.", event.isClassUnloading());
         Assert.assertEquals("User time not parsed correctly.", 26, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 9, event.getTimeReal());
-        Assert.assertEquals("Parallelism not calculated correctly.", 289, event.getParallelism());
+        Assert.assertEquals("Parallelism not calculated correctly.", 300, event.getParallelism());
     }
 
     public void testLogLineTruncated() {

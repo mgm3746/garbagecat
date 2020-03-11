@@ -135,9 +135,14 @@ public class G1MixedPauseEvent extends G1Collector
     private String trigger;
 
     /**
-     * The time of all threads added together in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
     private int timeUser;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -166,7 +171,8 @@ public class G1MixedPauseEvent extends G1Collector
                 duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
                 if (matcher.group(28) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(31)).intValue();
                 }
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
@@ -187,7 +193,8 @@ public class G1MixedPauseEvent extends G1Collector
                 combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(47), matcher.group(49).charAt(0));
                 if (matcher.group(50) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(51)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(52)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(52)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(53)).intValue();
                 }
             }
         }
@@ -245,12 +252,16 @@ public class G1MixedPauseEvent extends G1Collector
         return timeUser;
     }
 
+    public int getTimeSys() {
+        return timeSys;
+    }
+
     public int getTimeReal() {
         return timeReal;
     }
 
     public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     /**

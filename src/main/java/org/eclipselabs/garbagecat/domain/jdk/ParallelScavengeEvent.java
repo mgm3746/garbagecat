@@ -126,11 +126,15 @@ public class ParallelScavengeEvent extends ParallelCollector
      * The trigger for the GC event.
      */
     private String trigger;
-
     /**
-     * The time of all threads added together in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
     private int timeUser;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -179,7 +183,8 @@ public class ParallelScavengeEvent extends ParallelCollector
             duration = JdkMath.convertSecsToMicros(matcher.group(24)).intValue();
             if (matcher.group(27) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
             }
         }
     }
@@ -248,12 +253,16 @@ public class ParallelScavengeEvent extends ParallelCollector
         return timeUser;
     }
 
+    public int getTimeSys() {
+        return timeSys;
+    }
+
     public int getTimeReal() {
         return timeReal;
     }
 
     public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     /**

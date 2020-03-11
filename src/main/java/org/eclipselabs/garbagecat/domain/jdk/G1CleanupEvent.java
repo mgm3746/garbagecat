@@ -104,9 +104,14 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
     private int combinedAvailable;
 
     /**
-     * The time of all threads added together in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
     private int timeUser;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -133,7 +138,8 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
             duration = JdkMath.convertSecsToMicros(matcher.group(23)).intValue();
             if (matcher.group(26) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(27)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
             }
         }
     }
@@ -186,12 +192,16 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
         return timeUser;
     }
 
+    public int getTimeSys() {
+        return timeSys;
+    }
+
     public int getTimeReal() {
         return timeReal;
     }
 
     public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     /**
