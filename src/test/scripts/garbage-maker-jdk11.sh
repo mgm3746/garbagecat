@@ -6,7 +6,7 @@
 #
 
 GARBAGECAT_HOME=~/workspace/garbagecat/target
-GARBAGECAT_VERSION=-3.0.3-SNAPSHOT
+GARBAGECAT_VERSION=-3.0.4-SNAPSHOT
 
 ##### Create GC Logging #####
 
@@ -22,9 +22,9 @@ java -Xms1m -Xmx64m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-par-new-cms.log::files
 
 java -Xms1m -Xmx64m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-par-new-cms.log::filesize=50M -XX:+UseConcMarkSweepGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
-java -Xms1m -Xmx64m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-g1.log::filesize=50M -XX:+UseG1GC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
+java -Xms1m -Xmx96m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-g1.log::filesize=50M -XX:+UseG1GC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
-java -Xms32m -Xmx64m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-shenandoah.log::filesize=50M -XX:+UseShenandoahGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
+java -Xms32m -Xmx96m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-shenandoah.log::filesize=50M -XX:+UseShenandoahGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
 # uptime (seconds after JVM start) decorator #
 
@@ -38,9 +38,9 @@ java -Xms1m -Xmx64m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-par-new-cms-uptime.log
 
 java -Xms1m -Xmx64m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-par-new-cms-uptime.log:uptime:filesize=50M -XX:+UseConcMarkSweepGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
-java -Xms1m -Xmx64m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-g1-uptime.log:uptime:filesize=50M -XX:+UseG1GC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
+java -Xms1m -Xmx96m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-g1-uptime.log:uptime:filesize=50M -XX:+UseG1GC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
-java -Xms32m -Xmx64m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-shenandoah-uptime.log:uptime:filesize=50M -XX:+UseShenandoahGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
+java -Xms32m -Xmx96m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-shenandoah-uptime.log:uptime:filesize=50M -XX:+UseShenandoahGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
 # time (datestamp) decorator #
 
@@ -54,9 +54,9 @@ java -Xms1m -Xmx64m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-par-new-cms-time.log:t
 
 java -Xms1m -Xmx64m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-par-new-cms-time.log:time:filesize=50M -XX:+UseConcMarkSweepGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
-java -Xms1m -Xmx64m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-g1-time.log:time:filesize=50M -XX:+UseG1GC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
+java -Xms1m -Xmx96m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-g1-time.log:time:filesize=50M -XX:+UseG1GC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
-java -Xms32m -Xmx64m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-shenandoah-time.log:time:filesize=50M -XX:+UseShenandoahGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
+java -Xms32m -Xmx96m -Xlog:gc*:file=$GARBAGECAT_HOME/jdk11-shenandoah-time.log:time:filesize=50M -XX:+UseShenandoahGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
 ##### Analyze GC Logging #####
 

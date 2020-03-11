@@ -10,71 +10,42 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * SHENANDOAH_INIT_MARK
+ * SHENANDOAH_DEGENERATED_GC_MARK
  * </p>
  * 
  * <p>
- * Initiates the concurrent marking. It prepares the heap and application threads for concurrent mark, and then scans
- * the root set. This is the first pause in the cycle, and the most dominant consumer is the root set scan. Therefore,
- * its duration is dependent on the root set size[1].
+ * When allocation failure occurs, degenerated GC continues the in-progress "concurrent" cycle under stop-the-world.[1].
  * 
  * [1]<a href="https://wiki.openjdk.java.net/display/shenandoah/Main">Shenandoah GC</a>
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
- * <p>
- * 1) Standard format:
- * </p>
- * 
  * <pre>
- * [0.521s][info][gc] GC(1) Pause Init Mark 0.453ms
- * </pre>
- * 
- * <p>
- * 2) process weakrefs:
- * </p>
- * 
- * <pre>
- * [0.456s][info][gc] GC(0) Pause Init Mark (process weakrefs) 0.868ms
- * </pre>
- * 
- * <p>
- * 3) update refs:
- * </p>
- * 
- * <pre>
- *[10.453s][info][gc] GC(279) Pause Init Mark (update refs) 0.244ms
- * </pre>
- * 
- * <p>
- * 4) With <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>:
- * </p>
- * 
- * <pre>
- * [2019-02-05T14:47:34.178-0200][3090ms] GC(0) Pause Init Mark (process weakrefs) 2.904ms
+ * [52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M-&gt;30M(64M) 53.697ms
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahInitMarkEvent extends ShenandoahCollector
-        implements UnifiedLogging, BlockingEvent, ParallelEvent {
+public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
+        implements BlockingEvent, ParallelEvent, CombinedData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -92,10 +63,25 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector
     private long timestamp;
 
     /**
+     * Combined size (kilobytes) at beginning of GC event.
+     */
+    private int combined;
+
+    /**
+     * Combined size (kilobytes) at end of GC event.
+     */
+    private int combinedEnd;
+
+    /**
+     * Combined available space (kilobytes).
+     */
+    private int combinedAvailable;
+
+    /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
-            + " Pause Init Mark( \\(update refs\\))?( \\(process weakrefs\\))? " + UnifiedRegEx.DURATION + "[ ]*$";
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Degenerated GC \\(Mark\\) "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -105,7 +91,7 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector
      * @param logEntry
      *            The log entry for the event.
      */
-    public ShenandoahInitMarkEvent(String logEntry) {
+    public ShenandoahDegeneratedGcMarkEvent(String logEntry) {
         this.logEntry = logEntry;
         if (logEntry.matches(REGEX)) {
             Pattern pattern = Pattern.compile(REGEX);
@@ -128,8 +114,12 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(25)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(33)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)), matcher.group(29).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(30)),
+                        matcher.group(32).charAt(0));
             }
         }
     }
@@ -144,7 +134,7 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector
      * @param duration
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public ShenandoahInitMarkEvent(String logEntry, long timestamp, int duration) {
+    public ShenandoahDegeneratedGcMarkEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
@@ -162,8 +152,20 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector
         return timestamp;
     }
 
+    public int getCombinedOccupancyInit() {
+        return combined;
+    }
+
+    public int getCombinedOccupancyEnd() {
+        return combinedEnd;
+    }
+
+    public int getCombinedSpace() {
+        return combinedAvailable;
+    }
+
     public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString();
+        return JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC_MARK.toString();
     }
 
     /**

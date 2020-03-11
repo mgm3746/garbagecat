@@ -62,9 +62,9 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
     /**
      * Regular expression defining standard logging (no details).
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
-            + " Pause Initial Mark \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\(" + TRIGGER + "\\) "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION
+            + TimesData.REGEX_JDK9 + "[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -140,15 +140,15 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                trigger = matcher.group(23);
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)), matcher.group(29).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(30)),
-                        matcher.group(32).charAt(0));
-                duration = JdkMath.convertMillisToMicros(matcher.group(33)).intValue();
+                trigger = matcher.group(24);
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)),
+                        matcher.group(33).charAt(0));
+                duration = JdkMath.convertMillisToMicros(matcher.group(34)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
             }
         }
     }

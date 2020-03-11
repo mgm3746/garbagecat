@@ -108,15 +108,14 @@ public class UnifiedG1ConcurrentEvent extends G1Collector implements UnifiedLogg
      */
     private static final String[] REGEX = {
             // gc
-            "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER + " Concurrent Cycle( "
-                    + UnifiedRegEx.DURATION + ")?$",
+            "^" + UnifiedRegEx.DECORATOR + " Concurrent Cycle( " + UnifiedRegEx.DURATION + ")?$",
             // gc, marking
-            "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
+            "^" + UnifiedRegEx.DECORATOR
                     + " Concurrent (Clear Claimed Marks|Scan Root Regions|Mark|Mark From Roots|Preclean|"
                     + "Rebuild Remembered Sets|Cleanup for Next Mark|Create Live Data)( \\(" + JdkRegEx.TIMESTAMP
                     + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + UnifiedRegEx.DURATION + ")?$",
             // gc, task
-            "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER + " Using \\d workers of \\d for marking$"
+            "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$"
             //
     };
 

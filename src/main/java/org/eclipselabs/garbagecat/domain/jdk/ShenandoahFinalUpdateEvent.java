@@ -10,39 +10,54 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * SHENANDOAH_FINAL_EVAC
+ * SHENANDOAH_FINAL_UPDATE
  * </p>
  * 
  * <p>
- * TODO
+ * Finishes the update references phase by re-updating the existing root set. It also recycles the regions from the
+ * collection set, because now heap does not have references to (stale) objects to them. This is the last pause in the
+ * cycle, and its duration is dependent on the size of root set[1].
+ * 
+ * [1]<a href="https://wiki.openjdk.java.net/display/shenandoah/Main">Shenandoah GC</a>
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) JDK8:
+ * </p>
+ * 
  * <pre>
- * [10.444s][info][gc] GC(278) Pause Final Evac 0.003ms
+ * 2020-03-10T08:03:47.442-0400: 18.504: [Pause Final Update Refs, 0.206 ms]
+ * </pre>
+ * 
+ * <p>
+ * 2) Unified:
+ * </p>
+ * 
+ * <pre>
+ * [0.478s][info][gc] GC(0) Pause Final Update Refs 0.232ms
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahFinalEvacEvent extends ShenandoahCollector
-        implements UnifiedLogging, BlockingEvent, ParallelEvent {
+public class ShenandoahFinalUpdateEvent extends ShenandoahCollector implements BlockingEvent, ParallelEvent {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -62,8 +77,8 @@ public class ShenandoahFinalEvacEvent extends ShenandoahCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
-            + " Pause Final Evac " + UnifiedRegEx.DURATION + "[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+            + ") [\\[]{0,1}Pause Final Update Refs[,]{0,1} " + UnifiedRegEx.DURATION + "[\\]]{0,1}[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -73,31 +88,36 @@ public class ShenandoahFinalEvacEvent extends ShenandoahCollector
      * @param logEntry
      *            The log entry for the event.
      */
-    public ShenandoahFinalEvacEvent(String logEntry) {
+    public ShenandoahFinalUpdateEvent(String logEntry) {
         this.logEntry = logEntry;
         if (logEntry.matches(REGEX)) {
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                long endTimestamp;
-                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(13));
-                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                } else {
-                    if (matcher.group(15) != null) {
-                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(17));
-                        } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
-                        }
+                duration = JdkMath.convertMillisToMicros(matcher.group(36)).intValue();
+                if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
+                    long endTimestamp;
+                    if (matcher.group(13).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        endTimestamp = Long.parseLong(matcher.group(29));
+                    } else if (matcher.group(13).matches(UnifiedRegEx.UPTIME)) {
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(24)).longValue();
                     } else {
-                        // Datestamp only.
-                        endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                        if (matcher.group(27) != null) {
+                            if (matcher.group(27).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                                endTimestamp = Long.parseLong(matcher.group(29));
+                            } else {
+                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(28)).longValue();
+                            }
+                        } else {
+                            // Datestamp only.
+                            endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(13));
+                        }
                     }
+                    timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+                } else {
+                    // JDK8
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(23)).intValue();
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             }
         }
     }
@@ -112,7 +132,7 @@ public class ShenandoahFinalEvacEvent extends ShenandoahCollector
      * @param duration
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public ShenandoahFinalEvacEvent(String logEntry, long timestamp, int duration) {
+    public ShenandoahFinalUpdateEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
@@ -131,7 +151,7 @@ public class ShenandoahFinalEvacEvent extends ShenandoahCollector
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString();
+        return JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString();
     }
 
     /**

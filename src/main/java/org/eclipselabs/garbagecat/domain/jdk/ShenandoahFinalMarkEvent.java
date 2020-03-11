@@ -10,15 +10,13 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.TimesData;
-import org.eclipselabs.garbagecat.domain.jdk.CmsCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -27,41 +25,73 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * UNIFIED_CMS_INITIAL_MARK
+ * SHENANDOAH_FINAL_MARK
  * </p>
  * 
  * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.CmsInitialMarkEvent} with unified logging (JDK9+).
- * </p>
+ * Finishes the concurrent marking by draining all pending marking/update queues and re-scanning the root set. It also
+ * initializes evacuation by figuring out the regions to be evacuated (collection set), pre-evacuating some roots, and
+ * generally prepares runtime for the next phase. Part of this work can be done concurrently during Concurrent
+ * precleaning phase. This is the second pause in the cycle, and the most dominant time consumers here are draining the
+ * queues and scanning the root set[1].
  * 
- * <p>
- * A stop-the-world phase of the concurrent low pause collector that identifies the initial set of live objects directly
- * reachable from GC roots. This event does not do any garbage collection, only marking of objects.
+ * [1]<a href="https://wiki.openjdk.java.net/display/shenandoah/Main">Shenandoah GC</a>
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
  * <p>
- * 1) Without times data:
+ * 1) JDK8 standard format:
  * </p>
  * 
  * <pre>
- * [0.132s][info][gc] GC(3) Pause Initial Mark 0M-&gt;0M(2M) 0.241ms
+ * 2020-03-10T08:03:29.427-0400: 0.489: [Pause Final Mark, 0.313 ms]
  * </pre>
  * 
  * <p>
- * 1) With times data:
+ * 2) JDK8 process weakrefs:
  * </p>
  * 
  * <pre>
- * [0.053s][info][gc           ] GC(1) Pause Initial Mark 0M-&gt;0M(2M) 0.278ms User=0.00s Sys=0.00s Real=0.00s
+ * 2020-03-10T08:03:45.915-0400: 16.977: [Pause Final Mark (process weakrefs), 1.040 ms]
+ * </pre>
+ * 
+ * <p>
+ * 3) JDK8 update refs:
+ * </p>
+ * 
+ * <pre>
+ * 2020-03-10T08:07:16.371-0400: 227.433: [Pause Final Mark (update refs), 0.589 ms]
+ * </pre>
+ * 
+ * <p>
+ * 4) Unified tandard format:
+ * </p>
+ * 
+ * <pre>
+ * [0.531s][info][gc] GC(1) Pause Final Mark 1.004ms
+ * </pre>
+ * 
+ * <p>
+ * 5) Unified process weakrefs:
+ * </p>
+ * 
+ * <pre>
+ * [0.820s][info][gc] GC(5) Pause Final Mark (process weakrefs) 0.231ms
+ * </pre>
+ * 
+ * <p>
+ * 6) Unified update refs:
+ * </p>
+ * 
+ * <pre>
+ * [10.459s][info][gc] GC(279) Pause Final Mark (update refs) 0.253ms
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedCmsInitialMarkEvent extends CmsCollector
-        implements UnifiedLogging, BlockingEvent, ParallelEvent, TimesData {
+public class ShenandoahFinalMarkEvent extends ShenandoahCollector implements BlockingEvent, ParallelEvent {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -79,20 +109,11 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
     private long timestamp;
 
     /**
-     * The time of all threads added together in centiseconds.
-     */
-    private int timeUser;
-
-    /**
-     * The wall (clock) time in centiseconds.
-     */
-    private int timeReal;
-
-    /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+            + ") [\\[]{0,1}Pause Final Mark( \\(update refs\\))?( \\(process weakrefs\\))?[,]{0,1} "
+            + UnifiedRegEx.DURATION + "[\\]]{0,1}[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -102,41 +123,42 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
      * @param logEntry
      *            The log entry for the event.
      */
-    public UnifiedCmsInitialMarkEvent(String logEntry) {
+    public ShenandoahFinalMarkEvent(String logEntry) {
         this.logEntry = logEntry;
         if (logEntry.matches(REGEX)) {
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                long endTimestamp;
-                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(13));
-                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                } else {
-                    if (matcher.group(15) != null) {
-                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(17));
-                        } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
-                        }
+                duration = JdkMath.convertMillisToMicros(matcher.group(38)).intValue();
+                if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
+                    long endTimestamp;
+                    if (matcher.group(13).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        endTimestamp = Long.parseLong(matcher.group(29));
+                    } else if (matcher.group(13).matches(UnifiedRegEx.UPTIME)) {
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(24)).longValue();
                     } else {
-                        // Datestamp only.
-                        endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                        if (matcher.group(27) != null) {
+                            if (matcher.group(27).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                                endTimestamp = Long.parseLong(matcher.group(29));
+                            } else {
+                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(28)).longValue();
+                            }
+                        } else {
+                            // Datestamp only.
+                            endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(13));
+                        }
                     }
-                }
-                duration = JdkMath.convertMillisToMicros(matcher.group(33)).intValue();
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                if (matcher.group(34) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
+                    timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+                } else {
+                    // JDK8
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 }
             }
         }
     }
 
     /**
-     * Alternate constructor. Create CMS Initial Mark from values.
+     * Alternate constructor. Create event from values.
      * 
      * @param logEntry
      *            The log entry for the event.
@@ -145,7 +167,7 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
      * @param duration
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public UnifiedCmsInitialMarkEvent(String logEntry, long timestamp, int duration) {
+    public ShenandoahFinalMarkEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
@@ -163,20 +185,8 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
         return timestamp;
     }
 
-    public int getTimeUser() {
-        return timeUser;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
-    }
-
-    public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeReal);
-    }
-
     public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString();
+        return JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString();
     }
 
     /**

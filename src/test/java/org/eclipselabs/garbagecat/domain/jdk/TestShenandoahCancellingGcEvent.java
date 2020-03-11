@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,14 @@ import junit.framework.TestCase;
  */
 public class TestShenandoahCancellingGcEvent extends TestCase {
 
-    public void testLineTriggerLearning() {
+    public void testLineJdk8() {
+        String logLine = "Cancelling GC: Stopping VM";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CANCELLING_GC.toString() + ".",
+                ShenandoahCancellingGcEvent.match(logLine));
+    }
+
+    public void testLineUnified() {
         String logLine = "[72.659s][info][gc] Cancelling GC: Stopping VM";
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CANCELLING_GC.toString() + ".",
@@ -63,18 +70,19 @@ public class TestShenandoahCancellingGcEvent extends TestCase {
     public void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_CANCELLING_GC);
-        Assert.assertTrue(JdkUtil.LogEventType.SHENANDOAH_CANCELLING_GC.toString() + " not indentified as unified.",
+        Assert.assertFalse(
+                JdkUtil.LogEventType.SHENANDOAH_CANCELLING_GC.toString() + " incorrectly indentified as unified.",
                 UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
-    public void testDetailed() {
+    public void testUnifiedDetailed() {
         String logLine = "[69.941s][info][gc           ] Cancelling GC: Stopping VM";
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CANCELLING_GC.toString() + ".",
                 ShenandoahCancellingGcEvent.match(logLine));
     }
 
-    public void testUptimeMillis() {
+    public void testUnifiedUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.997-0200][1357909ms] Cancelling GC: Stopping VM";
         Assert.assertTrue(
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CANCELLING_GC.toString() + ".",

@@ -419,6 +419,19 @@ public class JdkRegEx {
     public static final String PRINT_PROMOTION_FAILURE = "( \\(\\d{1,2}: promotion failure size = \\d{1,10}\\) ){1,64}";
 
     /**
+     * Regular expression for recognized decorations prepending logging.
+     * 
+     * <p>
+     * 1) time: uptime:
+     * </p>
+     * 
+     * <pre>
+     * 2020-03-10T08:03:29.311-0400: 0.373: [Concurrent reset 16991K-&gt;17152K(17408K), 0.435 ms]
+     * </pre>
+     */
+    public static final String DECORATOR = JdkRegEx.DATESTAMP + ": " + JdkRegEx.TIMESTAMP + ":";
+
+    /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private JdkRegEx() {

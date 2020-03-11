@@ -258,4 +258,9 @@ public class TestJdkRegEx extends TestCase {
         Assert.assertTrue("'" + promotionFailure + "' " + "not a valid PROMOTION_FAILURE.",
                 promotionFailure.matches(JdkRegEx.PRINT_PROMOTION_FAILURE));
     }
+
+    public void testDecoratorTimeUptime() {
+        String decorator = "2020-03-10T08:03:29.311-0400: 0.373:";
+        Assert.assertTrue("'" + decorator + "' " + "not a valid decorator.", decorator.matches(JdkRegEx.DECORATOR));
+    }
 }

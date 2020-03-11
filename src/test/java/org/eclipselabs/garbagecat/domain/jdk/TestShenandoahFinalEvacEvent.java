@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,16 @@ import junit.framework.TestCase;
  */
 public class TestShenandoahFinalEvacEvent extends TestCase {
 
-    public void testLogLine() {
+    public void testLogLineJdk8() {
+        String logLine = "2020-03-10T08:03:46.251-0400: 17.313: [Pause Final Evac, 0.009 ms]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".",
+                ShenandoahFinalEvacEvent.match(logLine));
+        ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 17313, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 9, event.getDuration());
+    }
+
+    public void testLogLineUnified() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".",
                 ShenandoahFinalEvacEvent.match(logLine));
@@ -72,7 +81,8 @@ public class TestShenandoahFinalEvacEvent extends TestCase {
     public void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_FINAL_EVAC);
-        Assert.assertTrue(JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not indentified as unified.",
+        Assert.assertFalse(
+                JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " incorrectly indentified as unified.",
                 UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
@@ -82,7 +92,7 @@ public class TestShenandoahFinalEvacEvent extends TestCase {
                 ShenandoahFinalEvacEvent.match(logLine));
     }
 
-    public void testLogLineDetailed() {
+    public void testLogLineUnifiedDetailed() {
         String logLine = "[41.912s][info][gc           ] GC(1500) Pause Final Evac 0.022ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".",
                 ShenandoahFinalEvacEvent.match(logLine));

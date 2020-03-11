@@ -10,14 +10,12 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
@@ -25,28 +23,44 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * SHENANDOAH_INIT_UPDATE
+ * CONSIDER_CLASS_UNLOADING_CONC_MARK
  * </p>
  * 
  * <p>
- * Initializes the update references phase. It does almost nothing except making sure all GC and applications threads
- * have finished evacuation, and then preparing GC for next phase. This is the third pause in the cycle, the shortest of
- * them all[1].
- * 
- * [1]<a href="https://wiki.openjdk.java.net/display/shenandoah/Main">Shenandoah GC</a>
+ * Logging output at the beginning of gc log when using the Shenandoah collector.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) With <code>-Xlog:gc*:file=&lt;file&gt;</code>:
+ * </p>
+ * 
  * <pre>
- * [5.312s][info][gc] GC(110) Pause Init Update Refs 0.005ms
+ * [[0.001s][info][gc] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are observed on class-unloading sensitive workloads
+ * </pre>
+ * 
+ * <p>
+ * 2) With <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>.
+ * </p>
+ * 
+ * <pre>
+ * [2019-02-05T14:47:31.090-0200][2ms] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are observed on class-unloading sensitive workloads
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahInitUpdateEvent extends ShenandoahCollector
-        implements UnifiedLogging, BlockingEvent, ParallelEvent {
+public class ShenandoahConsiderClassUnloadingConcMarkEvent extends ShenandoahCollector implements ThrowAwayEvent {
+
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR
+            + " Consider -XX:\\+ClassUnloadingWithConcurrentMark if large pause times are "
+            + "observed on class-unloading sensitive workloads[ ]*$";
+
+    private static Pattern pattern = Pattern.compile(REGEX);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -54,22 +68,9 @@ public class ShenandoahInitUpdateEvent extends ShenandoahCollector
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
-     */
-    private int duration;
-
-    /**
      * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
-
-    /**
-     * Regular expressions defining the logging.
-     */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
-            + " Pause Init Update Refs " + UnifiedRegEx.DURATION + "[ ]*$";
-
-    private static final Pattern pattern = Pattern.compile(REGEX);
 
     /**
      * Create event from log entry.
@@ -77,66 +78,43 @@ public class ShenandoahInitUpdateEvent extends ShenandoahCollector
      * @param logEntry
      *            The log entry for the event.
      */
-    public ShenandoahInitUpdateEvent(String logEntry) {
+    public ShenandoahConsiderClassUnloadingConcMarkEvent(String logEntry) {
         this.logEntry = logEntry;
+
         if (logEntry.matches(REGEX)) {
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                long endTimestamp;
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(13));
+                    timestamp = Long.parseLong(matcher.group(13));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 } else {
                     if (matcher.group(15) != null) {
                         if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(17));
+                            timestamp = Long.parseLong(matcher.group(17));
                         } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
                         }
                     } else {
                         // Datestamp only.
-                        endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                        timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(23)).intValue();
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             }
         }
-
-    }
-
-    /**
-     * Alternate constructor. Create event from values.
-     * 
-     * @param logEntry
-     *            The log entry for the event.
-     * @param timestamp
-     *            The time when the GC event started in milliseconds after JVM startup.
-     * @param duration
-     *            The elapsed clock time for the GC event in microseconds.
-     */
-    public ShenandoahInitUpdateEvent(String logEntry, long timestamp, int duration) {
-        this.logEntry = logEntry;
-        this.timestamp = timestamp;
-        this.duration = duration;
     }
 
     public String getLogEntry() {
         return logEntry;
     }
 
-    public int getDuration() {
-        return duration;
+    public String getName() {
+        return JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString();
     }
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString();
     }
 
     /**

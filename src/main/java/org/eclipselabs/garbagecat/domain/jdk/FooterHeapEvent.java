@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -40,9 +40,26 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [25.016s][info][gc,heap,exit  ]  Metaspace       used 11079K, capacity 11287K, committed 11520K, reserved 1060864K
  * [25.016s][info][gc,heap,exit  ]   class space    used 909K, capacity 995K, committed 1024K, reserved 1048576K
  * </pre>
+ *
+ * <p>
+ * 2) Shenandoah JDK8:
+ * </p>
+ * 
+ * <pre>
+ * Heap
+ * Shenandoah Heap
+ *  128M total, 128M committed, 102M used
+ *  512 x 256K regions
+ * Status: has forwarded objects, cancelled
+ * Reserved region:
+ *  - [0x00000000f8000000, 0x0000000100000000)
+ * Collection set:
+ *  - map (vanilla): 0x00007f271b2e5e00
+ *  - map (biased):  0x00007f271b2e2000
+ * </pre>
  * 
  * <p>
- * 2) Shenandoah:
+ * 3) Shenandoah Unified:
  * </p>
  * 
  * <pre>
@@ -62,7 +79,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 3) Serial:
+ * 4) Serial:
  * </p>
  * 
  * <pre>
@@ -78,7 +95,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 3) Parallel Serial:
+ * 5) Parallel Serial:
  * </p>
  * 
  * <pre>
@@ -94,7 +111,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 4) Parallel Serial Compacting:
+ * 6) Parallel Serial Compacting:
  * </p>
  * 
  * <pre>
@@ -110,7 +127,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 4) CMS:
+ * 7) CMS:
  * </p>
  * 
  * <pre>
@@ -127,7 +144,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class FooterHeapEvent implements UnifiedLogging, ThrowAwayEvent {
+public class FooterHeapEvent implements ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
@@ -140,17 +157,17 @@ public class FooterHeapEvent implements UnifiedLogging, ThrowAwayEvent {
             "^" + UnifiedRegEx.DECORATOR + "   region size " + JdkRegEx.SIZE + ", \\d{1,2} young \\(" + JdkRegEx.SIZE
                     + "\\), \\d survivors \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "  - \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )? - \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "( Shenandoah)? [h|H]eap$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?(Shenandoah )?[h|H]eap$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "  " + JdkRegEx.SIZE + " total, " + JdkRegEx.SIZE + " committed, "
+            "^(" + UnifiedRegEx.DECORATOR + " )? " + JdkRegEx.SIZE + " total, " + JdkRegEx.SIZE + " committed, "
                     + JdkRegEx.SIZE + " used$",
             //
             "^" + UnifiedRegEx.DECORATOR + "  Metaspace       used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
                     + ", committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "  \\d{1,4} x " + JdkRegEx.SIZE + " regions$",
+            "^(" + UnifiedRegEx.DECORATOR + " )? \\d{1,4} x " + JdkRegEx.SIZE + " regions$",
             //
             "^" + UnifiedRegEx.DECORATOR + "   class space    used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
                     + ", " + "committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
@@ -164,13 +181,13 @@ public class FooterHeapEvent implements UnifiedLogging, ThrowAwayEvent {
                     + ",[ ]{1,3}\\d{1,3}% used \\[" + JdkRegEx.ADDRESS + ",[ ]{0,1}" + JdkRegEx.ADDRESS + ",[ ]{0,1}"
                     + JdkRegEx.ADDRESS + "(,[ ]{0,1}" + JdkRegEx.ADDRESS + ")?\\)$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Status: (has forwarded objects, )?cancelled$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Status: (has forwarded objects, )?cancelled$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Reserved region:$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Reserved region:$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Collection set:$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Collection set:$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "  - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$"
+            "^(" + UnifiedRegEx.DECORATOR + " )? - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$"
             //
     };
 

@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,16 @@ import junit.framework.TestCase;
  */
 public class TestShenandoahFinalUpdateEvent extends TestCase {
 
-    public void testLogLine() {
+    public void testLogLineJdk8() {
+        String logLine = "2020-03-10T08:03:47.442-0400: 18.504: [Pause Final Update Refs, 0.206 ms]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + ".",
+                ShenandoahFinalUpdateEvent.match(logLine));
+        ShenandoahFinalUpdateEvent event = new ShenandoahFinalUpdateEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 18504, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 206, event.getDuration());
+    }
+
+    public void testLogLineUnified() {
         String logLine = "[1.030s][info][gc] GC(10) Pause Final Update Refs 0.097ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + ".",
                 ShenandoahFinalUpdateEvent.match(logLine));
@@ -72,7 +81,8 @@ public class TestShenandoahFinalUpdateEvent extends TestCase {
     public void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_FINAL_UPDATE);
-        Assert.assertTrue(JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + " not indentified as unified.",
+        Assert.assertFalse(
+                JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + " incorrectly indentified as unified.",
                 UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
@@ -82,7 +92,7 @@ public class TestShenandoahFinalUpdateEvent extends TestCase {
                 ShenandoahFinalUpdateEvent.match(logLine));
     }
 
-    public void testLogLineDetailed() {
+    public void testLogLineUnifiedDetailed() {
         String logLine = "[69.644s][info][gc           ] GC(2582) Pause Final Update Refs 0.302ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + ".",
                 ShenandoahFinalUpdateEvent.match(logLine));
@@ -91,7 +101,7 @@ public class TestShenandoahFinalUpdateEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 302, event.getDuration());
     }
 
-    public void testLogLineUptimeMillis() {
+    public void testLogLineUnifiedUptimeMillis() {
         String logLine = "[2019-02-05T14:47:34.249-0200][3161ms] GC(0) Pause Final Update Refs 0.998ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + ".",
                 ShenandoahFinalUpdateEvent.match(logLine));

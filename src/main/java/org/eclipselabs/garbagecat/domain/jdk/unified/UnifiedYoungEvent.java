@@ -97,9 +97,8 @@ public class UnifiedYoungEvent extends UnknownCollector
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
-            + " Pause Young \\(" + TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) " + UnifiedRegEx.DURATION + "[ ]*$";
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + TRIGGER + "\\) "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -129,12 +128,12 @@ public class UnifiedYoungEvent extends UnknownCollector
                     endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(23);
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)),
-                    matcher.group(33).charAt(0));
-            duration = JdkMath.convertMillisToMicros(matcher.group(34)).intValue();
+            trigger = matcher.group(24);
+            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)), matcher.group(28).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)), matcher.group(31).charAt(0));
+            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(32)),
+                    matcher.group(34).charAt(0));
+            duration = JdkMath.convertMillisToMicros(matcher.group(35)).intValue();
             timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
         }
     }

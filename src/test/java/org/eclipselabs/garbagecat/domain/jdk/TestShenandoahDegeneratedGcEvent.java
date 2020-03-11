@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,8 +79,8 @@ public class TestShenandoahDegeneratedGcEvent extends TestCase {
     public void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_DEGENERATED_GC_MARK);
-        Assert.assertTrue(
-                JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC_MARK.toString() + " not indentified as unified.",
+        Assert.assertFalse(
+                JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC_MARK.toString() + " incorrectly indentified as unified.",
                 UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 

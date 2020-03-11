@@ -30,6 +30,7 @@ import java.util.Set;
 import org.eclipselabs.garbagecat.Main;
 import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
@@ -62,8 +63,8 @@ import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
@@ -73,7 +74,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ParallelPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.SerialPreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.unified.ShenandoahPreprocessAction;
+import org.eclipselabs.garbagecat.preprocess.jdk.ShenandoahPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
@@ -755,13 +756,11 @@ public class GcManager {
                         jvmDao.addAnalysis(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED);
                     }
                 } else if (event instanceof ShenandoahConcurrentEvent) {
-                    if (((ShenandoahConcurrentEvent) event).getCombinedOccupancyInit() > jvmDao
-                            .getMaxHeapOccupancyNonBlocking()) {
-                        jvmDao.setMaxHeapOccupancyNonBlocking(
-                                ((ShenandoahConcurrentEvent) event).getCombinedOccupancyInit());
+                    if (((CombinedData) event).getCombinedOccupancyInit() > jvmDao.getMaxHeapOccupancyNonBlocking()) {
+                        jvmDao.setMaxHeapOccupancyNonBlocking(((CombinedData) event).getCombinedOccupancyInit());
                     }
-                    if (((ShenandoahConcurrentEvent) event).getCombinedSpace() > jvmDao.getMaxHeapSpaceNonBlocking()) {
-                        jvmDao.setMaxHeapSpaceNonBlocking(((ShenandoahConcurrentEvent) event).getCombinedSpace());
+                    if (((CombinedData) event).getCombinedSpace() > jvmDao.getMaxHeapSpaceNonBlocking()) {
+                        jvmDao.setMaxHeapSpaceNonBlocking(((CombinedData) event).getCombinedSpace());
                     }
                 } else if (event instanceof UnknownEvent) {
                     // Don't count reportable events with datestamp only as unidentified

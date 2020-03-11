@@ -41,21 +41,8 @@ public class UnifiedUtil {
             while (iterator.hasNext() && !isUnifiedLogging) {
                 JdkUtil.LogEventType eventType = iterator.next();
                 switch (eventType) {
-                case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
-                case FOOTER_HEAP:
-                case FOOTER_STATS:
-                case GC_INFO:
                 case HEAP_ADDRESS:
                 case HEAP_REGION_SIZE:
-                case SHENANDOAH_CANCELLING_GC:
-                case SHENANDOAH_CONCURRENT:
-                case SHENANDOAH_DEGENERATED_GC_MARK:
-                case SHENANDOAH_FINAL_EVAC:
-                case SHENANDOAH_FINAL_MARK:
-                case SHENANDOAH_FINAL_UPDATE:
-                case SHENANDOAH_INIT_MARK:
-                case SHENANDOAH_INIT_UPDATE:
-                case SHENANDOAH_TRIGGER:
                 case UNIFIED_BLANK_LINE:
                 case UNIFIED_CMS_CONCURRENT:
                 case UNIFIED_CMS_INITIAL_MARK:

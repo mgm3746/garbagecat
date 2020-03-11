@@ -10,71 +10,59 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
+
+import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
- * SHENANDOAH_TRIGGER
+ * SHENANDOAH_CANCELLING_GC
  * </p>
  * 
  * <p>
- * Trigger information logging. Broken out from {@link org.eclipselabs.garbagecat.domain.jdk.unified.GcInfoEvent} for
- * possible future analysis.
+ * Cancelling GC information logging.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
- * <pre>
- * [0.448s][info][gc] Trigger: Learning 1 of 5. Free (44M) is below initial threshold (44M)
- * </pre>
+ * <p>
+ * 1) Unified:
+ * </p>
  * 
  * <pre>
- * [0.814s][info][gc] Trigger: Average GC time (18.86 ms) is above the time for allocation rate (328.75 MB/s) to deplete free headroom (5M)
+ * [72.659s][info][gc] Cancelling GC: Stopping VM
  * </pre>
  * 
+ * <p>
+ * 2) JDK8:
+ * </p>
+ * 
  * <pre>
- * [24.356s][info][gc] Trigger: Free (6M) is below minimum threshold (6M)
+ * Cancelling GC: Stopping VM
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahTriggerEvent extends ShenandoahCollector implements UnifiedLogging, ThrowAwayEvent {
+public class ShenandoahCancellingGcEvent extends ShenandoahCollector implements ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String[] REGEX = {
-            // Learning
-            "^" + UnifiedRegEx.DECORATOR + " Trigger: Learning \\d of \\d. Free \\(" + JdkRegEx.SIZE
-                    + "\\) is below initial threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
-            // Average
-            "^" + UnifiedRegEx.DECORATOR + " Trigger: Average GC time \\(" + UnifiedRegEx.DURATION
-                    + "\\) is above the time for allocation rate \\(" + JdkRegEx.ALLOCATION_RATE
-                    + "\\) to deplete free headroom \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
-            // Free
-            "^" + UnifiedRegEx.DECORATOR + " Trigger: Free \\(" + JdkRegEx.SIZE + "\\) is below minimum threshold \\("
-                    + JdkRegEx.SIZE + "\\)[ ]*$",
-            // Time
-            "^" + UnifiedRegEx.DECORATOR + " Trigger: Time since last GC \\(\\d{1,7} ms\\) is larger "
-                    + "than guaranteed interval \\(\\d{1,7} ms\\)[ ]*$",
-            // Allocation Failure
-            "^" + UnifiedRegEx.DECORATOR + " Trigger: Handle Allocation Failure[ ]*$"
-            //
-    };
+    private static final String REGEX = "^(" + UnifiedRegEx.DECORATOR + " )?Cancelling GC: Stopping VM[ ]*$";
+
+    private static Pattern pattern = Pattern.compile(REGEX);
 
     public String getLogEntry() {
         throw new UnsupportedOperationException("Event does not include log entry information");
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString();
+        return JdkUtil.LogEventType.SHENANDOAH_CANCELLING_GC.toString();
     }
 
     public long getTimestamp() {
@@ -89,13 +77,6 @@ public class ShenandoahTriggerEvent extends ShenandoahCollector implements Unifi
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        boolean match = false;
-        for (int i = 0; i < REGEX.length; i++) {
-            if (logLine.matches(REGEX[i])) {
-                match = true;
-                break;
-            }
-        }
-        return match;
+        return pattern.matcher(logLine).matches();
     }
 }

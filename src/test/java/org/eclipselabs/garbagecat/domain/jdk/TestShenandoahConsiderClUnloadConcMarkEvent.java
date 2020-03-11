@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +26,9 @@ import junit.framework.TestCase;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestShenandoahConsiderClassUnloadingConcMarkEvent extends TestCase {
+public class TestShenandoahConsiderClUnloadConcMarkEvent extends TestCase {
 
-    public void testLine() {
+    public void testLineUnifie() {
         String logLine = "[0.001s][info][gc] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are "
                 + "observed on class-unloading sensitive workloads";
         Assert.assertTrue(
@@ -74,8 +74,8 @@ public class TestShenandoahConsiderClassUnloadingConcMarkEvent extends TestCase 
     public void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK);
-        Assert.assertTrue(JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString()
-                + " not indentified as unified.", UnifiedUtil.isUnifiedLogging(eventTypes));
+        Assert.assertFalse(JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString()
+                + " incorrectly indentified as unified.", UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
     public void testLineWithSpaces() {

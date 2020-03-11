@@ -10,15 +10,13 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -27,26 +25,35 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * SHENANDOAH_DEGENERATED_GC_MARK
+ * SHENANDOAH_FINAL_EVAC
  * </p>
  * 
  * <p>
- * When allocation failure occurs, degenerated GC continues the in-progress "concurrent" cycle under stop-the-world.[1].
- * 
- * [1]<a href="https://wiki.openjdk.java.net/display/shenandoah/Main">Shenandoah GC</a>
+ * TODO
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) JDK8:
+ * </p>
+ * 
  * <pre>
- * [52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M-&gt;30M(64M) 53.697ms
+ * 2020-03-10T08:03:46.251-0400: 17.313: [Pause Final Evac, 0.009 ms]
+ * </pre>
+ * 
+ * <p>
+ * 2) Unified:
+ * </p>
+ * 
+ * <pre>
+ * [10.444s][info][gc] GC(278) Pause Final Evac 0.003ms
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
-        implements UnifiedLogging, BlockingEvent, ParallelEvent, CombinedData {
+public class ShenandoahFinalEvacEvent extends ShenandoahCollector implements BlockingEvent, ParallelEvent {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -64,26 +71,10 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
     private long timestamp;
 
     /**
-     * Combined size (kilobytes) at beginning of GC event.
-     */
-    private int combined;
-
-    /**
-     * Combined size (kilobytes) at end of GC event.
-     */
-    private int combinedEnd;
-
-    /**
-     * Combined available space (kilobytes).
-     */
-    private int combinedAvailable;
-
-    /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
-            + " Pause Degenerated GC \\(Mark\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) " + UnifiedRegEx.DURATION + "[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+            + ") [\\[]{0,1}Pause Final Evac[,]{0,1} " + UnifiedRegEx.DURATION + "[\\]]{0,1}[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -93,35 +84,36 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
      * @param logEntry
      *            The log entry for the event.
      */
-    public ShenandoahDegeneratedGcMarkEvent(String logEntry) {
+    public ShenandoahFinalEvacEvent(String logEntry) {
         this.logEntry = logEntry;
         if (logEntry.matches(REGEX)) {
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                long endTimestamp;
-                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(13));
-                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                } else {
-                    if (matcher.group(15) != null) {
-                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(17));
-                        } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
-                        }
+                duration = JdkMath.convertMillisToMicros(matcher.group(36)).intValue();
+                if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
+                    long endTimestamp;
+                    if (matcher.group(13).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        endTimestamp = Long.parseLong(matcher.group(29));
+                    } else if (matcher.group(13).matches(UnifiedRegEx.UPTIME)) {
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(24)).longValue();
                     } else {
-                        // Datestamp only.
-                        endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                        if (matcher.group(27) != null) {
+                            if (matcher.group(27).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                                endTimestamp = Long.parseLong(matcher.group(29));
+                            } else {
+                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(28)).longValue();
+                            }
+                        } else {
+                            // Datestamp only.
+                            endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(13));
+                        }
                     }
+                    timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+                } else {
+                    // JDK8
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(32)).intValue();
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(23)), matcher.group(25).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)), matcher.group(28).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)),
-                        matcher.group(31).charAt(0));
             }
         }
     }
@@ -136,7 +128,7 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
      * @param duration
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public ShenandoahDegeneratedGcMarkEvent(String logEntry, long timestamp, int duration) {
+    public ShenandoahFinalEvacEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
@@ -154,20 +146,8 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
         return timestamp;
     }
 
-    public int getCombinedOccupancyInit() {
-        return combined;
-    }
-
-    public int getCombinedOccupancyEnd() {
-        return combinedEnd;
-    }
-
-    public int getCombinedSpace() {
-        return combinedAvailable;
-    }
-
     public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC_MARK.toString();
+        return JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString();
     }
 
     /**

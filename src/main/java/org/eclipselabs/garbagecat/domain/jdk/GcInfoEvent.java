@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -29,7 +29,16 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * <h3>Example Logging</h3>
  * 
  * <p>
- * 1) Header default (uptime,level,tags):
+ * 1) Jdk8 header:
+ * </p>
+ * 
+ * <pre>
+ * Heuristics ergonomically sets -XX:+ExplicitGCInvokesConcurrent
+ * Heuristics ergonomically sets -XX:+ShenandoahImplicitGCInvokesConcurrent
+ * </pre>
+ * 
+ * <p>
+ * 2) Unified header default (uptime,level,tags):
  * </p>
  * 
  * <pre>
@@ -49,7 +58,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 2) Header datestamp and milliseconds (time,millis):
+ * 3) Unified header datestamp and milliseconds (time,millis):
  * </p>
  * 
  * <pre>
@@ -64,10 +73,12 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 3) Between cycles default (uptime,level,tags):
+ * 4) Unified between cycles default (uptime,level,tags):
+ * </p>
  * 
- * Note: Trigger is broken out to a separate event,
- * {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahTriggerEvent} ,for possible future analsysis.
+ * <p>
+ * Note: Trigger is broken out to a separate event, {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahTriggerEvent}
+ * ,for possible future analsysis.
  * </p>
  * 
  * <pre>
@@ -83,43 +94,43 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class GcInfoEvent implements UnifiedLogging, ThrowAwayEvent {
+public class GcInfoEvent implements ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX[] = {
             //
-            "^" + UnifiedRegEx.DECORATOR + " Humongous object threshold: " + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Humongous object threshold: " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Max TLAB size: " + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Max TLAB size: " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " GC threads: \\d parallel, \\d concurrent$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?GC threads: \\d parallel, \\d concurrent$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Reference processing: parallel$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Reference processing: parallel$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Shenandoah heuristics: adaptive$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Shenandoah heuristics: adaptive$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Initialize Shenandoah heap( with initial size \\d{10} bytes|: "
+            "^(" + UnifiedRegEx.DECORATOR + " )?Initialize Shenandoah heap( with initial size \\d{10} bytes|: "
                     + JdkRegEx.SIZE + " initial, " + JdkRegEx.SIZE + " min, " + JdkRegEx.SIZE + " max)$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Pacer for Idle. Initial: " + JdkRegEx.SIZE
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pacer for Idle. Initial: " + JdkRegEx.SIZE
                     + ", Alloc Tax Rate: \\d\\.\\dx$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Safepointing mechanism: global-page poll$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Safepointing mechanism: global-page poll$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Free: " + JdkRegEx.SIZE + " \\(\\d{1,4} regions\\), Max regular: "
+            "^(" + UnifiedRegEx.DECORATOR + " )?Free: " + JdkRegEx.SIZE + " \\(\\d{1,4} regions\\), Max regular: "
                     + JdkRegEx.SIZE + ", Max humongous: " + JdkRegEx.SIZE
                     + ", External frag: \\d%, Internal frag: \\d%$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Evacuation Reserve: " + JdkRegEx.SIZE
+            "^(" + UnifiedRegEx.DECORATOR + " )?Evacuation Reserve: " + JdkRegEx.SIZE
                     + " \\(\\d{1,3} regions\\), Max regular: " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Regions: \\d{1,3} x " + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Regions: \\d{1,3} x " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Humongous object threshold: " + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Humongous object threshold: " + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Heuristics ergonomically sets (-XX:\\+ExplicitGCInvokesConcurrent|"
+            "^(" + UnifiedRegEx.DECORATOR + " )?Heuristics ergonomically sets (-XX:\\+ExplicitGCInvokesConcurrent|"
                     + "-XX:\\+ShenandoahImplicitGCInvokesConcurrent)$"
             //
     };

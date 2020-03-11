@@ -62,16 +62,15 @@ public class UnifiedRemarkEvent extends UnknownCollector
     /**
      * Regular expressions defining the logging JDK9+.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
-            + " Pause Remark " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
-            + UnifiedRegEx.DURATION + "[ ]*$";
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Remark " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + "[ ]*$";
 
     /**
      * Regular expression defining preprocessed logging.
      */
-    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
-            + " Pause Remark " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
-            + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
+    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Remark " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9
+            + "[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -127,7 +126,7 @@ public class UnifiedRemarkEvent extends UnknownCollector
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(32)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(33)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
@@ -153,11 +152,11 @@ public class UnifiedRemarkEvent extends UnknownCollector
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(32)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(33)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                if (matcher.group(33) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
+                if (matcher.group(34) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
                 } else {
                     timeUser = TimesData.NO_DATA;
                     timeReal = TimesData.NO_DATA;

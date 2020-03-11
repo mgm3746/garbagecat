@@ -10,30 +10,28 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * SHENANDOAH_FINAL_MARK
+ * SHENANDOAH_INIT_UPDATE
  * </p>
  * 
  * <p>
- * Finishes the concurrent marking by draining all pending marking/update queues and re-scanning the root set. It also
- * initializes evacuation by figuring out the regions to be evacuated (collection set), pre-evacuating some roots, and
- * generally prepares runtime for the next phase. Part of this work can be done concurrently during Concurrent
- * precleaning phase. This is the second pause in the cycle, and the most dominant time consumers here are draining the
- * queues and scanning the root set[1].
+ * Initializes the update references phase. It does almost nothing except making sure all GC and applications threads
+ * have finished evacuation, and then preparing GC for next phase. This is the third pause in the cycle, the shortest of
+ * them all[1].
  * 
  * [1]<a href="https://wiki.openjdk.java.net/display/shenandoah/Main">Shenandoah GC</a>
  * </p>
@@ -41,26 +39,25 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * <h3>Example Logging</h3>
  * 
  * <p>
- * 1) Standard format:
+ * 1) JDK8:
  * </p>
  * 
  * <pre>
- * [0.531s][info][gc] GC(1) Pause Final Mark 1.004ms
+ * 2020-03-10T08:03:46.284-0400: 17.346: [Pause Init Update Refs, 0.017 ms]
  * </pre>
  * 
  * <p>
- * 2) Process weakrefs:
+ * 2) Unified:
  * </p>
  * 
  * <pre>
- * [0.820s][info][gc] GC(5) Pause Final Mark (process weakrefs) 0.231ms
+ * [5.312s][info][gc] GC(110) Pause Init Update Refs 0.005ms
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahFinalMarkEvent extends ShenandoahCollector
-        implements UnifiedLogging, BlockingEvent, ParallelEvent {
+public class ShenandoahInitUpdateEvent extends ShenandoahCollector implements BlockingEvent, ParallelEvent {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -80,8 +77,8 @@ public class ShenandoahFinalMarkEvent extends ShenandoahCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " " + UnifiedRegEx.GC_EVENT_NUMBER
-            + " Pause Final Mark( \\(update refs\\))?( \\(process weakrefs\\))? " + UnifiedRegEx.DURATION + "[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+            + ") [\\[]{0,1}Pause Init Update Refs[,]{0,1} " + UnifiedRegEx.DURATION + "[\\]]{0,1}[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -91,33 +88,39 @@ public class ShenandoahFinalMarkEvent extends ShenandoahCollector
      * @param logEntry
      *            The log entry for the event.
      */
-    public ShenandoahFinalMarkEvent(String logEntry) {
+    public ShenandoahInitUpdateEvent(String logEntry) {
         this.logEntry = logEntry;
         if (logEntry.matches(REGEX)) {
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                long endTimestamp;
-                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(13));
-                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                } else {
-                    if (matcher.group(15) != null) {
-                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(17));
-                        } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
-                        }
+                duration = JdkMath.convertMillisToMicros(matcher.group(36)).intValue();
+                if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
+                    long endTimestamp;
+                    if (matcher.group(13).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        endTimestamp = Long.parseLong(matcher.group(29));
+                    } else if (matcher.group(13).matches(UnifiedRegEx.UPTIME)) {
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(24)).longValue();
                     } else {
-                        // Datestamp only.
-                        endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                        if (matcher.group(27) != null) {
+                            if (matcher.group(27).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                                endTimestamp = Long.parseLong(matcher.group(29));
+                            } else {
+                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(28)).longValue();
+                            }
+                        } else {
+                            // Datestamp only.
+                            endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(13));
+                        }
                     }
+                    timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+                } else {
+                    // JDK8
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(25)).intValue();
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             }
         }
+
     }
 
     /**
@@ -130,7 +133,7 @@ public class ShenandoahFinalMarkEvent extends ShenandoahCollector
      * @param duration
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public ShenandoahFinalMarkEvent(String logEntry, long timestamp, int duration) {
+    public ShenandoahInitUpdateEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
@@ -149,7 +152,7 @@ public class ShenandoahFinalMarkEvent extends ShenandoahCollector
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString();
+        return JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString();
     }
 
     /**

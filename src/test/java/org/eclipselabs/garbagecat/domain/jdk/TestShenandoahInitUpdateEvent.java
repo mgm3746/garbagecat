@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Red Hat, Inc. - initial API and implementation                                                                  *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,16 @@ import junit.framework.TestCase;
  */
 public class TestShenandoahInitUpdateEvent extends TestCase {
 
-    public void testLogLine() {
+    public void testLogLineJdk8() {
+        String logLine = "2020-03-10T08:03:46.284-0400: 17.346: [Pause Init Update Refs, 0.017 ms]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".",
+                ShenandoahInitUpdateEvent.match(logLine));
+        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 17346, event.getTimestamp());
+        Assert.assertEquals("Duration not parsed correctly.", 17, event.getDuration());
+    }
+
+    public void testLogLineUnified() {
         String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".",
                 ShenandoahInitUpdateEvent.match(logLine));
@@ -72,7 +81,8 @@ public class TestShenandoahInitUpdateEvent extends TestCase {
     public void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_INIT_UPDATE);
-        Assert.assertTrue(JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " not indentified as unified.",
+        Assert.assertFalse(
+                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " incorrectly indentified as unified.",
                 UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
@@ -82,7 +92,7 @@ public class TestShenandoahInitUpdateEvent extends TestCase {
                 ShenandoahInitUpdateEvent.match(logLine));
     }
 
-    public void testLogLineDetailed() {
+    public void testLogLineUnifiedDetailed() {
         String logLine = "[69.612s][info][gc           ] GC(2582) Pause Init Update Refs 0.036ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".",
                 ShenandoahInitUpdateEvent.match(logLine));
@@ -91,7 +101,7 @@ public class TestShenandoahInitUpdateEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 36, event.getDuration());
     }
 
-    public void testLogLineTimeUptimeMillis() {
+    public void testLogLineUnifiedTimeUptimeMillis() {
         String logLine = "[2019-02-05T14:47:34.229-0200][3141ms] GC(0) Pause Init Update Refs 0.092ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".",
                 ShenandoahInitUpdateEvent.match(logLine));
@@ -100,7 +110,7 @@ public class TestShenandoahInitUpdateEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 92, event.getDuration());
     }
 
-    public void testLogLineTimeUptime() {
+    public void testLogLineUnifiedTimeUptime() {
         String logLine = "[2019-02-05T14:47:34.229-0200][4.766s] GC(0) Pause Init Update Refs 0.092ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".",
                 ShenandoahInitUpdateEvent.match(logLine));
@@ -109,7 +119,7 @@ public class TestShenandoahInitUpdateEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 92, event.getDuration());
     }
 
-    public void testLogLineTime() {
+    public void testLogLineUnifiedTime() {
         String logLine = "[2019-02-05T14:47:34.229-0200] GC(0) Pause Init Update Refs 0.092ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".",
                 ShenandoahInitUpdateEvent.match(logLine));
