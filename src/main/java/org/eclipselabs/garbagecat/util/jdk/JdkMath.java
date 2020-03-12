@@ -266,7 +266,7 @@ public class JdkMath {
     public static int calcParallelism(final int timeUser, final int timeSys, final int timeReal) {
         int calc;
         if (timeReal == 0 || timeReal == TimesData.NO_DATA) {
-            if ((timeUser == 0 && timeSys == 0) || (timeUser == TimesData.NO_DATA || timeSys == TimesData.NO_DATA)) {
+            if ((timeUser == 0 && timeSys == 0) || timeUser == TimesData.NO_DATA || timeSys == TimesData.NO_DATA) {
                 // Undefined (no times data) or explicitly equal to zero.
                 calc = 100;
             } else {
