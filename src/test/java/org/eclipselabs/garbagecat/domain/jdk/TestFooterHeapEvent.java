@@ -209,6 +209,13 @@ public class TestFooterHeapEvent extends TestCase {
                 FooterHeapEvent.match(logLine));
     }
 
+    public void testLineUnifiedRegion3DigitYoung2DigutSurvivors() {
+        String logLine = "[2020-03-12T13:13:49.821-0400][26578ms]   region size 1024K, 260 young (266240K), 26 "
+                + "survivors (26624K)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
+
     public void testLineUnifiedMetaspace() {
         String logLine = "[25.016s][info][gc,heap,exit  ]  Metaspace       used 11079K, capacity 11287K, "
                 + "committed 11520K, reserved 1060864K";

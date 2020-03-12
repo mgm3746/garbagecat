@@ -154,8 +154,8 @@ public class FooterHeapEvent implements ThrowAwayEvent {
             "^" + UnifiedRegEx.DECORATOR + "  garbage-first heap   total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE
                     + " \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "   region size " + JdkRegEx.SIZE + ", \\d{1,2} young \\(" + JdkRegEx.SIZE
-                    + "\\), \\d survivors \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
+            "^" + UnifiedRegEx.DECORATOR + "   region size " + JdkRegEx.SIZE + ", \\d{1,3} young \\(" + JdkRegEx.SIZE
+                    + "\\), \\d{1,2} survivors \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )? - \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
             //
