@@ -849,6 +849,14 @@ public class JvmRun {
             analysis.add(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED);
         }
 
+        // Check if log file size is small
+        if (jvm.getGcLogFileSize() != null) {
+            BigDecimal oneMegabyte = new BigDecimal("5").multiply(Constants.MEGABYTE);
+            if (jvm.getGcLogFileSizeBytes() < oneMegabyte.longValue()) {
+                analysis.add(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL);
+            }
+        }
+
         // If explicit gc is disabled, don't need to set explicit gc options
         if (jvm.getExplicitGcInvokesConcurrentAndUnloadsClassesDisabled() != null
                 && jvm.getDisableExplicitGCOption() != null) {

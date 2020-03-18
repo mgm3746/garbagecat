@@ -1260,4 +1260,17 @@ public class TestAnalysis extends TestCase {
         Assert.assertFalse(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis incorrectly identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM));
     }
+
+    /**
+     * Test small gc log file size.
+     */
+    public void testGcLogFileSizeSmall() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset181.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL));
+    }
 }

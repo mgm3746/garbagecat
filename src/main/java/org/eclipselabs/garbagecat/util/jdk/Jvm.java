@@ -984,6 +984,45 @@ public class Jvm {
     }
 
     /**
+     * The option for setting the gc log file size that triggers rotation. For example:
+     * 
+     * <pre>
+     * -XX:GCLogFileSize=5M
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getGcLogFileSize() {
+        String regex = "(-XX:GCLogFileSize=(\\d{1,9})([kKmM])?)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The compressed class space size value. For example:
+     * 
+     * <pre>
+     * 5M
+     * </pre>
+     * 
+     * @return The gc log file size, or null if not set. For example:
+     * 
+     */
+    public String getGcLogFileSizeValue() {
+        return JdkUtil.getOptionValue(getGcLogFileSize());
+    }
+
+    /**
+     * @return The gc log file size in bytes, or 0 if not set.
+     */
+    public long getGcLogFileSizeBytes() {
+        long gcLogFileSizeBytes = 0;
+        if (getGcLogFileSizeValue() != null) {
+            gcLogFileSizeBytes = JdkUtil.convertOptionSizeToBytes(getGcLogFileSizeValue());
+        }
+        return gcLogFileSizeBytes;
+    }
+
+    /**
      * The option for compressed class pointers enabled.
      * 
      * <pre>
@@ -1026,11 +1065,14 @@ public class Jvm {
     }
 
     /**
+     * The compressed class space size value. For example:
+     * 
+     * <pre>
+     * 768m
+     * </pre>
+     * 
      * @return The compressed class space size value, or null if not set. For example:
      * 
-     *         <pre>
-     * 768m
-     *         </pre>
      */
     public String getCompressedClassSpaceSizeValue() {
         return JdkUtil.getOptionValue(getCompressedClassSpaceSizeOption());

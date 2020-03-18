@@ -437,10 +437,15 @@ public enum Analysis {
     WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT("warn.g1.mixed.gc.live.thrshld.prcnt"),
 
     /**
-     * Property key for specify number of GC log files (-XX:NumberOfGCLogFiles) with log rotation disabled
-     * (-XX:-UseGCLogFileRotation).
+     * Property key for specifying the number of GC log files (-XX:NumberOfGCLogFiles) to keep with log rotation is
+     * disabled (-XX:-UseGCLogFileRotation).
      */
     WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED("warn.gc.log.file.num.rotation.disabled"),
+
+    /**
+     * Property key for specifying the gc log file size that triggers rotation (-XX:GCLogFileSize=N) is small (&lt; 5M).
+     */
+    WARN_GC_LOG_FILE_SIZE_SMALL("warn.gc.log.file.size.small"),
 
     /**
      * Property key for the ratio of gc time vs. stopped time showing a significant amount of stopped time (&gt;20%) is
