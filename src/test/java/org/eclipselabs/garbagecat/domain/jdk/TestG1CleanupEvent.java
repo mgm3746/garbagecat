@@ -72,6 +72,7 @@ public class TestG1CleanupEvent extends TestCase {
                 event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 15449, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 19, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 1900, event.getParallelism());
     }
@@ -88,7 +89,28 @@ public class TestG1CleanupEvent extends TestCase {
         Assert.assertEquals("Combined available size not parsed correctly.", 0, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 91, event.getDuration());
         Assert.assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
+    }
+
+    public void testLogLineMixedErgonomics() {
+        String logLine = "2020-04-29T22:05:39.708+0200: 1745.417: [GC cleanup 1745.419: [G1Ergonomics "
+                + "(Concurrent Cycles) finish cleanup, occupancy: 22498457048 bytes, capacity: 32212254720 bytes, "
+                + "known garbage: 9291782792 bytes (28.85 %)]21456M->20543M(30720M), 0.0155840 secs] "
+                + "[Times: user=0.07 sys=0.06, real=0.01 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".",
+                G1CleanupEvent.match(logLine));
+        G1CleanupEvent event = new G1CleanupEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 1745417, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 21456 * 1024,
+                event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 20543 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 30720 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 15584, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 7, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 6, event.getTimeSys());
+        Assert.assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 1300, event.getParallelism());
     }
 }
