@@ -162,8 +162,8 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector implements Lo
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 int duration = 0;
-                if (matcher.group(49) != null) {
-                    duration = JdkMath.convertMillisToMicros(matcher.group(49)).intValue();
+                if (matcher.group(50) != null) {
+                    duration = JdkMath.convertMillisToMicros(matcher.group(50)).intValue();
                 }
 
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
@@ -189,12 +189,12 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector implements Lo
                     // JDK8
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 }
-                if (matcher.group(39) != null) {
-                    combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(40)), matcher.group(42).charAt(0));
-                    combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(43)),
-                            matcher.group(45).charAt(0));
-                    combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(46)),
-                            matcher.group(48).charAt(0));
+                if (matcher.group(40) != null) {
+                    combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(41)), matcher.group(43).charAt(0));
+                    combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(44)),
+                            matcher.group(46).charAt(0));
+                    combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(47)),
+                            matcher.group(49).charAt(0));
                 }
 
             }

@@ -94,7 +94,7 @@ public class ShenandoahInitUpdateEvent extends ShenandoahCollector implements Bl
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                duration = JdkMath.convertMillisToMicros(matcher.group(36)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(37)).intValue();
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;
                     if (matcher.group(13).matches(UnifiedRegEx.UPTIMEMILLIS)) {

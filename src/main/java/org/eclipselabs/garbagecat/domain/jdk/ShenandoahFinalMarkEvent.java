@@ -129,7 +129,7 @@ public class ShenandoahFinalMarkEvent extends ShenandoahCollector implements Blo
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                duration = JdkMath.convertMillisToMicros(matcher.group(38)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(39)).intValue();
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;
                     if (matcher.group(13).matches(UnifiedRegEx.UPTIMEMILLIS)) {

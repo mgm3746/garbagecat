@@ -26,7 +26,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * JVM run data.
@@ -983,8 +982,9 @@ public class JvmRun {
             analysis.add(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
         }
 
-        // Check to see if -XX:+PrintGCApplicationStoppedTime enabled
-        if (!eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME) && !UnifiedUtil.isUnifiedLogging(eventTypes)) {
+        // Check to see if application stopped time enabled
+        if (!(eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
+                || eventTypes.contains(LogEventType.UNIFIED_APPLICATION_STOPPED_TIME))) {
             analysis.add(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING);
         }
 

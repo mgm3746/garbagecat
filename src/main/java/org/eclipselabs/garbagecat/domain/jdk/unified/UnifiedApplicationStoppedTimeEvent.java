@@ -15,43 +15,57 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.CombinedData;
-import org.eclipselabs.garbagecat.domain.TriggerData;
-import org.eclipselabs.garbagecat.domain.YoungCollection;
-import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
+import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * UNIFIED_YOUNG
+ * UNIFIED_APPLICATION_STOPPED_TIME
  * </p>
  * 
  * <p>
- * Young collection JDK9+ with <code>-Xlog:gc:file=&lt;file&gt;</code> (no details).
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent} with unified logging (JDK9+).
  * </p>
  * 
  * <p>
- * Collector is one of the following: (1) {@link org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent}, (2)
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent}, (3)
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent}.
+ * Logging enabled with the <code>safepoint=info</code> unified logging option. It shows the time spent in a safepoint,
+ * when all threads are stopped and reachable by the JVM. Many JVM operations require that all threads be in a safepoint
+ * to execute. The most common is a "stop the world" garbage collection.
  * </p>
+ * 
+ * <p>
+ * A required logging option to determine overall throughput and identify throughput and pause issues not related to
+ * garbage collection.
+ * </p>
+ * 
+ * <p>
+ * Other JVM operations besides gc that require a safepoint:
+ * </p>
+ * <ul>
+ * <li>ThreadDump</li>
+ * <li>HeapDumper</li>
+ * <li>GetAllStackTrace</li>
+ * <li>PrintThreads</li>
+ * <li>PrintJNI</li>
+ * <li>RevokeBias</li>
+ * <li>Deoptimization</li>
+ * <li>FindDeadlock</li>
+ * <li>EnableBiasLocking</li>
+ * </ul>
  * 
  * <h3>Example Logging</h3>
  * 
  * <pre>
- * [0.053s][info][gc] GC(0) Pause Young (Allocation Failure) 0M-&gt;0M(1M) 0.914ms
+ * [0.031s][info][safepoint    ] Total time for which application threads were stopped: 0.0000643 seconds, Stopping threads took: 0.0000148 seconds
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedYoungEvent extends UnknownCollector
-        implements UnifiedLogging, BlockingEvent, YoungCollection, CombinedData, TriggerData {
+public class UnifiedApplicationStoppedTimeEvent extends ApplicationStoppedTimeEvent implements UnifiedLogging {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -69,93 +83,62 @@ public class UnifiedYoungEvent extends UnknownCollector
     private long timestamp;
 
     /**
-     * Combined young + old generation size (kilobytes) at beginning of GC event.
+     * Regular expressions defining the logging.
      */
-    private int combinedBegin;
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR
+            + " Total time for which application threads were stopped: (\\d{1,4}[\\.\\,]\\d{7}) seconds, "
+            + "Stopping threads took: (\\d{1,4}[\\.\\,]\\d{7}) seconds[ ]*$";
+    /**
+     * RegEx pattern.
+     */
+    private static Pattern pattern = Pattern.compile(REGEX);
 
     /**
-     * Combined young + old generation size (kilobytes) at end of GC event.
-     */
-    private int combinedEnd;
-
-    /**
-     * Combined young + old generation allocation (kilobytes).
-     */
-    private int combinedAllocation;
-
-    /**
-     * The trigger for the GC event.
-     */
-    private String trigger;
-
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_SYSTEM_GC
-            + ")";
-
-    /**
-     * Regular expression defining the logging.
-     */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + TRIGGER + "\\) "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + "[ ]*$";
-
-    private static final Pattern pattern = Pattern.compile(REGEX);
-
-    /**
+     * Create event from log entry.
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public UnifiedYoungEvent(String logEntry) {
+    public UnifiedApplicationStoppedTimeEvent(String logEntry) {
+        super(logEntry);
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            long endTimestamp;
             if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                endTimestamp = Long.parseLong(matcher.group(13));
+                timestamp = Long.parseLong(matcher.group(13));
             } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             } else {
                 if (matcher.group(15) != null) {
                     if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        endTimestamp = Long.parseLong(matcher.group(17));
+                        timestamp = Long.parseLong(matcher.group(17));
                     } else {
-                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                        timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
                     }
                 } else {
                     // Datestamp only.
-                    endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(25);
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)), matcher.group(29).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(30)), matcher.group(32).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(33)),
-                    matcher.group(35).charAt(0));
-            duration = JdkMath.convertMillisToMicros(matcher.group(36)).intValue();
-            timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
         }
     }
 
     /**
-     * Alternate constructor. Create serial logging event from values.
+     * Alternate constructor. Create application stopped time event from values.
      * 
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in microseconds.
+     *            The elapsed clock time for the GC event in microseconds (rounded).
      */
-    public UnifiedYoungEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedApplicationStoppedTimeEvent(String logEntry, long timestamp, int duration) {
+        super(logEntry, timestamp, duration);
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_YOUNG.toString();
     }
 
     public String getLogEntry() {
@@ -166,24 +149,12 @@ public class UnifiedYoungEvent extends UnknownCollector
         return duration;
     }
 
+    public String getName() {
+        return JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString();
+    }
+
     public long getTimestamp() {
         return timestamp;
-    }
-
-    public int getCombinedOccupancyInit() {
-        return combinedBegin;
-    }
-
-    public int getCombinedOccupancyEnd() {
-        return combinedEnd;
-    }
-
-    public int getCombinedSpace() {
-        return combinedAllocation;
-    }
-
-    public String getTrigger() {
-        return trigger;
     }
 
     /**
@@ -196,4 +167,5 @@ public class UnifiedYoungEvent extends UnknownCollector
     public static final boolean match(String logLine) {
         return pattern.matcher(logLine).matches();
     }
+
 }

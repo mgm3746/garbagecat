@@ -146,11 +146,11 @@ public class UnifiedG1CleanupEvent extends G1Collector
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)), matcher.group(29).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(30)),
-                        matcher.group(32).charAt(0));
-                duration = JdkMath.roundMillis(matcher.group(33)).intValue();
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)),
+                        matcher.group(33).charAt(0));
+                duration = JdkMath.roundMillis(matcher.group(34)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
@@ -175,15 +175,15 @@ public class UnifiedG1CleanupEvent extends G1Collector
                         timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(24)), matcher.group(26).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)), matcher.group(29).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(30)),
-                        matcher.group(32).charAt(0));
-                duration = JdkMath.roundMillis(matcher.group(33)).intValue();
-                if (matcher.group(34) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)),
+                        matcher.group(33).charAt(0));
+                duration = JdkMath.roundMillis(matcher.group(34)).intValue();
+                if (matcher.group(35) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(38)).intValue();
                 } else {
                     timeUser = TimesData.NO_DATA;
                     timeReal = TimesData.NO_DATA;

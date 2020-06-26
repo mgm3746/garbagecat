@@ -131,7 +131,7 @@ public class UnifiedRemarkEvent extends UnknownCollector
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(33)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(34)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
@@ -157,12 +157,12 @@ public class UnifiedRemarkEvent extends UnknownCollector
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(33)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(34)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                if (matcher.group(34) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
+                if (matcher.group(35) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(38)).intValue();
                 } else {
                     timeUser = TimesData.NO_DATA;
                     timeReal = TimesData.NO_DATA;

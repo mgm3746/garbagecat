@@ -180,7 +180,7 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
      *            The log line to test.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
+    public static boolean match(String logLine) {
         return pattern.matcher(logLine).matches();
     }
 

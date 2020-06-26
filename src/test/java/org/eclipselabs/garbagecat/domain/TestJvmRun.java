@@ -374,6 +374,41 @@ public class TestJvmRun extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO));
     }
 
+    public void testSummaryStatsUnifiedStoppedTime() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset182.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE));
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_CONCURRENT.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_CONCURRENT));
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK));
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_CLEANUP));
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_APPLICATION_STOPPED_TIME));
+        Assert.assertEquals("GC Event count not correct.", 5, jvmRun.getEventTypes().size());
+        Assert.assertEquals("GC pause total not correct.", 24, jvmRun.getTotalGcPause());
+        Assert.assertEquals("GC first timestamp not correct.", 53, jvmRun.getFirstGcEvent().getTimestamp());
+        Assert.assertEquals("GC last timestamp not correct.", 167, jvmRun.getLastGcEvent().getTimestamp());
+        Assert.assertEquals("GC last duration not correct.", 362, jvmRun.getLastGcEvent().getDuration());
+        Assert.assertEquals("Stopped Time event count not correct.", 12, jvmRun.getStoppedTimeEventCount());
+        Assert.assertEquals("Stopped time total not correct.", 25, jvmRun.getTotalStoppedTime());
+        Assert.assertEquals("Stopped first timestamp not correct.", 29, jvmRun.getFirstStoppedEvent().getTimestamp());
+        Assert.assertEquals("Stopped last timestamp not correct.", 167, jvmRun.getLastStoppedEvent().getTimestamp());
+        Assert.assertEquals("Stopped last duration not correct.", 418, jvmRun.getLastStoppedEvent().getDuration());
+        Assert.assertEquals("JVM first event timestamp not correct.", 29, jvmRun.getFirstEvent().getTimestamp());
+        Assert.assertEquals("JVM last event timestamp not correct.", 167, jvmRun.getLastEvent().getTimestamp());
+        Assert.assertEquals("JVM run duration not correct.", 167, jvmRun.getJvmRunDuration());
+        Assert.assertEquals("GC throughput not correct.", 86, jvmRun.getGcThroughput());
+        Assert.assertEquals("Stopped time throughput not correct.", 85, jvmRun.getStoppedTimeThroughput());
+        Assert.assertFalse(Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO));
+    }
+
     /**
      * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
      * 

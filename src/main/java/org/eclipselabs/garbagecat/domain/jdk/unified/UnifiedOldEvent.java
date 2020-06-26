@@ -132,12 +132,12 @@ public class UnifiedOldEvent extends UnknownCollector
                     endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(24);
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)), matcher.group(28).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)), matcher.group(31).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(32)),
-                    matcher.group(34).charAt(0));
-            duration = JdkMath.convertMillisToMicros(matcher.group(35)).intValue();
+            trigger = matcher.group(25);
+            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)), matcher.group(29).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(30)), matcher.group(32).charAt(0));
+            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(33)),
+                    matcher.group(35).charAt(0));
+            duration = JdkMath.convertMillisToMicros(matcher.group(36)).intValue();
             timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
         }
     }

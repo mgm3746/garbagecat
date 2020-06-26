@@ -144,16 +144,16 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                trigger = matcher.group(24);
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)),
-                        matcher.group(33).charAt(0));
-                duration = JdkMath.convertMillisToMicros(matcher.group(34)).intValue();
+                trigger = matcher.group(25);
+                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)), matcher.group(28).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)), matcher.group(31).charAt(0));
+                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(32)),
+                        matcher.group(34).charAt(0));
+                duration = JdkMath.convertMillisToMicros(matcher.group(35)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(38)).intValue();
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(38)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(39)).intValue();
             }
         }
     }

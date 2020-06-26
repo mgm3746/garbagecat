@@ -1,0 +1,142 @@
+[0.029s][info][safepoint    ] Entering safepoint region: EnableBiasedLocking
+[0.029s][info][safepoint    ] Leaving safepoint region
+[0.029s][info][safepoint    ] Total time for which application threads were stopped: 0.0001635 seconds, Stopping threads took: 0.0001057 seconds
+[0.030s][info][safepoint    ] Application time: 0.0012757 seconds
+[0.030s][info][safepoint    ] Entering safepoint region: RevokeBias
+[0.031s][info][safepoint    ] Leaving safepoint region
+[0.031s][info][safepoint    ] Total time for which application threads were stopped: 0.0000643 seconds, Stopping threads took: 0.0000148 seconds
+[0.053s][info][safepoint    ] Application time: 0.0219912 seconds
+[0.053s][info][safepoint    ] Entering safepoint region: G1CollectForAllocation
+[0.053s][info][gc,start     ] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+[0.053s][info][gc,task      ] GC(0) Using 2 workers of 4 for evacuation
+[0.058s][info][gc,phases    ] GC(0)   Pre Evacuate Collection Set: 0.0ms
+[0.058s][info][gc,phases    ] GC(0)   Evacuate Collection Set: 5.3ms
+[0.058s][info][gc,phases    ] GC(0)   Post Evacuate Collection Set: 0.2ms
+[0.058s][info][gc,phases    ] GC(0)   Other: 0.2ms
+[0.058s][info][gc,heap      ] GC(0) Eden regions: 1->0(1)
+[0.058s][info][gc,heap      ] GC(0) Survivor regions: 0->1(1)
+[0.058s][info][gc,heap      ] GC(0) Old regions: 2->2
+[0.058s][info][gc,heap      ] GC(0) Humongous regions: 0->0
+[0.058s][info][gc,metaspace ] GC(0) Metaspace: 316K->316K(1056768K)
+[0.058s][info][gc           ] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 1M->1M(4M) 5.780ms
+[0.058s][info][gc,cpu       ] GC(0) User=0.01s Sys=0.00s Real=0.01s
+[0.058s][info][safepoint    ] Leaving safepoint region
+[0.058s][info][safepoint    ] Total time for which application threads were stopped: 0.0059106 seconds, Stopping threads took: 0.0000063 seconds
+[0.061s][info][safepoint    ] Application time: 0.0028585 seconds
+[0.061s][info][safepoint    ] Entering safepoint region: RevokeBias
+[0.061s][info][safepoint    ] Leaving safepoint region
+[0.061s][info][safepoint    ] Total time for which application threads were stopped: 0.0001220 seconds, Stopping threads took: 0.0000253 seconds
+[0.062s][info][safepoint    ] Application time: 0.0006557 seconds
+[0.062s][info][safepoint    ] Entering safepoint region: RevokeBias
+[0.062s][info][safepoint    ] Leaving safepoint region
+[0.062s][info][safepoint    ] Total time for which application threads were stopped: 0.0000547 seconds, Stopping threads took: 0.0000046 seconds
+[0.109s][info][safepoint    ] Application time: 0.0467285 seconds
+[0.109s][info][safepoint    ] Entering safepoint region: G1CollectForAllocation
+[0.109s][info][gc,start     ] GC(1) Pause Young (Concurrent Start) (G1 Evacuation Pause)
+[0.109s][info][gc,task      ] GC(1) Using 2 workers of 4 for evacuation
+[0.114s][info][gc,phases    ] GC(1)   Pre Evacuate Collection Set: 0.0ms
+[0.114s][info][gc,phases    ] GC(1)   Evacuate Collection Set: 4.6ms
+[0.114s][info][gc,phases    ] GC(1)   Post Evacuate Collection Set: 0.1ms
+[0.114s][info][gc,phases    ] GC(1)   Other: 0.1ms
+[0.114s][info][gc,heap      ] GC(1) Eden regions: 1->0(1)
+[0.114s][info][gc,heap      ] GC(1) Survivor regions: 1->1(1)
+[0.114s][info][gc,heap      ] GC(1) Old regions: 2->2
+[0.114s][info][gc,heap      ] GC(1) Humongous regions: 0->0
+[0.114s][info][gc,metaspace ] GC(1) Metaspace: 879K->879K(1056768K)
+[0.114s][info][gc           ] GC(1) Pause Young (Concurrent Start) (G1 Evacuation Pause) 2M->1M(5M) 4.858ms
+[0.114s][info][gc,cpu       ] GC(1) User=0.01s Sys=0.00s Real=0.01s
+[0.114s][info][safepoint    ] Leaving safepoint region
+[0.114s][info][safepoint    ] Total time for which application threads were stopped: 0.0049236 seconds, Stopping threads took: 0.0000050 seconds
+[0.114s][info][gc           ] GC(2) Concurrent Cycle
+[0.114s][info][gc,marking   ] GC(2) Concurrent Clear Claimed Marks
+[0.114s][info][gc,marking   ] GC(2) Concurrent Clear Claimed Marks 0.005ms
+[0.114s][info][gc,marking   ] GC(2) Concurrent Scan Root Regions
+[0.114s][info][gc,marking   ] GC(2) Concurrent Scan Root Regions 0.494ms
+[0.114s][info][gc,marking   ] GC(2) Concurrent Mark (0.114s)
+[0.114s][info][gc,marking   ] GC(2) Concurrent Mark From Roots
+[0.114s][info][gc,task      ] GC(2) Using 1 workers of 1 for marking
+[0.115s][info][safepoint    ] Application time: 0.0014465 seconds
+[0.115s][info][safepoint    ] Entering safepoint region: Deoptimize
+[0.115s][info][safepoint    ] Leaving safepoint region
+[0.115s][info][safepoint    ] Total time for which application threads were stopped: 0.0000473 seconds, Stopping threads took: 0.0000048 seconds
+[0.116s][info][gc,marking   ] GC(2) Concurrent Mark From Roots 1.126ms
+[0.116s][info][gc,marking   ] GC(2) Concurrent Preclean
+[0.116s][info][gc,marking   ] GC(2) Concurrent Preclean 0.057ms
+[0.116s][info][gc,marking   ] GC(2) Concurrent Mark (0.114s, 0.116s) 1.204ms
+[0.116s][info][safepoint    ] Application time: 0.0002482 seconds
+[0.116s][info][safepoint    ] Entering safepoint region: CGC_Operation
+[0.116s][info][gc,start     ] GC(2) Pause Remark
+[0.116s][info][gc,stringtable] GC(2) Cleaned string and symbol table, strings: 141 processed, 0 removed, symbols: 1749 processed, 4 removed
+[0.116s][info][gc            ] GC(2) Pause Remark 1M->1M(5M) 0.364ms
+[0.116s][info][gc,cpu        ] GC(2) User=0.00s Sys=0.00s Real=0.00s
+[0.116s][info][safepoint     ] Leaving safepoint region
+[0.116s][info][safepoint     ] Total time for which application threads were stopped: 0.0004048 seconds, Stopping threads took: 0.0000089 seconds
+[0.116s][info][gc,marking    ] GC(2) Concurrent Rebuild Remembered Sets
+[0.116s][info][gc,marking    ] GC(2) Concurrent Rebuild Remembered Sets 0.267ms
+[0.116s][info][safepoint     ] Application time: 0.0003496 seconds
+[0.116s][info][safepoint     ] Entering safepoint region: CGC_Operation
+[0.117s][info][gc,start      ] GC(2) Pause Cleanup
+[0.117s][info][gc            ] GC(2) Pause Cleanup 1M->1M(5M) 0.024ms
+[0.117s][info][gc,cpu        ] GC(2) User=0.00s Sys=0.00s Real=0.00s
+[0.117s][info][safepoint     ] Leaving safepoint region
+[0.117s][info][safepoint     ] Total time for which application threads were stopped: 0.0001348 seconds, Stopping threads took: 0.0000177 seconds
+[0.117s][info][gc,marking    ] GC(2) Concurrent Cleanup for Next Mark
+[0.117s][info][gc,marking    ] GC(2) Concurrent Cleanup for Next Mark 0.117ms
+[0.117s][info][gc            ] GC(2) Concurrent Cycle 2.822ms
+[0.129s][info][safepoint     ] Application time: 0.0119211 seconds
+[0.129s][info][safepoint     ] Entering safepoint region: G1CollectForAllocation
+[0.129s][info][gc,start      ] GC(3) Pause Young (Normal) (G1 Evacuation Pause)
+[0.129s][info][gc,task       ] GC(3) Using 2 workers of 4 for evacuation
+[0.139s][info][gc,phases     ] GC(3)   Pre Evacuate Collection Set: 0.0ms
+[0.139s][info][gc,phases     ] GC(3)   Evacuate Collection Set: 9.8ms
+[0.139s][info][gc,phases     ] GC(3)   Post Evacuate Collection Set: 0.2ms
+[0.139s][info][gc,phases     ] GC(3)   Other: 0.1ms
+[0.139s][info][gc,heap       ] GC(3) Eden regions: 1->0(1)
+[0.139s][info][gc,heap       ] GC(3) Survivor regions: 1->1(1)
+[0.139s][info][gc,heap       ] GC(3) Old regions: 2->3
+[0.139s][info][gc,heap       ] GC(3) Humongous regions: 0->0
+[0.139s][info][gc,metaspace  ] GC(3) Metaspace: 1224K->1224K(1056768K)
+[0.139s][info][gc            ] GC(3) Pause Young (Normal) (G1 Evacuation Pause) 2M->1M(6M) 10.135ms
+[0.139s][info][gc,cpu        ] GC(3) User=0.02s Sys=0.00s Real=0.01s
+[0.139s][info][safepoint     ] Leaving safepoint region
+[0.139s][info][safepoint     ] Total time for which application threads were stopped: 0.0102775 seconds, Stopping threads took: 0.0000048 seconds
+[0.160s][info][safepoint     ] Application time: 0.0214397 seconds
+[0.160s][info][safepoint     ] Entering safepoint region: G1CollectForAllocation
+[0.160s][info][gc,start      ] GC(4) Pause Young (Concurrent Start) (G1 Evacuation Pause)
+[0.160s][info][gc,task       ] GC(4) Using 2 workers of 4 for evacuation
+[0.163s][info][gc,phases     ] GC(4)   Pre Evacuate Collection Set: 0.0ms
+[0.163s][info][gc,phases     ] GC(4)   Evacuate Collection Set: 2.3ms
+[0.163s][info][gc,phases     ] GC(4)   Post Evacuate Collection Set: 0.2ms
+[0.163s][info][gc,phases     ] GC(4)   Other: 0.1ms
+[0.163s][info][gc,heap       ] GC(4) Eden regions: 1->0(1)
+[0.163s][info][gc,heap       ] GC(4) Survivor regions: 1->1(1)
+[0.163s][info][gc,heap       ] GC(4) Old regions: 3->4
+[0.163s][info][gc,heap       ] GC(4) Humongous regions: 0->0
+[0.163s][info][gc,metaspace  ] GC(4) Metaspace: 1442K->1442K(1056768K)
+[0.163s][info][gc            ] GC(4) Pause Young (Concurrent Start) (G1 Evacuation Pause) 2M->2M(7M) 2.657ms
+[0.163s][info][gc,cpu        ] GC(4) User=0.00s Sys=0.00s Real=0.00s
+[0.163s][info][safepoint     ] Leaving safepoint region
+[0.163s][info][safepoint     ] Total time for which application threads were stopped: 0.0028099 seconds, Stopping threads took: 0.0000142 seconds
+[0.163s][info][gc            ] GC(5) Concurrent Cycle
+[0.163s][info][gc,marking    ] GC(5) Concurrent Clear Claimed Marks
+[0.163s][info][gc,marking    ] GC(5) Concurrent Clear Claimed Marks 0.006ms
+[0.163s][info][gc,marking    ] GC(5) Concurrent Scan Root Regions
+[0.163s][info][gc,marking    ] GC(5) Concurrent Scan Root Regions 0.361ms
+[0.163s][info][gc,marking    ] GC(5) Concurrent Mark (0.163s)
+[0.163s][info][gc,marking    ] GC(5) Concurrent Mark From Roots
+[0.163s][info][gc,task       ] GC(5) Using 1 workers of 1 for marking
+[0.166s][info][gc,marking    ] GC(5) Concurrent Mark From Roots 2.742ms
+[0.166s][info][gc,marking    ] GC(5) Concurrent Preclean
+[0.166s][info][gc,marking    ] GC(5) Concurrent Preclean 0.072ms
+[0.166s][info][gc,marking    ] GC(5) Concurrent Mark (0.163s, 0.166s) 2.849ms
+[0.166s][info][safepoint     ] Application time: 0.0032619 seconds
+[0.166s][info][safepoint     ] Entering safepoint region: CGC_Operation
+[0.166s][info][gc,start      ] GC(5) Pause Remark
+[0.167s][info][gc,stringtable] GC(5) Cleaned string and symbol table, strings: 500 processed, 0 removed, symbols: 3456 processed, 1 removed
+[0.167s][info][gc            ] GC(5) Pause Remark 2M->2M(7M) 0.362ms
+[0.167s][info][gc,cpu        ] GC(5) User=0.00s Sys=0.00s Real=0.00s
+[0.167s][info][safepoint     ] Leaving safepoint region
+[0.167s][info][safepoint     ] Total time for which application threads were stopped: 0.0004180 seconds, Stopping threads took: 0.0000219 seconds
+[0.167s][info][gc,marking    ] GC(5) Concurrent Rebuild Remembered Sets
+[0.168s][info][gc,marking    ] GC(5) Concurrent Rebuild Remembered Sets 1.235ms
+[0.168s][info][safepoint     ] Application time: 0.0012717 seconds

@@ -18,7 +18,7 @@ JDK9+:
 1) uptime
 
 ```
--Xlog:gc*:file=gc.log:uptime:filecount=4,filesize=50M
+-Xlog:gc*,safepoint=info:file=gc.log:uptime:filecount=4,filesize=50M
 
 [0.052s] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
@@ -26,7 +26,7 @@ JDK9+:
 2) uptimemillis
 
 ```
--Xlog:gc*:file=gc.log:uptimemillis:filecount=4,filesize=50M
+-Xlog:gc*,safepoint=info:file=gc.log:uptimemillis:filecount=4,filesize=50M
 
 [052ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
@@ -34,7 +34,7 @@ JDK9+:
 3) time
 
 ```
--Xlog:gc*:file=gc.log:time:filecount=4,filesize=50M
+-Xlog:gc*,safepoint=info:file=gc.log:time:filecount=4,filesize=50M
 
 [2020-02-14T15:21:55.207-0500] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
@@ -42,7 +42,7 @@ JDK9+:
 4) time,uptime
 
 ```
--Xlog:gc*:file=gc.log:time,uptime:filecount=4,filesize=50M
+-Xlog:gc*,safepoint=info:file=gc.log:time,uptime:filecount=4,filesize=50M
 
 [2020-02-14T15:21:55.207-0500][0.052s] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
@@ -50,7 +50,7 @@ JDK9+:
 5) time,uptimemillis
 
 ```
--Xlog:gc*:file=gc.log:time,uptimemillis:filecount=4,filesize=50M
+-Xlog:gc*,safepoint=info:file=gc.log:time,uptimemillis:filecount=4,filesize=50M
 
 [2020-02-14T15:21:55.207-0500][052ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```

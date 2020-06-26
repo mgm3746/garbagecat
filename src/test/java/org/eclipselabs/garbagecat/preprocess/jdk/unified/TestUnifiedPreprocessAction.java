@@ -575,6 +575,20 @@ public class TestUnifiedPreprocessAction extends TestCase {
                 UnifiedPreprocessAction.match(logLine));
     }
 
+    public void testLogLineG1MarkClosedArchiveRegions() {
+        String logLine = "[0.004s][info][gc,cds       ] Mark closed archive regions in map: [0x00000000fff00000, "
+                + "0x00000000fff69ff8]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineG1MarkOpenArchiveRegions() {
+        String logLine = "[0.004s][info][gc,cds       ] Mark open archive regions in map: [0x00000000ffe00000, "
+                + "0x00000000ffe46ff8]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
     public void testLogLineSerialNewStart() {
         String logLine = "[0.118s][info][gc,start       ] GC(4) Pause Young (Allocation Failure)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
@@ -712,6 +726,24 @@ public class TestUnifiedPreprocessAction extends TestCase {
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
         Assert.assertNull("Log line not parsed correctly.", event.getLogEntry());
+    }
+
+    public void testLogLineSafepointEnteringl() {
+        String logLine = "[0.029s][info][safepoint    ] Entering safepoint region: EnableBiasedLocking";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineSafepointLeaving() {
+        String logLine = "[0.029s][info][safepoint    ] Leaving safepoint region";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineSafepointApplicationTime() {
+        String logLine = "[0.030s][info][safepoint    ] Application time: 0.0012757 seconds";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
     }
 
     public void testPreprocessingG1YoungPauseNormalCollection() {

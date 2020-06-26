@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.jdk.CmsCollector;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
@@ -92,9 +93,14 @@ public class UnifiedCmsConcurrentEvent extends CmsCollector implements UnifiedLo
 
     /**
      * Regular expressions defining the logging.
+     * 
+     * <code>UnifiedRegEx.DECORATOR</code> is not used to avoid conflict with <code>UnifiedG1ConcurrentEvent</code>.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Concurrent (Mark|Preclean|Sweep|Reset)( "
-            + UnifiedRegEx.DURATION + ")?" + TimesData.REGEX_JDK9 + "?[ ]*$";
+    private static final String REGEX = "^\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
+            + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
+            + ")\\])?\\[info\\]\\[gc[ ]{0,13}\\] " + UnifiedRegEx.GC_EVENT_NUMBER
+            + " Concurrent (Mark|Preclean|Sweep|Reset)( " + UnifiedRegEx.DURATION + ")?" + TimesData.REGEX_JDK9
+            + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 

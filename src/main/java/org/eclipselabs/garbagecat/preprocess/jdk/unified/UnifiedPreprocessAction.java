@@ -376,6 +376,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [4.067s][info][gc,phases      ] GC(2264) Phase 4: Move objects 1.248ms
      * 
+     * [0.004s][info][gc,cds       ] Mark closed archive regions in map: [0x00000000fff00000, 0x00000000fff69ff8]
+     * 
+     * [0.004s][info][gc,cds       ] Mark open archive regions in map: [0x00000000ffe00000, 0x00000000ffe46ff8]
+     * 
      * PARALLEL_COMPACTING_OLD:
      * 
      * [0.083s][info][gc,phases,start] GC(3) Marking Phase
@@ -403,6 +407,13 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.053s][info][gc,start     ] GC(1) Pause Initial Mark
      * 
      * [0.056s][info][gc,heap      ] GC(1) Old: 518K->518K(960K)
+     * 
+     * Safepoint:
+     * [0.029s][info][safepoint    ] Entering safepoint region: EnableBiasedLocking
+     * 
+     * [0.029s][info][safepoint    ] Leaving safepoint region
+     * 
+     * [0.030s][info][safepoint    ] Application time: 0.0012757 seconds
      * </pre>
      */
     private static final String[] REGEX_THROWAWAY = {
@@ -421,16 +432,23 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR
                     + " Cleaned string and symbol table, strings: \\d{1,4} processed, \\d removed, "
                     + "symbols: \\d{1,5} processed, \\d{1,2} removed$",
+
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Mark (closed|open) archive regions in map:.+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Pause Cleanup$",
             // Parallel
             "^" + UnifiedRegEx.DECORATOR + " (Adjust Roots|Compaction Phase|Marking Phase|Post Compact|Summary Phase)( "
                     + UnifiedRegEx.DURATION + ")?$",
             // CMS
-            "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark?$",
+            "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Old: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-                    + "\\)$"
+                    + "\\)$",
+            // Safepoint
+            "^" + UnifiedRegEx.DECORATOR + " (Entering|Leaving) safepoint region.*$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Application time:.+$"
             //
     };
 
@@ -497,7 +515,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_SPACE_DATA);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(24);
+                this.logEntry = matcher.group(25);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA)) {
@@ -505,7 +523,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 if (context.contains(TOKEN)) {
-                    this.logEntry = matcher.group(24);
+                    this.logEntry = matcher.group(25);
                 } else {
                     // Single line event
                     this.logEntry = Constants.LINE_SEPARATOR + logEntry;
@@ -517,7 +535,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA);
                 Matcher matcher = pattern.matcher(logEntry);
                 if (matcher.matches()) {
-                    this.logEntry = matcher.group(25);
+                    this.logEntry = matcher.group(26);
                 }
             } else if (!context.contains(TOKEN)) {
                 // Single line event
@@ -529,7 +547,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(27);
+                this.logEntry = matcher.group(28);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_END_TIMES_DATA)) {
@@ -537,7 +555,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(24);
+                this.logEntry = matcher.group(25);
             }
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);

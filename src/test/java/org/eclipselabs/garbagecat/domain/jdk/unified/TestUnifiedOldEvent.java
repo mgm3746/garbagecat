@@ -98,7 +98,7 @@ public class TestUnifiedOldEvent extends TestCase {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_PARALLEL));
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_OLD));
-        Assert.assertFalse(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis incorrectly identified.",
+        Assert.assertTrue(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING));
     }
 

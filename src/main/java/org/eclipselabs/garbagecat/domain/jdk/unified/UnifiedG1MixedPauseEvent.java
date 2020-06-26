@@ -166,19 +166,19 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
                     timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(24);
-            permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
-            permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
-            permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)), matcher.group(33).charAt(0));
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(34)), matcher.group(36).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(37)), matcher.group(39).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(40)),
-                    matcher.group(42).charAt(0));
-            duration = JdkMath.convertMillisToMicros(matcher.group(43)).intValue();
-            if (matcher.group(44) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(45)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(46)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(47)).intValue();
+            trigger = matcher.group(25);
+            permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)), matcher.group(28).charAt(0));
+            permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)), matcher.group(31).charAt(0));
+            permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(32)), matcher.group(34).charAt(0));
+            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(35)), matcher.group(37).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(38)), matcher.group(40).charAt(0));
+            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(41)),
+                    matcher.group(43).charAt(0));
+            duration = JdkMath.convertMillisToMicros(matcher.group(44)).intValue();
+            if (matcher.group(45) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(46)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(47)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(48)).intValue();
             } else {
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;

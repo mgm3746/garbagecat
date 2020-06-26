@@ -284,7 +284,7 @@ public enum Analysis {
     WARN_APPLICATION_LOGGING("warn.application.logging"),
 
     /**
-     * Property key for -XX:+PrintGCApplicationStoppedTime missing.
+     * Property key for application stopped time missing.
      */
     WARN_APPLICATION_STOPPED_TIME_MISSING("warn.application.stopped.time.missing"),
 
