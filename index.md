@@ -6,15 +6,54 @@ A command line tool that parses Java garbage collection logging and does analysi
 
   * OpenJDK
   * Sun/Oracle JDK 1.5 and higher
-  * Best utilized with the following GC logging options:
-
+  
+### Recommended GC Logging Options ###  
+  
 JDK5 - JDK8:
 
 >-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime
 
 JDK9+:
 
->-Xlog:gc*:file=gc.log
+1) uptime
+
+```
+-Xlog:gc*,safepoint=info:file=gc.log:uptime:filecount=4,filesize=50M
+
+[0.052s] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+```
+
+2) uptimemillis
+
+```
+-Xlog:gc*,safepoint=info:file=gc.log:uptimemillis:filecount=4,filesize=50M
+
+[052ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+```
+
+3) time
+
+```
+-Xlog:gc*,safepoint=info:file=gc.log:time:filecount=4,filesize=50M
+
+[2020-02-14T15:21:55.207-0500] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+```
+
+4) time,uptime
+
+```
+-Xlog:gc*,safepoint=info:file=gc.log:time,uptime:filecount=4,filesize=50M
+
+[2020-02-14T15:21:55.207-0500][0.052s] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+```
+
+5) time,uptimemillis
+
+```
+-Xlog:gc*,safepoint=info:file=gc.log:time,uptimemillis:filecount=4,filesize=50M
+
+[2020-02-14T15:21:55.207-0500][052ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+```
 
 ## Installation ##
 
