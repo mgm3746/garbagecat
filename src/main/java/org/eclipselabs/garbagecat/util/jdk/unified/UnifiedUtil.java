@@ -45,10 +45,9 @@ public class UnifiedUtil {
                 case HEAP_REGION_SIZE:
                 case UNIFIED_APPLICATION_STOPPED_TIME:
                 case UNIFIED_BLANK_LINE:
-                case UNIFIED_CMS_CONCURRENT:
+                case UNIFIED_CONCURRENT:
                 case UNIFIED_CMS_INITIAL_MARK:
                 case UNIFIED_G1_CLEANUP:
-                case UNIFIED_G1_CONCURRENT:
                 case UNIFIED_G1_INFO:
                 case UNIFIED_G1_MIXED_PAUSE:
                 case UNIFIED_G1_YOUNG_INITIAL_MARK:

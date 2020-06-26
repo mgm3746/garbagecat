@@ -901,8 +901,8 @@ public class TestUnifiedPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CMS_INITIAL_MARK));
-        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + " collector not identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CMS_CONCURRENT));
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT));
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK));
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " collector not identified.",

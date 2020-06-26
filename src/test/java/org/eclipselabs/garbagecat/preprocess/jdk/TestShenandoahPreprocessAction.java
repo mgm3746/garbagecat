@@ -504,6 +504,18 @@ public class TestShenandoahPreprocessAction extends TestCase {
                 ShenandoahPreprocessAction.match(logLine));
     }
 
+    public void testLogLinePacerForReset() {
+        String logLine = "[2020-06-26T15:30:31.303-0400] GC(0) Pacer for Reset. Non-Taxable: 98304K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
+    public void testLogLinePacerForPrecleaning() {
+        String logLine = "[2020-06-26T15:30:31.311-0400] GC(0) Pacer for Precleaning. Non-Taxable: 98304K";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
     public void testUnifiedPreprocessingInitialMark() {
         File testFile = new File(Constants.TEST_DATA_DIR + "dataset160.txt");
         GcManager gcManager = new GcManager();

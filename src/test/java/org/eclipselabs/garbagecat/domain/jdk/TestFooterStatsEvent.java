@@ -333,6 +333,20 @@ public class TestFooterStatsEvent extends TestCase {
                 FooterStatsEvent.match(logLine));
     }
 
+    public void testLineSystemPurge() {
+        String logLine = "[57.108s][info][gc,stats     ]   System Purge              =     0.10 s (a =       73 us) "
+                + "(n =  1378) (lvls, us =       29,       45,       69,       85,      349)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".",
+                FooterStatsEvent.match(logLine));
+    }
+
+    public void testLineSystemParallelCleanup() {
+        String logLine = "[57.108s][info][gc,stats     ]     Parallel Cleanup        =     0.10 s (a =       72 us) "
+                + "(n =  1378) (lvls, us =       28,       45,       69,       85,      348)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".",
+                FooterStatsEvent.match(logLine));
+    }
+
     /**
      * Test logging.
      */

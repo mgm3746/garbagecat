@@ -382,8 +382,8 @@ public class TestJvmRun extends TestCase {
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE));
-        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_CONCURRENT.toString() + " collector not identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_CONCURRENT));
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT));
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK));
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " collector not identified.",

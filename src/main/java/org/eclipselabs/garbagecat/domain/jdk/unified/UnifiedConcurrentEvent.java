@@ -12,31 +12,29 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import java.util.regex.Pattern;
-
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
-import org.eclipselabs.garbagecat.domain.jdk.CmsCollector;
+import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
- * UNIFIED_CMS_CONCURRENT
+ * UNIFIED_CONCURRENT
  * </p>
  * 
  * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} with unified logging (JDK9+).
+ * {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} or
+ * {@link org.eclipselabs.garbagecat.domain.jdk.G1ConcurrentEvent} with unified logging (JDK9+).
  * </p>
  * 
  * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} with unified logging (JDK9+). Any number of events
- * that happen concurrently with the JVM's execution of application threads. These events are not included in the GC
- * analysis since there is no application pause time.
+ * Any number of events that happen concurrently with the JVM's execution of application threads. These events are not
+ * included in the GC analysis since there is no application pause time.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h3>CMS</h3>
  * 
  * <pre>
  * [0.082s][info][gc] GC(1) Concurrent Mark
@@ -86,30 +84,98 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [0.056s][info][gc           ] GC(1) Concurrent Reset 0.693ms User=0.01s Sys=0.00s Real=0.00s
  * </pre>
  * 
+ * <p>
+ * G1:
+ * </p>
+ * 
+ * <pre>
+ * [36.400s][info][gc] GC(1330) Concurrent Cycle
+ * </pre>
+ * 
+ * <pre>
+ * [36.606s][info][gc] GC(1335) Concurrent Cycle 90.487ms
+ * </pre>
+ * 
+ * <p>
+ * Detailed logging:
+ * </p>
+ * 
+ * <pre>
+ * [16.601s][info][gc           ] GC(1033) Concurrent Cycle
+ * </pre>
+ * 
+ * <pre>
+ * [16.601s][info][gc,marking   ] GC(1033) Concurrent Clear Claimed Marks
+ * </pre>
+ * 
+ * <pre>
+ * [16.601s][info][gc,marking   ] GC(1033) Concurrent Clear Claimed Marks 0.019ms
+ * </pre>
+ * 
+ * <pre>
+ * [16.601s][info][gc,marking   ] GC(1033) Concurrent Scan Root Regions
+ * </pre>
+ * 
+ * <pre>
+ * [16.601s][info][gc,marking   ] GC(1033) Concurrent Scan Root Regions 0.283ms
+ * </pre>
+ * 
+ * <pre>
+ * [16.601s][info][gc,marking   ] GC(1033) Concurrent Mark (16.601s)
+ * </pre>
+ * 
+ * <pre>
+ * [16.050s][info][gc,marking   ] GC(969) Concurrent Mark (16.017s, 16.050s) 33.614ms
+ * </pre>
+ * 
+ * <pre>
+ * [16.601s][info][gc,marking   ] GC(1033) Concurrent Mark From Roots
+ * </pre>
+ * 
+ * <pre>
+ * [16.601s][info][gc,task      ] GC(1033) Using 1 workers of 1 for marking
+ * </pre>
+ * 
+ * <pre>
+ * [16.053s][info][gc,marking    ] GC(969) Concurrent Rebuild Remembered Sets
+ * </pre>
+ * 
+ * <pre>
+ * [16.082s][info][gc,marking    ] GC(969) Concurrent Cleanup for Next Mark
+ * </pre>
+ * 
+ * <pre>
+ * [16.082s][info][gc,marking    ] GC(969) Concurrent Cleanup for Next Mark 0.428ms
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedCmsConcurrentEvent extends CmsCollector implements UnifiedLogging, ParallelEvent {
+public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedLogging, ParallelEvent {
 
     /**
      * Regular expressions defining the logging.
-     * 
-     * <code>UnifiedRegEx.DECORATOR</code> is not used to avoid conflict with <code>UnifiedG1ConcurrentEvent</code>.
      */
-    private static final String REGEX = "^\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
-            + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
-            + ")\\])?\\[info\\]\\[gc[ ]{0,13}\\] " + UnifiedRegEx.GC_EVENT_NUMBER
-            + " Concurrent (Mark|Preclean|Sweep|Reset)( " + UnifiedRegEx.DURATION + ")?" + TimesData.REGEX_JDK9
-            + "?[ ]*$";
-
-    private static final Pattern pattern = Pattern.compile(REGEX);
+    private static final String[] REGEX = {
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Concurrent Cycle( " + UnifiedRegEx.DURATION + ")?$",
+            //
+            "^" + UnifiedRegEx.DECORATOR
+                    + " Concurrent (Cleanup for Next Mark|Clear Claimed Marks|Create Live Data|Mark|Mark From Roots|"
+                    + "Preclean|Rebuild Remembered Sets|Reset|Scan Root Regions|Sweep)( \\(" + JdkRegEx.TIMESTAMP
+                    + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + UnifiedRegEx.DURATION + ")?" + TimesData.REGEX_JDK9
+                    + "?[ ]*$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$"
+            //
+    };
 
     public String getLogEntry() {
         throw new UnsupportedOperationException("Event does not include log entry information");
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString();
+        return JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString();
     }
 
     public long getTimestamp() {
@@ -124,6 +190,13 @@ public class UnifiedCmsConcurrentEvent extends CmsCollector implements UnifiedLo
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        boolean match = false;
+        for (int i = 0; i < REGEX.length; i++) {
+            if (logLine.matches(REGEX[i])) {
+                match = true;
+                break;
+            }
+        }
+        return match;
     }
 }

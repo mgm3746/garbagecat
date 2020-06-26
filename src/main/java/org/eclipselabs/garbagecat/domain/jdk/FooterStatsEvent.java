@@ -454,9 +454,9 @@ public class FooterStatsEvent implements ThrowAwayEvent {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?  Finish Queues.*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  Weak References.*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?  (Weak References|System Purge).*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?    (Process|Enqueue).*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?    (Process|Enqueue|Parallel Cleanup).*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?  (Initial|Prepare)( Evacuation)?.*$",
             //

@@ -76,10 +76,9 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.HeapAddressEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.HeapRegionSizeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsInitialMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1ConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1InfoEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1MixedPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEvent;
@@ -118,15 +117,15 @@ public class JdkUtil {
         // unified
         FOOTER_STATS, GC_INFO, HEAP_REGION_SIZE, HEAP_ADDRESS, UNIFIED_APPLICATION_STOPPED_TIME, UNIFIED_BLANK_LINE,
         //
-        UNIFIED_CMS_CONCURRENT, UNIFIED_CMS_INITIAL_MARK, UNIFIED_G1_CLEANUP, UNIFIED_G1_CONCURRENT, UNIFIED_G1_INFO,
+        UNIFIED_CONCURRENT, UNIFIED_CMS_INITIAL_MARK, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE,
         //
-        UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE,
+        UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_OLD,
         //
-        UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD,
+        UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
         //
-        UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, USING_CMS,
+        UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL,
         //
-        USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH,
+        USING_SHENANDOAH,
         // serial
         SERIAL_NEW, SERIAL_OLD,
         // parallel
@@ -201,20 +200,18 @@ public class JdkUtil {
             return LogEventType.FOOTER_HEAP;
         if (HeapAddressEvent.match(logLine))
             return LogEventType.HEAP_ADDRESS;
-        if (UnifiedApplicationStoppedTimeEvent.match(logLine))
-            return LogEventType.UNIFIED_APPLICATION_STOPPED_TIME;
         if (HeapRegionSizeEvent.match(logLine))
             return LogEventType.HEAP_REGION_SIZE;
+        if (UnifiedApplicationStoppedTimeEvent.match(logLine))
+            return LogEventType.UNIFIED_APPLICATION_STOPPED_TIME;
         if (UnifiedBlankLineEvent.match(logLine) && !BlankLineEvent.match(logLine))
             return LogEventType.UNIFIED_BLANK_LINE;
-        if (UnifiedCmsConcurrentEvent.match(logLine))
-            return LogEventType.UNIFIED_CMS_CONCURRENT;
         if (UnifiedCmsInitialMarkEvent.match(logLine))
             return LogEventType.UNIFIED_CMS_INITIAL_MARK;
+        if (UnifiedConcurrentEvent.match(logLine))
+            return LogEventType.UNIFIED_CONCURRENT;
         if (UnifiedG1CleanupEvent.match(logLine))
             return LogEventType.UNIFIED_G1_CLEANUP;
-        if (UnifiedG1ConcurrentEvent.match(logLine))
-            return LogEventType.UNIFIED_G1_CONCURRENT;
         if (UnifiedG1InfoEvent.match(logLine))
             return LogEventType.UNIFIED_G1_INFO;
         if (UnifiedG1MixedPauseEvent.match(logLine))
@@ -400,17 +397,14 @@ public class JdkUtil {
         case UNIFIED_BLANK_LINE:
             event = new UnifiedBlankLineEvent(logLine);
             break;
-        case UNIFIED_CMS_CONCURRENT:
-            event = new UnifiedCmsConcurrentEvent();
+        case UNIFIED_CONCURRENT:
+            event = new UnifiedConcurrentEvent();
             break;
         case UNIFIED_CMS_INITIAL_MARK:
             event = new UnifiedCmsInitialMarkEvent(logLine);
             break;
         case UNIFIED_G1_CLEANUP:
             event = new UnifiedG1CleanupEvent(logLine);
-            break;
-        case UNIFIED_G1_CONCURRENT:
-            event = new UnifiedG1ConcurrentEvent();
             break;
         case UNIFIED_G1_INFO:
             event = new UnifiedG1InfoEvent(logLine);
@@ -815,8 +809,7 @@ public class JdkUtil {
         case THREAD_DUMP:
         case TENURING_DISTRIBUTION:
         case UNIFIED_APPLICATION_STOPPED_TIME:
-        case UNIFIED_CMS_CONCURRENT:
-        case UNIFIED_G1_CONCURRENT:
+        case UNIFIED_CONCURRENT:
         case UNIFIED_G1_INFO:
         case UNKNOWN:
         case USING_SERIAL:

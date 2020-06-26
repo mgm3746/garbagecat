@@ -79,15 +79,15 @@ public class TestUnifiedUtil extends TestCase {
 
     public void testUnifiedCmsConcurrentIsUnifiedLogging() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_CMS_CONCURRENT);
-        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_CONCURRENT.toString() + " should be identified as unified.",
+        eventTypes.add(LogEventType.UNIFIED_CONCURRENT);
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " should be identified as unified.",
                 UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
     public void testUnifiedG1ConcurrentIsUnifiedLogging() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_G1_CONCURRENT);
-        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_CONCURRENT.toString() + " should be identified as unified.",
+        eventTypes.add(LogEventType.UNIFIED_CONCURRENT);
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " should be identified as unified.",
                 UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
