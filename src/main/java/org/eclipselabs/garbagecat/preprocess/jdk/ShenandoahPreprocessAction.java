@@ -198,7 +198,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             "^" + JdkRegEx.DECORATOR + " \\[Concurrent (cleanup|evacuation|marking|precleaning|reset|"
                     + "update references)( \\((process weakrefs|update refs)\\))?( \\(process weakrefs\\))?, start\\]$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Pacer for (Reset|Precleaning). Non-Taxable: " + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for (Reset|Precleaning). Non-Taxable: " + JdkRegEx.SIZE
+                    + "$",
             //
     };
 
