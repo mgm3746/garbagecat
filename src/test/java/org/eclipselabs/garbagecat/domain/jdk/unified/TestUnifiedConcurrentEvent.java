@@ -210,6 +210,12 @@ public class TestUnifiedConcurrentEvent extends TestCase {
                 UnifiedConcurrentEvent.match(logLine));
     }
 
+    public void testUsingWorkersForFullCompaction() {
+        String logLine = "[2020-06-24T18:13:47.695-0700][173690ms] GC(74) Using 2 workers of 2 for full compaction";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".",
+                UnifiedConcurrentEvent.match(logLine));
+    }
+
     public void testMarkFromRoots() {
         String logLine = "[16.601s][info][gc,task      ] GC(1033) Using 1 workers of 1 for marking";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".",
@@ -254,6 +260,12 @@ public class TestUnifiedConcurrentEvent extends TestCase {
 
     public void testCreateLiveDataWithDuration() {
         String logLine = "[2.731s][info][gc,marking    ] GC(52) Concurrent Create Live Data 0.483ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".",
+                UnifiedConcurrentEvent.match(logLine));
+    }
+
+    public void testConcurrentMarkAbort() {
+        String logLine = "[2020-06-24T18:13:51.156-0700][177151ms] GC(73) Concurrent Mark Abort";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".",
                 UnifiedConcurrentEvent.match(logLine));
     }

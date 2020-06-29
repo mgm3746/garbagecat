@@ -1,0 +1,13 @@
+[2020-06-24T18:11:52.676-0700][58671ms] GC(44) Pause Young (Concurrent Start) (Metadata GC Threshold)
+[2020-06-24T18:11:52.676-0700][58671ms] GC(44) Using 2 workers of 2 for evacuation
+[2020-06-24T18:11:52.781-0700][58776ms] GC(44)   Pre Evacuate Collection Set: 0.2ms
+[2020-06-24T18:11:52.781-0700][58776ms] GC(44)   Evacuate Collection Set: 101.6ms
+[2020-06-24T18:11:52.781-0700][58776ms] GC(44)   Post Evacuate Collection Set: 3.3ms
+[2020-06-24T18:11:52.781-0700][58776ms] GC(44)   Other: 0.4ms
+[2020-06-24T18:11:52.781-0700][58776ms] GC(44) Eden regions: 186->0(300)
+[2020-06-24T18:11:52.781-0700][58776ms] GC(44) Survivor regions: 30->45(45)
+[2020-06-24T18:11:52.781-0700][58776ms] GC(44) Old regions: 517->543
+[2020-06-24T18:11:52.781-0700][58776ms] GC(44) Humongous regions: 2->2
+[2020-06-24T18:11:52.781-0700][58776ms] GC(44) Metaspace: 88802K->88802K(1134592K)
+[2020-06-24T18:11:52.781-0700][58776ms] GC(44) Pause Young (Concurrent Start) (Metadata GC Threshold) 733M->588M(1223M) 105.541ms
+[2020-06-24T18:11:52.781-0700][58776ms] GC(44) User=0.18s Sys=0.00s Real=0.11s

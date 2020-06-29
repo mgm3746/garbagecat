@@ -1,0 +1,13 @@
+[2020-06-24T19:24:56.375-0700][4442370ms] GC(126) Pause Young (Concurrent Start) (G1 Humongous Allocation)
+[2020-06-24T19:24:56.375-0700][4442370ms] GC(126) Using 2 workers of 2 for evacuation
+[2020-06-24T19:24:56.395-0700][4442390ms] GC(126)   Pre Evacuate Collection Set: 1.0ms
+[2020-06-24T19:24:56.395-0700][4442390ms] GC(126)   Evacuate Collection Set: 15.3ms
+[2020-06-24T19:24:56.395-0700][4442390ms] GC(126)   Post Evacuate Collection Set: 3.0ms
+[2020-06-24T19:24:56.395-0700][4442390ms] GC(126)   Other: 0.5ms
+[2020-06-24T19:24:56.395-0700][4442390ms] GC(126) Eden regions: 43->0(192)
+[2020-06-24T19:24:56.395-0700][4442390ms] GC(126) Survivor regions: 3->5(29)
+[2020-06-24T19:24:56.395-0700][4442390ms] GC(126) Old regions: 838->838
+[2020-06-24T19:24:56.395-0700][4442390ms] GC(126) Humongous regions: 2->2
+[2020-06-24T19:24:56.395-0700][4442390ms] GC(126) Metaspace: 349357K->349357K(1372160K)
+[2020-06-24T19:24:56.395-0700][4442390ms] GC(126) Pause Young (Concurrent Start) (G1 Humongous Allocation) 882M->842M(1223M) 19.777ms
+[2020-06-24T19:24:56.395-0700][4442390ms] GC(126) User=0.04s Sys=0.00s Real=0.02s

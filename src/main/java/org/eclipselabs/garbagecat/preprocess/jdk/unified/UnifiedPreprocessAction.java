@@ -318,11 +318,14 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.076s][info][gc             ] GC(2) Pause Full (Allocation Failure) 0M->0M(2M) 1.699ms
      * 
      * [0.092s][info][gc             ] GC(3) Pause Full (Ergonomics) 0M->0M(3M) 1.849ms
+     * 
+     * [2020-06-24T18:13:51.155-0700][177150ms] GC(74) Pause Full (System.gc()) 887M->583M(1223M) 3460.196ms
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_ERGONOMICS + ")\\)( " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + ")$";
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_ERGONOMICS + "|" + JdkRegEx.TRIGGER_SYSTEM_GC
+            + ")\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION
+            + ")$";
 
     /**
      * Regular expression for retained Pause Young data.
@@ -337,10 +340,17 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 35.722ms
      * 
      * [16.630s][info][gc ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) 15M->12M(31M) 1.202ms
+     * 
+     * [2020-06-24T18:11:52.781-0700][58776ms] GC(44) Pause Young (Concurrent Start) (Metadata GC Threshold)
+     * 733M->588M(1223M) 105.541ms
+     * 
+     * [2020-06-24T19:24:56.395-0700][4442390ms] GC(126) Pause Young (Concurrent Start) (G1 Humongous Allocation)
+     * 882M->842M(1223M) 19.777ms
      */
     private static final String REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA = "^" + UnifiedRegEx.DECORATOR
             + " Pause Young( \\((Normal|Mixed|Prepare Mixed|Concurrent Start)\\))? \\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)( "
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\)( "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + ")$";
 
     /**
@@ -430,13 +440,15 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Pause Remark$",
             //
             "^" + UnifiedRegEx.DECORATOR
-                    + " Cleaned string and symbol table, strings: \\d{1,4} processed, \\d removed, "
-                    + "symbols: \\d{1,5} processed, \\d{1,2} removed$",
+                    + " Cleaned string and symbol table, strings: \\d{1,7} processed, \\d{1,5} removed, "
+                    + "symbols: \\d{1,7} processed, \\d{1,4} removed$",
 
             //
             "^" + UnifiedRegEx.DECORATOR + " Mark (closed|open) archive regions in map:.+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Pause Cleanup$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " MMU target violated:.+",
             // Parallel
             "^" + UnifiedRegEx.DECORATOR + " (Adjust Roots|Compaction Phase|Marking Phase|Post Compact|Summary Phase)( "
                     + UnifiedRegEx.DURATION + ")?$",
@@ -535,7 +547,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA);
                 Matcher matcher = pattern.matcher(logEntry);
                 if (matcher.matches()) {
-                    this.logEntry = matcher.group(26);
+                    this.logEntry = matcher.group(27);
                 }
             } else if (!context.contains(TOKEN)) {
                 // Single line event

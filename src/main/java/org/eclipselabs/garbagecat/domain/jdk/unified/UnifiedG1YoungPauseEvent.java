@@ -79,7 +79,8 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")";
 
     /**
      * Regular expression defining standard logging (no details).

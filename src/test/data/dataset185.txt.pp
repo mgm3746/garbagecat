@@ -1,0 +1,1 @@
+[2020-06-24T19:24:56.375-0700][4442370ms] GC(126) Pause Young (Concurrent Start) (G1 Humongous Allocation) Metaspace: 349357K->349357K(1372160K) 882M->842M(1223M) 19.777ms User=0.04s Sys=0.00s Real=0.02s

@@ -1,0 +1,17 @@
+[2020-06-24T18:13:47.695-0700][173690ms] GC(74) Pause Full (System.gc())
+[2020-06-24T18:13:47.711-0700][173706ms] GC(74) Phase 1: Mark live objects
+[2020-06-24T18:13:49.278-0700][175273ms] GC(74) Cleaned string and symbol table, strings: 81779 processed, 51 removed, symbols: 402330 processed, 598 removed
+[2020-06-24T18:13:49.278-0700][175273ms] GC(74) Phase 1: Mark live objects 1566.691ms
+[2020-06-24T18:13:49.278-0700][175273ms] GC(74) Phase 2: Prepare for compaction
+[2020-06-24T18:13:49.532-0700][175527ms] GC(74) Phase 2: Prepare for compaction 253.852ms
+[2020-06-24T18:13:49.532-0700][175527ms] GC(74) Phase 3: Adjust pointers
+[2020-06-24T18:13:50.584-0700][176579ms] GC(74) Phase 3: Adjust pointers 1052.546ms
+[2020-06-24T18:13:50.584-0700][176579ms] GC(74) Phase 4: Compact heap
+[2020-06-24T18:13:51.149-0700][177144ms] GC(74) Phase 4: Compact heap 565.091ms
+[2020-06-24T18:13:51.155-0700][177150ms] GC(74) Eden regions: 244->0(427)
+[2020-06-24T18:13:51.155-0700][177150ms] GC(74) Survivor regions: 24->0(52)
+[2020-06-24T18:13:51.155-0700][177150ms] GC(74) Old regions: 613->580
+[2020-06-24T18:13:51.155-0700][177150ms] GC(74) Humongous regions: 8->8
+[2020-06-24T18:13:51.155-0700][177150ms] GC(74) Metaspace: 260211K->260197K(1290240K)
+[2020-06-24T18:13:51.155-0700][177150ms] GC(74) Pause Full (System.gc()) 887M->583M(1223M) 3460.196ms
+[2020-06-24T18:13:51.155-0700][177150ms] GC(74) User=1.78s Sys=0.01s Real=3.46s

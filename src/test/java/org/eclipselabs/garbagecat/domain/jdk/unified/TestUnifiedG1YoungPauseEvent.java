@@ -45,9 +45,9 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 15086 - 0, event.getTimestamp());
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
-        Assert.assertEquals("Perm gen begin size not parsed correctly.", 3771, event.getPermOccupancyInit());
-        Assert.assertEquals("Perm gen end size not parsed correctly.", 3771, event.getPermOccupancyEnd());
-        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 1056768, event.getPermSpace());
+        Assert.assertEquals("Metaspace begin size not parsed correctly.", 3771, event.getPermOccupancyInit());
+        Assert.assertEquals("Metaspace end size not parsed correctly.", 3771, event.getPermOccupancyEnd());
+        Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1056768, event.getPermSpace());
         Assert.assertEquals("Combined begin size not parsed correctly.", 24 * 1024, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 13 * 1024, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 31 * 1024, event.getCombinedSpace());
@@ -115,9 +115,9 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 5355, event.getTimestamp());
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
-        Assert.assertEquals("Perm gen begin size not parsed correctly.", 26116, event.getPermOccupancyInit());
-        Assert.assertEquals("Perm gen end size not parsed correctly.", 26116, event.getPermOccupancyEnd());
-        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 278528, event.getPermSpace());
+        Assert.assertEquals("Metaspace begin size not parsed correctly.", 26116, event.getPermOccupancyInit());
+        Assert.assertEquals("Metaspace end size not parsed correctly.", 26116, event.getPermOccupancyEnd());
+        Assert.assertEquals("Metaspace allocation size not parsed correctly.", 278528, event.getPermSpace());
         Assert.assertEquals("Combined begin size not parsed correctly.", 65 * 1024, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 8 * 1024, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 1304 * 1024, event.getCombinedSpace());
@@ -139,9 +139,9 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 11728, event.getTimestamp());
         Assert.assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
-        Assert.assertEquals("Perm gen begin size not parsed correctly.", 35318, event.getPermOccupancyInit());
-        Assert.assertEquals("Perm gen end size not parsed correctly.", 35318, event.getPermOccupancyEnd());
-        Assert.assertEquals("Perm gen allocation size not parsed correctly.", 288768, event.getPermSpace());
+        Assert.assertEquals("Metaspace begin size not parsed correctly.", 35318, event.getPermOccupancyInit());
+        Assert.assertEquals("Metaspace end size not parsed correctly.", 35318, event.getPermOccupancyEnd());
+        Assert.assertEquals("Metaspace allocation size not parsed correctly.", 288768, event.getPermSpace());
         Assert.assertEquals("Combined begin size not parsed correctly.", 78 * 1024, event.getCombinedOccupancyInit());
         Assert.assertEquals("Combined end size not parsed correctly.", 22 * 1024, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined allocation size not parsed correctly.", 1304 * 1024, event.getCombinedSpace());
@@ -150,6 +150,31 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
         Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
         Assert.assertEquals("Real time not parsed correctly.", 4, event.getTimeReal());
         Assert.assertEquals("Parallelism not calculated correctly.", 50, event.getParallelism());
+    }
+
+    public void testLogLinePreprocessedConcurrentStartTriggerMetaGcThreshold() {
+        String logLine = "[2020-06-24T18:11:52.676-0700][58671ms] GC(44) Pause Young (Concurrent Start) "
+                + "(Metadata GC Threshold) Metaspace: 88802K->88802K(1134592K) 733M->588M(1223M) 105.541ms "
+                + "User=0.18s Sys=0.00s Real=0.11s";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".",
+                UnifiedG1YoungPauseEvent.match(logLine));
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(),
+                event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 58671, event.getTimestamp());
+        Assert.assertTrue("Trigger not parsed correctly.",
+                event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
+        Assert.assertEquals("Metaspace begin size not parsed correctly.", 88802, event.getPermOccupancyInit());
+        Assert.assertEquals("Metaspace end size not parsed correctly.", 88802, event.getPermOccupancyEnd());
+        Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1134592, event.getPermSpace());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 733 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 588 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 1223 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 105541, event.getDuration());
+        Assert.assertEquals("User time not parsed correctly.", 18, event.getTimeUser());
+        Assert.assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
+        Assert.assertEquals("Real time not parsed correctly.", 11, event.getTimeReal());
+        Assert.assertEquals("Parallelism not calculated correctly.", 164, event.getParallelism());
     }
 
     public void testUnifiedG1YoungPauseJdk9() {
@@ -167,6 +192,32 @@ public class TestUnifiedG1YoungPauseEvent extends TestCase {
 
     public void testUnifiedG1YoungPauseDatestampMillis() {
         File testFile = new File(Constants.TEST_DATA_DIR + "dataset166.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE));
+    }
+
+    public void testUnifiedG1YoungPauseConcurrentStartTriggerMetaGcThreshold() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset183.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".",
+                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE));
+    }
+
+    public void testUnifiedG1YoungPauseConcurrentStartTriggerG1HumongousAllocation() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset185.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

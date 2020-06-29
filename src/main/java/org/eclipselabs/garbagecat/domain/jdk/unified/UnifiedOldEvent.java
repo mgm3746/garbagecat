@@ -19,6 +19,9 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
+import org.eclipselabs.garbagecat.domain.PermCollection;
+import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -45,15 +48,27 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) Normal:
+ * </p>
+ * 
  * <pre>
  * [0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M-&gt;1M(7M) 2.969ms
+ * </pre>
+ * 
+ * <p>
+ * 2) Preprocessed:
+ * </p>
+ * 
+ * <pre>
+ * [2020-06-24T18:13:47.695-0700][173690ms] GC(74) Pause Full (System.gc()) Metaspace: 260211K-&gt;260197K(1290240K) 887M-&gt;583M(1223M) 3460.196ms User=1.78s Sys=0.01s Real=3.46s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedOldEvent extends UnknownCollector
-        implements UnifiedLogging, BlockingEvent, OldCollection, CombinedData, TriggerData, ParallelEvent {
+public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging, BlockingEvent, OldCollection,
+        PermCollection, PermData, CombinedData, TriggerData, ParallelEvent, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -69,6 +84,21 @@ public class UnifiedOldEvent extends UnknownCollector
      * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
+
+    /**
+     * Permanent generation size (kilobytes) at beginning of GC event.
+     */
+    private int permGen;
+
+    /**
+     * Permanent generation size (kilobytes) at end of GC event.
+     */
+    private int permGenEnd;
+
+    /**
+     * Space allocated to permanent generation (kilobytes).
+     */
+    private int permGenAllocation;
 
     /**
      * Combined young + old generation size (kilobytes) at beginning of GC event.
@@ -91,6 +121,20 @@ public class UnifiedOldEvent extends UnknownCollector
     private String trigger;
 
     /**
+     * The time of all user (non-kernel) threads added together in centiseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
+    /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
+
+    /**
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
@@ -100,8 +144,9 @@ public class UnifiedOldEvent extends UnknownCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + TRIGGER + "\\) "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + "[ ]*$";
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + TRIGGER + "\\)( Metaspace: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))? " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -133,12 +178,23 @@ public class UnifiedOldEvent extends UnknownCollector
                 }
             }
             trigger = matcher.group(25);
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)), matcher.group(29).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(30)), matcher.group(32).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(33)),
-                    matcher.group(35).charAt(0));
-            duration = JdkMath.convertMillisToMicros(matcher.group(36)).intValue();
+            if (matcher.group(27) != null) {
+                permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
+                permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)), matcher.group(33).charAt(0));
+                permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(34)),
+                        matcher.group(36).charAt(0));
+            }
+            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(37)), matcher.group(39).charAt(0));
+            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(40)), matcher.group(42).charAt(0));
+            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(43)),
+                    matcher.group(45).charAt(0));
+            duration = JdkMath.convertMillisToMicros(matcher.group(46)).intValue();
             timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+            if (matcher.group(47) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(48)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(49)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(50)).intValue();
+            }
         }
     }
 
@@ -174,6 +230,30 @@ public class UnifiedOldEvent extends UnknownCollector
         return timestamp;
     }
 
+    public int getPermOccupancyInit() {
+        return permGen;
+    }
+
+    protected void setPermOccupancyInit(int permGen) {
+        this.permGen = permGen;
+    }
+
+    public int getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    protected void setPermOccupancyEnd(int permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    public int getPermSpace() {
+        return permGenAllocation;
+    }
+
+    protected void setPermSpace(int permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
+    }
+
     public int getCombinedOccupancyInit() {
         return combinedBegin;
     }
@@ -188,6 +268,22 @@ public class UnifiedOldEvent extends UnknownCollector
 
     public String getTrigger() {
         return trigger;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public int getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     /**

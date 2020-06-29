@@ -161,12 +161,12 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
             "^" + UnifiedRegEx.DECORATOR + " Concurrent Cycle( " + UnifiedRegEx.DURATION + ")?$",
             //
             "^" + UnifiedRegEx.DECORATOR
-                    + " Concurrent (Cleanup for Next Mark|Clear Claimed Marks|Create Live Data|Mark|Mark From Roots|"
-                    + "Preclean|Rebuild Remembered Sets|Reset|Scan Root Regions|Sweep)( \\(" + JdkRegEx.TIMESTAMP
-                    + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + UnifiedRegEx.DURATION + ")?" + TimesData.REGEX_JDK9
-                    + "?[ ]*$",
+                    + " Concurrent (Cleanup for Next Mark|Clear Claimed Marks|Create Live Data|Mark|Mark Abort|"
+                    + "Mark From Roots|Preclean|Rebuild Remembered Sets|Reset|Scan Root Regions|Sweep)( \\("
+                    + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + UnifiedRegEx.DURATION + ")?"
+                    + TimesData.REGEX_JDK9 + "?[ ]*$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$"
+            "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for (full compaction|marking)$"
             //
     };
 
