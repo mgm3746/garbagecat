@@ -227,7 +227,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
 
     public void testLogLineG1PauseYoungInfo() {
         String logLine = "[0.337s][info][gc           ] GC(0) Pause Young (G1 Evacuation Pause) 25M->4M(254M) 3.523ms";
-        String nextLogLine = "";
+        String nextLogLine = "[0.337s][info][gc,cpu       ] GC(0) User=0.00s Sys=0.00s Real=0.00s";
         Set<String> context = new HashSet<String>();
         Assert.assertTrue("Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".",
                 UnifiedPreprocessAction.match(logLine));
@@ -240,7 +240,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     public void testLogLineG1MixedPauseInfo() {
         String logLine = "[16.630s][info][gc            ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "15M->12M(31M) 1.202ms";
-        String nextLogLine = "";
+        String nextLogLine = "[16.630s][info][gc           ] GC(0) User=0.18s Sys=0.00s Real=0.11s";
         Set<String> context = new HashSet<String>();
         Assert.assertTrue("Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".",
                 UnifiedPreprocessAction.match(logLine));
@@ -253,7 +253,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     public void testLogLinePauseYoungInfoNormalWithDatestamp() {
         String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) "
                 + "65M->8M(1304M) 57.263ms";
-        String nextLogLine = "";
+        String nextLogLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) User=0.02s Sys=0.01s Real=0.06s";
         Set<String> context = new HashSet<String>();
         Assert.assertTrue("Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".",
                 UnifiedPreprocessAction.match(logLine));
@@ -266,7 +266,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     public void testLogLinePauseYoungInfoNormalTriggerGcLockerWithDatestamp() {
         String logLine = "[2019-05-09T01:39:07.172+0000][11764ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC) "
                 + "78M->22M(1304M) 35.722ms";
-        String nextLogLine = "";
+        String nextLogLine = "[2019-05-09T01:39:07.172+0000][11764ms] GC(3) User=0.02s Sys=0.00s Real=0.04s";
         Set<String> context = new HashSet<String>();
         Assert.assertTrue("Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".",
                 UnifiedPreprocessAction.match(logLine));
@@ -285,7 +285,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     public void testLogLinePauseYoungInfoConcurrentStartTriggerMetaGcThreshold() {
         String logLine = "[2020-06-24T18:11:52.781-0700][58776ms] GC(44) Pause Young (Concurrent Start) "
                 + "(Metadata GC Threshold) 733M->588M(1223M) 105.541ms";
-        String nextLogLine = "";
+        String nextLogLine = "[2020-06-24T18:11:52.781-0700][58776ms] GC(44) User=0.18s Sys=0.00s Real=0.11s";
         Set<String> context = new HashSet<String>();
         Assert.assertTrue("Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".",
                 UnifiedPreprocessAction.match(logLine));
@@ -298,7 +298,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     public void testLogLinePauseYoungInfoConcurrentStartTriggerG1HumongousAllocation() {
         String logLine = "[2020-06-24T19:24:56.395-0700][4442390ms] GC(126) Pause Young (Concurrent Start) "
                 + "(G1 Humongous Allocation) 882M->842M(1223M) 19.777ms";
-        String nextLogLine = "";
+        String nextLogLine = "[2020-06-24T19:24:56.395-0700][4442390ms] GC(126) User=0.04s Sys=0.00s Real=0.02s";
         Set<String> context = new HashSet<String>();
         Assert.assertTrue("Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".",
                 UnifiedPreprocessAction.match(logLine));
@@ -960,5 +960,21 @@ public class TestUnifiedPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK));
         Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " collector not identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PAR_NEW));
+    }
+
+    /**
+     * Verify that preprocessing logging that does not need preprocessing does not chnage logging.
+     */
+    public void testPreprocessingG1Unecessarily() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset186.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE));
     }
 }

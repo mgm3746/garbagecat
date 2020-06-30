@@ -544,6 +544,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA)) {
             if (nextLogEntry != null && nextLogEntry.matches(REGEX_RETAIN_END_TIMES_DATA)) {
+                // Middle logging
                 Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA);
                 Matcher matcher = pattern.matcher(logEntry);
                 if (matcher.matches()) {
@@ -555,13 +556,26 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA)) {
-            // Middle logging
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.matches()) {
-                this.logEntry = matcher.group(28);
+            if (nextLogEntry != null && nextLogEntry.matches(REGEX_RETAIN_END_TIMES_DATA)) {
+                // Middle logging
+                Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
+                Matcher matcher = pattern.matcher(logEntry);
+                if (matcher.matches()) {
+                    this.logEntry = matcher.group(28);
+                }
+            } else if (!context.contains(TOKEN)) {
+                // Single line event
+                this.logEntry = Constants.LINE_SEPARATOR + logEntry;
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+
+            // Middle logging
+            /*
+             * Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA); Matcher matcher =
+             * pattern.matcher(logEntry); if (matcher.matches()) { if (context.contains(TOKEN)) { this.logEntry =
+             * matcher.group(28); } else { // Single line event this.logEntry = Constants.LINE_SEPARATOR + logEntry; } }
+             * context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+             */
         } else if (logEntry.matches(REGEX_RETAIN_END_TIMES_DATA)) {
             // End logging
             Pattern pattern = Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);
