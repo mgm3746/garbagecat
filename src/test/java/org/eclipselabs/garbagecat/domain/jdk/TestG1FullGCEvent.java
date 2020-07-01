@@ -12,8 +12,16 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.io.File;
+
+import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -240,5 +248,37 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Combined end size not parsed correctly.", 1281 * 1024, event.getCombinedOccupancyEnd());
         Assert.assertEquals("Combined available size not parsed correctly.", 3072 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 4155525, event.getDuration());
+    }
+
+    public void testLogLinePreprocessedTriggerHeapInspection() {
+        String logLine = "2020-06-26T00:00:06.152+0200: 21424.319: [Full GC (Heap Inspection Initiated GC)  "
+                + "3198M->827M(4096M), 4.1354492 secs][Eden: 1404.0M(1794.0M)->0.0B(2456.0M) Survivors: 102.0M->0.0B "
+                + "Heap: 3198.1M(4096.0M)->827.6M(4096.0M)], [Metaspace: 319076K->318118K(1343488K)] "
+                + "[Times: user=5.01 sys=0.00, real=4.14 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
+                G1FullGCEvent.match(logLine));
+        G1FullGCEvent event = new G1FullGCEvent(logLine);
+        Assert.assertEquals("Trigger not parsed correctly.", JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC,
+                event.getTrigger());
+        Assert.assertEquals("Time stamp not parsed correctly.", 21424319, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 3274854, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 847462, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 4096 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 4135449, event.getDuration());
+    }
+
+    public void testUnifiedYoungExplictGc() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset188.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.G1_FULL_GC.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC));
+        Assert.assertFalse(Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_G1));
     }
 }
