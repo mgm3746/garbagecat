@@ -1273,4 +1273,17 @@ public class TestAnalysis extends TestCase {
         Assert.assertTrue(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL));
     }
+
+    /**
+     * Test swap disabled.
+     */
+    public void testSwapDisabled() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset187.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.INFO_SWAP_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.INFO_SWAP_DISABLED));
+    }
 }

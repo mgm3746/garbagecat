@@ -1026,6 +1026,11 @@ public class JvmRun {
         if (getJvm().getPercentSwapFree() < 95) {
             analysis.add(Analysis.INFO_SWAPPING);
         }
+        if (getJvm().getSwap() == 0) {
+            analysis.add(Analysis.INFO_SWAP_DISABLED);
+        }
+
+        // Check for swap disabled
 
         // Check for insufficient physical memory
         if (getJvm().getPhysicalMemory() > 0) {

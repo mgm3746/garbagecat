@@ -274,6 +274,11 @@ public enum Analysis {
     INFO_SWAPPING("info.swapping"),
 
     /**
+     * Property key for swapping disabled.
+     */
+    INFO_SWAP_DISABLED("info.swap.disabled"),
+
+    /**
      * Property key for unidentified last log line w/ preparsing.
      */
     INFO_UNIDENTIFIED_LOG_LINE_LAST("info.unidentified.log.line.last"),
