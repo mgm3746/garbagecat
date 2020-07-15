@@ -98,7 +98,7 @@ public class TestClassHistogramEvent extends TestCase {
                 ClassHistogramEvent.match(logLine));
     }
 
-    public void test65SpacesBeforeInstancesLine() {
+    public void test6SpacesBeforeInstancesLine() {
         String logLine = "   1:      98460990     7018731456  [I";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
                 ClassHistogramEvent.match(logLine));
@@ -126,6 +126,12 @@ public class TestClassHistogramEvent extends TestCase {
     public void testClassWithForwardSlash() {
         String logLine = " 116:           318           7632  "
                 + "io.micrometer.prometheus.PrometheusMeterRegistry$$Lambda$53/635371680";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
+                ClassHistogramEvent.match(logLine));
+    }
+
+    public void testTotal8SpacesBeforeInstances() {
+        String logLine = "Total        271481       20043160";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
                 ClassHistogramEvent.match(logLine));
     }

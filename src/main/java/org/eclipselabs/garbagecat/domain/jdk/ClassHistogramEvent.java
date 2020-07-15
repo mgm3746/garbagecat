@@ -92,7 +92,7 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
             /*
              * Footer
              */
-            "^Total[ ]{5,6}\\d{1,10}[ ]{4,5}\\d{1,11}$",
+            "^Total[ ]{5,8}\\d{1,10}[ ]{4,7}\\d{1,11}$",
             /*
              * Preprocessed block as a single line
              */
