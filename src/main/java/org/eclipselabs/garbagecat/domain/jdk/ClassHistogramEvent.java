@@ -88,7 +88,7 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
             /*
              * Instance data
              */
-            "^[ ]{0,3}\\d{1,6}:[ ]{6,13}\\d{1,9}[ ]{5,13}\\d{1,10}[ ]{2}[a-zA-Z0-9<>\\[\\$\\._;]+$",
+            "^[ ]{0,3}\\d{1,6}:[ ]{6,13}\\d{1,9}[ ]{5,13}\\d{1,10}[ ]{2}[a-zA-Z0-9<>\\[\\$\\._;/]+$",
             /*
              * Footer
              */

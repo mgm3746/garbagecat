@@ -122,4 +122,11 @@ public class TestClassHistogramEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
                 ClassHistogramEvent.match(logLine));
     }
+
+    public void testClassWithForwardSlash() {
+        String logLine = " 116:           318           7632  "
+                + "io.micrometer.prometheus.PrometheusMeterRegistry$$Lambda$53/635371680";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".",
+                ClassHistogramEvent.match(logLine));
+    }
 }
