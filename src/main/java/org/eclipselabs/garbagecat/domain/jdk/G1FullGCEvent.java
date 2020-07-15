@@ -86,13 +86,13 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
     private static final String REGEX_PREPROCESSED = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[Full GC[ ]{0,1}(\\((" + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD
             + "|" + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION
-            + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC
-            + ")\\)[ ]{0,2}|" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\](, \\[(Perm|Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\])?" + TimesData.REGEX + "?[ ]*$";
+            + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + ")\\)[ ]{0,2}|" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?"
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
+            + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\](, \\[(Perm|Metaspace): "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

@@ -267,6 +267,23 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 4135449, event.getDuration());
     }
 
+    public void testLogLinePreprocessedTriggerHeapDumpInitiatedGc() {
+        String logLine = "2020-07-14T14:51:39.493-0500: 5590.760: [Full GC (Heap Dump Initiated GC)  "
+                + "277M->16M(1024M), 0.1206075 secs][Eden: 259.0M(614.0M)->0.0B(614.0M) Survivors: 0.0B->0.0B "
+                + "Heap: 277.7M(1024.0M)->16.7M(1024.0M)], [Metaspace: 41053K->41053K(1085440K)] "
+                + "[Times: user=0.14 sys=0.00, real=0.12 secs]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".",
+                G1FullGCEvent.match(logLine));
+        G1FullGCEvent event = new G1FullGCEvent(logLine);
+        Assert.assertEquals("Trigger not parsed correctly.", JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC,
+                event.getTrigger());
+        Assert.assertEquals("Time stamp not parsed correctly.", 5590760, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 284365, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 17101, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined available size not parsed correctly.", 1024 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 120607, event.getDuration());
+    }
+
     public void testUnifiedYoungExplictGc() {
         File testFile = new File(Constants.TEST_DATA_DIR + "dataset188.txt");
         GcManager gcManager = new GcManager();
