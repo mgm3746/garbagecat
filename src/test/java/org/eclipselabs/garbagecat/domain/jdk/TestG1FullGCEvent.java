@@ -20,8 +20,8 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -284,8 +284,23 @@ public class TestG1FullGCEvent extends TestCase {
         Assert.assertEquals("Duration not parsed correctly.", 120607, event.getDuration());
     }
 
-    public void testUnifiedYoungExplictGc() {
+    public void testHeapInspectionInitiatedGc() {
         File testFile = new File(Constants.TEST_DATA_DIR + "dataset188.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.G1_FULL_GC.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC));
+        Assert.assertFalse(Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_G1));
+    }
+
+    public void testTriggerHeapDumpInitiatedGc() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset189.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

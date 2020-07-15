@@ -1152,7 +1152,7 @@ public class TestCmsSerialOldEvent extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD));
         Assert.assertTrue(Analysis.WARN_HEAP_DUMP_INITIATED_GC + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_INITIATED_GC));
-        Assert.assertTrue(Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.",
+        Assert.assertFalse(Analysis.ERROR_SERIAL_GC_CMS + " analysis incorrectly identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS));
     }
 }
