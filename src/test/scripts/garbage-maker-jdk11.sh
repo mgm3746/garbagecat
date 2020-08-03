@@ -6,7 +6,7 @@
 #
 
 GARBAGECAT_HOME=~/workspace/garbagecat/target
-GARBAGECAT_VERSION=-3.0.4-SNAPSHOT
+GARBAGECAT_VERSION=-3.0.5-SNAPSHOT
 
 ##### Create GC Logging #####
 
