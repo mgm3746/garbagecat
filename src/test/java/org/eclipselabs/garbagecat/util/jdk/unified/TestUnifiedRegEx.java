@@ -57,6 +57,12 @@ public class TestUnifiedRegEx extends TestCase {
         Assert.assertTrue("Time decorator " + decorator + " not recognized.",
                 decorator.matches(UnifiedRegEx.DECORATOR));
     }
+    
+    public void testDecoratorUptimeMillis9Digits() {
+        String decorator = "[100159717ms]";
+        Assert.assertTrue("Time decorator " + decorator + " not recognized.",
+                decorator.matches(UnifiedRegEx.DECORATOR));
+    }
 
     public void testDecoratorTime() {
         String decorator = "[2020-02-14T15:21:55.207-0500]";

@@ -34,7 +34,7 @@ public class UnifiedRegEx {
      * 
      * For example: 3ms
      */
-    public static final String UPTIMEMILLIS = "(\\d{1,8})ms";
+    public static final String UPTIMEMILLIS = "(\\d{1,9})ms";
 
     /**
      * The duration of the event in milliseconds with 3 decimal places, introduced JDK9.

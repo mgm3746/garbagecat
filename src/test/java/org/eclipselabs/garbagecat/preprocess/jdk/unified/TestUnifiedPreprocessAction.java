@@ -963,7 +963,7 @@ public class TestUnifiedPreprocessAction extends TestCase {
     }
 
     /**
-     * Verify that preprocessing logging that does not need preprocessing does not chnage logging.
+     * Verify that preprocessing logging that does not need preprocessing does not change logging.
      */
     public void testPreprocessingG1Unecessarily() {
         File testFile = new File(Constants.TEST_DATA_DIR + "dataset186.txt");
