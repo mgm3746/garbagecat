@@ -252,7 +252,7 @@ public class JdkMath {
     }
 
     /**
-     * Calculate parallelism, the ratio of user to wall (real) time.
+     * Calculate parallelism, the ratio of user + sys to wall (real) time.
      * 
      * @param timeUser
      *            The user (non-kernel) time in centiseconds.

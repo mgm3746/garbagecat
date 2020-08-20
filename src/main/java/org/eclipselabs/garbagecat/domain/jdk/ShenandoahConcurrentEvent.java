@@ -86,6 +86,10 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * </pre>
  * 
  * <pre>
+ * 2020-08-13T16:38:29.318+0000: 432034.969: [Concurrent reset, 26.427 ms]
+ * </pre>
+ * 
+ * <pre>
  * 2020-03-10T08:03:29.365-0400: 0.427: [Concurrent marking 16498K-&gt;17020K(21248K), 2.462 ms]
  * </pre>
  * 
@@ -119,8 +123,8 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector implements Lo
      */
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
             + ") [\\[]{0,1}Concurrent (reset|uncommit|marking( \\(update refs\\))?( \\(process weakrefs\\))?|"
-            + "precleaning|evacuation|update references|cleanup)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)[,]{0,1} " + UnifiedRegEx.DURATION + ")?[\\]]{0,1}[ ]*$";
+            + "precleaning|evacuation|update references|cleanup)(( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\))?[,]{0,1} " + UnifiedRegEx.DURATION + ")?[\\]]{0,1}[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
@@ -162,8 +166,8 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector implements Lo
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 int duration = 0;
-                if (matcher.group(50) != null) {
-                    duration = JdkMath.convertMillisToMicros(matcher.group(50)).intValue();
+                if (matcher.group(51) != null) {
+                    duration = JdkMath.convertMillisToMicros(matcher.group(51)).intValue();
                 }
 
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
@@ -189,12 +193,12 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector implements Lo
                     // JDK8
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 }
-                if (matcher.group(40) != null) {
-                    combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(41)), matcher.group(43).charAt(0));
-                    combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(44)),
-                            matcher.group(46).charAt(0));
-                    combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(47)),
-                            matcher.group(49).charAt(0));
+                if (matcher.group(41) != null) {
+                    combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(42)), matcher.group(44).charAt(0));
+                    combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(45)),
+                            matcher.group(47).charAt(0));
+                    combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(48)),
+                            matcher.group(50).charAt(0));
                 }
 
             }

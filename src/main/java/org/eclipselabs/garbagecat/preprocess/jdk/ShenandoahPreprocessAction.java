@@ -12,10 +12,14 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
@@ -120,11 +124,46 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * <pre>
  * [69.644s][info][gc           ] GC(2582) Pause Final Update Refs 0.302ms
  * </pre>
+ * 
+ * <p>
+ * 6) {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalUpdateEvent}:
+ * </p>
+ *
+ * <pre>
+ * 2020-08-18T14:05:39.789+0000: 854865.439: [Concurrent marking
+ *     Failed to allocate TLAB, 4096K
+ *     Cancelling GC: Allocation Failure
+ * , 2714.003 ms]
+ * </pre>
+ *
+ * <p>
+ * Preprocessed:
+ * </p>
+ *
+ * <pre>
+ * 2020-08-18T14:05:39.789+0000: 854865.439: [Concurrent marking, 2714.003 ms]
+ * </pre>
  *
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  *
  */
 public class ShenandoahPreprocessAction implements PreprocessAction {
+
+    /**
+     * Regular expression for retained beginning SHENANDOAH_CONCURRENT collection.
+     * 
+     * 2020-08-18T14:05:39.789+0000: 854865.439: [Concurrent marking
+     */
+    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(" + JdkRegEx.DECORATOR
+            + " \\[Concurrent marking)$";
+
+    /**
+     * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
+     * multiple lines. Check the TOKEN to see if in the middle of preprocessing an event that spans multiple lines.
+     * 
+     * , 27.5589374 secs]
+     */
+    private static final String REGEX_RETAIN_DURATION = "(, " + UnifiedRegEx.DURATION + "\\])[ ]*";
 
     /**
      * Regular expressions for lines thrown away.
@@ -191,15 +230,15 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Uncommitted " + JdkRegEx.SIZE + ". Heap: " + JdkRegEx.SIZE + " reserved, "
                     + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Failed to allocate " + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Failed to allocate (TLAB, )?" + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Cancelling GC: Allocation Failure$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Cancelling GC: Allocation Failure$",
             //
             "^" + JdkRegEx.DECORATOR + " \\[Concurrent (cleanup|evacuation|marking|precleaning|reset|"
                     + "update references)( \\((process weakrefs|update refs)\\))?( \\(process weakrefs\\))?, start\\]$",
             //
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for (Reset|Precleaning). Non-Taxable: " + JdkRegEx.SIZE
-                    + "$",
+                    + "$"
             //
     };
 
@@ -234,6 +273,27 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     public ShenandoahPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
             List<String> entangledLogLines, Set<String> context) {
+        // Beginning logging
+        if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_DURATION)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_DURATION);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            // Sometimes this is the end of a logging event
+            if (entangledLogLines != null && entangledLogLines.size() > 0 && newLoggingEvent(nextLogEntry)) {
+                clearEntangledLines(entangledLogLines);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        }
     }
 
     public String getLogEntry() {
@@ -251,13 +311,50 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        // TODO: Get rid of this and make them throwaway events?
-        for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
-            if (logLine.matches(REGEX_THROWAWAY[i])) {
-                match = true;
-                break;
+        if (logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT) || logLine.matches(REGEX_RETAIN_DURATION)) {
+            match = true;
+        } else {
+            // TODO: Get rid of this and make them throwaway events?
+            for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
+                if (logLine.matches(REGEX_THROWAWAY[i])) {
+                    match = true;
+                    break;
+                }
             }
         }
         return match;
+    }
+
+    /**
+     * TODO: Move to superclass.
+     * 
+     * Convenience method to write out any saved log lines.
+     * 
+     * @param entangledLogLines
+     *            Log lines to be output out of order.
+     */
+    private final void clearEntangledLines(List<String> entangledLogLines) {
+        if (entangledLogLines != null && entangledLogLines.size() > 0) {
+            // Output any entangled log lines
+            Iterator<String> iterator = entangledLogLines.iterator();
+            while (iterator.hasNext()) {
+                String logLine = iterator.next();
+                this.logEntry = this.logEntry + Constants.LINE_SEPARATOR + logLine;
+            }
+            // Reset entangled log lines
+            entangledLogLines.clear();
+        }
+    }
+
+    /**
+     * Convenience method to test if a log line is the start of a new logging event or a complete logging event (vs. the
+     * middle or end of a multi line logging event).
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return True if the line is the start of a new logging event or a complete logging event.
+     */
+    private boolean newLoggingEvent(String logLine) {
+        return true;
     }
 }

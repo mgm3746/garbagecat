@@ -91,4 +91,19 @@ public class TestShenandoahDegeneratedGcEvent extends TestCase {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC_MARK.toString() + ".",
                 ShenandoahDegeneratedGcMarkEvent.match(logLine));
     }
+
+    public void testLogLineNotUnified() {
+        String logLine = "2020-08-18T14:05:42.515+0000: 854868.165: [Pause Degenerated GC (Mark) "
+                + "93058M->29873M(98304M), 1285.045 ms]";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC_MARK.toString() + ".",
+                ShenandoahDegeneratedGcMarkEvent.match(logLine));
+        ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 854868165, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 93058 * 1024,
+                event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 29873 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 98304 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 1285045, event.getDuration());
+    }
 }

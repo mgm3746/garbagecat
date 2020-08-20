@@ -67,6 +67,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalUpdateEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitUpdateEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahStatsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahTriggerEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent;
@@ -139,7 +140,7 @@ public class JdkUtil {
         //
         SHENANDOAH_DEGENERATED_GC_MARK, SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_UPDATE,
         //
-        SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_TRIGGER,
+        SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_STATS, SHENANDOAH_TRIGGER,
         // other
         APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, BLANK_LINE, CLASS_HISTOGRAM,
         //
@@ -326,6 +327,8 @@ public class JdkUtil {
             return LogEventType.SHENANDOAH_INIT_MARK;
         if (ShenandoahInitUpdateEvent.match(logLine))
             return LogEventType.SHENANDOAH_INIT_UPDATE;
+        if (ShenandoahStatsEvent.match(logLine))
+            return LogEventType.SHENANDOAH_STATS;
         if (ShenandoahTriggerEvent.match(logLine))
             return LogEventType.SHENANDOAH_TRIGGER;
 
@@ -517,6 +520,9 @@ public class JdkUtil {
             break;
         case SHENANDOAH_INIT_UPDATE:
             event = new ShenandoahInitUpdateEvent(logLine);
+            break;
+        case SHENANDOAH_STATS:
+            event = new ShenandoahStatsEvent();
             break;
         case SHENANDOAH_TRIGGER:
             event = new ShenandoahTriggerEvent();
@@ -805,6 +811,7 @@ public class JdkUtil {
         case SHENANDOAH_CANCELLING_GC:
         case SHENANDOAH_CONCURRENT:
         case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
+        case SHENANDOAH_STATS:
         case SHENANDOAH_TRIGGER:
         case THREAD_DUMP:
         case TENURING_DISTRIBUTION:
@@ -1109,6 +1116,7 @@ public class JdkUtil {
         case REFERENCE_GC:
         case SHENANDOAH_CANCELLING_GC:
         case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
+        case SHENANDOAH_STATS:
         case SHENANDOAH_TRIGGER:
         case UNIFIED_BLANK_LINE:
         case UNIFIED_G1_INFO:

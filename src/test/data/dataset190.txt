@@ -1,0 +1,4 @@
+2020-08-18T14:05:39.789+0000: 854865.439: [Concurrent marking
+    Failed to allocate TLAB, 4096K
+    Cancelling GC: Allocation Failure
+, 2714.003 ms]
