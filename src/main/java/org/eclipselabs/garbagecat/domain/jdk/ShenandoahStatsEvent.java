@@ -61,9 +61,9 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
      */
     private static final String REGEX[] = {
             //
-            "^All times are wall-clock times, except per-root-class counters, that are sum over$",
+            "^[ ]{0,}All times are wall-clock times, except per-root-class counters, that are sum over$",
             //
-            "^all workers. Dividing the <total> over the root stage time estimates parallelism.$",
+            "^[ ]{0,}all workers. Dividing the <total> over the root stage time estimates parallelism.$",
             //
             "^  Update Region States.+$",
             //

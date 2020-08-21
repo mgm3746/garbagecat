@@ -64,8 +64,20 @@ public class TestShenandoahStatsEvent extends TestCase {
                 ShenandoahStatsEvent.match(logLine));
     }
 
+    public void testLineAllTimesWithLeadingSpaces() {
+        String logLine = "  All times are wall-clock times, except per-root-class counters, that are sum over";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
     public void testLineAllWokers() {
         String logLine = "all workers. Dividing the <total> over the root stage time estimates parallelism.";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineAllWokersWithLeadingSpaces() {
+        String logLine = "  all workers. Dividing the <total> over the root stage time estimates parallelism.";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
                 ShenandoahStatsEvent.match(logLine));
     }
