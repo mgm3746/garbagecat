@@ -220,6 +220,8 @@ public class JvmDao {
         unidentifiedLogLines = new ArrayList<String>();
         blockingBatch = new ArrayList<BlockingEvent>();
         stoppedTimeBatch = new ArrayList<ApplicationStoppedTimeEvent>();
+        // prevent false positives of Analysis.INFO_SWAP_DISABLED
+        swap = -1;
     }
 
     public List<String> getUnidentifiedLogLines() {
