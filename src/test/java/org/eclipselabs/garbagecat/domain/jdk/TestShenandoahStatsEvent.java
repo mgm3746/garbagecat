@@ -64,6 +64,13 @@ public class TestShenandoahStatsEvent extends TestCase {
                 ShenandoahStatsEvent.match(logLine));
     }
 
+    public void testLineAllTimesUnified() {
+        String logLine = "[0.484s][info][gc,stats     ] All times are wall-clock times, except per-root-class "
+                + "counters, that are sum over";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
     public void testLineAllTimesWithLeadingSpaces() {
         String logLine = "  All times are wall-clock times, except per-root-class counters, that are sum over";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
@@ -88,8 +95,20 @@ public class TestShenandoahStatsEvent extends TestCase {
                 ShenandoahStatsEvent.match(logLine));
     }
 
+    public void testUpdateRegionStatesUnified() {
+        String logLine = "[0.484s][info][gc,stats     ]   Update Region States                3 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
     public void testLineSTotal() {
         String logLine = "    S: <total>                    69130 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineSTotalUnified() {
+        String logLine = "[0.484s][info][gc,stats     ]     S: <total>                     1469 us";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
                 ShenandoahStatsEvent.match(logLine));
     }
@@ -97,6 +116,13 @@ public class TestShenandoahStatsEvent extends TestCase {
     public void testSJni() {
         String logLine = "    S: JNI Handles Roots              7 us, workers (us): ---,   7, ---, ---, ---, ---, ---, "
                 + "---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---,";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testSJniUnified() {
+        String logLine = "[0.484s][info][gc,stats     ]     S: JNI Handles Roots              1 us, workers (us):"
+                + "   1, ---,";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
                 ShenandoahStatsEvent.match(logLine));
     }
@@ -117,6 +143,12 @@ public class TestShenandoahStatsEvent extends TestCase {
 
     public void testLineWeakRoots() {
         String logLine = "  Weak Roots                         36 us, parallelism: 0.94x";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineWeakRootsUnified() {
+        String logLine = "[0.484s][info][gc,stats     ]     Weak Roots                      106 us";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
                 ShenandoahStatsEvent.match(logLine));
     }
@@ -147,8 +179,20 @@ public class TestShenandoahStatsEvent extends TestCase {
                 ShenandoahStatsEvent.match(logLine));
     }
 
+    public void testLineUpdateRegionStatesUnified() {
+        String logLine = "[0.484s][info][gc,stats     ]   Update Region States                4 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
     public void testLineChooseCollectionSet() {
         String logLine = "  Choose Collection Set             440 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineChooseCollectionSetUnified() {
+        String logLine = "[0.484s][info][gc,stats     ]   Choose Collection Set              41 us";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
                 ShenandoahStatsEvent.match(logLine));
     }
@@ -159,8 +203,20 @@ public class TestShenandoahStatsEvent extends TestCase {
                 ShenandoahStatsEvent.match(logLine));
     }
 
+    public void testLineRebuildFreeSetUnified() {
+        String logLine = "[0.484s][info][gc,stats     ]   Rebuild Free Set                    6 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
     public void testLineETotal() {
         String logLine = "    E: <total>                    69151 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineETotalUnified() {
+        String logLine = "[0.484s][info][gc,stats     ]     E: <total>                      876 us";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
                 ShenandoahStatsEvent.match(logLine));
     }
@@ -168,6 +224,13 @@ public class TestShenandoahStatsEvent extends TestCase {
     public void testEJni() {
         String logLine = "    E: JNI Handles Roots              3 us, workers (us):   3, ---, ---, ---, ---, ---, ---, "
                 + "---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---,";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testEJniUnified() {
+        String logLine = "[0.484s][info][gc,stats     ]     E: JNI Handles Roots              1 us, workers (us):"
+                + "   1, ---,";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
                 ShenandoahStatsEvent.match(logLine));
     }
@@ -188,6 +251,12 @@ public class TestShenandoahStatsEvent extends TestCase {
 
     public void testLineUrTotal() {
         String logLine = "    UR: <total>                    3127 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineUrTotalUnified() {
+        String logLine = "[0.484s][info][gc,stats     ]     UR: <total>                     139 us";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
                 ShenandoahStatsEvent.match(logLine));
     }

@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
@@ -61,36 +62,39 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
      */
     private static final String REGEX[] = {
             //
-            "^[ ]{0,}All times are wall-clock times, except per-root-class counters, that are sum over$",
+            "^(" + UnifiedRegEx.DECORATOR
+                    + ")?[ ]{0,}All times are wall-clock times, except per-root-class counters, that are sum over$",
             //
-            "^[ ]{0,}all workers. Dividing the <total> over the root stage time estimates parallelism.$",
+            "^(" + UnifiedRegEx.DECORATOR
+                    + ")?[ ]{0,}all workers. Dividing the <total> over the root stage time estimates parallelism.$",
             //
-            "^  Update Region States.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{2,3}Update Region States.+$",
             //
-            "^    (DU|E|S|UR|WR): <total>.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{4,5}(DU|E|S|UR|WR): <total>.+$",
             //
-            "^    (DU|E|S): JNI Handles Roots.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{4,5}(DU|E|S): JNI Handles Roots.+$",
             //
-            "^    (DU|E|S|WR): JFR Weak Roots.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?    (DU|E|S|WR): JFR Weak Roots.+$",
             //
-            "^    (DU|WR): JNI Weak Roots.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?    (DU|WR): JNI Weak Roots.+$",
             //
-            "^    (E|S): Flat Profiler Roots.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?    (E|S): Flat Profiler Roots.+$",
             //
-            "^  Weak Roots.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{2,5}Weak Roots.+$",
             //
-            "^  (Choose|Trash) Collection Set.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{2,3}(Choose|Trash) Collection Set.+$",
             //
-            "^  Rebuild Free Set.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{2,3}Rebuild Free Set.+$",
             //
-            "^  Finish Work.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?  Finish Work.+$",
             //
-            "^Pause Degenerated GC \\((G|N)\\).+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?Pause Degenerated GC \\((G|N)\\).+$",
             //
-            "^  Degen Update Roots.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?  Degen Update Roots.+$",
             //
-            "^    DU: (CLDG|Code Cache|Flat Profiler|JVMTI|Management|String Table|Synchronizer|System Dict|Thread|"
-                    + "Universe) Roots.+$"
+            "^(" + UnifiedRegEx.DECORATOR
+                    + ")?    DU: (CLDG|Code Cache|Flat Profiler|JVMTI|Management|String Table|Synchronizer|System Dict"
+                    + "|Thread|Universe) Roots.+$"
             //
     };
 

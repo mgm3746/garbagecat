@@ -252,6 +252,23 @@ public class TestShenandoahConcurrentEvent extends TestCase {
                 ShenandoahConcurrentEvent.match(logLine));
     }
 
+    public void testUnifiedPreprocessedWithMetaspace() {
+        String logLine = "[0.484s][info][gc           ] GC(0) Concurrent cleanup 24M->10M(34M) 0.051ms Metaspace: "
+                + "3231K->3239K(1056768K)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
+                ShenandoahConcurrentEvent.match(logLine));
+        ShenandoahConcurrentEvent event = new ShenandoahConcurrentEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(),
+                event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 484 - 0, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 24 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 10 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 34 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Metaspace begin size not parsed correctly.", 3231, event.getPermOccupancyInit());
+        Assert.assertEquals("Metaspace end size not parsed correctly.", 3239, event.getPermOccupancyEnd());
+        Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1056768, event.getPermSpace());
+    }
+
     /**
      * Test max heap space and occupancy data.
      */
