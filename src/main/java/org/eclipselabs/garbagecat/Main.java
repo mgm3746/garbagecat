@@ -387,6 +387,7 @@ public class Main {
                     bufferedWriter.write(
                             "Max Heap Space: " + jvmRun.getMaxHeapSpaceNonBlocking() + "K" + Constants.LINE_SEPARATOR);
                 }
+
                 if (jvmRun.getMaxPermSpace() > 0) {
                     if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(Analysis.INFO_PERM_GEN)) {
                         // Max perm occupancy.
@@ -396,12 +397,28 @@ public class Main {
                         bufferedWriter.write(
                                 "Max Perm Gen Space: " + jvmRun.getMaxPermSpace() + "K" + Constants.LINE_SEPARATOR);
                     } else {
-                        // Max perm occupancy.
+                        // Max metaspace occupancy.
                         bufferedWriter.write("Max Metaspace Occupancy: " + jvmRun.getMaxPermOccupancy() + "K"
                                 + Constants.LINE_SEPARATOR);
-                        // Max perm space.
+                        // Max metaspace space.
                         bufferedWriter.write(
                                 "Max Metaspace Space: " + jvmRun.getMaxPermSpace() + "K" + Constants.LINE_SEPARATOR);
+                    }
+                } else if (jvmRun.getMaxPermSpaceNonBlocking() > 0) {
+                    if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(Analysis.INFO_PERM_GEN)) {
+                        // Max perm occupancy.
+                        bufferedWriter.write("Max Perm Gen Occupancy: " + jvmRun.getMaxPermOccupancyNonBlocking() + "K"
+                                + Constants.LINE_SEPARATOR);
+                        // Max perm space.
+                        bufferedWriter.write("Max Perm Gen Space: " + jvmRun.getMaxPermSpaceNonBlocking() + "K"
+                                + Constants.LINE_SEPARATOR);
+                    } else {
+                        // Max metaspace occupancy.
+                        bufferedWriter.write("Max Metaspace Occupancy: " + jvmRun.getMaxPermOccupancyNonBlocking() + "K"
+                                + Constants.LINE_SEPARATOR);
+                        // Max metaspace space.
+                        bufferedWriter.write("Max Metaspace Space: " + jvmRun.getMaxPermSpaceNonBlocking() + "K"
+                                + Constants.LINE_SEPARATOR);
                     }
                 }
                 // GC throughput

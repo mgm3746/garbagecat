@@ -107,9 +107,12 @@ public class GcInfoEvent implements ThrowAwayEvent {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?GC threads: \\d parallel, \\d concurrent$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Reference processing: parallel$",
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?Reference processing: (parallel|parallel discovery, parallel processing)$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Shenandoah heuristics: adaptive$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Shenandoah GC mode: Snapshot-At-The-Beginning \\(SATB\\)$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?Shenandoah heuristics: [a|A]daptive$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Initialize Shenandoah heap( with initial size \\d{10} bytes|: "
                     + JdkRegEx.SIZE + " initial, " + JdkRegEx.SIZE + " min, " + JdkRegEx.SIZE + " max)$",
@@ -119,9 +122,10 @@ public class GcInfoEvent implements ThrowAwayEvent {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Safepointing mechanism: global-page poll$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Free: " + JdkRegEx.SIZE + " \\(\\d{1,4} regions\\), Max regular: "
-                    + JdkRegEx.SIZE + ", Max humongous: " + JdkRegEx.SIZE
-                    + ", External frag: \\d%, Internal frag: \\d%$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Free: " + JdkRegEx.SIZE + "( \\(\\d{1,4} regions\\))?, "
+                    + "Max( regular)?: " + JdkRegEx.SIZE + "( regular)?, (Max humongous: )?" + JdkRegEx.SIZE
+                    + "( humongous)?, (External )?[fF]rag: \\d{1,2}%( external)?, (Internal frag: )?\\d{1,2}%"
+                    + "( internal; Reserve: " + JdkRegEx.SIZE + ", Max: " + JdkRegEx.SIZE + ")?$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Evacuation Reserve: " + JdkRegEx.SIZE
                     + " \\(\\d{1,3} regions\\), Max regular: " + JdkRegEx.SIZE + "$",

@@ -190,6 +190,12 @@ public class TestShenandoahPreprocessAction extends TestCase {
                 ShenandoahPreprocessAction.match(logLine));
     }
 
+    public void testLogLineFinalMarkCollectableGarbageWithImmediateBlock() {
+        String logLine = "    Collectable Garbage: 30279K (99%), Immediate: 16640K (54%), CSet: 13639K (44%)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
     public void testLogLineUnifiedFinalMarkCollectableGarbage() {
         String logLine = "[41.911s][info][gc,ergo      ] GC(1500) Collectable Garbage: 5M (18% of total), 0M CSet, "
                 + "21 CSet regions";
@@ -549,8 +555,7 @@ public class TestShenandoahPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
                 ShenandoahPreprocessAction.match(logLine));
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context);
-        Assert.assertEquals("Log line not parsed correctly.",
-                "2020-08-18T14:05:39.789+0000: 854865.439: [Concurrent marking", event.getLogEntry());
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
 
     public void testLogLineEndDuration() {
@@ -560,7 +565,27 @@ public class TestShenandoahPreprocessAction extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
                 ShenandoahPreprocessAction.match(logLine));
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context);
-        Assert.assertEquals("Log line not parsed correctly.", ", 2714.003 ms]", event.getLogEntry());
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+    }
+
+    public void testLogLineConcurrentCleanup() {
+        String logLine = "2020-08-21T09:40:29.929-0400: 0.467: [Concurrent cleanup 21278K->4701K(37888K), 0.048 ms]";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+    }
+
+    public void testLogLineEndMetaspace() {
+        String logLine = ", [Metaspace: 6477K->6481K(1056768K)]";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context);
+        Assert.assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
     }
 
     public void testUnifiedPreprocessingInitialMark() {
@@ -641,4 +666,16 @@ public class TestShenandoahPreprocessAction extends TestCase {
                 jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT));
     }
 
+    public void testPreprocessingConcurrentWithMetaspace() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset191.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT));
+    }
 }

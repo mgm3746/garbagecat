@@ -568,14 +568,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 this.logEntry = Constants.LINE_SEPARATOR + logEntry;
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-
-            // Middle logging
-            /*
-             * Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA); Matcher matcher =
-             * pattern.matcher(logEntry); if (matcher.matches()) { if (context.contains(TOKEN)) { this.logEntry =
-             * matcher.group(28); } else { // Single line event this.logEntry = Constants.LINE_SEPARATOR + logEntry; } }
-             * context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-             */
         } else if (logEntry.matches(REGEX_RETAIN_END_TIMES_DATA)) {
             // End logging
             Pattern pattern = Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);

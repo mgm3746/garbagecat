@@ -168,6 +168,16 @@ public class JvmDao {
      */
     private int maxHeapOccupancyNonBlocking;
 
+    /**
+     * Used for tracking max perm space outside of <code>BlockingEvent</code>s.
+     */
+    private int maxPermSpaceNonBlocking;
+
+    /**
+     * Used for tracking max perm occupancy outside of <code>BlockingEvent</code>s.
+     */
+    private int maxPermOccupancyNonBlocking;
+
     public JvmDao() {
         try {
             // Load database driver.
@@ -438,6 +448,36 @@ public class JvmDao {
      */
     public void setMaxHeapOccupancyNonBlocking(int maxHeapOccupancyNonBlocking) {
         this.maxHeapOccupancyNonBlocking = maxHeapOccupancyNonBlocking;
+    }
+
+    /**
+     * @return The maximum perm space in non <code>BlockingEvent</code>s.
+     */
+    public int getMaxPermSpaceNonBlocking() {
+        return maxPermSpaceNonBlocking;
+    }
+
+    /**
+     * @param maxPermSpaceNonBlocking
+     *            The maximum perm space in non <code>BlockingEvent</code>s.
+     */
+    public void setMaxPermSpaceNonBlocking(int maxPermSpaceNonBlocking) {
+        this.maxPermSpaceNonBlocking = maxPermSpaceNonBlocking;
+    }
+
+    /**
+     * @return The maximum perm occupancy in non <code>BlockingEvent</code>s.
+     */
+    public int getMaxPermOccupancyNonBlocking() {
+        return maxPermOccupancyNonBlocking;
+    }
+
+    /**
+     * @param maxPermOccupancyNonBlocking
+     *            The maximum perm occupancy in non <code>BlockingEvent</code>s.
+     */
+    public void setMaxPermOccupancyNonBlocking(int maxPermOccupancyNonBlocking) {
+        this.maxPermOccupancyNonBlocking = maxPermOccupancyNonBlocking;
     }
 
     /**

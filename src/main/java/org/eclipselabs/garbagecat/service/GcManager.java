@@ -764,6 +764,12 @@ public class GcManager {
                     if (((CombinedData) event).getCombinedSpace() > jvmDao.getMaxHeapSpaceNonBlocking()) {
                         jvmDao.setMaxHeapSpaceNonBlocking(((CombinedData) event).getCombinedSpace());
                     }
+                    if (((PermData) event).getPermOccupancyInit() > jvmDao.getMaxPermOccupancyNonBlocking()) {
+                        jvmDao.setMaxPermOccupancyNonBlocking(((PermData) event).getPermOccupancyInit());
+                    }
+                    if (((PermData) event).getPermSpace() > jvmDao.getMaxPermSpaceNonBlocking()) {
+                        jvmDao.setMaxPermSpaceNonBlocking(((PermData) event).getPermSpace());
+                    }
                 } else if (event instanceof UnknownEvent) {
                     // Don't count reportable events with datestamp only as unidentified
                     Date jvmStartDate = GcUtil.parseStartDateTime("2000-01-01 00:00:00,000");
@@ -941,6 +947,8 @@ public class GcManager {
         jvmRun.setWorstInvertedParallelismEvent(jvmDao.getWorstInvertedParallelismEvent());
         jvmRun.setMaxHeapOccupancyNonBlocking(jvmDao.getMaxHeapOccupancyNonBlocking());
         jvmRun.setMaxHeapSpaceNonBlocking(jvmDao.getMaxHeapSpaceNonBlocking());
+        jvmRun.setMaxPermOccupancyNonBlocking(jvmDao.getMaxPermOccupancyNonBlocking());
+        jvmRun.setMaxPermSpaceNonBlocking(jvmDao.getMaxPermSpaceNonBlocking());
         jvmRun.doAnalysis();
         return jvmRun;
     }

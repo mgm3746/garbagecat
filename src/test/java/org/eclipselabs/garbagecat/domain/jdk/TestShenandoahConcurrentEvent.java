@@ -58,6 +58,23 @@ public class TestShenandoahConcurrentEvent extends TestCase {
         Assert.assertEquals("Combined allocation size not parsed correctly.", 64 * 1024, event.getCombinedSpace());
     }
 
+    public void testLogLineJdk8PreprocessedWithMetaspace() {
+        String logLine = "2020-08-21T09:40:29.929-0400: 0.467: [Concurrent cleanup 21278K->4701K(37888K), 0.048 ms]"
+                + ", [Metaspace: 6477K->6481K(1056768K)]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
+                ShenandoahConcurrentEvent.match(logLine));
+        ShenandoahConcurrentEvent event = new ShenandoahConcurrentEvent(logLine);
+        Assert.assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(),
+                event.getName());
+        Assert.assertEquals("Time stamp not parsed correctly.", 467, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 21278, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 4701, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 37888, event.getCombinedSpace());
+        Assert.assertEquals("Metaspace begin size not parsed correctly.", 6477, event.getPermOccupancyInit());
+        Assert.assertEquals("Metaspace end size not parsed correctly.", 6481, event.getPermOccupancyEnd());
+        Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1056768, event.getPermSpace());
+    }
+
     public void testIdentityEventType() {
         String logLine = "[0.437s][info][gc] GC(0) Concurrent reset 15M->16M(64M) 4.701ms";
         Assert.assertEquals(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT + "not identified.",

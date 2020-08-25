@@ -187,6 +187,16 @@ public class JvmRun {
     private int maxHeapOccupancyNonBlocking;
 
     /**
+     * Used for tracking max perm space outside of <code>BlockingEvent</code>s.
+     */
+    private int maxPermSpaceNonBlocking;
+
+    /**
+     * Used for tracking max perm occupancy outside of <code>BlockingEvent</code>s.
+     */
+    private int maxPermOccupancyNonBlocking;
+
+    /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
      * 
      * @param throughputThreshold
@@ -437,6 +447,22 @@ public class JvmRun {
 
     public void setMaxHeapOccupancyNonBlocking(int maxHeapOccupancyNonBlocking) {
         this.maxHeapOccupancyNonBlocking = maxHeapOccupancyNonBlocking;
+    }
+
+    public int getMaxPermSpaceNonBlocking() {
+        return maxPermSpaceNonBlocking;
+    }
+
+    public void setMaxPermSpaceNonBlocking(int maxPermSpaceNonBlocking) {
+        this.maxPermSpaceNonBlocking = maxPermSpaceNonBlocking;
+    }
+
+    public int getMaxPermOccupancyNonBlocking() {
+        return maxPermOccupancyNonBlocking;
+    }
+
+    public void setMaxPermOccupancyNonBlocking(int maxPermOccupancyNonBlocking) {
+        this.maxPermOccupancyNonBlocking = maxPermOccupancyNonBlocking;
     }
 
     /**

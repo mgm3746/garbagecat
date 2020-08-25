@@ -150,12 +150,29 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 public class ShenandoahPreprocessAction implements PreprocessAction {
 
     /**
-     * Regular expression for retained beginning SHENANDOAH_CONCURRENT collection.
+     * Regular expression for retained beginning SHENANDOAH_CONCURRENT marking event
      * 
      * 2020-08-18T14:05:39.789+0000: 854865.439: [Concurrent marking
      */
-    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(" + JdkRegEx.DECORATOR
+    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING = "^(" + JdkRegEx.DECORATOR
             + " \\[Concurrent marking)$";
+
+    /**
+     * Regular expression for retained beginning SHENANDOAH_CONCURRENT cleanup event
+     * 
+     * 2020-08-18T14:05:39.789+0000: 854865.439: [Concurrent marking
+     */
+    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP = "^(" + JdkRegEx.DECORATOR
+            + " \\[Concurrent cleanup " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + UnifiedRegEx.DURATION + "\\])$";
+
+    /**
+     * Regular expression for retained Metaspace block.
+     * 
+     * , [Metaspace: 6477K->6481K(1056768K)]
+     */
+    private static final String REGEX_RETAIN_METASPACE = "(, \\[Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)\\])[ ]*";
 
     /**
      * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
@@ -194,7 +211,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                     + JdkRegEx.SIZE,
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Collectable Garbage: " + JdkRegEx.SIZE
-                    + " \\(\\d{1,2}% of total\\), " + JdkRegEx.SIZE + " CSet, \\d{1,3} CSet regions",
+                    + " \\(\\d{1,2}%( of total)?\\)(, Immediate: " + JdkRegEx.SIZE + " \\(\\d{1,2}%\\))?, (CSet: )?"
+                    + JdkRegEx.SIZE + " (\\(\\d{1,2}%\\))?(CSet, \\d{1,3} CSet regions)?",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Immediate Garbage: " + JdkRegEx.SIZE
                     + " \\(\\d{1,2}% of total\\), \\d{1,4} regions",
@@ -274,14 +292,29 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
     public ShenandoahPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
             List<String> entangledLogLines, Set<String> context) {
         // Beginning logging
-        if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT);
+        if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_METASPACE)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_METASPACE);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_DURATION)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_DURATION);
             Matcher matcher = pattern.matcher(logEntry);
@@ -311,7 +344,9 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        if (logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT) || logLine.matches(REGEX_RETAIN_DURATION)) {
+        if (logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP) || logLine.matches(REGEX_RETAIN_METASPACE)
+                || logLine.matches(REGEX_RETAIN_DURATION)) {
             match = true;
         } else {
             // TODO: Get rid of this and make them throwaway events?

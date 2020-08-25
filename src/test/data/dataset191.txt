@@ -1,0 +1,71 @@
+2020-08-21T09:40:29.929-0400: 0.467: [Concurrent cleanup 21278K->4701K(37888K), 0.048 ms]
+Free: 116M, Max: 256K regular, 86528K humongous, Frag: 28% external, 1% internal; Reserve: 6656K, Max: 256K
+
+All times are wall-clock times, except per-root-class counters, that are sum over
+all workers. Dividing the <total> over the root stage time estimates parallelism.
+
+Concurrent Reset                   5412 us
+Pause Init Mark (G)                1096 us
+Pause Init Mark (N)                 994 us
+  Accumulate Stats                    2 us
+  Make Parsable                       1 us
+  Update Region States                4 us
+  Scan Roots                        953 us, parallelism: 1.40x
+    S: <total>                     1333 us
+    S: Thread Roots                1111 us, workers (us): 893, 218,
+    S: Universe Roots                13 us, workers (us):  13, ---,
+    S: JNI Handles Roots             16 us, workers (us): ---,  16,
+    S: JFR Weak Roots                 0 us, workers (us): ---,   0,
+    S: JNI Weak Roots                 4 us, workers (us): ---,   4,
+    S: String Table Roots           176 us, workers (us):   0, 176,
+    S: Synchronizer Roots             1 us, workers (us):   1,   0,
+    S: Flat Profiler Roots            1 us, workers (us):   1, ---,
+    S: Management Roots               1 us, workers (us): ---,   1,
+    S: System Dict Roots             10 us, workers (us):  10, ---,
+    S: CLDG Roots                     0 us, workers (us):   0,   0,
+    S: JVMTI Roots                    1 us, workers (us): ---,   1,
+  Resize TLABs                        1 us
+Concurrent Marking                 2725 us
+Concurrent Precleaning               91 us
+Pause Final Mark (G)               3792 us
+Pause Final Mark (N)               3657 us
+  Finish Queues                     657 us
+  Weak References                  2251 us
+    Process                        2227 us
+    Enqueue                          22 us
+  Update Region States                9 us
+  Retire TLABs                        2 us
+  Choose Collection Set              22 us
+  Rebuild Free Set                    5 us
+  Initial Evacuation                665 us, parallelism: 1.75x
+    E: <total>                     1166 us
+    E: Thread Roots                 147 us, workers (us):  13, 135,
+    E: Code Cache Roots             196 us, workers (us):   0, 195,
+    E: Universe Roots                 1 us, workers (us):   1, ---,
+    E: JNI Handles Roots             41 us, workers (us): ---,  41,
+    E: JFR Weak Roots                 1 us, workers (us):   1, ---,
+    E: JNI Weak Roots                 1 us, workers (us):   1, ---,
+    E: String Table Roots           457 us, workers (us): 242, 215,
+    E: Synchronizer Roots             2 us, workers (us):   2,   0,
+    E: Flat Profiler Roots            1 us, workers (us):   1, ---,
+    E: Management Roots               2 us, workers (us):   2, ---,
+    E: System Dict Roots             41 us, workers (us):  41, ---,
+    E: CLDG Roots                   276 us, workers (us): 275,   0,
+    E: JVMTI Roots                    1 us, workers (us):   1, ---,
+Concurrent Cleanup                   63 us
+Concurrent Evacuation              6118 us
+Pause Init  Update Refs (G)         141 us
+Pause Init  Update Refs (N)          29 us
+  Prepare                             2 us
+Concurrent Update Refs             2577 us
+Pause Final Update Refs (G)         268 us
+Pause Final Update Refs (N)         178 us
+  Update Roots                      138 us, parallelism: 0.79x
+    UR: <total>                     109 us
+    UR: Thread Roots                109 us, workers (us): 109,   0,
+  Update Region States                4 us
+  Trash Collection Set                2 us
+  Rebuild Free Set                    3 us
+Concurrent Cleanup                   55 us
+, [Metaspace: 6477K->6481K(1056768K)]
+

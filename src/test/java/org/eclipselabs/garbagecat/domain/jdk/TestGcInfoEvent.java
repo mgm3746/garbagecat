@@ -89,6 +89,12 @@ public class TestGcInfoEvent extends TestCase {
                 GcInfoEvent.match(logLine));
     }
 
+    public void testNonUnifiedShanandoahHeuristics() {
+        String logLine = "Shenandoah heuristics: Adaptive";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
     public void testUnifiedShanandoahHeuristics() {
         String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Shenandoah heuristics: adaptive";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
@@ -134,6 +140,13 @@ public class TestGcInfoEvent extends TestCase {
 
     public void testUnifiedSafepointingMechanismInfo() {
         String logLine = "[0.007s][info][gc,init] Safepointing mechanism: global-page poll";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
+    public void testNonUnifiedFree() {
+        String logLine = "Free: 12838K, Max: 256K regular, 10752K humongous, Frag: 7% external, 12% internal; "
+                + "Reserve: 6656K, Max: 256K";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
                 GcInfoEvent.match(logLine));
     }
@@ -198,5 +211,17 @@ public class TestGcInfoEvent extends TestCase {
         eventTypes.add(LogEventType.GC_INFO);
         Assert.assertFalse(JdkUtil.LogEventType.GC_INFO.toString() + " incorrectly indentified as unified.",
                 UnifiedUtil.isUnifiedLogging(eventTypes));
+    }
+
+    public void testShenandoahGcMode() {
+        String logLine = "Shenandoah GC mode: Snapshot-At-The-Beginning (SATB)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
+    }
+
+    public void testReferenceProcessing() {
+        String logLine = "Reference processing: parallel discovery, parallel processing";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".",
+                GcInfoEvent.match(logLine));
     }
 }

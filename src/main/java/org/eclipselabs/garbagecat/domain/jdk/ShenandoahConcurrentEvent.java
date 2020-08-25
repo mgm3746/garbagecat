@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
+import org.eclipselabs.garbagecat.domain.PermData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -32,7 +33,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * <p>
  * Any number of events that happen concurrently with the JVM's execution of application threads. These events are not
  * included in the GC analysis since there is no application pause time; however, they are used to determine max heap
- * space and occupancy.
+ * and metaspace size and occupancy.
  * </p>
  * 
  * <h3>Example Logging</h3>
@@ -113,10 +114,19 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * 2020-03-10T08:03:29.431-0400: 0.493: [Concurrent cleanup 12501K-&gt;8434K(23296K), 0.034 ms]
  * </pre>
  * 
+ * <p>
+ * 4) JDK8 preprocessed with Metaspace block:
+ * </p>
+ * 
+ * <pre>
+ * 2020-08-21T09:40:29.929-0400: 0.467: [Concurrent cleanup 21278K-&gt;4701K(37888K), 0.048 ms], [Metaspace: 6477K-&gt;6481K(1056768K)]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahConcurrentEvent extends ShenandoahCollector implements LogEvent, ParallelEvent, CombinedData {
+public class ShenandoahConcurrentEvent extends ShenandoahCollector
+        implements LogEvent, ParallelEvent, CombinedData, PermData {
 
     /**
      * Regular expressions defining the logging.
@@ -124,7 +134,8 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector implements Lo
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
             + ") [\\[]{0,1}Concurrent (reset|uncommit|marking( \\(update refs\\))?( \\(process weakrefs\\))?|"
             + "precleaning|evacuation|update references|cleanup)(( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\))?[,]{0,1} " + UnifiedRegEx.DURATION + ")?[\\]]{0,1}[ ]*$";
+            + JdkRegEx.SIZE + "\\))?[,]{0,1} " + UnifiedRegEx.DURATION + ")?[\\]]{0,1}(, \\[Metaspace: " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
@@ -152,6 +163,21 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector implements Lo
      * Combined available space (kilobytes).
      */
     private int combinedAvailable;
+
+    /**
+     * Permanent generation size (kilobytes) at beginning of GC event.
+     */
+    private int permGen;
+
+    /**
+     * Permanent generation size (kilobytes) at end of GC event.
+     */
+    private int permGenEnd;
+
+    /**
+     * Space allocated to permanent generation (kilobytes).
+     */
+    private int permGenAllocation;
 
     /**
      * Create event from log entry.
@@ -199,6 +225,14 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector implements Lo
                             matcher.group(47).charAt(0));
                     combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(48)),
                             matcher.group(50).charAt(0));
+                    if (matcher.group(52) != null) {
+                        permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(53)),
+                                matcher.group(55).charAt(0));
+                        permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(56)),
+                                matcher.group(58).charAt(0));
+                        permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(59)),
+                                matcher.group(61).charAt(0));
+                    }
                 }
 
             }
@@ -223,6 +257,30 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector implements Lo
 
     public int getCombinedSpace() {
         return combinedAvailable;
+    }
+
+    public int getPermOccupancyInit() {
+        return permGen;
+    }
+
+    protected void setPermOccupancyInit(int permGen) {
+        this.permGen = permGen;
+    }
+
+    public int getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    protected void setPermOccupancyEnd(int permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    public int getPermSpace() {
+        return permGenAllocation;
+    }
+
+    protected void setPermSpace(int permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
     }
 
     public String getName() {
