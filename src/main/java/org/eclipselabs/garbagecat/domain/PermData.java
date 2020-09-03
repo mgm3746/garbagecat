@@ -16,12 +16,14 @@ package org.eclipselabs.garbagecat.domain;
  * Permanent generation or metaspace data.
  * 
  * <p>
- * The decommissioning of the perm gen space began in JDK7 when interned strings and class static variables were moved
+ * In JDK7 the decommissioning of the perm gen space began when interned strings and class static variables were moved
  * to the Java heap, and symbols were moved to the native heap.
  * </p>
  * 
  * <p>
- * In JDK8 the perm gen space was fully replaced by the metaspace, a native space holding only class metadata.
+ * In JDK8 the perm gen space was fully replaced by the metaspace, a native space holding only class metadata. The value
+ * in the gc logging is the sum of the committed compressed class space (CompressedClassSpaceSize) and the other class
+ * metadata.
  * </p>
  * 
  * <p>
