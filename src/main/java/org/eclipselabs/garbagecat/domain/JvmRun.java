@@ -1097,6 +1097,16 @@ public class JvmRun {
         if (getInvertedParallelismCount() > 0) {
             analysis.add(Analysis.WARN_PARALLELISM_INVERTED);
         }
+
+        // Check for diagnostic options enabled
+        if (jvm.getUnlockDiagnosticVmOptions() != null) {
+            analysis.add(Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED);
+        }
+
+        // Check for JMX enabled
+        if (jvm.IsJmxEnabled()) {
+            analysis.add(Analysis.INFO_JMX_ENABLED);
+        }
     }
 
     /**

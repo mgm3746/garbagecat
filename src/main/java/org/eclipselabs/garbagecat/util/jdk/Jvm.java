@@ -1557,4 +1557,30 @@ public class Jvm {
         }
         return percentSwapFree;
     }
+
+    /**
+     * The option for enabling JVM diagnostic options:
+     * 
+     * <pre>
+     * -XX:+UnlockDiagnosticVMOptions
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUnlockDiagnosticVmOptions() {
+        String regex = "(-XX:\\+UnlockDiagnosticVMOptions)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * @return true if JMX enable, false otherwise.
+     */
+    public boolean IsJmxEnabled() {
+        boolean isJmxEnabled = false;
+        if (getJvmOption("(-XX:\\+ManagementServer)") != null
+                || getJvmOption("(-Dcom.sun.management.jmxremote)") != null) {
+            isJmxEnabled = true;
+        }
+        return isJmxEnabled;
+    }
 }

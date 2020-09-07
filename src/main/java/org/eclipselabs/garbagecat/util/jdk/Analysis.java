@@ -177,6 +177,11 @@ public enum Analysis {
     INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA("info.cruft.exp.gc.inv.con.and.unl.cla"),
 
     /**
+     * Property key for -XX:+UnlockDiagnosticVMOptions.
+     */
+    INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED("info.diagnostic.vm.options.enabled"),
+
+    /**
      * Property key for experimental jvm options enabled with <code>-XX:+UnlockExperimentalVMOptions</code>.
      */
     INFO_EXPERIMENTAL_VM_OPTIONS("info.experimental.vm.options.enabled"),
@@ -211,6 +216,11 @@ public enum Analysis {
      * Property key for instrumentation.
      */
     INFO_INSTRUMENTATION("info.instrumentation"),
+
+    /**
+     * Property key for JMX enabled with -Dcom.sun.management.jmxremote or -XX:+ManagementServer.
+     */
+    INFO_JMX_ENABLED("info.jmx.enabled"),
 
     /**
      * Property key for overriding the number of times an object is copied between survivor spaces being set with
