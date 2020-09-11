@@ -23,10 +23,10 @@ import junit.framework.TestCase;
  */
 public class TestBlankLineEvent extends TestCase {
 
-    public void testIdentityEventType() {
+    public void testParseLogLine() {
         String logLine = "";
-        Assert.assertEquals(JdkUtil.LogEventType.BLANK_LINE + "not identified.", JdkUtil.LogEventType.BLANK_LINE,
-                JdkUtil.identifyEventType(logLine));
+        Assert.assertTrue(JdkUtil.LogEventType.BLANK_LINE.toString() + " not parsed.",
+                JdkUtil.parseLogLine(logLine) instanceof BlankLineEvent);
     }
 
     public void testReportable() {
