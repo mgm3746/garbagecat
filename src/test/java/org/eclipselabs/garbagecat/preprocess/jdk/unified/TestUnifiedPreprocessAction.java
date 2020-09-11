@@ -500,6 +500,12 @@ public class TestUnifiedPreprocessAction extends TestCase {
                 UnifiedPreprocessAction.match(logLine));
     }
 
+    public void testLogLineG1EdenDatestampMillisRegions4Digits() {
+        String logLine = "[2020-09-11T05:33:44.563+0000][1732868ms] GC(42) Eden regions: 307->0(1659)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
     public void testLogLineG1Survivor() {
         String logLine = "[0.101s][info][gc,heap      ] GC(0) Survivor regions: 0->1(1)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",

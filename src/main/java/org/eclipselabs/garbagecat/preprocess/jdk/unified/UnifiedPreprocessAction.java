@@ -436,7 +436,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + UnifiedRegEx.DURATION + "$",
             //
             "^" + UnifiedRegEx.DECORATOR
-                    + " (Eden|Survivor|Old|Humongous) regions: \\d{1,3}->\\d{1,3}(\\(\\d{1,3}\\))?$",
+                    + " (Eden|Survivor|Old|Humongous) regions: \\d{1,4}->\\d{1,4}(\\(\\d{1,4}\\))?$",
             "^" + UnifiedRegEx.DECORATOR + " Pause Remark$",
             //
             "^" + UnifiedRegEx.DECORATOR
