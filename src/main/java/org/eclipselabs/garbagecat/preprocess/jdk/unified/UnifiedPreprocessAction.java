@@ -441,7 +441,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR
                     + " Cleaned string and symbol table, strings: \\d{1,7} processed, \\d{1,5} removed, "
-                    + "symbols: \\d{1,7} processed, \\d{1,4} removed$",
+                    + "symbols: \\d{1,7} processed, \\d{1,5} removed$",
 
             //
             "^" + UnifiedRegEx.DECORATOR + " Mark (closed|open) archive regions in map:.+$",

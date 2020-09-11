@@ -608,6 +608,13 @@ public class TestUnifiedPreprocessAction extends TestCase {
                 UnifiedPreprocessAction.match(logLine));
     }
 
+    public void testLogLineG1StringTableRemoved5Digits() {
+        String logLine = "[2020-09-11T08:23:37.353+0000][11925659ms] GC(194) Cleaned string and symbol table, "
+                + "strings: 368294 processed, 9531 removed, symbols: 1054532 processed, 18545 removed";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
+                UnifiedPreprocessAction.match(logLine));
+    }
+
     public void testLogLineG1PauseCleanup() {
         String logLine = "[16.081s][info][gc,start      ] GC(969) Pause Cleanup";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".",
