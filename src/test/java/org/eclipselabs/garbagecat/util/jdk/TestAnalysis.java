@@ -49,6 +49,14 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertTrue(Analysis.WARN_BIASED_LOCKING_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_BIASED_LOCKING_DISABLED));
+        jvmRun.getAnalysis().clear();
+        List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
+        collectorFamilies.add(CollectorFamily.SHENANDOAH);
+        jvmRun.setCollectorFamilies(collectorFamilies);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.WARN_BIASED_LOCKING_DISABLED + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_BIASED_LOCKING_DISABLED));
+
     }
 
     public void testPrintClassHistogramEnabled() {

@@ -767,7 +767,7 @@ public class JvmRun {
         }
 
         // Check for biased locking disabled with -XX:-UseBiasedLocking.
-        if (jvm.getBiasedLockingDisabled() != null) {
+        if (jvm.getBiasedLockingDisabled() != null && !collectorFamilies.contains(CollectorFamily.SHENANDOAH)) {
             analysis.add(Analysis.WARN_BIASED_LOCKING_DISABLED);
         }
 
