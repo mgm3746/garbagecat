@@ -14,7 +14,9 @@ package org.eclipselabs.garbagecat.util.jdk;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1582,5 +1584,50 @@ public class Jvm {
             isJmxEnabled = true;
         }
         return isJmxEnabled;
+    }
+
+    /**
+     * Disabled JVM options.
+     * 
+     * @return the disabled JVM options, null otherwise.
+     */
+    public ArrayList<String> getDisabledOptions() {
+        String regex = "(-XX:-[\\S]+)";
+        ArrayList<String> disabledOptions = new ArrayList<String>();
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(options);
+        while (matcher.find()) {
+            disabledOptions.add(matcher.group(1));
+        }
+        return disabledOptions;
+    }
+
+    /**
+     * Unaccounted disabled JVM options otherwise.
+     * 
+     * @return the unaccounted disabled JVM options, null otherwise.
+     */
+    public String getUnaccountedDisabledOptions() {
+        String unaccountedDisabledOptions = null;
+        String accountedDisabledOptions = "-XX:-HeapDumpOnOutOfMemoryError -XX:-BackgroundCompilation "
+                + "-XX:-PrintGCDetails -XX:-UseParNewGC -XX:-CMSClassUnloadingEnabled "
+                + "-XX:-PrintGCCause -XX:-UseBiasedLocking -XX:-UseCompressedOops "
+                + "-XX:-UseGCLogFileRotation -XX:-UseCompressedClassPointers "
+                + "-XX:-ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:-ClassUnloading "
+                + "-XX:-PrintAdaptiveSizePolicy -XX:-CMSParallelInitialMarkEnabled -XX:-CMSParallelRemarkEnabled";
+
+        ArrayList<String> disabledOptions = getDisabledOptions();
+        Iterator<String> iterator = disabledOptions.iterator();
+        while (iterator.hasNext()) {
+            String disabledOption = iterator.next();
+            if (accountedDisabledOptions.lastIndexOf(disabledOption) == -1) {
+                if (unaccountedDisabledOptions == null) {
+                    unaccountedDisabledOptions = disabledOption;
+                } else {
+                    unaccountedDisabledOptions = unaccountedDisabledOptions + ", " + disabledOption;
+                }
+            }
+        }
+        return unaccountedDisabledOptions;
     }
 }

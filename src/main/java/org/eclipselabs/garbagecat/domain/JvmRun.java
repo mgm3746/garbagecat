@@ -996,6 +996,11 @@ public class JvmRun {
         if (jvm.getHeapDumpPathValue() != null && !jvm.getHeapDumpPathValue().matches("^\\s*[\\//]$")) {
             analysis.add(Analysis.WARN_HEAP_DUMP_PATH_FILENAME);
         }
+
+        // Check for unaccounted disabled options
+        if (jvm.getUnaccountedDisabledOptions() != null) {
+            analysis.add(Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED);
+        }
     }
 
     /**

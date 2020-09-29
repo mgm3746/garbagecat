@@ -103,7 +103,7 @@ import org.eclipselabs.garbagecat.util.GcUtil;
 
 /**
  * <p>
- * Utility methods and constants for OpenJDK and Sun JDK.
+ * Utility methods and constants for OpenJDK and Oracle JDK.
  * </p>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

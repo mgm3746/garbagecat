@@ -556,6 +556,10 @@ public class Main {
                     Analysis a = iterator.next();
                     bufferedWriter.write("*");
                     bufferedWriter.write(a.getValue());
+                    if (Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED.equals(a)) {
+                        bufferedWriter.write(jvmRun.getJvm().getUnaccountedDisabledOptions());
+                        bufferedWriter.write(".");
+                    }
                     bufferedWriter.write(Constants.LINE_SEPARATOR);
                 }
                 bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);

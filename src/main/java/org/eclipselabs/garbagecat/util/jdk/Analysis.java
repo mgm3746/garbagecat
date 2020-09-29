@@ -241,6 +241,11 @@ public enum Analysis {
     INFO_NEW_RATIO_INVERTED("info.new.ratio.inverted"),
 
     /**
+     * Property key for otherwise unaccounted JVM options disabled.
+     */
+    INFO_UNACCOUNTED_OPTIONS_DISABLED("info.unaccounted.options.disabled"),
+
+    /**
      * Property key for a very old JDK with a permanent generation.
      */
     INFO_PERM_GEN("info.perm.gen"),

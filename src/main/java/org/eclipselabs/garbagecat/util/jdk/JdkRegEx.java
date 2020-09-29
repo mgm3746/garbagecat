@@ -13,7 +13,7 @@
 package org.eclipselabs.garbagecat.util.jdk;
 
 /**
- * Regular expression utility methods and constants for OpenJDK and Sun JDK.
+ * Regular expression utility methods and constants for OpenJDK and Oracle JDK.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 

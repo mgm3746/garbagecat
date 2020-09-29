@@ -868,4 +868,22 @@ public class TestJvm extends TestCase {
         Assert.assertNotNull("-XX:HeapDumpPath=/path/to/heap.dump not found.", jvm.getHeapDumpPathOption());
         Assert.assertEquals("Heap dump path value incorrect.", "/path/to/heap.dump", jvm.getHeapDumpPathValue());
     }
+
+    public void testDisabledOptions() {
+        String jvmOptions = "-Xss128K -XX:-BackgroundCompilation -Xms1024m -Xmx2048m -XX:-UseCompressedClassPointers "
+                + "-XX:-UseCompressedOops -XX:-TraceClassUnloading";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        Assert.assertEquals("Disabled options count incorrect.", 4, jvm.getDisabledOptions().size());
+        Assert.assertTrue("-XX:-BackgroundCompilation not identified as disabled option.",
+                jvm.getDisabledOptions().contains("-XX:-BackgroundCompilation"));
+        Assert.assertTrue("-XX:-UseCompressedClassPointers not identified as disabled option.",
+                jvm.getDisabledOptions().contains("-XX:-UseCompressedClassPointers"));
+        Assert.assertTrue("-XX:-UseCompressedOops not identified as disabled option.",
+                jvm.getDisabledOptions().contains("-XX:-UseCompressedOops"));
+        Assert.assertTrue("-XX:-TraceClassUnloading not identified as disabled option.",
+                jvm.getDisabledOptions().contains("-XX:-TraceClassUnloading"));
+        Assert.assertNotNull("Unaccounted disabled options not identified.", jvm.getUnaccountedDisabledOptions());
+        Assert.assertEquals("Unaccounted disabled options incorrect.", "-XX:-TraceClassUnloading",
+                jvm.getUnaccountedDisabledOptions());
+    }
 }
