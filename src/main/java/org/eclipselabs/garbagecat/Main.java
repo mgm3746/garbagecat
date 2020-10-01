@@ -169,7 +169,7 @@ public class Main {
 
                 boolean version = cmd.hasOption(Constants.OPTION_VERSION_LONG);
                 boolean latestVersion = cmd.hasOption(Constants.OPTION_LATEST_VERSION_LONG);
-                createReport(jvmRun, outputFileName, version, latestVersion, logFile.getName());
+                createReport(jvmRun, outputFileName, version, latestVersion, logFileName);
             }
         }
     }
@@ -279,7 +279,7 @@ public class Main {
      * @param latestVersion
      *            Whether or not to report latest garbagecat version.
      * @param gcLogFileName
-     *            The name of the gc log file analyzed.
+     *            The gc log file analyzed.
      */
     public static void createReport(JvmRun jvmRun, String reportFileName, boolean version, boolean latestVersion,
             String gcLogFileName) {
@@ -289,8 +289,8 @@ public class Main {
         try {
             fileWriter = new FileWriter(reportFile);
             bufferedWriter = new BufferedWriter(fileWriter);
-
-            bufferedWriter.write(gcLogFileName);
+            File gcLogFile = new File(gcLogFileName);
+            bufferedWriter.write(gcLogFile.getName());
             bufferedWriter.write(Constants.LINE_SEPARATOR);
 
             if (version || latestVersion) {
