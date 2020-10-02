@@ -213,6 +213,11 @@ public enum Analysis {
     INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED("info.gc.log.file.rotation.not.enabled"),
 
     /**
+     * Property key for heap dumps enabled without specifying a location with the -XX:HeapDumpPath option.
+     */
+    INFO_HEAP_DUMP_PATH_MISSING("info.heap.dump.path.missing"),
+
+    /**
      * Property key for instrumentation.
      */
     INFO_INSTRUMENTATION("info.instrumentation"),

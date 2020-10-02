@@ -349,6 +349,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING));
+        Assert.assertFalse(Analysis.INFO_HEAP_DUMP_PATH_MISSING + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.INFO_HEAP_DUMP_PATH_MISSING));
     }
 
     /**
@@ -495,6 +497,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED));
+        Assert.assertFalse(Analysis.INFO_HEAP_DUMP_PATH_MISSING + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.INFO_HEAP_DUMP_PATH_MISSING));
     }
 
     /**
@@ -1282,6 +1286,19 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL));
+    }
+
+    /**
+     * Test heap dump location missing
+     */
+    public void testHeapDumpPathMissing() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset181.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertTrue(Analysis.INFO_HEAP_DUMP_PATH_MISSING + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.INFO_HEAP_DUMP_PATH_MISSING));
     }
 
     /**

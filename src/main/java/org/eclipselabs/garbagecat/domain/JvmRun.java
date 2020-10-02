@@ -664,6 +664,11 @@ public class JvmRun {
             analysis.add(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING);
         }
 
+        // Check if heap dump path missing.
+        if (jvm.getHeapDumpOnOutOfMemoryErrorEnabledOption() != null && jvm.getHeapDumpPathOption() == null) {
+            analysis.add(Analysis.INFO_HEAP_DUMP_PATH_MISSING);
+        }
+
         // Check if instrumentation being used.
         if (jvm.getJavaagentOption() != null) {
             analysis.add(Analysis.INFO_INSTRUMENTATION);
