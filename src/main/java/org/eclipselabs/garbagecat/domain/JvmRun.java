@@ -944,6 +944,25 @@ public class JvmRun {
             analysis.add(Analysis.INFO_SURVIVOR_RATIO_TARGET);
         }
 
+        // Check for experimental options being used
+        if (jvm.getUnlockExperimentalVmOptionsEnabled() != null) {
+            analysis.add(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
+        }
+        if (jvm.getUseFastUnorderedTimeStampsEnabled() != null) {
+            analysis.add(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS);
+            // Don't double report
+            if (analysis.contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS)) {
+                analysis.remove(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
+            }
+        }
+        if (jvm.getG1MixedGCLiveThresholdPercent() != null) {
+            analysis.add(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT);
+            // Don't double report
+            if (analysis.contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS)) {
+                analysis.remove(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
+            }
+        }
+
         // Check for JDK < u40 recommendations (require experimental options)
         if ((collectorFamilies.contains(CollectorFamily.G1) || jvm.getUseG1Gc() != null) && jvm.JdkNumber() == 8
                 && jvm.JdkUpdate() < 40) {
@@ -951,16 +970,8 @@ public class JvmRun {
                     || !jvm.getG1MixedGCLiveThresholdPercentValue().equals("85") || jvm.getG1HeapWastePercent() == null
                     || !jvm.getG1HeapWastePercentValue().equals("5")) {
                 analysis.add(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS);
-            }
-        } else {
-            // Check for experimental options being used
-            if (jvm.getUnlockExperimentalVmOptionsEnabled() != null) {
-                if (jvm.getUseFastUnorderedTimeStampsEnabled() != null) {
-                    analysis.add(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS);
-                } else if (jvm.getG1MixedGCLiveThresholdPercent() != null) {
-                    analysis.add(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT);
-                } else {
-                    analysis.add(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
+                if (analysis.contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS)) {
+                    analysis.remove(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
                 }
             }
         }
