@@ -1452,6 +1452,20 @@ public class Jvm {
     }
 
     /**
+     * The option for enabling cgroup memory limit for heap sizing.
+     * 
+     * <pre>
+     * -XX:+UseCGroupMemoryLimitForHeap
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseCGroupMemoryLimitForHeap() {
+        String regex = "(-XX:\\+UseCGroupMemoryLimitForHeap)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * 
      * @return True if the minimum and maximum permanent generation space are set equal.
      */

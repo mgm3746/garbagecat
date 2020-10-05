@@ -334,6 +334,11 @@ public enum Analysis {
     WARN_BYTECODE_COMPILE_FIRST_INVOCATION("warn.bytecode.compile.first.invocation"),
 
     /**
+     * Property key for -XX:+UseCGroupMemoryLimitForHeap.
+     */
+    WARN_CGROUP_MEMORY_LIMIT("warn.cgroup.memory.limit"),
+
+    /**
      * Property key for class histogram output.
      */
     WARN_CLASS_HISTOGRAM("warn.class.histogram"),

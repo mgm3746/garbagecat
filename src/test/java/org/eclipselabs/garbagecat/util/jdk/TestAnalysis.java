@@ -860,7 +860,6 @@ public class TestAnalysis extends TestCase {
     public void testApplicationStoppedTimeMissingNoData() {
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(null, null);
-
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNKNOWN);
@@ -869,6 +868,18 @@ public class TestAnalysis extends TestCase {
         jvmRun.doAnalysis();
         Assert.assertFalse(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis incorrectly identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING));
+    }
+
+    public void testCGroupMemoryLimit() {
+        String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_CGROUP_MEMORY_LIMIT + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_CGROUP_MEMORY_LIMIT));
+        Assert.assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
     }
 
     public void testHeaderLogging() {

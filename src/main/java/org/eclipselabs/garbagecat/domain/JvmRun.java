@@ -967,6 +967,13 @@ public class JvmRun {
                 analysis.remove(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
             }
         }
+        if (jvm.getUseCGroupMemoryLimitForHeap() != null) {
+            analysis.add(Analysis.WARN_CGROUP_MEMORY_LIMIT);
+            // Don't double report
+            if (analysis.contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS)) {
+                analysis.remove(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
+            }
+        }
 
         // Check for JDK < u40 recommendations (require experimental options)
         if ((collectorFamilies.contains(CollectorFamily.G1) || jvm.getUseG1Gc() != null) && jvm.JdkNumber() == 8
