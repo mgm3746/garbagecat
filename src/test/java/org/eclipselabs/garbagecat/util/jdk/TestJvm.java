@@ -15,8 +15,8 @@ package org.eclipselabs.garbagecat.util.jdk;
 import java.math.BigDecimal;
 
 import org.eclipselabs.garbagecat.util.Constants;
+import org.junit.Assert;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**

@@ -17,8 +17,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
+import org.junit.Assert;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**

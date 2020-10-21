@@ -15,8 +15,8 @@ package org.eclipselabs.garbagecat.service;
 import java.io.File;
 
 import org.eclipselabs.garbagecat.util.Constants;
+import org.junit.Assert;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**

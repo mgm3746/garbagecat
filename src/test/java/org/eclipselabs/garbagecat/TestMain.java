@@ -18,8 +18,8 @@ import java.lang.reflect.Method;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.junit.Assert;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class TestMain extends TestCase {

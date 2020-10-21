@@ -250,7 +250,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             //
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Failed to allocate (TLAB, )?" + JdkRegEx.SIZE + "$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Cancelling GC: Allocation Failure$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Cancelling GC: (Allocation Failure|Stopping VM)$",
             //
             "^" + JdkRegEx.DECORATOR + " \\[Concurrent (cleanup|evacuation|marking|precleaning|reset|"
                     + "update references)( \\((process weakrefs|update refs)\\))?( \\(process weakrefs\\))?, start\\]$",

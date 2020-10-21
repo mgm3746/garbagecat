@@ -22,8 +22,8 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.junit.Assert;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**
@@ -542,8 +542,14 @@ public class TestShenandoahPreprocessAction extends TestCase {
                 ShenandoahPreprocessAction.match(logLine));
     }
 
-    public void testLogLineCancellingGcNoDecorator() {
+    public void testLogLineCancellingGcAllocationFailureNoDecorator() {
         String logLine = "    Cancelling GC: Allocation Failure";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineCancellingGcStoppingVmNoDecorator() {
+        String logLine = "    Cancelling GC: Stopping VM";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
                 ShenandoahPreprocessAction.match(logLine));
     }
@@ -668,6 +674,19 @@ public class TestShenandoahPreprocessAction extends TestCase {
 
     public void testPreprocessingConcurrentWithMetaspace() {
         File testFile = new File(Constants.TEST_DATA_DIR + "dataset191.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.",
+                jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT));
+    }
+
+    public void testPreprocessingConcurrentCancellingGc() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset194.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
