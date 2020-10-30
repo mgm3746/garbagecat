@@ -436,4 +436,26 @@ public class TestFooterStatsEvent extends TestCase {
         JvmRun jvmRun2 = gcManager2.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertEquals("Event type count not correct.", 0, jvmRun2.getEventTypes().size());
     }
+
+    public void testJdk8() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset198.txt");
+        GcManager gcManager1 = new GcManager();
+        gcManager1.store(testFile, false);
+        GcManager gcManager2 = new GcManager();
+        File preprocessedFile = gcManager1.preprocess(testFile, null);
+        gcManager2.store(preprocessedFile, false);
+        JvmRun jvmRun1 = gcManager1.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 3, jvmRun1.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun1.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.FOOTER_STATS.toString() + " collector not identified.",
+                jvmRun1.getEventTypes().contains(LogEventType.FOOTER_STATS));
+        // Some logging patterns are exactly the same as SHENANDOAH_STATS. No easy way to distinguish them.
+        Assert.assertTrue(JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " collector not identified.",
+                jvmRun1.getEventTypes().contains(LogEventType.SHENANDOAH_STATS));
+        Assert.assertTrue(JdkUtil.LogEventType.BLANK_LINE.toString() + " collector not identified.",
+                jvmRun1.getEventTypes().contains(LogEventType.BLANK_LINE));
+        JvmRun jvmRun2 = gcManager2.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 0, jvmRun2.getEventTypes().size());
+    }
 }

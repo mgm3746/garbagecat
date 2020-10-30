@@ -929,48 +929,50 @@ public class JdkUtil {
     }
 
     /**
-     * Determine if the garbage collection event should be classified as a bottleneck.
+     * Determine if the <code>BlockingEvent</code> should be classified as a bottleneck.
      * 
      * @param gcEvent
-     *            Current garbage collection event.
+     *            Current <code>BlockingEvent</code>.
      * @param priorEvent
-     *            Previous garbage collection event.
+     *            Previous <code>BlockingEvent</code>.
      * @param throughputThreshold
      *            Throughput threshold (percent of time spent not doing garbage collection for a given time interval) to
      *            be considered a bottleneck. Whole number 0-100.
-     * @return True if the garbage collection event pause time meets the bottleneck definition.
+     * @return True if the <code>BlockingEvent</code> pause time meets the bottleneck definition.
      */
     public static final boolean isBottleneck(BlockingEvent gcEvent, BlockingEvent priorEvent, int throughputThreshold)
             throws TimeWarpException {
-
         /*
-         * Current event should not start until prior even finishes. Allow 1 thousandth of a second overlap to account
-         * for precision and rounding limitations.
+         * Check for logging time warps, which could be an indication of mixed logging from multiple JVM runs. JDK8
+         * seems to have threading issues where sometimes logging gets mixed up under heavy load, and an event appears
+         * to start before the previous event finished. They are mainly very small overlaps or a few milliseconds.
          */
-        if (gcEvent.getTimestamp() < (priorEvent.getTimestamp()
-                + JdkMath.convertMicrosToMillis(priorEvent.getDuration()).longValue() - 1)) {
+        if (gcEvent.getTimestamp() < priorEvent.getTimestamp()) {
+            throw new TimeWarpException("Bad order: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
+                    + Constants.LINE_SEPARATOR + gcEvent.getLogEntry());
+        } else if (gcEvent.getTimestamp() < (priorEvent.getTimestamp()
+                + JdkMath.convertMicrosToMillis(priorEvent.getDuration()).longValue() - 1000)) {
+            // Only report if overlap > 1 sec to account for small overlaps due to JDK threading issues
             throw new TimeWarpException("Event overlap: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
                     + Constants.LINE_SEPARATOR + gcEvent.getLogEntry());
+        } else if (gcEvent.getTimestamp() <= (priorEvent.getTimestamp()
+                + JdkMath.convertMicrosToMillis(priorEvent.getDuration()).longValue())) {
+            // Small (<1 sec) event overlap
+            return true;
+        } else {
+            /*
+             * Timestamp is the start of a vm event; therefore, the interval is from the end of the prior event to the
+             * end of the current event.
+             */
+            long interval = gcEvent.getTimestamp() + JdkMath.convertMicrosToMillis(gcEvent.getDuration()).longValue()
+                    - priorEvent.getTimestamp() - JdkMath.convertMicrosToMillis(priorEvent.getDuration()).longValue();
+            // Determine the maximum duration for the given interval that meets the throughput goal.
+            BigDecimal durationThreshold = new BigDecimal(100 - throughputThreshold);
+            durationThreshold = durationThreshold.movePointLeft(2);
+            durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
+            durationThreshold.setScale(0, RoundingMode.DOWN);
+            return (JdkMath.convertMicrosToMillis(gcEvent.getDuration()).longValue() > durationThreshold.intValue());
         }
-
-        /*
-         * Timestamp is the start of a garbage collection event; therefore, the interval is from the end of the prior
-         * event to the end of the current event.
-         */
-        long interval = gcEvent.getTimestamp() + JdkMath.convertMicrosToMillis(gcEvent.getDuration()).longValue()
-                - priorEvent.getTimestamp() - JdkMath.convertMicrosToMillis(priorEvent.getDuration()).longValue();
-        if (interval < 0) {
-            throw new TimeWarpException("Negative interval: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
-                    + Constants.LINE_SEPARATOR + gcEvent.getLogEntry());
-        }
-
-        // Determine the maximum duration for the given interval that meets the
-        // throughput goal.
-        BigDecimal durationThreshold = new BigDecimal(100 - throughputThreshold);
-        durationThreshold = durationThreshold.movePointLeft(2);
-        durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
-        durationThreshold.setScale(0, RoundingMode.DOWN);
-        return (JdkMath.convertMicrosToMillis(gcEvent.getDuration()).longValue() > durationThreshold.intValue());
     }
 
     /**

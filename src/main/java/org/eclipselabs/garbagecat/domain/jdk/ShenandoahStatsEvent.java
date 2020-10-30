@@ -100,7 +100,8 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             "^(" + UnifiedRegEx.DECORATOR + " )?  Degen Update Roots.+$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{2,4}(Cleanup|CLDG|Enqueue|Parallel Cleanup|Process|Unload Classes|Weak Roots).*$",
+                    + " )?[ ]{2,4}(Cleanup|CLDG|Deallocate Metadata|Enqueue|Parallel Cleanup|Process|Unload Classes|"
+                    + "Weak Roots).*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?  (Initial|Prepare)( Evacuation)?.*$",
             //
@@ -122,7 +123,7 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             // ,
             "^(" + UnifiedRegEx.DECORATOR
                     + " )?[ ]{0,7}\\d{1,8} of[ ]{0,5}\\d{1,6} ms \\([ ]{0,2}\\d{1,3}\\.\\d%\\): (<average non-zero>|"
-                    + "<average total>|main|<total>)$",
+                    + "<average total>|C1 CompilerThread2|main|<total>)$",
             //
             "^(" + UnifiedRegEx.DECORATOR
                     + " )?      CU: (<total>|(Code Cache|(String|Resolved) Table|CLDG) (Roots|Cleaning)) .*$"

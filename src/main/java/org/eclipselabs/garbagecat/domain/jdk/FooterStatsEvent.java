@@ -493,18 +493,18 @@ public class FooterStatsEvent implements ThrowAwayEvent {
             "^(" + UnifiedRegEx.DECORATOR + " )?Max pacing delay is set for 10 ms.$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + "[ ]{1,3})?Higher delay would prevent application outpacing the GC, but it will hide the GC "
+                    + ")?[ ]{0,3}Higher delay would prevent application outpacing the GC, but it will hide the GC "
                     + "latencies$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + "[ ]{1,3})?from the STW pause times. Pacing affects the individual threads, and so it would also "
+                    + ")?[ ]{0,3}from the STW pause times. Pacing affects the individual threads, and so it would also "
                     + "be$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + "[ ]{1,3})?invisible to the usual profiling tools, but would add up to end-to-end application "
+                    + ")?[ ]{0,3}invisible to the usual profiling tools, but would add up to end-to-end application "
                     + "latency.$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + "[ ]{1,3})?Raise max pacing delay with care.$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{0,3}Raise max pacing delay with care.$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Actual pacing delays histogram:$",
             //
@@ -519,18 +519,22 @@ public class FooterStatsEvent implements ThrowAwayEvent {
                     + " )?  Allocation tracing is disabled, use -XX:\\+ShenandoahAllocationTrace to enable.$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + "[ ]{1,3})?Pacing delays are measured from entering the pacing code till exiting it. Therefore,$",
+                    + ")?[ ]{0,3}Pacing delays are measured from entering the pacing code till exiting it. Therefore,$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + "[ ]{1,3})?observed pacing delays may be higher than the threshold when paced thread spent more$",
+                    + ")?[ ]{0,3}observed pacing delays may be higher than the threshold when paced thread spent more$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + "[ ]{1,3})?time in the pacing code. It usually happens when thread is de-scheduled while paced,$",
+                    + ")?[ ]{0,3}time in the pacing code. It usually happens when thread is de-scheduled while paced,$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + "[ ]{1,3})?OS takes longer to unblock the thread, or JVM experiences an STW pause.$",
+                    + ")?[ ]{0,3}OS takes longer to unblock the thread, or JVM experiences an STW pause.$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Pause Degenerated GC \\((G|N)\\)[ ]{1,}=.*$"
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pause Degenerated GC \\((G|N)\\)[ ]{1,}=.*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR
+                    + ")?[ ]{3,4}(Cleanup|CLDG|Deallocate Metadata|Enqueue|Parallel Cleanup|Process|Unload Classes|"
+                    + "Weak Roots)[ ]{1,}=.*$"
             //
     };
 

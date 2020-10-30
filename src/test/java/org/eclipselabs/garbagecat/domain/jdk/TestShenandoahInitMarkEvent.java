@@ -146,7 +146,7 @@ public class TestShenandoahInitMarkEvent extends TestCase {
         Assert.assertEquals("Time stamp not parsed correctly.", 3090 - 2, event.getTimestamp());
         Assert.assertEquals("Duration not parsed correctly.", 2904, event.getDuration());
     }
-    
+
     public void testLogLineUnifiedUnloadClasses() {
         String logLine = "[5.593s][info][gc           ] GC(99) Pause Init Mark (unload classes) 0.088ms";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".",

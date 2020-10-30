@@ -465,6 +465,18 @@ public class TestShenandoahStatsEvent extends TestCase {
                 ShenandoahStatsEvent.match(logLine));
     }
 
+    public void testLineDeallocateMetadata() {
+        String logLine = "    Deallocate Metadata              24 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineC1CompilerThread2() {
+        String logLine = "      8 of   105 ms (  7.6%): C1 CompilerThread2";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
     public void testJdk11() {
         File testFile = new File(Constants.TEST_DATA_DIR + "dataset195.txt");
         GcManager gcManager1 = new GcManager();
