@@ -1,0 +1,68 @@
+[0.590s][info][gc,stats     ] 
+[0.590s][info][gc,stats     ] All times are wall-clock times, except per-root-class counters, that are sum over
+[0.590s][info][gc,stats     ] all workers. Dividing the <total> over the root stage time estimates parallelism.
+[0.590s][info][gc,stats     ] 
+[0.590s][info][gc,stats     ] Concurrent Reset                     52 us
+[0.590s][info][gc,stats     ] Pause Init Mark (G)                 201 us
+[0.590s][info][gc,stats     ] Pause Init Mark (N)                  89 us
+[0.590s][info][gc,stats     ]   Accumulate Stats                    1 us
+[0.590s][info][gc,stats     ]   Make Parsable                       2 us
+[0.590s][info][gc,stats     ]   Update Region States                2 us
+[0.590s][info][gc,stats     ]   Scan Roots                         72 us, parallelism: 1.38x
+[0.590s][info][gc,stats     ]     S: <total>                       99 us
+[0.590s][info][gc,stats     ]     S: Thread Roots                  43 us, workers (us):   0,  42, 
+[0.590s][info][gc,stats     ]     S: Universe Roots                 2 us, workers (us):   2, ---, 
+[0.590s][info][gc,stats     ]     S: JNI Handles Roots              1 us, workers (us):   1, ---, 
+[0.590s][info][gc,stats     ]     S: Synchronizer Roots             0 us, workers (us): ---,   0, 
+[0.590s][info][gc,stats     ]     S: Management Roots               1 us, workers (us):   1, ---, 
+[0.590s][info][gc,stats     ]     S: System Dict Roots              4 us, workers (us): ---,   4, 
+[0.590s][info][gc,stats     ]     S: CLDG Roots                    48 us, workers (us):  48, ---, 
+[0.590s][info][gc,stats     ]     S: JVMTI Roots                    0 us, workers (us):   0, ---, 
+[0.590s][info][gc,stats     ]   Resize TLABs                        1 us
+[0.590s][info][gc,stats     ] Concurrent Marking                 4147 us
+[0.590s][info][gc,stats     ] Concurrent Precleaning               41 us
+[0.590s][info][gc,stats     ] Pause Final Mark (G)                767 us
+[0.590s][info][gc,stats     ] Pause Final Mark (N)                544 us
+[0.590s][info][gc,stats     ]   Finish Queues                     231 us
+[0.590s][info][gc,stats     ]   Weak References                    19 us
+[0.590s][info][gc,stats     ]     Process                          16 us
+[0.590s][info][gc,stats     ]   System Purge                       77 us
+[0.590s][info][gc,stats     ]     Weak Roots                       76 us
+[0.590s][info][gc,stats     ]   Update Region States                4 us
+[0.590s][info][gc,stats     ]   Retire TLABs                        2 us
+[0.590s][info][gc,stats     ]   Choose Collection Set              40 us
+[0.590s][info][gc,stats     ]   Rebuild Free Set                    3 us
+[0.590s][info][gc,stats     ]   Initial Evacuation                159 us, parallelism: 0.46x
+[0.590s][info][gc,stats     ]     E: <total>                       74 us
+[0.590s][info][gc,stats     ]     E: Thread Roots                  36 us, workers (us):  36,   0, 
+[0.590s][info][gc,stats     ]     E: Code Cache Roots              16 us, workers (us):  16,   0, 
+[0.590s][info][gc,stats     ]     E: Universe Roots                 1 us, workers (us):   1, ---, 
+[0.590s][info][gc,stats     ]     E: JNI Handles Roots              1 us, workers (us):   1, ---, 
+[0.590s][info][gc,stats     ]     E: Synchronizer Roots             0 us, workers (us):   0, ---, 
+[0.590s][info][gc,stats     ]     E: Management Roots               1 us, workers (us):   1, ---, 
+[0.590s][info][gc,stats     ]     E: System Dict Roots              3 us, workers (us):   3, ---, 
+[0.590s][info][gc,stats     ]     E: CLDG Roots                    16 us, workers (us):  16, ---, 
+[0.590s][info][gc,stats     ]     E: JVMTI Roots                    0 us, workers (us):   0, ---, 
+[0.590s][info][gc,stats     ] Concurrent Cleanup                   38 us
+[0.590s][info][gc,stats     ] Concurrent Evacuation               132 us
+[0.590s][info][gc,stats     ] Pause Init  Update Refs (G)          95 us
+[0.590s][info][gc,stats     ] Pause Init  Update Refs (N)          11 us
+[0.590s][info][gc,stats     ]   Retire GCLABs                       1 us
+[0.590s][info][gc,stats     ] Concurrent Update Refs             3713 us
+[0.590s][info][gc,stats     ] Pause Final Update Refs (G)         192 us
+[0.590s][info][gc,stats     ] Pause Final Update Refs (N)          51 us
+[0.590s][info][gc,stats     ]   Update Roots                       37 us, parallelism: 1.07x
+[0.590s][info][gc,stats     ]     UR: <total>                      39 us
+[0.590s][info][gc,stats     ]     UR: Thread Roots                 39 us, workers (us):  24,  15, 
+[0.590s][info][gc,stats     ]   Update Region States                4 us
+[0.590s][info][gc,stats     ]   Trash Collection Set                2 us
+[0.590s][info][gc,stats     ]   Rebuild Free Set                    3 us
+[0.590s][info][gc,stats     ] Concurrent Cleanup                   30 us
+[0.590s][info][gc,stats     ] Pacing                             1737 us
+[0.590s][info][gc,stats     ] 
+[0.590s][info][gc,stats     ] Allocation pacing accrued:
+[0.590s][info][gc,stats     ]       2 of    88 ms (  2.0%): main
+[0.590s][info][gc,stats     ]       2 of    88 ms (  2.0%): <total>
+[0.590s][info][gc,stats     ]       0 of    88 ms (  0.2%): <average total>
+[0.590s][info][gc,stats     ]       2 of    88 ms (  2.0%): <average non-zero>
+[0.590s][info][gc,stats     ] 

@@ -12,11 +12,16 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.Assert;
 
@@ -273,6 +278,12 @@ public class TestShenandoahStatsEvent extends TestCase {
                 ShenandoahStatsEvent.match(logLine));
     }
 
+    public void testLineUnifiedFinishWork() {
+        String logLine = "[2020-10-26T14:51:41.413-0400]   Finish Work                     10950 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
     public void testLinePauseDegenerateGcG() {
         String logLine = "Pause Degenerated GC (G)        1296188 us";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
@@ -380,5 +391,115 @@ public class TestShenandoahStatsEvent extends TestCase {
                 + "---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---,";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
                 ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineConcurrentCleanup() {
+        String logLine = "[0.590s][info][gc,stats     ] Concurrent Cleanup                   38 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineMain2DigitPercent() {
+        String logLine = "[0.661s][info][gc,stats     ]      10 of    71 ms ( 14.0%): main";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineUnloadClasses() {
+        String logLine = "[5.608s][info][gc,stats      ]     Unload Classes                   52 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineCleanup() {
+        String logLine = "[5.608s][info][gc,stats      ]     Cleanup                        1275 us, "
+                + "parallelism: 1.93x";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineCuTotal() {
+        String logLine = "[5.608s][info][gc,stats      ]       CU: <total>                  2466 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineCuCodeCacheRoots() {
+        String logLine = "[5.608s][info][gc,stats      ]       CU: Code Cache Roots          983 us, "
+                + "workers (us): 488, 495,";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineCuCodeCacheCleaning() {
+        String logLine = "[5.608s][info][gc,stats      ]       CU: Code Cache Cleaning       149 us, "
+                + "workers (us):  79,  70,";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineCuStringTableRoots() {
+        String logLine = "[5.608s][info][gc,stats      ]       CU: String Table Roots        358 us, "
+                + "workers (us): 183, 175,";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineCuResolvedTableRoots() {
+        String logLine = "[5.608s][info][gc,stats      ]       CU: Resolved Table Roots        9 us, "
+                + "workers (us):   0,   9";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineCuCldgRoots() {
+        String logLine = "[5.608s][info][gc,stats      ]       CU: CLDG Roots                967 us, "
+                + "workers (us): 479, 489,";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testLineCldg() {
+        String logLine = "[5.608s][info][gc,stats      ]     CLDG                              0 us";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".",
+                ShenandoahStatsEvent.match(logLine));
+    }
+
+    public void testJdk11() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset195.txt");
+        GcManager gcManager1 = new GcManager();
+        gcManager1.store(testFile, false);
+        GcManager gcManager2 = new GcManager();
+        File preprocessedFile = gcManager1.preprocess(testFile, null);
+        gcManager2.store(preprocessedFile, false);
+        JvmRun jvmRun1 = gcManager1.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun1.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun1.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " collector not identified.",
+                jvmRun1.getEventTypes().contains(LogEventType.SHENANDOAH_STATS));
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " collector not identified.",
+                jvmRun1.getEventTypes().contains(LogEventType.UNIFIED_BLANK_LINE));
+        JvmRun jvmRun2 = gcManager2.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 0, jvmRun2.getEventTypes().size());
+    }
+
+    public void testJdk11Time() {
+        File testFile = new File(Constants.TEST_DATA_DIR + "dataset197.txt");
+        GcManager gcManager1 = new GcManager();
+        gcManager1.store(testFile, false);
+        GcManager gcManager2 = new GcManager();
+        File preprocessedFile = gcManager1.preprocess(testFile, null);
+        gcManager2.store(preprocessedFile, false);
+        JvmRun jvmRun1 = gcManager1.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 2, jvmRun1.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun1.getEventTypes().contains(LogEventType.UNKNOWN));
+        Assert.assertTrue(JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " collector not identified.",
+                jvmRun1.getEventTypes().contains(LogEventType.SHENANDOAH_STATS));
+        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " collector not identified.",
+                jvmRun1.getEventTypes().contains(LogEventType.UNIFIED_BLANK_LINE));
+        JvmRun jvmRun2 = gcManager2.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        Assert.assertEquals("Event type count not correct.", 0, jvmRun2.getEventTypes().size());
     }
 }

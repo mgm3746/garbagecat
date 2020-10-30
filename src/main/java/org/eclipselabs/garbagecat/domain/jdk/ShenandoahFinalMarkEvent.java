@@ -112,8 +112,8 @@ public class ShenandoahFinalMarkEvent extends ShenandoahCollector implements Blo
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Pause Final Mark( \\(update refs\\))?( \\(process weakrefs\\))?[,]{0,1} "
-            + UnifiedRegEx.DURATION + "[\\]]{0,1}[ ]*$";
+            + ") [\\[]{0,1}Pause Final Mark( \\((update refs|unload classes)\\))?"
+            + "( \\(process weakrefs\\))?[,]{0,1} " + UnifiedRegEx.DURATION + "[\\]]{0,1}[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -129,7 +129,7 @@ public class ShenandoahFinalMarkEvent extends ShenandoahCollector implements Blo
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                duration = JdkMath.convertMillisToMicros(matcher.group(39)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(40)).intValue();
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;
                     if (matcher.group(13).matches(UnifiedRegEx.UPTIMEMILLIS)) {

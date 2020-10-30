@@ -106,4 +106,38 @@ public class TestShenandoahDegeneratedGcEvent extends TestCase {
         Assert.assertEquals("Combined allocation size not parsed correctly.", 98304 * 1024, event.getCombinedSpace());
         Assert.assertEquals("Duration not parsed correctly.", 1285045, event.getDuration());
     }
+
+    public void testLogLineMetaspace() {
+        String logLine = "[2020-10-26T14:51:41.413-0400] GC(413) Pause Degenerated GC (Mark) 90M->12M(96M) 27.501ms "
+                + "Metaspace: 3963K->3963K(1056768K)";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC_MARK.toString() + ".",
+                ShenandoahDegeneratedGcMarkEvent.match(logLine));
+        ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 657035501386L, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 90 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 12 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 96 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 27501, event.getDuration());
+        Assert.assertEquals("Metaspace begin size not parsed correctly.", 3963, event.getPermOccupancyInit());
+        Assert.assertEquals("Metaspace end size not parsed correctly.", 3963, event.getPermOccupancyEnd());
+        Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1056768, event.getPermSpace());
+    }
+
+    public void testLogLineTriggerOutsideOfCycle() {
+        String logLine = "[8.084s] GC(136) Pause Degenerated GC (Outside of Cycle) 90M->6M(96M) 23.018ms "
+                + "Metaspace: 3847K->3847K(1056768K)";
+        Assert.assertTrue(
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC_MARK.toString() + ".",
+                ShenandoahDegeneratedGcMarkEvent.match(logLine));
+        ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
+        Assert.assertEquals("Time stamp not parsed correctly.", 8084 - 23, event.getTimestamp());
+        Assert.assertEquals("Combined begin size not parsed correctly.", 90 * 1024, event.getCombinedOccupancyInit());
+        Assert.assertEquals("Combined end size not parsed correctly.", 6 * 1024, event.getCombinedOccupancyEnd());
+        Assert.assertEquals("Combined allocation size not parsed correctly.", 96 * 1024, event.getCombinedSpace());
+        Assert.assertEquals("Duration not parsed correctly.", 23018, event.getDuration());
+        Assert.assertEquals("Metaspace begin size not parsed correctly.", 3847, event.getPermOccupancyInit());
+        Assert.assertEquals("Metaspace end size not parsed correctly.", 3847, event.getPermOccupancyEnd());
+        Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1056768, event.getPermSpace());
+    }
 }

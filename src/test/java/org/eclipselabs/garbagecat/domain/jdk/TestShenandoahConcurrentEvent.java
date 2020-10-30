@@ -269,6 +269,12 @@ public class TestShenandoahConcurrentEvent extends TestCase {
         Assert.assertEquals("Metaspace allocation size not parsed correctly.", 1056768, event.getPermSpace());
     }
 
+    public void testUnifiedUnloadClasses() {
+        String logLine = "[5.601s][info][gc           ] GC(99) Concurrent marking (unload classes) 7.346ms";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
+                ShenandoahConcurrentEvent.match(logLine));
+    }
+
     /**
      * Test max heap space and occupancy data.
      */

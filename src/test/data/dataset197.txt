@@ -1,0 +1,33 @@
+[2020-10-26T14:51:41.413-0400] All times are wall-clock times, except per-root-class counters, that are sum over
+[2020-10-26T14:51:41.413-0400] all workers. Dividing the <total> over the root stage time estimates parallelism.
+[2020-10-26T14:51:41.413-0400] 
+[2020-10-26T14:51:41.413-0400]   Finish Queues                    6153 us
+[2020-10-26T14:51:41.413-0400]   System Purge                       70 us
+[2020-10-26T14:51:41.413-0400]     Weak Roots                       69 us
+[2020-10-26T14:51:41.413-0400]   Update Region States                4 us
+[2020-10-26T14:51:41.413-0400]   Retire TLABs                        3 us
+[2020-10-26T14:51:41.413-0400]   Choose Collection Set              76 us
+[2020-10-26T14:51:41.413-0400]   Rebuild Free Set                    5 us
+[2020-10-26T14:51:41.413-0400]   Initial Evacuation                  9 us
+[2020-10-26T14:51:41.413-0400]   Retire GCLABs                       4 us
+[2020-10-26T14:51:41.413-0400]   Finish Work                     10950 us
+[2020-10-26T14:51:41.413-0400]   Update Region States                7 us
+[2020-10-26T14:51:41.413-0400]   Trash Collection Set                4 us
+[2020-10-26T14:51:41.413-0400]   Rebuild Free Set                    5 us
+[2020-10-26T14:51:41.413-0400] Pause Degenerated GC (G)          27600 us
+[2020-10-26T14:51:41.413-0400] Pause Degenerated GC (N)          27488 us
+[2020-10-26T14:51:41.413-0400]   Degen Update Roots                616 us, parallelism: 0.26x
+[2020-10-26T14:51:41.413-0400]     DU: <total>                     160 us
+[2020-10-26T14:51:41.413-0400]     DU: Thread Roots                 36 us, workers (us):  35,   1, 
+[2020-10-26T14:51:41.413-0400]     DU: Code Cache Roots             91 us, workers (us):  91,   0, 
+[2020-10-26T14:51:41.413-0400]     DU: Universe Roots                2 us, workers (us):   2, ---, 
+[2020-10-26T14:51:41.413-0400]     DU: JNI Handles Roots             1 us, workers (us):   1, ---, 
+[2020-10-26T14:51:41.413-0400]     DU: Synchronizer Roots            0 us, workers (us):   0, ---, 
+[2020-10-26T14:51:41.413-0400]     DU: Management Roots              2 us, workers (us):   2, ---, 
+[2020-10-26T14:51:41.413-0400]     DU: System Dict Roots             3 us, workers (us):   3, ---, 
+[2020-10-26T14:51:41.413-0400]     DU: CLDG Roots                   25 us, workers (us):  25, ---, 
+[2020-10-26T14:51:41.413-0400]     DU: JVMTI Roots                   1 us, workers (us):   1, ---, 
+[2020-10-26T14:51:41.413-0400] 
+[2020-10-26T14:51:41.413-0400] Allocation pacing accrued:
+[2020-10-26T14:51:41.413-0400]       0 of    29 ms (  0.0%): <total>
+[2020-10-26T14:51:41.413-0400]       0 of    29 ms (  0.0%): <average total>

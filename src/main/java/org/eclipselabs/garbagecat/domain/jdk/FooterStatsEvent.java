@@ -434,36 +434,37 @@ public class FooterStatsEvent implements ThrowAwayEvent {
                     + " )?  \"lvls\" are quantiles: 0% \\(minimum\\), 25%, 50% \\(median\\), 75%, 100% "
                     + "\\(maximum\\).$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Total Pauses \\([G|N]\\).*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Init[ ]{0,1}|Final) (Mark|Update Refs|Evac) \\([G|N]\\).*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  Accumulate Stats.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  Make Parsable .*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  (Clear|Complete) Liveness.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  (Scan|Update) Roots.*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Total Pauses \\([G|N]\\)[ ]{1,}=.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?    (E|S|U|UR): (CLDG|Code Cache|FlatProfiler|JNI|JNI Weak|Management|String Table|"
-                    + "Synchronizer|System Dict|Thread|Universe|JVMTI) Roots.*$",
+                    + " )?Pause (Init[ ]{0,1}|Final) (Mark|Update Refs|Evac) \\([G|N]\\)[ ]{1,}=.*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  (Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs).*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?  Accumulate Stats[ ]{1,}=.*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  Finish Queues.*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?  Make Parsable[ ]{1,}=.*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  (Weak References|System Purge).*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?  (Clear|Complete) Liveness[ ]{1,}=.*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?    (Process|Enqueue|Parallel Cleanup).*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  (Initial|Prepare)( Evacuation)?.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  Recycle.*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?  ((Scan|(Degen )?Update) Roots|Finish Work)[ ]{1,}=.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?Concurrent (Reset|Marking|Precleaning|Evacuation|Update Refs|Cleanup|Uncommit).*$",
+                    + " )?    (DU|E|S|U|UR): (CLDG|Code Cache|FlatProfiler|JNI|JNI Weak|Management|String Table|"
+                    + "Synchronizer|System Dict|Thread|Universe|JVMTI) Roots[ ]{1,}=.*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?  (Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs)[ ]{1,}=.*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?  Finish Queues[ ]{1,}=.*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?  (Weak References|System Purge)[ ]{1,}=.*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?    (Process|Enqueue|Parallel Cleanup)[ ]{1,}=.*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?  (Initial|Prepare)( Evacuation)?[ ]{1,}=.*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?  Recycle[ ]{1,}=.*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?Concurrent (Reset|Marking|Precleaning|Evacuation|Update Refs|Cleanup|Uncommit)[ ]{1,}=.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR
                     + " )?Under allocation pressure, concurrent cycles may cancel, and either continue cycle$",
@@ -483,6 +484,8 @@ public class FooterStatsEvent implements ThrowAwayEvent {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?      \\d{1,7} caused by allocation failure$",
             //
+            "^(" + UnifiedRegEx.DECORATOR + " )?        \\d{1,7} happened at (Mark|Outside of Cycle)$",
+            //
             "^(" + UnifiedRegEx.DECORATOR + " )?      \\d{1,7} upgraded from Degenerated GC$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?ALLOCATION PACING:$",
@@ -490,16 +493,18 @@ public class FooterStatsEvent implements ThrowAwayEvent {
             "^(" + UnifiedRegEx.DECORATOR + " )?Max pacing delay is set for 10 ms.$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?Higher delay would prevent application outpacing the GC, but it will hide the GC latencies$",
+                    + "[ ]{1,3})?Higher delay would prevent application outpacing the GC, but it will hide the GC "
+                    + "latencies$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?from the STW pause times. Pacing affects the individual threads, and so it would also be$",
+                    + "[ ]{1,3})?from the STW pause times. Pacing affects the individual threads, and so it would also "
+                    + "be$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?invisible to the usual profiling tools, but would add up to end-to-end application "
+                    + "[ ]{1,3})?invisible to the usual profiling tools, but would add up to end-to-end application "
                     + "latency.$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Raise max pacing delay with care.$",
+            "^(" + UnifiedRegEx.DECORATOR + "[ ]{1,3})?Raise max pacing delay with care.$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Actual pacing delays histogram:$",
             //
@@ -514,16 +519,18 @@ public class FooterStatsEvent implements ThrowAwayEvent {
                     + " )?  Allocation tracing is disabled, use -XX:\\+ShenandoahAllocationTrace to enable.$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?Pacing delays are measured from entering the pacing code till exiting it. Therefore,$",
+                    + "[ ]{1,3})?Pacing delays are measured from entering the pacing code till exiting it. Therefore,$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?observed pacing delays may be higher than the threshold when paced thread spent more$",
+                    + "[ ]{1,3})?observed pacing delays may be higher than the threshold when paced thread spent more$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?time in the pacing code. It usually happens when thread is de-scheduled while paced,$",
+                    + "[ ]{1,3})?time in the pacing code. It usually happens when thread is de-scheduled while paced,$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?OS takes longer to unblock the thread, or JVM experiences an STW pause.$"
+                    + "[ ]{1,3})?OS takes longer to unblock the thread, or JVM experiences an STW pause.$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pause Degenerated GC \\((G|N)\\)[ ]{1,}=.*$"
             //
     };
 

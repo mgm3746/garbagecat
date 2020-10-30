@@ -62,8 +62,20 @@ public class TestShenandoahPreprocessAction extends TestCase {
                 ShenandoahPreprocessAction.match(logLine));
     }
 
+    public void testLogLineUnifiedInitMarkUnloadClasses() {
+        String logLine = "[5.593s][info][gc,start     ] GC(99) Pause Init Mark (unload classes)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
     public void testLogLineUnifiedDegeneratedGc() {
         String logLine = "[52.883s][info][gc,start     ] GC(1632) Pause Degenerated GC (Mark)";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineUnifiedDegeneratedGcOutsideOfCycle() {
+        String logLine = "[8.061s] GC(136) Pause Degenerated GC (Outside of Cycle)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
                 ShenandoahPreprocessAction.match(logLine));
     }
@@ -508,6 +520,12 @@ public class TestShenandoahPreprocessAction extends TestCase {
     public void testLogLineJdk8ConcurrentMarkingUpdateRefsProcessWeakrefs() {
         String logLine = "2020-03-11T07:02:09.720-0400: 129.217: [Concurrent marking (update refs) (process weakrefs), "
                 + "start]";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
+                ShenandoahPreprocessAction.match(logLine));
+    }
+
+    public void testLogLineUnifiedConcurrentMarkingUnloadClasses() {
+        String logLine = "[5.593s][info][gc,start     ] GC(99) Concurrent marking (unload classes)";
         Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".",
                 ShenandoahPreprocessAction.match(logLine));
     }

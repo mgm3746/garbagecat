@@ -68,7 +68,16 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             "^(" + UnifiedRegEx.DECORATOR
                     + ")?[ ]{0,}all workers. Dividing the <total> over the root stage time estimates parallelism.$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{2,3}Update Region States.+$",
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?Concurrent (Cleanup|Evacuation|Marking|Reset|Precleaning|Update Refs).+$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Init|Final) Mark \\((G|N)\\).+$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?  (Accumulate Stats|Finish Queues|Make Parsable|System Purge|Update Region States|"
+                    + "Weak References).*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?  (Scan|Update) Roots.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{4,5}(DU|E|S|UR|WR): <total>.+$",
             //
@@ -76,25 +85,47 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             //
             "^(" + UnifiedRegEx.DECORATOR + ")?    (DU|E|S|WR): JFR Weak Roots.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?    (DU|WR): JNI Weak Roots.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?    (DU|S|WR): JNI Weak Roots.+$",
             //
             "^(" + UnifiedRegEx.DECORATOR + ")?    (E|S): Flat Profiler Roots.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{2,5}Weak Roots.+$",
             //
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{2,3}(Choose|Trash) Collection Set.+$",
             //
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{2,3}Rebuild Free Set.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?  Finish Work.+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?  Finish Work.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?Pause Degenerated GC \\((G|N)\\).+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pause Degenerated GC \\((G|N)\\).+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?  Degen Update Roots.+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?  Degen Update Roots.+$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + ")?    DU: (CLDG|Code Cache|Flat Profiler|JVMTI|Management|String Table|Synchronizer|System Dict"
-                    + "|Thread|Universe) Roots.+$"
+                    + " )?[ ]{2,4}(Cleanup|CLDG|Enqueue|Parallel Cleanup|Process|Unload Classes|Weak Roots).*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?  (Initial|Prepare)( Evacuation)?.*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?  (Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs).*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?    (DU|E|S|U|UR): (CLDG|Code Cache|FlatProfiler|JNI|JNI Weak|Management|String Table|"
+                    + "Synchronizer|System Dict|Thread|Universe|JVMTI) Roots.*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Init[ ]{0,1}|Final) (Mark|Update Refs|Evac) \\([G|N]\\).*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR
+                    + ")?    (DU|S): (CLDG|Code Cache|Flat Profiler|JVMTI|Management|String Table|Synchronizer|"
+                    + "System Dict|Thread|Universe) Roots.+$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?Allocation pacing accrued:$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pacing.*$",
+            // ,
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?[ ]{0,7}\\d{1,8} of[ ]{0,5}\\d{1,6} ms \\([ ]{0,2}\\d{1,3}\\.\\d%\\): (<average non-zero>|"
+                    + "<average total>|main|<total>)$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?      CU: (<total>|(Code Cache|(String|Resolved) Table|CLDG) (Roots|Cleaning)) .*$"
             //
     };
 

@@ -1,0 +1,123 @@
+[2020-10-26T14:52:27.770-0400] GC STATISTICS:
+[2020-10-26T14:52:27.770-0400]   "(G)" (gross) pauses include VM time: time to notify and block threads, do the pre-
+[2020-10-26T14:52:27.770-0400]         and post-safepoint housekeeping. Use -XX:+PrintSafepointStatistics to dissect.
+[2020-10-26T14:52:27.770-0400]   "(N)" (net) pauses are the times spent in the actual GC code.
+[2020-10-26T14:52:27.770-0400]   "a" is average time for each phase, look at levels to see if average makes sense.
+[2020-10-26T14:52:27.770-0400]   "lvls" are quantiles: 0% (minimum), 25%, 50% (median), 75%, 100% (maximum).
+[2020-10-26T14:52:27.770-0400] 
+[2020-10-26T14:52:27.770-0400]   All times are wall-clock times, except per-root-class counters, that are sum over
+[2020-10-26T14:52:27.770-0400]   all workers. Dividing the <total> over the root stage time estimates parallelism.
+[2020-10-26T14:52:27.770-0400] 
+[2020-10-26T14:52:27.770-0400]   Pacing delays are measured from entering the pacing code till exiting it. Therefore,
+[2020-10-26T14:52:27.770-0400]   observed pacing delays may be higher than the threshold when paced thread spent more
+[2020-10-26T14:52:27.770-0400]   time in the pacing code. It usually happens when thread is de-scheduled while paced,
+[2020-10-26T14:52:27.770-0400]   OS takes longer to unblock the thread, or JVM experiences an STW pause.
+[2020-10-26T14:52:27.770-0400] 
+[2020-10-26T14:52:27.770-0400]   Higher delay would prevent application outpacing the GC, but it will hide the GC latencies
+[2020-10-26T14:52:27.770-0400]   from the STW pause times. Pacing affects the individual threads, and so it would also be
+[2020-10-26T14:52:27.770-0400]   invisible to the usual profiling tools, but would add up to end-to-end application latency.
+[2020-10-26T14:52:27.770-0400]   Raise max pacing delay with care.
+[2020-10-26T14:52:27.770-0400] 
+[2020-10-26T14:52:27.770-0400] Concurrent Reset               =    0.164 s (a =      118 us) (n =  1398) (lvls, us =       41,       81,      102,      117,    14994)
+[2020-10-26T14:52:27.770-0400] Pause Init Mark (G)            =    0.430 s (a =      308 us) (n =  1398) (lvls, us =      164,      240,      275,      311,    10200)
+[2020-10-26T14:52:27.770-0400] Pause Init Mark (N)            =    0.170 s (a =      121 us) (n =  1398) (lvls, us =       73,       97,      105,      146,     1251)
+[2020-10-26T14:52:27.770-0400]   Accumulate Stats             =    0.003 s (a =        2 us) (n =  1398) (lvls, us =        1,        2,        2,        2,       18)
+[2020-10-26T14:52:27.770-0400]   Make Parsable                =    0.003 s (a =        2 us) (n =  1398) (lvls, us =        1,        2,        2,        2,       22)
+[2020-10-26T14:52:27.770-0400]   Update Region States         =    0.003 s (a =        2 us) (n =  1398) (lvls, us =        1,        2,        2,        2,       18)
+[2020-10-26T14:52:27.770-0400]   Scan Roots                   =    0.136 s (a =       97 us) (n =  1398) (lvls, us =       53,       75,       83,      119,     1117)
+[2020-10-26T14:52:27.770-0400]     S: <total>                 =    0.136 s (a =       98 us) (n =  1398) (lvls, us =       62,       84,       92,      104,     1170)
+[2020-10-26T14:52:27.770-0400]     S: Thread Roots            =    0.068 s (a =       49 us) (n =  1398) (lvls, us =       16,       38,       43,       56,      904)
+[2020-10-26T14:52:27.770-0400]     S: Universe Roots          =    0.002 s (a =        2 us) (n =  1398) (lvls, us =        1,        2,        2,        2,       21)
+[2020-10-26T14:52:27.770-0400]     S: JNI Handles Roots       =    0.001 s (a =        1 us) (n =  1398) (lvls, us =        0,        1,        1,        1,       20)
+[2020-10-26T14:52:27.770-0400]     S: Synchronizer Roots      =    0.000 s (a =        0 us) (n =  1398) (lvls, us =        0,        0,        0,        0,       17)
+[2020-10-26T14:52:27.770-0400]     S: Management Roots        =    0.001 s (a =        1 us) (n =  1398) (lvls, us =        0,        1,        1,        1,       17)
+[2020-10-26T14:52:27.770-0400]     S: System Dict Roots       =    0.005 s (a =        3 us) (n =  1398) (lvls, us =        2,        3,        3,        3,       51)
+[2020-10-26T14:52:27.770-0400]     S: CLDG Roots              =    0.058 s (a =       41 us) (n =  1398) (lvls, us =       26,       38,       39,       44,      199)
+[2020-10-26T14:52:27.770-0400]     S: JVMTI Roots             =    0.001 s (a =        0 us) (n =  1398) (lvls, us =        0,        0,        0,        0,       20)
+[2020-10-26T14:52:27.770-0400]   Resize TLABs                 =    0.001 s (a =        1 us) (n =  1398) (lvls, us =        1,        1,        1,        1,       18)
+[2020-10-26T14:52:27.770-0400] Concurrent Marking             =   19.799 s (a =    14162 us) (n =  1398) (lvls, us =      445,     9492,    14453,    18750,    44133)
+[2020-10-26T14:52:27.770-0400] Concurrent Precleaning         =    0.023 s (a =       82 us) (n =   280) (lvls, us =       21,       36,       80,      109,      696)
+[2020-10-26T14:52:27.770-0400] Pause Final Mark (G)           =    0.666 s (a =      477 us) (n =  1397) (lvls, us =      225,      363,      424,      488,    11432)
+[2020-10-26T14:52:27.770-0400] Pause Final Mark (N)           =    0.431 s (a =      309 us) (n =  1397) (lvls, us =      131,      213,      252,      299,    11248)
+[2020-10-26T14:52:27.770-0400]   Finish Queues                =    0.116 s (a =       83 us) (n =  1398) (lvls, us =       11,       20,       51,       65,    10887)
+[2020-10-26T14:52:27.770-0400]   Weak References              =    0.005 s (a =       19 us) (n =   280) (lvls, us =       12,       15,       15,       17,      199)
+[2020-10-26T14:52:27.770-0400]     Process                    =    0.005 s (a =       17 us) (n =   280) (lvls, us =       11,       13,       14,       15,      197)
+[2020-10-26T14:52:27.770-0400]   System Purge                 =    0.085 s (a =       61 us) (n =  1398) (lvls, us =       27,       35,       49,       80,     2373)
+[2020-10-26T14:52:27.770-0400]     Unload Classes             =    0.000 s (a =       22 us) (n =    13) (lvls, us =       13,       14,       15,       16,       67)
+[2020-10-26T14:52:27.770-0400]     Cleanup                    =    0.016 s (a =     1195 us) (n =    13) (lvls, us =     1016,     1055,     1133,     1211,     1453)
+[2020-10-26T14:52:27.770-0400]       CU: <total>              =    0.029 s (a =     2199 us) (n =    13) (lvls, us =     1875,     1953,     2031,     2246,     2703)
+[2020-10-26T14:52:27.770-0400]       CU: Code Cache Roots     =    0.011 s (a =      838 us) (n =    13) (lvls, us =      664,      719,      785,      877,     1099)
+[2020-10-26T14:52:27.770-0400]       CU: Code Cache Cleaning  =    0.002 s (a =      122 us) (n =    13) (lvls, us =       98,      107,      115,      127,      158)
+[2020-10-26T14:52:27.770-0400]       CU: String Table Roots   =    0.004 s (a =      302 us) (n =    13) (lvls, us =      256,      256,      266,      273,      437)
+[2020-10-26T14:52:27.770-0400]       CU: Resolved Table Roots =    0.000 s (a =        7 us) (n =    13) (lvls, us =        6,        6,        6,        6,       10)
+[2020-10-26T14:52:27.770-0400]       CU: CLDG Roots           =    0.012 s (a =      931 us) (n =    13) (lvls, us =      844,      865,      875,      902,     1106)
+[2020-10-26T14:52:27.770-0400]     Weak Roots                 =    0.084 s (a =       60 us) (n =  1398) (lvls, us =       26,       35,       48,       79,     2372)
+[2020-10-26T14:52:27.770-0400]     CLDG                       =    0.000 s (a =        2 us) (n =    13) (lvls, us =        0,        0,        0,        0,       29)
+[2020-10-26T14:52:27.770-0400]   Update Region States         =    0.005 s (a =        4 us) (n =  1398) (lvls, us =        2,        3,        3,        4,       40)
+[2020-10-26T14:52:27.770-0400]   Retire TLABs                 =    0.002 s (a =        2 us) (n =  1398) (lvls, us =        1,        1,        2,        2,       39)
+[2020-10-26T14:52:27.770-0400]   Choose Collection Set        =    0.049 s (a =       35 us) (n =  1398) (lvls, us =       18,       29,       33,       42,       89)
+[2020-10-26T14:52:27.770-0400]   Rebuild Free Set             =    0.006 s (a =        4 us) (n =  1398) (lvls, us =        2,        3,        4,        4,       37)
+[2020-10-26T14:52:27.770-0400]   Initial Evacuation           =    0.144 s (a =      103 us) (n =  1398) (lvls, us =        9,       81,       94,      111,      926)
+[2020-10-26T14:52:27.770-0400]     E: <total>                 =    0.109 s (a =       78 us) (n =  1397) (lvls, us =       50,       66,       75,       85,      584)
+[2020-10-26T14:52:27.770-0400]     E: Thread Roots            =    0.035 s (a =       25 us) (n =  1397) (lvls, us =       17,       21,       24,       26,      360)
+[2020-10-26T14:52:27.770-0400]     E: Code Cache Roots        =    0.042 s (a =       30 us) (n =  1397) (lvls, us =       12,       23,       28,       34,      216)
+[2020-10-26T14:52:27.770-0400]     E: Universe Roots          =    0.002 s (a =        1 us) (n =  1397) (lvls, us =        1,        1,        1,        1,       26)
+[2020-10-26T14:52:27.770-0400]     E: JNI Handles Roots       =    0.002 s (a =        1 us) (n =  1397) (lvls, us =        0,        0,        1,        1,       20)
+[2020-10-26T14:52:27.770-0400]     E: Synchronizer Roots      =    0.000 s (a =        0 us) (n =  1397) (lvls, us =        0,        0,        0,        0,       17)
+[2020-10-26T14:52:27.770-0400]     E: Management Roots        =    0.002 s (a =        1 us) (n =  1397) (lvls, us =        0,        1,        1,        1,       19)
+[2020-10-26T14:52:27.770-0400]     E: System Dict Roots       =    0.004 s (a =        3 us) (n =  1397) (lvls, us =        2,        2,        3,        3,       22)
+[2020-10-26T14:52:27.770-0400]     E: CLDG Roots              =    0.022 s (a =       15 us) (n =  1397) (lvls, us =       10,       12,       15,       17,      238)
+[2020-10-26T14:52:27.770-0400]     E: JVMTI Roots             =    0.001 s (a =        1 us) (n =  1397) (lvls, us =        0,        0,        0,        0,       20)
+[2020-10-26T14:52:27.770-0400] Concurrent Cleanup             =    0.042 s (a =       30 us) (n =  1397) (lvls, us =       23,       26,       28,       30,       67)
+[2020-10-26T14:52:27.770-0400] Concurrent Evacuation          =    0.169 s (a =      121 us) (n =  1397) (lvls, us =       33,       63,       88,      125,    11930)
+[2020-10-26T14:52:27.770-0400] Pause Init  Update Refs (G)    =    0.161 s (a =      115 us) (n =  1397) (lvls, us =       41,       64,      102,      152,      412)
+[2020-10-26T14:52:27.770-0400] Pause Init  Update Refs (N)    =    0.009 s (a =        6 us) (n =  1397) (lvls, us =        4,        5,        6,        7,       40)
+[2020-10-26T14:52:27.770-0400]   Retire GCLABs                =    0.001 s (a =        1 us) (n =  1398) (lvls, us =        0,        1,        1,        1,       18)
+[2020-10-26T14:52:27.770-0400] Concurrent Update Refs         =   13.144 s (a =     9409 us) (n =  1397) (lvls, us =     1973,     5996,     8984,    11914,    42743)
+[2020-10-26T14:52:27.770-0400] Pause Final Update Refs (G)    =    0.338 s (a =      242 us) (n =  1397) (lvls, us =       77,      164,      197,      244,    21729)
+[2020-10-26T14:52:27.770-0400] Pause Final Update Refs (N)    =    0.080 s (a =       57 us) (n =  1397) (lvls, us =       23,       40,       48,       63,      651)
+[2020-10-26T14:52:27.770-0400]   Finish Work                  =    0.011 s (a =    10950 us) (n =     1) (lvls, us =    10938,    10938,    10938,    10938,    10950)
+[2020-10-26T14:52:27.770-0400]   Update Roots                 =    0.058 s (a =       41 us) (n =  1397) (lvls, us =       13,       24,       32,       48,      626)
+[2020-10-26T14:52:27.770-0400]     UR: <total>                =    0.037 s (a =       26 us) (n =  1397) (lvls, us =       10,       19,       22,       28,      397)
+[2020-10-26T14:52:27.771-0400]     UR: Thread Roots           =    0.037 s (a =       26 us) (n =  1397) (lvls, us =       10,       19,       22,       28,      397)
+[2020-10-26T14:52:27.771-0400]   Update Region States         =    0.005 s (a =        4 us) (n =  1398) (lvls, us =        2,        3,        4,        4,       21)
+[2020-10-26T14:52:27.771-0400]   Trash Collection Set         =    0.002 s (a =        2 us) (n =  1398) (lvls, us =        1,        1,        1,        2,       21)
+[2020-10-26T14:52:27.771-0400]   Rebuild Free Set             =    0.006 s (a =        4 us) (n =  1398) (lvls, us =        2,        3,        4,        4,       23)
+[2020-10-26T14:52:27.771-0400] Concurrent Cleanup             =    0.035 s (a =       25 us) (n =  1397) (lvls, us =       21,       23,       24,       25,       61)
+[2020-10-26T14:52:27.771-0400] Pause Degenerated GC (G)       =    0.028 s (a =    27600 us) (n =     1) (lvls, us =    27539,    27539,    27539,    27539,    27600)
+[2020-10-26T14:52:27.771-0400] Pause Degenerated GC (N)       =    0.027 s (a =    27488 us) (n =     1) (lvls, us =    27344,    27344,    27344,    27344,    27488)
+[2020-10-26T14:52:27.771-0400]   Degen Update Roots           =    0.001 s (a =      616 us) (n =     1) (lvls, us =      615,      615,      615,      615,      616)
+[2020-10-26T14:52:27.771-0400]     DU: <total>                =    0.000 s (a =      160 us) (n =     1) (lvls, us =      158,      158,      158,      158,      160)
+[2020-10-26T14:52:27.771-0400]     DU: Thread Roots           =    0.000 s (a =       36 us) (n =     1) (lvls, us =       36,       36,       36,       36,       36)
+[2020-10-26T14:52:27.771-0400]     DU: Code Cache Roots       =    0.000 s (a =       91 us) (n =     1) (lvls, us =       91,       91,       91,       91,       91)
+[2020-10-26T14:52:27.771-0400]     DU: Universe Roots         =    0.000 s (a =        2 us) (n =     1) (lvls, us =        2,        2,        2,        2,        2)
+[2020-10-26T14:52:27.771-0400]     DU: JNI Handles Roots      =    0.000 s (a =        1 us) (n =     1) (lvls, us =        1,        1,        1,        1,        1)
+[2020-10-26T14:52:27.771-0400]     DU: Synchronizer Roots     =    0.000 s (a =        0 us) (n =     1) (lvls, us =        0,        0,        0,        0,        0)
+[2020-10-26T14:52:27.771-0400]     DU: Management Roots       =    0.000 s (a =        2 us) (n =     1) (lvls, us =        2,        2,        2,        2,        2)
+[2020-10-26T14:52:27.771-0400]     DU: System Dict Roots      =    0.000 s (a =        3 us) (n =     1) (lvls, us =        3,        3,        3,        3,        3)
+[2020-10-26T14:52:27.771-0400]     DU: CLDG Roots             =    0.000 s (a =       25 us) (n =     1) (lvls, us =       25,       25,       25,       25,       25)
+[2020-10-26T14:52:27.771-0400]     DU: JVMTI Roots            =    0.000 s (a =        1 us) (n =     1) (lvls, us =        1,        1,        1,        1,        1)
+[2020-10-26T14:52:27.771-0400] Pacing                         =   22.480 s (a =    16069 us) (n =  1399) (lvls, us =        0,    10938,    16211,    20898,    49916)
+[2020-10-26T14:52:27.771-0400] 
+[2020-10-26T14:52:27.771-0400] 
+[2020-10-26T14:52:27.771-0400] Under allocation pressure, concurrent cycles may cancel, and either continue cycle
+[2020-10-26T14:52:27.771-0400] under stop-the-world pause or result in stop-the-world Full GC. Increase heap size,
+[2020-10-26T14:52:27.771-0400] tune GC heuristics, set more aggressive pacing delay, or lower allocation rate
+[2020-10-26T14:52:27.771-0400] to avoid Degenerated and Full GC cycles.
+[2020-10-26T14:52:27.771-0400] 
+[2020-10-26T14:52:27.771-0400]  1397 successful concurrent GCs
+[2020-10-26T14:52:27.771-0400]       0 invoked explicitly
+[2020-10-26T14:52:27.771-0400]       0 invoked implicitly
+[2020-10-26T14:52:27.771-0400] 
+[2020-10-26T14:52:27.771-0400]     1 Degenerated GCs
+[2020-10-26T14:52:27.771-0400]       1 caused by allocation failure
+[2020-10-26T14:52:27.771-0400]         1 happened at Mark
+[2020-10-26T14:52:27.771-0400]       0 upgraded to Full GC
+[2020-10-26T14:52:27.771-0400] 
+[2020-10-26T14:52:27.771-0400]     0 Full GCs
+[2020-10-26T14:52:27.771-0400]       0 invoked explicitly
+[2020-10-26T14:52:27.771-0400]       0 invoked implicitly
+[2020-10-26T14:52:27.771-0400]       0 caused by allocation failure
+[2020-10-26T14:52:27.771-0400]       0 upgraded from Degenerated GC
+[2020-10-26T14:52:27.771-0400] 
+[2020-10-26T14:52:27.771-0400] 

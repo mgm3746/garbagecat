@@ -122,6 +122,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * 2020-08-21T09:40:29.929-0400: 0.467: [Concurrent cleanup 21278K-&gt;4701K(37888K), 0.048 ms], [Metaspace: 6477K-&gt;6481K(1056768K)]
  * </pre>
  * 
+ * <p>
+ * 5) JDK11:
+ * </p>
+ * 
+ * <pre>
+ * [5.601s][info][gc           ] GC(99) Concurrent marking (unload classes) 7.346ms
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -132,10 +140,11 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Concurrent (reset|uncommit|marking( \\(update refs\\))?( \\(process weakrefs\\))?|"
-            + "precleaning|evacuation|update references|cleanup)(( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\))?[,]{0,1} " + UnifiedRegEx.DURATION + ")?[\\]]{0,1}([,]{0,1} [\\[]{0,1}Metaspace: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[\\]]{0,1})?[ ]*$";
+            + ") [\\[]{0,1}Concurrent (reset|uncommit|marking( \\((unload classes|update refs)\\))?"
+            + "( \\(process weakrefs\\))?|" + "precleaning|evacuation|update references|cleanup)(( " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[,]{0,1} " + UnifiedRegEx.DURATION
+            + ")?[\\]]{0,1}([,]{0,1} [\\[]{0,1}Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)[\\]]{0,1})?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 
@@ -192,8 +201,8 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 int duration = 0;
-                if (matcher.group(51) != null) {
-                    duration = JdkMath.convertMillisToMicros(matcher.group(51)).intValue();
+                if (matcher.group(52) != null) {
+                    duration = JdkMath.convertMillisToMicros(matcher.group(52)).intValue();
                 }
 
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
@@ -219,19 +228,19 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
                     // JDK8
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 }
-                if (matcher.group(41) != null) {
-                    combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(42)), matcher.group(44).charAt(0));
-                    combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(45)),
-                            matcher.group(47).charAt(0));
-                    combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(48)),
-                            matcher.group(50).charAt(0));
-                    if (matcher.group(52) != null) {
-                        permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(53)),
-                                matcher.group(55).charAt(0));
-                        permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(56)),
-                                matcher.group(58).charAt(0));
-                        permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(59)),
-                                matcher.group(61).charAt(0));
+                if (matcher.group(42) != null) {
+                    combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(43)), matcher.group(45).charAt(0));
+                    combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(46)),
+                            matcher.group(48).charAt(0));
+                    combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(49)),
+                            matcher.group(51).charAt(0));
+                    if (matcher.group(53) != null) {
+                        permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(54)),
+                                matcher.group(56).charAt(0));
+                        permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(57)),
+                                matcher.group(59).charAt(0));
+                        permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(60)),
+                                matcher.group(62).charAt(0));
                     }
                 }
 

@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
+import org.eclipselabs.garbagecat.domain.PermData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -57,7 +58,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * 
  */
 public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
-        implements BlockingEvent, ParallelEvent, CombinedData {
+        implements BlockingEvent, ParallelEvent, CombinedData, PermData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -90,11 +91,27 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
     private int combinedAvailable;
 
     /**
+     * Permanent generation size (kilobytes) at beginning of GC event.
+     */
+    private int permGen;
+
+    /**
+     * Permanent generation size (kilobytes) at end of GC event.
+     */
+    private int permGenEnd;
+
+    /**
+     * Space allocated to permanent generation (kilobytes).
+     */
+    private int permGenAllocation;
+
+    /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Pause Degenerated GC \\(Mark\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)[,]{0,1} " + UnifiedRegEx.DURATION + "[]]{0,1}[ ]*$";
+            + ") [\\[]{0,1}Pause Degenerated GC \\((Mark|Outside of Cycle)\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)[,]{0,1} " + UnifiedRegEx.DURATION + "[]]{0,1}( Metaspace: " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -110,7 +127,7 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                duration = JdkMath.convertMillisToMicros(matcher.group(46)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(47)).intValue();
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;
                     if (matcher.group(13).matches(UnifiedRegEx.UPTIMEMILLIS)) {
@@ -133,10 +150,17 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
                 } else {
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 }
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(37)), matcher.group(39).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(40)), matcher.group(42).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(43)),
-                        matcher.group(45).charAt(0));
+                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(38)), matcher.group(40).charAt(0));
+                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(41)), matcher.group(43).charAt(0));
+                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(44)),
+                        matcher.group(46).charAt(0));
+                if (matcher.group(48) != null) {
+                    permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(49)), matcher.group(51).charAt(0));
+                    permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(52)),
+                            matcher.group(54).charAt(0));
+                    permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(55)),
+                            matcher.group(57).charAt(0));
+                }
             }
         }
     }
@@ -179,6 +203,30 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
 
     public int getCombinedSpace() {
         return combinedAvailable;
+    }
+
+    public int getPermOccupancyInit() {
+        return permGen;
+    }
+
+    protected void setPermOccupancyInit(int permGen) {
+        this.permGen = permGen;
+    }
+
+    public int getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    protected void setPermOccupancyEnd(int permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    public int getPermSpace() {
+        return permGenAllocation;
+    }
+
+    protected void setPermSpace(int permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
     }
 
     public String getName() {

@@ -189,7 +189,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitMarkEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
             "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-                    + ") (\\[)?Pause (Init|Final) Mark( \\(update refs\\))?( \\(process weakrefs\\))?(, start\\])?$",
+                    + ") (\\[)?Pause (Init|Final) Mark( \\((update refs|unload classes)\\))?( \\(process weakrefs\\))?"
+                    + "(, start\\])?$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitMarkEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalUpdateEvent}
@@ -204,7 +205,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for Mark. Expected Live: " + JdkRegEx.SIZE + ", Free: "
                     + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: (inf|\\d{1,2}\\.\\d)x$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcEvent}
-            "^" + UnifiedRegEx.DECORATOR + " Pause Degenerated GC \\(Mark\\)$",
+            "^" + UnifiedRegEx.DECORATOR + " Pause Degenerated GC \\((Mark|Outside of Cycle)\\)$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Adaptive CSet Selection. Target Free: " + JdkRegEx.SIZE
                     + ", Actual Free: " + JdkRegEx.SIZE + ", Max CSet: " + JdkRegEx.SIZE + ", Min Garbage: "
@@ -252,8 +253,9 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             //
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Cancelling GC: (Allocation Failure|Stopping VM)$",
             //
-            "^" + JdkRegEx.DECORATOR + " \\[Concurrent (cleanup|evacuation|marking|precleaning|reset|"
-                    + "update references)( \\((process weakrefs|update refs)\\))?( \\(process weakrefs\\))?, start\\]$",
+            "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+                    + ") (\\[)?Concurrent (cleanup|evacuation|marking|precleaning|reset|update references)"
+                    + "( \\((process weakrefs|unload classes|update refs)\\))?( \\(process weakrefs\\))?(, start\\])?$",
             //
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for (Reset|Precleaning). Non-Taxable: " + JdkRegEx.SIZE
                     + "$"
