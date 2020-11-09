@@ -592,6 +592,9 @@ public class JvmRun {
         // Check to see if min and max heap sizes are the same
         if (!jvm.isMinAndMaxHeapSpaceEqual()) {
             analysis.add(Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX);
+            if (jvm.getUseAdaptiveSizePolicyDisabledOption() != null) {
+                analysis.add(Analysis.ERROR_ADAPTIVE_SIZE_POLICY_DISABLED);
+            }
         }
 
         // Check to see if min and max perm gen sizes are the same

@@ -882,6 +882,20 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
     }
 
+    public void testAdaptiveSizePolicy() {
+        String jvmOptions = "-XX:InitialHeapSize=2147483648 -XX:MaxHeapSize=8589934592 -XX:-UseAdaptiveSizePolicy";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertTrue(Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX));
+        Assert.assertTrue(Analysis.ERROR_ADAPTIVE_SIZE_POLICY_DISABLED + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.ERROR_ADAPTIVE_SIZE_POLICY_DISABLED));
+        Assert.assertFalse(Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED + " analysis incorrectly identified.",
+                jvmRun.getAnalysis().contains(Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED));
+    }
+
     public void testHeaderLogging() {
         File testFile = new File(Constants.TEST_DATA_DIR + "dataset42.txt");
         GcManager gcManager = new GcManager();

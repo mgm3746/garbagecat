@@ -24,6 +24,11 @@ import org.eclipselabs.garbagecat.util.GcUtil;
 public enum Analysis {
 
     /**
+     * Property key for adaptive size policy disabled with -XX:-UseAdaptiveSizePolicy.
+     */
+    ERROR_ADAPTIVE_SIZE_POLICY_DISABLED("error.adaptive.size.policy.disabled"),
+
+    /**
      * Property key for concurrent mode failure.
      */
     ERROR_CMS_CONCURRENT_MODE_FAILURE("error.cms.concurrent.mode.failure"),

@@ -1628,7 +1628,8 @@ public class Jvm {
                 + "-XX:-PrintGCCause -XX:-UseBiasedLocking -XX:-UseCompressedOops "
                 + "-XX:-UseGCLogFileRotation -XX:-UseCompressedClassPointers "
                 + "-XX:-ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:-ClassUnloading "
-                + "-XX:-PrintAdaptiveSizePolicy -XX:-CMSParallelInitialMarkEnabled -XX:-CMSParallelRemarkEnabled";
+                + "-XX:-PrintAdaptiveSizePolicy -XX:-CMSParallelInitialMarkEnabled -XX:-CMSParallelRemarkEnabled "
+                + "-XX:-UseAdaptiveSizePolicy";
 
         ArrayList<String> disabledOptions = getDisabledOptions();
         Iterator<String> iterator = disabledOptions.iterator();
@@ -1643,5 +1644,20 @@ public class Jvm {
             }
         }
         return unaccountedDisabledOptions;
+    }
+
+    /**
+     * The option to disable allowing the JVM to automatically resize heap regions to meet performance goals. For
+     * example:
+     * 
+     * <pre>
+     * -XX:-UseAdaptiveSizePolicy
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseAdaptiveSizePolicyDisabledOption() {
+        String regex = "(-XX:-UseAdaptiveSizePolicy)";
+        return getJvmOption(regex);
     }
 }
