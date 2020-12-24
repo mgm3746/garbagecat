@@ -47,7 +47,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 2) With 2 dashes after the GC. This seems to happen when the JVM is stressed out doing continuous full GCs:
+ * 2) With 2 dashes after the GC indicates a <code>JdkRegEx.Promotion.TRIGGER_PROMOTION_FAILED</code>. See <a href=
+ * "http://hg.openjdk.java.net/jdk8u/jdk8u/hotspot/file/de8045923ad2/src/share/vm/gc_implementation/parallelScavenge/psScavenge.cpp">psScavenge.cpp</a>.
+ * This seems to happen when the JVM is stressed out doing continuous full GCs.
  * </p>
  * 
  * <pre>
