@@ -285,18 +285,6 @@ public class TestAnalysis extends TestCase {
     }
 
     /**
-     * Test DGC not managed analysis.
-     */
-    public void testDgcNotManaged() {
-        String jvmOptions = "MGM";
-        GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.WARN_RMI_DGC_NOT_MANAGED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_NOT_MANAGED));
-    }
-
-    /**
      * Test DGC redundant options analysis.
      */
     public void testDgcRedundantOptions() {
@@ -357,7 +345,7 @@ public class TestAnalysis extends TestCase {
      * Test analysis if instrumentation being used.
      */
     public void testInstrumentation() {
-        String jvmOptions = "Xss128k -Xms2048M -javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar -Xmx2048M";
+        String jvmOptions = "-Xss128k -Xms2048M -javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -369,7 +357,7 @@ public class TestAnalysis extends TestCase {
      * Test analysis if native library being used.
      */
     public void testNative() {
-        String jvmOptions = "Xss128k -Xms2048M -agentpath:/path/to/agent.so -Xmx2048M";
+        String jvmOptions = "-Xss128k -Xms2048M -agentpath:/path/to/agent.so -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -381,7 +369,7 @@ public class TestAnalysis extends TestCase {
      * Test analysis background compilation disabled.
      */
     public void testBackgroundCompilationDisabled() {
-        String jvmOptions = "Xss128k -XX:-BackgroundCompilation -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:-BackgroundCompilation -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -393,7 +381,7 @@ public class TestAnalysis extends TestCase {
      * Test analysis background compilation disabled.
      */
     public void testBackgroundCompilationDisabledXBatch() {
-        String jvmOptions = "Xss128k -Xbatch -Xms2048M";
+        String jvmOptions = "-Xss128k -Xbatch -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -405,7 +393,7 @@ public class TestAnalysis extends TestCase {
      * Test analysis compilation on first invocation enabled.
      */
     public void testCompilationOnFirstInvocation() {
-        String jvmOptions = "Xss128k -Xcomp-Xms2048M";
+        String jvmOptions = "-Xss128k -Xcomp-Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -417,7 +405,7 @@ public class TestAnalysis extends TestCase {
      * Test analysis just in time (JIT) compiler disabled.
      */
     public void testCompilationDisabled() {
-        String jvmOptions = "Xss128k -Xint -Xms2048M";
+        String jvmOptions = "-Xss128k -Xint -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -479,7 +467,7 @@ public class TestAnalysis extends TestCase {
      * Test DisableExplicitGC in combination with ExplicitGCInvokesConcurrent.
      */
     public void testDisableExplictGcWithConcurrentHandling() {
-        String jvmOptions = "Xss128k -XX:+DisableExplicitGC -XX:+ExplicitGCInvokesConcurrent -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:+DisableExplicitGC -XX:+ExplicitGCInvokesConcurrent -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -491,7 +479,7 @@ public class TestAnalysis extends TestCase {
      * Test HeapDumpOnOutOfMemoryError disabled.
      */
     public void testHeapDumpOnOutOfMemoryErrorDisabled() {
-        String jvmOptions = "Xss128k -XX:-HeapDumpOnOutOfMemoryError -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:-HeapDumpOnOutOfMemoryError -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -534,7 +522,7 @@ public class TestAnalysis extends TestCase {
      * Test PrintCommandLineFlags not missing.
      */
     public void testPrintCommandlineFlagsNotMissing() {
-        String jvmOptions = "Xss128k -XX:+PrintCommandLineFlags -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:+PrintCommandLineFlags -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -547,7 +535,7 @@ public class TestAnalysis extends TestCase {
      * Test PrintGCDetails missing.
      */
     public void testPrintGCDetailsMissing() {
-        String jvmOptions = "Xss128k -Xms2048M";
+        String jvmOptions = "-Xss128k -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -560,7 +548,7 @@ public class TestAnalysis extends TestCase {
      * Test PrintGCDetails not missing.
      */
     public void testPrintGCDetailsNotMissing() {
-        String jvmOptions = "Xss128k -XX:+PrintGCDetails -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:+PrintGCDetails -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -570,10 +558,23 @@ public class TestAnalysis extends TestCase {
     }
 
     /**
+     * Test PrintGCDetails disabled.
+     */
+    public void testPrintGCDetailsDisabled() {
+        String jvmOptions = "-Xss128k -XX:-PrintGCDetails -Xms2048M";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        Assert.assertFalse(Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " analysis identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED));
+    }
+
+    /**
      * Test CMS not being used to collect old generation.
      */
     public void testCmsYoungSerialOld() {
-        String jvmOptions = "Xss128k -XX:+UseParNewGC -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:+UseParNewGC -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -586,7 +587,7 @@ public class TestAnalysis extends TestCase {
      * Test CMS being used to collect old generation.
      */
     public void testCmsYoungCmsOld() {
-        String jvmOptions = "Xss128k -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -Xms2048M";
+        String jvmOptions = "-Xss128k -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -639,7 +640,7 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED));
     }
 
-    public void testTenuringDisabledZero() {
+    public void testTenuringDisabled() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=0 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -649,17 +650,7 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.WARN_TENURING_DISABLED));
     }
 
-    public void testTenuringDisabledGreater15() {
-        String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=32 -Xmx2048M";
-        GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        Assert.assertTrue(Analysis.WARN_TENURING_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_TENURING_DISABLED));
-    }
-
-    public void testMaxTenuringParallel() {
+    public void testMaxTenuringOverrideParallel() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=6 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -672,7 +663,7 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.INFO_MAX_TENURING_OVERRIDE));
     }
 
-    public void testMaxTenuringCms() {
+    public void testMaxTenuringOverrideCms() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=14 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -685,7 +676,7 @@ public class TestAnalysis extends TestCase {
                 jvmRun.getAnalysis().contains(Analysis.INFO_MAX_TENURING_OVERRIDE));
     }
 
-    public void testMaxTenuringG1() {
+    public void testMaxTenuringOverrideG1() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=6 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -1181,8 +1172,8 @@ public class TestAnalysis extends TestCase {
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         Assert.assertTrue(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD));
-        Assert.assertTrue(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT));
+        Assert.assertTrue(Analysis.WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT + " analysis not identified.",
+                jvmRun.getAnalysis().contains(Analysis.WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT));
         Assert.assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
                 jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
         Assert.assertFalse(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.",

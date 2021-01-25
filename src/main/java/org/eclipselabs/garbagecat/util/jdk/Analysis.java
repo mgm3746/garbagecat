@@ -234,9 +234,9 @@ public enum Analysis {
 
     /**
      * Property key for overriding the number of times an object is copied between survivor spaces being set with
-     * -XX:MaxTenuringThreshold=N (0-15). 0 = disabled. 15 = promote when the survivor space fills. Unless testing has
-     * shown this improves performance, consider removing this option to allow the default value to be applied (6 for
-     * CMS, 15 for Parallel, G1).
+     * -XX:MaxTenuringThreshold=N (0-15). 0 = disabled. 15 (default) = promote when the survivor space fills. Unless
+     * testing has shown this improves performance, consider removing this option to allow the default value to be
+     * applied.
      */
     INFO_MAX_TENURING_OVERRIDE("info.max.tenuring.override"),
 
@@ -287,8 +287,8 @@ public enum Analysis {
     INFO_SURVIVOR_RATIO("info.survivor.ratio"),
 
     /**
-     * Property key for the target survivor ratio being set with -XX:TargetSerror.g1.humongous.jdk8.u60urvivorRatio=N
-     * (e.g. -XX:TargetSurvivorRatio=90).
+     * Property key for the target survivor ratio being set with XX:TargetSurvivorRatio=N (e.g.
+     * -XX:TargetSurvivorRatio=90).
      * 
      */
     INFO_SURVIVOR_RATIO_TARGET("info.survivor.ratio.target"),
@@ -469,7 +469,7 @@ public enum Analysis {
      * Property key for the occupancy threshold for a region to be considered as a candidate region for a G1_CLEANUP
      * collection being specified with <code>-XX:G1MixedGCLiveThresholdPercent=NN</code>.
      */
-    WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT("warn.g1.mixed.gc.live.thrshld.prcnt"),
+    WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT("warn.g1.mixed.gc.live.thrshld.prcnt"),
 
     /**
      * Property key for specifying the number of GC log files (-XX:NumberOfGCLogFiles) to keep with log rotation is
@@ -539,14 +539,12 @@ public enum Analysis {
     WARN_PRINT_CLASS_HISTOGRAM("warn.print.class.histogram"),
 
     /**
-     * Property key for printing a class histogram when a thread dump is initiated
-     * (-XX:+PrintClassHistogramAfterFullGC).
+     * Property key for printing a class histogram after a full gc (-XX:+PrintClassHistogramAfterFullGC).
      */
     WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC("warn.print.class.histogram.after.full.gc"),
 
     /**
-     * Property key for printing a class histogram when a thread dump is initiated
-     * (-XX:+PrintClassHistogramBeforeFullGC).
+     * Property key for printing a class histogram before a full gc (-XX:+PrintClassHistogramBeforeFullGC).
      */
     WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC("warn.print.class.histogram.before.full.gc"),
 
@@ -614,11 +612,6 @@ public enum Analysis {
      * Property key for small sun.rmi.dgc.client.gcInterval.
      */
     WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL("warn.rmi.dgc.client.gcInterval.small"),
-
-    /**
-     * Property key for the RMI Distributed Garbage Collection (DGC) not being managed.
-     */
-    WARN_RMI_DGC_NOT_MANAGED("warn.rmi.dgc.not.managed"),
 
     /**
      * Property key for -Dsun.rmi.dgc.server.gcInterval.redundant in combination with -XX:+DisableExplicitGC.

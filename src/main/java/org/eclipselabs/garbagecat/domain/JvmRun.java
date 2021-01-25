@@ -619,12 +619,6 @@ public class JvmRun {
             analysis.add(Analysis.WARN_THREAD_STACK_SIZE_LARGE);
         }
 
-        // Check if the RMI Distributed Garbage Collection (DGC) is managed.
-        if (jvm.getRmiDgcClientGcIntervalOption() == null && jvm.getRmiDgcServerGcIntervalOption() == null
-                && jvm.getDisableExplicitGCOption() == null) {
-            analysis.add(Analysis.WARN_RMI_DGC_NOT_MANAGED);
-        }
-
         // Check for setting DGC intervals when explicit GC is disabled.
         if (jvm.getDisableExplicitGCOption() != null && jvm.getRmiDgcClientGcIntervalOption() != null) {
             analysis.add(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT);
@@ -863,7 +857,7 @@ public class JvmRun {
             analysis.add(Analysis.INFO_PRINT_FLS_STATISTICS);
         }
 
-        // Check if PARN_NEW collector disabled
+        // Check if PAR_NEW collector disabled
         if (jvm.getUseParNewGcDisabled() != null && !analysis.contains(Analysis.WARN_CMS_PAR_NEW_DISABLED)) {
             analysis.add(Analysis.WARN_CMS_PAR_NEW_DISABLED);
         }
@@ -932,11 +926,9 @@ public class JvmRun {
             String maxTenuringThreshold = JdkUtil.getOptionValue(jvm.getMaxTenuringThresholdOption());
             if (maxTenuringThreshold != null) {
                 int tenuring = Integer.parseInt(maxTenuringThreshold);
-                if (tenuring == 0 || tenuring > 15) {
+                if (tenuring == 0) {
                     analysis.add(Analysis.WARN_TENURING_DISABLED);
-                } else if ((collectorFamilies.contains(CollectorFamily.CMS) && tenuring != 6)
-                        || ((collectorFamilies.contains(CollectorFamily.PARALLEL)
-                                || collectorFamilies.contains(CollectorFamily.G1)) && tenuring != 15)) {
+                } else if (tenuring != 15) {
                     analysis.add(Analysis.INFO_MAX_TENURING_OVERRIDE);
                 }
             }
@@ -964,7 +956,7 @@ public class JvmRun {
             }
         }
         if (jvm.getG1MixedGCLiveThresholdPercent() != null) {
-            analysis.add(Analysis.WARN_GA_MIXED_GC_LIVE_THRSHOLD_PRCNT);
+            analysis.add(Analysis.WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT);
             // Don't double report
             if (analysis.contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS)) {
                 analysis.remove(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS);
@@ -1086,7 +1078,7 @@ public class JvmRun {
         // Check for swap disabled
         if (getJvm().getSwap() == 0) {
             analysis.add(Analysis.INFO_SWAP_DISABLED);
-        }   
+        }
 
         // Check for insufficient physical memory
         if (getJvm().getPhysicalMemory() > 0) {
@@ -1118,7 +1110,7 @@ public class JvmRun {
             analysis.add(Analysis.WARN_G1_JDK8_PRIOR_U40);
         }
 
-        // Check for young space > old space
+        // Check for young space >= old space
         if (maxYoungSpace > 0 && maxOldSpace > 0 && maxYoungSpace >= maxOldSpace) {
             analysis.add(Analysis.INFO_NEW_RATIO_INVERTED);
         }

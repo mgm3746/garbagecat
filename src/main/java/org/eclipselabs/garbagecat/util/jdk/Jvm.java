@@ -214,7 +214,7 @@ public class Jvm {
      * 
      * <pre>
      * -Xms1024m
-     * -XX:HeapSize=1234567890
+     * -XX:InitialHeapSize=1234567890
      * </pre>
      * 
      * @return The minimum heap space, or null if not explicitly set.
