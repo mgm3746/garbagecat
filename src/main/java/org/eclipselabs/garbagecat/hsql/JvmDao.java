@@ -25,7 +25,7 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
-import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
@@ -533,9 +533,9 @@ public class JvmDao {
                     pst.setInt(COMBINED_SPACE_INDEX, 0);
                     pst.setInt(COMBINED_OCCUPANCY_INIT_INDEX, 0);
                 }
-                if (event instanceof PermData) {
-                    pst.setInt(PERM_SPACE_INDEX, ((PermData) event).getPermSpace());
-                    pst.setInt(PERM_OCCUPANCY_INIT_INDEX, ((PermData) event).getPermOccupancyInit());
+                if (event instanceof PermMetaspaceData) {
+                    pst.setInt(PERM_SPACE_INDEX, ((PermMetaspaceData) event).getPermSpace());
+                    pst.setInt(PERM_OCCUPANCY_INIT_INDEX, ((PermMetaspaceData) event).getPermOccupancyInit());
                 } else {
                     pst.setInt(PERM_SPACE_INDEX, 0);
                     pst.setInt(PERM_OCCUPANCY_INIT_INDEX, 0);

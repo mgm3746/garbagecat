@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.OldCollection;
-import org.eclipselabs.garbagecat.domain.PermCollection;
-import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.PermMetaspaceCollection;
+import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
@@ -70,8 +70,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCollection, OldCollection, PermCollection,
-        CombinedData, PermData, TriggerData, SerialCollection {
+public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCollection, OldCollection,
+        PermMetaspaceCollection, CombinedData, PermMetaspaceData, TriggerData, SerialCollection {
 
     /**
      * Regular expression standard format.

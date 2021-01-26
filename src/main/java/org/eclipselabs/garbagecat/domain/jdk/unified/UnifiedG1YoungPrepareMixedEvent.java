@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
@@ -52,7 +52,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * 
  */
 public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements UnifiedLogging, BlockingEvent,
-        YoungCollection, ParallelEvent, PermData, CombinedData, TriggerData, TimesData {
+        YoungCollection, ParallelEvent, PermMetaspaceData, CombinedData, TriggerData, TimesData {
 
     /**
      * Trigger(s) regular expression(s).

@@ -122,13 +122,13 @@ public class GcUtil {
         if (yyyy == null || MM == null || dd == null || HH == null || mm == null || ss == null || SSS == null) {
             throw new IllegalArgumentException("One or more date parts are missing.");
         }
-        calendar.set(Calendar.YEAR, new Integer(yyyy));
-        calendar.set(Calendar.MONTH, new Integer(MM).intValue() - 1);
-        calendar.set(Calendar.DAY_OF_MONTH, new Integer(dd).intValue());
-        calendar.set(Calendar.HOUR_OF_DAY, new Integer(HH).intValue());
-        calendar.set(Calendar.MINUTE, new Integer(mm).intValue());
-        calendar.set(Calendar.SECOND, new Integer(ss).intValue());
-        calendar.set(Calendar.MILLISECOND, new Integer(SSS).intValue());
+        calendar.set(Calendar.YEAR, Integer.valueOf(yyyy));
+        calendar.set(Calendar.MONTH, Integer.valueOf(MM).intValue() - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(dd).intValue());
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(HH).intValue());
+        calendar.set(Calendar.MINUTE, Integer.valueOf(mm).intValue());
+        calendar.set(Calendar.SECOND, Integer.valueOf(ss).intValue());
+        calendar.set(Calendar.MILLISECOND, Integer.valueOf(SSS).intValue());
         return calendar.getTime();
     }
 

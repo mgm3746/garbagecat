@@ -34,7 +34,7 @@ import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
@@ -724,10 +724,24 @@ public class GcManager {
                     }
 
                     // 18) Check for old JDKs using perm gen
-                    if (event instanceof PermData && event.getLogEntry() != null
+                    if (event instanceof PermMetaspaceData && event.getLogEntry() != null
                             && event.getLogEntry().matches("^.*Perm.*$")) {
                         if (!jvmDao.getAnalysis().contains(Analysis.INFO_PERM_GEN)) {
                             jvmDao.addAnalysis(Analysis.INFO_PERM_GEN);
+                        }
+                    }
+
+                    // 19) Check for undersized CompressedClassSpace
+                    if (event instanceof TriggerData && event instanceof PermMetaspaceData) {
+                        String trigger = ((TriggerData) event).getTrigger();
+                        if (trigger != null && (trigger.matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD))) {
+                            long metaspaceOccupancyInit = ((PermMetaspaceData) event).getPermOccupancyInit();
+                            long metaspaceSize = ((PermMetaspaceData) event).getPermSpace();
+                            if (JdkMath.calcPercent(metaspaceOccupancyInit, metaspaceSize) < 50) {
+                                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_COMP_CLASS_SPACE_UNDERSIZED)) {
+                                    jvmDao.addAnalysis(Analysis.ERROR_COMP_CLASS_SPACE_UNDERSIZED);
+                                }
+                            }
                         }
                     }
 
@@ -764,11 +778,11 @@ public class GcManager {
                     if (((CombinedData) event).getCombinedSpace() > jvmDao.getMaxHeapSpaceNonBlocking()) {
                         jvmDao.setMaxHeapSpaceNonBlocking(((CombinedData) event).getCombinedSpace());
                     }
-                    if (((PermData) event).getPermOccupancyInit() > jvmDao.getMaxPermOccupancyNonBlocking()) {
-                        jvmDao.setMaxPermOccupancyNonBlocking(((PermData) event).getPermOccupancyInit());
+                    if (((PermMetaspaceData) event).getPermOccupancyInit() > jvmDao.getMaxPermOccupancyNonBlocking()) {
+                        jvmDao.setMaxPermOccupancyNonBlocking(((PermMetaspaceData) event).getPermOccupancyInit());
                     }
-                    if (((PermData) event).getPermSpace() > jvmDao.getMaxPermSpaceNonBlocking()) {
-                        jvmDao.setMaxPermSpaceNonBlocking(((PermData) event).getPermSpace());
+                    if (((PermMetaspaceData) event).getPermSpace() > jvmDao.getMaxPermSpaceNonBlocking()) {
+                        jvmDao.setMaxPermSpaceNonBlocking(((PermMetaspaceData) event).getPermSpace());
                     }
                 } else if (event instanceof UnknownEvent) {
                     // Don't count reportable events with datestamp only as unidentified

@@ -18,6 +18,6 @@ package org.eclipselabs.garbagecat.domain;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public interface PermCollection {
+public interface PermMetaspaceCollection {
 
 }

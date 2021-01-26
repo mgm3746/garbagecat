@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -58,7 +58,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * 
  */
 public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
-        implements BlockingEvent, ParallelEvent, CombinedData, PermData {
+        implements BlockingEvent, ParallelEvent, CombinedData, PermMetaspaceData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

@@ -81,6 +81,11 @@ public enum Analysis {
     ERROR_COMP_CLASS_SIZE_HEAP_GT_32G("error.comp.class.size.heap.gt.32g"),
 
     /**
+     * Property key for undersized compressed class pointers space causing full GCs.
+     */
+    ERROR_COMP_CLASS_SPACE_UNDERSIZED("error.comp.class.space.undersized"),
+
+    /**
      * Property key for compressed object references disabled (-XX:-UseCompressedOops), and heap &lt; 32G.
      */
     ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G("error.comp.oops.disabled.heap.lt.32g"),

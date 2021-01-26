@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
-import org.eclipselabs.garbagecat.domain.PermCollection;
-import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.PermMetaspaceCollection;
+import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
@@ -84,7 +84,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class SerialOldEvent extends SerialCollector implements BlockingEvent, YoungCollection, OldCollection,
-        PermCollection, YoungData, OldData, PermData, TriggerData, SerialCollection {
+        PermMetaspaceCollection, YoungData, OldData, PermMetaspaceData, TriggerData, SerialCollection {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

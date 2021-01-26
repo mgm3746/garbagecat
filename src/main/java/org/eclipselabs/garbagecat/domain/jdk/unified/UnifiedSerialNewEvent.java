@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
-import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
@@ -53,7 +53,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * 
  */
 public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLogging, BlockingEvent, YoungCollection,
-        SerialCollection, YoungData, OldData, PermData, TriggerData {
+        SerialCollection, YoungData, OldData, PermMetaspaceData, TriggerData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

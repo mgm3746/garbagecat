@@ -473,7 +473,7 @@ public class JvmRun {
     public long getGcThroughput() {
         long gcThroughput;
         if (blockingEventCount > 0) {
-            long timeNotGc = getJvmRunDuration() - new Long(totalGcPause).longValue();
+            long timeNotGc = getJvmRunDuration() - Long.valueOf(totalGcPause).longValue();
             BigDecimal throughput = new BigDecimal(timeNotGc);
             throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, RoundingMode.HALF_EVEN);
             throughput = throughput.movePointRight(2);
@@ -494,7 +494,7 @@ public class JvmRun {
         long stoppedTimeThroughput;
         if (stoppedTimeEventCount > 0) {
             if (getJvmRunDuration() > 0) {
-                long timeNotStopped = getJvmRunDuration() - new Long(totalStoppedTime).longValue();
+                long timeNotStopped = getJvmRunDuration() - Long.valueOf(totalStoppedTime).longValue();
                 BigDecimal throughput = new BigDecimal(timeNotStopped);
                 throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, RoundingMode.HALF_EVEN);
                 throughput = throughput.movePointRight(2);
@@ -629,13 +629,13 @@ public class JvmRun {
 
         // Check for small DGC intervals.
         if (jvm.getRmiDgcClientGcIntervalOption() != null) {
-            long rmiDgcClientGcInterval = new Long(jvm.getRmiDgcClientGcIntervalValue()).longValue();
+            long rmiDgcClientGcInterval = Long.valueOf(jvm.getRmiDgcClientGcIntervalValue()).longValue();
             if (rmiDgcClientGcInterval < 3600000) {
                 analysis.add(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL);
             }
         }
         if (jvm.getRmiDgcServerGcIntervalOption() != null) {
-            long rmiDgcServerGcInterval = new Long(jvm.getRmiDgcServerGcIntervalValue()).longValue();
+            long rmiDgcServerGcInterval = Long.valueOf(jvm.getRmiDgcServerGcIntervalValue()).longValue();
             if (rmiDgcServerGcInterval < 3600000) {
                 analysis.add(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL);
             }
@@ -1005,9 +1005,17 @@ public class JvmRun {
         }
 
         // Check if MaxMetaspaceSize is less than CompressedClassSpaceSize.
-        if (jvm.getMaxMetaspaceOption() != null && jvm.getCompressedClassSpaceSizeOption() != null
-                && jvm.getMaxMetaspaceBytes() < jvm.getCompressedClassSpaceSizeBytes()) {
-            analysis.add(Analysis.ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE);
+        if (jvm.getMaxMetaspaceOption() != null) {
+            long compressedClassSpaceSize = 0;
+            if (jvm.getCompressedClassSpaceSizeOption() != null) {
+                compressedClassSpaceSize = jvm.getCompressedClassSpaceSizeBytes();
+            } else {
+                // Default is 1g
+                compressedClassSpaceSize = Constants.GIGABYTE.longValue();
+            }
+            if (jvm.getMaxMetaspaceBytes() < compressedClassSpaceSize) {
+                analysis.add(Analysis.ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE);
+            }
         }
 
         // Check if heap dump filename specified

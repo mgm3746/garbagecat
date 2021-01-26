@@ -19,8 +19,8 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.PermCollection;
-import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.PermMetaspaceCollection;
+import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
@@ -68,7 +68,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * 
  */
 public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging, BlockingEvent, OldCollection,
-        PermCollection, PermData, CombinedData, TriggerData, ParallelEvent, TimesData {
+        PermMetaspaceCollection, PermMetaspaceData, CombinedData, TriggerData, ParallelEvent, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

@@ -186,8 +186,9 @@ public class JdkMath {
      */
     public static int calcThroughput(final int currentDuration, final long currentTimestamp, final int priorDuration,
             final long priorTimestamp) {
-        long timeTotal = currentTimestamp + new Long(currentDuration).longValue() - priorTimestamp;
-        long timeNotGc = timeTotal - new Long(currentDuration).longValue() - new Long(priorDuration).longValue();
+        long timeTotal = currentTimestamp + Long.valueOf(currentDuration).longValue() - priorTimestamp;
+        long timeNotGc = timeTotal - Long.valueOf(currentDuration).longValue()
+                - Long.valueOf(priorDuration).longValue();
         BigDecimal throughput = new BigDecimal(timeNotGc);
         throughput = throughput.divide(new BigDecimal(timeTotal), 2, RoundingMode.HALF_EVEN);
         throughput = throughput.movePointRight(2);
@@ -302,5 +303,33 @@ public class JdkMath {
      */
     public static boolean isLowParallelism(int parallelism) {
         return (parallelism < 150);
+    }
+
+    /**
+     * Calculate percent.
+     * 
+     * @param part
+     *            The numerator.
+     * @param whole
+     *            The denominator.
+     * 
+     * @return Percent part:whole rounded to the nearest whole number.
+     */
+    public static int calcPercent(final long part, final long whole) {
+        int percent;
+        if (whole == 0) {
+            if (part == 0 && whole == 0) {
+                percent = 100;
+            } else {
+                percent = Integer.MAX_VALUE;
+            }
+        } else {
+            BigDecimal calc = new BigDecimal(part);
+            BigDecimal hundred = new BigDecimal("100");
+            calc = calc.multiply(hundred);
+            calc = calc.divide(new BigDecimal(whole), 0, RoundingMode.HALF_EVEN);
+            percent = calc.intValue();
+        }
+        return percent;
     }
 }

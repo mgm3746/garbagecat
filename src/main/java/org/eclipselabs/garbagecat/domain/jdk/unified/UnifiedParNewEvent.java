@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.PermData;
+import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
@@ -53,7 +53,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * 
  */
 public class UnifiedParNewEvent extends ParallelCollector implements UnifiedLogging, BlockingEvent, YoungCollection,
-        ParallelEvent, YoungData, OldData, PermData, TriggerData, TimesData {
+        ParallelEvent, YoungData, OldData, PermMetaspaceData, TriggerData, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
