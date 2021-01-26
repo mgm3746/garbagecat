@@ -391,4 +391,10 @@ public class TestFooterHeapEvent extends TestCase {
         Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
                 FooterHeapEvent.match(logLine));
     }
+
+    public void testLineShenandoahSoftMax() {
+        String logLine = "[2021-01-25T17:44:28.636-0500]  98304K max, 98304K soft max, 98304K committed, 58219K used";
+        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".",
+                FooterHeapEvent.match(logLine));
+    }
 }

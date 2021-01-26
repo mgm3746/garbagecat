@@ -566,7 +566,7 @@ public class TestAnalysis extends TestCase {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        Assert.assertFalse(Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " analysis identified.",
+        Assert.assertTrue(Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED));
     }
 

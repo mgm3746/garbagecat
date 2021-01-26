@@ -161,8 +161,8 @@ public class FooterHeapEvent implements ThrowAwayEvent {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?(Shenandoah )?[h|H]eap$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )? " + JdkRegEx.SIZE + " total, " + JdkRegEx.SIZE + " committed, "
-                    + JdkRegEx.SIZE + " used$",
+            "^(" + UnifiedRegEx.DECORATOR + " )? " + JdkRegEx.SIZE + " (total|max)(, " + JdkRegEx.SIZE + " soft max)?, "
+                    + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
             //
             "^" + UnifiedRegEx.DECORATOR + "  Metaspace       used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
                     + ", committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
