@@ -189,11 +189,13 @@ public class Jvm {
     }
 
     /**
-     * @return The thread stack size value, or null if not set. For example:
+     * Thread stack size value.
      * 
-     *         <pre>
+     * <pre>
      * 256K
-     *         </pre>
+     * </pre>
+     * 
+     * @return The thread stack size value, or null if not set. For example:
      */
     public String getThreadStackSizeValue() {
         return JdkUtil.getOptionValue(getThreadStackSizeOption());
