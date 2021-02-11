@@ -58,7 +58,8 @@ public class JvmDao {
                     + "time_stamp bigint, event_name varchar(64), duration integer, young_space integer, "
                     + "old_space integer, combined_space integer, perm_space integer, young_occupancy_init integer, "
                     + "old_occupancy_init integer, combined_occupancy_init integer, perm_occupancy_init integer, "
-                    + "log_entry varchar(500))",
+                    + "young_occupancy_end integer, old_occupancy_end integer, combined_occupancy_end integer, "
+                    + "perm_occupancy_end integer, log_entry varchar(500))",
             "create table application_stopped_time (id integer identity, "
                     + "time_stamp bigint, event_name varchar(64), duration bigint, log_entry varchar(500))" };
 
@@ -489,8 +490,9 @@ public class JvmDao {
         try {
             String sqlInsertBlockingEvent = "insert into blocking_event (time_stamp, event_name, "
                     + "duration, young_space, old_space, combined_space, perm_space, young_occupancy_init, "
-                    + "old_occupancy_init, combined_occupancy_init, perm_occupancy_init, log_entry) "
-                    + "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+                    + "old_occupancy_init, combined_occupancy_init, perm_occupancy_init, young_occupancy_end, "
+                    + "old_occupancy_end, combined_occupancy_end, perm_occupancy_end,log_entry) "
+                    + "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?)";
 
             final int TIME_STAMP_INDEX = 1;
             final int EVENT_NAME_INDEX = 2;
@@ -503,7 +505,11 @@ public class JvmDao {
             final int OLD_OCCUPANCY_INIT_INDEX = 9;
             final int COMBINED_OCCUPANCY_INIT_INDEX = 10;
             final int PERM_OCCUPANCY_INIT_INDEX = 11;
-            final int LOG_ENTRY_INDEX = 12;
+            final int YOUNG_OCCUPANCY_END_INDEX = 12;
+            final int OLD_OCCUPANCY_END_INDEX = 13;
+            final int COMBINED_OCCUPANCY_END_INDEX = 14;
+            final int PERM_OCCUPANCY_END_INDEX = 15;
+            final int LOG_ENTRY_INDEX = 16;
 
             pst = connection.prepareStatement(sqlInsertBlockingEvent);
 
@@ -515,30 +521,38 @@ public class JvmDao {
                 if (event instanceof YoungData) {
                     pst.setInt(YOUNG_SPACE_INDEX, ((YoungData) event).getYoungSpace());
                     pst.setInt(YOUNG_OCCUPANCY_INIT_INDEX, ((YoungData) event).getYoungOccupancyInit());
+                    pst.setInt(YOUNG_OCCUPANCY_END_INDEX, ((YoungData) event).getYoungOccupancyEnd());
                 } else {
                     pst.setInt(YOUNG_SPACE_INDEX, 0);
                     pst.setInt(YOUNG_OCCUPANCY_INIT_INDEX, 0);
+                    pst.setInt(YOUNG_OCCUPANCY_END_INDEX, 0);
                 }
                 if (event instanceof OldData) {
                     pst.setInt(OLD_SPACE_INDEX, ((OldData) event).getOldSpace());
                     pst.setInt(OLD_OCCUPANCY_INIT_INDEX, ((OldData) event).getOldOccupancyInit());
+                    pst.setInt(OLD_OCCUPANCY_END_INDEX, ((OldData) event).getOldOccupancyEnd());
                 } else {
                     pst.setInt(OLD_SPACE_INDEX, 0);
                     pst.setInt(OLD_OCCUPANCY_INIT_INDEX, 0);
+                    pst.setInt(OLD_OCCUPANCY_END_INDEX, 0);
                 }
                 if (event instanceof CombinedData) {
                     pst.setInt(COMBINED_SPACE_INDEX, ((CombinedData) event).getCombinedSpace());
                     pst.setInt(COMBINED_OCCUPANCY_INIT_INDEX, ((CombinedData) event).getCombinedOccupancyInit());
+                    pst.setInt(COMBINED_OCCUPANCY_END_INDEX, ((CombinedData) event).getCombinedOccupancyEnd());
                 } else {
                     pst.setInt(COMBINED_SPACE_INDEX, 0);
                     pst.setInt(COMBINED_OCCUPANCY_INIT_INDEX, 0);
+                    pst.setInt(COMBINED_OCCUPANCY_END_INDEX, 0);
                 }
                 if (event instanceof PermMetaspaceData) {
                     pst.setInt(PERM_SPACE_INDEX, ((PermMetaspaceData) event).getPermSpace());
                     pst.setInt(PERM_OCCUPANCY_INIT_INDEX, ((PermMetaspaceData) event).getPermOccupancyInit());
+                    pst.setInt(PERM_OCCUPANCY_END_INDEX, ((PermMetaspaceData) event).getPermOccupancyEnd());
                 } else {
                     pst.setInt(PERM_SPACE_INDEX, 0);
                     pst.setInt(PERM_OCCUPANCY_INIT_INDEX, 0);
+                    pst.setInt(PERM_OCCUPANCY_END_INDEX, 0);
                 }
                 pst.setString(LOG_ENTRY_INDEX, event.getLogEntry());
                 pst.addBatch();
@@ -1048,6 +1062,42 @@ public class JvmDao {
     }
 
     /**
+     * The maximum heap after GC during the JVM run.
+     * 
+     * @return maximum heap after GC (kilobytes).
+     */
+    public synchronized int getMaxHeapAfterGc() {
+        int occupancy = 0;
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            statement = connection.createStatement();
+            rs = statement.executeQuery("select max(young_occupancy_end + old_occupancy_end "
+                    + "+ combined_occupancy_end) from blocking_event");
+            if (rs.next()) {
+                occupancy = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Error determining max heap after GC.");
+        } finally {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing ResultSet.");
+            }
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing Statement.");
+            }
+        }
+        return occupancy;
+    }
+
+    /**
      * The maximum perm/metaspace size during the JVM run.
      * 
      * @return maximum perm/metaspace footprint (kilobytes).
@@ -1100,6 +1150,41 @@ public class JvmDao {
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             throw new RuntimeException("Error determining max perm gen occupancy.");
+        } finally {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing ResultSet.");
+            }
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing Statement.");
+            }
+        }
+        return occupancy;
+    }
+
+    /**
+     * The maximum perm/metaspace after GC during the JVM run.
+     * 
+     * @return maximum perm/metaspac after GC (kilobytes).
+     */
+    public synchronized int getMaxPermAfterGc() {
+        int occupancy = 0;
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            statement = connection.createStatement();
+            rs = statement.executeQuery("select max(perm_occupancy_end) from blocking_event");
+            if (rs.next()) {
+                occupancy = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Error determining max perm gen after GC.");
         } finally {
             try {
                 rs.close();

@@ -382,6 +382,11 @@ public class Main {
                     bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancyNonBlocking() + "K"
                             + Constants.LINE_SEPARATOR);
                 }
+                // Max heap after GC.
+                if (jvmRun.getMaxHeapAfterGc() > 0) {
+                    bufferedWriter
+                            .write("Max Heap After GC: " + jvmRun.getMaxHeapAfterGc() + "K" + Constants.LINE_SEPARATOR);
+                }
                 // Max heap space.
                 if (jvmRun.getMaxHeapSpace() > 0) {
                     bufferedWriter
@@ -396,12 +401,18 @@ public class Main {
                         // Max perm occupancy.
                         bufferedWriter.write("Max Perm Gen Occupancy: " + jvmRun.getMaxPermOccupancy() + "K"
                                 + Constants.LINE_SEPARATOR);
+                        // Max perm after GC.
+                        bufferedWriter.write("Max Perm Gen After GC: " + jvmRun.getMaxPermAfterGc() + "K"
+                                + Constants.LINE_SEPARATOR);
                         // Max perm space.
                         bufferedWriter.write(
                                 "Max Perm Gen Space: " + jvmRun.getMaxPermSpace() + "K" + Constants.LINE_SEPARATOR);
                     } else {
                         // Max metaspace occupancy.
                         bufferedWriter.write("Max Metaspace Occupancy: " + jvmRun.getMaxPermOccupancy() + "K"
+                                + Constants.LINE_SEPARATOR);
+                        // Max metaspace after GC.
+                        bufferedWriter.write("Max Metaspace After GC: " + jvmRun.getMaxPermAfterGc() + "K"
                                 + Constants.LINE_SEPARATOR);
                         // Max metaspace space.
                         bufferedWriter.write(

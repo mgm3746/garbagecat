@@ -67,6 +67,19 @@ public class JvmRun {
     private int maxHeapOccupancy;
 
     /**
+     * Maximum heap after gc (kilobytes).
+     */
+    private int maxHeapAfterGc;
+
+    public int getMaxHeapAfterGc() {
+        return maxHeapAfterGc;
+    }
+
+    public void setMaxHeapAfterGc(int maxHeapAfterGc) {
+        this.maxHeapAfterGc = maxHeapAfterGc;
+    }
+
+    /**
      * Maximum perm gen size (kilobytes).
      */
     private int maxPermSpace;
@@ -75,6 +88,19 @@ public class JvmRun {
      * Maximum perm gen occupancy (kilobytes).
      */
     private int maxPermOccupancy;
+
+    /**
+     * Maximum perm gen after gC (kilobytes).
+     */
+    private int maxPermAfterGc;
+
+    public int getMaxPermAfterGc() {
+        return maxPermAfterGc;
+    }
+
+    public void setMaxPermAfterGc(int maxPermAfterGc) {
+        this.maxPermAfterGc = maxPermAfterGc;
+    }
 
     /**
      * Maximum GC pause duration (milliseconds).
