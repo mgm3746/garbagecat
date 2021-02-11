@@ -731,20 +731,6 @@ public class GcManager {
                         }
                     }
 
-                    // 19) Check for undersized CompressedClassSpace
-                    if (event instanceof TriggerData && event instanceof PermMetaspaceData) {
-                        String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && (trigger.matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD))) {
-                            long metaspaceOccupancyInit = ((PermMetaspaceData) event).getPermOccupancyInit();
-                            long metaspaceSize = ((PermMetaspaceData) event).getPermSpace();
-                            if (JdkMath.calcPercent(metaspaceOccupancyInit, metaspaceSize) < 50) {
-                                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_COMP_CLASS_SPACE_UNDERSIZED)) {
-                                    jvmDao.addAnalysis(Analysis.ERROR_COMP_CLASS_SPACE_UNDERSIZED);
-                                }
-                            }
-                        }
-                    }
-
                     priorEvent = (BlockingEvent) event;
 
                 } else if (event instanceof ApplicationStoppedTimeEvent) {

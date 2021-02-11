@@ -1359,15 +1359,16 @@ public class TestAnalysis extends TestCase {
     }
 
     /**
-     * Test undersized compressed class space
+     * Test Metadata GC Threshold
      */
-    public void testCompressedClassSpaceUndersized() {
+    public void testMetadataGcThreshold() {
         File testFile = new File(Constants.TEST_DATA_DIR + "dataset199.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        Assert.assertTrue(Analysis.ERROR_COMP_CLASS_SPACE_UNDERSIZED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_CLASS_SPACE_UNDERSIZED));
+        Assert.assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
+        Assert.assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
+                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
     }
 }
