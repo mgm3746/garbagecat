@@ -209,46 +209,6 @@ public class TestJdkUtil {
     }
 
     @Test
-    public void testConvertSizeG1DetailsBytesToSizeG1() {
-        String size = "0.0";
-        char units = 'B';
-        assertEquals("Bytes not converted to expected format.", "0K",
-                JdkUtil.convertSizeG1DetailsToSizeG1(size, units));
-    }
-
-    @Test
-    public void testConvertSizeG1DetailsKilobytesToSizeG1() {
-        String size = "8192.0";
-        char units = 'K';
-        assertEquals("Bytes not converted to expected format.", "8192K",
-                JdkUtil.convertSizeG1DetailsToSizeG1(size, units));
-    }
-
-    @Test
-    public void testConvertSizeG1DetailsMegabytesToSizeG1() {
-        String size = "28.0";
-        char units = 'M';
-        assertEquals("Bytes not converted to expected format.", "28M",
-                JdkUtil.convertSizeG1DetailsToSizeG1(size, units));
-    }
-
-    @Test
-    public void testConvertSizeG1DetailsGigabytesToSizeG1() {
-        String size = "30.0";
-        char units = 'G';
-        assertEquals("Bytes not converted to expected format.", "30720M",
-                JdkUtil.convertSizeG1DetailsToSizeG1(size, units));
-    }
-
-    @Test
-    public void testConvertSizeG1DetailsToSizeG1Rounding() {
-        String size = "24.9";
-        char units = 'M';
-        assertEquals("Bytes not converted to expected format.", "25M",
-                JdkUtil.convertSizeG1DetailsToSizeG1(size, units));
-    }
-
-    @Test
     public void testDateStampInMiddle() {
         String logLine = "85030.389: [Full GC 85030.390: [CMS2012-06-20T12:29:58.094+0200: 85030.443: "
                 + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";

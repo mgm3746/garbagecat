@@ -104,7 +104,6 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UsingParallelEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingSerialEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingShenandoahEvent;
 import org.eclipselabs.garbagecat.util.Constants;
-import org.eclipselabs.garbagecat.util.Constants.Size;
 import org.eclipselabs.garbagecat.util.GcUtil;
 
 /**
@@ -1000,47 +999,6 @@ public class JdkUtil {
             }
         }
         return value;
-    }
-
-    /**
-     * Convert SIZE_G1_DETAILS to SIZE.
-     * 
-     * @param size
-     *            The size (e.g. '128.0').
-     * @param units
-     *            The units (e.g. 'G').
-     * @return The size block in G1 format (e.g. '131072M').
-     */
-    public static String convertSizeG1DetailsToSizeG1(String size, char units) {
-        Size source;
-        Size target;
-        switch (units) {
-
-        case 'B':
-            // Convert to K
-        	source = KILOBYTES;
-        	target = BYTES;
-            break;
-        case 'K':
-        	source = KILOBYTES;
-        	target = KILOBYTES;
-            break;
-        case 'M':
-        	source = MEGABYTES;
-        	target = MEGABYTES;
-            break;
-        case 'G':
-            // Convert to M
-        	source = MEGABYTES;
-        	target = GIGABYTES;
-            break;
-        default:
-            throw new AssertionError("Unexpected units value: " + units);
-
-        }
-        double sizeG1 = source.convertTo(Double.parseDouble(size), target);
-        String unitsG1 = source.getName();
-        return Long.toString(BigDecimal.valueOf(sizeG1).setScale(0, RoundingMode.HALF_EVEN).longValue()) + unitsG1;
     }
 
     /**
