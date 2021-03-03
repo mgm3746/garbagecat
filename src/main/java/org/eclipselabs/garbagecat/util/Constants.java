@@ -68,6 +68,16 @@ public class Constants {
 		public String getName() {
 			return name;
 		}
+		
+		public static Size forUnit(char unit) {
+			String cc = String.valueOf(unit);
+			for (Size size : values()) {
+				if (size.getName().equals(cc)) {
+					return size;
+				}
+			}
+			throw new IllegalArgumentException("Unexpected units value: " + unit);
+		}
 
 	}
 

@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.util.Constants.Size;
 
 /**
  * Math utility methods and constants for OpenJDK and Oracle JDK.
@@ -23,13 +24,13 @@ import org.eclipselabs.garbagecat.domain.TimesData;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class JdkMath {
+public final class JdkMath {
 
     /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private JdkMath() {
-
+    	super();
     }
 
     /**
@@ -41,11 +42,9 @@ public class JdkMath {
      */
     public static BigDecimal convertSecsToMillis(String secs) {
         // BigDecimal does not accept decimal commas, only decimal periods
-        BigDecimal millis = new BigDecimal(secs.replace(",", "."));
-        millis = millis.movePointRight(3);
+        BigDecimal millis = new BigDecimal(secs.replace(",", ".")).movePointRight(3);
         // Round down to avoid TimeWarpExceptions when events are spaced close together
-        millis = millis.setScale(0, RoundingMode.DOWN);
-        return millis;
+        return millis.setScale(0, RoundingMode.DOWN);
     }
 
     /**
@@ -61,8 +60,7 @@ public class JdkMath {
         // BigDecimal does not accept decimal commas, only decimal periods
         BigDecimal rounded = new BigDecimal(millis.replace(",", "."));
         // Round down to avoid TimeWarpExceptions when events are spaced close together
-        rounded = rounded.setScale(0, RoundingMode.DOWN);
-        return rounded;
+        return rounded.setScale(0, RoundingMode.DOWN);
     }
 
     /**
@@ -76,9 +74,7 @@ public class JdkMath {
      */
     public static BigDecimal convertMillisToSecs(long millis) {
         BigDecimal secs = new BigDecimal(millis);
-        secs = secs.movePointLeft(3);
-        secs = secs.setScale(3, RoundingMode.HALF_EVEN);
-        return secs;
+        return secs.movePointLeft(3).setScale(3, RoundingMode.HALF_EVEN);
     }
 
     /**
@@ -92,11 +88,9 @@ public class JdkMath {
      */
     public static BigDecimal convertSecsToMicros(String secs) {
         // BigDecimal does not accept decimal commas, only decimal periods
-        BigDecimal micros = new BigDecimal(secs.replace(",", "."));
-        micros = micros.movePointRight(6);
+        BigDecimal micros = new BigDecimal(secs.replace(",", ".")).movePointRight(6);
         // Round down to avoid TimeWarpExceptions when events are spaced close together
-        micros = micros.setScale(0, RoundingMode.DOWN);
-        return micros;
+        return micros.setScale(0, RoundingMode.DOWN);
     }
 
     /**
@@ -110,11 +104,9 @@ public class JdkMath {
      */
     public static BigDecimal convertMillisToMicros(String millis) {
         // BigDecimal does not accept decimal commas, only decimal periods
-        BigDecimal duration = new BigDecimal(millis.replace(",", "."));
-        duration = duration.movePointRight(3);
+        BigDecimal duration = new BigDecimal(millis.replace(",", ".")).movePointRight(3);
         // Round down to avoid TimeWarpExceptions when events are spaced close together
-        duration = duration.setScale(0, RoundingMode.DOWN);
-        return duration;
+        return duration.setScale(0, RoundingMode.DOWN);
     }
 
     /**
@@ -128,9 +120,7 @@ public class JdkMath {
      */
     public static BigDecimal convertMicrosToMillis(long micros) {
         BigDecimal duration = new BigDecimal(micros);
-        duration = duration.movePointLeft(3);
-        duration = duration.setScale(3, RoundingMode.HALF_EVEN);
-        return duration;
+        return duration.movePointLeft(3).setScale(3, RoundingMode.HALF_EVEN);
     }
 
     /**
@@ -142,11 +132,9 @@ public class JdkMath {
      */
     public static BigDecimal convertSecsToCentis(String secs) {
         // BigDecimal does not accept decimal commas, only decimal periods
-        BigDecimal duration = new BigDecimal(secs.replace(",", "."));
-        duration = duration.movePointRight(2);
+        BigDecimal duration = new BigDecimal(secs.replace(",", ".")).movePointRight(2);
         // Round down to avoid TimeWarpExceptions when events are spaced close together
-        duration = duration.setScale(0, RoundingMode.DOWN);
-        return duration;
+        return duration.setScale(0, RoundingMode.DOWN);
     }
 
     /**
@@ -198,23 +186,14 @@ public class JdkMath {
     /**
      * Calculate size in kilobytes.
      * 
-     * @param size
+     * @param value
      *            Size block value.
      * @param units
      *            Size block units.
      * @return The size in Kilobytes.
      */
-    public static int calcKilobytes(final int size, final char units) {
-        int kilobytes = size;
-        switch (units) {
-        case 'M':
-            kilobytes = kilobytes * 1024;
-            break;
-        case 'G':
-            kilobytes = kilobytes * 1024 * 1024;
-            break;
-        }
-        return kilobytes;
+    public static int calcKilobytes(int value, char units) {
+        return (int) Size.forUnit(units).toKiloBytes(value);
     }
 
     /**
@@ -226,31 +205,13 @@ public class JdkMath {
      *            The units (e.g. 'G').
      * @return The size in Kilobytes.
      */
-    public static int convertSizeToKilobytes(final String size, final char units) {
+	public static int convertSizeToKilobytes(String size, char units) {
+		return convertSizeToKilobytes(Double.parseDouble(size.replace(",", ".")), units);
+	}
 
-        BigDecimal kilobytes = new BigDecimal(size.replace(",", "."));
-        BigDecimal kilo = new BigDecimal("1024");
-
-        switch (units) {
-
-        case 'B':
-            kilobytes = kilobytes.divide(new BigDecimal("1024"));
-            break;
-        case 'K':
-            break;
-        case 'M':
-            kilobytes = kilobytes.multiply(kilo);
-            break;
-        case 'G':
-            kilobytes = (kilobytes.multiply(kilo)).multiply(kilo);
-            break;
-        default:
-            throw new AssertionError("Unexpected units value: " + units);
-
-        }
-        kilobytes = kilobytes.setScale(0, RoundingMode.HALF_EVEN);
-        return kilobytes.intValue();
-    }
+	public static int convertSizeToKilobytes(double size, char units) {
+		return BigDecimal.valueOf(Size.forUnit(units).toKiloBytes(size)).setScale(0, RoundingMode.HALF_EVEN).intValue();
+	}
 
     /**
      * Calculate parallelism, the ratio of user + sys to wall (real) time.
