@@ -12,143 +12,123 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.eclipselabs.garbagecat.util.Constants;
-import org.junit.Assert;
 
-import junit.framework.TestCase;
 
-public class TestMain extends TestCase {
 
-    public void testShortOptions() {
-        try {
-            Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
-            Class.forName("java.lang.IllegalArgumentException");
-            Class<?>[] argTypes = new Class[] { String[].class };
-            Method parseOptions = c.getDeclaredMethod("parseOptions", argTypes);
-            // Make private method accessible
-            parseOptions.setAccessible(true);
-            // Method arguments
-            String[] args = new String[14];
-            args[0] = "-h";
-            args[1] = "-j";
-            args[2] = "-Xmx2048m";
-            args[3] = "-p";
-            args[4] = "-s";
-            args[5] = "2009-09-18 00:00:08,172";
-            args[6] = "-t";
-            args[7] = "80";
-            args[8] = "-r";
-            args[9] = "-o";
-            args[10] = "12345678.txt";
-            args[11] = "-v";
-            args[12] = "-l";
-            // Instead of a file, use a location sure to exist.
-            args[13] = System.getProperty("user.dir");
-            // Pass null object since parseOptions is static
-            Object o = parseOptions.invoke(null, (Object) args);
-            CommandLine cmd = (CommandLine) o;
-            Assert.assertNotNull(cmd);
-            Assert.assertTrue("'-" + Constants.OPTION_HELP_SHORT + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_HELP_SHORT));
-            Assert.assertTrue("'-" + Constants.OPTION_JVMOPTIONS_SHORT + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_JVMOPTIONS_SHORT));
-            Assert.assertTrue("'-" + Constants.OPTION_PREPROCESS_SHORT + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_PREPROCESS_SHORT));
-            Assert.assertTrue("'-" + Constants.OPTION_STARTDATETIME_SHORT + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_STARTDATETIME_SHORT));
-            Assert.assertTrue("'-" + Constants.OPTION_THRESHOLD_SHORT + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_THRESHOLD_SHORT));
-            Assert.assertTrue("'-" + Constants.OPTION_REORDER_SHORT + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_REORDER_SHORT));
-            Assert.assertTrue("'-" + Constants.OPTION_OUTPUT_SHORT + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_OUTPUT_SHORT));
-            Assert.assertTrue("'-" + Constants.OPTION_VERSION_SHORT + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_VERSION_SHORT));
-            Assert.assertTrue("'-" + Constants.OPTION_LATEST_VERSION_SHORT + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_LATEST_VERSION_SHORT));
-        } catch (ClassNotFoundException e) {
-            Assert.fail(e.getMessage());
-        } catch (SecurityException e) {
-            Assert.fail("SecurityException: " + e.getMessage());
-        } catch (NoSuchMethodException e) {
-            Assert.fail("NoSuchMethodException: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            Assert.fail("IllegalArgumentException: " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            Assert.fail("IllegalAccessException: " + e.getMessage());
-        } catch (InvocationTargetException e) {
-            // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.fail("InvocationTargetException: " + e.getMessage());
-        }
+public class TestMain {
+
+	@Test
+    public void testShortOptions() throws Exception {
+        Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
+		Class.forName("java.lang.IllegalArgumentException");
+		Class<?>[] argTypes = new Class[] { String[].class };
+		Method parseOptions = c.getDeclaredMethod("parseOptions", argTypes);
+		// Make private method accessible
+		parseOptions.setAccessible(true);
+		// Method arguments
+		String[] args = new String[14];
+		args[0] = "-h";
+		args[1] = "-j";
+		args[2] = "-Xmx2048m";
+		args[3] = "-p";
+		args[4] = "-s";
+		args[5] = "2009-09-18 00:00:08,172";
+		args[6] = "-t";
+		args[7] = "80";
+		args[8] = "-r";
+		args[9] = "-o";
+		args[10] = "12345678.txt";
+		args[11] = "-v";
+		args[12] = "-l";
+		// Instead of a file, use a location sure to exist.
+		args[13] = System.getProperty("user.dir");
+		// Pass null object since parseOptions is static
+		Object o = parseOptions.invoke(null, (Object) args);
+		CommandLine cmd = (CommandLine) o;
+		assertNotNull(cmd);
+		assertTrue("'-" + Constants.OPTION_HELP_SHORT + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_HELP_SHORT));
+		assertTrue("'-" + Constants.OPTION_JVMOPTIONS_SHORT + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_JVMOPTIONS_SHORT));
+		assertTrue("'-" + Constants.OPTION_PREPROCESS_SHORT + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_PREPROCESS_SHORT));
+		assertTrue("'-" + Constants.OPTION_STARTDATETIME_SHORT + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_STARTDATETIME_SHORT));
+		assertTrue("'-" + Constants.OPTION_THRESHOLD_SHORT + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_THRESHOLD_SHORT));
+		assertTrue("'-" + Constants.OPTION_REORDER_SHORT + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_REORDER_SHORT));
+		assertTrue("'-" + Constants.OPTION_OUTPUT_SHORT + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_OUTPUT_SHORT));
+		assertTrue("'-" + Constants.OPTION_VERSION_SHORT + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_VERSION_SHORT));
+		assertTrue("'-" + Constants.OPTION_LATEST_VERSION_SHORT + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_LATEST_VERSION_SHORT));
     }
 
-    public void testLongOptions() {
-        try {
-            Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
-            Class<?>[] argTypes = new Class[] { String[].class };
-            Method parseOptions = c.getDeclaredMethod("parseOptions", argTypes);
-            // Make private method accessible
-            parseOptions.setAccessible(true);
-            // Method arguments
-            String[] args = new String[14];
-            args[0] = "--help";
-            args[1] = "--jvmoptions";
-            args[2] = "-Xmx2048m";
-            args[3] = "--preprocess";
-            args[4] = "--startdatetime";
-            args[5] = "2009-09-18 00:00:08,172";
-            args[6] = "--threshold";
-            args[7] = "80";
-            args[8] = "--reorder";
-            args[9] = "--output";
-            args[10] = "12345678.txt";
-            args[11] = "--version";
-            args[12] = "--latest";
-            // Instead of a file, use a location sure to exist.
-            args[13] = System.getProperty("user.dir");
-            // Pass null object since parseOptions is static
-            Object o = parseOptions.invoke(null, (Object) args);
-            CommandLine cmd = (CommandLine) o;
-            Assert.assertNotNull(cmd);
-            Assert.assertTrue("'-" + Constants.OPTION_HELP_LONG + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_HELP_LONG));
-            Assert.assertTrue("'-" + Constants.OPTION_JVMOPTIONS_LONG + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_JVMOPTIONS_LONG));
-            Assert.assertTrue("'-" + Constants.OPTION_PREPROCESS_LONG + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_PREPROCESS_LONG));
-            Assert.assertTrue("'-" + Constants.OPTION_STARTDATETIME_LONG + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_STARTDATETIME_LONG));
-            Assert.assertTrue("'-" + Constants.OPTION_THRESHOLD_LONG + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_THRESHOLD_LONG));
-            Assert.assertTrue("'-" + Constants.OPTION_REORDER_LONG + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_REORDER_LONG));
-            Assert.assertTrue("'-" + Constants.OPTION_OUTPUT_LONG + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_OUTPUT_LONG));
-            Assert.assertTrue("'-" + Constants.OPTION_VERSION_LONG + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_VERSION_LONG));
-            Assert.assertTrue("'-" + Constants.OPTION_LATEST_VERSION_LONG + "' is a valid option",
-                    cmd.hasOption(Constants.OPTION_LATEST_VERSION_LONG));
-        } catch (ClassNotFoundException e) {
-            Assert.fail(e.getMessage());
-        } catch (SecurityException e) {
-            Assert.fail("SecurityException: " + e.getMessage());
-        } catch (NoSuchMethodException e) {
-            Assert.fail("NoSuchMethodException: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            Assert.fail("IllegalArgumentException: " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            Assert.fail("IllegalAccessException: " + e.getMessage());
-        } catch (InvocationTargetException e) {
-            Assert.fail("InvocationTargetException: " + e.getMessage());
-        }
+   @Test
+    public void testLongOptions() throws Exception {
+        Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
+		Class<?>[] argTypes = new Class[] { String[].class };
+		Method parseOptions = c.getDeclaredMethod("parseOptions", argTypes);
+		// Make private method accessible
+		parseOptions.setAccessible(true);
+		// Method arguments
+		String[] args = new String[14];
+		args[0] = "--help";
+		args[1] = "--jvmoptions";
+		args[2] = "-Xmx2048m";
+		args[3] = "--preprocess";
+		args[4] = "--startdatetime";
+		args[5] = "2009-09-18 00:00:08,172";
+		args[6] = "--threshold";
+		args[7] = "80";
+		args[8] = "--reorder";
+		args[9] = "--output";
+		args[10] = "12345678.txt";
+		args[11] = "--version";
+		args[12] = "--latest";
+		// Instead of a file, use a location sure to exist.
+		args[13] = System.getProperty("user.dir");
+		// Pass null object since parseOptions is static
+		Object o = parseOptions.invoke(null, (Object) args);
+		CommandLine cmd = (CommandLine) o;
+		assertNotNull(cmd);
+		assertTrue("'-" + Constants.OPTION_HELP_LONG + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_HELP_LONG));
+		assertTrue("'-" + Constants.OPTION_JVMOPTIONS_LONG + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_JVMOPTIONS_LONG));
+		assertTrue("'-" + Constants.OPTION_PREPROCESS_LONG + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_PREPROCESS_LONG));
+		assertTrue("'-" + Constants.OPTION_STARTDATETIME_LONG + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_STARTDATETIME_LONG));
+		assertTrue("'-" + Constants.OPTION_THRESHOLD_LONG + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_THRESHOLD_LONG));
+		assertTrue("'-" + Constants.OPTION_REORDER_LONG + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_REORDER_LONG));
+		assertTrue("'-" + Constants.OPTION_OUTPUT_LONG + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_OUTPUT_LONG));
+		assertTrue("'-" + Constants.OPTION_VERSION_LONG + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_VERSION_LONG));
+		assertTrue("'-" + Constants.OPTION_LATEST_VERSION_LONG + "' is a valid option",
+		        cmd.hasOption(Constants.OPTION_LATEST_VERSION_LONG));
     }
 
-    public void testInvalidOption() {
+    @Test
+    public void testInvalidOption() throws Exception {
         try {
             Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
             Class<?>[] argTypes = new Class[] { String[].class };
@@ -167,24 +147,15 @@ public class TestMain extends TestCase {
             CommandLine cmd = (CommandLine) o;
             // An unrecognized option throws an <code>UnrecognizedOptionException</code>, which is
             // caught and the usage line output.
-            Assert.assertNull("An invalid option was accepted.", cmd);
-        } catch (ClassNotFoundException e) {
-            Assert.fail(e.getMessage());
-        } catch (SecurityException e) {
-            Assert.fail("SecurityException: " + e.getMessage());
-        } catch (NoSuchMethodException e) {
-            Assert.fail("NoSuchMethodException: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            Assert.fail("IllegalArgumentException: " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            Assert.fail("IllegalAccessException: " + e.getMessage());
+            assertNull("An invalid option was accepted.", cmd);
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
+            assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
         }
     }
 
-    public void testInvalidThresholdShortOption() {
+    @Test
+    public void testInvalidThresholdShortOption() throws Exception {
         try {
             Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
             Class<?>[] argTypes = new Class[] { String[].class };
@@ -199,24 +170,15 @@ public class TestMain extends TestCase {
             args[2] = System.getProperty("user.dir");
             // Pass null object since parseOptions is static
             parseOptions.invoke(null, (Object) args);
-            Assert.fail("Should have raised an InvocationTargetException with an underlying PareseException");
-        } catch (ClassNotFoundException e) {
-            Assert.fail(e.getMessage());
-        } catch (SecurityException e) {
-            Assert.fail("SecurityException: " + e.getMessage());
-        } catch (NoSuchMethodException e) {
-            Assert.fail("NoSuchMethodException: " + e.getMessage());
-        } catch (IllegalArgumentException expected) {
-            Assert.assertNotNull(expected.getMessage());
-        } catch (IllegalAccessException e) {
-            Assert.fail("IllegalAccessException: " + e.getMessage());
+            fail("Should have raised an InvocationTargetException with an underlying PareseException");
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
+            assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
         }
     }
 
-    public void testInvalidThresholdLongOption() {
+    @Test
+    public void testInvalidThresholdLongOption() throws Exception {
         try {
             Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
             Class<?>[] argTypes = new Class[] { String[].class };
@@ -231,24 +193,15 @@ public class TestMain extends TestCase {
             args[2] = System.getProperty("user.dir");
             // Pass null object since parseOptions is static
             parseOptions.invoke(null, (Object) args);
-            Assert.fail("Should have raised an InvocationTargetException with an underlying IllegalArgumentException");
-        } catch (ClassNotFoundException e) {
-            Assert.fail(e.getMessage());
-        } catch (SecurityException e) {
-            Assert.fail("SecurityException: " + e.getMessage());
-        } catch (NoSuchMethodException e) {
-            Assert.fail("NoSuchMethodException: " + e.getMessage());
-        } catch (IllegalArgumentException expected) {
-            Assert.assertNotNull(expected.getMessage());
-        } catch (IllegalAccessException e) {
-            Assert.fail("IllegalAccessException: " + e.getMessage());
+            fail("Should have raised an InvocationTargetException with an underlying IllegalArgumentException");
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
+            assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
         }
     }
 
-    public void testInvalidStartDateTimeShortOption() {
+   @Test
+    public void testInvalidStartDateTimeShortOption() throws Exception {
         try {
             Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
             Class<?>[] argTypes = new Class[] { String[].class };
@@ -263,24 +216,15 @@ public class TestMain extends TestCase {
             args[2] = System.getProperty("user.dir");
             // Pass null object since parseOptions is static
             parseOptions.invoke(null, (Object) args);
-            Assert.fail("Should have raised an InvocationTargetException with an underlying IllegalArgumentException");
-        } catch (ClassNotFoundException e) {
-            Assert.fail(e.getMessage());
-        } catch (SecurityException e) {
-            Assert.fail("SecurityException: " + e.getMessage());
-        } catch (NoSuchMethodException e) {
-            Assert.fail("NoSuchMethodException: " + e.getMessage());
-        } catch (IllegalArgumentException expected) {
-            Assert.assertNotNull(expected.getMessage());
-        } catch (IllegalAccessException e) {
-            Assert.fail("IllegalAccessException: " + e.getMessage());
+            fail("Should have raised an InvocationTargetException with an underlying IllegalArgumentException");
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
+            assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
         }
     }
 
-    public void testInvalidStartDateTimeLongOption() {
+    @Test
+    public void testInvalidStartDateTimeLongOption() throws Exception {
         try {
             Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
             Class<?>[] argTypes = new Class[] { String[].class };
@@ -295,84 +239,48 @@ public class TestMain extends TestCase {
             args[2] = System.getProperty("user.dir");
             // Pass null object since parseOptions is static
             parseOptions.invoke(null, (Object) args);
-            Assert.fail("Should have raised an InvocationTargetException with an underlying IllegalArgumentException");
-        } catch (ClassNotFoundException e) {
-            Assert.fail(e.getMessage());
-        } catch (SecurityException e) {
-            Assert.fail("SecurityException: " + e.getMessage());
-        } catch (NoSuchMethodException e) {
-            Assert.fail("NoSuchMethodException: " + e.getMessage());
-        } catch (IllegalArgumentException expected) {
-            Assert.assertNotNull(expected.getMessage());
-        } catch (IllegalAccessException e) {
-            Assert.fail("IllegalAccessException: " + e.getMessage());
+            fail("Should have raised an InvocationTargetException with an underlying IllegalArgumentException");
         } catch (InvocationTargetException e) {
             // Anything the invoked method throws is wrapped by InvocationTargetException.
-            Assert.assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
+            assertTrue("Epected ParseException not thrown.", e.getTargetException() instanceof ParseException);
         }
     }
 
-    public void testShortHelpOption() {
-        try {
-            Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
-            Class<?>[] argTypes = new Class[] { String[].class };
-            Method parseOptions = c.getDeclaredMethod("parseOptions", argTypes);
-            // Make private method accessible
-            parseOptions.setAccessible(true);
-            // Method arguments
-            String[] args = new String[1];
-            args[0] = "-h";
-            // Pass null object since parseOptions is static
-            parseOptions.invoke(null, (Object) args);
-            Object o = parseOptions.invoke(null, (Object) args);
-            CommandLine cmd = (CommandLine) o;
-            // CommandLine will be null if only the help option is passed in.
-            Assert.assertNull(cmd);
-            Assert.assertTrue("'-h' is a valid option", true);
-        } catch (ClassNotFoundException e) {
-            Assert.fail(e.getMessage());
-        } catch (SecurityException e) {
-            Assert.fail("SecurityException: " + e.getMessage());
-        } catch (NoSuchMethodException e) {
-            Assert.fail("NoSuchMethodException: " + e.getMessage());
-        } catch (IllegalArgumentException expected) {
-            Assert.assertNotNull(expected.getMessage());
-        } catch (IllegalAccessException e) {
-            Assert.fail("IllegalAccessException: " + e.getMessage());
-        } catch (InvocationTargetException e) {
-            Assert.fail("InvocationTargetException: " + e.getMessage());
-        }
+    @Test
+    public void testShortHelpOption() throws Exception {
+        Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
+		Class<?>[] argTypes = new Class[] { String[].class };
+		Method parseOptions = c.getDeclaredMethod("parseOptions", argTypes);
+		// Make private method accessible
+		parseOptions.setAccessible(true);
+		// Method arguments
+		String[] args = new String[1];
+		args[0] = "-h";
+		// Pass null object since parseOptions is static
+		parseOptions.invoke(null, (Object) args);
+		Object o = parseOptions.invoke(null, (Object) args);
+		CommandLine cmd = (CommandLine) o;
+		// CommandLine will be null if only the help option is passed in.
+		assertNull(cmd);
+		assertTrue("'-h' is a valid option", true);
     }
 
-    public void testLongHelpOption() {
-        try {
-            Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
-            Class<?>[] argTypes = new Class[] { String[].class };
-            Method parseOptions = c.getDeclaredMethod("parseOptions", argTypes);
-            // Make private method accessible
-            parseOptions.setAccessible(true);
-            // Method arguments
-            String[] args = new String[1];
-            args[0] = "--help";
-            // Pass null object since parseOptions is static
-            parseOptions.invoke(null, (Object) args);
-            Object o = parseOptions.invoke(null, (Object) args);
-            CommandLine cmd = (CommandLine) o;
-            // CommandLine will be null if only the help option is passed in.
-            Assert.assertNull(cmd);
-            Assert.assertTrue("'--help' is a valid option", true);
-        } catch (ClassNotFoundException e) {
-            Assert.fail(e.getMessage());
-        } catch (SecurityException e) {
-            Assert.fail("SecurityException: " + e.getMessage());
-        } catch (NoSuchMethodException e) {
-            Assert.fail("NoSuchMethodException: " + e.getMessage());
-        } catch (IllegalArgumentException expected) {
-            Assert.assertNotNull(expected.getMessage());
-        } catch (IllegalAccessException e) {
-            Assert.fail("IllegalAccessException: " + e.getMessage());
-        } catch (InvocationTargetException e) {
-            Assert.fail("InvocationTargetException: " + e.getMessage());
-        }
+    @Test
+    public void testLongHelpOption() throws Exception {
+        Class<?> c = Class.forName("org.eclipselabs.garbagecat.Main");
+		Class<?>[] argTypes = new Class[] { String[].class };
+		Method parseOptions = c.getDeclaredMethod("parseOptions", argTypes);
+		// Make private method accessible
+		parseOptions.setAccessible(true);
+		// Method arguments
+		String[] args = new String[1];
+		args[0] = "--help";
+		// Pass null object since parseOptions is static
+		parseOptions.invoke(null, (Object) args);
+		Object o = parseOptions.invoke(null, (Object) args);
+		CommandLine cmd = (CommandLine) o;
+		// CommandLine will be null if only the help option is passed in.
+		assertNull(cmd);
+		assertTrue("'--help' is a valid option", true);
     }
 }

@@ -12,23 +12,27 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestTimesData extends TestCase {
+public class TestTimesData {
 
+    @Test
     public void testTimesData() {
         String timesData = " [Times: user=0.44 sys=0.00, real=0.08 secs]";
-        Assert.assertTrue("'" + timesData + "' is a valid duration.", timesData.matches(TimesData.REGEX));
+        assertTrue("'" + timesData + "' is a valid duration.", timesData.matches(TimesData.REGEX));
     }
 
+    @Test
     public void testTimesDataJdk9() {
         String timesData = " User=0.00s Sys=0.00s Real=0.00s";
-        Assert.assertTrue("'" + timesData + "' is a valid duration.", timesData.matches(TimesData.REGEX_JDK9));
+        assertTrue("'" + timesData + "' is a valid duration.", timesData.matches(TimesData.REGEX_JDK9));
     }
 }

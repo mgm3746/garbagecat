@@ -12,21 +12,25 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.hsql;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
-import org.junit.Assert;
 
-import junit.framework.TestCase;
+
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestJvmDao extends TestCase {
+public class TestJvmDao {
 
+    @Test
     public void testSameTimestampOrdering() {
         JvmDao jvmDao = new JvmDao();
         ParNewEvent event1 = new ParNewEvent("3010778.296: [GC 3010778.296: [ParNew: 337824K->32173K(368640K),"
@@ -44,7 +48,7 @@ public class TestJvmDao extends TestCase {
 
         // check they are the correct way around
         List<BlockingEvent> events = jvmDao.getBlockingEvents();
-        Assert.assertTrue(events.get(1) instanceof ParNewEvent);
-        Assert.assertTrue(events.get(2) instanceof SerialOldEvent);
+        assertTrue(events.get(1) instanceof ParNewEvent);
+        assertTrue(events.get(2) instanceof SerialOldEvent);
     }
 }
