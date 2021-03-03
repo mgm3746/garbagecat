@@ -1,0 +1,4 @@
+2016-10-31T12:40:35.294-0500: 262375.117: [CMS-concurrent-mark-start]
+2016-10-31T12:40:35.299-0500: 262375.122: [Full GC (Metadata GC Threshold) 2016-10-31T12:40:35.299-0500: 262375.122: [CMS (concurrent mode failure): 45449K->45424K(1756416K), 0.2599196 secs] 47075K->45424K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.2603968 secs] [Times: user=0.25 sys=0.00, real=0.26 secs]
+2016-10-31T12:40:35.377-0500: 262375.200: [CMS-concurrent-mark: 0.082/0.082 secs] [Times: user=0.08 sys=0.00, real=0.08 secs]
+2016-10-31T12:40:35.559-0500: 262375.383: [Full GC (Last ditch collection) 2016-10-31T12:40:35.560-0500: 262375.383: [CMS: 45424K->45424K(1756416K), 0.1749628 secs] 45424K->45424K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.1753883 secs] [Times: user=0.18 sys=0.00, real=0.18 secs]

@@ -1,0 +1,1 @@
+[0.029s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: 512K->432K(1024K) ParOldGen: 0K->8K(512K) Metaspace: 121K->121K(1056768K) 0M->0M(1M) 0.762ms User=0.00s Sys=0.00s Real=0.00s

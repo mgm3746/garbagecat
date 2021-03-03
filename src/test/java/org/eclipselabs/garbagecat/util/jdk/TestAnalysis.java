@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -962,7 +963,7 @@ public class TestAnalysis {
 
     @Test
     public void testHeaderLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset42.txt");
+        File testFile = TestUtil.getFile("dataset42.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -984,7 +985,7 @@ public class TestAnalysis {
      */
     @Test
     public void testAnalysisPermSizeNotSet() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset60.txt");
+        File testFile = TestUtil.getFile("dataset60.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1001,7 +1002,7 @@ public class TestAnalysis {
      */
     @Test
     public void testCmsSerialOldExplicitGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset85.txt");
+        File testFile = TestUtil.getFile("dataset85.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1024,7 +1025,7 @@ public class TestAnalysis {
      */
     @Test
     public void testParallelOldCompactingExplicitGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset86.txt");
+        File testFile = TestUtil.getFile("dataset86.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1045,7 +1046,7 @@ public class TestAnalysis {
 
     @Test
     public void testThreadStackSizeAnalysis32Bit() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset87.txt");
+        File testFile = TestUtil.getFile("dataset87.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1056,7 +1057,7 @@ public class TestAnalysis {
 
     @Test
     public void testHeapDumpPathFilename() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset95.txt");
+        File testFile = TestUtil.getFile("dataset95.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1070,7 +1071,7 @@ public class TestAnalysis {
      */
     @Test
     public void testParNewDisabled() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset101.txt");
+        File testFile = TestUtil.getFile("dataset101.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1099,7 +1100,7 @@ public class TestAnalysis {
      */
     @Test
     public void testCompressedOopsDisabledLargeHeap() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset106.txt");
+        File testFile = TestUtil.getFile("dataset106.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1118,7 +1119,7 @@ public class TestAnalysis {
      */
     @Test
     public void testPhysicalMemoryLessThanJvmMemoryWithoutCompressedClassPointerSpace() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset106.txt");
+        File testFile = TestUtil.getFile("dataset106.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1139,7 +1140,7 @@ public class TestAnalysis {
      */
     @Test
     public void testPrintGcDetailsDisabledWithVerboseGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset107.txt");
+        File testFile = TestUtil.getFile("dataset107.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1157,7 +1158,7 @@ public class TestAnalysis {
      */
     @Test
     public void testPhysicalMemoryLessThanJvmMemoryWithCompressedClassPointerSpace() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset107.txt");
+        File testFile = TestUtil.getFile("dataset107.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1177,7 +1178,7 @@ public class TestAnalysis {
      */
     @Test
     public void testPhysicalMemoryLessThanHeapAllocation() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset109.txt");
+        File testFile = TestUtil.getFile("dataset109.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1196,7 +1197,7 @@ public class TestAnalysis {
      */
     @Test
     public void testCmsClassunloadingDisabled() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset110.txt");
+        File testFile = TestUtil.getFile("dataset110.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1216,7 +1217,7 @@ public class TestAnalysis {
      */
     @Test
     public void testApplicationLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset114.txt");
+        File testFile = TestUtil.getFile("dataset114.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1234,7 +1235,7 @@ public class TestAnalysis {
      */
     @Test
     public void testPrintFlsStatisticsPrintPromotionFailure() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset115.txt");
+        File testFile = TestUtil.getFile("dataset115.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1254,7 +1255,7 @@ public class TestAnalysis {
      */
     @Test
     public void testHumongousAllocationsNotCollectedYoung() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset118.txt");
+        File testFile = TestUtil.getFile("dataset118.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1274,7 +1275,7 @@ public class TestAnalysis {
      */
     @Test
     public void testCmsSerialOldGcLocker() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset119.txt");
+        File testFile = TestUtil.getFile("dataset119.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1292,7 +1293,7 @@ public class TestAnalysis {
      */
     @Test
     public void testVerboseGcOldExplicitGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset125.txt");
+        File testFile = TestUtil.getFile("dataset125.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1307,7 +1308,7 @@ public class TestAnalysis {
      */
     @Test
     public void testVerboseGcYoungExplicitGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset126.txt");
+        File testFile = TestUtil.getFile("dataset126.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1321,7 +1322,7 @@ public class TestAnalysis {
      */
     @Test
     public void testSerialPromotionFailed() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset129.txt");
+        File testFile = TestUtil.getFile("dataset129.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1335,7 +1336,7 @@ public class TestAnalysis {
      */
     @Test
     public void testCmsInitialMarkSerial() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset130.txt");
+        File testFile = TestUtil.getFile("dataset130.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1349,7 +1350,7 @@ public class TestAnalysis {
      */
     @Test
     public void testCmsRemarkSerial() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset131.txt");
+        File testFile = TestUtil.getFile("dataset131.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1363,7 +1364,7 @@ public class TestAnalysis {
      */
     @Test
     public void testInitialMarkLowParallelismFalseReportZeroReal() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset137.txt");
+        File testFile = TestUtil.getFile("dataset137.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1377,7 +1378,7 @@ public class TestAnalysis {
      */
     @Test
     public void testInitialMarkLowParallelismFalseReportSmallPause() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset138.txt");
+        File testFile = TestUtil.getFile("dataset138.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1393,7 +1394,7 @@ public class TestAnalysis {
      */
     @Test
     public void testGcLogFileSizeSmall() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset181.txt");
+        File testFile = TestUtil.getFile("dataset181.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1407,7 +1408,7 @@ public class TestAnalysis {
      */
     @Test
     public void testHeapDumpPathMissing() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset181.txt");
+        File testFile = TestUtil.getFile("dataset181.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1421,7 +1422,7 @@ public class TestAnalysis {
      */
     @Test
     public void testSwapDisabled() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset187.txt");
+        File testFile = TestUtil.getFile("dataset187.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1435,7 +1436,7 @@ public class TestAnalysis {
      */
     @Test
     public void testDiagnosticOptions() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset192.txt");
+        File testFile = TestUtil.getFile("dataset192.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1451,7 +1452,7 @@ public class TestAnalysis {
      */
     @Test
     public void testFastUnorderedTimestamps() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset193.txt");
+        File testFile = TestUtil.getFile("dataset193.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1465,7 +1466,7 @@ public class TestAnalysis {
      */
     @Test
     public void testMetadataGcThreshold() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset199.txt");
+        File testFile = TestUtil.getFile("dataset199.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

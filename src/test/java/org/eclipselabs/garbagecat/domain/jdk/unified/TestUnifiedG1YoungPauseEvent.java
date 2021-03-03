@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -195,7 +196,7 @@ public class TestUnifiedG1YoungPauseEvent {
 
     @Test
     public void testUnifiedG1YoungPauseJdk9() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset158.txt");
+        File testFile = TestUtil.getFile("dataset158.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -209,7 +210,7 @@ public class TestUnifiedG1YoungPauseEvent {
 
     @Test
     public void testUnifiedG1YoungPauseDatestampMillis() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset166.txt");
+        File testFile = TestUtil.getFile("dataset166.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -223,7 +224,7 @@ public class TestUnifiedG1YoungPauseEvent {
 
     @Test
     public void testUnifiedG1YoungPauseConcurrentStartTriggerMetaGcThreshold() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset183.txt");
+        File testFile = TestUtil.getFile("dataset183.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -237,7 +238,7 @@ public class TestUnifiedG1YoungPauseEvent {
 
     @Test
     public void testUnifiedG1YoungPauseConcurrentStartTriggerG1HumongousAllocation() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset185.txt");
+        File testFile = TestUtil.getFile("dataset185.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

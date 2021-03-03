@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -467,7 +468,7 @@ public class TestFooterStatsEvent {
      */
     @Test
     public void testUnifiedUptimeMillis() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset165.txt");
+        File testFile = TestUtil.getFile("dataset165.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -479,7 +480,7 @@ public class TestFooterStatsEvent {
 
     @Test
     public void testJdk11Time() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset196.txt");
+        File testFile = TestUtil.getFile("dataset196.txt");
         GcManager gcManager1 = new GcManager();
         gcManager1.store(testFile, false);
         GcManager gcManager2 = new GcManager();
@@ -502,7 +503,7 @@ public class TestFooterStatsEvent {
 
     @Test
     public void testJdk8() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset198.txt");
+        File testFile = TestUtil.getFile("dataset198.txt");
         GcManager gcManager1 = new GcManager();
         gcManager1.store(testFile, false);
         GcManager gcManager2 = new GcManager();

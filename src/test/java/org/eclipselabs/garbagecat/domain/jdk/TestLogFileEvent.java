@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -69,7 +70,7 @@ public class TestLogFileEvent {
      */
     @Test
     public void testPreparsing() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset88.txt");
+        File testFile = TestUtil.getFile("dataset88.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

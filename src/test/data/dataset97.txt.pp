@@ -1,0 +1,1 @@
+2016-10-18T15:01:54.616-0200: 785,047: [GC pause (young), 0,73936800 secs][Eden: 4096M(4096M)->0B(3528M) Survivors: 0B->568M Heap: 4096M(16384M)->567M(16384M)] [Times: user=4,42 sys=0,38, real=0,74 secs]

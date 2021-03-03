@@ -12,8 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
-import org.junit.Test;
-
+import static org.eclipselabs.garbagecat.util.Constants.Size.KILOBYTES;
+import static org.eclipselabs.garbagecat.util.Constants.Size.MEGABYTES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -21,7 +21,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 
-import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.Constants.Size;
+import org.junit.Test;
 
 
 
@@ -904,7 +905,7 @@ public class TestJvm {
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:GCLogFileSize not found.", jvm.getGcLogFileSize());
         assertEquals("Log file size value incorrect.", "8192k", jvm.getGcLogFileSizeValue());
-        BigDecimal size = new BigDecimal("8192").multiply(Constants.KILOBYTE);
+        BigDecimal size = BigDecimal.valueOf(KILOBYTES.toBytes(8192));
         assertEquals("Log file size bytes incorrect.", size.longValue(), jvm.getGcLogFileSizeBytes());
     }
 
@@ -914,7 +915,7 @@ public class TestJvm {
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:GCLogFileSize not found.", jvm.getGcLogFileSize());
         assertEquals("Log file size value incorrect.", "8192K", jvm.getGcLogFileSizeValue());
-        BigDecimal size = new BigDecimal("8192").multiply(Constants.KILOBYTE);
+        BigDecimal size = BigDecimal.valueOf(Size.KILOBYTES.toBytes(8192));
         assertEquals("Log file size bytes incorrect.", size.longValue(), jvm.getGcLogFileSizeBytes());
     }
 
@@ -924,7 +925,7 @@ public class TestJvm {
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:GCLogFileSize not found.", jvm.getGcLogFileSize());
         assertEquals("Log file size value incorrect.", "5m", jvm.getGcLogFileSizeValue());
-        BigDecimal size = new BigDecimal("5").multiply(Constants.MEGABYTE);
+        BigDecimal size = BigDecimal.valueOf(MEGABYTES.toBytes(5));
         assertEquals("Log file size bytes incorrect.", size.longValue(), jvm.getGcLogFileSizeBytes());
     }
 
@@ -934,7 +935,7 @@ public class TestJvm {
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:GCLogFileSize not found.", jvm.getGcLogFileSize());
         assertEquals("Log file size value incorrect.", "5M", jvm.getGcLogFileSizeValue());
-        BigDecimal size = new BigDecimal("5").multiply(Constants.MEGABYTE);
+        BigDecimal size = BigDecimal.valueOf(MEGABYTES.toBytes(5));
         assertEquals("Log file size bytes incorrect.", size.longValue(), jvm.getGcLogFileSizeBytes());
     }
 

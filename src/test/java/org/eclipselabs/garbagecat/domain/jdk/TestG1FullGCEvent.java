@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -306,7 +307,7 @@ public class TestG1FullGCEvent {
 
     @Test
     public void testHeapInspectionInitiatedGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset188.txt");
+        File testFile = TestUtil.getFile("dataset188.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -322,7 +323,7 @@ public class TestG1FullGCEvent {
 
     @Test
     public void testTriggerHeapDumpInitiatedGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset189.txt");
+        File testFile = TestUtil.getFile("dataset189.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

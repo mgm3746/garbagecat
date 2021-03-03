@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
+import static org.eclipselabs.garbagecat.util.Constants.Size.MEGABYTES;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -19,8 +21,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.eclipselabs.garbagecat.util.Constants;
 
 /**
  * JVM environment information
@@ -1498,15 +1498,9 @@ public class Jvm {
      * @return True if stack size &gt;= 1024k, false otherwise.
      */
     public boolean hasLargeThreadStackSize() {
-        boolean hasLargeThreadStackSize = false;
-
         String threadStackSize = getThreadStackSizeValue();
-        if (threadStackSize != null
-                && JdkUtil.convertOptionSizeToBytes(threadStackSize) >= Constants.MEGABYTE.longValue()) {
-            hasLargeThreadStackSize = true;
-        }
-
-        return hasLargeThreadStackSize;
+        return threadStackSize != null
+                && JdkUtil.convertOptionSizeToBytes(threadStackSize) >= MEGABYTES.toBytes(1);
     }
 
     /**

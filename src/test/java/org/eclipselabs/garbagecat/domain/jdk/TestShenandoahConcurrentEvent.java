@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -317,7 +318,7 @@ public class TestShenandoahConcurrentEvent {
      */
     @Test
     public void testUnifiedMaxHeapData() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset167.txt");
+        File testFile = TestUtil.getFile("dataset167.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

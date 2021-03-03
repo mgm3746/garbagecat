@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -121,7 +122,7 @@ public class TestUnifiedOldEvent {
 
     @Test
     public void testUnifiedOldStandardLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset148.txt");
+        File testFile = TestUtil.getFile("dataset148.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -139,7 +140,7 @@ public class TestUnifiedOldEvent {
 
     @Test
     public void testUnifiedOldExplictGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset153.txt");
+        File testFile = TestUtil.getFile("dataset153.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -159,7 +160,7 @@ public class TestUnifiedOldEvent {
 
     @Test
     public void testUnifiedSerialOldTriggerSystemGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset184.txt");
+        File testFile = TestUtil.getFile("dataset184.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

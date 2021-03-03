@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -123,7 +124,7 @@ public class TestUnifiedG1MixedPauseEvent {
 
     @Test
     public void testPreprocessing() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset169.txt");
+        File testFile = TestUtil.getFile("dataset169.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

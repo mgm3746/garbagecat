@@ -12,6 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
+import static org.eclipselabs.garbagecat.util.Constants.Size.GIGABYTES;
+import static org.eclipselabs.garbagecat.util.Constants.Size.MEGABYTES;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -827,7 +830,7 @@ public class JvmRun {
 
         // Compressed object references should only be used when heap < 32G
         boolean heapLessThan32G = true;
-        BigDecimal thirtyTwoGigabytes = new BigDecimal("32").multiply(Constants.GIGABYTE);
+        BigDecimal thirtyTwoGigabytes = BigDecimal.valueOf(GIGABYTES.toBytes(32));
         if (jvm.getMaxHeapBytes() >= thirtyTwoGigabytes.longValue()) {
             heapLessThan32G = false;
         }
@@ -904,8 +907,7 @@ public class JvmRun {
 
         // Check if log file size is small
         if (jvm.getGcLogFileSize() != null) {
-            BigDecimal oneMegabyte = new BigDecimal("5").multiply(Constants.MEGABYTE);
-            if (jvm.getGcLogFileSizeBytes() < oneMegabyte.longValue()) {
+            if (jvm.getGcLogFileSizeBytes() < MEGABYTES.toBytes(5)) {
                 analysis.add(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL);
             }
         }
@@ -1037,7 +1039,7 @@ public class JvmRun {
                 compressedClassSpaceSize = jvm.getCompressedClassSpaceSizeBytes();
             } else {
                 // Default is 1g
-                compressedClassSpaceSize = Constants.GIGABYTE.longValue();
+                compressedClassSpaceSize = (long) GIGABYTES.toBytes(1);
             }
             if (jvm.getMaxMetaspaceBytes() < compressedClassSpaceSize) {
                 analysis.add(Analysis.ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE);

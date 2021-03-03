@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -120,7 +121,7 @@ public class TestParallelPreprocessAction {
      */
     @Test
     public void testSplitParallelSerialOldEventLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset9.txt");
+        File testFile = TestUtil.getFile("dataset9.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -142,7 +143,7 @@ public class TestParallelPreprocessAction {
      */
     @Test
     public void testUnloadingClassPreprocessActionParallelSerialOldEventLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset24.txt");
+        File testFile = TestUtil.getFile("dataset24.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -158,7 +159,7 @@ public class TestParallelPreprocessAction {
      */
     @Test
     public void testSplitParallelScavengeEventLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset30.txt");
+        File testFile = TestUtil.getFile("dataset30.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -175,7 +176,7 @@ public class TestParallelPreprocessAction {
      */
     @Test
     public void testParallelSerialOldAcrossMultipleLinesMixedGcTimeLimitLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset132.txt");
+        File testFile = TestUtil.getFile("dataset132.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

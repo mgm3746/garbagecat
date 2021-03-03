@@ -1,0 +1,2 @@
+28308.701: [GC 28308.701: [ParNew (promotion failed): 261951K->261951K(261952K), 0.7470390 secs]28309.448: [CMS (concurrent mode failure): 1179212K->1179647K(1179648K), 10.7159890 secs] 1422025K->1183557K(1441600K), 11.4633890 secs]
+28312.544: [CMS-concurrent-mark: 5.114/5.863 secs]

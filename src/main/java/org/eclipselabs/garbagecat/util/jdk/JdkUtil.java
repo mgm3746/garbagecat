@@ -12,6 +12,11 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
+import static org.eclipselabs.garbagecat.util.Constants.Size.BYTES;
+import static org.eclipselabs.garbagecat.util.Constants.Size.GIGABYTES;
+import static org.eclipselabs.garbagecat.util.Constants.Size.KILOBYTES;
+import static org.eclipselabs.garbagecat.util.Constants.Size.MEGABYTES;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -1005,35 +1010,36 @@ public class JdkUtil {
      *            The units (e.g. 'G').
      * @return The size block in G1 format (e.g. '131072M').
      */
-    public static String convertSizeG1DetailsToSizeG1(final String size, final char units) {
+    public static String convertSizeG1DetailsToSizeG1(String size, char units) {
 
-        BigDecimal sizeG1 = new BigDecimal(size);
-        char unitsG1;
+        double sizeG1 = Double.parseDouble(size);
+        String unitsG1;
 
         switch (units) {
 
         case 'B':
             // Convert to K
-            sizeG1 = sizeG1.divide(new BigDecimal("1024"));
-            unitsG1 = 'K';
+            sizeG1 = KILOBYTES.convertTo(sizeG1, BYTES);
+            unitsG1 = KILOBYTES.getName();
             break;
         case 'K':
-            unitsG1 = 'K';
+        	sizeG1 = KILOBYTES.convertTo(sizeG1, KILOBYTES);
+            unitsG1 = KILOBYTES.getName();
             break;
         case 'M':
-            unitsG1 = 'M';
+        	sizeG1 = MEGABYTES.convertTo(sizeG1, MEGABYTES);
+            unitsG1 = MEGABYTES.getName();
             break;
         case 'G':
             // Convert to M
-            sizeG1 = sizeG1.multiply(new BigDecimal("1024"));
-            unitsG1 = 'M';
+            sizeG1 = MEGABYTES.convertTo(sizeG1, GIGABYTES);
+            unitsG1 = MEGABYTES.getName();
             break;
         default:
             throw new AssertionError("Unexpected units value: " + units);
 
         }
-        sizeG1 = sizeG1.setScale(0, RoundingMode.HALF_EVEN);
-        return Integer.toString(sizeG1.intValue()) + unitsG1;
+        return Long.toString(BigDecimal.valueOf(sizeG1).setScale(0, RoundingMode.HALF_EVEN).longValue()) + unitsG1;
     }
 
     /**
@@ -1059,31 +1065,26 @@ public class JdkUtil {
             }
         }
 
-        BigDecimal bytes = new BigDecimal(value);
+        long bytes = Long.parseLong(value);
 
         switch (units) {
 
         case 'b':
         case 'B':
-            // do nothing
-            break;
+        	return (long) BYTES.toBytes(bytes);
         case 'k':
         case 'K':
-            bytes = bytes.multiply(Constants.KILOBYTE);
-            break;
+        	return (long) KILOBYTES.toBytes(bytes);
         case 'm':
         case 'M':
-            bytes = bytes.multiply(Constants.MEGABYTE);
-            break;
+        	return (long) MEGABYTES.toBytes(bytes);
         case 'g':
         case 'G':
-            bytes = bytes.multiply(Constants.GIGABYTE);
-            break;
+            return (long) GIGABYTES.toBytes(bytes);
         default:
             throw new AssertionError("Unexpected units value: " + units);
 
         }
-        return bytes.longValue();
     }
 
     /**

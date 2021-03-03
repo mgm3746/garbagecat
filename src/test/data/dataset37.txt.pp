@@ -1,0 +1,1 @@
+2970.268: [GC pause (G1 Evacuation Pause) (young) (initial-mark), 0.0698627 secs][Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: 13.6G(30.0G)->13.5G(30.0G)] [Times: user=0.28 sys=0.00, real=0.08 secs]

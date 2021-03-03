@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.util.Date;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -462,7 +463,7 @@ public class TestParNewEvent {
      */
     @Test
     public void testSplitParNewCmsConcurrentEventAbortablePrecleanLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset15.txt");
+        File testFile = TestUtil.getFile("dataset15.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -479,7 +480,7 @@ public class TestParNewEvent {
      */
     @Test
     public void testCmsIncrementalModeAnalysis() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset68.txt");
+        File testFile = TestUtil.getFile("dataset68.txt");
         String jvmOptions = "Xss128k -XX:+CMSIncrementalMode -XX:CMSInitiatingOccupancyFraction=70 -Xms2048M";
         Jvm jvm = new Jvm(jvmOptions, null);
         GcManager gcManager = new GcManager();
@@ -497,7 +498,7 @@ public class TestParNewEvent {
      */
     @Test
     public void testParNewDatestampNoTimestampNoJvmStartDate() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset113.txt");
+        File testFile = TestUtil.getFile("dataset113.txt");
         Jvm jvm = new Jvm(null, null);
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -519,7 +520,7 @@ public class TestParNewEvent {
      */
     @Test
     public void testParNewDatestampNoTimestampJvmStartDate() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset113.txt");
+        File testFile = TestUtil.getFile("dataset113.txt");
         Date jvmStartDate = GcUtil.parseStartDateTime("2017-02-28 11:26:24,135");
         Jvm jvm = new Jvm(null, jvmStartDate);
         GcManager gcManager = new GcManager();

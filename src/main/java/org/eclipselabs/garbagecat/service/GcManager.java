@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.service;
 
+import static org.eclipselabs.garbagecat.util.Constants.Size.KILOBYTES;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -739,14 +740,10 @@ public class GcManager {
                     jvmDao.setOptions(((HeaderCommandLineFlagsEvent) event).getJvmOptions());
                 } else if (event instanceof HeaderMemoryEvent) {
                     jvmDao.setMemory(((HeaderMemoryEvent) event).getLogEntry());
-                    BigDecimal size = new BigDecimal(((HeaderMemoryEvent) event).getPhysicalMemory());
-                    jvmDao.setPhysicalMemory(size.multiply(Constants.KILOBYTE).longValue());
-                    size = new BigDecimal(((HeaderMemoryEvent) event).getPhysicalMemoryFree());
-                    jvmDao.setPhysicalMemoryFree(size.multiply(Constants.KILOBYTE).longValue());
-                    size = new BigDecimal(((HeaderMemoryEvent) event).getSwap());
-                    jvmDao.setSwap(size.multiply(Constants.KILOBYTE).longValue());
-                    size = new BigDecimal(((HeaderMemoryEvent) event).getSwapFree());
-                    jvmDao.setSwapFree(size.multiply(Constants.KILOBYTE).longValue());
+                    jvmDao.setPhysicalMemory((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemory()));
+                    jvmDao.setPhysicalMemoryFree((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemoryFree()));
+                    jvmDao.setSwap((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwap()));
+                    jvmDao.setSwapFree((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwapFree()));
                 } else if (event instanceof HeaderVersionEvent) {
                     jvmDao.setVersion(((HeaderVersionEvent) event).getLogEntry());
                 } else if (event instanceof GcOverheadLimitEvent) {

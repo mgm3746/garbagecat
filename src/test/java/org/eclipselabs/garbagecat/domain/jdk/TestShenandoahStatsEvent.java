@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -553,7 +554,7 @@ public class TestShenandoahStatsEvent {
 
     @Test
     public void testJdk11() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset195.txt");
+        File testFile = TestUtil.getFile("dataset195.txt");
         GcManager gcManager1 = new GcManager();
         gcManager1.store(testFile, false);
         GcManager gcManager2 = new GcManager();
@@ -573,7 +574,7 @@ public class TestShenandoahStatsEvent {
 
     @Test
     public void testJdk11Time() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset197.txt");
+        File testFile = TestUtil.getFile("dataset197.txt");
         GcManager gcManager1 = new GcManager();
         gcManager1.store(testFile, false);
         GcManager gcManager2 = new GcManager();

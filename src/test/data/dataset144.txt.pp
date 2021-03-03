@@ -1,0 +1,6 @@
+537.122: [GC pause (G1 Evacuation Pause) (young) (to-space exhausted), 0.3314995 secs][Eden: 0.0B(151.0M)->0.0B(153.0M) Survivors: 2048.0K->0.0B Heap: 3038.7M(3072.0M)->3038.7M(3072.0M)] [Times: user=0.20 sys=0.00, real=0.33 secs]
+537.123: [GC concurrent-root-region-scan-start]
+537.142: [GC concurrent-root-region-scan-end, 0.0189841 secs]
+2132.960: [GC pause (G1 Evacuation Pause) (young), 0.1083307 secs][Eden: 0.0B(153.0M)->0.0B(153.0M) Survivors: 0.0B->0.0B Heap: 3035.6M(3072.0M)->3035.6M(3072.0M)] [Times: user=0.09 sys=0.00, real=0.11 secs]
+2132.962: [GC concurrent-root-region-scan-start]
+2132.962: [GC concurrent-root-region-scan-end, 0.0001111 secs]

@@ -1,0 +1,1 @@
+105.151: [Full GC (System.gc()) 5820M->1381M(30G), 5.5390169 secs][Eden: 80.0M(112.0M)->0.0B(128.0M) Survivors: 16.0M->0.0B Heap: 5820.3M(30.0G)->1381.9M(30.0G)] [Times: user=5.76 sys=1.00, real=5.53 secs]

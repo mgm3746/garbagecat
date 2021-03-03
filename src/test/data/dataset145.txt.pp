@@ -1,0 +1,2 @@
+35420.674: [Full GC (Allocation Failure) 3035M->3030M(3072M), 21.7552521 secs][Eden: 0.0B(153.0M)->0.0B(153.0M) Survivors: 0.0B->0.0B Heap: 3035.5M(3072.0M)->3030.4M(3072.0M)], [Metaspace: 93308K->93308K(352256K)] [Times: user=16.39 sys=0.04, real=21.75 secs]
+35420.734: [GC concurrent-mark-start]

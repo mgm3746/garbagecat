@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -1173,7 +1174,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testSplitPrintHeapAtGcCmsSerialOldLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset6.txt");
+        File testFile = TestUtil.getFile("dataset6.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1190,7 +1191,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testSplitPrintHeapAtGcCmsSerialOldConcurrentModeFailureLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset8.txt");
+        File testFile = TestUtil.getFile("dataset8.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1211,7 +1212,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testSplitCmsConcurrentModeFailureEventMarkLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset10.txt");
+        File testFile = TestUtil.getFile("dataset10.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1232,7 +1233,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testSplitCmsConcurrentModeFailureEventAbortablePrecleanLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset11.txt");
+        File testFile = TestUtil.getFile("dataset11.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1253,7 +1254,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testSplit3LinesCmsConcurrentModeFailureEventLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset14.txt");
+        File testFile = TestUtil.getFile("dataset14.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1273,7 +1274,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testSplitMixedTenuringParNewPromotionFailedEventLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset18.txt");
+        File testFile = TestUtil.getFile("dataset18.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1292,7 +1293,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testSplitPrintHeapAtGcParNewPromotionFailedCmsConcurrentModeFailureEventLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset21.txt");
+        File testFile = TestUtil.getFile("dataset21.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1310,7 +1311,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testParNewPromotionFailedTruncatedEventLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset23.txt");
+        File testFile = TestUtil.getFile("dataset23.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1334,7 +1335,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testParNewMixedCmsConcurrent() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset58.txt");
+        File testFile = TestUtil.getFile("dataset58.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1354,7 +1355,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testCmsSerialConcurrentModeFailureMixedCmsConcurrent() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset61.txt");
+        File testFile = TestUtil.getFile("dataset61.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1376,7 +1377,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testSplitMixedTenuringParNewPromotionEventWithTriggerLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset67.txt");
+        File testFile = TestUtil.getFile("dataset67.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1392,7 +1393,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testCmsSerialConcurrentModeFailureMixedCmsConcurrentJdk8() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset69.txt");
+        File testFile = TestUtil.getFile("dataset69.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1416,7 +1417,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testCmsSerialOldConcurrentModeInterruptedMixedCmsConcurrent() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset71.txt");
+        File testFile = TestUtil.getFile("dataset71.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1438,7 +1439,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testCmsSerialOldPrintClassHistogramTriggerAcross5Lines() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset81.txt");
+        File testFile = TestUtil.getFile("dataset81.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1456,7 +1457,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testParNewPrintHeapAtGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset83.txt");
+        File testFile = TestUtil.getFile("dataset83.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1476,7 +1477,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testParNewPrefixed() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset89.txt");
+        File testFile = TestUtil.getFile("dataset89.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1494,7 +1495,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testCmsSerialOldTriggerJvmtiEnvForceGarbageCollectionWithConcurrentModeInterrupted() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset90.txt");
+        File testFile = TestUtil.getFile("dataset90.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1516,7 +1517,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testCmsSerialOldTriggerMetadataGcThresholdWithConcurrentModeInterrupted() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset91.txt");
+        File testFile = TestUtil.getFile("dataset91.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1538,7 +1539,7 @@ public class TestCmsPreprocessAction {
      */
     @Test
     public void testParNewWithFlsStatistics() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset94.txt");
+        File testFile = TestUtil.getFile("dataset94.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1554,7 +1555,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testBeginningParNewWithNoParNewWithCmsConcurrentPreclean() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset105.txt");
+        File testFile = TestUtil.getFile("dataset105.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1576,7 +1577,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testUnknownWithCmsConcurrent() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset111.txt");
+        File testFile = TestUtil.getFile("dataset111.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1597,7 +1598,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testParNewCmsConcurrentOver3Lines() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset112.txt");
+        File testFile = TestUtil.getFile("dataset112.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1613,7 +1614,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testPrintPromotionFailure() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset115.txt");
+        File testFile = TestUtil.getFile("dataset115.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1627,7 +1628,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testPrintFLSStatistics2ParNewOver4Lines() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset117.txt");
+        File testFile = TestUtil.getFile("dataset117.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1643,7 +1644,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testCmsScavengeBeforeRemarkNoPrintGcDetails() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset120.txt");
+        File testFile = TestUtil.getFile("dataset120.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1655,7 +1656,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testParNewConcurrentModeFailureMixedAbortPrecleanDueToTime() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset121.txt");
+        File testFile = TestUtil.getFile("dataset121.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1671,7 +1672,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testParNewConcurrentModeFailureMixedConcurrentPreclean() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset122.txt");
+        File testFile = TestUtil.getFile("dataset122.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1687,7 +1688,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testParNewConcurrentModeFailureMixedConcurrentMark() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset123.txt");
+        File testFile = TestUtil.getFile("dataset123.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1703,7 +1704,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testCmsSerialOldConcurrentModeFailureMixedConcurrentMark() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset124.txt");
+        File testFile = TestUtil.getFile("dataset124.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1719,7 +1720,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testCmsConcurrentMixedApplicationConcurrentTime() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset135.txt");
+        File testFile = TestUtil.getFile("dataset135.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1739,7 +1740,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testCmsScavengeBeforeRemarkJdk8MixedHeapAtGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset136.txt");
+        File testFile = TestUtil.getFile("dataset136.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1755,7 +1756,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testCmsScavengeBeforeRemarkJMixedHeapAtGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset140.txt");
+        File testFile = TestUtil.getFile("dataset140.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1771,7 +1772,7 @@ public class TestCmsPreprocessAction {
 
     @Test
     public void testParNewMixedHeapAtGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset141.txt");
+        File testFile = TestUtil.getFile("dataset141.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

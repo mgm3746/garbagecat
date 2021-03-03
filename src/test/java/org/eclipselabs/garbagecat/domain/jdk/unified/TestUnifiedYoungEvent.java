@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -122,7 +123,7 @@ public class TestUnifiedYoungEvent {
 
     @Test
     public void testUnifiedYoungStandardLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset149.txt");
+        File testFile = TestUtil.getFile("dataset149.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -140,7 +141,7 @@ public class TestUnifiedYoungEvent {
 
     @Test
     public void testUnifiedYoungExplictGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset154.txt");
+        File testFile = TestUtil.getFile("dataset154.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

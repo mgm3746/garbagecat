@@ -1,0 +1,4 @@
+2016-10-12T09:50:19.025+0200: 98.150: [Full GC (Last ditch collection)  1196M->1118M(5120M), 4.4628626 secs][Eden: 0.0B(3072.0M)->0.0B(3072.0M) Survivors: 0.0B->0.0B Heap: 1196.3M(5120.0M)->1118.8M(5120.0M)], [Metaspace: 324984K->323866K(1511424K)] [Times: user=6.37 sys=0.00, real=4.46 secs]
+2016-10-12T09:50:23.488+0200: 102.614: [GC concurrent-mark-abort]
+2016-10-12T09:50:23.496+0200: 102.621: [Full GC (JvmtiEnv ForceGarbageCollection)  1124M->1118M(5120M), 3.8954775 secs][Eden: 6144.0K(3072.0M)->0.0B(3072.0M) Survivors: 0.0B->0.0B Heap: 1124.8M(5120.0M)->1118.9M(5120.0M)], [Metaspace: 323874K->323874K(1511424K)] [Times: user=5.87 sys=0.01, real=3.89 secs]
+2016-10-12T09:51:21.202+0200: 160.328: [GC pause (Metadata GC Threshold) (young) (initial-mark), 0.0534873 secs][Eden: 12.0M(3072.0M)->0.0B(3066.0M) Survivors: 0.0B->6144.0K Heap: 1130.9M(5120.0M)->1123.9M(5120.0M)] [Times: user=0.09 sys=0.00, real=0.05 secs]

@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -298,7 +299,7 @@ public class TestG1MixedPauseEvent {
      */
     @Test
     public void testPreprocessingTriggerToSpaceExhausted() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset99.txt");
+        File testFile = TestUtil.getFile("dataset99.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -318,7 +319,7 @@ public class TestG1MixedPauseEvent {
      */
     @Test
     public void testPreprocessingDoubleTriggerG1EvacuationPauseToSpaceExhausted() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset102.txt");
+        File testFile = TestUtil.getFile("dataset102.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -338,7 +339,7 @@ public class TestG1MixedPauseEvent {
      */
     @Test
     public void testPreprocessingDoubleTriggerHumongousAllocationToSpaceExhausted() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset133.txt");
+        File testFile = TestUtil.getFile("dataset133.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

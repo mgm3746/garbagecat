@@ -1,0 +1,4 @@
+2016-10-31T12:40:32.520-0500: 262372.344: [CMS-concurrent-mark-start]
+2016-10-31T12:40:32.521-0500: 262372.344: [Full GC (JvmtiEnv ForceGarbageCollection) 2016-10-31T12:40:32.521-0500: 262372.344: [CMS (concurrent mode interrupted): 49392K->48780K(1756416K), 0.2620228 secs] 49392K->48780K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.2624794 secs] [Times: user=0.26 sys=0.00, real=0.27 secs]
+2016-10-31T12:40:32.603-0500: 262372.426: [CMS-concurrent-mark: 0.082/0.083 secs] [Times: user=0.08 sys=0.00, real=0.09 secs]
+2016-10-31T12:40:34.918-0500: 262374.741: [Full GC (Metadata GC Threshold) 2016-10-31T12:40:34.918-0500: 262374.741: [CMS: 48780K->45514K(1756416K), 0.1948760 secs] 51366K->45514K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.1954497 secs] [Times: user=0.20 sys=0.00, real=0.20 secs]

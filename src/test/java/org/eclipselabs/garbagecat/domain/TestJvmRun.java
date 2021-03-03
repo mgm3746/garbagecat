@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
@@ -202,7 +203,7 @@ public class TestJvmRun {
 
     @Test
     public void testSummaryStatsParallel() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset1.txt");
+        File testFile = TestUtil.getFile("dataset1.txt");
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -228,7 +229,7 @@ public class TestJvmRun {
 
     @Test
     public void testSummaryStatsParNew() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset2.txt");
+        File testFile = TestUtil.getFile("dataset2.txt");
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -255,7 +256,7 @@ public class TestJvmRun {
      */
     @Test
     public void testParseLoggingWithApplicationTime() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset3.txt");
+        File testFile = TestUtil.getFile("dataset3.txt");
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -281,7 +282,7 @@ public class TestJvmRun {
      */
     @Test
     public void testSplitParallelOldCompactingEventLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset28.txt");
+        File testFile = TestUtil.getFile("dataset28.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -303,7 +304,7 @@ public class TestJvmRun {
      */
     @Test
     public void testCombinedCmsConcurrentApplicationConcurrentTimeLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset19.txt");
+        File testFile = TestUtil.getFile("dataset19.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -319,7 +320,7 @@ public class TestJvmRun {
      */
     @Test
     public void testCombinedCmsConcurrentApplicationStoppedTimeLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset27.txt");
+        File testFile = TestUtil.getFile("dataset27.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -334,7 +335,7 @@ public class TestJvmRun {
 
     @Test
     public void testRemoveBlankLines() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset20.txt");
+        File testFile = TestUtil.getFile("dataset20.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -352,7 +353,7 @@ public class TestJvmRun {
      */
     @Test
     public void testDateStampPreprocessActionLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset25.txt");
+        File testFile = TestUtil.getFile("dataset25.txt");
         GcManager gcManager = new GcManager();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 2010);
@@ -372,7 +373,7 @@ public class TestJvmRun {
 
     @Test
     public void testSummaryStatsStoppedTime() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset41.txt");
+        File testFile = TestUtil.getFile("dataset41.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -402,7 +403,7 @@ public class TestJvmRun {
 
     @Test
     public void testSummaryStatsUnifiedStoppedTime() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset182.txt");
+        File testFile = TestUtil.getFile("dataset182.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -442,7 +443,7 @@ public class TestJvmRun {
      */
     @Test
     public void testExplicitGcAnalsysisParallelSerialOld() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset56.txt");
+        File testFile = TestUtil.getFile("dataset56.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -464,7 +465,7 @@ public class TestJvmRun {
      */
     @Test
     public void testHeaders() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset59.txt");
+        File testFile = TestUtil.getFile("dataset59.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -488,7 +489,7 @@ public class TestJvmRun {
      */
     @Test
     public void testPrintTenuringDistributionPreprocessActionNoSpaceAfterGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset66.txt");
+        File testFile = TestUtil.getFile("dataset66.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -503,7 +504,7 @@ public class TestJvmRun {
      */
     @Test
     public void testApplicationStoppedTimeNoTimestamps() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset96.txt");
+        File testFile = TestUtil.getFile("dataset96.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -530,7 +531,7 @@ public class TestJvmRun {
      */
     @Test
     public void testSummaryStatsPartialLog() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset98.txt");
+        File testFile = TestUtil.getFile("dataset98.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -562,7 +563,7 @@ public class TestJvmRun {
      */
     @Test
     public void testStoppedTime() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset103.txt");
+        File testFile = TestUtil.getFile("dataset103.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -593,7 +594,7 @@ public class TestJvmRun {
      */
     @Test
     public void testStoppedTimeWithoutGcEvents() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset108.txt");
+        File testFile = TestUtil.getFile("dataset108.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -607,7 +608,7 @@ public class TestJvmRun {
      */
     @Test
     public void testPrintGcApplicationConcurrentTimeAnalysis() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset104.txt");
+        File testFile = TestUtil.getFile("dataset104.txt");
         Jvm jvm = new Jvm(null, null);
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -616,4 +617,5 @@ public class TestJvmRun {
         assertTrue(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME));
     }
+
 }

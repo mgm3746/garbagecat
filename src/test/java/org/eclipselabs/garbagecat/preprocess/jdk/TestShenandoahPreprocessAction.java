@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -708,7 +709,7 @@ public class TestShenandoahPreprocessAction {
 
     @Test
     public void testUnifiedPreprocessingInitialMark() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset160.txt");
+        File testFile = TestUtil.getFile("dataset160.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -722,7 +723,7 @@ public class TestShenandoahPreprocessAction {
 
     @Test
     public void testUnifiedPreprocessingFinalMark() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset161.txt");
+        File testFile = TestUtil.getFile("dataset161.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -736,7 +737,7 @@ public class TestShenandoahPreprocessAction {
 
     @Test
     public void testUnifiedPreprocessingFinalEvac() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset162.txt");
+        File testFile = TestUtil.getFile("dataset162.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -750,7 +751,7 @@ public class TestShenandoahPreprocessAction {
 
     @Test
     public void testUnifiedPreprocessingInitUpdate() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset163.txt");
+        File testFile = TestUtil.getFile("dataset163.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -764,7 +765,7 @@ public class TestShenandoahPreprocessAction {
 
     @Test
     public void testUnifiedPreprocessingFinalUpdate() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset164.txt");
+        File testFile = TestUtil.getFile("dataset164.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -778,7 +779,7 @@ public class TestShenandoahPreprocessAction {
 
     @Test
     public void testPreprocessingConcurrent() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset190.txt");
+        File testFile = TestUtil.getFile("dataset190.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -792,7 +793,7 @@ public class TestShenandoahPreprocessAction {
 
     @Test
     public void testPreprocessingConcurrentWithMetaspace() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset191.txt");
+        File testFile = TestUtil.getFile("dataset191.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -806,7 +807,7 @@ public class TestShenandoahPreprocessAction {
 
     @Test
     public void testPreprocessingConcurrentCancellingGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset194.txt");
+        File testFile = TestUtil.getFile("dataset194.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

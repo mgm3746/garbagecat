@@ -1,0 +1,1 @@
+[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: 974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms User=0.01s Sys=0.01s Real=0.01s

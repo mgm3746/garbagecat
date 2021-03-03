@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.service.GcManager;
@@ -924,7 +925,7 @@ public class TestUnifiedPreprocessAction {
 
     @Test
     public void testPreprocessingG1YoungPauseNormalCollection() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset155.txt");
+        File testFile = TestUtil.getFile("dataset155.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -938,7 +939,7 @@ public class TestUnifiedPreprocessAction {
 
     @Test
     public void testPreprocessingG1Remark() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset156.txt");
+        File testFile = TestUtil.getFile("dataset156.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -952,7 +953,7 @@ public class TestUnifiedPreprocessAction {
 
     @Test
     public void testPreprocessingG1Cleanup() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset157.txt");
+        File testFile = TestUtil.getFile("dataset157.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -966,7 +967,7 @@ public class TestUnifiedPreprocessAction {
 
     @Test
     public void testPreprocessingG1YoungPauseNormalTriggerGcLockerWithDatestamps() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset170.txt");
+        File testFile = TestUtil.getFile("dataset170.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -980,7 +981,7 @@ public class TestUnifiedPreprocessAction {
 
     @Test
     public void testPreprocessingSerialNew() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset171.txt");
+        File testFile = TestUtil.getFile("dataset171.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -994,7 +995,7 @@ public class TestUnifiedPreprocessAction {
 
     @Test
     public void testPreprocessingSerialOld() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset172.txt");
+        File testFile = TestUtil.getFile("dataset172.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1008,7 +1009,7 @@ public class TestUnifiedPreprocessAction {
 
     @Test
     public void testPreprocessingSerialOldTriggerErgonomics() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset174.txt");
+        File testFile = TestUtil.getFile("dataset174.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1022,7 +1023,7 @@ public class TestUnifiedPreprocessAction {
 
     @Test
     public void testPreprocessingParallelScavengeSerialOld() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset173.txt");
+        File testFile = TestUtil.getFile("dataset173.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1036,7 +1037,7 @@ public class TestUnifiedPreprocessAction {
 
     @Test
     public void testPreprocessingParallelScavengeParallelCompactingOld() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset175.txt");
+        File testFile = TestUtil.getFile("dataset175.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1050,7 +1051,7 @@ public class TestUnifiedPreprocessAction {
 
     @Test
     public void testPreprocessingParallelCompactingOld() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset176.txt");
+        File testFile = TestUtil.getFile("dataset176.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1065,7 +1066,7 @@ public class TestUnifiedPreprocessAction {
 
     @Test
     public void testPreprocessingParNew() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset177.txt");
+        File testFile = TestUtil.getFile("dataset177.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1079,7 +1080,7 @@ public class TestUnifiedPreprocessAction {
 
     @Test
     public void testPreprocessingCms() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset178.txt");
+        File testFile = TestUtil.getFile("dataset178.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1102,7 +1103,7 @@ public class TestUnifiedPreprocessAction {
      */
     @Test
     public void testPreprocessingG1Unecessarily() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset186.txt");
+        File testFile = TestUtil.getFile("dataset186.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

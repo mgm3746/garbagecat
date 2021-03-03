@@ -1,0 +1,1 @@
+5.293: [GC pause (GCLocker Initiated GC) (young), 0.0176868 secs][Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: 415.0M(30.0G)->313.0M(30.0G)] [Times: user=0.01 sys=0.00, real=0.02 secs]

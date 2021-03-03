@@ -12,13 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.service;
 
-import org.junit.Test;
-
-import static org.junit.Assert.fail;
-
 import java.io.File;
 
-import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.TestUtil;
+import org.junit.Test;
 
 
 
@@ -34,7 +31,9 @@ public class TestGcManager {
      */
     @Test
     public void testNullPointerExceptionNotRaised() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset31.txt");
-        new GcManager().preprocess(testFile, null);
+        File testFile = TestUtil.getFile("dataset31.txt");
+        GcManager gcManager = new GcManager();
+        gcManager.preprocess(testFile, null);
     }
+
 }

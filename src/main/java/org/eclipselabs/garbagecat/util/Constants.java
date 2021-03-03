@@ -12,8 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util;
 
-import java.math.BigDecimal;
-
 /**
  * Global constants.
  * 
@@ -21,6 +19,57 @@ import java.math.BigDecimal;
  * 
  */
 public class Constants {
+
+	public static enum Size {
+
+		BYTES("B") {
+			@Override public double toBytes(double v) { return v; }
+			@Override public double toKiloBytes(double v) { return v / K; }
+			@Override public double toMegaBytes(double v) { return v / K / K; }
+			@Override public double toGigaBytes(double v) { return v / K / K / K; }
+			@Override public double convertTo(double v, Size s) { return s.toBytes(v); }
+		},
+		KILOBYTES("K") {
+			@Override public double toBytes(double v) { return v * K; }
+			@Override public double toKiloBytes(double v) { return v; }
+			@Override public double toMegaBytes(double v) { return v / K; }
+			@Override public double toGigaBytes(double v) { return v / K / K; }
+			@Override public double convertTo(double v, Size s) { return s.toKiloBytes(v); }
+		},
+		MEGABYTES("M") {
+			@Override public double toBytes(double v) { return v * K * K; }
+			@Override public double toKiloBytes(double v) { return v * K; }
+			@Override public double toMegaBytes(double v) { return v; }
+			@Override public double toGigaBytes(double v) { return v / K; }
+			@Override public double convertTo(double v, Size s) { return s.toMegaBytes(v); }
+		},
+		GIGABYTES("G") {
+			@Override public double toBytes(double v) { return v * K * K * K; }
+			@Override public double toKiloBytes(double v) { return v * K * K; }
+			@Override public double toMegaBytes(double v) { return v * K; }
+			@Override public double toGigaBytes(double v) { return v; }
+			@Override public double convertTo(double v, Size s) { return s.toGigaBytes(v); }
+		};
+
+		private static final int K = 1024;
+
+		private String name;
+
+		public abstract double toBytes(double v);
+		public abstract double toKiloBytes(double v);
+		public abstract double toMegaBytes(double v);
+		public abstract double toGigaBytes(double v);
+		public abstract double convertTo(double v, Size s);
+
+		private Size(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+	}
 
     /**
      * The threshold for the time (seconds) for the first log entry for a GC log to be considered complete. First log
@@ -39,21 +88,6 @@ public class Constants {
      * The ratio of GC time vs. Stopped time for reporting excessive Stopped time.
      */
     public static final int GC_STOPPED_RATIO_THRESHOLD = 80;
-
-    /**
-     * kilobyte
-     */
-    public static final BigDecimal KILOBYTE = new BigDecimal("1024");
-
-    /**
-     * megabyte
-     */
-    public static final BigDecimal MEGABYTE = new BigDecimal("1048576");
-
-    /**
-     * gigabyte
-     */
-    public static final BigDecimal GIGABYTE = new BigDecimal("1073741824");
 
     /**
      * Help command line short option.
@@ -170,6 +204,6 @@ public class Constants {
      * Make default constructor private so the class cannot be instantiated.
      */
     private Constants() {
-
+    	super();
     }
 }

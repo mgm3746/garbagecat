@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -1583,7 +1584,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1YoungPauseLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset32.txt");
+        File testFile = TestUtil.getFile("dataset32.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1600,7 +1601,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1EvacuationPauseLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset34.txt");
+        File testFile = TestUtil.getFile("dataset34.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1616,7 +1617,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1YoungPauseWithGCLockerInitiatedGCLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset35.txt");
+        File testFile = TestUtil.getFile("dataset35.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1635,7 +1636,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1FullGCLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset36.txt");
+        File testFile = TestUtil.getFile("dataset36.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1655,7 +1656,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionYoungInitialMarkLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset37.txt");
+        File testFile = TestUtil.getFile("dataset37.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1671,7 +1672,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1InitialMarkWithCodeRootLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset43.txt");
+        File testFile = TestUtil.getFile("dataset43.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1687,7 +1688,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionRemarkLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset38.txt");
+        File testFile = TestUtil.getFile("dataset38.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1703,7 +1704,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionMixedPauseLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset39.txt");
+        File testFile = TestUtil.getFile("dataset39.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1719,7 +1720,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionCleanupLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset40.txt");
+        File testFile = TestUtil.getFile("dataset40.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1735,7 +1736,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionConcurrentLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset44.txt");
+        File testFile = TestUtil.getFile("dataset44.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1753,7 +1754,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionToSpaceExhaustedLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset45.txt");
+        File testFile = TestUtil.getFile("dataset45.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1771,7 +1772,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionMixedPauseNoTriggerLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset46.txt");
+        File testFile = TestUtil.getFile("dataset46.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1787,7 +1788,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionYoungConcurrentLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset47.txt");
+        File testFile = TestUtil.getFile("dataset47.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1805,7 +1806,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1YoungPauseWithG1ErgonomicsLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset48.txt");
+        File testFile = TestUtil.getFile("dataset48.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1823,7 +1824,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1YoungInitialMarkWithG1ErgonomicsLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset49.txt");
+        File testFile = TestUtil.getFile("dataset49.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1839,7 +1840,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1YoungPauseTriggerToSpaceExhaustedWithG1ErgonomicsLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset50.txt");
+        File testFile = TestUtil.getFile("dataset50.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1857,7 +1858,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1YoungPauseWithG1ErgonomicsLogging2() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset51.txt");
+        File testFile = TestUtil.getFile("dataset51.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1875,7 +1876,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1YoungPauseWithG1ErgonomicsLogging3() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset52.txt");
+        File testFile = TestUtil.getFile("dataset52.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1893,7 +1894,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1YoungInitialMarkWithTriggerAndG1ErgonomicsLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset53.txt");
+        File testFile = TestUtil.getFile("dataset53.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1911,7 +1912,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1YoungPauseWithG1ErgonomicsLogging4() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset54.txt");
+        File testFile = TestUtil.getFile("dataset54.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1929,7 +1930,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1YoungPauseWithG1ErgonomicsLogging5() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset55.txt");
+        File testFile = TestUtil.getFile("dataset55.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1947,7 +1948,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1PreprocessActionG1YoungPauseWithG1ErgonomicsLogging6() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset57.txt");
+        File testFile = TestUtil.getFile("dataset57.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1969,7 +1970,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1CleanupG1InitialMark() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset62.txt");
+        File testFile = TestUtil.getFile("dataset62.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1989,7 +1990,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testRemarkWithFinalizeMarkingAndUnloading() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset63.txt");
+        File testFile = TestUtil.getFile("dataset63.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2005,7 +2006,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testConcurrentStringDeduplicatonLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset64.txt");
+        File testFile = TestUtil.getFile("dataset64.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2021,7 +2022,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1Full3Lines() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset65.txt");
+        File testFile = TestUtil.getFile("dataset65.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2041,7 +2042,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1FullLastDitchCollectionTrigger() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset74.txt");
+        File testFile = TestUtil.getFile("dataset74.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2061,7 +2062,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1FullJvmTiForcedGarbageCollectionTrigger() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset75.txt");
+        File testFile = TestUtil.getFile("dataset75.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2083,7 +2084,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1ConcurrentMissingTimestamp() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset76.txt");
+        File testFile = TestUtil.getFile("dataset76.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2105,7 +2106,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1ConcurrentMissingTimestampExceptColon() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset77.txt");
+        File testFile = TestUtil.getFile("dataset77.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2127,7 +2128,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1FullMissingTimestamp() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset78.txt");
+        File testFile = TestUtil.getFile("dataset78.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2149,7 +2150,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1FullMissingTimestampExceptColon() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset79.txt");
+        File testFile = TestUtil.getFile("dataset79.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2171,7 +2172,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1FullPrependedColon() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset80.txt");
+        File testFile = TestUtil.getFile("dataset80.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2193,7 +2194,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1FullWithPrintClassHistogram() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset93.txt");
+        File testFile = TestUtil.getFile("dataset93.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2218,7 +2219,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1YoungPauseNoSizeDetails() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset97.txt");
+        File testFile = TestUtil.getFile("dataset97.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2236,7 +2237,7 @@ public class TestG1PreprocessAction {
      */
     @Test
     public void testG1YoungPauseEvacuationFailure() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset100.txt");
+        File testFile = TestUtil.getFile("dataset100.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2252,7 +2253,7 @@ public class TestG1PreprocessAction {
 
     @Test
     public void testFullGcMixedConcurrent() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset116.txt");
+        File testFile = TestUtil.getFile("dataset116.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2273,7 +2274,7 @@ public class TestG1PreprocessAction {
 
     @Test
     public void testG1YoungInitialMark() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset127.txt");
+        File testFile = TestUtil.getFile("dataset127.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2285,7 +2286,7 @@ public class TestG1PreprocessAction {
 
     @Test
     public void testFullMixedConcurrentScrambledDateTimestamps() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset134.txt");
+        File testFile = TestUtil.getFile("dataset134.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2303,7 +2304,7 @@ public class TestG1PreprocessAction {
 
     @Test
     public void testSummarizeRSetStatsPreprocessing() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset139.txt");
+        File testFile = TestUtil.getFile("dataset139.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2319,7 +2320,7 @@ public class TestG1PreprocessAction {
 
     @Test
     public void testPreprocessingWithCommas() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset143.txt");
+        File testFile = TestUtil.getFile("dataset143.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2333,7 +2334,7 @@ public class TestG1PreprocessAction {
 
     @Test
     public void testPreprocessingYoungMixedConcurrent() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset144.txt");
+        File testFile = TestUtil.getFile("dataset144.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2349,7 +2350,7 @@ public class TestG1PreprocessAction {
 
     @Test
     public void testPreprocessingFullMixedConcurrent() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset145.txt");
+        File testFile = TestUtil.getFile("dataset145.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2365,7 +2366,7 @@ public class TestG1PreprocessAction {
 
     @Test
     public void testPreprocessingYoungMixedErgonomics() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset180.txt");
+        File testFile = TestUtil.getFile("dataset180.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

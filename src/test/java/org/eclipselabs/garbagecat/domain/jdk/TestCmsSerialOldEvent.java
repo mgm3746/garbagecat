@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
+import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -1011,7 +1012,7 @@ public class TestCmsSerialOldEvent {
 
     @Test
     public void testSplitParNewPromotionFailedCmsConcurrentModeFailure() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset5.txt");
+        File testFile = TestUtil.getFile("dataset5.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1036,7 +1037,7 @@ public class TestCmsSerialOldEvent {
      */
     @Test
     public void testSplitPrintHeapAtGcParNewConcurrentModeFailureEventLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset7.txt");
+        File testFile = TestUtil.getFile("dataset7.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1056,7 +1057,7 @@ public class TestCmsSerialOldEvent {
 
     @Test
     public void testSplitParNewPromotionFailedCmsConcurrentModeFailurePermData() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset12.txt");
+        File testFile = TestUtil.getFile("dataset12.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1074,7 +1075,7 @@ public class TestCmsSerialOldEvent {
 
     @Test
     public void testSplitParNewCmsConcurrentModeFailurePermData() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset13.txt");
+        File testFile = TestUtil.getFile("dataset13.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1090,7 +1091,7 @@ public class TestCmsSerialOldEvent {
 
     @Test
     public void testSplit3LinesParNewPromotionFailedCmsConcurrentModeFailurePermDataEventMarkLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset16.txt");
+        File testFile = TestUtil.getFile("dataset16.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1112,7 +1113,7 @@ public class TestCmsSerialOldEvent {
      */
     @Test
     public void testSplit3LinesParNewConcurrentModeFailureEventLogging() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset29.txt");
+        File testFile = TestUtil.getFile("dataset29.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1130,7 +1131,7 @@ public class TestCmsSerialOldEvent {
 
     @Test
     public void testParNewConcurrentModeFailureMixedCmsConcurrentJdk8() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset70.txt");
+        File testFile = TestUtil.getFile("dataset70.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1154,7 +1155,7 @@ public class TestCmsSerialOldEvent {
      */
     @Test
     public void testHeapInspectionInitiatedGcAnalysis() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset72.txt");
+        File testFile = TestUtil.getFile("dataset72.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1176,7 +1177,7 @@ public class TestCmsSerialOldEvent {
      */
     @Test
     public void testParNewPromotionFailedCmsSerialOldPermDataPrintClassHistogramTriggerAcross6Lines() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset82.txt");
+        File testFile = TestUtil.getFile("dataset82.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -1198,7 +1199,7 @@ public class TestCmsSerialOldEvent {
      */
     @Test
     public void testLogLineTriggerHeapDumpedInitiatedGc() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset92.txt");
+        File testFile = TestUtil.getFile("dataset92.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
