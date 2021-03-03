@@ -22,24 +22,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -50,7 +37,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
-import org.json.JSONObject;
 
 /**
  * <p>
@@ -68,29 +54,6 @@ public class Main {
      */
     public static final int REJECT_LIMIT = 1000;
 
-    private static Options options;
-
-    static {
-        // Declare command line options
-        options = new Options();
-        options.addOption(Constants.OPTION_HELP_SHORT, Constants.OPTION_HELP_LONG, false, "help");
-        options.addOption(Constants.OPTION_VERSION_SHORT, Constants.OPTION_VERSION_LONG, false, "version");
-        options.addOption(Constants.OPTION_LATEST_VERSION_SHORT, Constants.OPTION_LATEST_VERSION_LONG, false,
-                "latest version");
-        options.addOption(Constants.OPTION_JVMOPTIONS_SHORT, Constants.OPTION_JVMOPTIONS_LONG, true,
-                "JVM options used during JVM run");
-        options.addOption(Constants.OPTION_PREPROCESS_SHORT, Constants.OPTION_PREPROCESS_LONG, false,
-                "do preprocessing");
-        options.addOption(Constants.OPTION_STARTDATETIME_SHORT, Constants.OPTION_STARTDATETIME_LONG, true,
-                "JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS) required for handling datestamp-only logging");
-        options.addOption(Constants.OPTION_THRESHOLD_SHORT, Constants.OPTION_THRESHOLD_LONG, true,
-                "threshold (0-100) for throughput bottleneck reporting");
-        options.addOption(Constants.OPTION_REORDER_SHORT, Constants.OPTION_REORDER_LONG, false,
-                "reorder logging by timestamp");
-        options.addOption(Constants.OPTION_OUTPUT_SHORT, Constants.OPTION_OUTPUT_LONG, true,
-                "output file name (default " + Constants.OUTPUT_FILE_NAME + ")");
-    }
-
     /**
      * @param args
      *            The argument list includes one or more scope options followed by the name of the gc log file to
@@ -101,15 +64,15 @@ public class Main {
         CommandLine cmd = null;
 
         try {
-            cmd = parseOptions(args);
+            cmd = OptionsParser.parseOptions(args);
         } catch (ParseException pe) {
             System.out.println(pe.getMessage());
-            usage(options);
+            OptionsParser.usage();
         }
 
         if (cmd != null) {
             if (cmd.hasOption(Constants.OPTION_HELP_LONG)) {
-                usage(options);
+                OptionsParser.usage();
             } else {
 
                 // Determine JVM environment information.
@@ -172,52 +135,6 @@ public class Main {
                 createReport(jvmRun, outputFileName, version, latestVersion, logFileName);
             }
         }
-    }
-
-    /**
-     * Parse command line options.
-     * 
-     * @return
-     */
-    private static final CommandLine parseOptions(String[] args) throws ParseException {
-        CommandLineParser parser = new BasicParser();
-        CommandLine cmd = null;
-        // Allow user to just specify help or version.
-        if (args.length == 1 && (args[0].equals("-" + Constants.OPTION_HELP_SHORT)
-                || args[0].equals("--" + Constants.OPTION_HELP_LONG))) {
-            usage(options);
-        } else if (args.length == 1 && (args[0].equals("-" + Constants.OPTION_VERSION_SHORT)
-                || args[0].equals("--" + Constants.OPTION_VERSION_LONG))) {
-            System.out.println("Running garbagecat version: " + getVersion());
-        } else if (args.length == 1 && (args[0].equals("-" + Constants.OPTION_LATEST_VERSION_SHORT)
-                || args[0].equals("--" + Constants.OPTION_LATEST_VERSION_LONG))) {
-            System.out.println("Latest garbagecat version/tag: " + getLatestVersion());
-        } else if (args.length == 2 && (((args[0].equals("-" + Constants.OPTION_VERSION_SHORT)
-                || args[0].equals("--" + Constants.OPTION_VERSION_LONG))
-                && (args[1].equals("-" + Constants.OPTION_LATEST_VERSION_SHORT)
-                        || args[1].equals("--" + Constants.OPTION_LATEST_VERSION_LONG)))
-                || ((args[1].equals("-" + Constants.OPTION_VERSION_SHORT)
-                        || args[1].equals("--" + Constants.OPTION_VERSION_LONG))
-                        && (args[0].equals("-" + Constants.OPTION_LATEST_VERSION_SHORT)
-                                || args[0].equals("--" + Constants.OPTION_LATEST_VERSION_LONG))))) {
-            System.out.println("Running garbagecat version: " + getVersion());
-            System.out.println("Latest garbagecat version/tag: " + getLatestVersion());
-        } else {
-            cmd = parser.parse(options, args);
-            validateOptions(cmd);
-        }
-        return cmd;
-    }
-
-    /**
-     * Output usage help.
-     * 
-     * @param options
-     */
-    private static void usage(Options options) {
-        // Use the built in formatter class
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("garbagecat [OPTION]... [FILE]", options);
     }
 
     /**
@@ -297,10 +214,10 @@ public class Main {
                 bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);
                 if (version) {
                     bufferedWriter.write(
-                            "Running garbagecat version: " + getVersion() + System.getProperty("line.separator"));
+                            "Running garbagecat version: " + OptionsParser.getVersion() + System.getProperty("line.separator"));
                 }
                 if (latestVersion) {
-                    bufferedWriter.write("Latest garbagecat version/tag: " + getLatestVersion()
+                    bufferedWriter.write("Latest garbagecat version/tag: " + OptionsParser.getLatestVersion()
                             + System.getProperty("line.separator"));
                 }
             }
@@ -621,38 +538,4 @@ public class Main {
         }
     }
 
-    /**
-     * @return version string.
-     */
-    private static String getVersion() {
-        ResourceBundle rb = ResourceBundle.getBundle("META-INF/maven/garbagecat/garbagecat/pom");
-        return rb.getString("version");
-    }
-
-    /**
-     * @return version string.
-     */
-    private static String getLatestVersion() {
-        String url = "https://github.com/mgm3746/garbagecat/releases/latest";
-        String name = null;
-        try {
-            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-            httpClient = HttpClients.custom()
-                    .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-                    .build();
-            HttpGet request = new HttpGet(url);
-            request.addHeader("Accept", "application/json");
-            request.addHeader("content-type", "application/json");
-            HttpResponse result = httpClient.execute(request);
-            String json = EntityUtils.toString(result.getEntity(), "UTF-8");
-            JSONObject jsonObj = new JSONObject(json);
-            name = jsonObj.getString("tag_name");
-        }
-
-        catch (Exception ex) {
-            name = "Unable to retrieve";
-            ex.printStackTrace();
-        }
-        return name;
-    }
 }

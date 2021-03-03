@@ -16,8 +16,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.Method;
-
 import org.apache.commons.cli.CommandLine;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.junit.Rule;
@@ -33,10 +31,6 @@ public class TestMain {
 
 	@Test
     public void testShortOptions() throws Exception {
-        Class<?>[] argTypes = new Class[] { String[].class };
-		Method parseOptions = Main.class.getDeclaredMethod("parseOptions", argTypes);
-		// Make private method accessible
-		parseOptions.setAccessible(true);
 		// Method arguments
 		String[] args = new String[] { //
 				"-h", //
@@ -55,8 +49,7 @@ public class TestMain {
 				// Instead of a file, use a location sure to exist.
 				temporaryFolder.getRoot().getAbsolutePath() //
 		};
-		// Pass null object since parseOptions is static
-		CommandLine cmd = (CommandLine) parseOptions.invoke(null, (Object) args);
+		CommandLine cmd = OptionsParser.parseOptions(args);
 		assertNotNull(cmd);
 		assertTrue("'-" + Constants.OPTION_HELP_SHORT + "' is a valid option",
 		        cmd.hasOption(Constants.OPTION_HELP_SHORT));
@@ -80,10 +73,6 @@ public class TestMain {
 
    @Test
     public void testLongOptions() throws Exception {
-        Class<?>[] argTypes = new Class[] { String[].class };
-		Method parseOptions = Main.class.getDeclaredMethod("parseOptions", argTypes);
-		// Make private method accessible
-		parseOptions.setAccessible(true);
 		// Method arguments
 		String[] args = new String[] { //
 				"--help", //
@@ -102,8 +91,7 @@ public class TestMain {
 				// Instead of a file, use a location sure to exist.
 				temporaryFolder.getRoot().getAbsolutePath() //
 		};
-		// Pass null object since parseOptions is static
-		CommandLine cmd = (CommandLine) parseOptions.invoke(null, (Object) args);
+		CommandLine cmd = OptionsParser.parseOptions(args);
 		assertNotNull(cmd);
 		assertTrue("'-" + Constants.OPTION_HELP_LONG + "' is a valid option",
 		        cmd.hasOption(Constants.OPTION_HELP_LONG));
@@ -127,15 +115,9 @@ public class TestMain {
 
     @Test
     public void testShortHelpOption() throws Exception {
-        Class<?>[] argTypes = new Class[] { String[].class };
-		Method parseOptions = Main.class.getDeclaredMethod("parseOptions", argTypes);
-		// Make private method accessible
-		parseOptions.setAccessible(true);
 		// Method arguments
 		String[] args = new String[] {"-h" };
-		// Pass null object since parseOptions is static
-		parseOptions.invoke(null, (Object) args);
-		CommandLine cmd = (CommandLine) parseOptions.invoke(null, (Object) args);
+		CommandLine cmd = OptionsParser.parseOptions(args);
 		// CommandLine will be null if only the help option is passed in.
 		assertNull(cmd);
 		assertTrue("'-h' is a valid option", true);
@@ -143,15 +125,10 @@ public class TestMain {
 
     @Test
     public void testLongHelpOption() throws Exception {
-        Class<?>[] argTypes = new Class[] { String[].class };
-		Method parseOptions = Main.class.getDeclaredMethod("parseOptions", argTypes);
-		// Make private method accessible
-		parseOptions.setAccessible(true);
 		// Method arguments
 		String[] args = new String[] { "--help" };
 		// Pass null object since parseOptions is static
-		parseOptions.invoke(null, (Object) args);
-		CommandLine cmd = (CommandLine) parseOptions.invoke(null, (Object) args);
+		CommandLine cmd = OptionsParser.parseOptions(args);
 		// CommandLine will be null if only the help option is passed in.
 		assertNull(cmd);
 		assertTrue("'--help' is a valid option", true);
