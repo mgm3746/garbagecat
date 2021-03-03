@@ -72,7 +72,7 @@ public class Constants {
 		public static Size forUnit(char unit) {
 			String cc = String.valueOf(unit);
 			for (Size size : values()) {
-				if (size.getName().equals(cc)) {
+				if (size.getName().equalsIgnoreCase(cc)) {
 					return size;
 				}
 			}
