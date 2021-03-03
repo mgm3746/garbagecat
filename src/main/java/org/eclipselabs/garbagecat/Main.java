@@ -107,10 +107,7 @@ public class Main {
                 }
 
                 // Allow logging to be reordered?
-                boolean reorder = false;
-                if (cmd.hasOption(Constants.OPTION_REORDER_LONG)) {
-                    reorder = true;
-                }
+                boolean reorder = cmd.hasOption(Constants.OPTION_REORDER_LONG);
 
                 // Store garbage collection logging in data store.
                 gcManager.store(logFile, reorder);
@@ -118,10 +115,10 @@ public class Main {
                 // Create report
                 Jvm jvm = new Jvm(jvmOptions, jvmStartDate);
                 // Determine report options
-                int throughputThreshold = Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
-                if (cmd.hasOption(Constants.OPTION_THRESHOLD_LONG)) {
-                    throughputThreshold = Integer.parseInt(cmd.getOptionValue(Constants.OPTION_THRESHOLD_SHORT));
-                }
+				int throughputThreshold = cmd.hasOption(Constants.OPTION_THRESHOLD_LONG)
+						? Integer.parseInt(cmd.getOptionValue(Constants.OPTION_THRESHOLD_SHORT))
+						: Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
+
                 JvmRun jvmRun = gcManager.getJvmRun(jvm, throughputThreshold);
                 String outputFileName;
                 if (cmd.hasOption(Constants.OPTION_OUTPUT_LONG)) {
