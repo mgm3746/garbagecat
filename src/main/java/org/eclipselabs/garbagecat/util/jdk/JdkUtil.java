@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
-import static org.eclipselabs.garbagecat.util.Constants.Size.BYTES;
+import static org.eclipselabs.garbagecat.Memory.Unit.BYTES;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.Memory.Unit;
 import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
 import org.eclipselabs.garbagecat.domain.BlankLineEvent;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
@@ -101,7 +102,6 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UsingParallelEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingSerialEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingShenandoahEvent;
 import org.eclipselabs.garbagecat.util.Constants;
-import org.eclipselabs.garbagecat.util.Constants.Size;
 import org.eclipselabs.garbagecat.util.GcUtil;
 
 /**
@@ -882,14 +882,14 @@ public final class JdkUtil {
         String regex = "(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?";
 
         String value = null;
-        Size unit = BYTES;
+        Unit unit = BYTES;
 
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(size);
         if (matcher.find()) {
             value = matcher.group(1);
             if (matcher.group(2) != null) {
-                unit = Size.forUnit(matcher.group(2).charAt(0));
+                unit = Unit.forUnit(matcher.group(2).charAt(0));
             }
         }
 

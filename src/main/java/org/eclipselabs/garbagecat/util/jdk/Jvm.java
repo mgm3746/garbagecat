@@ -12,7 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
-import static org.eclipselabs.garbagecat.util.Constants.Size.MEGABYTES;
+import static org.eclipselabs.garbagecat.Memory.Unit.BYTES;
+import static org.eclipselabs.garbagecat.Memory.Unit.MEGABYTES;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,6 +22,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.eclipselabs.garbagecat.Memory;
 
 /**
  * JVM environment information
@@ -1018,12 +1021,9 @@ public class Jvm {
     /**
      * @return The gc log file size in bytes, or 0 if not set.
      */
-    public long getGcLogFileSizeBytes() {
-        long gcLogFileSizeBytes = 0;
-        if (getGcLogFileSizeValue() != null) {
-            gcLogFileSizeBytes = JdkUtil.convertOptionSizeToBytes(getGcLogFileSizeValue());
-        }
-        return gcLogFileSizeBytes;
+    public Memory getGcLogFileSizeBytes() {
+		return getGcLogFileSizeValue() == null ? Memory.ZERO
+				: new Memory(JdkUtil.convertOptionSizeToBytes(getGcLogFileSizeValue()), BYTES);
     }
 
     /**

@@ -12,8 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
-import static org.eclipselabs.garbagecat.util.Constants.Size.GIGABYTES;
-import static org.eclipselabs.garbagecat.util.Constants.Size.MEGABYTES;
+import static org.eclipselabs.garbagecat.Memory.megabytes;
+import static org.eclipselabs.garbagecat.Memory.Unit.GIGABYTES;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -908,7 +908,7 @@ public class JvmRun {
 
         // Check if log file size is small
         if (jvm.getGcLogFileSize() != null) {
-            if (jvm.getGcLogFileSizeBytes() < MEGABYTES.toBytes(5)) {
+            if (jvm.getGcLogFileSizeBytes().lessThan(megabytes(5))) {
                 analysis.add(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL);
             }
         }

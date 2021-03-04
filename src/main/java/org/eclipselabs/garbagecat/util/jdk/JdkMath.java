@@ -16,8 +16,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.eclipselabs.garbagecat.Memory;
+import org.eclipselabs.garbagecat.Memory.Unit;
 import org.eclipselabs.garbagecat.domain.TimesData;
-import org.eclipselabs.garbagecat.util.Constants.Size;
 
 /**
  * Math utility methods and constants for OpenJDK and Oracle JDK.
@@ -198,7 +198,7 @@ public final class JdkMath {
 	}
 
 	public static Memory convertSizeToKilobytes(double size, char units) {
-		return new Memory(BigDecimal.valueOf(Size.forUnit(units).toKiloBytes(size)).setScale(0, RoundingMode.HALF_EVEN).longValue(), Size.KILOBYTES);
+		return new Memory(BigDecimal.valueOf(Unit.forUnit(units).toKiloBytes(size)).setScale(0, RoundingMode.HALF_EVEN).longValue(), Unit.KILOBYTES);
 		
 	}
 

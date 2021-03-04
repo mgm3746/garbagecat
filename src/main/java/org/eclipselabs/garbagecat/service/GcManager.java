@@ -13,7 +13,7 @@
 package org.eclipselabs.garbagecat.service;
 
 import static org.eclipselabs.garbagecat.Memory.kilobytes;
-import static org.eclipselabs.garbagecat.util.Constants.Size.KILOBYTES;
+import static org.eclipselabs.garbagecat.Memory.Unit.KILOBYTES;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
