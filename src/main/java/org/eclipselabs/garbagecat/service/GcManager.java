@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipselabs.garbagecat.Main;
+import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
@@ -755,17 +756,17 @@ public class GcManager {
                         jvmDao.addAnalysis(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED);
                     }
                 } else if (event instanceof ShenandoahConcurrentEvent) {
-                    if (((CombinedData) event).getCombinedOccupancyInit() > jvmDao.getMaxHeapOccupancyNonBlocking()) {
-                        jvmDao.setMaxHeapOccupancyNonBlocking(((CombinedData) event).getCombinedOccupancyInit());
+                    if (greater(((CombinedData) event).getCombinedOccupancyInit(), jvmDao.getMaxHeapOccupancyNonBlocking())) {
+                        jvmDao.setMaxHeapOccupancyNonBlocking((int) ((CombinedData) event).getCombinedOccupancyInit().getKilobytes());
                     }
-                    if (((CombinedData) event).getCombinedSpace() > jvmDao.getMaxHeapSpaceNonBlocking()) {
-                        jvmDao.setMaxHeapSpaceNonBlocking(((CombinedData) event).getCombinedSpace());
+                    if (greater(((CombinedData) event).getCombinedSpace(), jvmDao.getMaxHeapSpaceNonBlocking())) {
+                        jvmDao.setMaxHeapSpaceNonBlocking((int) ((CombinedData) event).getCombinedSpace().getKilobytes());
                     }
-                    if (((PermMetaspaceData) event).getPermOccupancyInit() > jvmDao.getMaxPermOccupancyNonBlocking()) {
-                        jvmDao.setMaxPermOccupancyNonBlocking(((PermMetaspaceData) event).getPermOccupancyInit());
+                    if (greater(((PermMetaspaceData) event).getPermOccupancyInit(), jvmDao.getMaxPermOccupancyNonBlocking())) {
+                        jvmDao.setMaxPermOccupancyNonBlocking((int) ((PermMetaspaceData) event).getPermOccupancyInit().getKilobytes());
                     }
-                    if (((PermMetaspaceData) event).getPermSpace() > jvmDao.getMaxPermSpaceNonBlocking()) {
-                        jvmDao.setMaxPermSpaceNonBlocking(((PermMetaspaceData) event).getPermSpace());
+                    if (greater(((PermMetaspaceData) event).getPermSpace(), jvmDao.getMaxPermSpaceNonBlocking())) {
+                        jvmDao.setMaxPermSpaceNonBlocking((int) ((PermMetaspaceData) event).getPermSpace().getKilobytes());
                     }
                 } else if (event instanceof UnknownEvent) {
                     // Don't count reportable events with datestamp only as unidentified
@@ -833,6 +834,10 @@ public class GcManager {
         }
 
     }
+
+	private static boolean greater(Memory memory, int value) {
+		return memory != null && memory.getKilobytes() > value;
+	}
 
     /**
      * Determine <code>BlockingEvent</code>s where throughput since last event does not meet the throughput goal.
@@ -920,11 +925,11 @@ public class GcManager {
         jvmRun.getJvm().setVersion(jvmDao.getVersion());
         jvmRun.setFirstGcEvent(jvmDao.getFirstGcEvent());
         jvmRun.setLastGcEvent(jvmDao.getLastGcEvent());
-        jvmRun.setMaxYoungSpace(jvmDao.getMaxYoungSpace());
-        jvmRun.setMaxOldSpace(jvmDao.getMaxOldSpace());
-        jvmRun.setMaxHeapSpace(jvmDao.getMaxHeapSpace());
-        jvmRun.setMaxHeapOccupancy(jvmDao.getMaxHeapOccupancy());
-        jvmRun.setMaxHeapAfterGc(jvmDao.getMaxHeapAfterGc());
+        jvmRun.setMaxYoungSpace(Memory.kilobytes(jvmDao.getMaxYoungSpace()));
+        jvmRun.setMaxOldSpace(Memory.kilobytes(jvmDao.getMaxOldSpace()));
+        jvmRun.setMaxHeapSpace(Memory.kilobytes(jvmDao.getMaxHeapSpace()));
+        jvmRun.setMaxHeapOccupancy(Memory.kilobytes(jvmDao.getMaxHeapOccupancy()));
+        jvmRun.setMaxHeapAfterGc(Memory.kilobytes(jvmDao.getMaxHeapAfterGc()));
         jvmRun.setMaxPermSpace(jvmDao.getMaxPermSpace());
         jvmRun.setMaxPermOccupancy(jvmDao.getMaxPermOccupancy());
         jvmRun.setMaxPermAfterGc(jvmDao.getMaxPermAfterGc());
@@ -944,8 +949,8 @@ public class GcManager {
         jvmRun.setParallelCount(jvmDao.getParallelCount());
         jvmRun.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount());
         jvmRun.setWorstInvertedParallelismEvent(jvmDao.getWorstInvertedParallelismEvent());
-        jvmRun.setMaxHeapOccupancyNonBlocking(jvmDao.getMaxHeapOccupancyNonBlocking());
-        jvmRun.setMaxHeapSpaceNonBlocking(jvmDao.getMaxHeapSpaceNonBlocking());
+        jvmRun.setMaxHeapOccupancyNonBlocking(Memory.kilobytes(jvmDao.getMaxHeapOccupancyNonBlocking()));
+        jvmRun.setMaxHeapSpaceNonBlocking(Memory.kilobytes(jvmDao.getMaxHeapSpaceNonBlocking()));
         jvmRun.setMaxPermOccupancyNonBlocking(jvmDao.getMaxPermOccupancyNonBlocking());
         jvmRun.setMaxPermSpaceNonBlocking(jvmDao.getMaxPermSpaceNonBlocking());
         jvmRun.doAnalysis();

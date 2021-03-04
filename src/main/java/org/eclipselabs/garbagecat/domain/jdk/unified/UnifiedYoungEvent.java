@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
@@ -69,19 +70,19 @@ public class UnifiedYoungEvent extends UnknownCollector
     private long timestamp;
 
     /**
-     * Combined young + old generation size (kilobytes) at beginning of GC event.
+     * Combined young + old generation size at beginning of GC event.
      */
-    private int combinedBegin;
+    private Memory combinedBegin;
 
     /**
-     * Combined young + old generation size (kilobytes) at end of GC event.
+     * Combined young + old generation size at end of GC event.
      */
-    private int combinedEnd;
+    private Memory combinedEnd;
 
     /**
-     * Combined young + old generation allocation (kilobytes).
+     * Combined young + old generation allocation.
      */
-    private int combinedAllocation;
+    private Memory combinedAllocation;
 
     /**
      * The trigger for the GC event.
@@ -129,10 +130,9 @@ public class UnifiedYoungEvent extends UnknownCollector
                 }
             }
             trigger = matcher.group(25);
-            combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(27)), matcher.group(29).charAt(0));
-            combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(30)), matcher.group(32).charAt(0));
-            combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(33)),
-                    matcher.group(35).charAt(0));
+            combinedBegin = Memory.memory(matcher.group(27), matcher.group(29).charAt(0)).toKilobytes();
+            combinedEnd = Memory.memory(matcher.group(30), matcher.group(32).charAt(0)).toKilobytes();
+            combinedAllocation = Memory.memory(matcher.group(33), matcher.group(35).charAt(0)).toKilobytes();
             duration = JdkMath.convertMillisToMicros(matcher.group(36)).intValue();
             timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
         }
@@ -170,15 +170,15 @@ public class UnifiedYoungEvent extends UnknownCollector
         return timestamp;
     }
 
-    public int getCombinedOccupancyInit() {
+    public Memory getCombinedOccupancyInit() {
         return combinedBegin;
     }
 
-    public int getCombinedOccupancyEnd() {
+    public Memory getCombinedOccupancyEnd() {
         return combinedEnd;
     }
 
-    public int getCombinedSpace() {
+    public Memory getCombinedSpace() {
         return combinedAllocation;
     }
 

@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
@@ -102,49 +103,49 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
     private long timestamp;
 
     /**
-     * Young generation size (kilobytes) at beginning of GC event.
+     * Young generation size at beginning of GC event.
      */
-    private int young;
+    private Memory young;
 
     /**
-     * Young generation size (kilobytes) at end of GC event.
+     * Young generation size at end of GC event.
      */
-    private int youngEnd;
+    private Memory youngEnd;
 
     /**
-     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
+     * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private int youngAvailable;
+    private Memory youngAvailable;
 
     /**
-     * Old generation size (kilobytes) at beginning of GC event.
+     * Old generation size at beginning of GC event.
      */
-    private int old;
+    private Memory old;
 
     /**
-     * Old generation size (kilobytes) at end of GC event.
+     * Old generation size at end of GC event.
      */
-    private int oldEnd;
+    private Memory oldEnd;
 
     /**
-     * Space allocated to old generation (kilobytes).
+     * Space allocated to old generation.
      */
-    private int oldAllocation;
+    private Memory oldAllocation;
 
     /**
-     * Permanent generation size (kilobytes) at beginning of GC event.
+     * Permanent generation size at beginning of GC event.
      */
-    private int permGen;
+    private Memory permGen;
 
     /**
-     * Permanent generation size (kilobytes) at end of GC event.
+     * Permanent generation size at end of GC event.
      */
-    private int permGenEnd;
+    private Memory permGenEnd;
 
     /**
-     * Space allocated to permanent generation (kilobytes).
+     * Space allocated to permanent generation.
      */
-    private int permGenAllocation;
+    private Memory permGenAllocation;
 
     /**
      * The trigger for the GC event.
@@ -198,19 +199,19 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
             } else if (matcher.group(15) != null) {
                 trigger = matcher.group(15);
             }
-            old = Integer.parseInt(matcher.group(51));
-            oldEnd = Integer.parseInt(matcher.group(52));
-            oldAllocation = Integer.parseInt(matcher.group(53));
+            old = Memory.kilobytes(matcher.group(51));
+            oldEnd = Memory.kilobytes(matcher.group(52));
+            oldAllocation = Memory.kilobytes(Integer.parseInt(matcher.group(53)));
             int totalBegin = Integer.parseInt(matcher.group(57));
-            young = totalBegin - getOldOccupancyInit();
+            young = Memory.kilobytes(totalBegin - getOldOccupancyInit().getKilobytes());
             int totalEnd = Integer.parseInt(matcher.group(58));
-            youngEnd = totalEnd - getOldOccupancyEnd();
+            youngEnd = Memory.kilobytes(totalEnd - getOldOccupancyEnd().getKilobytes());
             int totalAllocation = Integer.parseInt(matcher.group(59));
-            youngAvailable = totalAllocation - getOldSpace();
+            youngAvailable = Memory.kilobytes(totalAllocation - getOldSpace().getKilobytes());
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Integer.parseInt(matcher.group(61));
-            permGenEnd = Integer.parseInt(matcher.group(62));
-            permGenAllocation = Integer.parseInt(matcher.group(63));
+            permGen = Memory.kilobytes(matcher.group(61));
+            permGenEnd = Memory.kilobytes(matcher.group(62));
+            permGenAllocation = Memory.kilobytes(matcher.group(63));
             duration = JdkMath.convertSecsToMicros(matcher.group(64)).intValue();
         }
     }
@@ -255,75 +256,75 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
         this.timestamp = timestamp;
     }
 
-    public int getYoungOccupancyInit() {
+    public Memory getYoungOccupancyInit() {
         return young;
     }
 
-    protected void setYoungOccupancyInit(int young) {
+    protected void setYoungOccupancyInit(Memory young) {
         this.young = young;
     }
 
-    public int getYoungOccupancyEnd() {
+    public Memory getYoungOccupancyEnd() {
         return youngEnd;
     }
 
-    protected void setYoungOccupancyEnd(int youngEnd) {
+    protected void setYoungOccupancyEnd(Memory youngEnd) {
         this.youngEnd = youngEnd;
     }
 
-    public int getYoungSpace() {
+    public Memory getYoungSpace() {
         return youngAvailable;
     }
 
-    protected void setYoungSpace(int youngAvailable) {
+    protected void setYoungSpace(Memory youngAvailable) {
         this.youngAvailable = youngAvailable;
     }
 
-    public int getOldOccupancyInit() {
+    public Memory getOldOccupancyInit() {
         return old;
     }
 
-    protected void setOldOccupancyInit(int old) {
+    protected void setOldOccupancyInit(Memory old) {
         this.old = old;
     }
 
-    public int getOldOccupancyEnd() {
+    public Memory getOldOccupancyEnd() {
         return oldEnd;
     }
 
-    protected void setOldOccupancyEnd(int oldEnd) {
+    protected void setOldOccupancyEnd(Memory oldEnd) {
         this.oldEnd = oldEnd;
     }
 
-    public int getOldSpace() {
+    public Memory getOldSpace() {
         return oldAllocation;
     }
 
-    protected void setOldSpace(int oldAllocation) {
+    protected void setOldSpace(Memory oldAllocation) {
         this.oldAllocation = oldAllocation;
     }
 
-    public int getPermOccupancyInit() {
+    public Memory getPermOccupancyInit() {
         return permGen;
     }
 
-    protected void setPermOccupancyInit(int permGen) {
+    protected void setPermOccupancyInit(Memory permGen) {
         this.permGen = permGen;
     }
 
-    public int getPermOccupancyEnd() {
+    public Memory getPermOccupancyEnd() {
         return permGenEnd;
     }
 
-    protected void setPermOccupancyEnd(int permGenEnd) {
+    protected void setPermOccupancyEnd(Memory permGenEnd) {
         this.permGenEnd = permGenEnd;
     }
 
-    public int getPermSpace() {
+    public Memory getPermSpace() {
         return permGenAllocation;
     }
 
-    protected void setPermSpace(int permGenAllocation) {
+    protected void setPermSpace(Memory permGenAllocation) {
         this.permGenAllocation = permGenAllocation;
     }
 

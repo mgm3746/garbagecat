@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
@@ -88,19 +89,19 @@ public class UnifiedG1CleanupEvent extends G1Collector
     private long timestamp;
 
     /**
-     * Combined young + old generation size (kilobytes) at beginning of GC event.
+     * Combined young + old generation size at beginning of GC event.
      */
-    private int combinedBegin;
+    private Memory combinedBegin;
 
     /**
-     * Combined young + old generation size (kilobytes) at end of GC event.
+     * Combined young + old generation size at end of GC event.
      */
-    private int combinedEnd;
+    private Memory combinedEnd;
 
     /**
-     * Combined young + old generation allocation (kilobytes).
+     * Combined young + old generation allocation.
      */
-    private int combinedAllocation;
+    private Memory combinedAllocation;
 
     /**
      * The time of all user (non-kernel) threads added together in centiseconds.
@@ -146,10 +147,9 @@ public class UnifiedG1CleanupEvent extends G1Collector
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)),
-                        matcher.group(33).charAt(0));
+                combinedBegin = Memory.memory(matcher.group(25), matcher.group(27).charAt(0)).toKilobytes();
+                combinedEnd = Memory.memory(matcher.group(28), matcher.group(30).charAt(0)).toKilobytes();
+                combinedAllocation = Memory.memory(matcher.group(31), matcher.group(33).charAt(0)).toKilobytes();
                 duration = JdkMath.roundMillis(matcher.group(34)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
@@ -175,10 +175,9 @@ public class UnifiedG1CleanupEvent extends G1Collector
                         timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)), matcher.group(27).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(28)), matcher.group(30).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(31)),
-                        matcher.group(33).charAt(0));
+                combinedBegin = Memory.memory(matcher.group(25), matcher.group(27).charAt(0)).toKilobytes();
+                combinedEnd = Memory.memory(matcher.group(28), matcher.group(30).charAt(0)).toKilobytes();
+                combinedAllocation = Memory.memory(matcher.group(31), matcher.group(33).charAt(0)).toKilobytes();
                 duration = JdkMath.roundMillis(matcher.group(34)).intValue();
                 if (matcher.group(35) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
@@ -224,15 +223,15 @@ public class UnifiedG1CleanupEvent extends G1Collector
         return timestamp;
     }
 
-    public int getCombinedOccupancyInit() {
+    public Memory getCombinedOccupancyInit() {
         return combinedBegin;
     }
 
-    public int getCombinedOccupancyEnd() {
+    public Memory getCombinedOccupancyEnd() {
         return combinedEnd;
     }
 
-    public int getCombinedSpace() {
+    public Memory getCombinedSpace() {
         return combinedAllocation;
     }
 

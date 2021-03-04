@@ -21,6 +21,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.LogEvent;
@@ -519,36 +520,36 @@ public class JvmDao {
                 pst.setString(EVENT_NAME_INDEX, event.getName());
                 pst.setLong(DURATION_INDEX, event.getDuration());
                 if (event instanceof YoungData) {
-                    pst.setInt(YOUNG_SPACE_INDEX, ((YoungData) event).getYoungSpace());
-                    pst.setInt(YOUNG_OCCUPANCY_INIT_INDEX, ((YoungData) event).getYoungOccupancyInit());
-                    pst.setInt(YOUNG_OCCUPANCY_END_INDEX, ((YoungData) event).getYoungOccupancyEnd());
+                    pst.setInt(YOUNG_SPACE_INDEX, kilobytes(((YoungData) event).getYoungSpace()));
+                    pst.setInt(YOUNG_OCCUPANCY_INIT_INDEX, kilobytes(((YoungData) event).getYoungOccupancyInit()));
+                    pst.setInt(YOUNG_OCCUPANCY_END_INDEX, kilobytes(((YoungData) event).getYoungOccupancyEnd()));
                 } else {
                     pst.setInt(YOUNG_SPACE_INDEX, 0);
                     pst.setInt(YOUNG_OCCUPANCY_INIT_INDEX, 0);
                     pst.setInt(YOUNG_OCCUPANCY_END_INDEX, 0);
                 }
                 if (event instanceof OldData) {
-                    pst.setInt(OLD_SPACE_INDEX, ((OldData) event).getOldSpace());
-                    pst.setInt(OLD_OCCUPANCY_INIT_INDEX, ((OldData) event).getOldOccupancyInit());
-                    pst.setInt(OLD_OCCUPANCY_END_INDEX, ((OldData) event).getOldOccupancyEnd());
+                    pst.setInt(OLD_SPACE_INDEX, kilobytes(((OldData) event).getOldSpace()));
+                    pst.setInt(OLD_OCCUPANCY_INIT_INDEX, kilobytes(((OldData) event).getOldOccupancyInit()));
+                    pst.setInt(OLD_OCCUPANCY_END_INDEX, kilobytes(((OldData) event).getOldOccupancyEnd()));
                 } else {
                     pst.setInt(OLD_SPACE_INDEX, 0);
                     pst.setInt(OLD_OCCUPANCY_INIT_INDEX, 0);
                     pst.setInt(OLD_OCCUPANCY_END_INDEX, 0);
                 }
                 if (event instanceof CombinedData) {
-                    pst.setInt(COMBINED_SPACE_INDEX, ((CombinedData) event).getCombinedSpace());
-                    pst.setInt(COMBINED_OCCUPANCY_INIT_INDEX, ((CombinedData) event).getCombinedOccupancyInit());
-                    pst.setInt(COMBINED_OCCUPANCY_END_INDEX, ((CombinedData) event).getCombinedOccupancyEnd());
+                    pst.setInt(COMBINED_SPACE_INDEX, kilobytes(((CombinedData) event).getCombinedSpace()));
+                    pst.setInt(COMBINED_OCCUPANCY_INIT_INDEX, kilobytes(((CombinedData) event).getCombinedOccupancyInit()));
+                    pst.setInt(COMBINED_OCCUPANCY_END_INDEX, kilobytes(((CombinedData) event).getCombinedOccupancyEnd()));
                 } else {
                     pst.setInt(COMBINED_SPACE_INDEX, 0);
                     pst.setInt(COMBINED_OCCUPANCY_INIT_INDEX, 0);
                     pst.setInt(COMBINED_OCCUPANCY_END_INDEX, 0);
                 }
                 if (event instanceof PermMetaspaceData) {
-                    pst.setInt(PERM_SPACE_INDEX, ((PermMetaspaceData) event).getPermSpace());
-                    pst.setInt(PERM_OCCUPANCY_INIT_INDEX, ((PermMetaspaceData) event).getPermOccupancyInit());
-                    pst.setInt(PERM_OCCUPANCY_END_INDEX, ((PermMetaspaceData) event).getPermOccupancyEnd());
+                    pst.setInt(PERM_SPACE_INDEX, kilobytes(((PermMetaspaceData) event).getPermSpace()));
+                    pst.setInt(PERM_OCCUPANCY_INIT_INDEX, kilobytes(((PermMetaspaceData) event).getPermOccupancyInit()));
+                    pst.setInt(PERM_OCCUPANCY_END_INDEX, kilobytes(((PermMetaspaceData) event).getPermOccupancyEnd()));
                 } else {
                     pst.setInt(PERM_SPACE_INDEX, 0);
                     pst.setInt(PERM_OCCUPANCY_INIT_INDEX, 0);
@@ -571,6 +572,10 @@ public class JvmDao {
             }
         }
     }
+
+	private static int kilobytes(Memory memory) {
+		return (int) (memory == null ? 0 : memory.getKilobytes());
+	}
 
     /**
      * Add stopped time events to database.

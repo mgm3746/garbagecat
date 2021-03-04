@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
@@ -82,19 +83,19 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
     private long timestamp;
 
     /**
-     * Combined young + old generation size (kilobytes) at beginning of GC event.
+     * Combined young + old generation size at beginning of GC event.
      */
-    private int combinedBegin;
+    private Memory combinedBegin;
 
     /**
-     * Combined young + old generation size (kilobytes) at end of GC event.
+     * Combined young + old generation size at end of GC event.
      */
-    private int combinedEnd;
+    private Memory combinedEnd;
 
     /**
-     * Combined young + old generation allocation (kilobytes).
+     * Combined young + old generation allocation.
      */
-    private int combinedAllocation;
+    private Memory combinedAllocation;
 
     /**
      * The trigger for the GC event.
@@ -145,10 +146,9 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
                     }
                 }
                 trigger = matcher.group(25);
-                combinedBegin = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(26)), matcher.group(28).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(29)), matcher.group(31).charAt(0));
-                combinedAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(32)),
-                        matcher.group(34).charAt(0));
+                combinedBegin = Memory.memory(matcher.group(26), matcher.group(28).charAt(0)).toKilobytes();
+                combinedEnd = Memory.memory(matcher.group(29), matcher.group(31).charAt(0)).toKilobytes();
+                combinedAllocation = Memory.memory(matcher.group(32), matcher.group(34).charAt(0)).toKilobytes();
                 duration = JdkMath.convertMillisToMicros(matcher.group(35)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
@@ -190,15 +190,15 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
         return timestamp;
     }
 
-    public int getCombinedOccupancyInit() {
+    public Memory getCombinedOccupancyInit() {
         return combinedBegin;
     }
 
-    public int getCombinedOccupancyEnd() {
+    public Memory getCombinedOccupancyEnd() {
         return combinedEnd;
     }
 
-    public int getCombinedSpace() {
+    public Memory getCombinedSpace() {
         return combinedAllocation;
     }
 

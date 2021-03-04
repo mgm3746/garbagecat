@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.util.jdk;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.util.Constants.Size;
 
@@ -184,19 +185,6 @@ public final class JdkMath {
     }
 
     /**
-     * Calculate size in kilobytes.
-     * 
-     * @param value
-     *            Size block value.
-     * @param units
-     *            Size block units.
-     * @return The size in Kilobytes.
-     */
-    public static int calcKilobytes(int value, char units) {
-        return (int) Size.forUnit(units).toKiloBytes(value);
-    }
-
-    /**
      * Convert SIZE to kilobytes.
      * 
      * @param size
@@ -205,12 +193,13 @@ public final class JdkMath {
      *            The units (e.g. 'G').
      * @return The size in Kilobytes.
      */
-	public static int convertSizeToKilobytes(String size, char units) {
+	public static Memory convertSizeToKilobytes(String size, char units) {
 		return convertSizeToKilobytes(Double.parseDouble(size.replace(",", ".")), units);
 	}
 
-	public static int convertSizeToKilobytes(double size, char units) {
-		return BigDecimal.valueOf(Size.forUnit(units).toKiloBytes(size)).setScale(0, RoundingMode.HALF_EVEN).intValue();
+	public static Memory convertSizeToKilobytes(double size, char units) {
+		return new Memory(BigDecimal.valueOf(Size.forUnit(units).toKiloBytes(size)).setScale(0, RoundingMode.HALF_EVEN).longValue(), Size.KILOBYTES);
+		
 	}
 
     /**

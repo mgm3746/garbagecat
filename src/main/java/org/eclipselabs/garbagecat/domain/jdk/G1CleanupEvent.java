@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
@@ -91,19 +92,19 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
     private long timestamp;
 
     /**
-     * Young generation size (kilobytes) at beginning of GC event.
+     * Young generation size at beginning of GC event.
      */
-    private int combined;
+    private Memory combined;
 
     /**
-     * Young generation size (kilobytes) at end of GC event.
+     * Young generation size at end of GC event.
      */
-    private int combinedEnd;
+    private Memory combinedEnd;
 
     /**
-     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
+     * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private int combinedAvailable;
+    private Memory combinedAvailable;
 
     /**
      * The time of all user (non-kernel) threads added together in centiseconds.
@@ -132,10 +133,9 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             if (matcher.group(18) != null) {
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)), matcher.group(24).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(25)),
-                        matcher.group(27).charAt(0));
+                combined = Memory.memory(matcher.group(19), matcher.group(21).charAt(0)).toKilobytes();
+                combinedEnd = Memory.memory(matcher.group(22), matcher.group(24).charAt(0)).toKilobytes();
+                combinedAvailable = Memory.memory(matcher.group(25), matcher.group(27).charAt(0)).toKilobytes();
             }
             duration = JdkMath.convertSecsToMicros(matcher.group(28)).intValue();
             if (matcher.group(31) != null) {
@@ -174,15 +174,15 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
         return timestamp;
     }
 
-    public int getCombinedOccupancyInit() {
+    public Memory getCombinedOccupancyInit() {
         return combined;
     }
 
-    public int getCombinedOccupancyEnd() {
+    public Memory getCombinedOccupancyEnd() {
         return combinedEnd;
     }
 
-    public int getCombinedSpace() {
+    public Memory getCombinedSpace() {
         return combinedAvailable;
     }
 

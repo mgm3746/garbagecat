@@ -70,9 +70,11 @@ public class Constants {
 		}
 		
 		public static Size forUnit(char unit) {
-			String cc = String.valueOf(unit);
+			return forUnit(String.valueOf(unit));
+		}
+		public static Size forUnit(String unit) {
 			for (Size size : values()) {
-				if (size.getName().equalsIgnoreCase(cc)) {
+				if (size.getName().equalsIgnoreCase(unit)) {
 					return size;
 				}
 			}

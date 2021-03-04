@@ -285,29 +285,29 @@ public class Main {
                     }
                 }
                 // NewRatio
-                if (jvmRun.getMaxYoungSpace() > 0 && jvmRun.getMaxOldSpace() > 0) {
+                if (jvmRun.getMaxYoungSpace() != null && jvmRun.getMaxOldSpace() != null) {
                     bufferedWriter.write("NewRatio: " + jvmRun.getNewRatio() + Constants.LINE_SEPARATOR);
                 }
                 // Max heap occupancy.
-                if (jvmRun.getMaxHeapOccupancy() > 0) {
+                if (jvmRun.getMaxHeapOccupancy() != null) {
                     bufferedWriter.write(
                             "Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K" + Constants.LINE_SEPARATOR);
-                } else if (jvmRun.getMaxHeapOccupancyNonBlocking() > 0) {
-                    bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancyNonBlocking() + "K"
+                } else if (jvmRun.getMaxHeapOccupancyNonBlocking() != null) {
+                    bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancyNonBlocking().toKilobytes()
                             + Constants.LINE_SEPARATOR);
                 }
                 // Max heap after GC.
-                if (jvmRun.getMaxHeapAfterGc() > 0) {
+                if (jvmRun.getMaxHeapAfterGc() != null) {
                     bufferedWriter
-                            .write("Max Heap After GC: " + jvmRun.getMaxHeapAfterGc() + "K" + Constants.LINE_SEPARATOR);
+                            .write("Max Heap After GC: " + jvmRun.getMaxHeapAfterGc().toKilobytes() + Constants.LINE_SEPARATOR);
                 }
                 // Max heap space.
-                if (jvmRun.getMaxHeapSpace() > 0) {
+                if (jvmRun.getMaxHeapSpace() != null) {
                     bufferedWriter
-                            .write("Max Heap Space: " + jvmRun.getMaxHeapSpace() + "K" + Constants.LINE_SEPARATOR);
-                } else if (jvmRun.getMaxHeapSpaceNonBlocking() > 0) {
+                            .write("Max Heap Space: " + jvmRun.getMaxHeapSpace().toKilobytes() + Constants.LINE_SEPARATOR);
+                } else if (jvmRun.getMaxHeapSpaceNonBlocking() != null) {
                     bufferedWriter.write(
-                            "Max Heap Space: " + jvmRun.getMaxHeapSpaceNonBlocking() + "K" + Constants.LINE_SEPARATOR);
+                            "Max Heap Space: " + jvmRun.getMaxHeapSpaceNonBlocking().toKilobytes() + Constants.LINE_SEPARATOR);
                 }
 
                 if (jvmRun.getMaxPermSpace() > 0) {

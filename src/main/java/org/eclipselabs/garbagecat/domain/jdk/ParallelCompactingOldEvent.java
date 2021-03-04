@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
@@ -100,49 +101,49 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
     private long timestamp;
 
     /**
-     * Young generation size (kilobytes) at beginning of GC event.
+     * Young generation size at beginning of GC event.
      */
-    private int young;
+    private Memory young;
 
     /**
-     * Young generation size (kilobytes) at end of GC event.
+     * Young generation size at end of GC event.
      */
-    private int youngEnd;
+    private Memory youngEnd;
 
     /**
-     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
+     * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private int youngAvailable;
+    private Memory youngAvailable;
 
     /**
-     * Old generation size (kilobytes) at beginning of GC event.
+     * Old generation size at beginning of GC event.
      */
-    private int old;
+    private Memory old;
 
     /**
-     * Old generation size (kilobytes) at end of GC event.
+     * Old generation size at end of GC event.
      */
-    private int oldEnd;
+    private Memory oldEnd;
 
     /**
-     * Space allocated to old generation (kilobytes).
+     * Space allocated to old generation.
      */
-    private int oldAllocation;
+    private Memory oldAllocation;
 
     /**
-     * Permanent generation size (kilobytes) at beginning of GC event.
+     * Permanent generation size at beginning of GC event.
      */
-    private int permGen;
+    private Memory permGen;
 
     /**
-     * Permanent generation size (kilobytes) at end of GC event.
+     * Permanent generation size at end of GC event.
      */
-    private int permGenEnd;
+    private Memory permGenEnd;
 
     /**
-     * Space allocated to permanent generation (kilobytes).
+     * Space allocated to permanent generation.
      */
-    private int permGenAllocation;
+    private Memory permGenAllocation;
 
     /**
      * The trigger for the GC event.
@@ -196,16 +197,16 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             trigger = matcher.group(14);
-            young = Integer.parseInt(matcher.group(16));
-            youngEnd = Integer.parseInt(matcher.group(17));
-            youngAvailable = Integer.parseInt(matcher.group(18));
-            old = Integer.parseInt(matcher.group(19));
-            oldEnd = Integer.parseInt(matcher.group(20));
-            oldAllocation = Integer.parseInt(matcher.group(21));
+            young = Memory.kilobytes(matcher.group(16));
+            youngEnd = Memory.kilobytes(matcher.group(17));
+            youngAvailable = Memory.kilobytes(matcher.group(18));
+            old = Memory.kilobytes(matcher.group(19));
+            oldEnd = Memory.kilobytes(matcher.group(20));
+            oldAllocation = Memory.kilobytes(matcher.group(21));
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Integer.parseInt(matcher.group(27));
-            permGenEnd = Integer.parseInt(matcher.group(28));
-            permGenAllocation = Integer.parseInt(matcher.group(29));
+            permGen = Memory.kilobytes(matcher.group(27));
+            permGenEnd = Memory.kilobytes(matcher.group(28));
+            permGenAllocation = Memory.kilobytes(matcher.group(29));
             duration = JdkMath.convertSecsToMicros(matcher.group(30)).intValue();
             if (matcher.group(33) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
@@ -243,27 +244,27 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
         return timestamp;
     }
 
-    public int getYoungOccupancyInit() {
+    public Memory getYoungOccupancyInit() {
         return young;
     }
 
-    public int getYoungOccupancyEnd() {
+    public Memory getYoungOccupancyEnd() {
         return youngEnd;
     }
 
-    public int getYoungSpace() {
+    public Memory getYoungSpace() {
         return youngAvailable;
     }
 
-    public int getOldOccupancyInit() {
+    public Memory getOldOccupancyInit() {
         return old;
     }
 
-    public int getOldOccupancyEnd() {
+    public Memory getOldOccupancyEnd() {
         return oldEnd;
     }
 
-    public int getOldSpace() {
+    public Memory getOldSpace() {
         return oldAllocation;
     }
 
@@ -271,15 +272,15 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
         return JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString();
     }
 
-    public int getPermOccupancyInit() {
+    public Memory getPermOccupancyInit() {
         return permGen;
     }
 
-    public int getPermOccupancyEnd() {
+    public Memory getPermOccupancyEnd() {
         return permGenEnd;
     }
 
-    public int getPermSpace() {
+    public Memory getPermSpace() {
         return permGenAllocation;
     }
 

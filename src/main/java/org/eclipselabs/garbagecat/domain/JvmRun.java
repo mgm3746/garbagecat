@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
@@ -50,35 +51,35 @@ public class JvmRun {
     private int throughputThreshold;
 
     /**
-     * Maximum young space size (kilobytes).
+     * Maximum young space size.
      */
-    private int maxYoungSpace;
+    private Memory maxYoungSpace;
 
     /**
-     * Maximum old space size (kilobytes).
+     * Maximum old space size.
      */
-    private int maxOldSpace;
+    private Memory maxOldSpace;
 
     /**
-     * Maximum heap size (kilobytes).
+     * Maximum heap size.
      */
-    private int maxHeapSpace;
+    private Memory maxHeapSpace;
 
     /**
-     * Maximum heap occupancy (kilobytes).
+     * Maximum heap occupancy.
      */
-    private int maxHeapOccupancy;
+    private Memory maxHeapOccupancy;
 
     /**
-     * Maximum heap after gc (kilobytes).
+     * Maximum heap after gc.
      */
-    private int maxHeapAfterGc;
+    private Memory maxHeapAfterGc;
 
-    public int getMaxHeapAfterGc() {
+    public Memory getMaxHeapAfterGc() {
         return maxHeapAfterGc;
     }
 
-    public void setMaxHeapAfterGc(int maxHeapAfterGc) {
+    public void setMaxHeapAfterGc(Memory maxHeapAfterGc) {
         this.maxHeapAfterGc = maxHeapAfterGc;
     }
 
@@ -208,12 +209,12 @@ public class JvmRun {
     /**
      * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
      */
-    private int maxHeapSpaceNonBlocking;
+    private Memory maxHeapSpaceNonBlocking;
 
     /**
      * Used for tracking max heap occupancy outside of <code>BlockingEvent</code>s.
      */
-    private int maxHeapOccupancyNonBlocking;
+    private Memory maxHeapOccupancyNonBlocking;
 
     /**
      * Used for tracking max perm space outside of <code>BlockingEvent</code>s.
@@ -254,35 +255,35 @@ public class JvmRun {
         this.jvm = jvm;
     }
 
-    public int getMaxYoungSpace() {
+    public Memory getMaxYoungSpace() {
         return maxYoungSpace;
     }
 
-    public void setMaxYoungSpace(int maxYoungSpace) {
+    public void setMaxYoungSpace(Memory maxYoungSpace) {
         this.maxYoungSpace = maxYoungSpace;
     }
 
-    public int getMaxOldSpace() {
+    public Memory getMaxOldSpace() {
         return maxOldSpace;
     }
 
-    public void setMaxOldSpace(int maxOldSpace) {
+    public void setMaxOldSpace(Memory maxOldSpace) {
         this.maxOldSpace = maxOldSpace;
     }
 
-    public int getMaxHeapSpace() {
+    public Memory getMaxHeapSpace() {
         return maxHeapSpace;
     }
 
-    public void setMaxHeapSpace(int maxHeapSpace) {
+    public void setMaxHeapSpace(Memory maxHeapSpace) {
         this.maxHeapSpace = maxHeapSpace;
     }
 
-    public int getMaxHeapOccupancy() {
+    public Memory getMaxHeapOccupancy() {
         return maxHeapOccupancy;
     }
 
-    public void setMaxHeapOccupancy(int maxHeapOccupancy) {
+    public void setMaxHeapOccupancy(Memory maxHeapOccupancy) {
         this.maxHeapOccupancy = maxHeapOccupancy;
     }
 
@@ -462,19 +463,19 @@ public class JvmRun {
         this.worstInvertedParallelismEvent = worstInvertedParallelismEvent;
     }
 
-    public int getMaxHeapSpaceNonBlocking() {
+    public Memory getMaxHeapSpaceNonBlocking() {
         return maxHeapSpaceNonBlocking;
     }
 
-    public void setMaxHeapSpaceNonBlocking(int maxHeapSpaceNonBlocking) {
+    public void setMaxHeapSpaceNonBlocking(Memory maxHeapSpaceNonBlocking) {
         this.maxHeapSpaceNonBlocking = maxHeapSpaceNonBlocking;
     }
 
-    public int getMaxHeapOccupancyNonBlocking() {
+    public Memory getMaxHeapOccupancyNonBlocking() {
         return maxHeapOccupancyNonBlocking;
     }
 
-    public void setMaxHeapOccupancyNonBlocking(int maxHeapOccupancyNonBlocking) {
+    public void setMaxHeapOccupancyNonBlocking(Memory maxHeapOccupancyNonBlocking) {
         this.maxHeapOccupancyNonBlocking = maxHeapOccupancyNonBlocking;
     }
 
@@ -542,9 +543,9 @@ public class JvmRun {
      */
     public long getNewRatio() {
         int newRatio;
-        if (maxYoungSpace > 0) {
-            BigDecimal ratio = new BigDecimal(maxOldSpace);
-            ratio = ratio.divide(new BigDecimal(maxYoungSpace), 0, RoundingMode.HALF_EVEN);
+        if (maxYoungSpace != null) {
+            BigDecimal ratio = new BigDecimal(maxOldSpace.getKilobytes());
+            ratio = ratio.divide(new BigDecimal(maxYoungSpace.getKilobytes()), 0, RoundingMode.HALF_EVEN);
             newRatio = ratio.intValue();
         } else {
             newRatio = 0;
@@ -1147,7 +1148,7 @@ public class JvmRun {
         }
 
         // Check for young space >= old space
-        if (maxYoungSpace > 0 && maxOldSpace > 0 && maxYoungSpace >= maxOldSpace) {
+        if (maxYoungSpace != null && maxOldSpace != null && maxYoungSpace.compareTo(maxOldSpace) >= 0) {
             analysis.add(Analysis.INFO_NEW_RATIO_INVERTED);
         }
 

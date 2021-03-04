@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
+import org.eclipselabs.garbagecat.Memory;
+
 /**
  * Combined young plus old generation data.
  * 
@@ -23,15 +25,15 @@ public interface CombinedData {
     /**
      * @return Young + old generation initial occupancy (kilobytes).
      */
-    int getCombinedOccupancyInit();
+    Memory getCombinedOccupancyInit();
 
     /**
      * @return Total young + old generation space (kilobytes) at the end of the event (i.e. it reflects any resizing).
      */
-    int getCombinedSpace();
+    Memory getCombinedSpace();
 
     /**
      * @return Young + old generation end occupancy (kilobytes).
      */
-    int getCombinedOccupancyEnd();
+    Memory getCombinedOccupancyEnd();
 }
