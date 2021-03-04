@@ -133,47 +133,47 @@ public class TestJdkMath {
 
     @Test
     public void testCalcKilobytesMegabytes() {
-        assertEquals("Megabytes not converted to kilobytes.", kilobytes((long) 1024), new Memory(1, MEGABYTES));
+        assertEquals("Megabytes not converted to kilobytes.", kilobytes(1024), new Memory(1, MEGABYTES));
     }
 
     @Test
     public void testCalcKilobytesGigabytes() {
-        assertEquals("Megabytes not converted to kilobytes.", kilobytes((long) 1048576), new Memory(1, GIGABYTES));
+		assertEquals("Megabytes not converted to kilobytes.", kilobytes(1024 * 1024), new Memory(1, GIGABYTES));
     }
 
     @Test
     public void testConvertSizeG1DetailsToKilobytesB() {
         String size = "102400";
         char units = 'B';
-        assertEquals("G1 details not converted to kilobytes.", kilobytes((long) 100), JdkMath.convertSizeToKilobytes(size, units));
+        assertEquals("G1 details not converted to kilobytes.", kilobytes(100), JdkMath.convertSizeToKilobytes(size, units));
     }
 
     @Test
     public void testConvertSizeG1DetailsToKilobytesK() {
         String size = "1234567";
         char units = 'K';
-        assertEquals("G1 details not converted to kilobytes.", kilobytes((long) 1234567), JdkMath.convertSizeToKilobytes(size, units));
+        assertEquals("G1 details not converted to kilobytes.", kilobytes(1234567), JdkMath.convertSizeToKilobytes(size, units));
     }
 
     @Test
     public void testConvertSizeG1DetailsToKilobytesM() {
         String size = "10";
         char units = 'M';
-        assertEquals("G1 details not converted to kilobytes.", kilobytes((long) 10240), JdkMath.convertSizeToKilobytes(size, units));
+        assertEquals("G1 details not converted to kilobytes.", kilobytes(10240), JdkMath.convertSizeToKilobytes(size, units));
     }
 
     @Test
     public void testConvertSizeG1DetailsToKilobytesMWithComma() {
         String size = "306,0";
         char units = 'M';
-        assertEquals("G1 details not converted to kilobytes.", kilobytes((long) 313344), JdkMath.convertSizeToKilobytes(size, units));
+        assertEquals("G1 details not converted to kilobytes.", kilobytes(313344), JdkMath.convertSizeToKilobytes(size, units));
     }
 
     @Test
     public void testConvertSizeG1DetailsToKilobytesG() {
         String size = "100";
         char units = 'G';
-        assertEquals("G1 details not converted to kilobytes.", kilobytes((long) 104857600), JdkMath.convertSizeToKilobytes(size, units));
+        assertEquals("G1 details not converted to kilobytes.", kilobytes(104857600), JdkMath.convertSizeToKilobytes(size, units));
     }
 
     @Test

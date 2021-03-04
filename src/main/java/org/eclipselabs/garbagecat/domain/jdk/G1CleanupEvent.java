@@ -94,17 +94,17 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
     /**
      * Young generation size at beginning of GC event.
      */
-    private Memory combined;
+    private Memory combined = Memory.ZERO;
 
     /**
      * Young generation size at end of GC event.
      */
-    private Memory combinedEnd;
+    private Memory combinedEnd = Memory.ZERO;
 
     /**
      * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private Memory combinedAvailable;
+    private Memory combinedAvailable = Memory.ZERO;
 
     /**
      * The time of all user (non-kernel) threads added together in centiseconds.

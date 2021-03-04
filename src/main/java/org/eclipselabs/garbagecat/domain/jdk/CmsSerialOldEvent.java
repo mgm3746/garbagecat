@@ -155,47 +155,47 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
     /**
      * Young generation size at beginning of GC event.
      */
-    private Memory young;
+    private Memory young = Memory.ZERO;
 
     /**
      * Young generation size at end of GC event.
      */
-    private Memory youngEnd;
+    private Memory youngEnd = Memory.ZERO;
 
     /**
      * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private Memory youngAvailable;
+    private Memory youngAvailable = Memory.ZERO;
 
     /**
      * Old generation size at beginning of GC event.
      */
-    private Memory old;
+    private Memory old = Memory.ZERO;
 
     /**
      * Old generation size at end of GC event.
      */
-    private Memory oldEnd;
+    private Memory oldEnd = Memory.ZERO;
 
     /**
      * Space allocated to old generation.
      */
-    private Memory oldAllocation;
+    private Memory oldAllocation = Memory.ZERO;
 
     /**
      * Permanent generation size at beginning of GC event.
      */
-    private Memory permGen;
+    private Memory permGen = Memory.ZERO;
 
     /**
      * Permanent generation size at end of GC event.
      */
-    private Memory permGenEnd;
+    private Memory permGenEnd = Memory.ZERO;
 
     /**
      * Space allocated to permanent generation.
      */
-    private Memory permGenAllocation;
+    private Memory permGenAllocation = Memory.ZERO;
 
     /**
      * The trigger for the GC event.
@@ -321,7 +321,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
                 }
                 this.young = Memory.kilobytes(matcher.group(31));
                 // No data to determine young end size.
-                this.youngEnd = null;
+                this.youngEnd = Memory.ZERO;
                 this.youngAvailable = Memory.kilobytes(matcher.group(33));
 
                 // use young block duration for truncated events
@@ -341,7 +341,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
                     if (matcher.group(103) != null) {
                         this.old = Memory.kilobytes(Integer.parseInt(matcher.group(104)) - this.young.getKilobytes());
                         // No data to determine old end size.
-                        this.oldEnd = null;
+                        this.oldEnd = Memory.ZERO;
                         this.oldAllocation = Memory.kilobytes(Integer.parseInt(matcher.group(106)) - this.youngAvailable.getKilobytes());
                     }
                 }

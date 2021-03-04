@@ -113,32 +113,32 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
     /**
      * Combined size at beginning of GC event.
      */
-    private Memory combined;
+    private Memory combined = Memory.ZERO;
 
     /**
      * Combined size at end of GC event.
      */
-    private Memory combinedEnd;
+    private Memory combinedEnd = Memory.ZERO;
 
     /**
      * Combined available space.
      */
-    private Memory combinedAvailable;
+    private Memory combinedAvailable = Memory.ZERO;
 
     /**
      * Permanent generation size at beginning of GC event.
      */
-    private Memory permGen;
+    private Memory permGen = Memory.ZERO;
 
     /**
      * Permanent generation size at end of GC event.
      */
-    private Memory permGenEnd;
+    private Memory permGenEnd = Memory.ZERO;
 
     /**
      * Space allocated to permanent generation.
      */
-    private Memory permGenAllocation;
+    private Memory permGenAllocation = Memory.ZERO;
 
     /**
      * The trigger for the GC event.

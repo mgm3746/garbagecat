@@ -115,17 +115,17 @@ public class G1YoungInitialMarkEvent extends G1Collector
     /**
      * Combined generation size at beginning of GC event.
      */
-    private Memory combined;
+    private Memory combined = Memory.ZERO;
 
     /**
      * Combined generation size at end of GC event.
      */
-    private Memory combinedEnd;
+    private Memory combinedEnd = Memory.ZERO;
 
     /**
      * Available space in multiple generation.
      */
-    private Memory combinedAvailable;
+    private Memory combinedAvailable = Memory.ZERO;
 
     /**
      * The trigger for the GC event.
