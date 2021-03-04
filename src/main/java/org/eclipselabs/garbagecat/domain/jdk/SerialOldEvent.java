@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -199,19 +201,16 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
             } else if (matcher.group(15) != null) {
                 trigger = matcher.group(15);
             }
-            old = Memory.kilobytes(matcher.group(51));
-            oldEnd = Memory.kilobytes(matcher.group(52));
-            oldAllocation = Memory.kilobytes(Integer.parseInt(matcher.group(53)));
-            int totalBegin = Integer.parseInt(matcher.group(57));
-            young = Memory.kilobytes(totalBegin - getOldOccupancyInit().getKilobytes());
-            int totalEnd = Integer.parseInt(matcher.group(58));
-            youngEnd = Memory.kilobytes(totalEnd - getOldOccupancyEnd().getKilobytes());
-            int totalAllocation = Integer.parseInt(matcher.group(59));
-            youngAvailable = Memory.kilobytes(totalAllocation - getOldSpace().getKilobytes());
+            old = kilobytes(matcher.group(51));
+            oldEnd = kilobytes(matcher.group(52));
+            oldAllocation = kilobytes(matcher.group(53));
+            young = kilobytes(matcher.group(57)).minus(getOldOccupancyInit());
+            youngEnd = kilobytes(matcher.group(58)).minus(getOldOccupancyEnd());
+            youngAvailable = kilobytes(matcher.group(59)).minus(getOldSpace());
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Memory.kilobytes(matcher.group(61));
-            permGenEnd = Memory.kilobytes(matcher.group(62));
-            permGenAllocation = Memory.kilobytes(matcher.group(63));
+            permGen = kilobytes(matcher.group(61));
+            permGenEnd = kilobytes(matcher.group(62));
+            permGenAllocation = kilobytes(matcher.group(63));
             duration = JdkMath.convertSecsToMicros(matcher.group(64)).intValue();
         }
     }

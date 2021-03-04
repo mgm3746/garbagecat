@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -156,15 +158,12 @@ public class SerialNewEvent extends SerialCollector
             if (matcher.group(15) != null) {
                 trigger = matcher.group(15);
             }
-            young = Memory.kilobytes(matcher.group(29));
-            youngEnd = Memory.kilobytes(matcher.group(30));
-            youngAvailable = Memory.kilobytes(matcher.group(31));
-            int totalBegin = Integer.parseInt(matcher.group(35));
-            old = Memory.kilobytes(totalBegin - young.getKilobytes());
-            int totalEnd = Integer.parseInt(matcher.group(36));
-            oldEnd = Memory.kilobytes(totalEnd - youngEnd.getKilobytes());
-            int totalAllocation = Integer.parseInt(matcher.group(37));
-            oldAllocation = Memory.kilobytes(totalAllocation - youngAvailable.getKilobytes());
+            young = kilobytes(matcher.group(29));
+            youngEnd = kilobytes(matcher.group(30));
+            youngAvailable = kilobytes(matcher.group(31));
+            old = kilobytes(matcher.group(35)).minus(young);
+            oldEnd = kilobytes(matcher.group(36)).minus(youngEnd);
+            oldAllocation = kilobytes(matcher.group(37)).minus(youngAvailable);
             duration = JdkMath.convertSecsToMicros(matcher.group(38)).intValue();
         }
     }

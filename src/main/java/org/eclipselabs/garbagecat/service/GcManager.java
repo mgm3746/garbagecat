@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.service;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
 import static org.eclipselabs.garbagecat.util.Constants.Size.KILOBYTES;
 
 import java.io.BufferedReader;
@@ -925,11 +926,11 @@ public class GcManager {
         jvmRun.getJvm().setVersion(jvmDao.getVersion());
         jvmRun.setFirstGcEvent(jvmDao.getFirstGcEvent());
         jvmRun.setLastGcEvent(jvmDao.getLastGcEvent());
-        jvmRun.setMaxYoungSpace(Memory.kilobytes(jvmDao.getMaxYoungSpace()));
-        jvmRun.setMaxOldSpace(Memory.kilobytes(jvmDao.getMaxOldSpace()));
-        jvmRun.setMaxHeapSpace(Memory.kilobytes(jvmDao.getMaxHeapSpace()));
-        jvmRun.setMaxHeapOccupancy(Memory.kilobytes(jvmDao.getMaxHeapOccupancy()));
-        jvmRun.setMaxHeapAfterGc(Memory.kilobytes(jvmDao.getMaxHeapAfterGc()));
+        jvmRun.setMaxYoungSpace(kilobytes(jvmDao.getMaxYoungSpace()));
+        jvmRun.setMaxOldSpace(kilobytes(jvmDao.getMaxOldSpace()));
+        jvmRun.setMaxHeapSpace(kilobytes(jvmDao.getMaxHeapSpace()));
+        jvmRun.setMaxHeapOccupancy(kilobytes(jvmDao.getMaxHeapOccupancy()));
+        jvmRun.setMaxHeapAfterGc(kilobytes(jvmDao.getMaxHeapAfterGc()));
         jvmRun.setMaxPermSpace(jvmDao.getMaxPermSpace());
         jvmRun.setMaxPermOccupancy(jvmDao.getMaxPermOccupancy());
         jvmRun.setMaxPermAfterGc(jvmDao.getMaxPermAfterGc());
@@ -949,8 +950,8 @@ public class GcManager {
         jvmRun.setParallelCount(jvmDao.getParallelCount());
         jvmRun.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount());
         jvmRun.setWorstInvertedParallelismEvent(jvmDao.getWorstInvertedParallelismEvent());
-        jvmRun.setMaxHeapOccupancyNonBlocking(Memory.kilobytes(jvmDao.getMaxHeapOccupancyNonBlocking()));
-        jvmRun.setMaxHeapSpaceNonBlocking(Memory.kilobytes(jvmDao.getMaxHeapSpaceNonBlocking()));
+        jvmRun.setMaxHeapOccupancyNonBlocking(kilobytes(jvmDao.getMaxHeapOccupancyNonBlocking()));
+        jvmRun.setMaxHeapSpaceNonBlocking(kilobytes(jvmDao.getMaxHeapSpaceNonBlocking()));
         jvmRun.setMaxPermOccupancyNonBlocking(jvmDao.getMaxPermOccupancyNonBlocking());
         jvmRun.setMaxPermSpaceNonBlocking(jvmDao.getMaxPermSpaceNonBlocking());
         jvmRun.doAnalysis();

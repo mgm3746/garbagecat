@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -289,15 +291,15 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
                 } else if (matcher.group(14) != null) {
                     this.trigger = matcher.group(14);
                 }
-                this.old = Memory.kilobytes(matcher.group(72));
-                this.oldEnd = Memory.kilobytes(matcher.group(73));
-                this.oldAllocation = Memory.kilobytes(matcher.group(74));
-                this.young = Memory.kilobytes(Integer.parseInt(matcher.group(98)) - this.old.getKilobytes());
-                this.youngEnd = Memory.kilobytes(Integer.parseInt(matcher.group(99)) - this.oldEnd.getKilobytes());
-                this.youngAvailable = Memory.kilobytes(Integer.parseInt(matcher.group(100)) - this.oldAllocation.getKilobytes());
-                this.permGen = Memory.kilobytes(matcher.group(102));
-                this.permGenEnd = Memory.kilobytes(matcher.group(103));
-                this.permGenAllocation = Memory.kilobytes(matcher.group(104));
+                this.old = kilobytes(matcher.group(72));
+                this.oldEnd = kilobytes(matcher.group(73));
+                this.oldAllocation = kilobytes(matcher.group(74));
+                this.young = kilobytes(matcher.group(98)).minus(this.old);
+                this.youngEnd = kilobytes(matcher.group(99)).minus(this.oldEnd);
+                this.youngAvailable = kilobytes(matcher.group(100)).minus(this.oldAllocation);
+                this.permGen = kilobytes(matcher.group(102));
+                this.permGenEnd = kilobytes(matcher.group(103));
+                this.permGenAllocation = kilobytes(matcher.group(104));
                 if (matcher.group(105) != null) {
                     super.setIncrementalMode(true);
                 }
@@ -319,10 +321,10 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
                     // assume promotion failure
                     this.trigger = JdkRegEx.TRIGGER_PROMOTION_FAILED;
                 }
-                this.young = Memory.kilobytes(matcher.group(31));
+                this.young = kilobytes(matcher.group(31));
                 // No data to determine young end size.
                 this.youngEnd = Memory.ZERO;
-                this.youngAvailable = Memory.kilobytes(matcher.group(33));
+                this.youngAvailable = kilobytes(matcher.group(33));
 
                 // use young block duration for truncated events
                 if (matcher.group(113) == null) {
@@ -331,25 +333,25 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
 
                 // old block after young
                 if (matcher.group(76) != null) {
-                    this.old = Memory.kilobytes(matcher.group(77));
-                    this.oldEnd = Memory.kilobytes(matcher.group(78));
-                    this.oldAllocation = Memory.kilobytes(matcher.group(79));
+                    this.old = kilobytes(matcher.group(77));
+                    this.oldEnd = kilobytes(matcher.group(78));
+                    this.oldAllocation = kilobytes(matcher.group(79));
                     if (matcher.group(105) != null) {
-                        this.youngEnd = Memory.kilobytes(Integer.parseInt(matcher.group(105)) - this.oldEnd.getKilobytes());
+                        this.youngEnd = kilobytes(matcher.group(105)).minus(this.oldEnd);
                     }
                 } else {
                     if (matcher.group(103) != null) {
-                        this.old = Memory.kilobytes(Integer.parseInt(matcher.group(104)) - this.young.getKilobytes());
+                        this.old = kilobytes(matcher.group(104)).minus(this.young);
                         // No data to determine old end size.
                         this.oldEnd = Memory.ZERO;
-                        this.oldAllocation = Memory.kilobytes(Integer.parseInt(matcher.group(106)) - this.youngAvailable.getKilobytes());
+                        this.oldAllocation = kilobytes(matcher.group(106)).minus(this.youngAvailable);
                     }
                 }
                 // perm/metaspace data
                 if (matcher.group(107) != null) {
-                    this.permGen = Memory.kilobytes(matcher.group(109));
-                    this.permGenEnd = Memory.kilobytes(matcher.group(110));
-                    this.permGenAllocation = Memory.kilobytes(matcher.group(111));
+                    this.permGen = kilobytes(matcher.group(109));
+                    this.permGenEnd = kilobytes(matcher.group(110));
+                    this.permGenAllocation = kilobytes(matcher.group(111));
                 }
                 if (matcher.group(112) != null) {
                     super.setIncrementalMode(true);

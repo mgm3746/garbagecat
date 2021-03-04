@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -174,15 +176,12 @@ public class ParallelScavengeEvent extends ParallelCollector
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             trigger = matcher.group(15);
-            young = Memory.kilobytes((matcher.group(18)));
-            youngEnd = Memory.kilobytes((matcher.group(19)));
-            youngAvailable = Memory.kilobytes((matcher.group(20)));
-            int totalBegin = Integer.parseInt(matcher.group(21));
-            old = Memory.kilobytes(totalBegin - young.getKilobytes());
-            int totalEnd = Integer.parseInt(matcher.group(22));
-            oldEnd = Memory.kilobytes(totalEnd - youngEnd.getKilobytes());
-            int totalAllocation = Integer.parseInt(matcher.group(23));
-            oldAllocation = Memory.kilobytes(totalAllocation - youngAvailable.getKilobytes());
+            young = kilobytes((matcher.group(18)));
+            youngEnd = kilobytes((matcher.group(19)));
+            youngAvailable = kilobytes((matcher.group(20)));
+            old = kilobytes(matcher.group(21)).minus(young);
+            oldEnd = kilobytes(matcher.group(22)).minus(youngEnd);
+            oldAllocation = kilobytes(matcher.group(23)).minus(youngAvailable);
             duration = JdkMath.convertSecsToMicros(matcher.group(24)).intValue();
             if (matcher.group(27) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();

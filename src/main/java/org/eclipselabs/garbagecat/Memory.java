@@ -2,7 +2,6 @@ package org.eclipselabs.garbagecat;
 
 import static org.eclipselabs.garbagecat.util.Constants.Size.BYTES;
 import static org.eclipselabs.garbagecat.util.Constants.Size.KILOBYTES;
-import static org.eclipselabs.garbagecat.util.Constants.Size.MEGABYTES;
 
 import org.eclipselabs.garbagecat.util.Constants.Size;
 
@@ -36,14 +35,8 @@ public class Memory implements Comparable<Memory> {
 		return new Memory(Long.valueOf(value), Size.forUnit(unit));
 	}
 
-	@Deprecated // eliminate usage of long constructor, use String
 	public static Memory kilobytes(long value) {
 		return value == 0 ? ZERO : new Memory(value, KILOBYTES);
-	}
-
-	@Deprecated // eliminate usage of long constructor, use String
-	public static Memory megabytes(long value) {
-		return value == 0 ? ZERO : new Memory(value, MEGABYTES);
 	}
 
 	public static Memory kilobytes(String value) {
@@ -78,6 +71,15 @@ public class Memory implements Comparable<Memory> {
 
 	public Memory toKilobytes() {
 		return new Memory(getKilobytes(), Size.KILOBYTES);
+	}
+
+	public Memory minus(Memory other) {
+		Size smaller = smaller(this.size, other.size);
+		return new Memory((long) (get(this, smaller) - get(other, smaller)), smaller);
+	}
+
+	private Size smaller(Size size1, Size size2) {
+		return size1.compareTo(size2) < 0 ? size1 : size2;
 	}
 
 }

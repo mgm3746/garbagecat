@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -217,20 +219,12 @@ public class ParNewEvent extends CmsIncrementalModeCollector
             } else {
                 trigger = matcher.group(33);
             }
-            young = Memory.kilobytes(matcher.group(52));
-            youngEnd = Memory.kilobytes(matcher.group(53));
-            youngAvailable = Memory.kilobytes(matcher.group(54));
-            int totalEnd = Integer.parseInt(matcher.group(60));
-            oldEnd = Memory.kilobytes(totalEnd - youngEnd.getKilobytes());
-            if (matcher.group(58) != null) {
-                int totalBegin = Integer.parseInt(matcher.group(59));
-                old = Memory.kilobytes(totalBegin - young.getKilobytes());
-            } else {
-                // Set equal to old end
-                old = oldEnd;
-            }
-            int totalAllocation = Integer.parseInt(matcher.group(61));
-            oldAllocation = Memory.kilobytes(totalAllocation - youngAvailable.getKilobytes());
+            young = kilobytes(matcher.group(52));
+            youngEnd = kilobytes(matcher.group(53));
+            youngAvailable = kilobytes(matcher.group(54));
+            oldEnd = kilobytes(matcher.group(60)).minus(youngEnd);
+            old = matcher.group(58) == null ? oldEnd : kilobytes(matcher.group(59)).minus(young);
+            oldAllocation = kilobytes(matcher.group(61)).minus(youngAvailable);
             duration = JdkMath.convertSecsToMicros(matcher.group(63)).intValue();
             if (matcher.group(62) != null) {
                 super.setIncrementalMode(true);
