@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.junit.Test;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -60,12 +61,12 @@ public class TestG1FullGCEvent {
         G1FullGCEvent event = new G1FullGCEvent(logLine);
         assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
         assertEquals("Time stamp not parsed correctly.", 1302524, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 653 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 586 * 1024, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 979 * 1024, event.getCombinedSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 0, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(653 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(586 * 1024), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(979 * 1024), event.getCombinedSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(0), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(0), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(0), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 1636490, event.getDuration());
     }
 
@@ -78,12 +79,12 @@ public class TestG1FullGCEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 424753957, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 8184 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 6998 * 1024, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 8192 * 1024, event.getCombinedSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 0, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(8184 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(6998 * 1024), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(8192 * 1024), event.getCombinedSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(0), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(0), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(0), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 24199045, event.getDuration());
     }
 
@@ -97,13 +98,12 @@ public class TestG1FullGCEvent {
         G1FullGCEvent event = new G1FullGCEvent(logLine);
         assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
         assertEquals("Time stamp not parsed correctly.", 105151, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 5959987, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 1415066, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 30 * 1024 * 1024,
-                event.getCombinedSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 0, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(5959987), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(1415066), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(30 * 1024 * 1024), event.getCombinedSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(0), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(0), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(0), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 5539016, event.getDuration());
     }
 
@@ -118,12 +118,12 @@ public class TestG1FullGCEvent {
         G1FullGCEvent event = new G1FullGCEvent(logLine);
         assertTrue("Trigger not parsed correctly.", event.getTrigger() == null);
         assertEquals("Time stamp not parsed correctly.", 178892, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 1023488, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 707686, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 3072 * 1024, event.getCombinedSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 175031, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 175031, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 175104, event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(1023488), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(707686), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(3072 * 1024), event.getCombinedSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(175031), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(175031), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(175104), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 3426206, event.getDuration());
     }
 
@@ -139,14 +139,12 @@ public class TestG1FullGCEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 35911404, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 22 * 1024 * 1024,
-                event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 21600666, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 22 * 1024 * 1024,
-                event.getCombinedSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 1252884, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 1252884, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 2097152, event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(22 * 1024 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(21600666), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(22 * 1024 * 1024), event.getCombinedSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(1252884), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(1252884), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(2097152), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 40678289, event.getDuration());
     }
 
@@ -162,12 +160,12 @@ public class TestG1FullGCEvent {
         assertEquals("Trigger not parsed correctly.", JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD,
                 event.getTrigger());
         assertEquals("Time stamp not parsed correctly.", 188123, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 1831 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 1242624, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 5120 * 1024, event.getCombinedSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 396834, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 324903, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1511424, event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(1831 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(1242624), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(5120 * 1024), event.getCombinedSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(396834), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(324903), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1511424), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 5135387, event.getDuration());
     }
 
@@ -183,12 +181,12 @@ public class TestG1FullGCEvent {
         assertEquals("Trigger not parsed correctly.", JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION,
                 event.getTrigger());
         assertEquals("Time stamp not parsed correctly.", 98150, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 1225011, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 1145651, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 5120 * 1024, event.getCombinedSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 324984, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 323866, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1511424, event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(1225011), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(1145651), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(5120 * 1024), event.getCombinedSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(324984), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(323866), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1511424), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 4462862, event.getDuration());
     }
 
@@ -204,12 +202,12 @@ public class TestG1FullGCEvent {
         assertEquals("Trigger not parsed correctly.", JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION,
                 event.getTrigger());
         assertEquals("Time stamp not parsed correctly.", 102621, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 1151795, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 1145754, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 5120 * 1024, event.getCombinedSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 323874, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 323874, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1511424, event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(1151795), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(1145754), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(5120 * 1024), event.getCombinedSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(323874), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(323874), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1511424), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 3895477, event.getDuration());
     }
 
@@ -223,13 +221,12 @@ public class TestG1FullGCEvent {
         G1FullGCEvent event = new G1FullGCEvent(logLine);
         assertEquals("Trigger not parsed correctly.", JdkRegEx.TRIGGER_CLASS_HISTOGRAM, event.getTrigger());
         assertEquals("Time stamp not parsed correctly.", 49689217, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 11639194, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 2324582, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 12 * 1024 * 1024,
-                event.getCombinedSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 730823, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 730823, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 2097152, event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(11639194), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(2324582), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(12 * 1024 * 1024), event.getCombinedSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(730823), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(730823), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(2097152), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 19818562, event.getDuration());
     }
 
@@ -243,14 +240,12 @@ public class TestG1FullGCEvent {
         G1FullGCEvent event = new G1FullGCEvent(logLine);
         assertEquals("Trigger not parsed correctly.", JdkRegEx.TRIGGER_ALLOCATION_FAILURE, event.getTrigger());
         assertEquals("Time stamp not parsed correctly.", 56965451, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 28 * 1024 * 1024,
-                event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 396902, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 28 * 1024 * 1024,
-                event.getCombinedSpace());
-        assertEquals("Metaspace begin size not parsed correctly.", 65867, event.getPermOccupancyInit());
-        assertEquals("Metaspace end size not parsed correctly.", 65277, event.getPermOccupancyEnd());
-        assertEquals("Metaspace allocation size not parsed correctly.", 1112064, event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(28 * 1024 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(396902), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(28 * 1024 * 1024), event.getCombinedSpace());
+        assertEquals("Metaspace begin size not parsed correctly.", kilobytes(65867), event.getPermOccupancyInit());
+        assertEquals("Metaspace end size not parsed correctly.", kilobytes(65277), event.getPermOccupancyEnd());
+        assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(1112064), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 1182163, event.getDuration());
     }
 
@@ -263,9 +258,9 @@ public class TestG1FullGCEvent {
         G1FullGCEvent event = new G1FullGCEvent(logLine);
         assertTrue("Trigger not parsed correctly.", event.getTrigger() == null);
         assertEquals("Time stamp not parsed correctly.", 2412888, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 1630 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 1281 * 1024, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 3072 * 1024, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(1630 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(1281 * 1024), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(3072 * 1024), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 4155525, event.getDuration());
     }
 
@@ -281,9 +276,9 @@ public class TestG1FullGCEvent {
         assertEquals("Trigger not parsed correctly.", JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC,
                 event.getTrigger());
         assertEquals("Time stamp not parsed correctly.", 21424319, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 3274854, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 847462, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 4096 * 1024, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(3274854), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(847462), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(4096 * 1024), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 4135449, event.getDuration());
     }
 
@@ -299,9 +294,9 @@ public class TestG1FullGCEvent {
         assertEquals("Trigger not parsed correctly.", JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC,
                 event.getTrigger());
         assertEquals("Time stamp not parsed correctly.", 5590760, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 284365, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 17101, event.getCombinedOccupancyEnd());
-        assertEquals("Combined available size not parsed correctly.", 1024 * 1024, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(284365), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(17101), event.getCombinedOccupancyEnd());
+        assertEquals("Combined available size not parsed correctly.", kilobytes(1024 * 1024), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 120607, event.getDuration());
     }
 

@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain;
 
 import org.junit.Test;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -207,11 +208,11 @@ public class TestJvmRun {
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Max young space not calculated correctly.", 248192, jvmRun.getMaxYoungSpace());
-        assertEquals("Max old space not calculated correctly.", 786432, jvmRun.getMaxOldSpace());
+        assertEquals("Max young space not calculated correctly.", kilobytes(248192), jvmRun.getMaxYoungSpace());
+        assertEquals("Max old space not calculated correctly.", kilobytes(786432), jvmRun.getMaxOldSpace());
         assertEquals("NewRatio not calculated correctly.", 3, jvmRun.getNewRatio());
-        assertEquals("Max heap space not calculated correctly.", 1034624, jvmRun.getMaxHeapSpace());
-        assertEquals("Max heap occupancy not calculated correctly.", 1013058, jvmRun.getMaxHeapOccupancy());
+        assertEquals("Max heap space not calculated correctly.", kilobytes(1034624), jvmRun.getMaxHeapSpace());
+        assertEquals("Max heap occupancy not calculated correctly.", kilobytes(1013058), jvmRun.getMaxHeapOccupancy());
         assertEquals("Max pause not calculated correctly.", 2782, jvmRun.getMaxGcPause());
         assertEquals("Max perm gen space not calculated correctly.", 159936, jvmRun.getMaxPermSpace());
         assertEquals("Max perm gen occupancy not calculated correctly.", 76972, jvmRun.getMaxPermOccupancy());
@@ -233,11 +234,11 @@ public class TestJvmRun {
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Max young space not calculated correctly.", 348864, jvmRun.getMaxYoungSpace());
-        assertEquals("Max old space not calculated correctly.", 699392, jvmRun.getMaxOldSpace());
+        assertEquals("Max young space not calculated correctly.", kilobytes(348864), jvmRun.getMaxYoungSpace());
+        assertEquals("Max old space not calculated correctly.", kilobytes(699392), jvmRun.getMaxOldSpace());
         assertEquals("NewRatio not calculated correctly.", 2, jvmRun.getNewRatio());
-        assertEquals("Max heap space not calculated correctly.", 1048256, jvmRun.getMaxHeapSpace());
-        assertEquals("Max heap occupancy not calculated correctly.", 424192, jvmRun.getMaxHeapOccupancy());
+        assertEquals("Max heap space not calculated correctly.", kilobytes(1048256), jvmRun.getMaxHeapSpace());
+        assertEquals("Max heap occupancy not calculated correctly.", kilobytes(424192), jvmRun.getMaxHeapOccupancy());
         assertEquals("Max pause not calculated correctly.", 1070, jvmRun.getMaxGcPause());
         assertEquals("Max perm gen space not calculated correctly.", 99804, jvmRun.getMaxPermSpace());
         assertEquals("Max perm gen occupancy not calculated correctly.", 60155, jvmRun.getMaxPermOccupancy());
@@ -260,8 +261,8 @@ public class TestJvmRun {
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Max young space not calculated correctly.", 1100288, jvmRun.getMaxYoungSpace());
-        assertEquals("Max old space not calculated correctly.", 1100288, jvmRun.getMaxOldSpace());
+        assertEquals("Max young space not calculated correctly.", kilobytes(1100288), jvmRun.getMaxYoungSpace());
+        assertEquals("Max old space not calculated correctly.", kilobytes(1100288), jvmRun.getMaxOldSpace());
         assertEquals("NewRatio not calculated correctly.", 1, jvmRun.getNewRatio());
         assertEquals("Event count not correct.", 3, jvmRun.getEventTypes().size());
         assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",

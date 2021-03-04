@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.junit.Test;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -43,9 +44,9 @@ public class TestVerboseGcOldEvent {
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 2143132151L, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 1606823, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 1409859, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 2976064, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(1606823), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(1409859), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(2976064), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 12085559, event.getDuration());
     }
 
@@ -66,9 +67,9 @@ public class TestVerboseGcOldEvent {
         assertEquals("Time stamp not parsed correctly.", 18129496, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
-        assertEquals("Combined begin size not parsed correctly.", 629455, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 457103, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(629455), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(457103), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(3128704), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 4494696, event.getDuration());
     }
 
@@ -82,9 +83,9 @@ public class TestVerboseGcOldEvent {
         assertEquals("Time stamp not parsed correctly.", 18134427, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION));
-        assertEquals("Combined begin size not parsed correctly.", 457103, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 449140, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(457103), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(449140), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(3128704), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 5608107, event.getDuration());
     }
 
@@ -99,9 +100,9 @@ public class TestVerboseGcOldEvent {
         assertEquals("Time stamp not parsed correctly.", 22561627, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION));
-        assertEquals("Combined begin size not parsed correctly.", 500269, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 500224, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 3128704, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(500269), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(500224), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(3128704), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 4231182, event.getDuration());
     }
 
@@ -114,9 +115,9 @@ public class TestVerboseGcOldEvent {
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 2950666, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.", event.getTrigger() == null);
-        assertEquals("Combined begin size not parsed correctly.", 8329216, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 2405376, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 8388608, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(8329216), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(2405376), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(8388608), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 10372632, event.getDuration());
     }
 
@@ -131,9 +132,9 @@ public class TestVerboseGcOldEvent {
         assertEquals("Time stamp not parsed correctly.", 303068960, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
-        assertEquals("Combined begin size not parsed correctly.", 7455264, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 4498878, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 7992832, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(7455264), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(4498878), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(7992832), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 13244506, event.getDuration());
     }
 
@@ -146,9 +147,9 @@ public class TestVerboseGcOldEvent {
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 2412683, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ERGONOMICS));
-        assertEquals("Combined begin size not parsed correctly.", 728595, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 382365, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 932352, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(728595), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(382365), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(932352), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 1226890, event.getDuration());
     }
 
@@ -161,9 +162,9 @@ public class TestVerboseGcOldEvent {
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 8453778, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
-        assertEquals("Combined begin size not parsed correctly.", 457601, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 176797, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 939520, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(457601), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(176797), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(939520), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 1562393, event.getDuration());
     }
 }

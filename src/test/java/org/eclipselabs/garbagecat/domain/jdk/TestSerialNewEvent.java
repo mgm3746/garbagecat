@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.junit.Test;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -43,12 +44,12 @@ public class TestSerialNewEvent {
                 SerialNewEvent.match(logLine));
         SerialNewEvent event = new SerialNewEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 7798, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 37172, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 3631, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 39296, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 4505, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 6683, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 87424, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(37172), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(3631), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(39296), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(4505), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(6683), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(87424), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 21021, event.getDuration());
     }
 
@@ -68,12 +69,12 @@ public class TestSerialNewEvent {
                 SerialNewEvent.match(logLine));
         SerialNewEvent event = new SerialNewEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 4296, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 68160, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 8512, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 76672, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 68160 - 68160, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 11664 - 8512, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1325760 - 76672, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(68160), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(8512), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(76672), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(68160 - 68160), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(11664 - 8512), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1325760 - 76672), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 53064, event.getDuration());
     }
 
@@ -86,12 +87,12 @@ public class TestSerialNewEvent {
                 SerialNewEvent.match(logLine));
         SerialNewEvent event = new SerialNewEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 1319, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 68160, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 4425, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 76672, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 68160 - 68160, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 4425 - 4425, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 3137216 - 76672, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(68160), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(4425), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(76672), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(68160 - 68160), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(4425 - 4425), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(3137216 - 76672), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 36058, event.getDuration());
     }
 
@@ -103,12 +104,12 @@ public class TestSerialNewEvent {
                 SerialNewEvent.match(logLine));
         SerialNewEvent event = new SerialNewEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 2218, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 209792, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 15933, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 235968, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 209792 - 209792, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 15933 - 15933, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 760256 - 235968, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(209792), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(15933), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(235968), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(209792 - 209792), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(15933 - 15933), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(760256 - 235968), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 84924, event.getDuration());
     }
 }

@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import org.junit.Test;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -46,9 +47,9 @@ public class TestUnifiedG1YoungInitialMarkEvent {
         assertEquals("Time stamp not parsed correctly.", 2752 - 1, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION));
-        assertEquals("Combined begin size not parsed correctly.", 562 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 5 * 1024, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 1250 * 1024, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(562 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(5 * 1024), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1250 * 1024), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 1212, event.getDuration());
     }
 

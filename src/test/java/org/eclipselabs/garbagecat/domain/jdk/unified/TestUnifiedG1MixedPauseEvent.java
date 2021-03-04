@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import org.junit.Test;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -52,12 +53,12 @@ public class TestUnifiedG1MixedPauseEvent {
         assertEquals("Time stamp not parsed correctly.", 16629, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
-        assertEquals("Perm gen begin size not parsed correctly.", 3801, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 3801, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1056768, event.getPermSpace());
-        assertEquals("Combined begin size not parsed correctly.", 15 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 12 * 1024, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 31 * 1024, event.getCombinedSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(3801), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(3801), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1056768), event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(15 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(12 * 1024), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(31 * 1024), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 1202, event.getDuration());
         assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
         assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());

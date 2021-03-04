@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.junit.Test;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -44,12 +45,12 @@ public class TestParallelScavengeEvent {
                 ParallelScavengeEvent.match(logLine));
         ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 19810091, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 27808, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 632, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 28032, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 132375, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 132527, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 557056, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(27808), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(632), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(28032), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(132375), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(132527), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(557056), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 22521, event.getDuration());
     }
 
@@ -69,12 +70,12 @@ public class TestParallelScavengeEvent {
                 ParallelScavengeEvent.match(logLine));
         ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 14112691, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 313864, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 313864, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 326656, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 565806, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 699071, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 699072, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(313864), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(313864), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(326656), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(565806), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(699071), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(699072), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 956194, event.getDuration());
     }
 
@@ -86,12 +87,12 @@ public class TestParallelScavengeEvent {
                 ParallelScavengeEvent.match(logLine));
         ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 1006751, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 61139904, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 20643840, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 67413056, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 119561147 - 61139904, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 80396669 - 20643840, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 129092672 - 67413056, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(61139904), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(20643840), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(67413056), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(119561147 - 61139904), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(80396669 - 20643840), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(129092672 - 67413056), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 3899346, event.getDuration());
         assertEquals("User time not parsed correctly.", 6640, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 373, event.getTimeSys());
@@ -109,12 +110,12 @@ public class TestParallelScavengeEvent {
         assertEquals("Time stamp not parsed correctly.", 1219, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
-        assertEquals("Young begin size not parsed correctly.", 1226834, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 17779, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 1835008, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 1226834 - 1226834, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 17795 - 17779, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 6029312 - 1835008, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(1226834), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(17779), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(1835008), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(1226834 - 1226834), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(17795 - 17779), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(6029312 - 1835008), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 14491, event.getDuration());
         assertEquals("User time not parsed correctly.", 4, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
@@ -132,12 +133,12 @@ public class TestParallelScavengeEvent {
         assertEquals("Time stamp not parsed correctly.", 4172, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
-        assertEquals("Young begin size not parsed correctly.", 649034, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 114285, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 1223168, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 673650 - 649034, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 138909 - 114285, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 4019712 - 1223168, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(649034), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(114285), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(1223168), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(673650 - 649034), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(138909 - 114285), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(4019712 - 1223168), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 71141, event.getDuration());
         assertEquals("User time not parsed correctly.", 24, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
@@ -155,12 +156,12 @@ public class TestParallelScavengeEvent {
         assertEquals("Time stamp not parsed correctly.", 7682, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
-        assertEquals("Young begin size not parsed correctly.", 1048576, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 131690, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 1223168, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 1118082 - 1048576, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 201204 - 131690, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 4019712 - 1223168, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(1048576), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(131690), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(1223168), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(1118082 - 1048576), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(201204 - 131690), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(4019712 - 1223168), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 65742, event.getDuration());
         assertEquals("User time not parsed correctly.", 13, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
@@ -178,12 +179,12 @@ public class TestParallelScavengeEvent {
         assertEquals("Time stamp not parsed correctly.", 372405495, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION));
-        assertEquals("Young begin size not parsed correctly.", 0, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 1569280, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 773083 - 0, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 773083 - 0, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 6287872 - 1569280, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(0), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(0), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(1569280), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(773083 - 0), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(773083 - 0), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(6287872 - 1569280), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 221706, event.getDuration());
         assertEquals("User time not parsed correctly.", 76, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
@@ -202,12 +203,12 @@ public class TestParallelScavengeEvent {
         assertTrue(
                 "Trigger not recognized as " + JdkUtil.TriggerType.HEAP_INSPECTION_INITIATED_GC.toString() + ".",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC));
-        assertEquals("Young begin size not parsed correctly.", 1475708, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 47669, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 1514496, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 4407360 - 1475708, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 2982516 - 47669, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 6233088 - 1514496, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(1475708), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(47669), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(1514496), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(4407360 - 1475708), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(2982516 - 47669), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(6233088 - 1514496), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 263594, event.getDuration());
         assertEquals("User time not parsed correctly.", 86, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
@@ -225,12 +226,12 @@ public class TestParallelScavengeEvent {
         assertEquals("Time stamp not parsed correctly.", 180069616, event.getTimestamp());
         assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.SYSTEM_GC.toString() + ".",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
-        assertEquals("Young begin size not parsed correctly.", 553672, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 22188, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 1472512, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 2900456 - 553672, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 2372732 - 22188, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 6191104 - 1472512, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(553672), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(22188), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(1472512), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(2900456 - 553672), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(2372732 - 22188), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(6191104 - 1472512), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 166827, event.getDuration());
         assertEquals("User time not parsed correctly.", 58, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
@@ -249,12 +250,12 @@ public class TestParallelScavengeEvent {
         assertEquals("Time stamp not parsed correctly.", 1029482045, event.getTimestamp());
         assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.HEAP_DUMP_INITIATED_GC.toString() + ".",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC));
-        assertEquals("Young begin size not parsed correctly.", 335699, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 33192, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 397312, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 1220565 - 335699, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 918194 - 33192, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1287680 - 397312, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(335699), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(33192), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(397312), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(1220565 - 335699), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(918194 - 33192), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1287680 - 397312), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 24342, event.getDuration());
         assertEquals("User time not parsed correctly.", 7, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
@@ -273,12 +274,12 @@ public class TestParallelScavengeEvent {
         assertEquals("Time stamp not parsed correctly.", 1025076327, event.getTimestamp());
         assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.ALLOCATION_FAILURE.toString() + ".",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
-        assertEquals("Young begin size not parsed correctly.", 385537, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 385537, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 397824, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 1271095 - 385537, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 1275901 - 385537, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1288192 - 397824, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(385537), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(385537), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(397824), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(1271095 - 385537), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(1275901 - 385537), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1288192 - 397824), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 167461, event.getDuration());
         assertEquals("User time not parsed correctly.", 24, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());

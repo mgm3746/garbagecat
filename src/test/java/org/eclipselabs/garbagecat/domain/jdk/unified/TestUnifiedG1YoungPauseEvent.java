@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import org.junit.Test;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -52,12 +53,12 @@ public class TestUnifiedG1YoungPauseEvent {
         assertEquals("Time stamp not parsed correctly.", 15086 - 0, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
-        assertEquals("Metaspace begin size not parsed correctly.", 3771, event.getPermOccupancyInit());
-        assertEquals("Metaspace end size not parsed correctly.", 3771, event.getPermOccupancyEnd());
-        assertEquals("Metaspace allocation size not parsed correctly.", 1056768, event.getPermSpace());
-        assertEquals("Combined begin size not parsed correctly.", 24 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 13 * 1024, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 31 * 1024, event.getCombinedSpace());
+        assertEquals("Metaspace begin size not parsed correctly.", kilobytes(3771), event.getPermOccupancyInit());
+        assertEquals("Metaspace end size not parsed correctly.", kilobytes(3771), event.getPermOccupancyEnd());
+        assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(1056768), event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(24 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(13 * 1024), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(31 * 1024), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 401, event.getDuration());
     }
 
@@ -130,12 +131,12 @@ public class TestUnifiedG1YoungPauseEvent {
         assertEquals("Time stamp not parsed correctly.", 5355, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
-        assertEquals("Metaspace begin size not parsed correctly.", 26116, event.getPermOccupancyInit());
-        assertEquals("Metaspace end size not parsed correctly.", 26116, event.getPermOccupancyEnd());
-        assertEquals("Metaspace allocation size not parsed correctly.", 278528, event.getPermSpace());
-        assertEquals("Combined begin size not parsed correctly.", 65 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 8 * 1024, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 1304 * 1024, event.getCombinedSpace());
+        assertEquals("Metaspace begin size not parsed correctly.", kilobytes(26116), event.getPermOccupancyInit());
+        assertEquals("Metaspace end size not parsed correctly.", kilobytes(26116), event.getPermOccupancyEnd());
+        assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(278528), event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(65 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(8 * 1024), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1304 * 1024), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 57263, event.getDuration());
         assertEquals("User time not parsed correctly.", 2, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
@@ -155,12 +156,12 @@ public class TestUnifiedG1YoungPauseEvent {
         assertEquals("Time stamp not parsed correctly.", 11728, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
-        assertEquals("Metaspace begin size not parsed correctly.", 35318, event.getPermOccupancyInit());
-        assertEquals("Metaspace end size not parsed correctly.", 35318, event.getPermOccupancyEnd());
-        assertEquals("Metaspace allocation size not parsed correctly.", 288768, event.getPermSpace());
-        assertEquals("Combined begin size not parsed correctly.", 78 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 22 * 1024, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 1304 * 1024, event.getCombinedSpace());
+        assertEquals("Metaspace begin size not parsed correctly.", kilobytes(35318), event.getPermOccupancyInit());
+        assertEquals("Metaspace end size not parsed correctly.", kilobytes(35318), event.getPermOccupancyEnd());
+        assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(288768), event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(78 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(22 * 1024), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1304 * 1024), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 35722, event.getDuration());
         assertEquals("User time not parsed correctly.", 2, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
@@ -181,12 +182,12 @@ public class TestUnifiedG1YoungPauseEvent {
         assertEquals("Time stamp not parsed correctly.", 58671, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
-        assertEquals("Metaspace begin size not parsed correctly.", 88802, event.getPermOccupancyInit());
-        assertEquals("Metaspace end size not parsed correctly.", 88802, event.getPermOccupancyEnd());
-        assertEquals("Metaspace allocation size not parsed correctly.", 1134592, event.getPermSpace());
-        assertEquals("Combined begin size not parsed correctly.", 733 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 588 * 1024, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 1223 * 1024, event.getCombinedSpace());
+        assertEquals("Metaspace begin size not parsed correctly.", kilobytes(88802), event.getPermOccupancyInit());
+        assertEquals("Metaspace end size not parsed correctly.", kilobytes(88802), event.getPermOccupancyEnd());
+        assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(1134592), event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(733 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(588 * 1024), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1223 * 1024), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 105541, event.getDuration());
         assertEquals("User time not parsed correctly.", 18, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());

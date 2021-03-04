@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.junit.Test;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -57,15 +58,15 @@ public class TestCmsSerialOldEvent {
                 CmsSerialOldEvent.match(logLine));
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 5980, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 6106, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 8192, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 5589, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 5796, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 122880, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 13140, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 13124, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(6106), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(0), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(8192), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(5589), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(5796), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(122880), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(13140), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(13124), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(131072), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 89127, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -89,15 +90,15 @@ public class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
         assertEquals("Time stamp not parsed correctly.", 2425, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 7562, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 14784, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 1231, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 2846, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 114688, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 8602, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 8593, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(7562), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(0), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(14784), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(1231), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(2846), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(114688), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(8602), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(8593), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(131072), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 82809, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -110,15 +111,15 @@ public class TestCmsSerialOldEvent {
                 CmsSerialOldEvent.match(logLine));
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 165805, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", (287075 - 101481), event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (97352 - 97352), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", (2080768 - 1572864), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 101481, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 97352, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1572864, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 68021, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 67965, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes((287075 - 101481)), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((97352 - 97352)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes((2080768 - 1572864)), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(101481), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(97352), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1572864), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(68021), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(67965), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(262144), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 1118602, event.getDuration());
         assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -146,15 +147,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 44684, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 1229657 - 1218548, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 413373 - 413373, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 1581168 - 1465840, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 1218548, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 413373, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1465840, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 83805, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 80520, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 83968, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(1229657 - 1218548), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(413373 - 413373), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(1581168 - 1465840), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(1218548), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(413373), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1465840), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(83805), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(80520), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(83968), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 1365942, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -171,15 +172,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED));
         assertEquals("Time stamp not parsed correctly.", 85030389, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 1045947 - 861863, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 904027 - 904027, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 2047232 - 1797568, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 861863, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 904027, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1797568, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 252246, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 252202, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(1045947 - 861863), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(904027 - 904027), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(2047232 - 1797568), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(861863), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(904027), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1797568), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(252246), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(252202), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(262144), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 42907027, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -196,15 +197,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC));
         assertEquals("Time stamp not parsed correctly.", 2854464, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 1432148 - 945496, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 961540 - 961540, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 6137856 - 4755456, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 945496, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 961540, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 4755456, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 73362, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 73362, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1118208, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(1432148 - 945496), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(961540 - 961540), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(6137856 - 4755456), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(945496), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(961540), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(4755456), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(73362), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(73362), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1118208), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 855335, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -220,15 +221,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 4300825, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 6256895 - 6014591, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 6147510 - 6014592, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 6256896 - 6014592, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 6014591, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 6014592, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 6014592, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 206989, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 206977, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(6256895 - 6014591), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(6147510 - 6014592), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(6256896 - 6014592), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(6014591), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(6014592), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(6014592), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(206989), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(206977), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(262144), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 79935662, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -246,15 +247,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 706707, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 3973407 - 2655937, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 2373842 - 2373842, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 4040704 - 2658304, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 2655937, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 2373842, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 2658304, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 72496, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 72496, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1118208, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(3973407 - 2655937), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(2373842 - 2373842), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(4040704 - 2658304), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(2655937), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(2373842), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(2658304), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(72496), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(72496), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1118208), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 11677083, event.getDuration());
         assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -272,15 +273,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM));
         assertEquals("Time stamp not parsed correctly.", 11662232, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 3198859 - 2844387, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 635365 - 635365, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 7848704 - 7331840, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 2844387, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 635365, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 7331840, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 851635, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 408849, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1048576, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(3198859 - 2844387), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(635365 - 635365), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(7848704 - 7331840), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(2844387), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(635365), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(7331840), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(851635), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(408849), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1048576), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 94911621, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -300,15 +301,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 85217903, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 457349 - 423728, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 457254 - 423633, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 4177280 - 4023936, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 423728, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 423633, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 4023936, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 260428, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 260406, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(457349 - 423728), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(457254 - 423633), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(4177280 - 4023936), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(423728), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(423633), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(4023936), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(260428), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(260406), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(262144), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 516760, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -326,15 +327,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM));
         assertEquals("Time stamp not parsed correctly.", 11662232, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 3198859 - 2844387, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 635365 - 635365, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 7848704 - 7331840, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 2844387, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 635365, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 7331840, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 851635, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 408849, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1048576, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(3198859 - 2844387), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(635365 - 635365), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(7848704 - 7331840), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(2844387), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(635365), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(7331840), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(851635), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(408849), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1048576), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 94911621, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -350,15 +351,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
         assertEquals("Time stamp not parsed correctly.", 262371895, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 176820 - 42863, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 49512 - 49512, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 2063104 - 1756416, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 42863, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 49512, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1756416, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 256586, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 256586, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1230848, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(176820 - 42863), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(49512 - 49512), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(2063104 - 1756416), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(42863), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(49512), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1756416), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(256586), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(256586), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1230848), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 234309, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -374,15 +375,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION));
         assertEquals("Time stamp not parsed correctly.", 262372130, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 49512 - 49512, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 49392 - 49392, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 2063104 - 1756416, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 49512, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 49392, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1756416, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 256586, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 256586, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1230848, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(49512 - 49512), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(49392 - 49392), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(2063104 - 1756416), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(49512), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(49392), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1756416), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(256586), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(256586), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1230848), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 210863, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -399,15 +400,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED));
         assertEquals("Time stamp not parsed correctly.", 262372344, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 49392 - 49392, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 48780 - 48780, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 2063104 - 1756416, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 49392, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 48780, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1756416, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 256552, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 256552, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1230848, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(49392 - 49392), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(48780 - 48780), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(2063104 - 1756416), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(49392), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(48780), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1756416), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(256552), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(256552), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1230848), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 262479, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -422,15 +423,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Time stamp not parsed correctly.", 144501626, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 680066, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 707840, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 1971073 - 680066, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 0, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 2018560 - 707840, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 0, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(680066), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(0), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(707840), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(1971073 - 680066), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(0), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(2018560 - 707840), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(0), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(0), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(0), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 3708405, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -461,15 +462,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Time stamp not parsed correctly.", 1181943, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 145542, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 548489 - 548489, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 149120, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 6656483, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 548489, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 8218240, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 0, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 0, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 0, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(145542), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(548489 - 548489), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(149120), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(6656483), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(548489), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(8218240), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(0), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(0), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(0), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 9256447, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -506,12 +507,12 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Time stamp not parsed correctly.", 3546690, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 532480, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 599040, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 887439, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 893801, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 907264, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(532480), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(0), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(599040), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(887439), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(893801), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(907264), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 9641918, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -530,12 +531,12 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Time stamp not parsed correctly.", 289985117, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 144192, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 978341 - 978341, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 144192, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 1281600, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 978341, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1281600, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(144192), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(978341 - 978341), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(144192), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(1281600), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(978341), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1281600), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 3793020, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -552,15 +553,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Time stamp not parsed correctly.", 395950370, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 53094, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (317110 - 317110), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 59008, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 664527, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 317110, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1507328, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 83780, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 83711, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 131072, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(53094), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((317110 - 317110)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(59008), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(664527), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(317110), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1507328), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(83780), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(83711), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(131072), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 3003904, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -577,15 +578,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Time stamp not parsed correctly.", 4595651, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 1304576, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (684015 - 684015), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 1304576, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 967034, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 684015, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 4886528, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 201541, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 201494, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 524288, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(1304576), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((684015 - 684015)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(1304576), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(967034), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(684015), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(4886528), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(201541), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(201494), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(524288), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 5042168, event.getDuration());
         assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -602,15 +603,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Time stamp not parsed correctly.", 108537519, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 1409215, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (4554003 - 4554003), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 1567616, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 13135135, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 4554003, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 16914880, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 227503, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 226115, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 378908, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(1409215), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((4554003 - 4554003)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(1567616), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(13135135), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(4554003), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(16914880), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(227503), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(226115), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(378908), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 15192712, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -628,15 +629,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Time stamp not parsed correctly.", 182314858, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 516864, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (756393 - 756393), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 516864, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 3354568, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 756393, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 7331840, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 682507, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 442221, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1048576, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(516864), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((756393 - 756393)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(516864), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(3354568), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(756393), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(7331840), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(682507), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(442221), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1048576), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 107655371, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -652,13 +653,12 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 26683209, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", (1403308 - 1141548),
-                event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (1078465 - 1078465), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", (1441600 - 1179648), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 1141548, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 1078465, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1179648, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes((1403308 - 1141548)), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((1078465 - 1078465)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes((1441600 - 1179648)), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(1141548), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(1078465), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1179648), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 7383839, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -674,12 +674,12 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 25281015, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 261760, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (1015603 - 1015603), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 261952, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 1048384, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 1015603, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1179648, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(261760), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((1015603 - 1015603)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(261952), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(1048384), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(1015603), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1179648), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 7855766, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -697,12 +697,12 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Time stamp not parsed correctly.", 36843783, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 2304000, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (2769354 - 2769354), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 2304000, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 2818067, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 2769354, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 5120000, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(2304000), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((2769354 - 2769354)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(2304000), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(2818067), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(2769354), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(5120000), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 4284796, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -718,12 +718,12 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Time stamp not parsed correctly.", 42782086, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 254464, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 0, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 254464, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 1082057, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 934941, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1082084, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(254464), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(0), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(254464), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(1082057), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(934941), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1082084), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 6558777, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -739,15 +739,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Time stamp not parsed correctly.", 6102, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 19648, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 25946 - 25946, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 64512 - 44864, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 44849, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 25946, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 44864, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 43759, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 43759, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(19648), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(25946 - 25946), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(64512 - 44864), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(44849), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(25946), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(44864), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(43759), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(43759), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(262144), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 277307, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -764,15 +764,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 1817644, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 1382383, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 2873414 - 2658303, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 4040704 - 2658304, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 2658303, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 2658303, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 2658304, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 72200, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 72200, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 1118208, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(1382383), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(2873414 - 2658303), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(4040704 - 2658304), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(2658303), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(2658303), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(2658304), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(72200), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(72200), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1118208), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 8798675, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -789,16 +789,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 3070289, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", (6217865 - 6010121),
-                event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (6028029 - 6014591), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", (6256896 - 6014592), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 6010121, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 6014591, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 6014592, event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", 206688, event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", 206662, event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", 262144, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes((6217865 - 6010121)), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((6028029 - 6014591)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes((6256896 - 6014592)), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(6010121), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(6014591), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(6014592), event.getOldSpace());
+        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(206688), event.getPermOccupancyInit());
+        assertEquals("Perm gen end size not parsed correctly.", kilobytes(206662), event.getPermOccupancyEnd());
+        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(262144), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 79050959, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -815,13 +814,12 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 1901217, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", (2056175 - 1794415),
-                event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (909664 - 909664), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", (2096960 - 1835008), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 1794415, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 909664, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 1835008, event.getOldSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes((2056175 - 1794415)), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((909664 - 909664)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes((2096960 - 1835008)), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(1794415), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(909664), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(1835008), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 124596332, event.getDuration());
         assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -838,15 +836,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 719519, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 1382400, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (2702358 - 2658278), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", (4040704 - 2658304), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 2542828, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 2658278, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 2658304, event.getOldSpace());
-        assertEquals("Metaspace begin size not parsed correctly.", 72175, event.getPermOccupancyInit());
-        assertEquals("Metaspace end size not parsed correctly.", 72175, event.getPermOccupancyEnd());
-        assertEquals("Metaspace allocation size not parsed correctly.", 1118208, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(1382400), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((2702358 - 2658278)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes((4040704 - 2658304)), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(2542828), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(2658278), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(2658304), event.getOldSpace());
+        assertEquals("Metaspace begin size not parsed correctly.", kilobytes(72175), event.getPermOccupancyInit());
+        assertEquals("Metaspace end size not parsed correctly.", kilobytes(72175), event.getPermOccupancyEnd());
+        assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(1118208), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 12348057, event.getDuration());
         assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -863,15 +861,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 1202526, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 1355422, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (2725109 - 2658289), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", (4040704 - 2658304), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 2656311, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 2658289, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 2658304, event.getOldSpace());
-        assertEquals("Metaspace begin size not parsed correctly.", 72111, event.getPermOccupancyInit());
-        assertEquals("Metaspace end size not parsed correctly.", 72111, event.getPermOccupancyEnd());
-        assertEquals("Metaspace allocation size not parsed correctly.", 1118208, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(1355422), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((2725109 - 2658289)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes((4040704 - 2658304)), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(2656311), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(2658289), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(2658304), event.getOldSpace());
+        assertEquals("Metaspace begin size not parsed correctly.", kilobytes(72111), event.getPermOccupancyInit());
+        assertEquals("Metaspace end size not parsed correctly.", kilobytes(72111), event.getPermOccupancyEnd());
+        assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(1118208), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 9361008, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -890,15 +888,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 572264304, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 516864, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (891234 - 891234), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", (7848704 - 7331840), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 5350445, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 891234, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 7331840, event.getOldSpace());
-        assertEquals("Metaspace begin size not parsed correctly.", 500357, event.getPermOccupancyInit());
-        assertEquals("Metaspace end size not parsed correctly.", 443269, event.getPermOccupancyEnd());
-        assertEquals("Metaspace allocation size not parsed correctly.", 1048576, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(516864), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((891234 - 891234)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes((7848704 - 7331840)), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(5350445), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(891234), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(7331840), event.getOldSpace());
+        assertEquals("Metaspace begin size not parsed correctly.", kilobytes(500357), event.getPermOccupancyInit());
+        assertEquals("Metaspace end size not parsed correctly.", kilobytes(443269), event.getPermOccupancyEnd());
+        assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(1048576), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 97218882, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -917,15 +915,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Time stamp not parsed correctly.", 576460444, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 516864, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", (905970 - 905970), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", (7848704 - 7331840), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 5074711, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 905970, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 7331840, event.getOldSpace());
-        assertEquals("Metaspace begin size not parsed correctly.", 498279, event.getPermOccupancyInit());
-        assertEquals("Metaspace end size not parsed correctly.", 443366, event.getPermOccupancyEnd());
-        assertEquals("Metaspace allocation size not parsed correctly.", 1048576, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(516864), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes((905970 - 905970)), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes((7848704 - 7331840)), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(5074711), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(905970), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(7331840), event.getOldSpace());
+        assertEquals("Metaspace begin size not parsed correctly.", kilobytes(498279), event.getPermOccupancyInit());
+        assertEquals("Metaspace end size not parsed correctly.", kilobytes(443366), event.getPermOccupancyEnd());
+        assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(1048576), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 83677520, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -942,16 +940,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 58626878, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 19349630 - 13441202,
-                event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 12005469 - 12005469, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 22020096 - 13631488, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 13441202, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 12005469, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 13631488, event.getOldSpace());
-        assertEquals("Perm begin size not parsed correctly.", 1257346, event.getPermOccupancyInit());
-        assertEquals("Perm end size not parsed correctly.", 1257346, event.getPermOccupancyEnd());
-        assertEquals("Perm allocation size not parsed correctly.", 2097152, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(19349630 - 13441202), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(12005469 - 12005469), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(22020096 - 13631488), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(13441202), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(12005469), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(13631488), event.getOldSpace());
+        assertEquals("Perm begin size not parsed correctly.", kilobytes(1257346), event.getPermOccupancyInit());
+        assertEquals("Perm end size not parsed correctly.", kilobytes(1257346), event.getPermOccupancyEnd());
+        assertEquals("Perm allocation size not parsed correctly.", kilobytes(2097152), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 23183850, event.getDuration());
         assertTrue("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -969,15 +966,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 471391741, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 516864, event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 1290167 - 1290167, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 7848704 - 7331840, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 5977264, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 1290167, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 7331840, event.getOldSpace());
-        assertEquals("Perm begin size not parsed correctly.", 473438, event.getPermOccupancyInit());
-        assertEquals("Perm end size not parsed correctly.", 450663, event.getPermOccupancyEnd());
-        assertEquals("Perm allocation size not parsed correctly.", 771512, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(516864), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(1290167 - 1290167), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(7848704 - 7331840), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(5977264), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(1290167), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(7331840), event.getOldSpace());
+        assertEquals("Perm begin size not parsed correctly.", kilobytes(473438), event.getPermOccupancyInit());
+        assertEquals("Perm end size not parsed correctly.", kilobytes(450663), event.getPermOccupancyEnd());
+        assertEquals("Perm allocation size not parsed correctly.", kilobytes(771512), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 102335790, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }
@@ -996,16 +993,15 @@ public class TestCmsSerialOldEvent {
         assertTrue("Trigger not parsed correctly.",
                 event.getTrigger().matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE));
         assertEquals("Time stamp not parsed correctly.", 2057323, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", 13363199 - 9216000,
-                event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", 9728622 - 9215999, event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", 13363200 - 9216000, event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", 9216000, event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", 9215999, event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", 9216000, event.getOldSpace());
-        assertEquals("Perm begin size not parsed correctly.", 376898, event.getPermOccupancyInit());
-        assertEquals("Perm end size not parsed correctly.", 376894, event.getPermOccupancyEnd());
-        assertEquals("Perm allocation size not parsed correctly.", 524288, event.getPermSpace());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(13363199 - 9216000), event.getYoungOccupancyInit());
+        assertEquals("Young end size not parsed correctly.", kilobytes(9728622 - 9215999), event.getYoungOccupancyEnd());
+        assertEquals("Young available size not parsed correctly.", kilobytes(13363200 - 9216000), event.getYoungSpace());
+        assertEquals("Old begin size not parsed correctly.", kilobytes(9216000), event.getOldOccupancyInit());
+        assertEquals("Old end size not parsed correctly.", kilobytes(9215999), event.getOldOccupancyEnd());
+        assertEquals("Old allocation size not parsed correctly.", kilobytes(9216000), event.getOldSpace());
+        assertEquals("Perm begin size not parsed correctly.", kilobytes(376898), event.getPermOccupancyInit());
+        assertEquals("Perm end size not parsed correctly.", kilobytes(376894), event.getPermOccupancyEnd());
+        assertEquals("Perm allocation size not parsed correctly.", kilobytes(524288), event.getPermSpace());
         assertEquals("Duration not parsed correctly.", 88278527, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
     }

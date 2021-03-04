@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.junit.Test;
 
+import static org.eclipselabs.garbagecat.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -47,9 +48,9 @@ public class TestShenandoahConcurrentEvent {
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(),
                 event.getName());
         assertEquals("Time stamp not parsed correctly.", 426, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 16434, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 16466, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 21248, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(16434), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(16466), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(21248), event.getCombinedSpace());
     }
 
     @Test
@@ -61,9 +62,9 @@ public class TestShenandoahConcurrentEvent {
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(),
                 event.getName());
         assertEquals("Time stamp not parsed correctly.", 437 - 4, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 15 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 16 * 1024, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 64 * 1024, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(15 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(16 * 1024), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(64 * 1024), event.getCombinedSpace());
     }
 
     @Test
@@ -76,12 +77,12 @@ public class TestShenandoahConcurrentEvent {
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(),
                 event.getName());
         assertEquals("Time stamp not parsed correctly.", 467, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 21278, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 4701, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 37888, event.getCombinedSpace());
-        assertEquals("Metaspace begin size not parsed correctly.", 6477, event.getPermOccupancyInit());
-        assertEquals("Metaspace end size not parsed correctly.", 6481, event.getPermOccupancyEnd());
-        assertEquals("Metaspace allocation size not parsed correctly.", 1056768, event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(21278), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(4701), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(37888), event.getCombinedSpace());
+        assertEquals("Metaspace begin size not parsed correctly.", kilobytes(6477), event.getPermOccupancyInit());
+        assertEquals("Metaspace end size not parsed correctly.", kilobytes(6481), event.getPermOccupancyEnd());
+        assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(1056768), event.getPermSpace());
     }
 
     @Test
@@ -276,9 +277,9 @@ public class TestShenandoahConcurrentEvent {
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(),
                 event.getName());
         assertEquals("Time stamp not parsed correctly.", 300050 - 5, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 874 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 874 * 1024, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 1303 * 1024, event.getCombinedSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(874 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(874 * 1024), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1303 * 1024), event.getCombinedSpace());
     }
 
     @Test
@@ -298,12 +299,12 @@ public class TestShenandoahConcurrentEvent {
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(),
                 event.getName());
         assertEquals("Time stamp not parsed correctly.", 484 - 0, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", 24 * 1024, event.getCombinedOccupancyInit());
-        assertEquals("Combined end size not parsed correctly.", 10 * 1024, event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", 34 * 1024, event.getCombinedSpace());
-        assertEquals("Metaspace begin size not parsed correctly.", 3231, event.getPermOccupancyInit());
-        assertEquals("Metaspace end size not parsed correctly.", 3239, event.getPermOccupancyEnd());
-        assertEquals("Metaspace allocation size not parsed correctly.", 1056768, event.getPermSpace());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(24 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined end size not parsed correctly.", kilobytes(10 * 1024), event.getCombinedOccupancyEnd());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(34 * 1024), event.getCombinedSpace());
+        assertEquals("Metaspace begin size not parsed correctly.", kilobytes(3231), event.getPermOccupancyInit());
+        assertEquals("Metaspace end size not parsed correctly.", kilobytes(3239), event.getPermOccupancyEnd());
+        assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(1056768), event.getPermSpace());
     }
 
     @Test
@@ -325,9 +326,7 @@ public class TestShenandoahConcurrentEvent {
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        assertEquals("Max heap occupancy for a non blocking event not parsed correctly.", 19 * 1024,
-                jvmRun.getMaxHeapOccupancyNonBlocking());
-        assertEquals("Max heap space for a non blocking event not parsed correctly.", 33 * 1024,
-                jvmRun.getMaxHeapSpaceNonBlocking());
+        assertEquals("Max heap occupancy for a non blocking event not parsed correctly.", kilobytes(19 * 1024), jvmRun.getMaxHeapOccupancyNonBlocking());
+        assertEquals("Max heap space for a non blocking event not parsed correctly.", kilobytes(33 * 1024), jvmRun.getMaxHeapSpaceNonBlocking());
     }
 }
