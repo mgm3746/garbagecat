@@ -12,8 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
-import static org.eclipselabs.garbagecat.Memory.megabytes;
-import static org.eclipselabs.garbagecat.Memory.Unit.BYTES;
+import static org.eclipselabs.garbagecat.util.Memory.megabytes;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.BYTES;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.Memory;
+import org.eclipselabs.garbagecat.util.Memory;
 
 /**
  * JVM environment information
@@ -270,21 +270,21 @@ public class Jvm {
      * @return The maximum heap space, or 0 if not set.
      */
     public Memory getMaxHeapBytes() {
-        return getMaxHeapValue() == null ? Memory.ZERO : JdkUtil.convertOptionSizeToBytes(getMaxHeapValue());
+        return getMaxHeapValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxHeapValue());
     }
 
     /**
      * @return The maximum perm space in bytes, or 0 if not set.
      */
     public Memory getMaxPermBytes() {
-		return getMaxPermValue() == null ? Memory.ZERO : JdkUtil.convertOptionSizeToBytes(getMaxPermValue());
+		return getMaxPermValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxPermValue());
     }
 
     /**
      * @return The maximum metaspace in bytes, or 0 if not set.
      */
     public Memory getMaxMetaspaceBytes() {
-        return getMaxMetaspaceValue() == null ? Memory.ZERO : JdkUtil.convertOptionSizeToBytes(getMaxMetaspaceValue());
+        return getMaxMetaspaceValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxMetaspaceValue());
     }
 
     /**
@@ -1011,7 +1011,7 @@ public class Jvm {
      */
     public Memory getGcLogFileSizeBytes() {
 		return getGcLogFileSizeValue() == null ? Memory.ZERO
-				: JdkUtil.convertOptionSizeToBytes(getGcLogFileSizeValue());
+				: Memory.fromOptionSize(getGcLogFileSizeValue());
     }
 
     /**
@@ -1075,7 +1075,7 @@ public class Jvm {
      */
     public Memory getCompressedClassSpaceSizeBytes() {
 		return getCompressedClassSpaceSizeValue() == null ? Memory.ZERO
-				: JdkUtil.convertOptionSizeToBytes(getCompressedClassSpaceSizeValue());
+				: Memory.fromOptionSize(getCompressedClassSpaceSizeValue());
     }
 
     /**
@@ -1458,8 +1458,8 @@ public class Jvm {
      */
     public boolean isMinAndMaxPermSpaceEqual() {
 		return (getMinPermValue() == null && getMaxPermValue() == null) || (getMinPermValue() != null
-				&& getMaxPermValue() != null && JdkUtil.convertOptionSizeToBytes(getMinPermValue())
-						.equals(JdkUtil.convertOptionSizeToBytes(getMaxPermValue())));
+				&& getMaxPermValue() != null && Memory.fromOptionSize(getMinPermValue())
+						.equals(Memory.fromOptionSize(getMaxPermValue())));
     }
 
     /**
@@ -1485,7 +1485,7 @@ public class Jvm {
     public boolean hasLargeThreadStackSize() {
         String threadStackSize = getThreadStackSizeValue();
         return threadStackSize != null
-                && JdkUtil.convertOptionSizeToBytes(threadStackSize).compareTo(megabytes(1)) >= 0;
+                && Memory.fromOptionSize(threadStackSize).compareTo(megabytes(1)) >= 0;
     }
 
     /**

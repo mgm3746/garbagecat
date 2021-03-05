@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
-import static org.eclipselabs.garbagecat.Memory.bytes;
+import static org.eclipselabs.garbagecat.util.Memory.bytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

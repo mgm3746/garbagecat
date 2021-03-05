@@ -12,8 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
-import static org.eclipselabs.garbagecat.Memory.kilobytes;
-import static org.eclipselabs.garbagecat.Memory.Unit.BYTES;
+import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.BYTES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;

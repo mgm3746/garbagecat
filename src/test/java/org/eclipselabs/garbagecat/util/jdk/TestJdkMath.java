@@ -12,15 +12,15 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
-import static org.eclipselabs.garbagecat.Memory.kilobytes;
-import static org.eclipselabs.garbagecat.Memory.Unit.GIGABYTES;
-import static org.eclipselabs.garbagecat.Memory.Unit.MEGABYTES;
+import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.GIGABYTES;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.MEGABYTES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.junit.Test;
 
 

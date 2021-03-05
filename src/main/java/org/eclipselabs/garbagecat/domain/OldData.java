@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
-import org.eclipselabs.garbagecat.Memory;
+import org.eclipselabs.garbagecat.util.Memory;
 
 /**
  * Old generation data.

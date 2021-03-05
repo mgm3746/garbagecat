@@ -11,15 +11,15 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
-import static org.eclipselabs.garbagecat.Memory.bytes;
-import static org.eclipselabs.garbagecat.Memory.kilobytes;
-import static org.eclipselabs.garbagecat.Memory.megabytes;
+import static org.eclipselabs.garbagecat.util.Memory.bytes;
+import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.megabytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipselabs.garbagecat.Memory;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.junit.Test;
 
 

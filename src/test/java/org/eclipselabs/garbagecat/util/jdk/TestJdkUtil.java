@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
-import static org.eclipselabs.garbagecat.Memory.bytes;
+import static org.eclipselabs.garbagecat.util.Memory.bytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -24,6 +24,7 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.junit.Test;
 
 
@@ -225,63 +226,63 @@ public class TestJdkUtil {
     public void testConvertOptionSizeToBytesNoUnits() {
         String optionSize = "45097156608";
         assertEquals("'" + optionSize + "' not converted to expected bytes.", bytes(45097156608L),
-                JdkUtil.convertOptionSizeToBytes(optionSize));
+                Memory.fromOptionSize(optionSize));
     }
 
     @Test
     public void testConvertOptionSizeToBytesLowercaseB() {
         String optionSize = "12345678b";
         assertEquals("'" + optionSize + "' not converted to expected bytes.", bytes(12345678),
-                JdkUtil.convertOptionSizeToBytes(optionSize));
+                Memory.fromOptionSize(optionSize));
     }
 
     @Test
     public void testConvertOptionSizeToBytesUppercaseB() {
         String optionSize = "12345678B";
         assertEquals("'" + optionSize + "' not converted to expected bytes.", bytes(12345678),
-                JdkUtil.convertOptionSizeToBytes(optionSize));
+                Memory.fromOptionSize(optionSize));
     }
 
     @Test
     public void testConvertOptionSizeToBytesLowercaseK() {
         String optionSize = "1k";
         assertEquals("'" + optionSize + "' not converted to expected bytes.", bytes(1024),
-                JdkUtil.convertOptionSizeToBytes(optionSize));
+                Memory.fromOptionSize(optionSize));
     }
 
     @Test
     public void testConvertOptionSizeToBytesUppercaseK() {
         String optionSize = "1K";
         assertEquals("'" + optionSize + "' not converted to expected bytes.", bytes(1024),
-                JdkUtil.convertOptionSizeToBytes(optionSize));
+                Memory.fromOptionSize(optionSize));
     }
 
     @Test
     public void testConvertOptionSizeToBytesLowercaseM() {
         String optionSize = "1m";
         assertEquals("'" + optionSize + "' not converted to expected bytes.", bytes(1048576),
-                JdkUtil.convertOptionSizeToBytes(optionSize));
+                Memory.fromOptionSize(optionSize));
     }
 
     @Test
     public void testConvertOptionSizeToBytesUppercaseM() {
         String optionSize = "1M";
         assertEquals("'" + optionSize + "' not converted to expected bytes.", bytes(1048576),
-                JdkUtil.convertOptionSizeToBytes(optionSize));
+                Memory.fromOptionSize(optionSize));
     }
 
     @Test
     public void testConvertOptionSizeToBytesLowercaseG() {
         String optionSize = "1g";
         assertEquals("'" + optionSize + "' not converted to expected bytes.", bytes(1073741824),
-                JdkUtil.convertOptionSizeToBytes(optionSize));
+                Memory.fromOptionSize(optionSize));
     }
 
     @Test
     public void testConvertOptionSizeToBytesUppercaseG() {
         String optionSize = "1G";
         assertEquals("'" + optionSize + "' not converted to expected bytes.", bytes(1073741824),
-                JdkUtil.convertOptionSizeToBytes(optionSize));
+                Memory.fromOptionSize(optionSize));
     }
 
     @Test

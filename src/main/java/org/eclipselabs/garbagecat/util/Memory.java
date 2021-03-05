@@ -1,9 +1,16 @@
-package org.eclipselabs.garbagecat;
+package org.eclipselabs.garbagecat.util;
 
-import static org.eclipselabs.garbagecat.Memory.Unit.BYTES;
-import static org.eclipselabs.garbagecat.Memory.Unit.GIGABYTES;
-import static org.eclipselabs.garbagecat.Memory.Unit.KILOBYTES;
-import static org.eclipselabs.garbagecat.Memory.Unit.MEGABYTES;
+import static java.lang.Long.parseLong;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.BYTES;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.GIGABYTES;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.MEGABYTES;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.forUnit;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 
 public class Memory implements Comparable<Memory> {
 
@@ -151,52 +158,83 @@ public class Memory implements Comparable<Memory> {
 
 	}
 
+	private static final Pattern optionSizePttern = Pattern.compile("(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?");
+
 	public static final Memory ZERO = new Memory(0, BYTES);
 
-	private final long value;
-	private final Unit size;
-
-	public Memory(long value, Unit size) {
-		this.value = value;
-		this.size = size;
-	}
-
-	public Memory(long value, char units) {
-		this(value, Unit.forUnit(units));
-	}
-
-	@Override
-	public String toString() {
-		return String.valueOf(value) + size.getName();
+	public static Memory memory(long value, Unit unit) {
+		return value == 0 ? ZERO : new Memory(value, unit);
 	}
 
 	public static Memory memory(String string) {
 		return new Memory(Long.valueOf(string.substring(0, string.length() - 1)),
-				Unit.forUnit(string.charAt(string.length() - 1)));
+				forUnit(string.charAt(string.length() - 1)));
 	}
 
 	public static Memory memory(String value, char unit) {
-		return new Memory(Long.valueOf(value), Unit.forUnit(unit));
+		return memory(Long.valueOf(value), forUnit(unit));
 	}
 
 	public static Memory bytes(long value) {
-		return value == 0 ? ZERO : new Memory(value, BYTES);
+		return memory(value, BYTES);
 	}
-	
+
+	public static Memory bytes(String value) {
+		return bytes(parseLong(value));
+	}
+
 	public static Memory kilobytes(long value) {
-		return value == 0 ? ZERO : new Memory(value, KILOBYTES);
+		return memory(value, KILOBYTES);
 	}
 
 	public static Memory kilobytes(String value) {
-		return kilobytes(Long.parseLong(value));
+		return kilobytes(parseLong(value));
 	}
 
-	public static Memory megabytes(int value) {
-		return (long) value == 0 ? ZERO : new Memory(value, MEGABYTES);
+	public static Memory megabytes(long value) {
+		return memory(value, MEGABYTES);
 	}
 
-	public static Memory gigabytes(int value) {
-		return (long) value == 0 ? ZERO : new Memory(value, GIGABYTES);
+	public static Memory megabytes(String value) {
+		return megabytes(parseLong(value));
+	}
+
+	public static Memory gigabytes(long value) {
+		return memory(value, GIGABYTES);
+	}
+
+	public static Memory gigabytes(String value) {
+		return gigabytes(parseLong(value));
+	}
+
+	private static double get(Memory memory, Unit unit) {
+		return unit.convertTo(memory.value, memory.size);
+	}
+
+	/**
+	 * Convert JVM size option to bytes.
+	 * 
+	 * @param size The size in various units (e.g. 'k').
+	 * @return The size in bytes.
+	 */
+	public static Memory fromOptionSize(String size) {
+		Matcher matcher = optionSizePttern.matcher(size);
+		return matcher.find()
+				? memory(parseLong(matcher.group(1)), matcher.group(2) == null ? BYTES : forUnit(matcher.group(2)))
+				: null;
+	}
+
+	private final Unit size;
+
+	private final long value;
+
+	public Memory(long value, char units) {
+		this(value, forUnit(units));
+	}
+
+	public Memory(long value, Unit size) {
+		this.value = value;
+		this.size = size;
 	}
 
 	@Override
@@ -209,22 +247,6 @@ public class Memory implements Comparable<Memory> {
 		return obj instanceof Memory && compareTo((Memory) obj) == 0;
 	}
 
-	private static double get(Memory memory, Unit s) {
-		return s.convertTo(memory.value, memory.size);
-	}
-
-	public boolean greaterThan(Memory other) {
-		return compareTo(other) > 0;
-	}
-
-	public boolean lessThan(Memory other) {
-		return compareTo(other) < 0;
-	}
-
-	public boolean isZero() {
-		return value == 0;
-	}
-
 	public long getKilobytes() {
 		return getValue(Unit.KILOBYTES);
 	}
@@ -233,8 +255,16 @@ public class Memory implements Comparable<Memory> {
 		return (long) size.convertTo(value, this.size);
 	}
 
-	public Memory toKilobytes() {
-		return new Memory(getKilobytes(), Unit.KILOBYTES);
+	public boolean greaterThan(Memory other) {
+		return compareTo(other) > 0;
+	}
+
+	public boolean isZero() {
+		return value == 0;
+	}
+
+	public boolean lessThan(Memory other) {
+		return compareTo(other) < 0;
 	}
 
 	public Memory minus(Memory other) {
@@ -251,5 +281,13 @@ public class Memory implements Comparable<Memory> {
 		return size1.compareTo(size2) < 0 ? size1 : size2;
 	}
 
+	public Memory toKilobytes() {
+		return new Memory(getKilobytes(), Unit.KILOBYTES);
+	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(value) + size.getName();
+	}
 
 }

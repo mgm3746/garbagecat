@@ -14,7 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import org.junit.Test;
 
-import static org.eclipselabs.garbagecat.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

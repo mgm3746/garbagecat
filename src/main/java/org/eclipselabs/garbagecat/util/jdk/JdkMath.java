@@ -15,9 +15,9 @@ package org.eclipselabs.garbagecat.util.jdk;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import org.eclipselabs.garbagecat.Memory;
-import org.eclipselabs.garbagecat.Memory.Unit;
 import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.Memory.Unit;
 
 /**
  * Math utility methods and constants for OpenJDK and Oracle JDK.

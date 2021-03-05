@@ -12,9 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.service;
 
-import static org.eclipselabs.garbagecat.Memory.kilobytes;
-import static org.eclipselabs.garbagecat.Memory.Unit.BYTES;
-import static org.eclipselabs.garbagecat.Memory.Unit.KILOBYTES;
+import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.BYTES;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipselabs.garbagecat.Main;
-import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
@@ -82,6 +81,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.ShenandoahPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;

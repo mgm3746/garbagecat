@@ -12,17 +12,17 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
-import static org.eclipselabs.garbagecat.Memory.gigabytes;
-import static org.eclipselabs.garbagecat.Memory.megabytes;
+import static org.eclipselabs.garbagecat.util.Memory.gigabytes;
+import static org.eclipselabs.garbagecat.util.Memory.megabytes;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
