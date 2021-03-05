@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -189,15 +191,15 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
                 }
             }
             trigger = matcher.group(25);
-            young = Memory.memory(matcher.group(26), matcher.group(28).charAt(0)).toKilobytes();
-            youngEnd = Memory.memory(matcher.group(29), matcher.group(31).charAt(0)).toKilobytes();
-            youngAvailable = Memory.memory(matcher.group(32), matcher.group(34).charAt(0)).toKilobytes();
-            old = Memory.memory(matcher.group(36), matcher.group(38).charAt(0)).toKilobytes();
-            oldEnd = Memory.memory(matcher.group(39), matcher.group(41).charAt(0)).toKilobytes();
-            oldAllocation = Memory.memory(matcher.group(42), matcher.group(44).charAt(0)).toKilobytes();
-            permGen = Memory.memory(matcher.group(45), matcher.group(47).charAt(0)).toKilobytes();
-            permGenEnd = Memory.memory(matcher.group(48), matcher.group(50).charAt(0)).toKilobytes();
-            permGenAllocation = Memory.memory(matcher.group(51), matcher.group(53).charAt(0)).toKilobytes();
+            young = Memory.memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
+            youngEnd = Memory.memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
+            youngAvailable = Memory.memory(matcher.group(32), matcher.group(34).charAt(0)).convertTo(KILOBYTES);
+            old = Memory.memory(matcher.group(36), matcher.group(38).charAt(0)).convertTo(KILOBYTES);
+            oldEnd = Memory.memory(matcher.group(39), matcher.group(41).charAt(0)).convertTo(KILOBYTES);
+            oldAllocation = Memory.memory(matcher.group(42), matcher.group(44).charAt(0)).convertTo(KILOBYTES);
+            permGen = Memory.memory(matcher.group(45), matcher.group(47).charAt(0)).convertTo(KILOBYTES);
+            permGenEnd = Memory.memory(matcher.group(48), matcher.group(50).charAt(0)).convertTo(KILOBYTES);
+            permGenAllocation = Memory.memory(matcher.group(51), matcher.group(53).charAt(0)).convertTo(KILOBYTES);
             duration = JdkMath.convertMillisToMicros(matcher.group(63)).intValue();
             timeUser = JdkMath.convertSecsToCentis(matcher.group(65)).intValue();
             timeSys = JdkMath.convertSecsToCentis(matcher.group(66)).intValue();

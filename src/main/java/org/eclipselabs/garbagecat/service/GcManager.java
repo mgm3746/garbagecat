@@ -759,16 +759,16 @@ public class GcManager {
                     }
                 } else if (event instanceof ShenandoahConcurrentEvent) {
                     if (greater(((CombinedData) event).getCombinedOccupancyInit(), jvmDao.getMaxHeapOccupancyNonBlocking())) {
-                        jvmDao.setMaxHeapOccupancyNonBlocking((int) ((CombinedData) event).getCombinedOccupancyInit().getKilobytes());
+                        jvmDao.setMaxHeapOccupancyNonBlocking((int) ((CombinedData) event).getCombinedOccupancyInit().getValue(KILOBYTES));
                     }
                     if (greater(((CombinedData) event).getCombinedSpace(), jvmDao.getMaxHeapSpaceNonBlocking())) {
-                        jvmDao.setMaxHeapSpaceNonBlocking((int) ((CombinedData) event).getCombinedSpace().getKilobytes());
+                        jvmDao.setMaxHeapSpaceNonBlocking((int) ((CombinedData) event).getCombinedSpace().getValue(KILOBYTES));
                     }
                     if (greater(((PermMetaspaceData) event).getPermOccupancyInit(), jvmDao.getMaxPermOccupancyNonBlocking())) {
-                        jvmDao.setMaxPermOccupancyNonBlocking((int) ((PermMetaspaceData) event).getPermOccupancyInit().getKilobytes());
+                        jvmDao.setMaxPermOccupancyNonBlocking((int) ((PermMetaspaceData) event).getPermOccupancyInit().getValue(KILOBYTES));
                     }
                     if (greater(((PermMetaspaceData) event).getPermSpace(), jvmDao.getMaxPermSpaceNonBlocking())) {
-                        jvmDao.setMaxPermSpaceNonBlocking((int) ((PermMetaspaceData) event).getPermSpace().getKilobytes());
+                        jvmDao.setMaxPermSpaceNonBlocking((int) ((PermMetaspaceData) event).getPermSpace().getValue(KILOBYTES));
                     }
                 } else if (event instanceof UnknownEvent) {
                     // Don't count reportable events with datestamp only as unidentified
@@ -838,7 +838,7 @@ public class GcManager {
     }
 
 	private static boolean greater(Memory memory, int value) {
-		return memory != null && memory.getKilobytes() > value;
+		return memory != null && memory.getValue(KILOBYTES) > value;
 	}
 
     /**

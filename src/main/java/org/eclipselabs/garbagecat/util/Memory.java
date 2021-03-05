@@ -38,8 +38,8 @@ public class Memory implements Comparable<Memory> {
 			}
 
 			@Override
-			public double convertTo(double v, Unit s) {
-				return s.toBytes(v);
+			public double convert(double sourceValue, Unit sourceUnit) {
+				return sourceUnit.toBytes(sourceValue);
 			}
 		},
 		KILOBYTES("K") {
@@ -64,8 +64,8 @@ public class Memory implements Comparable<Memory> {
 			}
 
 			@Override
-			public double convertTo(double v, Unit s) {
-				return s.toKiloBytes(v);
+			public double convert(double sourceValue, Unit sourceUnit) {
+				return sourceUnit.toKiloBytes(sourceValue);
 			}
 		},
 		MEGABYTES("M") {
@@ -90,8 +90,8 @@ public class Memory implements Comparable<Memory> {
 			}
 
 			@Override
-			public double convertTo(double v, Unit s) {
-				return s.toMegaBytes(v);
+			public double convert(double sourceValue, Unit sourceUnit) {
+				return sourceUnit.toMegaBytes(sourceValue);
 			}
 		},
 		GIGABYTES("G") {
@@ -116,8 +116,8 @@ public class Memory implements Comparable<Memory> {
 			}
 
 			@Override
-			public double convertTo(double v, Unit s) {
-				return s.toGigaBytes(v);
+			public double convert(double sourceValue, Unit sourceUnit) {
+				return sourceUnit.toGigaBytes(sourceValue);
 			}
 		};
 
@@ -133,7 +133,7 @@ public class Memory implements Comparable<Memory> {
 
 		public abstract double toGigaBytes(double v);
 
-		public abstract double convertTo(double v, Unit s);
+		public abstract double convert(double sourceValue, Unit sourceUnit);
 
 		private Unit(String name) {
 			this.name = name;
@@ -208,7 +208,7 @@ public class Memory implements Comparable<Memory> {
 	}
 
 	private static double get(Memory memory, Unit unit) {
-		return unit.convertTo(memory.value, memory.size);
+		return unit.convert(memory.value, memory.size);
 	}
 
 	/**
@@ -247,12 +247,8 @@ public class Memory implements Comparable<Memory> {
 		return obj instanceof Memory && compareTo((Memory) obj) == 0;
 	}
 
-	public long getKilobytes() {
-		return getValue(Unit.KILOBYTES);
-	}
-
 	public long getValue(Unit size) {
-		return (long) size.convertTo(value, this.size);
+		return (long) size.convert(value, this.size);
 	}
 
 	public boolean greaterThan(Memory other) {
@@ -281,8 +277,8 @@ public class Memory implements Comparable<Memory> {
 		return size1.compareTo(size2) < 0 ? size1 : size2;
 	}
 
-	public Memory toKilobytes() {
-		return new Memory(getKilobytes(), Unit.KILOBYTES);
+	public Memory convertTo(Unit target) {
+		return new Memory(getValue(target), target);
 	}
 
 	@Override

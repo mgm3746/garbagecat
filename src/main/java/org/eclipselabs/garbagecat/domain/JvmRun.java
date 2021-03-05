@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain;
 
 import static org.eclipselabs.garbagecat.util.Memory.gigabytes;
 import static org.eclipselabs.garbagecat.util.Memory.megabytes;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -544,8 +545,8 @@ public class JvmRun {
     public long getNewRatio() {
         int newRatio;
         if (maxYoungSpace != null) {
-            BigDecimal ratio = new BigDecimal(maxOldSpace.getKilobytes());
-            ratio = ratio.divide(new BigDecimal(maxYoungSpace.getKilobytes()), 0, RoundingMode.HALF_EVEN);
+            BigDecimal ratio = new BigDecimal(maxOldSpace.getValue(KILOBYTES));
+            ratio = ratio.divide(new BigDecimal(maxYoungSpace.getValue(KILOBYTES)), 0, RoundingMode.HALF_EVEN);
             newRatio = ratio.intValue();
         } else {
             newRatio = 0;

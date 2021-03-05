@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -161,9 +163,9 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
                 if (matcher.group(14) != null) {
                     trigger = matcher.group(14);
                 }
-                combined = Memory.memory(matcher.group(16), matcher.group(18).charAt(0)).toKilobytes();
-                combinedEnd = Memory.memory(matcher.group(19), matcher.group(21).charAt(0)).toKilobytes();
-                combinedAvailable = Memory.memory(matcher.group(22), matcher.group(24).charAt(0)).toKilobytes();
+                combined = Memory.memory(matcher.group(16), matcher.group(18).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = Memory.memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = Memory.memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
@@ -181,9 +183,9 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
                 combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(74), matcher.group(76).charAt(0));
                 duration = JdkMath.convertSecsToMicros(matcher.group(44)).intValue();
                 if (matcher.group(77) != null) {
-                    permGen = Memory.memory(matcher.group(79), matcher.group(81).charAt(0)).toKilobytes();
-                    permGenEnd = Memory.memory(matcher.group(82), matcher.group(84).charAt(0)).toKilobytes();
-                    permGenAllocation = Memory.memory(matcher.group(85), matcher.group(87).charAt(0)).toKilobytes();
+                    permGen = Memory.memory(matcher.group(79), matcher.group(81).charAt(0)).convertTo(KILOBYTES);
+                    permGenEnd = Memory.memory(matcher.group(82), matcher.group(84).charAt(0)).convertTo(KILOBYTES);
+                    permGenAllocation = Memory.memory(matcher.group(85), matcher.group(87).charAt(0)).convertTo(KILOBYTES);
                 }
             }
         }

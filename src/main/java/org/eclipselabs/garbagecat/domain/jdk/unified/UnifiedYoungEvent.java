@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -130,9 +132,9 @@ public class UnifiedYoungEvent extends UnknownCollector
                 }
             }
             trigger = matcher.group(25);
-            combinedBegin = Memory.memory(matcher.group(27), matcher.group(29).charAt(0)).toKilobytes();
-            combinedEnd = Memory.memory(matcher.group(30), matcher.group(32).charAt(0)).toKilobytes();
-            combinedAllocation = Memory.memory(matcher.group(33), matcher.group(35).charAt(0)).toKilobytes();
+            combinedBegin = Memory.memory(matcher.group(27), matcher.group(29).charAt(0)).convertTo(KILOBYTES);
+            combinedEnd = Memory.memory(matcher.group(30), matcher.group(32).charAt(0)).convertTo(KILOBYTES);
+            combinedAllocation = Memory.memory(matcher.group(33), matcher.group(35).charAt(0)).convertTo(KILOBYTES);
             duration = JdkMath.convertMillisToMicros(matcher.group(36)).intValue();
             timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
         }

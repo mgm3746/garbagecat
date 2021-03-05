@@ -12,6 +12,11 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat;
 
+import static org.eclipselabs.garbagecat.util.Constants.LINE_SEPARATOR;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_PERM_GEN;
+import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -205,10 +210,10 @@ public class Main {
             bufferedWriter = new BufferedWriter(fileWriter);
             File gcLogFile = new File(gcLogFileName);
             bufferedWriter.write(gcLogFile.getName());
-            bufferedWriter.write(Constants.LINE_SEPARATOR);
+            bufferedWriter.write(LINE_SEPARATOR);
 
             if (version || latestVersion) {
-                bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);
+                bufferedWriter.write("========================================" + LINE_SEPARATOR);
                 if (version) {
                     bufferedWriter.write(
                             "Running garbagecat version: " + OptionsParser.getVersion() + System.getProperty("line.separator"));
@@ -222,40 +227,40 @@ public class Main {
             // Bottlenecks
             List<String> bottlenecks = jvmRun.getBottlenecks();
             if (bottlenecks.size() > 0) {
-                bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);
+                bufferedWriter.write("========================================" + LINE_SEPARATOR);
                 bufferedWriter.write(
-                        "Throughput less than " + jvmRun.getThroughputThreshold() + "%" + Constants.LINE_SEPARATOR);
-                bufferedWriter.write("----------------------------------------" + Constants.LINE_SEPARATOR);
+                        "Throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
+                bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
                 Iterator<String> iterator = bottlenecks.iterator();
                 while (iterator.hasNext()) {
-                    bufferedWriter.write(iterator.next() + Constants.LINE_SEPARATOR);
+                    bufferedWriter.write(iterator.next() + LINE_SEPARATOR);
                 }
             }
 
             // JVM information
             if (jvmRun.getJvm().getVersion() != null || jvmRun.getJvm().getOptions() != null
                     || jvmRun.getJvm().getMemory() != null) {
-                bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);
-                bufferedWriter.write("JVM:" + Constants.LINE_SEPARATOR);
-                bufferedWriter.write("----------------------------------------" + Constants.LINE_SEPARATOR);
+                bufferedWriter.write("========================================" + LINE_SEPARATOR);
+                bufferedWriter.write("JVM:" + LINE_SEPARATOR);
+                bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
                 if (jvmRun.getJvm().getVersion() != null) {
-                    bufferedWriter.write("Version: " + jvmRun.getJvm().getVersion() + Constants.LINE_SEPARATOR);
+                    bufferedWriter.write("Version: " + jvmRun.getJvm().getVersion() + LINE_SEPARATOR);
                 }
                 if (jvmRun.getJvm().getOptions() != null) {
-                    bufferedWriter.write("Options: " + jvmRun.getJvm().getOptions() + Constants.LINE_SEPARATOR);
+                    bufferedWriter.write("Options: " + jvmRun.getJvm().getOptions() + LINE_SEPARATOR);
                 }
                 if (jvmRun.getJvm().getMemory() != null) {
-                    bufferedWriter.write("Memory: " + jvmRun.getJvm().getMemory() + Constants.LINE_SEPARATOR);
+                    bufferedWriter.write("Memory: " + jvmRun.getJvm().getMemory() + LINE_SEPARATOR);
                 }
             }
 
             // Summary
-            bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);
-            bufferedWriter.write("SUMMARY:" + Constants.LINE_SEPARATOR);
-            bufferedWriter.write("----------------------------------------" + Constants.LINE_SEPARATOR);
+            bufferedWriter.write("========================================" + LINE_SEPARATOR);
+            bufferedWriter.write("SUMMARY:" + LINE_SEPARATOR);
+            bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
 
             // GC stats
-            bufferedWriter.write("# GC Events: " + jvmRun.getBlockingEventCount() + Constants.LINE_SEPARATOR);
+            bufferedWriter.write("# GC Events: " + jvmRun.getBlockingEventCount() + LINE_SEPARATOR);
             if (jvmRun.getBlockingEventCount() > 0) {
                 bufferedWriter.write("Event Types: ");
                 List<LogEventType> eventTypes = jvmRun.getEventTypes();
@@ -272,81 +277,81 @@ public class Main {
                         firstEvent = false;
                     }
                 }
-                bufferedWriter.write(Constants.LINE_SEPARATOR);
+                bufferedWriter.write(LINE_SEPARATOR);
                 // Inverted parallelism. Only report if we have Serial/Parallel/CMS/G1 events with times data.
                 if (jvmRun.getCollectorFamilies() != null && jvmRun.getCollectorFamilies().size() > 0
                         && jvmRun.getParallelCount() > 0) {
-                    bufferedWriter.write("# Parallel Events: " + jvmRun.getParallelCount() + Constants.LINE_SEPARATOR);
+                    bufferedWriter.write("# Parallel Events: " + jvmRun.getParallelCount() + LINE_SEPARATOR);
                     bufferedWriter.write("# Inverted Parallelism: " + jvmRun.getInvertedParallelismCount()
-                            + Constants.LINE_SEPARATOR);
+                            + LINE_SEPARATOR);
                     if (jvmRun.getInvertedParallelismCount() > 0) {
                         bufferedWriter.write("Max Inverted Parallelism: "
-                                + jvmRun.getWorstInvertedParallelismEvent().getLogEntry() + Constants.LINE_SEPARATOR);
+                                + jvmRun.getWorstInvertedParallelismEvent().getLogEntry() + LINE_SEPARATOR);
                     }
                 }
                 // NewRatio
                 if (jvmRun.getMaxYoungSpace() != null && jvmRun.getMaxOldSpace() != null) {
-                    bufferedWriter.write("NewRatio: " + jvmRun.getNewRatio() + Constants.LINE_SEPARATOR);
+                    bufferedWriter.write("NewRatio: " + jvmRun.getNewRatio() + LINE_SEPARATOR);
                 }
                 // Max heap occupancy.
                 if (jvmRun.getMaxHeapOccupancy() != null) {
                     bufferedWriter.write(
-                            "Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K" + Constants.LINE_SEPARATOR);
+                            "Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K" + LINE_SEPARATOR);
                 } else if (jvmRun.getMaxHeapOccupancyNonBlocking() != null) {
-                    bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancyNonBlocking().toKilobytes()
-                            + Constants.LINE_SEPARATOR);
+                    bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancyNonBlocking().convertTo(KILOBYTES)
+                            + LINE_SEPARATOR);
                 }
                 // Max heap after GC.
                 if (jvmRun.getMaxHeapAfterGc() != null) {
                     bufferedWriter
-                            .write("Max Heap After GC: " + jvmRun.getMaxHeapAfterGc().toKilobytes() + Constants.LINE_SEPARATOR);
+                            .write("Max Heap After GC: " + jvmRun.getMaxHeapAfterGc().convertTo(KILOBYTES) + LINE_SEPARATOR);
                 }
                 // Max heap space.
                 if (jvmRun.getMaxHeapSpace() != null) {
                     bufferedWriter
-                            .write("Max Heap Space: " + jvmRun.getMaxHeapSpace().toKilobytes() + Constants.LINE_SEPARATOR);
+                            .write("Max Heap Space: " + jvmRun.getMaxHeapSpace().convertTo(KILOBYTES) + LINE_SEPARATOR);
                 } else if (jvmRun.getMaxHeapSpaceNonBlocking() != null) {
                     bufferedWriter.write(
-                            "Max Heap Space: " + jvmRun.getMaxHeapSpaceNonBlocking().toKilobytes() + Constants.LINE_SEPARATOR);
+                            "Max Heap Space: " + jvmRun.getMaxHeapSpaceNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                 }
 
                 if (jvmRun.getMaxPermSpace() > 0) {
-                    if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(Analysis.INFO_PERM_GEN)) {
+                    if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(INFO_PERM_GEN)) {
                         // Max perm occupancy.
                         bufferedWriter.write("Max Perm Gen Occupancy: " + jvmRun.getMaxPermOccupancy() + "K"
-                                + Constants.LINE_SEPARATOR);
+                                + LINE_SEPARATOR);
                         // Max perm after GC.
                         bufferedWriter.write("Max Perm Gen After GC: " + jvmRun.getMaxPermAfterGc() + "K"
-                                + Constants.LINE_SEPARATOR);
+                                + LINE_SEPARATOR);
                         // Max perm space.
                         bufferedWriter.write(
-                                "Max Perm Gen Space: " + jvmRun.getMaxPermSpace() + "K" + Constants.LINE_SEPARATOR);
+                                "Max Perm Gen Space: " + jvmRun.getMaxPermSpace() + "K" + LINE_SEPARATOR);
                     } else {
                         // Max metaspace occupancy.
                         bufferedWriter.write("Max Metaspace Occupancy: " + jvmRun.getMaxPermOccupancy() + "K"
-                                + Constants.LINE_SEPARATOR);
+                                + LINE_SEPARATOR);
                         // Max metaspace after GC.
                         bufferedWriter.write("Max Metaspace After GC: " + jvmRun.getMaxPermAfterGc() + "K"
-                                + Constants.LINE_SEPARATOR);
+                                + LINE_SEPARATOR);
                         // Max metaspace space.
                         bufferedWriter.write(
-                                "Max Metaspace Space: " + jvmRun.getMaxPermSpace() + "K" + Constants.LINE_SEPARATOR);
+                                "Max Metaspace Space: " + jvmRun.getMaxPermSpace() + "K" + LINE_SEPARATOR);
                     }
                 } else if (jvmRun.getMaxPermSpaceNonBlocking() > 0) {
-                    if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(Analysis.INFO_PERM_GEN)) {
+                    if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(INFO_PERM_GEN)) {
                         // Max perm occupancy.
                         bufferedWriter.write("Max Perm Gen Occupancy: " + jvmRun.getMaxPermOccupancyNonBlocking() + "K"
-                                + Constants.LINE_SEPARATOR);
+                                + LINE_SEPARATOR);
                         // Max perm space.
                         bufferedWriter.write("Max Perm Gen Space: " + jvmRun.getMaxPermSpaceNonBlocking() + "K"
-                                + Constants.LINE_SEPARATOR);
+                                + LINE_SEPARATOR);
                     } else {
                         // Max metaspace occupancy.
                         bufferedWriter.write("Max Metaspace Occupancy: " + jvmRun.getMaxPermOccupancyNonBlocking() + "K"
-                                + Constants.LINE_SEPARATOR);
+                                + LINE_SEPARATOR);
                         // Max metaspace space.
                         bufferedWriter.write("Max Metaspace Space: " + jvmRun.getMaxPermSpaceNonBlocking() + "K"
-                                + Constants.LINE_SEPARATOR);
+                                + LINE_SEPARATOR);
                     }
                 }
                 // GC throughput
@@ -355,13 +360,13 @@ public class Main {
                     // Provide clue it's rounded to 100
                     bufferedWriter.write("~");
                 }
-                bufferedWriter.write(jvmRun.getGcThroughput() + "%" + Constants.LINE_SEPARATOR);
+                bufferedWriter.write(jvmRun.getGcThroughput() + "%" + LINE_SEPARATOR);
                 // GC max pause
                 BigDecimal maxGcPause = JdkMath.convertMillisToSecs(jvmRun.getMaxGcPause());
-                bufferedWriter.write("GC Max Pause: " + maxGcPause.toString() + " secs" + Constants.LINE_SEPARATOR);
+                bufferedWriter.write("GC Max Pause: " + maxGcPause.toString() + " secs" + LINE_SEPARATOR);
                 // GC total pause time
                 BigDecimal totalGcPause = JdkMath.convertMillisToSecs(jvmRun.getTotalGcPause());
-                bufferedWriter.write("GC Total Pause: " + totalGcPause.toString() + " secs" + Constants.LINE_SEPARATOR);
+                bufferedWriter.write("GC Total Pause: " + totalGcPause.toString() + " secs" + LINE_SEPARATOR);
             }
             if (jvmRun.getStoppedTimeEventCount() > 0) {
                 // Stopped time throughput
@@ -370,19 +375,19 @@ public class Main {
                     // Provide clue it's rounded to 100
                     bufferedWriter.write("~");
                 }
-                bufferedWriter.write(jvmRun.getStoppedTimeThroughput() + "%" + Constants.LINE_SEPARATOR);
+                bufferedWriter.write(jvmRun.getStoppedTimeThroughput() + "%" + LINE_SEPARATOR);
                 // Max stopped time
                 BigDecimal maxStoppedPause = JdkMath.convertMillisToSecs(jvmRun.getMaxStoppedTime());
                 bufferedWriter.write(
-                        "Stopped Time Max Pause: " + maxStoppedPause.toString() + " secs" + Constants.LINE_SEPARATOR);
+                        "Stopped Time Max Pause: " + maxStoppedPause.toString() + " secs" + LINE_SEPARATOR);
                 // Total stopped time
                 BigDecimal totalStoppedTime = JdkMath.convertMillisToSecs(jvmRun.getTotalStoppedTime());
                 bufferedWriter.write(
-                        "Stopped Time Total: " + totalStoppedTime.toString() + " secs" + Constants.LINE_SEPARATOR);
+                        "Stopped Time Total: " + totalStoppedTime.toString() + " secs" + LINE_SEPARATOR);
                 // Ratio of GC vs. stopped time. 100 means all stopped time due to GC.
                 if (jvmRun.getBlockingEventCount() > 0) {
                     bufferedWriter
-                            .write("GC/Stopped Ratio: " + jvmRun.getGcStoppedRatio() + "%" + Constants.LINE_SEPARATOR);
+                            .write("GC/Stopped Ratio: " + jvmRun.getGcStoppedRatio() + "%" + LINE_SEPARATOR);
                 }
             }
             // First/last timestamps
@@ -392,30 +397,30 @@ public class Main {
                 if (firstEventDatestamp != null) {
                     bufferedWriter.write("First Datestamp: ");
                     bufferedWriter.write(firstEventDatestamp);
-                    bufferedWriter.write(Constants.LINE_SEPARATOR);
+                    bufferedWriter.write(LINE_SEPARATOR);
                 }
                 if (!jvmRun.getFirstEvent().getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
                     bufferedWriter.write("First Timestamp: ");
                     BigDecimal firstEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getFirstEvent().getTimestamp());
                     bufferedWriter.write(firstEventTimestamp.toString());
-                    bufferedWriter.write(" secs" + Constants.LINE_SEPARATOR);
+                    bufferedWriter.write(" secs" + LINE_SEPARATOR);
                 }
                 // Last event
                 String lastEventDatestamp = JdkUtil.getDateStamp(jvmRun.getLastEvent().getLogEntry());
                 if (lastEventDatestamp != null) {
                     bufferedWriter.write("Last Datestamp: ");
                     bufferedWriter.write(lastEventDatestamp);
-                    bufferedWriter.write(Constants.LINE_SEPARATOR);
+                    bufferedWriter.write(LINE_SEPARATOR);
                 }
                 if (!jvmRun.getLastEvent().getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
                     bufferedWriter.write("Last Timestamp: ");
                     BigDecimal lastEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getLastEvent().getTimestamp());
                     bufferedWriter.write(lastEventTimestamp.toString());
-                    bufferedWriter.write(" secs" + Constants.LINE_SEPARATOR);
+                    bufferedWriter.write(" secs" + LINE_SEPARATOR);
                 }
             }
 
-            bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);
+            bufferedWriter.write("========================================" + LINE_SEPARATOR);
 
             // Analysis
             List<Analysis> analysis = jvmRun.getAnalysis();
@@ -426,9 +431,7 @@ public class Main {
                 List<Analysis> warn = new ArrayList<Analysis>();
                 List<Analysis> info = new ArrayList<Analysis>();
 
-                Iterator<Analysis> iterator = analysis.iterator();
-                while (iterator.hasNext()) {
-                    Analysis a = iterator.next();
+                for (Analysis a : analysis) {
                     String level = a.getKey().split("\\.")[0];
                     if (level.equals("error")) {
                         error.add(a);
@@ -441,74 +444,68 @@ public class Main {
                     }
                 }
 
-                bufferedWriter.write("ANALYSIS:" + Constants.LINE_SEPARATOR);
+                bufferedWriter.write("ANALYSIS:" + LINE_SEPARATOR);
 
-                iterator = error.iterator();
                 boolean printHeader = true;
                 // ERROR
-                while (iterator.hasNext()) {
+                for (Analysis a : error) {
                     if (printHeader) {
-                        bufferedWriter.write("----------------------------------------" + Constants.LINE_SEPARATOR);
-                        bufferedWriter.write("error" + Constants.LINE_SEPARATOR);
-                        bufferedWriter.write("----------------------------------------" + Constants.LINE_SEPARATOR);
+                        bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
+                        bufferedWriter.write("error" + LINE_SEPARATOR);
+                        bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
                     }
                     printHeader = false;
-                    Analysis a = iterator.next();
                     bufferedWriter.write("*");
                     bufferedWriter.write(a.getValue());
-                    bufferedWriter.write(Constants.LINE_SEPARATOR);
+                    bufferedWriter.write(LINE_SEPARATOR);
                 }
                 // WARN
-                iterator = warn.iterator();
                 printHeader = true;
-                while (iterator.hasNext()) {
+                for (Analysis a : warn) {
                     if (printHeader) {
-                        bufferedWriter.write("----------------------------------------" + Constants.LINE_SEPARATOR);
-                        bufferedWriter.write("warn" + Constants.LINE_SEPARATOR);
-                        bufferedWriter.write("----------------------------------------" + Constants.LINE_SEPARATOR);
+                        bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
+                        bufferedWriter.write("warn" + LINE_SEPARATOR);
+                        bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
                     }
                     printHeader = false;
-                    Analysis a = iterator.next();
                     bufferedWriter.write("*");
                     bufferedWriter.write(a.getValue());
-                    bufferedWriter.write(Constants.LINE_SEPARATOR);
+                    bufferedWriter.write(LINE_SEPARATOR);
                 }
                 // INFO
-                iterator = info.iterator();
                 printHeader = true;
-                while (iterator.hasNext()) {
+                for (Analysis a : info) {
                     if (printHeader) {
-                        bufferedWriter.write("----------------------------------------" + Constants.LINE_SEPARATOR);
-                        bufferedWriter.write("info" + Constants.LINE_SEPARATOR);
-                        bufferedWriter.write("----------------------------------------" + Constants.LINE_SEPARATOR);
+                        bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
+                        bufferedWriter.write("info" + LINE_SEPARATOR);
+                        bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
                     }
                     printHeader = false;
-                    Analysis a = iterator.next();
                     bufferedWriter.write("*");
                     bufferedWriter.write(a.getValue());
-                    if (Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED.equals(a)) {
+                    if (INFO_UNACCOUNTED_OPTIONS_DISABLED.equals(a)) {
                         bufferedWriter.write(jvmRun.getJvm().getUnaccountedDisabledOptions());
                         bufferedWriter.write(".");
                     }
-                    bufferedWriter.write(Constants.LINE_SEPARATOR);
+                    bufferedWriter.write(LINE_SEPARATOR);
                 }
-                bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);
+                bufferedWriter.write("========================================" + LINE_SEPARATOR);
             }
 
             // Unidentified log lines
             List<String> unidentifiedLogLines = jvmRun.getUnidentifiedLogLines();
             if (!unidentifiedLogLines.isEmpty()) {
                 bufferedWriter
-                        .write(unidentifiedLogLines.size() + " UNIDENTIFIED LOG LINE(S):" + Constants.LINE_SEPARATOR);
-                bufferedWriter.write("----------------------------------------" + Constants.LINE_SEPARATOR);
+                        .write(unidentifiedLogLines.size() + " UNIDENTIFIED LOG LINE(S):" + LINE_SEPARATOR);
+                bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
 
                 Iterator<String> iterator = unidentifiedLogLines.iterator();
                 while (iterator.hasNext()) {
                     String unidentifiedLogLine = iterator.next();
                     bufferedWriter.write(unidentifiedLogLine);
-                    bufferedWriter.write(Constants.LINE_SEPARATOR);
+                    bufferedWriter.write(LINE_SEPARATOR);
                 }
-                bufferedWriter.write("========================================" + Constants.LINE_SEPARATOR);
+                bufferedWriter.write("========================================" + LINE_SEPARATOR);
             }
         } catch (
 

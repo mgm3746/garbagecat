@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -151,13 +153,13 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
                 } else {
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 }
-                combined = Memory.memory(matcher.group(38), matcher.group(40).charAt(0)).toKilobytes();
-                combinedEnd = Memory.memory(matcher.group(41), matcher.group(43).charAt(0)).toKilobytes();
-                combinedAvailable = Memory.memory(matcher.group(44), matcher.group(46).charAt(0)).toKilobytes();
+                combined = Memory.memory(matcher.group(38), matcher.group(40).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = Memory.memory(matcher.group(41), matcher.group(43).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = Memory.memory(matcher.group(44), matcher.group(46).charAt(0)).convertTo(KILOBYTES);
                 if (matcher.group(48) != null) {
-                    permGen = Memory.memory(matcher.group(49), matcher.group(51).charAt(0)).toKilobytes();
-                    permGenEnd = Memory.memory(matcher.group(52), matcher.group(54).charAt(0)).toKilobytes();
-                    permGenAllocation = Memory.memory(matcher.group(55), matcher.group(57).charAt(0)).toKilobytes();
+                    permGen = Memory.memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
+                    permGenEnd = Memory.memory(matcher.group(52), matcher.group(54).charAt(0)).convertTo(KILOBYTES);
+                    permGenAllocation = Memory.memory(matcher.group(55), matcher.group(57).charAt(0)).convertTo(KILOBYTES);
                 }
             }
         }

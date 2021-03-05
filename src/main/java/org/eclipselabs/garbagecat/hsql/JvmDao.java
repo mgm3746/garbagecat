@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.hsql;
 
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -574,7 +576,7 @@ public class JvmDao {
     }
 
 	private static int kilobytes(Memory memory) {
-		return (int) (memory == null ? 0 : memory.getKilobytes());
+		return (int) (memory == null ? 0 : memory.getValue(KILOBYTES));
 	}
 
     /**

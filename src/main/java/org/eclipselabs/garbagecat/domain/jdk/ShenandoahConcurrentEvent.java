@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -230,13 +232,13 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 }
                 if (matcher.group(42) != null) {
-                    combined = Memory.memory(matcher.group(43), matcher.group(45).charAt(0)).toKilobytes();
-                    combinedEnd = Memory.memory(matcher.group(46), matcher.group(48).charAt(0)).toKilobytes();
-                    combinedAvailable = Memory.memory(matcher.group(49), matcher.group(51).charAt(0)).toKilobytes();
+                    combined = Memory.memory(matcher.group(43), matcher.group(45).charAt(0)).convertTo(KILOBYTES);
+                    combinedEnd = Memory.memory(matcher.group(46), matcher.group(48).charAt(0)).convertTo(KILOBYTES);
+                    combinedAvailable = Memory.memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
                     if (matcher.group(53) != null) {
-                        permGen = Memory.memory(matcher.group(54), matcher.group(56).charAt(0)).toKilobytes();
-                        permGenEnd = Memory.memory(matcher.group(57), matcher.group(59).charAt(0)).toKilobytes();
-                        permGenAllocation = Memory.memory(matcher.group(60), matcher.group(62).charAt(0)).toKilobytes();
+                        permGen = Memory.memory(matcher.group(54), matcher.group(56).charAt(0)).convertTo(KILOBYTES);
+                        permGenEnd = Memory.memory(matcher.group(57), matcher.group(59).charAt(0)).convertTo(KILOBYTES);
+                        permGenAllocation = Memory.memory(matcher.group(60), matcher.group(62).charAt(0)).convertTo(KILOBYTES);
                     }
                 }
 

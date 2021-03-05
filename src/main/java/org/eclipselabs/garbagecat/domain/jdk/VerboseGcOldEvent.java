@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -127,17 +129,17 @@ public class VerboseGcOldEvent extends UnknownCollector
             if (matcher.group(16).matches(JdkRegEx.SIZE_K)) {
                 combinedBegin = Memory.kilobytes(matcher.group(17));
             } else {
-                combinedBegin = Memory.memory(matcher.group(18), matcher.group(20).charAt(0)).toKilobytes();
+                combinedBegin = Memory.memory(matcher.group(18), matcher.group(20).charAt(0)).convertTo(KILOBYTES);
             }
             if (matcher.group(21).matches(JdkRegEx.SIZE_K)) {
                 combinedEnd = Memory.kilobytes(matcher.group(22));
             } else {
-                combinedEnd = Memory.memory(matcher.group(23), matcher.group(25).charAt(0)).toKilobytes();
+                combinedEnd = Memory.memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
             }
             if (matcher.group(26).matches(JdkRegEx.SIZE_K)) {
                 combinedAllocation = Memory.kilobytes(matcher.group(27));
             } else {
-                combinedAllocation = Memory.memory(matcher.group(28), matcher.group(30).charAt(0)).toKilobytes();
+                combinedAllocation = Memory.memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
             }
             duration = JdkMath.convertSecsToMicros(matcher.group(31)).intValue();
         }
