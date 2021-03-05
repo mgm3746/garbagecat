@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
+import static org.eclipselabs.garbagecat.Memory.memory;
 import static org.eclipselabs.garbagecat.Memory.Unit.BYTES;
 
 import java.math.BigDecimal;
@@ -21,7 +22,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.Memory.Unit;
+import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
 import org.eclipselabs.garbagecat.domain.BlankLineEvent;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
@@ -877,23 +878,23 @@ public final class JdkUtil {
      *            The size in various units (e.g. 'k').
      * @return The size in bytes.
      */
-    public static long convertOptionSizeToBytes(final String size) {
+    public static Memory convertOptionSizeToBytes(final String size) {
 
         String regex = "(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?";
 
         String value = null;
-        Unit unit = BYTES;
+        String unit = BYTES.getName();
 
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(size);
         if (matcher.find()) {
             value = matcher.group(1);
             if (matcher.group(2) != null) {
-                unit = Unit.forUnit(matcher.group(2).charAt(0));
+                unit = matcher.group(2);
             }
         }
 
-        return (long) unit.toBytes(Long.parseLong(value));
+        return memory(value, unit.charAt(0));
     }
 
     /**

@@ -12,9 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
-import org.junit.Test;
-
 import static org.eclipselabs.garbagecat.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.Memory.Unit.BYTES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.Memory;
 import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -32,6 +32,7 @@ import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.junit.Test;
 
 
 
@@ -139,8 +140,8 @@ public class TestJvmRun {
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.getJvm().setSwap(1000);
-        jvmRun.getJvm().setSwapFree(946);
+        jvmRun.getJvm().setSwap(new Memory(1000, BYTES));
+        jvmRun.getJvm().setSwapFree(new Memory(946, BYTES));
         jvmRun.doAnalysis();
         assertEquals("Percent swap free not correct.", 95, jvmRun.getJvm().getPercentSwapFree());
         assertFalse(Analysis.INFO_SWAPPING + " analysis incorrectly identified.",
@@ -156,8 +157,8 @@ public class TestJvmRun {
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.getJvm().setSwap(1000);
-        jvmRun.getJvm().setSwapFree(945);
+        jvmRun.getJvm().setSwap(new Memory(1000, BYTES));
+        jvmRun.getJvm().setSwapFree(new Memory(945, BYTES));
         jvmRun.doAnalysis();
         assertEquals("Percent swap free not correct.", 94, jvmRun.getJvm().getPercentSwapFree());
         assertTrue(Analysis.INFO_SWAPPING + " analysis not identified.",
@@ -173,7 +174,7 @@ public class TestJvmRun {
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.getJvm().setPhysicalMemory(1207959552);
+        jvmRun.getJvm().setPhysicalMemory(new Memory(1207959552, BYTES));
         jvmRun.doAnalysis();
         assertFalse(Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY));
@@ -188,7 +189,7 @@ public class TestJvmRun {
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.getJvm().setPhysicalMemory(1207959551);
+        jvmRun.getJvm().setPhysicalMemory(new Memory(1207959551, BYTES));
         jvmRun.doAnalysis();
         assertTrue(Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY));

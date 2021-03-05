@@ -12,8 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
+import static org.eclipselabs.garbagecat.Memory.gigabytes;
 import static org.eclipselabs.garbagecat.Memory.megabytes;
-import static org.eclipselabs.garbagecat.Memory.Unit.GIGABYTES;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -830,17 +830,13 @@ public class JvmRun {
         }
 
         // Compressed object references should only be used when heap < 32G
-        boolean heapLessThan32G = true;
-        BigDecimal thirtyTwoGigabytes = BigDecimal.valueOf(GIGABYTES.toBytes(32));
-        if (jvm.getMaxHeapBytes() >= thirtyTwoGigabytes.longValue()) {
-            heapLessThan32G = false;
-        }
+		boolean heapLessThan32G = jvm.getMaxHeapBytes().lessThan(gigabytes(32));
 
         if (heapLessThan32G) {
             // Should use compressed object pointers
             if (jvm.getUseCompressedOopsDisabled() != null) {
 
-                if (jvm.getMaxHeapBytes() == 0) {
+                if (jvm.getMaxHeapBytes().isZero()) {
                     // Heap size unknown
                     analysis.add(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK);
                 } else {
@@ -854,7 +850,7 @@ public class JvmRun {
 
             // Should use compressed class pointers
             if (jvm.getUseCompressedClassPointersDisabled() != null) {
-                if (jvm.getMaxHeapBytes() == 0) {
+                if (jvm.getMaxHeapBytes().isZero()) {
                     // Heap size unknown
                     analysis.add(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK);
                 } else {
@@ -1035,14 +1031,14 @@ public class JvmRun {
 
         // Check if MaxMetaspaceSize is less than CompressedClassSpaceSize.
         if (jvm.getMaxMetaspaceOption() != null) {
-            long compressedClassSpaceSize = 0;
+            Memory compressedClassSpaceSize = Memory.ZERO;
             if (jvm.getCompressedClassSpaceSizeOption() != null) {
                 compressedClassSpaceSize = jvm.getCompressedClassSpaceSizeBytes();
             } else {
                 // Default is 1g
-                compressedClassSpaceSize = (long) GIGABYTES.toBytes(1);
+                compressedClassSpaceSize = gigabytes(1);
             }
-            if (jvm.getMaxMetaspaceBytes() < compressedClassSpaceSize) {
+            if (jvm.getMaxMetaspaceBytes().lessThan(compressedClassSpaceSize)) {
                 analysis.add(Analysis.ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE);
             }
         }
@@ -1113,22 +1109,22 @@ public class JvmRun {
             analysis.add(Analysis.INFO_SWAPPING);
         }
         // Check for swap disabled
-        if (getJvm().getSwap() == 0) {
+        if (getJvm().getSwap().isZero()) {
             analysis.add(Analysis.INFO_SWAP_DISABLED);
         }
 
         // Check for insufficient physical memory
-        if (getJvm().getPhysicalMemory() > 0) {
-            Long jvmMemory;
+        if (!getJvm().getPhysicalMemory().isZero()) {
+            Memory jvmMemory;
             if (jvm.getUseCompressedOopsDisabled() == null && jvm.getUseCompressedClassPointersDisabled() == null) {
                 // Using compressed class pointers space
-                jvmMemory = getJvm().getMaxHeapBytes() + getJvm().getMaxPermBytes() + getJvm().getMaxMetaspaceBytes()
-                        + getJvm().getCompressedClassSpaceSizeBytes();
+                jvmMemory = getJvm().getMaxHeapBytes().plus(getJvm().getMaxPermBytes()).plus(getJvm().getMaxMetaspaceBytes()).plus(
+                        getJvm().getCompressedClassSpaceSizeBytes());
             } else {
                 // Not using compressed class pointers space
-                jvmMemory = getJvm().getMaxHeapBytes() + getJvm().getMaxPermBytes() + getJvm().getMaxMetaspaceBytes();
+                jvmMemory = getJvm().getMaxHeapBytes().plus(getJvm().getMaxPermBytes()).plus(getJvm().getMaxMetaspaceBytes());
             }
-            if (jvmMemory > getJvm().getPhysicalMemory()) {
+            if (jvmMemory.greaterThan(getJvm().getPhysicalMemory())) {
                 analysis.add(Analysis.ERROR_PHYSICAL_MEMORY);
             }
         }
@@ -1141,7 +1137,7 @@ public class JvmRun {
             analysis.add(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD);
         }
 
-        // Check for using G1 collecgtor JDK < u40
+        // Check for using G1 collector JDK < u40
         if ((collectorFamilies.contains(CollectorFamily.G1) || jvm.getUseG1Gc() != null) && jvm.JdkNumber() == 8
                 && jvm.JdkUpdate() < 40) {
             analysis.add(Analysis.WARN_G1_JDK8_PRIOR_U40);

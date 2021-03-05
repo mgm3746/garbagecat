@@ -13,6 +13,7 @@
 package org.eclipselabs.garbagecat.service;
 
 import static org.eclipselabs.garbagecat.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.Memory.Unit.BYTES;
 import static org.eclipselabs.garbagecat.Memory.Unit.KILOBYTES;
 
 import java.io.BufferedReader;
@@ -919,10 +920,10 @@ public class GcManager {
             jvmRun.getJvm().setOptions(jvmDao.getOptions());
         }
         jvmRun.getJvm().setMemory(jvmDao.getMemory());
-        jvmRun.getJvm().setPhysicalMemory(jvmDao.getPhysicalMemory());
-        jvmRun.getJvm().setPhysicalMemoryFree(jvmDao.getPhysicalMemoryFree());
-        jvmRun.getJvm().setSwap(jvmDao.getSwap());
-        jvmRun.getJvm().setSwapFree(jvmDao.getSwapFree());
+        jvmRun.getJvm().setPhysicalMemory(new Memory(jvmDao.getPhysicalMemory(), BYTES));
+        jvmRun.getJvm().setPhysicalMemoryFree(new Memory(jvmDao.getPhysicalMemoryFree(), BYTES));
+        jvmRun.getJvm().setSwap(new Memory(jvmDao.getSwap(), BYTES));
+        jvmRun.getJvm().setSwapFree(new Memory(jvmDao.getSwapFree(), BYTES));
         jvmRun.getJvm().setVersion(jvmDao.getVersion());
         jvmRun.setFirstGcEvent(jvmDao.getFirstGcEvent());
         jvmRun.setLastGcEvent(jvmDao.getLastGcEvent());

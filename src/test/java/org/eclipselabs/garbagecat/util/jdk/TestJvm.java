@@ -11,14 +11,13 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
+import static org.eclipselabs.garbagecat.Memory.bytes;
 import static org.eclipselabs.garbagecat.Memory.kilobytes;
 import static org.eclipselabs.garbagecat.Memory.megabytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
 
 import org.eclipselabs.garbagecat.Memory;
 import org.junit.Test;
@@ -765,52 +764,49 @@ public class TestJvm {
     public void testMaxHeapBytes() {
         String jvmOptions = "-Xss128k -Xmx2048m -XX:MaxMetaspaceSize=1280m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        BigDecimal size = new BigDecimal("2147483648");
-        assertEquals("Max heap bytes incorrect.", size.longValue(), jvm.getMaxHeapBytes());
+        assertEquals("Max heap bytes incorrect.", bytes(2147483648L), jvm.getMaxHeapBytes());
     }
 
     @Test
     public void testMaxHeapBytesUnknown() {
         String jvmOptions = "-Xss128k -XX:MaxMetaspaceSize=1280m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max heap bytes incorrect.", 0L, jvm.getMaxHeapBytes());
+        assertEquals("Max heap bytes incorrect.", bytes(0L), jvm.getMaxHeapBytes());
     }
 
     @Test
     public void testMaxPermBytes() {
         String jvmOptions = "-Xss128k -Xmx2048m -XX:MaxPermSize=1280m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        BigDecimal size = new BigDecimal("1342177280");
-        assertEquals("Max perm space bytes incorrect.", size.longValue(), jvm.getMaxPermBytes());
+        assertEquals("Max perm space bytes incorrect.", bytes(1342177280), jvm.getMaxPermBytes());
     }
 
     @Test
     public void testMaxPermBytesUnknown() {
         String jvmOptions = "-Xss128k";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max perm space bytes incorrect.", 0L, jvm.getMaxPermBytes());
+        assertEquals("Max perm space bytes incorrect.", bytes(0L), jvm.getMaxPermBytes());
     }
 
     @Test
     public void testMaxMetaspaceBytes() {
         String jvmOptions = "-Xss128k -Xmx2048m -XX:MaxMetaspaceSize=1280m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        BigDecimal size = new BigDecimal("1342177280");
-        assertEquals("Max metaspace bytes incorrect.", size.longValue(), jvm.getMaxMetaspaceBytes());
+        assertEquals("Max metaspace bytes incorrect.", bytes(1342177280), jvm.getMaxMetaspaceBytes());
     }
 
     @Test
     public void testMaxMetaspaceBytesUnknown() {
         String jvmOptions = "-Xss128k";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max metaspace bytes incorrect.", 0L, jvm.getMaxMetaspaceBytes());
+        assertEquals("Max metaspace bytes incorrect.", bytes(0L), jvm.getMaxMetaspaceBytes());
     }
 
     @Test
     public void testgetCompressedClassSpaceSizeBytes() {
         String jvmOptions = "-XX:CompressedClassSpaceSize=768m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Compressed class space size bytes incorrect.", 805306368,
+        assertEquals("Compressed class space size bytes incorrect.", bytes(805306368),
                 jvm.getCompressedClassSpaceSizeBytes());
     }
 
