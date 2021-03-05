@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.util.regex.Matcher;
@@ -149,9 +150,9 @@ public class UnifiedG1CleanupEvent extends G1Collector
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                combinedBegin = Memory.memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = Memory.memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
-                combinedAllocation = Memory.memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
+                combinedBegin = memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.roundMillis(matcher.group(34)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
@@ -177,9 +178,9 @@ public class UnifiedG1CleanupEvent extends G1Collector
                         timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                combinedBegin = Memory.memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = Memory.memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
-                combinedAllocation = Memory.memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
+                combinedBegin = memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.roundMillis(matcher.group(34)).intValue();
                 if (matcher.group(35) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();

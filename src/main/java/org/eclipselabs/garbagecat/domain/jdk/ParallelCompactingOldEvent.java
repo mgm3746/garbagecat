@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -197,16 +199,16 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             trigger = matcher.group(14);
-            young = Memory.kilobytes(matcher.group(16));
-            youngEnd = Memory.kilobytes(matcher.group(17));
-            youngAvailable = Memory.kilobytes(matcher.group(18));
-            old = Memory.kilobytes(matcher.group(19));
-            oldEnd = Memory.kilobytes(matcher.group(20));
-            oldAllocation = Memory.kilobytes(matcher.group(21));
+            young = kilobytes(matcher.group(16));
+            youngEnd = kilobytes(matcher.group(17));
+            youngAvailable = kilobytes(matcher.group(18));
+            old = kilobytes(matcher.group(19));
+            oldEnd = kilobytes(matcher.group(20));
+            oldAllocation = kilobytes(matcher.group(21));
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = Memory.kilobytes(matcher.group(27));
-            permGenEnd = Memory.kilobytes(matcher.group(28));
-            permGenAllocation = Memory.kilobytes(matcher.group(29));
+            permGen = kilobytes(matcher.group(27));
+            permGenEnd = kilobytes(matcher.group(28));
+            permGenAllocation = kilobytes(matcher.group(29));
             duration = JdkMath.convertSecsToMicros(matcher.group(30)).intValue();
             if (matcher.group(33) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();

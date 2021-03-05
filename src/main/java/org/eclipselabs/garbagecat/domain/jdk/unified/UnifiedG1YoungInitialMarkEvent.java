@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.util.regex.Matcher;
@@ -148,9 +149,9 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
                     }
                 }
                 trigger = matcher.group(25);
-                combinedBegin = Memory.memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = Memory.memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
-                combinedAllocation = Memory.memory(matcher.group(32), matcher.group(34).charAt(0)).convertTo(KILOBYTES);
+                combinedBegin = memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(32), matcher.group(34).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.convertMillisToMicros(matcher.group(35)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();

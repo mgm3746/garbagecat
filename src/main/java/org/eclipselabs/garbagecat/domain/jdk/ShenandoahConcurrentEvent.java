@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.util.regex.Matcher;
@@ -232,13 +233,13 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 }
                 if (matcher.group(42) != null) {
-                    combined = Memory.memory(matcher.group(43), matcher.group(45).charAt(0)).convertTo(KILOBYTES);
-                    combinedEnd = Memory.memory(matcher.group(46), matcher.group(48).charAt(0)).convertTo(KILOBYTES);
-                    combinedAvailable = Memory.memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
+                    combined = memory(matcher.group(43), matcher.group(45).charAt(0)).convertTo(KILOBYTES);
+                    combinedEnd = memory(matcher.group(46), matcher.group(48).charAt(0)).convertTo(KILOBYTES);
+                    combinedAvailable = memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
                     if (matcher.group(53) != null) {
-                        permGen = Memory.memory(matcher.group(54), matcher.group(56).charAt(0)).convertTo(KILOBYTES);
-                        permGenEnd = Memory.memory(matcher.group(57), matcher.group(59).charAt(0)).convertTo(KILOBYTES);
-                        permGenAllocation = Memory.memory(matcher.group(60), matcher.group(62).charAt(0)).convertTo(KILOBYTES);
+                        permGen = memory(matcher.group(54), matcher.group(56).charAt(0)).convertTo(KILOBYTES);
+                        permGenEnd = memory(matcher.group(57), matcher.group(59).charAt(0)).convertTo(KILOBYTES);
+                        permGenAllocation = memory(matcher.group(60), matcher.group(62).charAt(0)).convertTo(KILOBYTES);
                     }
                 }
 

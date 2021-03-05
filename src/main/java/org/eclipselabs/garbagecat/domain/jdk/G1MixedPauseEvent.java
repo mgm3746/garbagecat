@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.util.regex.Matcher;
@@ -167,9 +168,9 @@ public class G1MixedPauseEvent extends G1Collector
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 trigger = matcher.group(14);
-                combined = Memory.memory(matcher.group(16), matcher.group(18).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = Memory.memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = Memory.memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
+                combined = memory(matcher.group(16), matcher.group(18).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
                 if (matcher.group(28) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();

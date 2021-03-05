@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.util.regex.Matcher;
@@ -153,13 +154,13 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
                 } else {
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 }
-                combined = Memory.memory(matcher.group(38), matcher.group(40).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = Memory.memory(matcher.group(41), matcher.group(43).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = Memory.memory(matcher.group(44), matcher.group(46).charAt(0)).convertTo(KILOBYTES);
+                combined = memory(matcher.group(38), matcher.group(40).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(41), matcher.group(43).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = memory(matcher.group(44), matcher.group(46).charAt(0)).convertTo(KILOBYTES);
                 if (matcher.group(48) != null) {
-                    permGen = Memory.memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
-                    permGenEnd = Memory.memory(matcher.group(52), matcher.group(54).charAt(0)).convertTo(KILOBYTES);
-                    permGenAllocation = Memory.memory(matcher.group(55), matcher.group(57).charAt(0)).convertTo(KILOBYTES);
+                    permGen = memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
+                    permGenEnd = memory(matcher.group(52), matcher.group(54).charAt(0)).convertTo(KILOBYTES);
+                    permGenAllocation = memory(matcher.group(55), matcher.group(57).charAt(0)).convertTo(KILOBYTES);
                 }
             }
         }

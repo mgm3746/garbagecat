@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.util.regex.Matcher;
@@ -198,9 +199,9 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
                     }
                 }
                 trigger = matcher.group(26);
-                combinedBegin = Memory.memory(matcher.group(27), matcher.group(29).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = Memory.memory(matcher.group(30), matcher.group(32).charAt(0)).convertTo(KILOBYTES);
-                combinedAllocation = Memory.memory(matcher.group(33), matcher.group(35).charAt(0)).convertTo(KILOBYTES);
+                combinedBegin = memory(matcher.group(27), matcher.group(29).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(30), matcher.group(32).charAt(0)).convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(33), matcher.group(35).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.convertMillisToMicros(matcher.group(36)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
@@ -227,12 +228,12 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
                     }
                 }
                 trigger = matcher.group(27);
-                permGen = Memory.memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
-                permGenEnd = Memory.memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
-                permGenAllocation = Memory.memory(matcher.group(34), matcher.group(36).charAt(0)).convertTo(KILOBYTES);
-                combinedBegin = Memory.memory(matcher.group(37), matcher.group(39).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = Memory.memory(matcher.group(40), matcher.group(42).charAt(0)).convertTo(KILOBYTES);
-                combinedAllocation = Memory.memory(matcher.group(43), matcher.group(45).charAt(0)).convertTo(KILOBYTES);
+                permGen = memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
+                permGenEnd = memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
+                permGenAllocation = memory(matcher.group(34), matcher.group(36).charAt(0)).convertTo(KILOBYTES);
+                combinedBegin = memory(matcher.group(37), matcher.group(39).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(40), matcher.group(42).charAt(0)).convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(43), matcher.group(45).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.convertMillisToMicros(matcher.group(46)).intValue();
                 if (matcher.group(47) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(48)).intValue();

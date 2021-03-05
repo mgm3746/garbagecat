@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.util.regex.Matcher;
@@ -135,9 +136,9 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             if (matcher.group(18) != null) {
-                combined = Memory.memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = Memory.memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = Memory.memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
+                combined = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
             }
             duration = JdkMath.convertSecsToMicros(matcher.group(28)).intValue();
             if (matcher.group(31) != null) {

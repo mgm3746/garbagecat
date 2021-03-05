@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -133,13 +135,13 @@ public class VerboseGcYoungEvent extends UnknownCollector
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             trigger = matcher.group(14);
             if (matcher.group(17) != null) {
-                combinedBegin = Memory.kilobytes(matcher.group(18));
+                combinedBegin = kilobytes(matcher.group(18));
             } else {
                 // set it to the end
-                combinedBegin = Memory.kilobytes(matcher.group(19));
+                combinedBegin = kilobytes(matcher.group(19));
             }
-            combinedEnd = Memory.kilobytes(matcher.group(19));
-            combinedAllocation = Memory.kilobytes(matcher.group(20));
+            combinedEnd = kilobytes(matcher.group(19));
+            combinedAllocation = kilobytes(matcher.group(20));
             duration = JdkMath.convertSecsToMicros(matcher.group(21)).intValue();
         }
     }

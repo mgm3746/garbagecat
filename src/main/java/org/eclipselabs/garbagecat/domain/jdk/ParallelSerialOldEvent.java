@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -176,17 +178,17 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
             if (matcher.group(14) != null) {
                 this.trigger = matcher.group(14);
             }
-            this.young = Memory.kilobytes(matcher.group(16));
-            this.youngEnd = Memory.kilobytes(matcher.group(17));
-            this.youngAvailable = Memory.kilobytes(matcher.group(18));
+            this.young = kilobytes(matcher.group(16));
+            this.youngEnd = kilobytes(matcher.group(17));
+            this.youngAvailable = kilobytes(matcher.group(18));
 
-            this.old = Memory.kilobytes(matcher.group(19));
-            this.oldEnd = Memory.kilobytes(matcher.group(20));
-            this.oldAllocation = Memory.kilobytes(matcher.group(21));
+            this.old = kilobytes(matcher.group(19));
+            this.oldEnd = kilobytes(matcher.group(20));
+            this.oldAllocation = kilobytes(matcher.group(21));
 
-            this.permGen = Memory.kilobytes(matcher.group(26));
-            this.permGenEnd = Memory.kilobytes(matcher.group(27));
-            this.permGenAllocation = Memory.kilobytes(matcher.group(28));
+            this.permGen = kilobytes(matcher.group(26));
+            this.permGenEnd = kilobytes(matcher.group(27));
+            this.permGenAllocation = kilobytes(matcher.group(28));
 
             this.duration = JdkMath.convertSecsToMicros(matcher.group(29)).intValue();
         }
