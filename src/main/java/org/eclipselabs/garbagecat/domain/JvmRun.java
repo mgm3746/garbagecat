@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -603,10 +603,10 @@ public class JvmRun {
         if (blockingEventCount <= 0) {
             return 100L;
         }
-		long timeNotGc = getJvmRunDuration() - totalGcPause;
-		BigDecimal throughput = new BigDecimal(timeNotGc);
-		throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
-		return throughput.movePointRight(2).longValue();
+        long timeNotGc = getJvmRunDuration() - totalGcPause;
+        BigDecimal throughput = new BigDecimal(timeNotGc);
+        throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
+        return throughput.movePointRight(2).longValue();
     }
 
     /**
@@ -618,13 +618,13 @@ public class JvmRun {
         if (stoppedTimeEventCount <= 0) {
             return 100L;
         }
-		if (getJvmRunDuration() <= 0) {
-		    return 0L;
-		}
-		long timeNotStopped = getJvmRunDuration() - Long.valueOf(totalStoppedTime).longValue();
-		BigDecimal throughput = new BigDecimal(timeNotStopped);
-		throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
-		return throughput.movePointRight(2).longValue();
+        if (getJvmRunDuration() <= 0) {
+            return 0L;
+        }
+        long timeNotStopped = getJvmRunDuration() - Long.valueOf(totalStoppedTime).longValue();
+        BigDecimal throughput = new BigDecimal(timeNotStopped);
+        throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
+        return throughput.movePointRight(2).longValue();
     }
 
     /**
@@ -634,9 +634,9 @@ public class JvmRun {
         if (maxYoungSpace == null) {
             return 0;
         }
-		BigDecimal ratio = new BigDecimal(maxOldSpace.getValue(KILOBYTES));
-		ratio = ratio.divide(new BigDecimal(maxYoungSpace.getValue(KILOBYTES)), 0, HALF_EVEN);
-		return ratio.intValue();
+        BigDecimal ratio = new BigDecimal(maxOldSpace.getValue(KILOBYTES));
+        ratio = ratio.divide(new BigDecimal(maxYoungSpace.getValue(KILOBYTES)), 0, HALF_EVEN);
+        return ratio.intValue();
     }
 
     /**
@@ -648,9 +648,9 @@ public class JvmRun {
         if (totalGcPause <= 0 || totalStoppedTime <= 0) {
             return 100L;
         }
-		BigDecimal ratio = new BigDecimal(totalGcPause);
-		ratio = ratio.divide(new BigDecimal(totalStoppedTime), 2, HALF_EVEN);
-		return ratio.movePointRight(2).longValue();
+        BigDecimal ratio = new BigDecimal(totalGcPause);
+        ratio = ratio.divide(new BigDecimal(totalStoppedTime), 2, HALF_EVEN);
+        return ratio.movePointRight(2).longValue();
     }
 
     /**
@@ -847,8 +847,7 @@ public class JvmRun {
         }
 
         // Check for -XX:+PrintGCCause missing.
-        if (jvm.getPrintGCCause() == null && jvm.JdkNumber() == 7
-                && !analysis.contains(WARN_PRINT_GC_CAUSE_MISSING)) {
+        if (jvm.getPrintGCCause() == null && jvm.JdkNumber() == 7 && !analysis.contains(WARN_PRINT_GC_CAUSE_MISSING)) {
             analysis.add(WARN_PRINT_GC_CAUSE_MISSING);
             // Don't double report
             if (analysis.contains(WARN_PRINT_GC_CAUSE_NOT_ENABLED)) {
@@ -912,7 +911,7 @@ public class JvmRun {
         }
 
         // Compressed object references should only be used when heap < 32G
-		boolean heapLessThan32G = jvm.getMaxHeapBytes().lessThan(gigabytes(32));
+        boolean heapLessThan32G = jvm.getMaxHeapBytes().lessThan(gigabytes(32));
 
         if (heapLessThan32G) {
             // Should use compressed object pointers
@@ -1003,8 +1002,7 @@ public class JvmRun {
         }
 
         // Check for -XX:+PrintPromotionFailure option being used
-        if (jvm.getPrintPromotionFailureEnabled() != null
-                && !analysis.contains(INFO_PRINT_PROMOTION_FAILURE)) {
+        if (jvm.getPrintPromotionFailureEnabled() != null && !analysis.contains(INFO_PRINT_PROMOTION_FAILURE)) {
             analysis.add(INFO_PRINT_PROMOTION_FAILURE);
         }
 
@@ -1097,8 +1095,7 @@ public class JvmRun {
         }
 
         // Check for multi-threaded CMS remark disabled
-        if (jvm.getCmsParallelRemarkDisabled() != null
-                && !analysis.contains(ERROR_CMS_PARALLEL_REMARK_DISABLED)) {
+        if (jvm.getCmsParallelRemarkDisabled() != null && !analysis.contains(ERROR_CMS_PARALLEL_REMARK_DISABLED)) {
             analysis.add(ERROR_CMS_PARALLEL_REMARK_DISABLED);
         }
 
@@ -1160,8 +1157,7 @@ public class JvmRun {
         }
 
         // Check if logging indicates gc details missing
-        if (!analysis.contains(WARN_PRINT_GC_DETAILS_MISSING)
-                && !analysis.contains(WARN_PRINT_GC_DETAILS_DISABLED)) {
+        if (!analysis.contains(WARN_PRINT_GC_DETAILS_MISSING) && !analysis.contains(WARN_PRINT_GC_DETAILS_DISABLED)) {
             if (getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)
                     || getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG)) {
                 analysis.add(WARN_PRINT_GC_DETAILS_MISSING);
@@ -1200,11 +1196,12 @@ public class JvmRun {
             Memory jvmMemory;
             if (jvm.getUseCompressedOopsDisabled() == null && jvm.getUseCompressedClassPointersDisabled() == null) {
                 // Using compressed class pointers space
-                jvmMemory = getJvm().getMaxHeapBytes().plus(getJvm().getMaxPermBytes()).plus(getJvm().getMaxMetaspaceBytes()).plus(
-                        getJvm().getCompressedClassSpaceSizeBytes());
+                jvmMemory = getJvm().getMaxHeapBytes().plus(getJvm().getMaxPermBytes())
+                        .plus(getJvm().getMaxMetaspaceBytes()).plus(getJvm().getCompressedClassSpaceSizeBytes());
             } else {
                 // Not using compressed class pointers space
-                jvmMemory = getJvm().getMaxHeapBytes().plus(getJvm().getMaxPermBytes()).plus(getJvm().getMaxMetaspaceBytes());
+                jvmMemory = getJvm().getMaxHeapBytes().plus(getJvm().getMaxPermBytes())
+                        .plus(getJvm().getMaxMetaspaceBytes());
             }
             if (jvmMemory.greaterThan(getJvm().getPhysicalMemory())) {
                 analysis.add(ERROR_PHYSICAL_MEMORY);
@@ -1282,10 +1279,10 @@ public class JvmRun {
      * @return The last gc or stopped event.
      */
     public LogEvent getLastEvent() {
-		long lastGcEventTimeStamp = lastGcEvent == null ? 0 : lastGcEvent.getTimestamp();
-		long lastStoppedEventTimestamp = lastStoppedEvent == null ? 0 : lastStoppedEvent.getTimestamp();
+        long lastGcEventTimeStamp = lastGcEvent == null ? 0 : lastGcEvent.getTimestamp();
+        long lastStoppedEventTimestamp = lastStoppedEvent == null ? 0 : lastStoppedEvent.getTimestamp();
         return lastGcEvent != null && lastGcEventTimeStamp >= lastStoppedEventTimestamp ? lastGcEvent
-				: lastStoppedEvent;
+                : lastStoppedEvent;
     }
 
     /**
@@ -1293,9 +1290,9 @@ public class JvmRun {
      */
     public long getJvmRunDuration() {
 
-		long start = getFirstEvent() == null
-				|| getFirstEvent().getTimestamp() <= Constants.FIRST_TIMESTAMP_THRESHOLD * 1000 ? 0
-						: getFirstEvent().getTimestamp();
+        long start = getFirstEvent() == null
+                || getFirstEvent().getTimestamp() <= Constants.FIRST_TIMESTAMP_THRESHOLD * 1000 ? 0
+                        : getFirstEvent().getTimestamp();
 
         // Use either last gc or last timestamp and add duration of gc/stop
         long lastGcEventTimeStamp = 0;
@@ -1311,9 +1308,9 @@ public class JvmRun {
             lastStoppedEventDuration = lastStoppedEvent.getDuration();
         }
 
-		long end = lastStoppedEventTimestamp > lastGcEventTimeStamp
-				? lastStoppedEventTimestamp + JdkMath.convertMicrosToMillis(lastStoppedEventDuration).longValue()
-				: lastGcEventTimeStamp + JdkMath.convertMicrosToMillis(lastGcEventDuration).longValue();
+        long end = lastStoppedEventTimestamp > lastGcEventTimeStamp
+                ? lastStoppedEventTimestamp + JdkMath.convertMicrosToMillis(lastStoppedEventDuration).longValue()
+                : lastGcEventTimeStamp + JdkMath.convertMicrosToMillis(lastGcEventDuration).longValue();
         return end - start;
     }
 

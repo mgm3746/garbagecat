@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -84,11 +84,11 @@ public class Main {
      */
     public static void main(String... args) {
         try {
-        	CommandLine cmd = parseOptions(args);
+            CommandLine cmd = parseOptions(args);
             if (cmd == null || cmd.hasOption(OPTION_HELP_LONG) || cmd.hasOption(OPTION_HELP_LONG)) {
-            	usage();
-			} else {
-				createReport(cmd);
+                usage();
+            } else {
+                createReport(cmd);
             }
         } catch (ParseException pe) {
             System.out.println(pe.getMessage());
@@ -107,50 +107,51 @@ public class Main {
         formatter.printHelp("garbagecat [OPTION]... [FILE]", options);
     }
 
-	public static void createReport(CommandLine cmd) {
-		// Determine JVM environment information.
-		Date jvmStartDate = cmd.hasOption(OPTION_STARTDATETIME_LONG) ? parseStartDateTime(cmd.getOptionValue(OPTION_STARTDATETIME_SHORT)) : null;
-		String jvmOptions = cmd.hasOption(OPTION_JVMOPTIONS_LONG) ? cmd.getOptionValue(OPTION_JVMOPTIONS_SHORT) : null;
-		String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
-		File logFile = new File(logFileName);
+    public static void createReport(CommandLine cmd) {
+        // Determine JVM environment information.
+        Date jvmStartDate = cmd.hasOption(OPTION_STARTDATETIME_LONG)
+                ? parseStartDateTime(cmd.getOptionValue(OPTION_STARTDATETIME_SHORT))
+                : null;
+        String jvmOptions = cmd.hasOption(OPTION_JVMOPTIONS_LONG) ? cmd.getOptionValue(OPTION_JVMOPTIONS_SHORT) : null;
+        String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
+        File logFile = new File(logFileName);
 
-		GcManager gcManager = new GcManager();
+        GcManager gcManager = new GcManager();
 
-		// Do preprocessing
-		if (cmd.hasOption(OPTION_PREPROCESS_LONG)
-		        || cmd.hasOption(OPTION_STARTDATETIME_LONG)) {
-		    /*
-		     * Requiring the JVM start date/time for preprocessing is a hack to handle datestamps. When
-		     * garbagecat was started there was no <code>-XX:+PrintGCDateStamps</code> option. When it was
-		     * introduced in JDK 1.6 update 4, the easiest thing to do to handle datestamps was to preprocess
-		     * the datestamps and convert them to timestamps.
-		     * 
-		     * TODO: Handle datetimes separately from preprocessing so preprocessing doesn't require passing in
-		     * the JVM start date/time.
-		     */
-		    logFile = gcManager.preprocess(logFile, jvmStartDate);
-		}
+        // Do preprocessing
+        if (cmd.hasOption(OPTION_PREPROCESS_LONG) || cmd.hasOption(OPTION_STARTDATETIME_LONG)) {
+            /*
+             * Requiring the JVM start date/time for preprocessing is a hack to handle datestamps. When garbagecat was
+             * started there was no <code>-XX:+PrintGCDateStamps</code> option. When it was introduced in JDK 1.6 update
+             * 4, the easiest thing to do to handle datestamps was to preprocess the datestamps and convert them to
+             * timestamps.
+             * 
+             * TODO: Handle datetimes separately from preprocessing so preprocessing doesn't require passing in the JVM
+             * start date/time.
+             */
+            logFile = gcManager.preprocess(logFile, jvmStartDate);
+        }
 
-		// Allow logging to be reordered?
-		boolean reorder = cmd.hasOption(OPTION_REORDER_LONG);
+        // Allow logging to be reordered?
+        boolean reorder = cmd.hasOption(OPTION_REORDER_LONG);
 
-		// Store garbage collection logging in data store.
-		gcManager.store(logFile, reorder);
+        // Store garbage collection logging in data store.
+        gcManager.store(logFile, reorder);
 
-		// Create report
-		Jvm jvm = new Jvm(jvmOptions, jvmStartDate);
-		// Determine report options
-		int throughputThreshold = cmd.hasOption(OPTION_THRESHOLD_LONG)
-				? Integer.parseInt(cmd.getOptionValue(OPTION_THRESHOLD_SHORT))
-				: DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
+        // Create report
+        Jvm jvm = new Jvm(jvmOptions, jvmStartDate);
+        // Determine report options
+        int throughputThreshold = cmd.hasOption(OPTION_THRESHOLD_LONG)
+                ? Integer.parseInt(cmd.getOptionValue(OPTION_THRESHOLD_SHORT))
+                : DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
 
-		JvmRun jvmRun = gcManager.getJvmRun(jvm, throughputThreshold);
-		String outputFileName = cmd.hasOption(OPTION_OUTPUT_LONG) ? cmd.getOptionValue(OPTION_OUTPUT_SHORT)
-				: OUTPUT_FILE_NAME;
-		boolean version = cmd.hasOption(OPTION_VERSION_LONG);
-		boolean latestVersion = cmd.hasOption(OPTION_LATEST_VERSION_LONG);
-		createReport(jvmRun, outputFileName, version, latestVersion, logFileName);
-	}
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, throughputThreshold);
+        String outputFileName = cmd.hasOption(OPTION_OUTPUT_LONG) ? cmd.getOptionValue(OPTION_OUTPUT_SHORT)
+                : OUTPUT_FILE_NAME;
+        boolean version = cmd.hasOption(OPTION_VERSION_LONG);
+        boolean latestVersion = cmd.hasOption(OPTION_LATEST_VERSION_LONG);
+        createReport(jvmRun, outputFileName, version, latestVersion, logFileName);
+    }
 
     /**
      * Create Garbage Collection Analysis report.
@@ -194,8 +195,7 @@ public class Main {
             List<String> bottlenecks = jvmRun.getBottlenecks();
             if (bottlenecks.size() > 0) {
                 bufferedWriter.write("========================================" + LINE_SEPARATOR);
-                bufferedWriter.write(
-                        "Throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
+                bufferedWriter.write("Throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
                 bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
                 Iterator<String> iterator = bottlenecks.iterator();
                 while (iterator.hasNext()) {
@@ -248,8 +248,8 @@ public class Main {
                 if (jvmRun.getCollectorFamilies() != null && jvmRun.getCollectorFamilies().size() > 0
                         && jvmRun.getParallelCount() > 0) {
                     bufferedWriter.write("# Parallel Events: " + jvmRun.getParallelCount() + LINE_SEPARATOR);
-                    bufferedWriter.write("# Inverted Parallelism: " + jvmRun.getInvertedParallelismCount()
-                            + LINE_SEPARATOR);
+                    bufferedWriter
+                            .write("# Inverted Parallelism: " + jvmRun.getInvertedParallelismCount() + LINE_SEPARATOR);
                     if (jvmRun.getInvertedParallelismCount() > 0) {
                         bufferedWriter.write("Max Inverted Parallelism: "
                                 + jvmRun.getWorstInvertedParallelismEvent().getLogEntry() + LINE_SEPARATOR);
@@ -261,63 +261,60 @@ public class Main {
                 }
                 // Max heap occupancy.
                 if (jvmRun.getMaxHeapOccupancy() != null) {
-                    bufferedWriter.write(
-                            "Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K" + LINE_SEPARATOR);
+                    bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K" + LINE_SEPARATOR);
                 } else if (jvmRun.getMaxHeapOccupancyNonBlocking() != null) {
-                    bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancyNonBlocking().convertTo(KILOBYTES)
-                            + LINE_SEPARATOR);
+                    bufferedWriter.write("Max Heap Occupancy: "
+                            + jvmRun.getMaxHeapOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                 }
                 // Max heap after GC.
                 if (jvmRun.getMaxHeapAfterGc() != null) {
-                    bufferedWriter
-                            .write("Max Heap After GC: " + jvmRun.getMaxHeapAfterGc().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                    bufferedWriter.write(
+                            "Max Heap After GC: " + jvmRun.getMaxHeapAfterGc().convertTo(KILOBYTES) + LINE_SEPARATOR);
                 }
                 // Max heap space.
                 if (jvmRun.getMaxHeapSpace() != null) {
                     bufferedWriter
                             .write("Max Heap Space: " + jvmRun.getMaxHeapSpace().convertTo(KILOBYTES) + LINE_SEPARATOR);
                 } else if (jvmRun.getMaxHeapSpaceNonBlocking() != null) {
-                    bufferedWriter.write(
-                            "Max Heap Space: " + jvmRun.getMaxHeapSpaceNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                    bufferedWriter.write("Max Heap Space: " + jvmRun.getMaxHeapSpaceNonBlocking().convertTo(KILOBYTES)
+                            + LINE_SEPARATOR);
                 }
 
                 if (jvmRun.getMaxPermSpace() > 0) {
                     if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(INFO_PERM_GEN)) {
                         // Max perm occupancy.
-                        bufferedWriter.write("Max Perm Gen Occupancy: " + jvmRun.getMaxPermOccupancy() + "K"
-                                + LINE_SEPARATOR);
-                        // Max perm after GC.
-                        bufferedWriter.write("Max Perm Gen After GC: " + jvmRun.getMaxPermAfterGc() + "K"
-                                + LINE_SEPARATOR);
-                        // Max perm space.
                         bufferedWriter.write(
-                                "Max Perm Gen Space: " + jvmRun.getMaxPermSpace() + "K" + LINE_SEPARATOR);
+                                "Max Perm Gen Occupancy: " + jvmRun.getMaxPermOccupancy() + "K" + LINE_SEPARATOR);
+                        // Max perm after GC.
+                        bufferedWriter
+                                .write("Max Perm Gen After GC: " + jvmRun.getMaxPermAfterGc() + "K" + LINE_SEPARATOR);
+                        // Max perm space.
+                        bufferedWriter.write("Max Perm Gen Space: " + jvmRun.getMaxPermSpace() + "K" + LINE_SEPARATOR);
                     } else {
                         // Max metaspace occupancy.
-                        bufferedWriter.write("Max Metaspace Occupancy: " + jvmRun.getMaxPermOccupancy() + "K"
-                                + LINE_SEPARATOR);
-                        // Max metaspace after GC.
-                        bufferedWriter.write("Max Metaspace After GC: " + jvmRun.getMaxPermAfterGc() + "K"
-                                + LINE_SEPARATOR);
-                        // Max metaspace space.
                         bufferedWriter.write(
-                                "Max Metaspace Space: " + jvmRun.getMaxPermSpace() + "K" + LINE_SEPARATOR);
+                                "Max Metaspace Occupancy: " + jvmRun.getMaxPermOccupancy() + "K" + LINE_SEPARATOR);
+                        // Max metaspace after GC.
+                        bufferedWriter
+                                .write("Max Metaspace After GC: " + jvmRun.getMaxPermAfterGc() + "K" + LINE_SEPARATOR);
+                        // Max metaspace space.
+                        bufferedWriter.write("Max Metaspace Space: " + jvmRun.getMaxPermSpace() + "K" + LINE_SEPARATOR);
                     }
                 } else if (jvmRun.getMaxPermSpaceNonBlocking().greaterThan(ZERO)) {
                     if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(INFO_PERM_GEN)) {
                         // Max perm occupancy.
-                        bufferedWriter.write("Max Perm Gen Occupancy: " + jvmRun.getMaxPermOccupancyNonBlocking().convertTo(KILOBYTES)
-                                + LINE_SEPARATOR);
+                        bufferedWriter.write("Max Perm Gen Occupancy: "
+                                + jvmRun.getMaxPermOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                         // Max perm space.
-                        bufferedWriter.write("Max Perm Gen Space: " + jvmRun.getMaxPermSpaceNonBlocking().convertTo(KILOBYTES)
-                                + LINE_SEPARATOR);
+                        bufferedWriter.write("Max Perm Gen Space: "
+                                + jvmRun.getMaxPermSpaceNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                     } else {
                         // Max metaspace occupancy.
-                        bufferedWriter.write("Max Metaspace Occupancy: " + jvmRun.getMaxPermOccupancyNonBlocking().convertTo(KILOBYTES)
-                                + LINE_SEPARATOR);
+                        bufferedWriter.write("Max Metaspace Occupancy: "
+                                + jvmRun.getMaxPermOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                         // Max metaspace space.
-                        bufferedWriter.write("Max Metaspace Space: " + jvmRun.getMaxPermSpaceNonBlocking().convertTo(KILOBYTES)
-                                + LINE_SEPARATOR);
+                        bufferedWriter.write("Max Metaspace Space: "
+                                + jvmRun.getMaxPermSpaceNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                     }
                 }
                 // GC throughput
@@ -344,16 +341,14 @@ public class Main {
                 bufferedWriter.write(jvmRun.getStoppedTimeThroughput() + "%" + LINE_SEPARATOR);
                 // Max stopped time
                 BigDecimal maxStoppedPause = JdkMath.convertMillisToSecs(jvmRun.getMaxStoppedTime());
-                bufferedWriter.write(
-                        "Stopped Time Max Pause: " + maxStoppedPause.toString() + " secs" + LINE_SEPARATOR);
+                bufferedWriter
+                        .write("Stopped Time Max Pause: " + maxStoppedPause.toString() + " secs" + LINE_SEPARATOR);
                 // Total stopped time
                 BigDecimal totalStoppedTime = JdkMath.convertMillisToSecs(jvmRun.getTotalStoppedTime());
-                bufferedWriter.write(
-                        "Stopped Time Total: " + totalStoppedTime.toString() + " secs" + LINE_SEPARATOR);
+                bufferedWriter.write("Stopped Time Total: " + totalStoppedTime.toString() + " secs" + LINE_SEPARATOR);
                 // Ratio of GC vs. stopped time. 100 means all stopped time due to GC.
                 if (jvmRun.getBlockingEventCount() > 0) {
-                    bufferedWriter
-                            .write("GC/Stopped Ratio: " + jvmRun.getGcStoppedRatio() + "%" + LINE_SEPARATOR);
+                    bufferedWriter.write("GC/Stopped Ratio: " + jvmRun.getGcStoppedRatio() + "%" + LINE_SEPARATOR);
                 }
             }
             // First/last timestamps
@@ -461,8 +456,7 @@ public class Main {
             // Unidentified log lines
             List<String> unidentifiedLogLines = jvmRun.getUnidentifiedLogLines();
             if (!unidentifiedLogLines.isEmpty()) {
-                bufferedWriter
-                        .write(unidentifiedLogLines.size() + " UNIDENTIFIED LOG LINE(S):" + LINE_SEPARATOR);
+                bufferedWriter.write(unidentifiedLogLines.size() + " UNIDENTIFIED LOG LINE(S):" + LINE_SEPARATOR);
                 bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
 
                 Iterator<String> iterator = unidentifiedLogLines.iterator();

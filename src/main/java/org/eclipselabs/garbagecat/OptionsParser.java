@@ -1,3 +1,15 @@
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Mike Millson - initial API and implementation                                                                   *
+ *********************************************************************************************************************/
 package org.eclipselabs.garbagecat;
 
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_HELP_LONG;
@@ -41,8 +53,11 @@ import org.apache.http.util.EntityUtils;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.json.JSONObject;
 
+/**
+ * @author <a href="https://github.com/pfichtner">Peter Fichtner</a>
+ */
 public class OptionsParser {
-	
+
     static Options options;
 
     static {
@@ -57,48 +72,45 @@ public class OptionsParser {
                 "JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS) required for handling datestamp-only logging");
         options.addOption(OPTION_THRESHOLD_SHORT, OPTION_THRESHOLD_LONG, true,
                 "threshold (0-100) for throughput bottleneck reporting");
-        options.addOption(OPTION_REORDER_SHORT, OPTION_REORDER_LONG, false,
-                "reorder logging by timestamp");
+        options.addOption(OPTION_REORDER_SHORT, OPTION_REORDER_LONG, false, "reorder logging by timestamp");
         options.addOption(OPTION_OUTPUT_SHORT, OPTION_OUTPUT_LONG, true,
                 "output file name (default " + OUTPUT_FILE_NAME + ")");
     }
 
-	/**
-	 * Parse command line options.
-	 * 
-	 * @return
-	 */
-	public static final CommandLine parseOptions(String[] args) throws ParseException {
-	    CommandLineParser parser = new BasicParser();
-	    // Allow user to just specify help or version.
-	    if (args.length == 1 && (args[0].equals("-" + OPTION_HELP_SHORT)
-	            || args[0].equals("--" + OPTION_HELP_LONG))) {
-	        return null;
-	    } else if (args.length == 1 && (args[0].equals("-" + OPTION_VERSION_SHORT)
-	            || args[0].equals("--" + OPTION_VERSION_LONG))) {
-	        System.out.println("Running garbagecat version: " + getVersion());
-	    } else if (args.length == 1 && (args[0].equals("-" + OPTION_LATEST_VERSION_SHORT)
-	            || args[0].equals("--" + OPTION_LATEST_VERSION_LONG))) {
-	        System.out.println("Latest garbagecat version/tag: " + getLatestVersion());
-	    } else if (args.length == 2 && (((args[0].equals("-" + OPTION_VERSION_SHORT)
-	            || args[0].equals("--" + OPTION_VERSION_LONG))
-	            && (args[1].equals("-" + OPTION_LATEST_VERSION_SHORT)
-	                    || args[1].equals("--" + OPTION_LATEST_VERSION_LONG)))
-	            || ((args[1].equals("-" + OPTION_VERSION_SHORT)
-	                    || args[1].equals("--" + OPTION_VERSION_LONG))
-	                    && (args[0].equals("-" + OPTION_LATEST_VERSION_SHORT)
-	                            || args[0].equals("--" + OPTION_LATEST_VERSION_LONG))))) {
-	        System.out.println("Running garbagecat version: " + getVersion());
-	        System.out.println("Latest garbagecat version/tag: " + getLatestVersion());
-	    } else {
-	        CommandLine cmd = parser.parse(options, args);
-	        validateOptions(cmd);
-	        return cmd;
-	    }
-	    return null;
-	}
+    /**
+     * Parse command line options.
+     * 
+     * @return
+     */
+    public static final CommandLine parseOptions(String[] args) throws ParseException {
+        CommandLineParser parser = new BasicParser();
+        // Allow user to just specify help or version.
+        if (args.length == 1 && (args[0].equals("-" + OPTION_HELP_SHORT) || args[0].equals("--" + OPTION_HELP_LONG))) {
+            return null;
+        } else if (args.length == 1
+                && (args[0].equals("-" + OPTION_VERSION_SHORT) || args[0].equals("--" + OPTION_VERSION_LONG))) {
+            System.out.println("Running garbagecat version: " + getVersion());
+        } else if (args.length == 1 && (args[0].equals("-" + OPTION_LATEST_VERSION_SHORT)
+                || args[0].equals("--" + OPTION_LATEST_VERSION_LONG))) {
+            System.out.println("Latest garbagecat version/tag: " + getLatestVersion());
+        } else if (args.length == 2
+                && (((args[0].equals("-" + OPTION_VERSION_SHORT) || args[0].equals("--" + OPTION_VERSION_LONG))
+                        && (args[1].equals("-" + OPTION_LATEST_VERSION_SHORT)
+                                || args[1].equals("--" + OPTION_LATEST_VERSION_LONG)))
+                        || ((args[1].equals("-" + OPTION_VERSION_SHORT) || args[1].equals("--" + OPTION_VERSION_LONG))
+                                && (args[0].equals("-" + OPTION_LATEST_VERSION_SHORT)
+                                        || args[0].equals("--" + OPTION_LATEST_VERSION_LONG))))) {
+            System.out.println("Running garbagecat version: " + getVersion());
+            System.out.println("Latest garbagecat version/tag: " + getLatestVersion());
+        } else {
+            CommandLine cmd = parser.parse(options, args);
+            validateOptions(cmd);
+            return cmd;
+        }
+        return null;
+    }
 
-	/**
+    /**
      * Validate command line options.
      * 
      * @param cmd
@@ -112,10 +124,10 @@ public class OptionsParser {
         if (cmd.getArgList().size() == 0) {
             throw new ParseException("Missing log file");
         }
-		if (cmd.getArgList().isEmpty()) {
-			throw new ParseException("Missing log file not");
-		}
-		String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
+        if (cmd.getArgList().isEmpty()) {
+            throw new ParseException("Missing log file not");
+        }
+        String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
         File logFile = new File(logFileName);
         if (!logFile.exists()) {
             throw new ParseException("Invalid log file: '" + logFileName + "'");
@@ -139,8 +151,8 @@ public class OptionsParser {
                 throw new ParseException("Invalid startdatetime: '" + startdatetimeOptionValue + "'");
             }
         }
-    }	
-	
+    }
+
     /**
      * @return version string.
      */
@@ -171,6 +183,5 @@ public class OptionsParser {
             return "Unable to retrieve";
         }
     }
-
 
 }

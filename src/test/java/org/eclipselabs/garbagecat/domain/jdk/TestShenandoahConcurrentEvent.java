@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -11,8 +11,6 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
-
-import org.junit.Test;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
@@ -31,8 +29,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -45,8 +42,7 @@ public class TestShenandoahConcurrentEvent {
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
                 ShenandoahConcurrentEvent.match(logLine));
         ShenandoahConcurrentEvent event = new ShenandoahConcurrentEvent(logLine);
-        assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(),
-                event.getName());
+        assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 426, event.getTimestamp());
         assertEquals("Combined begin size not parsed correctly.", kilobytes(16434), event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(16466), event.getCombinedOccupancyEnd());
@@ -59,10 +55,10 @@ public class TestShenandoahConcurrentEvent {
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
                 ShenandoahConcurrentEvent.match(logLine));
         ShenandoahConcurrentEvent event = new ShenandoahConcurrentEvent(logLine);
-        assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(),
-                event.getName());
+        assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 437 - 4, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", kilobytes(15 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(15 * 1024),
+                event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(16 * 1024), event.getCombinedOccupancyEnd());
         assertEquals("Combined allocation size not parsed correctly.", kilobytes(64 * 1024), event.getCombinedSpace());
     }
@@ -74,8 +70,7 @@ public class TestShenandoahConcurrentEvent {
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
                 ShenandoahConcurrentEvent.match(logLine));
         ShenandoahConcurrentEvent event = new ShenandoahConcurrentEvent(logLine);
-        assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(),
-                event.getName());
+        assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 467, event.getTimestamp());
         assertEquals("Combined begin size not parsed correctly.", kilobytes(21278), event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(4701), event.getCombinedOccupancyEnd());
@@ -102,8 +97,7 @@ public class TestShenandoahConcurrentEvent {
     @Test
     public void testNotBlocking() {
         String logLine = "[0.437s][info][gc] GC(0) Concurrent reset 15M->16M(64M) 4.701ms";
-        assertFalse(
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " incorrectly indentified as blocking.",
+        assertFalse(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " incorrectly indentified as blocking.",
                 JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
     }
 
@@ -117,8 +111,7 @@ public class TestShenandoahConcurrentEvent {
     public void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_CONCURRENT);
-        assertFalse(
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " incorrectly indentified as unified.",
+        assertFalse(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " incorrectly indentified as unified.",
                 UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
@@ -274,12 +267,13 @@ public class TestShenandoahConcurrentEvent {
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
                 ShenandoahConcurrentEvent.match(logLine));
         ShenandoahConcurrentEvent event = new ShenandoahConcurrentEvent(logLine);
-        assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(),
-                event.getName());
+        assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 300050 - 5, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", kilobytes(874 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(874 * 1024),
+                event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(874 * 1024), event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1303 * 1024), event.getCombinedSpace());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1303 * 1024),
+                event.getCombinedSpace());
     }
 
     @Test
@@ -296,10 +290,10 @@ public class TestShenandoahConcurrentEvent {
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".",
                 ShenandoahConcurrentEvent.match(logLine));
         ShenandoahConcurrentEvent event = new ShenandoahConcurrentEvent(logLine);
-        assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(),
-                event.getName());
+        assertEquals("Event name incorrect.", JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 484 - 0, event.getTimestamp());
-        assertEquals("Combined begin size not parsed correctly.", kilobytes(24 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(24 * 1024),
+                event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(10 * 1024), event.getCombinedOccupancyEnd());
         assertEquals("Combined allocation size not parsed correctly.", kilobytes(34 * 1024), event.getCombinedSpace());
         assertEquals("Metaspace begin size not parsed correctly.", kilobytes(3231), event.getPermOccupancyInit());
@@ -326,7 +320,9 @@ public class TestShenandoahConcurrentEvent {
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        assertEquals("Max heap occupancy for a non blocking event not parsed correctly.", kilobytes(19 * 1024), jvmRun.getMaxHeapOccupancyNonBlocking());
-        assertEquals("Max heap space for a non blocking event not parsed correctly.", kilobytes(33 * 1024), jvmRun.getMaxHeapSpaceNonBlocking());
+        assertEquals("Max heap occupancy for a non blocking event not parsed correctly.", kilobytes(19 * 1024),
+                jvmRun.getMaxHeapOccupancyNonBlocking());
+        assertEquals("Max heap space for a non blocking event not parsed correctly.", kilobytes(33 * 1024),
+                jvmRun.getMaxHeapSpaceNonBlocking());
     }
 }

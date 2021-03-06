@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -12,16 +12,13 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.junit.Test;
-
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -80,8 +77,7 @@ public class TestVerboseGcYoungEvent {
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 4970, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
         assertEquals("Combined begin size not parsed correctly.", kilobytes(136320), event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(18558), event.getCombinedOccupancyEnd());
         assertEquals("Combined allocation size not parsed correctly.", kilobytes(3128704), event.getCombinedSpace());
@@ -96,8 +92,7 @@ public class TestVerboseGcYoungEvent {
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 12915, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK));
         // We set beginging to end occupancy
         assertEquals("Combined begin size not parsed correctly.", kilobytes(59894), event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(59894), event.getCombinedOccupancyEnd());
@@ -113,8 +108,7 @@ public class TestVerboseGcYoungEvent {
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 70096, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         // We set beginging to end occupancy
         assertEquals("Combined begin size not parsed correctly.", kilobytes(521627), event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(521627), event.getCombinedOccupancyEnd());
@@ -130,8 +124,7 @@ public class TestVerboseGcYoungEvent {
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 37357, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
         assertEquals("Combined begin size not parsed correctly.", kilobytes(128035), event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(124539), event.getCombinedOccupancyEnd());
         assertEquals("Combined allocation size not parsed correctly.", kilobytes(3128704), event.getCombinedSpace());
@@ -189,8 +182,7 @@ public class TestVerboseGcYoungEvent {
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 20748, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
         assertEquals("Combined begin size not parsed correctly.", kilobytes(288163), event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(251266), event.getCombinedOccupancyEnd());
         assertEquals("Combined allocation size not parsed correctly.", kilobytes(1253376), event.getCombinedSpace());

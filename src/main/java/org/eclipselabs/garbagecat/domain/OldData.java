@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -25,11 +25,11 @@ public interface OldData {
     /**
      * @return Young generation initial occupancy.
      */
-	Memory getYoungOccupancyInit();
+    Memory getYoungOccupancyInit();
 
     /**
-     * @return Total young generation space at the end of the event (i.e. it reflects any resizing). Equals
-     *         young generation allocation minus one survivor space.
+     * @return Total young generation space at the end of the event (i.e. it reflects any resizing). Equals young
+     *         generation allocation minus one survivor space.
      */
     Memory getYoungSpace();
 

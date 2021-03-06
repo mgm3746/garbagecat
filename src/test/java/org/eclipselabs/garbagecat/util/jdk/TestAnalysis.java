@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -29,8 +29,6 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.junit.Test;
-
-
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -1163,12 +1161,12 @@ public class TestAnalysis {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-		assertEquals("Physical not parsed correctly.", bytes(16728526848L), jvmRun.getJvm().getPhysicalMemory());
-		assertEquals("Heap size not parsed correctly.", bytes(5368709120L), jvmRun.getJvm().getMaxHeapBytes());
-		assertEquals("Metaspace size not parsed correctly.", bytes(3221225472L),
-				jvmRun.getJvm().getMaxMetaspaceBytes());
-		assertEquals("Class compressed pointer space size not parsed correctly.", bytes(2147483648L),
-				jvmRun.getJvm().getCompressedClassSpaceSizeBytes());
+        assertEquals("Physical not parsed correctly.", bytes(16728526848L), jvmRun.getJvm().getPhysicalMemory());
+        assertEquals("Heap size not parsed correctly.", bytes(5368709120L), jvmRun.getJvm().getMaxHeapBytes());
+        assertEquals("Metaspace size not parsed correctly.", bytes(3221225472L),
+                jvmRun.getJvm().getMaxMetaspaceBytes());
+        assertEquals("Class compressed pointer space size not parsed correctly.", bytes(2147483648L),
+                jvmRun.getJvm().getCompressedClassSpaceSizeBytes());
         assertFalse(Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY));
     }
@@ -1186,13 +1184,13 @@ public class TestAnalysis {
         assertEquals("Physical not parsed correctly.", bytes(1968287744L), jvmRun.getJvm().getPhysicalMemory());
         assertEquals("Heap size not parsed correctly.", bytes(4718592000L), jvmRun.getJvm().getMaxHeapBytes());
         assertEquals("Metaspace size not parsed correctly.", bytes(0L), jvmRun.getJvm().getMaxMetaspaceBytes());
-		assertEquals("Class compressed pointer space size not parsed correctly.", bytes(0L),
-				jvmRun.getJvm().getCompressedClassSpaceSizeBytes());
+        assertEquals("Class compressed pointer space size not parsed correctly.", bytes(0L),
+                jvmRun.getJvm().getCompressedClassSpaceSizeBytes());
         assertTrue(Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY));
     }
 
-	/**
+    /**
      * Test CMS class unloading disabled.
      */
     @Test

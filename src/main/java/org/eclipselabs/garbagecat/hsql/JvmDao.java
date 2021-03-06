@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -541,8 +541,10 @@ public class JvmDao {
                 }
                 if (event instanceof CombinedData) {
                     pst.setInt(COMBINED_SPACE_INDEX, kilobytes(((CombinedData) event).getCombinedSpace()));
-                    pst.setInt(COMBINED_OCCUPANCY_INIT_INDEX, kilobytes(((CombinedData) event).getCombinedOccupancyInit()));
-                    pst.setInt(COMBINED_OCCUPANCY_END_INDEX, kilobytes(((CombinedData) event).getCombinedOccupancyEnd()));
+                    pst.setInt(COMBINED_OCCUPANCY_INIT_INDEX,
+                            kilobytes(((CombinedData) event).getCombinedOccupancyInit()));
+                    pst.setInt(COMBINED_OCCUPANCY_END_INDEX,
+                            kilobytes(((CombinedData) event).getCombinedOccupancyEnd()));
                 } else {
                     pst.setInt(COMBINED_SPACE_INDEX, 0);
                     pst.setInt(COMBINED_OCCUPANCY_INIT_INDEX, 0);
@@ -550,7 +552,8 @@ public class JvmDao {
                 }
                 if (event instanceof PermMetaspaceData) {
                     pst.setInt(PERM_SPACE_INDEX, kilobytes(((PermMetaspaceData) event).getPermSpace()));
-                    pst.setInt(PERM_OCCUPANCY_INIT_INDEX, kilobytes(((PermMetaspaceData) event).getPermOccupancyInit()));
+                    pst.setInt(PERM_OCCUPANCY_INIT_INDEX,
+                            kilobytes(((PermMetaspaceData) event).getPermOccupancyInit()));
                     pst.setInt(PERM_OCCUPANCY_END_INDEX, kilobytes(((PermMetaspaceData) event).getPermOccupancyEnd()));
                 } else {
                     pst.setInt(PERM_SPACE_INDEX, 0);
@@ -575,9 +578,9 @@ public class JvmDao {
         }
     }
 
-	private static int kilobytes(Memory memory) {
-		return (int) (memory == null ? 0 : memory.getValue(KILOBYTES));
-	}
+    private static int kilobytes(Memory memory) {
+        return (int) (memory == null ? 0 : memory.getValue(KILOBYTES));
+    }
 
     /**
      * Add stopped time events to database.

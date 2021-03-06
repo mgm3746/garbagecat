@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -11,8 +11,6 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
-
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -33,8 +31,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -2265,8 +2262,7 @@ public class TestG1PreprocessAction {
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC));
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CONCURRENT));
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
         assertTrue(Analysis.ERROR_SERIAL_GC_G1 + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_G1));

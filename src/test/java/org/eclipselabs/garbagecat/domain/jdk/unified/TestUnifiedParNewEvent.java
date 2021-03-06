@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -11,8 +11,6 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
-
-import org.junit.Test;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
@@ -25,8 +23,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -44,8 +41,7 @@ public class TestUnifiedParNewEvent {
         UnifiedParNewEvent event = new UnifiedParNewEvent(logLine);
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 49, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
         assertEquals("Young begin size not parsed correctly.", kilobytes(974), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(128), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(1152), event.getYoungSpace());
@@ -67,8 +63,8 @@ public class TestUnifiedParNewEvent {
         String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
                 + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
                 + "User=0.01s Sys=0.01s Real=0.01s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW + "not identified.",
-                JdkUtil.LogEventType.UNIFIED_PAR_NEW, JdkUtil.identifyEventType(logLine));
+        assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW + "not identified.", JdkUtil.LogEventType.UNIFIED_PAR_NEW,
+                JdkUtil.identifyEventType(logLine));
     }
 
     @Test

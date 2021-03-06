@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -11,8 +11,6 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
-
-import org.junit.Test;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
@@ -32,8 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -48,15 +45,14 @@ public class TestUnifiedG1MixedPauseEvent {
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".",
                 UnifiedG1MixedPauseEvent.match(logLine));
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
-        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString(),
-                event.getName());
+        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 16629, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
         assertEquals("Perm gen begin size not parsed correctly.", kilobytes(3801), event.getPermOccupancyInit());
         assertEquals("Perm gen end size not parsed correctly.", kilobytes(3801), event.getPermOccupancyEnd());
         assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1056768), event.getPermSpace());
-        assertEquals("Combined begin size not parsed correctly.", kilobytes(15 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(15 * 1024),
+                event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(12 * 1024), event.getCombinedOccupancyEnd());
         assertEquals("Combined allocation size not parsed correctly.", kilobytes(31 * 1024), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 1202, event.getDuration());

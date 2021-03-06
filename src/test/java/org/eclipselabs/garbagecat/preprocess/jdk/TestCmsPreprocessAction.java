@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -11,8 +11,6 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
-
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -33,8 +31,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -194,8 +191,8 @@ public class TestCmsPreprocessAction {
         Set<String> context = new HashSet<String>();
         List<String> entangledLogLines = new ArrayList<String>();
         CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
-        assertEquals("Log line not parsed correctly.",
-                "2017-06-22T21:22:03.269-0400: 23.858: [Full GC 23.859: [CMS", event.getLogEntry());
+        assertEquals("Log line not parsed correctly.", "2017-06-22T21:22:03.269-0400: 23.858: [Full GC 23.859: [CMS",
+                event.getLogEntry());
     }
 
     @Test
@@ -617,8 +614,8 @@ public class TestCmsPreprocessAction {
                 CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
         List<String> entangledLogLines = new ArrayList<String>();
         CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
-        assertEquals("Log line not parsed correctly.",
-                "262375.122: [Full GC (Metadata GC Threshold) 262375.122: [CMS", event.getLogEntry());
+        assertEquals("Log line not parsed correctly.", "262375.122: [Full GC (Metadata GC Threshold) 262375.122: [CMS",
+                event.getLogEntry());
     }
 
     @Test
@@ -648,8 +645,8 @@ public class TestCmsPreprocessAction {
                 CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine));
         List<String> entangledLogLines = new ArrayList<String>();
         CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
-        assertEquals("Log line not parsed correctly.",
-                "58626.878: [Full GC (GCLocker Initiated GC)58626.878: [CMS", event.getLogEntry());
+        assertEquals("Log line not parsed correctly.", "58626.878: [Full GC (GCLocker Initiated GC)58626.878: [CMS",
+                event.getLogEntry());
     }
 
     @Test
@@ -823,8 +820,8 @@ public class TestCmsPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals("Log line not parsed correctly.",
-                "2017-02-27T14:29:54.533+0000: 2.730: [GC (Allocation Failure) ", event.getLogEntry());
+        assertEquals("Log line not parsed correctly.", "2017-02-27T14:29:54.533+0000: 2.730: [GC (Allocation Failure) ",
+                event.getLogEntry());
     }
 
     @Test
@@ -956,8 +953,7 @@ public class TestCmsPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         CmsPreprocessAction event = new CmsPreprocessAction(priorLogLine, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals("Log line not parsed correctly.", " 1677988K(7992832K), 0.3055773 secs]",
-                event.getLogEntry());
+        assertEquals("Log line not parsed correctly.", " 1677988K(7992832K), 0.3055773 secs]", event.getLogEntry());
     }
 
     @Test
@@ -1730,11 +1726,9 @@ public class TestCmsPreprocessAction {
                 jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
         assertTrue("Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT));
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME));
     }
 

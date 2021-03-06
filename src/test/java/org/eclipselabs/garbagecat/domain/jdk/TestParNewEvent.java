@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -11,8 +11,6 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
-
-import org.junit.Test;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
@@ -31,8 +29,7 @@ import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -145,8 +142,7 @@ public class TestParNewEvent {
                 ParNewEvent.match(logLine));
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 6703, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
         assertEquals("Young begin size not parsed correctly.", kilobytes(886080), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(11485), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(996800), event.getYoungSpace());
@@ -169,8 +165,7 @@ public class TestParNewEvent {
                 ParNewEvent.match(logLine));
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 1948, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
         assertEquals("Young begin size not parsed correctly.", kilobytes(136576), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(17023), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(153600), event.getYoungSpace());
@@ -194,12 +189,12 @@ public class TestParNewEvent {
                 ParNewEvent.match(logLine));
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 2480, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
         assertEquals("Young begin size not parsed correctly.", kilobytes(1228800), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(30695), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(1382400), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", kilobytes((1228800 - 1228800)), event.getOldOccupancyInit());
+        assertEquals("Old begin size not parsed correctly.", kilobytes((1228800 - 1228800)),
+                event.getOldOccupancyInit());
         assertEquals("Old end size not parsed correctly.", kilobytes((30695 - 30695)), event.getOldOccupancyEnd());
         assertEquals("Old allocation size not parsed correctly.", kilobytes((8235008 - 1382400)), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 39798, event.getDuration());
@@ -222,7 +217,8 @@ public class TestParNewEvent {
         assertEquals("Young begin size not parsed correctly.", kilobytes(1388745), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(458752), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(4128768), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", kilobytes((2977822 - 1388745)), event.getOldOccupancyInit());
+        assertEquals("Old begin size not parsed correctly.", kilobytes((2977822 - 1388745)),
+                event.getOldOccupancyInit());
         assertEquals("Old end size not parsed correctly.", kilobytes((2161212 - 458752)), event.getOldOccupancyEnd());
         assertEquals("Old allocation size not parsed correctly.", kilobytes((13172736 - 4128768)), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 524878, event.getDuration());
@@ -245,7 +241,8 @@ public class TestParNewEvent {
         assertEquals("Young begin size not parsed correctly.", kilobytes(925502), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(58125), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(996800), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", kilobytes((5606646 - 925502)), event.getOldOccupancyInit());
+        assertEquals("Old begin size not parsed correctly.", kilobytes((5606646 - 925502)),
+                event.getOldOccupancyInit());
         assertEquals("Old end size not parsed correctly.", kilobytes((4742781 - 58125)), event.getOldOccupancyEnd());
         assertEquals("Old allocation size not parsed correctly.", kilobytes((8277888 - 996800)), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 13829, event.getDuration());
@@ -268,7 +265,8 @@ public class TestParNewEvent {
         assertEquals("Young begin size not parsed correctly.", kilobytes(476295), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(476295), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(4128768), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", kilobytes((7385012 - 476295)), event.getOldOccupancyInit());
+        assertEquals("Old begin size not parsed correctly.", kilobytes((7385012 - 476295)),
+                event.getOldOccupancyInit());
         assertEquals("Old end size not parsed correctly.", kilobytes((7555732 - 476295)), event.getOldOccupancyEnd());
         assertEquals("Old allocation size not parsed correctly.", kilobytes((13172736 - 4128768)), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 519641, event.getDuration());
@@ -343,8 +341,7 @@ public class TestParNewEvent {
                 ParNewEvent.match(logLine));
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 4506, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         assertEquals("Young begin size not parsed correctly.", kilobytes(100369), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(10116), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(153344), event.getYoungSpace());
@@ -370,12 +367,12 @@ public class TestParNewEvent {
                 ParNewEvent.match(logLine));
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 66504, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         assertEquals("Young begin size not parsed correctly.", kilobytes(4266790), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(922990), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(8388608), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", kilobytes((6417140 - 4266790)), event.getOldOccupancyInit());
+        assertEquals("Old begin size not parsed correctly.", kilobytes((6417140 - 4266790)),
+                event.getOldOccupancyInit());
         assertEquals("Old end size not parsed correctly.", kilobytes((3472610 - 922990)), event.getOldOccupancyEnd());
         assertEquals("Old allocation size not parsed correctly.", kilobytes((22020096 - 8388608)), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 654237, event.getDuration());
@@ -396,12 +393,12 @@ public class TestParNewEvent {
                 ParNewEvent.match(logLine));
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 78251, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         assertEquals("Young begin size not parsed correctly.", kilobytes(2619547), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(569438), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(8388608), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", kilobytes((6555444 - 2619547)), event.getOldOccupancyInit());
+        assertEquals("Old begin size not parsed correctly.", kilobytes((6555444 - 2619547)),
+                event.getOldOccupancyInit());
         assertEquals("Old end size not parsed correctly.", kilobytes((5043068 - 569438)), event.getOldOccupancyEnd());
         assertEquals("Old allocation size not parsed correctly.", kilobytes((22020096 - 8388608)), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 340625, event.getDuration());
@@ -422,12 +419,12 @@ public class TestParNewEvent {
                 ParNewEvent.match(logLine));
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 58427547, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
         assertEquals("Young begin size not parsed correctly.", kilobytes(5117539), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(5001473), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(8388608), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", kilobytes((17958061 - 5117539)), event.getOldOccupancyInit());
+        assertEquals("Old begin size not parsed correctly.", kilobytes((17958061 - 5117539)),
+                event.getOldOccupancyInit());
         assertEquals("Old end size not parsed correctly.", kilobytes((18622281 - 5001473)), event.getOldOccupancyEnd());
         assertEquals("Old allocation size not parsed correctly.", kilobytes((22020096 - 8388608)), event.getOldSpace());
         assertEquals("Duration not parsed correctly.", 27656055, event.getDuration());
@@ -447,8 +444,7 @@ public class TestParNewEvent {
                 ParNewEvent.match(logLine));
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 30385, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         assertEquals("Young begin size not parsed correctly.", kilobytes(890910), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(620060), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(7992832), event.getYoungSpace());

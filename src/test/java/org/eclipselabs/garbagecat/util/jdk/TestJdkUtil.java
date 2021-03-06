@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -26,8 +26,6 @@ import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.junit.Test;
-
-
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -200,10 +198,8 @@ public class TestJdkUtil {
         assertEquals("Option value not correct.", "128M", JdkUtil.getOptionValue("-XX:MaxPermSize=128M"));
         assertEquals("Option value not correct.", "3865051136",
                 JdkUtil.getOptionValue("-XX:InitialHeapSize=3865051136"));
-        assertEquals("Option value not correct.", "7730102272",
-                JdkUtil.getOptionValue("-XX:MaxHeapSize=7730102272"));
-        assertEquals("Option value not correct.", "268435456",
-                JdkUtil.getOptionValue("-XX:MaxPermSize=268435456"));
+        assertEquals("Option value not correct.", "7730102272", JdkUtil.getOptionValue("-XX:MaxHeapSize=7730102272"));
+        assertEquals("Option value not correct.", "268435456", JdkUtil.getOptionValue("-XX:MaxPermSize=268435456"));
         assertEquals("Option value not correct.", "67108864", JdkUtil.getOptionValue("-XX:PermSize=67108864"));
         assertNull("Option value not correct.", JdkUtil.getOptionValue(null));
     }
@@ -289,15 +285,13 @@ public class TestJdkUtil {
     public void testDateStampBeginning() {
         String logLine = "2017-01-30T10:06:50.070+0400: 2232356.357: [GC [PSYoungGen: 242595K->5980K(1324544K)] "
                 + "1264815K->1037853K(4121088K), 0.0173240 secs] [Times: user=0.08 sys=0.00, real=0.02 secs]";
-        assertEquals("Datestamp not parsed correctly.", "2017-01-30T10:06:50.070+0400",
-                JdkUtil.getDateStamp(logLine));
+        assertEquals("Datestamp not parsed correctly.", "2017-01-30T10:06:50.070+0400", JdkUtil.getDateStamp(logLine));
     }
 
     @Test
     public void testDateStampMiddle() {
         String logLine = "85030.389: [Full GC 85030.390: [CMS2012-06-20T12:29:58.094+0200: 85030.443: "
                 + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
-        assertEquals("Datestamp not parsed correctly.", "2012-06-20T12:29:58.094+0200",
-                JdkUtil.getDateStamp(logLine));
+        assertEquals("Datestamp not parsed correctly.", "2012-06-20T12:29:58.094+0200", JdkUtil.getDateStamp(logLine));
     }
 }

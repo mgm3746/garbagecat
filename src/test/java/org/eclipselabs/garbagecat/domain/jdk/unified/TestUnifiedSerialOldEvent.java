@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -11,8 +11,6 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
-
-import org.junit.Test;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
@@ -25,8 +23,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -42,11 +39,9 @@ public class TestUnifiedSerialOldEvent {
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + ".",
                 UnifiedSerialOldEvent.match(logLine));
         UnifiedSerialOldEvent event = new UnifiedSerialOldEvent(logLine);
-        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString(),
-                event.getName());
+        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 75, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
         assertEquals("Young begin size not parsed correctly.", kilobytes(1152), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(0), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(1152), event.getYoungSpace());
@@ -138,8 +133,7 @@ public class TestUnifiedSerialOldEvent {
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + ".",
                 UnifiedSerialOldEvent.match(logLine));
         UnifiedSerialOldEvent event = new UnifiedSerialOldEvent(logLine);
-        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString(),
-                event.getName());
+        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 91, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ERGONOMICS));
         assertEquals("Young begin size not parsed correctly.", kilobytes(502), event.getYoungOccupancyInit());

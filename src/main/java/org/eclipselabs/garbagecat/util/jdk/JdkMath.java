@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -31,7 +31,7 @@ public final class JdkMath {
      * Make default constructor private so the class cannot be instantiated.
      */
     private JdkMath() {
-    	super();
+        super();
     }
 
     /**
@@ -193,14 +193,15 @@ public final class JdkMath {
      *            The units (e.g. 'G').
      * @return The size in Kilobytes.
      */
-	public static Memory convertSizeToKilobytes(String size, char units) {
-		return convertSizeToKilobytes(Double.parseDouble(size.replace(",", ".")), units);
-	}
+    public static Memory convertSizeToKilobytes(String size, char units) {
+        return convertSizeToKilobytes(Double.parseDouble(size.replace(",", ".")), units);
+    }
 
-	public static Memory convertSizeToKilobytes(double size, char units) {
-		return new Memory(BigDecimal.valueOf(Unit.forUnit(units).toKiloBytes(size)).setScale(0, RoundingMode.HALF_EVEN).longValue(), Unit.KILOBYTES);
-		
-	}
+    public static Memory convertSizeToKilobytes(double size, char units) {
+        return new Memory(BigDecimal.valueOf(Unit.forUnit(units).toKiloBytes(size)).setScale(0, RoundingMode.HALF_EVEN)
+                .longValue(), Unit.KILOBYTES);
+
+    }
 
     /**
      * Calculate parallelism, the ratio of user + sys to wall (real) time.

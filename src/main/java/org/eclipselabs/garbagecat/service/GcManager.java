@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -744,7 +744,8 @@ public class GcManager {
                 } else if (event instanceof HeaderMemoryEvent) {
                     jvmDao.setMemory(((HeaderMemoryEvent) event).getLogEntry());
                     jvmDao.setPhysicalMemory((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemory()));
-                    jvmDao.setPhysicalMemoryFree((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemoryFree()));
+                    jvmDao.setPhysicalMemoryFree(
+                            (long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemoryFree()));
                     jvmDao.setSwap((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwap()));
                     jvmDao.setSwapFree((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwapFree()));
                 } else if (event instanceof HeaderVersionEvent) {
@@ -758,17 +759,23 @@ public class GcManager {
                         jvmDao.addAnalysis(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED);
                     }
                 } else if (event instanceof ShenandoahConcurrentEvent) {
-                    if (greater(((CombinedData) event).getCombinedOccupancyInit(), jvmDao.getMaxHeapOccupancyNonBlocking())) {
-                        jvmDao.setMaxHeapOccupancyNonBlocking((int) ((CombinedData) event).getCombinedOccupancyInit().getValue(KILOBYTES));
+                    if (greater(((CombinedData) event).getCombinedOccupancyInit(),
+                            jvmDao.getMaxHeapOccupancyNonBlocking())) {
+                        jvmDao.setMaxHeapOccupancyNonBlocking(
+                                (int) ((CombinedData) event).getCombinedOccupancyInit().getValue(KILOBYTES));
                     }
                     if (greater(((CombinedData) event).getCombinedSpace(), jvmDao.getMaxHeapSpaceNonBlocking())) {
-                        jvmDao.setMaxHeapSpaceNonBlocking((int) ((CombinedData) event).getCombinedSpace().getValue(KILOBYTES));
+                        jvmDao.setMaxHeapSpaceNonBlocking(
+                                (int) ((CombinedData) event).getCombinedSpace().getValue(KILOBYTES));
                     }
-                    if (greater(((PermMetaspaceData) event).getPermOccupancyInit(), jvmDao.getMaxPermOccupancyNonBlocking())) {
-                        jvmDao.setMaxPermOccupancyNonBlocking((int) ((PermMetaspaceData) event).getPermOccupancyInit().getValue(KILOBYTES));
+                    if (greater(((PermMetaspaceData) event).getPermOccupancyInit(),
+                            jvmDao.getMaxPermOccupancyNonBlocking())) {
+                        jvmDao.setMaxPermOccupancyNonBlocking(
+                                (int) ((PermMetaspaceData) event).getPermOccupancyInit().getValue(KILOBYTES));
                     }
                     if (greater(((PermMetaspaceData) event).getPermSpace(), jvmDao.getMaxPermSpaceNonBlocking())) {
-                        jvmDao.setMaxPermSpaceNonBlocking((int) ((PermMetaspaceData) event).getPermSpace().getValue(KILOBYTES));
+                        jvmDao.setMaxPermSpaceNonBlocking(
+                                (int) ((PermMetaspaceData) event).getPermSpace().getValue(KILOBYTES));
                     }
                 } else if (event instanceof UnknownEvent) {
                     // Don't count reportable events with datestamp only as unidentified
@@ -837,9 +844,9 @@ public class GcManager {
 
     }
 
-	private static boolean greater(Memory memory, int value) {
-		return memory != null && memory.getValue(KILOBYTES) > value;
-	}
+    private static boolean greater(Memory memory, int value) {
+        return memory != null && memory.getValue(KILOBYTES) > value;
+    }
 
     /**
      * Determine <code>BlockingEvent</code>s where throughput since last event does not meet the throughput goal.

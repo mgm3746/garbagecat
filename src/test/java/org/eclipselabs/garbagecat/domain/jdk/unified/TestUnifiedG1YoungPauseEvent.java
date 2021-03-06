@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -11,8 +11,6 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
-
-import org.junit.Test;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
@@ -32,8 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -48,15 +45,14 @@ public class TestUnifiedG1YoungPauseEvent {
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".",
                 UnifiedG1YoungPauseEvent.match(logLine));
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
-        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(),
-                event.getName());
+        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 15086 - 0, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
         assertEquals("Metaspace begin size not parsed correctly.", kilobytes(3771), event.getPermOccupancyInit());
         assertEquals("Metaspace end size not parsed correctly.", kilobytes(3771), event.getPermOccupancyEnd());
         assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(1056768), event.getPermSpace());
-        assertEquals("Combined begin size not parsed correctly.", kilobytes(24 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(24 * 1024),
+                event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(13 * 1024), event.getCombinedOccupancyEnd());
         assertEquals("Combined allocation size not parsed correctly.", kilobytes(31 * 1024), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 401, event.getDuration());
@@ -126,17 +122,17 @@ public class TestUnifiedG1YoungPauseEvent {
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".",
                 UnifiedG1YoungPauseEvent.match(logLine));
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
-        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(),
-                event.getName());
+        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 5355, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE));
         assertEquals("Metaspace begin size not parsed correctly.", kilobytes(26116), event.getPermOccupancyInit());
         assertEquals("Metaspace end size not parsed correctly.", kilobytes(26116), event.getPermOccupancyEnd());
         assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(278528), event.getPermSpace());
-        assertEquals("Combined begin size not parsed correctly.", kilobytes(65 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(65 * 1024),
+                event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(8 * 1024), event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1304 * 1024), event.getCombinedSpace());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1304 * 1024),
+                event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 57263, event.getDuration());
         assertEquals("User time not parsed correctly.", 2, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 1, event.getTimeSys());
@@ -151,17 +147,17 @@ public class TestUnifiedG1YoungPauseEvent {
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".",
                 UnifiedG1YoungPauseEvent.match(logLine));
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
-        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(),
-                event.getName());
+        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 11728, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC));
         assertEquals("Metaspace begin size not parsed correctly.", kilobytes(35318), event.getPermOccupancyInit());
         assertEquals("Metaspace end size not parsed correctly.", kilobytes(35318), event.getPermOccupancyEnd());
         assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(288768), event.getPermSpace());
-        assertEquals("Combined begin size not parsed correctly.", kilobytes(78 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(78 * 1024),
+                event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(22 * 1024), event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1304 * 1024), event.getCombinedSpace());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1304 * 1024),
+                event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 35722, event.getDuration());
         assertEquals("User time not parsed correctly.", 2, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());
@@ -177,17 +173,17 @@ public class TestUnifiedG1YoungPauseEvent {
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".",
                 UnifiedG1YoungPauseEvent.match(logLine));
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
-        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(),
-                event.getName());
+        assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 58671, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
         assertEquals("Metaspace begin size not parsed correctly.", kilobytes(88802), event.getPermOccupancyInit());
         assertEquals("Metaspace end size not parsed correctly.", kilobytes(88802), event.getPermOccupancyEnd());
         assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(1134592), event.getPermSpace());
-        assertEquals("Combined begin size not parsed correctly.", kilobytes(733 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(733 * 1024),
+                event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(588 * 1024), event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1223 * 1024), event.getCombinedSpace());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1223 * 1024),
+                event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 105541, event.getDuration());
         assertEquals("User time not parsed correctly.", 18, event.getTimeUser());
         assertEquals("Sys time not parsed correctly.", 0, event.getTimeSys());

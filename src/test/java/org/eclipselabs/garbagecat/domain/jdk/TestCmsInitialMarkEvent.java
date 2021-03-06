@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -12,15 +12,12 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -75,8 +72,7 @@ public class TestCmsInitialMarkEvent {
         assertTrue("Log line not recognized as CMS Initial Mark event.", CmsInitialMarkEvent.match(logLine));
         CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 8722, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK));
         assertEquals("Duration not parsed correctly.", 15789, event.getDuration());
         assertEquals("User time not parsed correctly.", 6, event.getTimeUser());
         assertEquals("Real time not parsed correctly.", 2, event.getTimeReal());
@@ -90,8 +86,7 @@ public class TestCmsInitialMarkEvent {
         assertTrue("Log line not recognized as CMS Initial Mark event.", CmsInitialMarkEvent.match(logLine));
         CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 3065, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK));
         assertEquals("Duration not parsed correctly.", 9198, event.getDuration());
         assertEquals("User time not parsed correctly.", 3, event.getTimeUser());
         assertEquals("Real time not parsed correctly.", 1, event.getTimeReal());

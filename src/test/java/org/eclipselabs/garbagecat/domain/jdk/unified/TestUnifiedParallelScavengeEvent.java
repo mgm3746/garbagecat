@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -11,8 +11,6 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
-
-import org.junit.Test;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
@@ -25,8 +23,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -39,15 +36,13 @@ public class TestUnifiedParallelScavengeEvent {
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".",
                 UnifiedParallelScavengeEvent.match(logLine));
         UnifiedParallelScavengeEvent event = new UnifiedParallelScavengeEvent(logLine);
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString(),
                 event.getName());
         assertEquals("Time stamp not parsed correctly.", 31, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
         assertEquals("Young begin size not parsed correctly.", kilobytes(512), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(464), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(1024), event.getYoungSpace());
@@ -121,8 +116,7 @@ public class TestUnifiedParallelScavengeEvent {
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s    ";
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".",
                 UnifiedParallelScavengeEvent.match(logLine));
     }
 
@@ -131,8 +125,7 @@ public class TestUnifiedParallelScavengeEvent {
         String logLine = "[15.030s][info][gc,start       ] GC(1199) Pause Young (Allocation Failure) PSYoungGen: "
                 + "20544K->64K(20992K) PSOldGen: 15496K->15504K(17920K) Metaspace: 3779K->3779K(1056768K) "
                 + "35M->15M(38M) 0.402ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".",
                 UnifiedParallelScavengeEvent.match(logLine));
     }
 
@@ -141,15 +134,13 @@ public class TestUnifiedParallelScavengeEvent {
         String logLine = "[0.029s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->432K(1024K) ParOldGen: 0K->8K(512K) Metaspace: 121K->121K(1056768K) 0M->0M(1M) 0.762ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".",
                 UnifiedParallelScavengeEvent.match(logLine));
         UnifiedParallelScavengeEvent event = new UnifiedParallelScavengeEvent(logLine);
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString(),
                 event.getName());
         assertEquals("Time stamp not parsed correctly.", 29, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
         assertEquals("Young begin size not parsed correctly.", kilobytes(512), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(432), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(1024), event.getYoungSpace());

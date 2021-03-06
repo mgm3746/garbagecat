@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -11,6 +11,7 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
+
 import static org.eclipselabs.garbagecat.util.Memory.bytes;
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.eclipselabs.garbagecat.util.Memory.megabytes;
@@ -21,8 +22,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipselabs.garbagecat.util.Memory;
 import org.junit.Test;
-
-
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -129,8 +128,7 @@ public class TestJvm {
     public void testGetThreadStackSizeNoUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1234567 -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size incorrect.", "-XX:ThreadStackSize=1234567",
-                jvm.getThreadStackSizeOption());
+        assertEquals("Thread stack size incorrect.", "-XX:ThreadStackSize=1234567", jvm.getThreadStackSizeOption());
         assertEquals("Thread stack size value incorrect.", "1234567", jvm.getThreadStackSizeValue());
     }
 
@@ -336,8 +334,7 @@ public class TestJvm {
     public void testGetMaxPermSmallM() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:PermSize=128m -XX:MaxPermSize=128m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max permanent generation optiion incorrect.", "-XX:MaxPermSize=128m",
-                jvm.getMaxPermOption());
+        assertEquals("Max permanent generation optiion incorrect.", "-XX:MaxPermSize=128m", jvm.getMaxPermOption());
         assertEquals("Max permanent generation value incorrect.", "128m", jvm.getMaxPermValue());
     }
 
@@ -345,8 +342,7 @@ public class TestJvm {
     public void testGetMaxPermBigM() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:PermSize=128M -XX:MaxPermSize=128M";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max permanent generation option incorrect.", "-XX:MaxPermSize=128M",
-                jvm.getMaxPermOption());
+        assertEquals("Max permanent generation option incorrect.", "-XX:MaxPermSize=128M", jvm.getMaxPermOption());
         assertEquals("Max permanent generation value incorrect.", "128M", jvm.getMaxPermValue());
     }
 
@@ -420,8 +416,7 @@ public class TestJvm {
     public void testGetMinMetaspaceSmallG() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:MetaspaceSize=1g -XX:MaxMetaspaceSize=1g";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min Metaspace generation option incorrect.", "-XX:MetaspaceSize=1g",
-                jvm.getMinMetaspaceOption());
+        assertEquals("Min Metaspace generation option incorrect.", "-XX:MetaspaceSize=1g", jvm.getMinMetaspaceOption());
         assertEquals("Min Metaspace generation value incorrect.", "1g", jvm.getMinMetaspaceValue());
     }
 
@@ -429,8 +424,7 @@ public class TestJvm {
     public void testGetMinMetaspaceBigG() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:MetaspaceSize=1G -XX:MaxMetaspaceSize=1G";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min Metaspace generation option incorrect.", "-XX:MetaspaceSize=1G",
-                jvm.getMinMetaspaceOption());
+        assertEquals("Min Metaspace generation option incorrect.", "-XX:MetaspaceSize=1G", jvm.getMinMetaspaceOption());
         assertEquals("Min Metaspace generation value incorrect.", "1G", jvm.getMinMetaspaceValue());
     }
 
@@ -483,12 +477,12 @@ public class TestJvm {
     public void testRmiDgcServerGcIntervalValue() {
         String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=14400000 -Dsun.rmi.dgc.server.gcInterval=24400000";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("sun.rmi.dgc.client.gcInterval option incorrect.",
-                "-Dsun.rmi.dgc.client.gcInterval=14400000", jvm.getRmiDgcClientGcIntervalOption());
+        assertEquals("sun.rmi.dgc.client.gcInterval option incorrect.", "-Dsun.rmi.dgc.client.gcInterval=14400000",
+                jvm.getRmiDgcClientGcIntervalOption());
         assertEquals("sun.rmi.dgc.client.gcInterval value incorrect.", "14400000",
                 jvm.getRmiDgcClientGcIntervalValue());
-        assertEquals("sun.rmi.dgc.server.gcInterval option incorrect.",
-                "-Dsun.rmi.dgc.server.gcInterval=24400000", jvm.getRmiDgcServerGcIntervalOption());
+        assertEquals("sun.rmi.dgc.server.gcInterval option incorrect.", "-Dsun.rmi.dgc.server.gcInterval=24400000",
+                jvm.getRmiDgcServerGcIntervalOption());
         assertEquals("sun.rmi.dgc.server.gcInterval value incorrect.", "24400000",
                 jvm.getRmiDgcServerGcIntervalValue());
     }
@@ -559,8 +553,7 @@ public class TestJvm {
     public void testPrintGCDetails() {
         String jvmOptions = "-Xss128k -XX:+PrintGCDetails -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+PrintGCDetails option incorrect.", "-XX:+PrintGCDetails",
-                jvm.getPrintGCDetailsOption());
+        assertEquals("-XX:+PrintGCDetails option incorrect.", "-XX:+PrintGCDetails", jvm.getPrintGCDetailsOption());
     }
 
     @Test
@@ -598,8 +591,7 @@ public class TestJvm {
     public void testPrintReferenceGC() {
         String jvmOptions = "-Xss128k -XX:+PrintReferenceGC -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+PrintReferenceGC option incorrect.", "-XX:+PrintReferenceGC",
-                jvm.getPrintReferenceGC());
+        assertEquals("-XX:+PrintReferenceGC option incorrect.", "-XX:+PrintReferenceGC", jvm.getPrintReferenceGC());
     }
 
     @Test
@@ -668,8 +660,7 @@ public class TestJvm {
     public void testTieredCompilation() {
         String jvmOptions = "-Xss128k -XX:+TieredCompilation -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+TieredCompilation option incorrect.", "-XX:+TieredCompilation",
-                jvm.getTieredCompilation());
+        assertEquals("-XX:+TieredCompilation option incorrect.", "-XX:+TieredCompilation", jvm.getTieredCompilation());
     }
 
     @Test
@@ -684,8 +675,8 @@ public class TestJvm {
     public void testCmsInitiatingOccupancyFraction() {
         String jvmOptions = "-Xss128k -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:CMSInitiatingOccupancyFraction option incorrect.",
-                "-XX:CMSInitiatingOccupancyFraction=70", jvm.getCMSInitiatingOccupancyFraction());
+        assertEquals("-XX:CMSInitiatingOccupancyFraction option incorrect.", "-XX:CMSInitiatingOccupancyFraction=70",
+                jvm.getCMSInitiatingOccupancyFraction());
     }
 
     @Test
@@ -693,8 +684,8 @@ public class TestJvm {
         String jvmOptions = "-Xss128k -XX:CMSInitiatingOccupancyFraction=70 -XX:+UseCMSInitiatingOccupancyOnly "
                 + "-XX:+CMSParallelRemarkEnabled";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+UseCMSInitiatingOccupancyOnly option incorrect.",
-                "-XX:+UseCMSInitiatingOccupancyOnly", jvm.getCMSInitiatingOccupancyOnlyEnabled());
+        assertEquals("-XX:+UseCMSInitiatingOccupancyOnly option incorrect.", "-XX:+UseCMSInitiatingOccupancyOnly",
+                jvm.getCMSInitiatingOccupancyOnlyEnabled());
     }
 
     @Test
@@ -709,8 +700,8 @@ public class TestJvm {
     public void testPrintApplicationConcurrentTime() {
         String jvmOptions = "-Xss128k -XX:+PrintGCApplicationConcurrentTime -XX:+CMSParallelRemarkEnabled";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:-PrintGCApplicationConcurrentTime option incorrect.",
-                "-XX:+PrintGCApplicationConcurrentTime", jvm.getPrintGcApplicationConcurrentTime());
+        assertEquals("-XX:-PrintGCApplicationConcurrentTime option incorrect.", "-XX:+PrintGCApplicationConcurrentTime",
+                jvm.getPrintGcApplicationConcurrentTime());
     }
 
     @Test
@@ -849,8 +840,7 @@ public class TestJvm {
     public void testUnlockExperimentalVmOptionsEnabled() {
         String jvmOptions = "-XX:CompressedClassSpaceSize=768m -XX:+UnlockExperimentalVMOptions -d64";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertNotNull("-XX:+UnlockExperimentalVMOptions not found.",
-                jvm.getUnlockExperimentalVmOptionsEnabled());
+        assertNotNull("-XX:+UnlockExperimentalVMOptions not found.", jvm.getUnlockExperimentalVmOptionsEnabled());
     }
 
     @Test
@@ -865,8 +855,7 @@ public class TestJvm {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:G1MixedGCLiveThresholdPercent=85 -d64";
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:G1MixedGCLiveThresholdPercent=NN not found.", jvm.getG1MixedGCLiveThresholdPercent());
-        assertEquals("G1MixedGCLiveThresholdPercent incorrect.", "85",
-                jvm.getG1MixedGCLiveThresholdPercentValue());
+        assertEquals("G1MixedGCLiveThresholdPercent incorrect.", "85", jvm.getG1MixedGCLiveThresholdPercentValue());
     }
 
     @Test
@@ -940,8 +929,8 @@ public class TestJvm {
     public void testCmsParallelInitialMarkDisabled() {
         String jvmOptions = "-Xss128k -XX:-CMSParallelInitialMarkEnabled -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:-CMSParallelInitialMarkEnabled option incorrect.",
-                "-XX:-CMSParallelInitialMarkEnabled", jvm.getCmsParallelInitialMarkDisabled());
+        assertEquals("-XX:-CMSParallelInitialMarkEnabled option incorrect.", "-XX:-CMSParallelInitialMarkEnabled",
+                jvm.getCmsParallelInitialMarkDisabled());
     }
 
     @Test

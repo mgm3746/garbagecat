@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -54,7 +54,7 @@ public class Jvm {
     private String memory;
 
     /**
-     * Physical memory. 
+     * Physical memory.
      */
     private Memory physicalMemory = Memory.ZERO;
 
@@ -277,7 +277,7 @@ public class Jvm {
      * @return The maximum perm space in bytes, or 0 if not set.
      */
     public Memory getMaxPermBytes() {
-		return getMaxPermValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxPermValue());
+        return getMaxPermValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxPermValue());
     }
 
     /**
@@ -1010,8 +1010,7 @@ public class Jvm {
      * @return The gc log file size in bytes, or 0 if not set.
      */
     public Memory getGcLogFileSizeBytes() {
-		return getGcLogFileSizeValue() == null ? Memory.ZERO
-				: Memory.fromOptionSize(getGcLogFileSizeValue());
+        return getGcLogFileSizeValue() == null ? Memory.ZERO : Memory.fromOptionSize(getGcLogFileSizeValue());
     }
 
     /**
@@ -1074,8 +1073,8 @@ public class Jvm {
      * @return The compressed class space in bytes, or 0 if not set.
      */
     public Memory getCompressedClassSpaceSizeBytes() {
-		return getCompressedClassSpaceSizeValue() == null ? Memory.ZERO
-				: Memory.fromOptionSize(getCompressedClassSpaceSizeValue());
+        return getCompressedClassSpaceSizeValue() == null ? Memory.ZERO
+                : Memory.fromOptionSize(getCompressedClassSpaceSizeValue());
     }
 
     /**
@@ -1457,9 +1456,9 @@ public class Jvm {
      * @return True if the minimum and maximum permanent generation space are set equal.
      */
     public boolean isMinAndMaxPermSpaceEqual() {
-		return (getMinPermValue() == null && getMaxPermValue() == null) || (getMinPermValue() != null
-				&& getMaxPermValue() != null && Memory.fromOptionSize(getMinPermValue())
-						.equals(Memory.fromOptionSize(getMaxPermValue())));
+        return (getMinPermValue() == null && getMaxPermValue() == null)
+                || (getMinPermValue() != null && getMaxPermValue() != null
+                        && Memory.fromOptionSize(getMinPermValue()).equals(Memory.fromOptionSize(getMaxPermValue())));
     }
 
     /**
@@ -1484,8 +1483,7 @@ public class Jvm {
      */
     public boolean hasLargeThreadStackSize() {
         String threadStackSize = getThreadStackSizeValue();
-        return threadStackSize != null
-                && Memory.fromOptionSize(threadStackSize).compareTo(megabytes(1)) >= 0;
+        return threadStackSize != null && Memory.fromOptionSize(threadStackSize).compareTo(megabytes(1)) >= 0;
     }
 
     /**
@@ -1546,10 +1544,10 @@ public class Jvm {
         if (!swap.greaterThan(Memory.ZERO)) {
             return 100L;
         }
-		BigDecimal percentFree = new BigDecimal(swapFree.getValue(BYTES));
-		percentFree = percentFree.divide(new BigDecimal(swap.getValue(BYTES)), 2, RoundingMode.HALF_EVEN);
-		percentFree = percentFree.movePointRight(2);
-		return percentFree.longValue();
+        BigDecimal percentFree = new BigDecimal(swapFree.getValue(BYTES));
+        percentFree = percentFree.divide(new BigDecimal(swap.getValue(BYTES)), 2, RoundingMode.HALF_EVEN);
+        percentFree = percentFree.movePointRight(2);
+        return percentFree.longValue();
     }
 
     /**

@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -11,8 +11,6 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
-
-import org.junit.Test;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
@@ -33,8 +31,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -51,7 +48,8 @@ public class TestUnifiedOldEvent {
         assertEquals("Event name incorrect.", JdkUtil.LogEventType.UNIFIED_OLD.toString(), event.getName());
         assertEquals("Time stamp not parsed correctly.", 231 - 2, event.getTimestamp());
         assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ERGONOMICS));
-        assertEquals("Combined begin size not parsed correctly.", kilobytes(1 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(1 * 1024),
+                event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(1 * 1024), event.getCombinedOccupancyEnd());
         assertEquals("Combined allocation size not parsed correctly.", kilobytes(7 * 1024), event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 2969, event.getDuration());
@@ -112,9 +110,11 @@ public class TestUnifiedOldEvent {
         assertEquals("Metaspace begin size not parsed correctly.", kilobytes(260211), event.getPermOccupancyInit());
         assertEquals("Metaspace end size not parsed correctly.", kilobytes(260197), event.getPermOccupancyEnd());
         assertEquals("Metaspace allocation size not parsed correctly.", kilobytes(1290240), event.getPermSpace());
-        assertEquals("Combined begin size not parsed correctly.", kilobytes(887 * 1024), event.getCombinedOccupancyInit());
+        assertEquals("Combined begin size not parsed correctly.", kilobytes(887 * 1024),
+                event.getCombinedOccupancyInit());
         assertEquals("Combined end size not parsed correctly.", kilobytes(583 * 1024), event.getCombinedOccupancyEnd());
-        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1223 * 1024), event.getCombinedSpace());
+        assertEquals("Combined allocation size not parsed correctly.", kilobytes(1223 * 1024),
+                event.getCombinedSpace());
         assertEquals("Duration not parsed correctly.", 3460196, event.getDuration());
         assertEquals("User time not parsed correctly.", 178, event.getTimeUser());
         assertEquals("Real time not parsed correctly.", 346, event.getTimeReal());

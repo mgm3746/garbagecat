@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -11,8 +11,6 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
-
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,8 +26,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -98,8 +95,7 @@ public class TestCmsRemarkEvent {
                 CmsRemarkEvent.match(logLine));
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 13749, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         assertEquals("Duration not parsed correctly.", 23951, event.getDuration());
         assertFalse("Incremental Mode not parsed correctly.", event.isIncrementalMode());
         assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
@@ -244,8 +240,7 @@ public class TestCmsRemarkEvent {
                 CmsRemarkEvent.match(logLine));
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 13758, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         assertEquals("Duration not parsed correctly.", 43034, event.getDuration());
         assertTrue("Class unloading not parsed correctly.", event.isClassUnloading());
         assertEquals("User time not parsed correctly.", 36, event.getTimeUser());
@@ -321,8 +316,7 @@ public class TestCmsRemarkEvent {
                 CmsRemarkEvent.match(logLine));
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 38695, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         assertEquals("Duration not parsed correctly.", 589380, event.getDuration());
         assertTrue("Class unloading not parsed correctly.", event.isClassUnloading());
         assertEquals("User time not parsed correctly.", 392, event.getTimeUser());
@@ -345,8 +339,7 @@ public class TestCmsRemarkEvent {
                 CmsRemarkEvent.match(logLine));
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 3674, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         assertEquals("Duration not parsed correctly.", 93573, event.getDuration());
         assertTrue("Class unloading not parsed correctly.", event.isClassUnloading());
         assertEquals("User time not parsed correctly.", 26, event.getTimeUser());
@@ -363,8 +356,7 @@ public class TestCmsRemarkEvent {
                 CmsRemarkEvent.match(logLine));
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 19763069, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK));
         assertEquals("Duration not parsed correctly.", 0, event.getDuration());
         assertFalse("Class unloading not parsed correctly.", event.isClassUnloading());
     }

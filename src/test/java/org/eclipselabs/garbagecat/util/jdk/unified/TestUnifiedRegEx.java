@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -15,8 +15,6 @@ package org.eclipselabs.garbagecat.util.jdk.unified;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
-
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -57,43 +55,37 @@ public class TestUnifiedRegEx {
     @Test
     public void testDecoratorUptime() {
         String decorator = "[25.016s]";
-        assertTrue("Time decorator " + decorator + " not recognized.",
-                decorator.matches(UnifiedRegEx.DECORATOR));
+        assertTrue("Time decorator " + decorator + " not recognized.", decorator.matches(UnifiedRegEx.DECORATOR));
     }
 
     @Test
     public void testDecoratorUptimeMillis() {
         String decorator = "[25016ms]";
-        assertTrue("Time decorator " + decorator + " not recognized.",
-                decorator.matches(UnifiedRegEx.DECORATOR));
+        assertTrue("Time decorator " + decorator + " not recognized.", decorator.matches(UnifiedRegEx.DECORATOR));
     }
 
     @Test
     public void testDecoratorUptimeMillis9Digits() {
         String decorator = "[100159717ms]";
-        assertTrue("Time decorator " + decorator + " not recognized.",
-                decorator.matches(UnifiedRegEx.DECORATOR));
+        assertTrue("Time decorator " + decorator + " not recognized.", decorator.matches(UnifiedRegEx.DECORATOR));
     }
 
     @Test
     public void testDecoratorTime() {
         String decorator = "[2020-02-14T15:21:55.207-0500]";
-        assertTrue("Time decorator " + decorator + " not recognized.",
-                decorator.matches(UnifiedRegEx.DECORATOR));
+        assertTrue("Time decorator " + decorator + " not recognized.", decorator.matches(UnifiedRegEx.DECORATOR));
     }
 
     @Test
     public void testDecoratorTimeUptime() {
         String decorator = "[2020-02-14T15:21:55.207-0500][25.016s]";
-        assertTrue("Time decorator " + decorator + " not recognized.",
-                decorator.matches(UnifiedRegEx.DECORATOR));
+        assertTrue("Time decorator " + decorator + " not recognized.", decorator.matches(UnifiedRegEx.DECORATOR));
     }
 
     @Test
     public void testDecoratorTimeUptimemillis() {
         String decorator = "[2020-02-14T15:21:55.207-0500][25016ms]";
-        assertTrue("Time decorator " + decorator + " not recognized.",
-                decorator.matches(UnifiedRegEx.DECORATOR));
+        assertTrue("Time decorator " + decorator + " not recognized.", decorator.matches(UnifiedRegEx.DECORATOR));
     }
 
     @Test

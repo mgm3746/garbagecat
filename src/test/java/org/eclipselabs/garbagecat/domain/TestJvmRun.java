@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -34,8 +34,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.junit.Test;
 
-
-
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
@@ -52,8 +50,7 @@ public class TestJvmRun {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue("JVM options passed in are missing or have changed.",
-                jvmRun.getJvm().getOptions().equals(options));
+        assertTrue("JVM options passed in are missing or have changed.", jvmRun.getJvm().getOptions().equals(options));
     }
 
     /**
@@ -271,8 +268,7 @@ public class TestJvmRun {
         assertEquals("Should not be any unidentified log lines.", 0, jvmRun.getUnidentifiedLogLines().size());
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
         assertTrue(Analysis.INFO_NEW_RATIO_INVERTED + " analysis not identified.",
                 jvmRun.getAnalysis().contains(Analysis.INFO_NEW_RATIO_INVERTED));
@@ -330,8 +326,7 @@ public class TestJvmRun {
         assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
         assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".",
                 jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME));
     }
 
@@ -546,10 +541,8 @@ public class TestJvmRun {
         assertEquals("GC last duration not correct.", 41453, jvmRun.getLastGcEvent().getDuration());
         assertEquals("Stopped Time event count not correct.", 6, jvmRun.getStoppedTimeEventCount());
         assertEquals("Stopped time total not correct.", 1064, jvmRun.getTotalStoppedTime());
-        assertEquals("Stopped first timestamp not correct.", 1000964,
-                jvmRun.getFirstStoppedEvent().getTimestamp());
-        assertEquals("Stopped last timestamp not correct.", 1003884,
-                jvmRun.getLastStoppedEvent().getTimestamp());
+        assertEquals("Stopped first timestamp not correct.", 1000964, jvmRun.getFirstStoppedEvent().getTimestamp());
+        assertEquals("Stopped last timestamp not correct.", 1003884, jvmRun.getLastStoppedEvent().getTimestamp());
         assertEquals("Stopped last duration not correct.", 1000688, jvmRun.getLastStoppedEvent().getDuration());
         assertEquals("JVM first event timestamp not correct.", 1000964, jvmRun.getFirstEvent().getTimestamp());
         assertEquals("JVM last event timestamp not correct.", 1003884, jvmRun.getLastEvent().getTimestamp());

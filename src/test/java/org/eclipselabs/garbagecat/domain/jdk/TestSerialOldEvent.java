@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  * garbagecat                                                                                                         *
  *                                                                                                                    *
- * Copyright (c) 2008-2020 Mike Millson                                                                               *
+ * Copyright (c) 2008-2021 Mike Millson                                                                               *
  *                                                                                                                    * 
  * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
  * Public License v1.0 which accompanies this distribution, and is available at                                       *
@@ -12,16 +12,13 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.junit.Test;
-
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-
-
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -100,7 +97,8 @@ public class TestSerialOldEvent {
                 SerialOldEvent.match(logLine));
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 3727365, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", kilobytes(1238107 - 837793), event.getYoungOccupancyInit());
+        assertEquals("Young begin size not parsed correctly.", kilobytes(1238107 - 837793),
+                event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(597490 - 597490), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(1289920 - 889536), event.getYoungSpace());
         assertEquals("Old begin size not parsed correctly.", kilobytes(837793), event.getOldOccupancyInit());
@@ -143,8 +141,7 @@ public class TestSerialOldEvent {
                 SerialOldEvent.match(logLine));
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 2447, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD));
         assertEquals("Young begin size not parsed correctly.", kilobytes(62508 - 0), event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(12062 - 12062), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(760256 - 524288), event.getYoungSpace());
@@ -167,9 +164,9 @@ public class TestSerialOldEvent {
                 SerialOldEvent.match(logLine));
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 38922, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
-        assertEquals("Young begin size not parsed correctly.", kilobytes(689404 - 459834), event.getYoungOccupancyInit());
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE));
+        assertEquals("Young begin size not parsed correctly.", kilobytes(689404 - 459834),
+                event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(79151 - 79151), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(760256 - 524288), event.getYoungSpace());
         assertEquals("Old begin size not parsed correctly.", kilobytes(459834), event.getOldOccupancyInit());
@@ -191,9 +188,9 @@ public class TestSerialOldEvent {
                 SerialOldEvent.match(logLine));
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals("Time stamp not parsed correctly.", 116957, event.getTimestamp());
-        assertTrue("Trigger not parsed correctly.",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
-        assertEquals("Young begin size not parsed correctly.", kilobytes(674654 - 524288), event.getYoungOccupancyInit());
+        assertTrue("Trigger not parsed correctly.", event.getTrigger().matches(JdkRegEx.TRIGGER_PROMOTION_FAILED));
+        assertEquals("Young begin size not parsed correctly.", kilobytes(674654 - 524288),
+                event.getYoungOccupancyInit());
         assertEquals("Young end size not parsed correctly.", kilobytes(144069 - 144069), event.getYoungOccupancyEnd());
         assertEquals("Young available size not parsed correctly.", kilobytes(760256 - 524288), event.getYoungSpace());
         assertEquals("Old begin size not parsed correctly.", kilobytes(524288), event.getOldOccupancyInit());
