@@ -953,8 +953,8 @@ public class GcManager {
         jvmRun.setWorstInvertedParallelismEvent(jvmDao.getWorstInvertedParallelismEvent());
         jvmRun.setMaxHeapOccupancyNonBlocking(kilobytes(jvmDao.getMaxHeapOccupancyNonBlocking()));
         jvmRun.setMaxHeapSpaceNonBlocking(kilobytes(jvmDao.getMaxHeapSpaceNonBlocking()));
-        jvmRun.setMaxPermOccupancyNonBlocking(jvmDao.getMaxPermOccupancyNonBlocking());
-        jvmRun.setMaxPermSpaceNonBlocking(jvmDao.getMaxPermSpaceNonBlocking());
+        jvmRun.setMaxPermOccupancyNonBlocking(kilobytes(jvmDao.getMaxPermOccupancyNonBlocking()));
+        jvmRun.setMaxPermSpaceNonBlocking(kilobytes(jvmDao.getMaxPermSpaceNonBlocking()));
         jvmRun.doAnalysis();
         return jvmRun;
     }

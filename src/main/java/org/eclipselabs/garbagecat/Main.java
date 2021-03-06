@@ -12,7 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat;
 
-import static org.eclipselabs.garbagecat.OptionsParser.usage;
+import static org.eclipselabs.garbagecat.OptionsParser.getLatestVersion;
+import static org.eclipselabs.garbagecat.OptionsParser.getVersion;
+import static org.eclipselabs.garbagecat.OptionsParser.options;
+import static org.eclipselabs.garbagecat.OptionsParser.parseOptions;
 import static org.eclipselabs.garbagecat.util.Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
 import static org.eclipselabs.garbagecat.util.Constants.LINE_SEPARATOR;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_HELP_LONG;
@@ -30,6 +33,7 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OUTPUT_FILE_NAME;
 import static org.eclipselabs.garbagecat.util.GcUtil.parseStartDateTime;
+import static org.eclipselabs.garbagecat.util.Memory.ZERO;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_PERM_GEN;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED;
@@ -46,6 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
@@ -79,18 +84,27 @@ public class Main {
      */
     public static void main(String[] args) {
         try {
-        	CommandLine cmd = OptionsParser.parseOptions(args);
-            if (cmd != null) {
-                if (cmd.hasOption(OPTION_HELP_LONG)) {
-                    usage();
-                } else {
-					createReport(cmd);
-				}
+        	CommandLine cmd = parseOptions(args);
+            if (cmd == null || cmd.hasOption(OPTION_HELP_LONG) || cmd.hasOption(OPTION_HELP_LONG)) {
+            	usage();
+			} else {
+				createReport(cmd);
             }
         } catch (ParseException pe) {
             System.out.println(pe.getMessage());
             usage();
         }
+    }
+
+    /**
+     * Output usage help.
+     * 
+     * @param options
+     */
+    private static void usage() {
+        // Use the built in formatter class
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("garbagecat [OPTION]... [FILE]", options);
     }
 
 	public static void createReport(CommandLine cmd) {
@@ -168,10 +182,10 @@ public class Main {
                 bufferedWriter.write("========================================" + LINE_SEPARATOR);
                 if (version) {
                     bufferedWriter.write(
-                            "Running garbagecat version: " + OptionsParser.getVersion() + System.getProperty("line.separator"));
+                            "Running garbagecat version: " + getVersion() + System.getProperty("line.separator"));
                 }
                 if (latestVersion) {
-                    bufferedWriter.write("Latest garbagecat version/tag: " + OptionsParser.getLatestVersion()
+                    bufferedWriter.write("Latest garbagecat version/tag: " + getLatestVersion()
                             + System.getProperty("line.separator"));
                 }
             }
@@ -289,20 +303,20 @@ public class Main {
                         bufferedWriter.write(
                                 "Max Metaspace Space: " + jvmRun.getMaxPermSpace() + "K" + LINE_SEPARATOR);
                     }
-                } else if (jvmRun.getMaxPermSpaceNonBlocking() > 0) {
+                } else if (jvmRun.getMaxPermSpaceNonBlocking().greaterThan(ZERO)) {
                     if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(INFO_PERM_GEN)) {
                         // Max perm occupancy.
-                        bufferedWriter.write("Max Perm Gen Occupancy: " + jvmRun.getMaxPermOccupancyNonBlocking() + "K"
+                        bufferedWriter.write("Max Perm Gen Occupancy: " + jvmRun.getMaxPermOccupancyNonBlocking().convertTo(KILOBYTES)
                                 + LINE_SEPARATOR);
                         // Max perm space.
-                        bufferedWriter.write("Max Perm Gen Space: " + jvmRun.getMaxPermSpaceNonBlocking() + "K"
+                        bufferedWriter.write("Max Perm Gen Space: " + jvmRun.getMaxPermSpaceNonBlocking().convertTo(KILOBYTES)
                                 + LINE_SEPARATOR);
                     } else {
                         // Max metaspace occupancy.
-                        bufferedWriter.write("Max Metaspace Occupancy: " + jvmRun.getMaxPermOccupancyNonBlocking() + "K"
+                        bufferedWriter.write("Max Metaspace Occupancy: " + jvmRun.getMaxPermOccupancyNonBlocking().convertTo(KILOBYTES)
                                 + LINE_SEPARATOR);
                         // Max metaspace space.
-                        bufferedWriter.write("Max Metaspace Space: " + jvmRun.getMaxPermSpaceNonBlocking() + "K"
+                        bufferedWriter.write("Max Metaspace Space: " + jvmRun.getMaxPermSpaceNonBlocking().convertTo(KILOBYTES)
                                 + LINE_SEPARATOR);
                     }
                 }

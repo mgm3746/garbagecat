@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
+import static java.math.RoundingMode.HALF_EVEN;
 import static org.eclipselabs.garbagecat.util.Memory.gigabytes;
 import static org.eclipselabs.garbagecat.util.Memory.megabytes;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
@@ -116,7 +117,6 @@ import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_USE_MEMBAR;
 import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx.DATESTAMP_EVENT;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
@@ -318,12 +318,12 @@ public class JvmRun {
     /**
      * Used for tracking max perm space outside of <code>BlockingEvent</code>s.
      */
-    private int maxPermSpaceNonBlocking;
+    private Memory maxPermSpaceNonBlocking;
 
     /**
      * Used for tracking max perm occupancy outside of <code>BlockingEvent</code>s.
      */
-    private int maxPermOccupancyNonBlocking;
+    private Memory maxPermOccupancyNonBlocking;
 
     /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
@@ -578,19 +578,19 @@ public class JvmRun {
         this.maxHeapOccupancyNonBlocking = maxHeapOccupancyNonBlocking;
     }
 
-    public int getMaxPermSpaceNonBlocking() {
+    public Memory getMaxPermSpaceNonBlocking() {
         return maxPermSpaceNonBlocking;
     }
 
-    public void setMaxPermSpaceNonBlocking(int maxPermSpaceNonBlocking) {
+    public void setMaxPermSpaceNonBlocking(Memory maxPermSpaceNonBlocking) {
         this.maxPermSpaceNonBlocking = maxPermSpaceNonBlocking;
     }
 
-    public int getMaxPermOccupancyNonBlocking() {
+    public Memory getMaxPermOccupancyNonBlocking() {
         return maxPermOccupancyNonBlocking;
     }
 
-    public void setMaxPermOccupancyNonBlocking(int maxPermOccupancyNonBlocking) {
+    public void setMaxPermOccupancyNonBlocking(Memory maxPermOccupancyNonBlocking) {
         this.maxPermOccupancyNonBlocking = maxPermOccupancyNonBlocking;
     }
 
@@ -600,18 +600,13 @@ public class JvmRun {
      *         doing GC.
      */
     public long getGcThroughput() {
-        long gcThroughput;
-        if (blockingEventCount > 0) {
-            long timeNotGc = getJvmRunDuration() - Long.valueOf(totalGcPause).longValue();
-            BigDecimal throughput = new BigDecimal(timeNotGc);
-            throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, RoundingMode.HALF_EVEN);
-            throughput = throughput.movePointRight(2);
-            gcThroughput = throughput.longValue();
-
-        } else {
-            gcThroughput = 100L;
+        if (blockingEventCount <= 0) {
+            return 100L;
         }
-        return gcThroughput;
+		long timeNotGc = getJvmRunDuration() - totalGcPause;
+		BigDecimal throughput = new BigDecimal(timeNotGc);
+		throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
+		return throughput.movePointRight(2).longValue();
     }
 
     /**
@@ -620,36 +615,28 @@ public class JvmRun {
      *         100 means no stopped time.
      */
     public long getStoppedTimeThroughput() {
-        long stoppedTimeThroughput;
-        if (stoppedTimeEventCount > 0) {
-            if (getJvmRunDuration() > 0) {
-                long timeNotStopped = getJvmRunDuration() - Long.valueOf(totalStoppedTime).longValue();
-                BigDecimal throughput = new BigDecimal(timeNotStopped);
-                throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, RoundingMode.HALF_EVEN);
-                throughput = throughput.movePointRight(2);
-                stoppedTimeThroughput = throughput.longValue();
-            } else {
-                stoppedTimeThroughput = 0L;
-            }
-        } else {
-            stoppedTimeThroughput = 100L;
+        if (stoppedTimeEventCount <= 0) {
+            return 100L;
         }
-        return stoppedTimeThroughput;
+		if (getJvmRunDuration() <= 0) {
+		    return 0L;
+		}
+		long timeNotStopped = getJvmRunDuration() - Long.valueOf(totalStoppedTime).longValue();
+		BigDecimal throughput = new BigDecimal(timeNotStopped);
+		throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
+		return throughput.movePointRight(2).longValue();
     }
 
     /**
      * @return Ratio of old/young space sizes rounded to whole number.
      */
     public long getNewRatio() {
-        int newRatio;
-        if (maxYoungSpace != null) {
-            BigDecimal ratio = new BigDecimal(maxOldSpace.getValue(KILOBYTES));
-            ratio = ratio.divide(new BigDecimal(maxYoungSpace.getValue(KILOBYTES)), 0, RoundingMode.HALF_EVEN);
-            newRatio = ratio.intValue();
-        } else {
-            newRatio = 0;
+        if (maxYoungSpace == null) {
+            return 0;
         }
-        return newRatio;
+		BigDecimal ratio = new BigDecimal(maxOldSpace.getValue(KILOBYTES));
+		ratio = ratio.divide(new BigDecimal(maxYoungSpace.getValue(KILOBYTES)), 0, HALF_EVEN);
+		return ratio.intValue();
     }
 
     /**
@@ -662,7 +649,7 @@ public class JvmRun {
             return 100L;
         }
 		BigDecimal ratio = new BigDecimal(totalGcPause);
-		ratio = ratio.divide(new BigDecimal(totalStoppedTime), 2, RoundingMode.HALF_EVEN);
+		ratio = ratio.divide(new BigDecimal(totalStoppedTime), 2, HALF_EVEN);
 		return ratio.movePointRight(2).longValue();
     }
 
