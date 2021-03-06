@@ -12,10 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -28,9 +28,7 @@ public class TestApplicationStoppedTimePreprocessAction {
         String priorLogLine = "6545.692Total time for which application threads were stopped: 0.0007993 seconds";
         String logLine = ": [CMS-concurrent-abortable-preclean: 0.025/0.042 secs] "
                 + "[Times: user=0.04 sys=0.00, real=0.04 secs]";
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".",
-                ApplicationStoppedTimePreprocessAction.match(logLine, priorLogLine));
+        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine, priorLogLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
     }
 
     @Test
@@ -38,9 +36,7 @@ public class TestApplicationStoppedTimePreprocessAction {
         String priorLogLine = "234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for"
                 + " which application threads were stopped: 0.0123330 seconds";
         String logLine = " [Times: user=0.10 sys=0.00, real=0.12 secs]";
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".",
-                ApplicationStoppedTimePreprocessAction.match(logLine, priorLogLine));
+        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine, priorLogLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
     }
 
     @Test
@@ -48,8 +44,6 @@ public class TestApplicationStoppedTimePreprocessAction {
         String priorLogLine = "234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for"
                 + " which application threads were stopped: 0.0123330 seconds";
         String logLine = " [Times: user=0.10 sys=0.00, real=0.12 secs]   ";
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".",
-                ApplicationStoppedTimePreprocessAction.match(logLine, priorLogLine));
+        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine, priorLogLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
     }
 }

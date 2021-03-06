@@ -12,11 +12,11 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -27,21 +27,19 @@ public class TestBlankLineEvent {
     @Test
     public void testParseLogLine() {
         String logLine = "";
-        assertTrue(JdkUtil.LogEventType.BLANK_LINE.toString() + " not parsed.",
-                JdkUtil.parseLogLine(logLine) instanceof BlankLineEvent);
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof BlankLineEvent, JdkUtil.LogEventType.BLANK_LINE.toString() + " not parsed.");
     }
 
     @Test
     public void testReportable() {
         String logLine = "";
-        assertFalse(JdkUtil.LogEventType.BLANK_LINE.toString() + " incorrectly indentified as reportable.",
-                JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.BLANK_LINE.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
     public void testLogLine() {
         String logLine = "";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.BLANK_LINE.toString() + ".",
-                BlankLineEvent.match(logLine));
+        assertTrue(BlankLineEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.BLANK_LINE.toString() + ".");
     }
+
 }

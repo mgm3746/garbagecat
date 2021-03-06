@@ -12,14 +12,14 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.hsql;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

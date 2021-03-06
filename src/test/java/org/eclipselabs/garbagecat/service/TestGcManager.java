@@ -15,7 +15,7 @@ package org.eclipselabs.garbagecat.service;
 import java.io.File;
 
 import org.eclipselabs.garbagecat.TestUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

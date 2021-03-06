@@ -12,23 +12,38 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_HELP_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_HELP_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_JVMOPTIONS_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_JVMOPTIONS_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_LATEST_VERSION_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_LATEST_VERSION_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_OUTPUT_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_OUTPUT_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_PREPROCESS_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_PREPROCESS_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_REORDER_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_REORDER_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_SHORT;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
-import org.eclipselabs.garbagecat.util.Constants;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-public class TestMain {
-
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+class TestMain {
 
     @Test
-    public void testShortOptions() throws Exception {
+    void testShortOptions(@TempDir File temporaryFolder) throws Exception {
         // Method arguments
         String[] args = new String[] { //
                 "-h", //
@@ -45,32 +60,25 @@ public class TestMain {
                 "-v", //
                 "-l", //
                 // Instead of a file, use a location sure to exist.
-                temporaryFolder.getRoot().getAbsolutePath() //
+                temporaryFolder.getAbsolutePath() //
         };
         CommandLine cmd = OptionsParser.parseOptions(args);
         assertNotNull(cmd);
-        assertTrue("'-" + Constants.OPTION_HELP_SHORT + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_HELP_SHORT));
-        assertTrue("'-" + Constants.OPTION_JVMOPTIONS_SHORT + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_JVMOPTIONS_SHORT));
-        assertTrue("'-" + Constants.OPTION_PREPROCESS_SHORT + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_PREPROCESS_SHORT));
-        assertTrue("'-" + Constants.OPTION_STARTDATETIME_SHORT + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_STARTDATETIME_SHORT));
-        assertTrue("'-" + Constants.OPTION_THRESHOLD_SHORT + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_THRESHOLD_SHORT));
-        assertTrue("'-" + Constants.OPTION_REORDER_SHORT + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_REORDER_SHORT));
-        assertTrue("'-" + Constants.OPTION_OUTPUT_SHORT + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_OUTPUT_SHORT));
-        assertTrue("'-" + Constants.OPTION_VERSION_SHORT + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_VERSION_SHORT));
-        assertTrue("'-" + Constants.OPTION_LATEST_VERSION_SHORT + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_LATEST_VERSION_SHORT));
+        assertHasOption(cmd, OPTION_HELP_SHORT);
+        assertHasOption(cmd, OPTION_JVMOPTIONS_SHORT);
+        assertHasOption(cmd, OPTION_PREPROCESS_SHORT);
+        assertHasOption(cmd, OPTION_STARTDATETIME_SHORT);
+        assertHasOption(cmd, OPTION_THRESHOLD_SHORT);
+        assertHasOption(cmd, OPTION_REORDER_SHORT);
+        assertHasOption(cmd, OPTION_OUTPUT_SHORT);
+        assertHasOption(cmd, OPTION_VERSION_SHORT);
+        assertHasOption(cmd, OPTION_LATEST_VERSION_SHORT);
+        assertHasOption(cmd, OPTION_LATEST_VERSION_SHORT);
     }
 
-    @Test
-    public void testLongOptions() throws Exception {
+
+	@Test
+    void testLongOptions(@TempDir File tmpFolder) throws Exception {
         // Method arguments
         String[] args = new String[] { //
                 "--help", //
@@ -87,49 +95,42 @@ public class TestMain {
                 "--version", //
                 "--latest", //
                 // Instead of a file, use a location sure to exist.
-                temporaryFolder.getRoot().getAbsolutePath() //
+                tmpFolder.getAbsolutePath() //
         };
         CommandLine cmd = OptionsParser.parseOptions(args);
         assertNotNull(cmd);
-        assertTrue("'-" + Constants.OPTION_HELP_LONG + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_HELP_LONG));
-        assertTrue("'-" + Constants.OPTION_JVMOPTIONS_LONG + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_JVMOPTIONS_LONG));
-        assertTrue("'-" + Constants.OPTION_PREPROCESS_LONG + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_PREPROCESS_LONG));
-        assertTrue("'-" + Constants.OPTION_STARTDATETIME_LONG + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_STARTDATETIME_LONG));
-        assertTrue("'-" + Constants.OPTION_THRESHOLD_LONG + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_THRESHOLD_LONG));
-        assertTrue("'-" + Constants.OPTION_REORDER_LONG + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_REORDER_LONG));
-        assertTrue("'-" + Constants.OPTION_OUTPUT_LONG + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_OUTPUT_LONG));
-        assertTrue("'-" + Constants.OPTION_VERSION_LONG + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_VERSION_LONG));
-        assertTrue("'-" + Constants.OPTION_LATEST_VERSION_LONG + "' is a valid option",
-                cmd.hasOption(Constants.OPTION_LATEST_VERSION_LONG));
+		assertHasOption(cmd, OPTION_HELP_LONG);
+		assertHasOption(cmd, OPTION_JVMOPTIONS_LONG);
+		assertHasOption(cmd, OPTION_PREPROCESS_LONG);
+		assertHasOption(cmd, OPTION_STARTDATETIME_LONG);
+		assertHasOption(cmd, OPTION_THRESHOLD_LONG);
+		assertHasOption(cmd, OPTION_REORDER_LONG);
+		assertHasOption(cmd, OPTION_OUTPUT_LONG);
+		assertHasOption(cmd, OPTION_VERSION_LONG);
+		assertHasOption(cmd, OPTION_LATEST_VERSION_LONG);
     }
 
     @Test
-    public void testShortHelpOption() throws Exception {
+    void testShortHelpOption() throws Exception {
         // Method arguments
         String[] args = new String[] { "-h" };
         CommandLine cmd = OptionsParser.parseOptions(args);
         // CommandLine will be null if only the help option is passed in.
         assertNull(cmd);
-        assertTrue("'-h' is a valid option", true);
     }
 
     @Test
-    public void testLongHelpOption() throws Exception {
+    void testLongHelpOption() throws Exception {
         // Method arguments
         String[] args = new String[] { "--help" };
         // Pass null object since parseOptions is static
         CommandLine cmd = OptionsParser.parseOptions(args);
         // CommandLine will be null if only the help option is passed in.
         assertNull(cmd);
-        assertTrue("'--help' is a valid option", true);
+    }
+
+    private static void assertHasOption(CommandLine cmd, String option) {
+    	assertTrue(cmd.hasOption(option), "'-" + option + "' is a valid option");
     }
 
 }

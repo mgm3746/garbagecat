@@ -12,10 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -26,7 +26,6 @@ public class TestUnknownEvent {
     @Test
     public void testLogLine() {
         String logLine = "Mike was here!!!";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNKNOWN.toString() + ".",
-                JdkUtil.parseLogLine(logLine) instanceof UnknownEvent);
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnknownEvent, "Log line not recognized as " + JdkUtil.LogEventType.UNKNOWN.toString() + ".");
     }
 }

@@ -12,9 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -24,7 +24,7 @@ import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -35,31 +35,27 @@ public class TestLogFileEvent {
     public void testNotBlocking() {
         String logLine = "2016-03-24 10:28:33 GC log file has reached the maximum size. "
                 + "Saved as /path/to/gc.log.0";
-        assertFalse(JdkUtil.LogEventType.LOG_FILE.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.LOG_FILE.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     public void testNotReportable() {
         String logLine = "2016-03-24 10:28:33 GC log file has reached the maximum size. "
                 + "Saved as /path/to/gc.log.0";
-        assertFalse(JdkUtil.LogEventType.LOG_FILE.toString() + " incorrectly indentified as reportable.",
-                JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.LOG_FILE.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
     public void testLogLineCreated() {
         String logLine = "2016-10-18 01:50:54 GC log file created /path/to/gc.log";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.LOG_FILE.toString() + ".",
-                LogFileEvent.match(logLine));
+        assertTrue(LogFileEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.LOG_FILE.toString() + ".");
     }
 
     @Test
     public void testLogLineRotations() {
         String logLine = "2016-03-24 10:28:33 GC log file has reached the maximum size. "
                 + "Saved as /path/to/gc.log.0";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.LOG_FILE.toString() + ".",
-                LogFileEvent.match(logLine));
+        assertTrue(LogFileEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.LOG_FILE.toString() + ".");
     }
 
     /**
@@ -72,6 +68,6 @@ public class TestLogFileEvent {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Event type count not correct.", 0, jvmRun.getEventTypes().size());
+        assertEquals(0,jvmRun.getEventTypes().size(),"Event type count not correct.");
     }
 }

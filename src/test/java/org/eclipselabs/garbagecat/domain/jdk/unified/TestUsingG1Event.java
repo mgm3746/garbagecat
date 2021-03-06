@@ -12,9 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -39,68 +39,59 @@ public class TestUsingG1Event {
     @Test
     public void testLine() {
         String logLine = "[0.005s][info][gc] Using G1";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".",
-                UsingG1Event.match(logLine));
+        assertTrue(UsingG1Event.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
         UsingG1Event event = new UsingG1Event(logLine);
-        assertEquals("Time stamp not parsed correctly.", 5, event.getTimestamp());
+        assertEquals((long) 5,event.getTimestamp(),"Time stamp not parsed correctly.");
     }
 
     @Test
     public void testIdentityEventType() {
         String logLine = "[0.005s][info][gc] Using G1";
-        assertEquals(JdkUtil.LogEventType.USING_G1 + "not identified.", JdkUtil.LogEventType.USING_G1,
-                JdkUtil.identifyEventType(logLine));
+        assertEquals(JdkUtil.LogEventType.USING_G1,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.USING_G1 + "not identified.");
     }
 
     @Test
     public void testParseLogLine() {
         String logLine = "[0.005s][info][gc] Using G1";
-        assertTrue(JdkUtil.LogEventType.USING_G1.toString() + " not parsed.",
-                JdkUtil.parseLogLine(logLine) instanceof UsingG1Event);
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingG1Event, JdkUtil.LogEventType.USING_G1.toString() + " not parsed.");
     }
 
     @Test
     public void testNotBlocking() {
         String logLine = "[0.005s][info][gc] Using G1";
-        assertFalse(JdkUtil.LogEventType.USING_G1.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.USING_G1.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     public void testReportable() {
-        assertTrue(JdkUtil.LogEventType.USING_G1.toString() + " not indentified as reportable.",
-                JdkUtil.isReportable(JdkUtil.LogEventType.USING_G1));
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_G1), JdkUtil.LogEventType.USING_G1.toString() + " not indentified as reportable.");
     }
 
     @Test
     public void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.USING_G1);
-        assertTrue(JdkUtil.LogEventType.USING_G1.toString() + " not indentified as unified.",
-                UnifiedUtil.isUnifiedLogging(eventTypes));
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.USING_G1.toString() + " not indentified as unified.");
     }
 
     @Test
     public void testLineWithSpaces() {
         String logLine = "[0.005s][info][gc] Using G1   ";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".",
-                UsingG1Event.match(logLine));
+        assertTrue(UsingG1Event.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
     }
 
     @Test
     public void testLineDetailedLogging() {
         String logLine = "[0.003s][info][gc     ] Using G1";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".",
-                UsingG1Event.match(logLine));
+        assertTrue(UsingG1Event.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
     }
 
     @Test
     public void testLineDatestampMillisNoLevelNoGc() {
         String logLine = "[2019-05-09T01:38:55.426+0000][18ms] Using G1";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".",
-                UsingG1Event.match(logLine));
+        assertTrue(UsingG1Event.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
         UsingG1Event event = new UsingG1Event(logLine);
-        assertEquals("Time stamp not parsed correctly.", 18, event.getTimestamp());
+        assertEquals((long) 18,event.getTimestamp(),"Time stamp not parsed correctly.");
     }
 
     /**
@@ -113,10 +104,8 @@ public class TestUsingG1Event {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_G1));
+        assertEquals(1,jvmRun.getEventTypes().size(),"Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN), JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_G1), "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
     }
 }

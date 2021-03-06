@@ -12,11 +12,11 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author James Livingston
@@ -27,43 +27,38 @@ public class TestG1RemarkEvent {
     @Test
     public void testIsBlocking() {
         String logLine = "106.129: [GC remark, 0.0450170 secs]";
-        assertTrue(JdkUtil.LogEventType.G1_REMARK.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.G1_REMARK.toString() + " not indentified as blocking.");
     }
 
     @Test
     public void testRemark() {
         String logLine = "106.129: [GC remark, 0.0450170 secs]";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".",
-                G1RemarkEvent.match(logLine));
+        assertTrue(G1RemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");
         G1RemarkEvent event = new G1RemarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 106129, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 45017, event.getDuration());
+        assertEquals((long) 106129,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(45017,event.getDuration(),"Duration not parsed correctly.");
     }
 
     public void TestG1RemarkPreprocessedEvent() {
         String logLine = "2971.469: [GC remark, 0.2274544 secs] [Times: user=0.22 sys=0.00, real=0.22 secs]";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".",
-                G1RemarkEvent.match(logLine));
+        assertTrue(G1RemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");
     }
 
     public void TestG1RemarkPreprocessedEventWhiteSpacesAtEnd() {
         String logLine = "2971.469: [GC remark, 0.2274544 secs] [Times: user=0.22 sys=0.00, real=0.22 secs]     ";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".",
-                G1RemarkEvent.match(logLine));
+        assertTrue(G1RemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");
     }
 
     @Test
     public void testRemarkWithTimesDate() {
         String logLine = "2016-11-08T09:40:55.346-0800: 35563.088: [GC remark, 0.0827210 secs] "
                 + "[Times: user=0.37 sys=0.00, real=0.08 secs]";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".",
-                G1RemarkEvent.match(logLine));
+        assertTrue(G1RemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");
         G1RemarkEvent event = new G1RemarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 35563088, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 82721, event.getDuration());
-        assertEquals("User time not parsed correctly.", 37, event.getTimeUser());
-        assertEquals("Real time not parsed correctly.", 8, event.getTimeReal());
-        assertEquals("Parallelism not calculated correctly.", 463, event.getParallelism());
+        assertEquals((long) 35563088,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(82721,event.getDuration(),"Duration not parsed correctly.");
+        assertEquals(37,event.getTimeUser(),"User time not parsed correctly.");
+        assertEquals(8,event.getTimeReal(),"Real time not parsed correctly.");
+        assertEquals(463,event.getParallelism(),"Parallelism not calculated correctly.");
     }
 }

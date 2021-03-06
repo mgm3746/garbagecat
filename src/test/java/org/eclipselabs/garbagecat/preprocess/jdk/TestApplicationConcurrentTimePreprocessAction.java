@@ -12,10 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -27,8 +27,8 @@ public class TestApplicationConcurrentTimePreprocessAction {
     public void testLine1Timestamp() {
         String priorLogLine = "";
         String logLine = "1122748.949Application time: 0.0005210 seconds";
-        assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
-                + ".", ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine));
+        assertTrue(ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
+		+ ".");
     }
 
     @Test
@@ -36,16 +36,16 @@ public class TestApplicationConcurrentTimePreprocessAction {
         String priorLogLine = "";
         String logLine = "1987600.604: [CMS-concurrent-preclean: 0.016/0.017 secs]Application time: "
                 + "4.5432350 seconds";
-        assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
-                + ".", ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine));
+        assertTrue(ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
+		+ ".");
     }
 
     @Test
     public void testLine2CmsConcurrent() {
         String priorLogLine = "1122748.949Application time: 0.0005210 seconds";
         String logLine = ": [CMS-concurrent-mark-start]";
-        assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
-                + ".", ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine));
+        assertTrue(ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
+		+ ".");
     }
 
     @Test
@@ -53,8 +53,8 @@ public class TestApplicationConcurrentTimePreprocessAction {
         String priorLogLine = "1987600.604: [CMS-concurrent-preclean: 0.016/0.017 secs]Application time: "
                 + "4.5432350 seconds";
         String logLine = " [Times: user=0.02 sys=0.00, real=0.02 secs]";
-        assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
-                + ".", ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine));
+        assertTrue(ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
+		+ ".");
     }
 
     @Test
@@ -62,8 +62,8 @@ public class TestApplicationConcurrentTimePreprocessAction {
         String priorLogLine = "235820.289: [CMS-concurrent-abortable-preclean: 0.049/1.737 secs]Application "
                 + "time: 0.0001370 seconds";
         String logLine = " [Times: user=0.90 sys=0.05, real=1.74 secs]";
-        assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
-                + ".", ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine));
+        assertTrue(ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
+		+ ".");
     }
 
     @Test
@@ -71,8 +71,8 @@ public class TestApplicationConcurrentTimePreprocessAction {
         String priorLogLine = "408365.532: [CMS-concurrent-mark: 0.476/10.257 secs]Application time: "
                 + "0.0576080 seconds";
         String logLine = " [Times: user=6.00 sys=0.28, real=10.26 secs]";
-        assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
-                + ".", ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine));
+        assertTrue(ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
+		+ ".");
     }
 
     @Test
@@ -80,7 +80,7 @@ public class TestApplicationConcurrentTimePreprocessAction {
         String priorLogLine = "408365.532: [CMS-concurrent-mark: 0.476/10.257 secs]Application time: "
                 + "0.0576080 seconds";
         String logLine = " [Times: user=6.00 sys=0.28, real=10.26 secs]       ";
-        assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
-                + ".", ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine));
+        assertTrue(ApplicationConcurrentTimePreprocessAction.match(logLine, priorLogLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_CONCURRENT_TIME.toString()
+		+ ".");
     }
 }

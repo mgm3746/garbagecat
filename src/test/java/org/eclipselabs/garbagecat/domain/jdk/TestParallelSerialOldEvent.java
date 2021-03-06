@@ -13,12 +13,12 @@
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -31,20 +31,19 @@ public class TestParallelSerialOldEvent {
         String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
                 + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
                 + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
-                ParallelSerialOldEvent.match(logLine));
+        assertTrue(ParallelSerialOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
         ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 3600, event.getTimestamp());
-        assertEquals("Young begin size not parsed correctly.", kilobytes(5424), event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", kilobytes(0), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", kilobytes(38208), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", kilobytes(488), event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", kilobytes(5786), event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", kilobytes(87424), event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(13092), event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", kilobytes(13094), event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(131072), event.getPermSpace());
-        assertEquals("Duration not parsed correctly.", 69936, event.getDuration());
+        assertEquals((long) 3600,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(kilobytes(5424),event.getYoungOccupancyInit(),"Young begin size not parsed correctly.");
+        assertEquals(kilobytes(0),event.getYoungOccupancyEnd(),"Young end size not parsed correctly.");
+        assertEquals(kilobytes(38208),event.getYoungSpace(),"Young available size not parsed correctly.");
+        assertEquals(kilobytes(488),event.getOldOccupancyInit(),"Old begin size not parsed correctly.");
+        assertEquals(kilobytes(5786),event.getOldOccupancyEnd(),"Old end size not parsed correctly.");
+        assertEquals(kilobytes(87424),event.getOldSpace(),"Old allocation size not parsed correctly.");
+        assertEquals(kilobytes(13092),event.getPermOccupancyInit(),"Perm gen begin size not parsed correctly.");
+        assertEquals(kilobytes(13094),event.getPermOccupancyEnd(),"Perm gen end size not parsed correctly.");
+        assertEquals(kilobytes(131072),event.getPermSpace(),"Perm gen allocation size not parsed correctly.");
+        assertEquals(69936,event.getDuration(),"Duration not parsed correctly.");
     }
 
     @Test
@@ -52,8 +51,7 @@ public class TestParallelSerialOldEvent {
         String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
                 + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
                 + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]  ";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
-                ParallelSerialOldEvent.match(logLine));
+        assertTrue(ParallelSerialOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
     }
 
     @Test
@@ -61,22 +59,20 @@ public class TestParallelSerialOldEvent {
         String logLine = "4.165: [Full GC (System) [PSYoungGen: 1784K->0K(12736K)] "
                 + "[PSOldGen: 1081K->2855K(116544K)] 2865K->2855K(129280K) "
                 + "[PSPermGen: 8600K->8600K(131072K)], 0.0427680 secs]";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
-                ParallelSerialOldEvent.match(logLine));
+        assertTrue(ParallelSerialOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
         ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 4165, event.getTimestamp());
-        assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.SYSTEM_GC.toString() + ".",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC));
-        assertEquals("Young begin size not parsed correctly.", kilobytes(1784), event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", kilobytes(0), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", kilobytes(12736), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", kilobytes(1081), event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", kilobytes(2855), event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", kilobytes(116544), event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(8600), event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", kilobytes(8600), event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(131072), event.getPermSpace());
-        assertEquals("Duration not parsed correctly.", 42768, event.getDuration());
+        assertEquals((long) 4165,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC), "Trigger not recognized as " + JdkUtil.TriggerType.SYSTEM_GC.toString() + ".");
+        assertEquals(kilobytes(1784),event.getYoungOccupancyInit(),"Young begin size not parsed correctly.");
+        assertEquals(kilobytes(0),event.getYoungOccupancyEnd(),"Young end size not parsed correctly.");
+        assertEquals(kilobytes(12736),event.getYoungSpace(),"Young available size not parsed correctly.");
+        assertEquals(kilobytes(1081),event.getOldOccupancyInit(),"Old begin size not parsed correctly.");
+        assertEquals(kilobytes(2855),event.getOldOccupancyEnd(),"Old end size not parsed correctly.");
+        assertEquals(kilobytes(116544),event.getOldSpace(),"Old allocation size not parsed correctly.");
+        assertEquals(kilobytes(8600),event.getPermOccupancyInit(),"Perm gen begin size not parsed correctly.");
+        assertEquals(kilobytes(8600),event.getPermOccupancyEnd(),"Perm gen end size not parsed correctly.");
+        assertEquals(kilobytes(131072),event.getPermSpace(),"Perm gen allocation size not parsed correctly.");
+        assertEquals(42768,event.getDuration(),"Duration not parsed correctly.");
     }
 
     @Test
@@ -84,22 +80,20 @@ public class TestParallelSerialOldEvent {
         String logLine = "2018-12-06T19:04:46.807-0500: 0.122: [Full GC (Ergonomics) [PSYoungGen: 508K->385K(1536K)] "
                 + "[PSOldGen: 408K->501K(2048K)] 916K->887K(3584K), "
                 + "[Metaspace: 3680K->3680K(1056768K)], 0.0030057 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".",
-                ParallelSerialOldEvent.match(logLine));
+        assertTrue(ParallelSerialOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
         ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 122, event.getTimestamp());
-        assertTrue("Trigger not recognized as " + JdkUtil.TriggerType.ERGONOMICS.toString() + ".",
-                event.getTrigger().matches(JdkRegEx.TRIGGER_ERGONOMICS));
-        assertEquals("Young begin size not parsed correctly.", kilobytes(508), event.getYoungOccupancyInit());
-        assertEquals("Young end size not parsed correctly.", kilobytes(385), event.getYoungOccupancyEnd());
-        assertEquals("Young available size not parsed correctly.", kilobytes(1536), event.getYoungSpace());
-        assertEquals("Old begin size not parsed correctly.", kilobytes(408), event.getOldOccupancyInit());
-        assertEquals("Old end size not parsed correctly.", kilobytes(501), event.getOldOccupancyEnd());
-        assertEquals("Old allocation size not parsed correctly.", kilobytes(2048), event.getOldSpace());
-        assertEquals("Perm gen begin size not parsed correctly.", kilobytes(3680), event.getPermOccupancyInit());
-        assertEquals("Perm gen end size not parsed correctly.", kilobytes(3680), event.getPermOccupancyEnd());
-        assertEquals("Perm gen allocation size not parsed correctly.", kilobytes(1056768), event.getPermSpace());
-        assertEquals("Duration not parsed correctly.", 3005, event.getDuration());
+        assertEquals((long) 122,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ERGONOMICS), "Trigger not recognized as " + JdkUtil.TriggerType.ERGONOMICS.toString() + ".");
+        assertEquals(kilobytes(508),event.getYoungOccupancyInit(),"Young begin size not parsed correctly.");
+        assertEquals(kilobytes(385),event.getYoungOccupancyEnd(),"Young end size not parsed correctly.");
+        assertEquals(kilobytes(1536),event.getYoungSpace(),"Young available size not parsed correctly.");
+        assertEquals(kilobytes(408),event.getOldOccupancyInit(),"Old begin size not parsed correctly.");
+        assertEquals(kilobytes(501),event.getOldOccupancyEnd(),"Old end size not parsed correctly.");
+        assertEquals(kilobytes(2048),event.getOldSpace(),"Old allocation size not parsed correctly.");
+        assertEquals(kilobytes(3680),event.getPermOccupancyInit(),"Perm gen begin size not parsed correctly.");
+        assertEquals(kilobytes(3680),event.getPermOccupancyEnd(),"Perm gen end size not parsed correctly.");
+        assertEquals(kilobytes(1056768),event.getPermSpace(),"Perm gen allocation size not parsed correctly.");
+        assertEquals(3005,event.getDuration(),"Duration not parsed correctly.");
     }
 
     @Test
@@ -107,7 +101,6 @@ public class TestParallelSerialOldEvent {
         String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
                 + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
                 + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]";
-        assertTrue(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not indentified as blocking.");
     }
 }

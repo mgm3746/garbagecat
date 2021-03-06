@@ -15,13 +15,13 @@ package org.eclipselabs.garbagecat.util.jdk;
 import static org.eclipselabs.garbagecat.util.Memory.bytes;
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.eclipselabs.garbagecat.util.Memory.megabytes;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.Memory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -33,435 +33,431 @@ public class TestJvm {
     public void testNullJvmOptions() {
         String jvmOptions = null;
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertNotNull("Jvm object creation failed.", jvm);
+        assertNotNull(jvm,"Jvm object creation failed.");
     }
 
     @Test
     public void testGetThreadStackSizeSsSmallK() {
         String jvmOptions = "-ss128k -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size not populated correctly.", "-ss128k", jvm.getThreadStackSizeOption());
-        assertEquals("Thread stack size value incorrect.", "128k", jvm.getThreadStackSizeValue());
+        assertEquals("-ss128k",jvm.getThreadStackSizeOption(),"Thread stack size not populated correctly.");
+        assertEquals("128k",jvm.getThreadStackSizeValue(),"Thread stack size value incorrect.");
     }
 
     @Test
     public void testGetThreadStackSizeSsBigK() {
         String jvmOptions = "-ss128K -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size not populated correctly.", "-ss128K", jvm.getThreadStackSizeOption());
-        assertEquals("Thread stack size value incorrect.", "128K", jvm.getThreadStackSizeValue());
+        assertEquals("-ss128K",jvm.getThreadStackSizeOption(),"Thread stack size not populated correctly.");
+        assertEquals("128K",jvm.getThreadStackSizeValue(),"Thread stack size value incorrect.");
     }
 
     @Test
     public void testGetThreadStackSizeSsSmallM() {
         String jvmOptions = "-ss1m -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size not populated correctly.", "-ss1m", jvm.getThreadStackSizeOption());
-        assertEquals("Thread stack size value incorrect.", "1m", jvm.getThreadStackSizeValue());
+        assertEquals("-ss1m",jvm.getThreadStackSizeOption(),"Thread stack size not populated correctly.");
+        assertEquals("1m",jvm.getThreadStackSizeValue(),"Thread stack size value incorrect.");
     }
 
     @Test
     public void testGetThreadStackSizeXssSmallK() {
         String jvmOptions = "-Xss128k -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size not populated correctly.", "-Xss128k", jvm.getThreadStackSizeOption());
-        assertEquals("Thread stack size value incorrect.", "128k", jvm.getThreadStackSizeValue());
+        assertEquals("-Xss128k",jvm.getThreadStackSizeOption(),"Thread stack size not populated correctly.");
+        assertEquals("128k",jvm.getThreadStackSizeValue(),"Thread stack size value incorrect.");
     }
 
     @Test
     public void testGetThreadStackSizeXssBigK() {
         String jvmOptions = "-Xss128K -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size not populated correctly.", "-Xss128K", jvm.getThreadStackSizeOption());
-        assertEquals("Thread stack size value incorrect.", "128K", jvm.getThreadStackSizeValue());
+        assertEquals("-Xss128K",jvm.getThreadStackSizeOption(),"Thread stack size not populated correctly.");
+        assertEquals("128K",jvm.getThreadStackSizeValue(),"Thread stack size value incorrect.");
     }
 
     @Test
     public void testGetThreadStackSizeXssSmallM() {
         String jvmOptions = "-Xss1m -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size not populated correctly.", "-Xss1m", jvm.getThreadStackSizeOption());
-        assertEquals("Thread stack size value incorrect.", "1m", jvm.getThreadStackSizeValue());
+        assertEquals("-Xss1m",jvm.getThreadStackSizeOption(),"Thread stack size not populated correctly.");
+        assertEquals("1m",jvm.getThreadStackSizeValue(),"Thread stack size value incorrect.");
     }
 
     @Test
     public void testGetThreadStackSizeXssBigM() {
         String jvmOptions = "-Xss1M -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size not populated correctly.", "-Xss1M", jvm.getThreadStackSizeOption());
-        assertEquals("Thread stack size value incorrect.", "1M", jvm.getThreadStackSizeValue());
+        assertEquals("-Xss1M",jvm.getThreadStackSizeOption(),"Thread stack size not populated correctly.");
+        assertEquals("1M",jvm.getThreadStackSizeValue(),"Thread stack size value incorrect.");
     }
 
     @Test
     public void testGetThreadStackSizeSmallK() {
         String jvmOptions = "-XX:ThreadStackSize=128k -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size incorrect.", "-XX:ThreadStackSize=128k", jvm.getThreadStackSizeOption());
-        assertEquals("Thread stack size value incorrect.", "128k", jvm.getThreadStackSizeValue());
+        assertEquals("-XX:ThreadStackSize=128k",jvm.getThreadStackSizeOption(),"Thread stack size incorrect.");
+        assertEquals("128k",jvm.getThreadStackSizeValue(),"Thread stack size value incorrect.");
     }
 
     @Test
     public void testGetThreadStackSizeBigK() {
         String jvmOptions = "-XX:ThreadStackSize=128K -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size incorrect.", "-XX:ThreadStackSize=128K", jvm.getThreadStackSizeOption());
-        assertEquals("Thread stack size value incorrect.", "128K", jvm.getThreadStackSizeValue());
+        assertEquals("-XX:ThreadStackSize=128K",jvm.getThreadStackSizeOption(),"Thread stack size incorrect.");
+        assertEquals("128K",jvm.getThreadStackSizeValue(),"Thread stack size value incorrect.");
     }
 
     @Test
     public void testGetThreadStackSizeSmallM() {
         String jvmOptions = "-XX:ThreadStackSize=1m -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size incorrect.", "-XX:ThreadStackSize=1m", jvm.getThreadStackSizeOption());
-        assertEquals("Thread stack size value incorrect.", "1m", jvm.getThreadStackSizeValue());
+        assertEquals("-XX:ThreadStackSize=1m",jvm.getThreadStackSizeOption(),"Thread stack size incorrect.");
+        assertEquals("1m",jvm.getThreadStackSizeValue(),"Thread stack size value incorrect.");
     }
 
     @Test
     public void testGetThreadStackSizeBigM() {
         String jvmOptions = "-XX:ThreadStackSize=1M -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size incorrect.", "-XX:ThreadStackSize=1M", jvm.getThreadStackSizeOption());
-        assertEquals("Thread stack size value incorrect.", "1M", jvm.getThreadStackSizeValue());
+        assertEquals("-XX:ThreadStackSize=1M",jvm.getThreadStackSizeOption(),"Thread stack size incorrect.");
+        assertEquals("1M",jvm.getThreadStackSizeValue(),"Thread stack size value incorrect.");
     }
 
     @Test
     public void testGetThreadStackSizeNoUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1234567 -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Thread stack size incorrect.", "-XX:ThreadStackSize=1234567", jvm.getThreadStackSizeOption());
-        assertEquals("Thread stack size value incorrect.", "1234567", jvm.getThreadStackSizeValue());
+        assertEquals("-XX:ThreadStackSize=1234567",jvm.getThreadStackSizeOption(),"Thread stack size incorrect.");
+        assertEquals("1234567",jvm.getThreadStackSizeValue(),"Thread stack size value incorrect.");
     }
 
     @Test
     public void testGetThreadStackSizeOneLessThanLargeNoUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1048575 -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertFalse("Thread stack size is not large.", jvm.hasLargeThreadStackSize());
+        assertFalse(jvm.hasLargeThreadStackSize(), "Thread stack size is not large.");
     }
 
     @Test
     public void testGetThreadStackSizeEqualsLargeNoUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1048576 -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
+        assertTrue(jvm.hasLargeThreadStackSize(), "Thread stack size is large.");
     }
 
     @Test
     public void testGetThreadStackSizeOneGreaterLargeNoUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1048577 -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
+        assertTrue(jvm.hasLargeThreadStackSize(), "Thread stack size is large.");
     }
 
     @Test
     public void testGetThreadStackSizeOneLessThanLargeByteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1048575b -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertFalse("Thread stack size is not large.", jvm.hasLargeThreadStackSize());
+        assertFalse(jvm.hasLargeThreadStackSize(), "Thread stack size is not large.");
     }
 
     @Test
     public void testGetThreadStackSizeEqualsLargeByteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1048576B -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
+        assertTrue(jvm.hasLargeThreadStackSize(), "Thread stack size is large.");
     }
 
     @Test
     public void testGetThreadStackSizeOneGreaterLargeByteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1048577B -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
+        assertTrue(jvm.hasLargeThreadStackSize(), "Thread stack size is large.");
     }
 
     @Test
     public void testGetThreadStackSizeOneLessThanLargeKilobyteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1023k -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertFalse("Thread stack size is not large.", jvm.hasLargeThreadStackSize());
+        assertFalse(jvm.hasLargeThreadStackSize(), "Thread stack size is not large.");
     }
 
     @Test
     public void testGetThreadStackSizeEqualsLargeKilobyteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1024K -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
+        assertTrue(jvm.hasLargeThreadStackSize(), "Thread stack size is large.");
     }
 
     @Test
     public void testGetThreadStackSizeOneGreaterLargeKilobyteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1025K -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
+        assertTrue(jvm.hasLargeThreadStackSize(), "Thread stack size is large.");
     }
 
     @Test
     public void testGetThreadStackSizeEqualsLargeMegabyteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1m -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
+        assertTrue(jvm.hasLargeThreadStackSize(), "Thread stack size is large.");
     }
 
     @Test
     public void testGetThreadStackSizeOneGreaterLargeMegabyteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1M -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
+        assertTrue(jvm.hasLargeThreadStackSize(), "Thread stack size is large.");
     }
 
     @Test
     public void testGetThreadStackSizeLargeGigabyteUnits() {
         String jvmOptions = "-XX:ThreadStackSize=1G -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertTrue("Thread stack size is large.", jvm.hasLargeThreadStackSize());
+        assertTrue(jvm.hasLargeThreadStackSize(), "Thread stack size is large.");
     }
 
     @Test
     public void testGetMinHeapSmallM() {
         String jvmOptions = "-XX:ThreadStackSize=128 -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min heap option incorrect.", "-Xms1024m", jvm.getMinHeapOption());
-        assertEquals("Min heap value incorrect.", "1024m", jvm.getMinHeapValue());
+        assertEquals("-Xms1024m",jvm.getMinHeapOption(),"Min heap option incorrect.");
+        assertEquals("1024m",jvm.getMinHeapValue(),"Min heap value incorrect.");
     }
 
     @Test
     public void testGetMinHeapBigM() {
         String jvmOptions = "-XX:ThreadStackSize=128 -Xms1024M -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min heap option incorrect.", "-Xms1024M", jvm.getMinHeapOption());
-        assertEquals("Min heap value incorrect.", "1024M", jvm.getMinHeapValue());
+        assertEquals("-Xms1024M",jvm.getMinHeapOption(),"Min heap option incorrect.");
+        assertEquals("1024M",jvm.getMinHeapValue(),"Min heap value incorrect.");
     }
 
     @Test
     public void testGetMinHeapSmallG() {
         String jvmOptions = "-XX:ThreadStackSize=128 -Xms1g -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min heap option incorrect.", "-Xms1g", jvm.getMinHeapOption());
-        assertEquals("Min heap value incorrect.", "1g", jvm.getMinHeapValue());
+        assertEquals("-Xms1g",jvm.getMinHeapOption(),"Min heap option incorrect.");
+        assertEquals("1g",jvm.getMinHeapValue(),"Min heap value incorrect.");
     }
 
     @Test
     public void testGetMinHeapBigG() {
         String jvmOptions = "-XX:ThreadStackSize=128 -Xms1G -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min heap option incorrect.", "-Xms1G", jvm.getMinHeapOption());
-        assertEquals("Min heap value incorrect.", "1G", jvm.getMinHeapValue());
+        assertEquals("-Xms1G",jvm.getMinHeapOption(),"Min heap option incorrect.");
+        assertEquals("1G",jvm.getMinHeapValue(),"Min heap value incorrect.");
     }
 
     @Test
     public void testGetMaxHeapSmallM() {
         String jvmOptions = "-XX:ThreadStackSize=128 -Xms1024m -Xmx2048m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min heap option incorrect.", "-Xmx2048m", jvm.getMaxHeapOption());
-        assertEquals("Min heap value incorrect.", "2048m", jvm.getMaxHeapValue());
+        assertEquals("-Xmx2048m",jvm.getMaxHeapOption(),"Min heap option incorrect.");
+        assertEquals("2048m",jvm.getMaxHeapValue(),"Min heap value incorrect.");
     }
 
     @Test
     public void testGetMaxHeapBigM() {
         String jvmOptions = "-XX:ThreadStackSize=128 -Xms1024M -Xmx2048M";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min heap option incorrect.", "-Xmx2048M", jvm.getMaxHeapOption());
-        assertEquals("Min heap value incorrect.", "2048M", jvm.getMaxHeapValue());
+        assertEquals("-Xmx2048M",jvm.getMaxHeapOption(),"Min heap option incorrect.");
+        assertEquals("2048M",jvm.getMaxHeapValue(),"Min heap value incorrect.");
     }
 
     @Test
     public void testGetMaxHeapSmallG() {
         String jvmOptions = "-XX:ThreadStackSize=128 -Xms1g -Xmx2g";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min heap option incorrect.", "-Xmx2g", jvm.getMaxHeapOption());
-        assertEquals("Min heap value incorrect.", "2g", jvm.getMaxHeapValue());
+        assertEquals("-Xmx2g",jvm.getMaxHeapOption(),"Min heap option incorrect.");
+        assertEquals("2g",jvm.getMaxHeapValue(),"Min heap value incorrect.");
     }
 
     @Test
     public void testGetMaxHeapBigG() {
         String jvmOptions = "-XX:ThreadStackSize=128 -Xms1G -Xmx2G";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min heap option incorrect.", "-Xmx2G", jvm.getMaxHeapOption());
-        assertEquals("Min heap value incorrect.", "2G", jvm.getMaxHeapValue());
+        assertEquals("-Xmx2G",jvm.getMaxHeapOption(),"Min heap option incorrect.");
+        assertEquals("2G",jvm.getMaxHeapValue(),"Min heap value incorrect.");
     }
 
     @Test
     public void testIsMinAndMaxHeapSpaceEqual() {
         Jvm jvm = new Jvm("-Xms2g -Xmx2G", null);
-        assertTrue("Min and max heap are equal.", jvm.isMinAndMaxHeapSpaceEqual());
+        assertTrue(jvm.isMinAndMaxHeapSpaceEqual(), "Min and max heap are equal.");
         jvm = new Jvm("-Xms1G -Xmx2G", null);
-        assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxHeapSpaceEqual());
+        assertFalse(jvm.isMinAndMaxHeapSpaceEqual(), "Min and max heap are not equal.");
         jvm = new Jvm("-Xms256k -Xmx256M", null);
-        assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxHeapSpaceEqual());
+        assertFalse(jvm.isMinAndMaxHeapSpaceEqual(), "Min and max heap are not equal.");
     }
 
     @Test
     public void testIsMinAndMaxHeapSpaceEqualVerboseOptions() {
         Jvm jvm = new Jvm("-XX:InitialHeapSize=1234567890 -XX:MaxHeapSize=1234567890", null);
-        assertTrue("Min and max heap are equal.", jvm.isMinAndMaxHeapSpaceEqual());
+        assertTrue(jvm.isMinAndMaxHeapSpaceEqual(), "Min and max heap are equal.");
         jvm = new Jvm("-XX:InitialHeapSize=1234567890 -XX:MaxHeapSize=1234567891", null);
-        assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxHeapSpaceEqual());
+        assertFalse(jvm.isMinAndMaxHeapSpaceEqual(), "Min and max heap are not equal.");
     }
 
     @Test
     public void testGetMinPermSmallM() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:PermSize=128m -XX:MaxPermSize=128m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min permanent generation option incorrect.", "-XX:PermSize=128m", jvm.getMinPermOption());
-        assertEquals("Min permanent generation value incorrect.", "128m", jvm.getMinPermValue());
+        assertEquals("-XX:PermSize=128m",jvm.getMinPermOption(),"Min permanent generation option incorrect.");
+        assertEquals("128m",jvm.getMinPermValue(),"Min permanent generation value incorrect.");
     }
 
     @Test
     public void testGetMinPermBigM() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:PermSize=128M -XX:MaxPermSize=128M";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min permanent generation option incorrect.", "-XX:PermSize=128M", jvm.getMinPermOption());
-        assertEquals("Min permanent generation value incorrect.", "128M", jvm.getMinPermValue());
+        assertEquals("-XX:PermSize=128M",jvm.getMinPermOption(),"Min permanent generation option incorrect.");
+        assertEquals("128M",jvm.getMinPermValue(),"Min permanent generation value incorrect.");
     }
 
     @Test
     public void testGetMinPermSmallG() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:PermSize=1g -XX:MaxPermSize=1g";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min permanent generation option incorrect.", "-XX:PermSize=1g", jvm.getMinPermOption());
-        assertEquals("Min permanent generation value incorrect.", "1g", jvm.getMinPermValue());
+        assertEquals("-XX:PermSize=1g",jvm.getMinPermOption(),"Min permanent generation option incorrect.");
+        assertEquals("1g",jvm.getMinPermValue(),"Min permanent generation value incorrect.");
     }
 
     @Test
     public void testGetMinPermBigG() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:PermSize=1G -XX:MaxPermSize=1G";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min permanent generation option incorrect.", "-XX:PermSize=1G", jvm.getMinPermOption());
-        assertEquals("Min permanent generation value incorrect.", "1G", jvm.getMinPermValue());
+        assertEquals("-XX:PermSize=1G",jvm.getMinPermOption(),"Min permanent generation option incorrect.");
+        assertEquals("1G",jvm.getMinPermValue(),"Min permanent generation value incorrect.");
     }
 
     @Test
     public void testGetMaxPermSmallM() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:PermSize=128m -XX:MaxPermSize=128m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max permanent generation optiion incorrect.", "-XX:MaxPermSize=128m", jvm.getMaxPermOption());
-        assertEquals("Max permanent generation value incorrect.", "128m", jvm.getMaxPermValue());
+        assertEquals("-XX:MaxPermSize=128m",jvm.getMaxPermOption(),"Max permanent generation optiion incorrect.");
+        assertEquals("128m",jvm.getMaxPermValue(),"Max permanent generation value incorrect.");
     }
 
     @Test
     public void testGetMaxPermBigM() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:PermSize=128M -XX:MaxPermSize=128M";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max permanent generation option incorrect.", "-XX:MaxPermSize=128M", jvm.getMaxPermOption());
-        assertEquals("Max permanent generation value incorrect.", "128M", jvm.getMaxPermValue());
+        assertEquals("-XX:MaxPermSize=128M",jvm.getMaxPermOption(),"Max permanent generation option incorrect.");
+        assertEquals("128M",jvm.getMaxPermValue(),"Max permanent generation value incorrect.");
     }
 
     @Test
     public void testGetMaxPermSmallG() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:PermSize=1g -XX:MaxPermSize=1g";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max permanent generation option incorrect.", "-XX:MaxPermSize=1g", jvm.getMaxPermOption());
-        assertEquals("Max permanent generation value incorrect.", "1g", jvm.getMaxPermValue());
+        assertEquals("-XX:MaxPermSize=1g",jvm.getMaxPermOption(),"Max permanent generation option incorrect.");
+        assertEquals("1g",jvm.getMaxPermValue(),"Max permanent generation value incorrect.");
     }
 
     @Test
     public void testGetMaxPermBigG() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:PermSize=1G -XX:MaxPermSize=1G";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max permanent generation option incorrect.", "-XX:MaxPermSize=1G", jvm.getMaxPermOption());
-        assertEquals("Max permanent generation value incorrect.", "1G", jvm.getMaxPermValue());
+        assertEquals("-XX:MaxPermSize=1G",jvm.getMaxPermOption(),"Max permanent generation option incorrect.");
+        assertEquals("1G",jvm.getMaxPermValue(),"Max permanent generation value incorrect.");
     }
 
     @Test
     public void testIsMinAndMaxPermSpaceEqualDifferentCaseM() {
         Jvm jvm = new Jvm("-XX:PermSize=256m -XX:MaxPermSize=256M", null);
-        assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
+        assertTrue(jvm.isMinAndMaxPermSpaceEqual(), "Min and max heap are equal.");
     }
 
     @Test
     public void testIsMinAndMaxPermSpaceEqualDifferentCaseG() {
         Jvm jvm = new Jvm("-XX:PermSize=1G -XX:MaxPermSize=1g", null);
-        assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
+        assertTrue(jvm.isMinAndMaxPermSpaceEqual(), "Min and max heap are equal.");
     }
 
     @Test
     public void testIsMinAndMaxPermSpaceEqualMissingMin() {
         Jvm jvm = new Jvm("-XX:MaxPermSize=256M", null);
-        assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxPermSpaceEqual());
+        assertFalse(jvm.isMinAndMaxPermSpaceEqual(), "Min and max heap are not equal.");
     }
 
     @Test
     public void testIsMinAndMaxPermSpaceEqualDifferentUnitsMG() {
         Jvm jvm = new Jvm("-XX:PermSize=2048m -XX:MaxPermSize=2g", null);
-        assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
+        assertTrue(jvm.isMinAndMaxPermSpaceEqual(), "Min and max heap are equal.");
     }
 
     @Test
     public void testIsMinAndMaxPermSpaceEqualDifferentUnitsKM() {
         Jvm jvm = new Jvm("-XX:PermSize=1024K -XX:MaxPermSize=1m", null);
-        assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
+        assertTrue(jvm.isMinAndMaxPermSpaceEqual(), "Min and max heap are equal.");
     }
 
     @Test
     public void testIsMinAndMaxPermSpaceEqualDifferentUnitsNoneG() {
         Jvm jvm = new Jvm("-XX:PermSize=1073741824 -XX:MaxPermSize=1G", null);
-        assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
+        assertTrue(jvm.isMinAndMaxPermSpaceEqual(), "Min and max heap are equal.");
     }
 
     @Test
     public void testIsMinAndMaxPermSpaceEqualDifferentUnitsBG() {
         Jvm jvm = new Jvm("-XX:PermSize=1073741824b -XX:MaxPermSize=1G", null);
-        assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
+        assertTrue(jvm.isMinAndMaxPermSpaceEqual(), "Min and max heap are equal.");
     }
 
     @Test
     public void testIsMinAndMaxPermSpaceEqualVerboseOptions() {
         Jvm jvm = new Jvm("-XX:MaxPermSize=1234567890 -XX:PermSize=1234567890", null);
-        assertTrue("Min and max heap are equal.", jvm.isMinAndMaxPermSpaceEqual());
+        assertTrue(jvm.isMinAndMaxPermSpaceEqual(), "Min and max heap are equal.");
         jvm = new Jvm("-XX:MaxPermSize=1234567890 -XX:PermSize=1234567891", null);
-        assertFalse("Min and max heap are not equal.", jvm.isMinAndMaxPermSpaceEqual());
+        assertFalse(jvm.isMinAndMaxPermSpaceEqual(), "Min and max heap are not equal.");
     }
 
     @Test
     public void testGetMinMetaspaceSmallG() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:MetaspaceSize=1g -XX:MaxMetaspaceSize=1g";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min Metaspace generation option incorrect.", "-XX:MetaspaceSize=1g", jvm.getMinMetaspaceOption());
-        assertEquals("Min Metaspace generation value incorrect.", "1g", jvm.getMinMetaspaceValue());
+        assertEquals("-XX:MetaspaceSize=1g",jvm.getMinMetaspaceOption(),"Min Metaspace generation option incorrect.");
+        assertEquals("1g",jvm.getMinMetaspaceValue(),"Min Metaspace generation value incorrect.");
     }
 
     @Test
     public void testGetMinMetaspaceBigG() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:MetaspaceSize=1G -XX:MaxMetaspaceSize=1G";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Min Metaspace generation option incorrect.", "-XX:MetaspaceSize=1G", jvm.getMinMetaspaceOption());
-        assertEquals("Min Metaspace generation value incorrect.", "1G", jvm.getMinMetaspaceValue());
+        assertEquals("-XX:MetaspaceSize=1G",jvm.getMinMetaspaceOption(),"Min Metaspace generation option incorrect.");
+        assertEquals("1G",jvm.getMinMetaspaceValue(),"Min Metaspace generation value incorrect.");
     }
 
     @Test
     public void testGetMaxMetaspaceSmallM() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max Metaspace generation optiion incorrect.", "-XX:MaxMetaspaceSize=128m",
-                jvm.getMaxMetaspaceOption());
-        assertEquals("Max Metaspace generation value incorrect.", "128m", jvm.getMaxMetaspaceValue());
+        assertEquals("-XX:MaxMetaspaceSize=128m",jvm.getMaxMetaspaceOption(),"Max Metaspace generation optiion incorrect.");
+        assertEquals("128m",jvm.getMaxMetaspaceValue(),"Max Metaspace generation value incorrect.");
     }
 
     @Test
     public void testGetMaxMetaspaceBigM() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:MetaspaceSize=128M -XX:MaxMetaspaceSize=128M";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max Metaspace generation option incorrect.", "-XX:MaxMetaspaceSize=128M",
-                jvm.getMaxMetaspaceOption());
-        assertEquals("Max Metaspace generation value incorrect.", "128M", jvm.getMaxMetaspaceValue());
+        assertEquals("-XX:MaxMetaspaceSize=128M",jvm.getMaxMetaspaceOption(),"Max Metaspace generation option incorrect.");
+        assertEquals("128M",jvm.getMaxMetaspaceValue(),"Max Metaspace generation value incorrect.");
     }
 
     @Test
     public void testGetMaxMetaspaceSmallG() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:MetaspaceSize=1g -XX:MaxMetaspaceSize=1g";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max Metaspace generation option incorrect.", "-XX:MaxMetaspaceSize=1g",
-                jvm.getMaxMetaspaceOption());
-        assertEquals("Max Metaspace generation value incorrect.", "1g", jvm.getMaxMetaspaceValue());
+        assertEquals("-XX:MaxMetaspaceSize=1g",jvm.getMaxMetaspaceOption(),"Max Metaspace generation option incorrect.");
+        assertEquals("1g",jvm.getMaxMetaspaceValue(),"Max Metaspace generation value incorrect.");
     }
 
     @Test
     public void testGetMaxMetaspaceBigG() {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:MetaspaceSize=1G -XX:MaxMetaspaceSize=1G";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max Metaspace generation option incorrect.", "-XX:MaxMetaspaceSize=1G",
-                jvm.getMaxMetaspaceOption());
-        assertEquals("Max Metaspace generation value incorrect.", "1G", jvm.getMaxMetaspaceValue());
+        assertEquals("-XX:MaxMetaspaceSize=1G",jvm.getMaxMetaspaceOption(),"Max Metaspace generation option incorrect.");
+        assertEquals("1G",jvm.getMaxMetaspaceValue(),"Max Metaspace generation value incorrect.");
     }
 
     @Test
@@ -469,22 +465,17 @@ public class TestJvm {
         String jvmOptions = "-Xss128k -Xms2048M -Xmx2048M -XX:MetaspaceSize=1G -XX:MaxMetaspaceSize=1G "
                 + "-XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Disable explicit gc option incorrect.", "-XX:+DisableExplicitGC",
-                jvm.getDisableExplicitGCOption());
+        assertEquals("-XX:+DisableExplicitGC",jvm.getDisableExplicitGCOption(),"Disable explicit gc option incorrect.");
     }
 
     @Test
     public void testRmiDgcServerGcIntervalValue() {
         String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=14400000 -Dsun.rmi.dgc.server.gcInterval=24400000";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("sun.rmi.dgc.client.gcInterval option incorrect.", "-Dsun.rmi.dgc.client.gcInterval=14400000",
-                jvm.getRmiDgcClientGcIntervalOption());
-        assertEquals("sun.rmi.dgc.client.gcInterval value incorrect.", "14400000",
-                jvm.getRmiDgcClientGcIntervalValue());
-        assertEquals("sun.rmi.dgc.server.gcInterval option incorrect.", "-Dsun.rmi.dgc.server.gcInterval=24400000",
-                jvm.getRmiDgcServerGcIntervalOption());
-        assertEquals("sun.rmi.dgc.server.gcInterval value incorrect.", "24400000",
-                jvm.getRmiDgcServerGcIntervalValue());
+        assertEquals("-Dsun.rmi.dgc.client.gcInterval=14400000",jvm.getRmiDgcClientGcIntervalOption(),"sun.rmi.dgc.client.gcInterval option incorrect.");
+        assertEquals("14400000",jvm.getRmiDgcClientGcIntervalValue(),"sun.rmi.dgc.client.gcInterval value incorrect.");
+        assertEquals("-Dsun.rmi.dgc.server.gcInterval=24400000",jvm.getRmiDgcServerGcIntervalOption(),"sun.rmi.dgc.server.gcInterval option incorrect.");
+        assertEquals("24400000",jvm.getRmiDgcServerGcIntervalValue(),"sun.rmi.dgc.server.gcInterval value incorrect.");
     }
 
     @Test
@@ -492,8 +483,7 @@ public class TestJvm {
         String jvmOptions = "-Xss128k -Xms2048M -javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar -Xmx2048M "
                 + "-XX:MetaspaceSize=1G -XX:MaxMetaspaceSize=1G -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-javaagent option incorrect.", "-javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar",
-                jvm.getJavaagentOption());
+        assertEquals("-javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar",jvm.getJavaagentOption(),"-javaagent option incorrect.");
     }
 
     @Test
@@ -501,111 +491,105 @@ public class TestJvm {
         String jvmOptions = "-Xss128k -Xms2048M -agentpath:C:/agent/agent.dll -Xmx2048M "
                 + "-XX:MetaspaceSize=1G -XX:MaxMetaspaceSize=1G -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-agentpath option incorrect.", "-agentpath:C:/agent/agent.dll", jvm.getAgentpathOption());
+        assertEquals("-agentpath:C:/agent/agent.dll",jvm.getAgentpathOption(),"-agentpath option incorrect.");
     }
 
     @Test
     public void testXBatch() {
         String jvmOptions = "-Xss128k -Xbatch -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-Xbatch option incorrect.", "-Xbatch", jvm.getXBatchOption());
+        assertEquals("-Xbatch",jvm.getXBatchOption(),"-Xbatch option incorrect.");
     }
 
     @Test
     public void testBackGroundCompilationDisabled() {
         String jvmOptions = "-Xss128k -XX:-BackgroundCompilation -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:-BackgroundCompilation option incorrect.", "-XX:-BackgroundCompilation",
-                jvm.getDisableBackgroundCompilationOption());
+        assertEquals("-XX:-BackgroundCompilation",jvm.getDisableBackgroundCompilationOption(),"-XX:-BackgroundCompilation option incorrect.");
     }
 
     @Test
     public void testXcomp() {
         String jvmOptions = "-Xss128k -Xcomp -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-Xcomp option incorrect.", "-Xcomp", jvm.getXCompOption());
+        assertEquals("-Xcomp",jvm.getXCompOption(),"-Xcomp option incorrect.");
     }
 
     @Test
     public void testXInt() {
         String jvmOptions = "-Xss128k -Xint -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-Xint option incorrect.", "-Xint", jvm.getXIntOption());
+        assertEquals("-Xint",jvm.getXIntOption(),"-Xint option incorrect.");
     }
 
     @Test
     public void testExplicitGCInvokesConcurrent() {
         String jvmOptions = "-Xss128k -XX:+ExplicitGCInvokesConcurrent -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+ExplicitGCInvokesConcurrent option incorrect.", "-XX:+ExplicitGCInvokesConcurrent",
-                jvm.getExplicitGcInvokesConcurrentOption());
+        assertEquals("-XX:+ExplicitGCInvokesConcurrent",jvm.getExplicitGcInvokesConcurrentOption(),"-XX:+ExplicitGCInvokesConcurrent option incorrect.");
     }
 
     @Test
     public void testPrintCommandLineFlags() {
         String jvmOptions = "-Xss128k -XX:+PrintCommandLineFlags -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+PrintCommandLineFlags option incorrect.", "-XX:+PrintCommandLineFlags",
-                jvm.getPrintCommandLineFlagsOption());
+        assertEquals("-XX:+PrintCommandLineFlags",jvm.getPrintCommandLineFlagsOption(),"-XX:+PrintCommandLineFlags option incorrect.");
     }
 
     @Test
     public void testPrintGCDetails() {
         String jvmOptions = "-Xss128k -XX:+PrintGCDetails -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+PrintGCDetails option incorrect.", "-XX:+PrintGCDetails", jvm.getPrintGCDetailsOption());
+        assertEquals("-XX:+PrintGCDetails",jvm.getPrintGCDetailsOption(),"-XX:+PrintGCDetails option incorrect.");
     }
 
     @Test
     public void testUseParNewGC() {
         String jvmOptions = "-Xss128k -XX:+UseParNewGC -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+UseParNewGC option incorrect.", "-XX:+UseParNewGC", jvm.getUseParNewGCOption());
+        assertEquals("-XX:+UseParNewGC",jvm.getUseParNewGCOption(),"-XX:+UseParNewGC option incorrect.");
     }
 
     @Test
     public void testUseConcMarkSweepGC() {
         String jvmOptions = "-Xss128k -XX:+UseConcMarkSweepGC -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+UseConcMarkSweepGC option incorrect.", "-XX:+UseConcMarkSweepGC",
-                jvm.getUseConcMarkSweepGCOption());
+        assertEquals("-XX:+UseConcMarkSweepGC",jvm.getUseConcMarkSweepGCOption(),"-XX:+UseConcMarkSweepGC option incorrect.");
     }
 
     @Test
     public void testCMSClassUnloadingEnabled() {
         String jvmOptions = "-Xss128k -XX:+CMSClassUnloadingEnabled -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+CMSClassUnloadingEnabled option incorrect.", "-XX:+CMSClassUnloadingEnabled",
-                jvm.getCMSClassUnloadingEnabled());
+        assertEquals("-XX:+CMSClassUnloadingEnabled",jvm.getCMSClassUnloadingEnabled(),"-XX:+CMSClassUnloadingEnabled option incorrect.");
     }
 
     @Test
     public void testCMSClassUnloadingDisabled() {
         String jvmOptions = "-Xss128k -XX:-CMSClassUnloadingEnabled -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:-CMSClassUnloadingEnabled option incorrect.", "-XX:-CMSClassUnloadingEnabled",
-                jvm.getCMSClassUnloadingDisabled());
+        assertEquals("-XX:-CMSClassUnloadingEnabled",jvm.getCMSClassUnloadingDisabled(),"-XX:-CMSClassUnloadingEnabled option incorrect.");
     }
 
     @Test
     public void testPrintReferenceGC() {
         String jvmOptions = "-Xss128k -XX:+PrintReferenceGC -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+PrintReferenceGC option incorrect.", "-XX:+PrintReferenceGC", jvm.getPrintReferenceGC());
+        assertEquals("-XX:+PrintReferenceGC",jvm.getPrintReferenceGC(),"-XX:+PrintReferenceGC option incorrect.");
     }
 
     @Test
     public void testPrintGCCause() {
         String jvmOptions = "-Xss128k -XX:+PrintGCCause -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+PrintGCCause option incorrect.", "-XX:+PrintGCCause", jvm.getPrintGCCause());
+        assertEquals("-XX:+PrintGCCause",jvm.getPrintGCCause(),"-XX:+PrintGCCause option incorrect.");
     }
 
     @Test
     public void testPrintGCCauseDisabled() {
         String jvmOptions = "-Xss128k -XX:-PrintGCCause -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:-PrintGCCause option incorrect.", "-XX:-PrintGCCause", jvm.getPrintGCCauseDisabled());
+        assertEquals("-XX:-PrintGCCause",jvm.getPrintGCCauseDisabled(),"-XX:-PrintGCCause option incorrect.");
     }
 
     /**
@@ -617,7 +601,7 @@ public class TestJvm {
                 + "Oct  2 2015 03:26:24 by \"java_re\" with unknown MS VC++:1600";
         Jvm jvm = new Jvm(null, null);
         jvm.setVersion(version);
-        assertEquals("JDK7 not identified", 7, jvm.JdkNumber());
+        assertEquals(7,jvm.JdkNumber(),"JDK7 not identified");
     }
 
     /**
@@ -629,7 +613,7 @@ public class TestJvm {
                 + "Oct  2 2015 03:26:24 by \"java_re\" with unknown MS VC++:1600";
         Jvm jvm = new Jvm(null, null);
         jvm.setVersion(version);
-        assertEquals("JDK7 not identified", 91, jvm.JdkUpdate());
+        assertEquals(91,jvm.JdkUpdate(),"JDK7 not identified");
     }
 
     /**
@@ -641,7 +625,7 @@ public class TestJvm {
                 + "built on Jan 29 2016 17:39:45 by \"java_re\" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)";
         Jvm jvm = new Jvm(null, null);
         jvm.setVersion(version);
-        assertEquals("JDK8 not identified", 8, jvm.JdkNumber());
+        assertEquals(8,jvm.JdkNumber(),"JDK8 not identified");
     }
 
     /**
@@ -653,30 +637,28 @@ public class TestJvm {
                 + "built on Jan 29 2016 17:39:45 by \"java_re\" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)";
         Jvm jvm = new Jvm(null, null);
         jvm.setVersion(version);
-        assertEquals("JDK8 not identified", 73, jvm.JdkUpdate());
+        assertEquals(73,jvm.JdkUpdate(),"JDK8 not identified");
     }
 
     @Test
     public void testTieredCompilation() {
         String jvmOptions = "-Xss128k -XX:+TieredCompilation -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+TieredCompilation option incorrect.", "-XX:+TieredCompilation", jvm.getTieredCompilation());
+        assertEquals("-XX:+TieredCompilation",jvm.getTieredCompilation(),"-XX:+TieredCompilation option incorrect.");
     }
 
     @Test
     public void testPrintStringDeduplicationStatistics() {
         String jvmOptions = "-Xss128k -XX:+PrintStringDeduplicationStatistics -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+TieredCompilation option incorrect.", "-XX:+PrintStringDeduplicationStatistics",
-                jvm.getPrintStringDeduplicationStatistics());
+        assertEquals("-XX:+PrintStringDeduplicationStatistics",jvm.getPrintStringDeduplicationStatistics(),"-XX:+TieredCompilation option incorrect.");
     }
 
     @Test
     public void testCmsInitiatingOccupancyFraction() {
         String jvmOptions = "-Xss128k -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:CMSInitiatingOccupancyFraction option incorrect.", "-XX:CMSInitiatingOccupancyFraction=70",
-                jvm.getCMSInitiatingOccupancyFraction());
+        assertEquals("-XX:CMSInitiatingOccupancyFraction=70",jvm.getCMSInitiatingOccupancyFraction(),"-XX:CMSInitiatingOccupancyFraction option incorrect.");
     }
 
     @Test
@@ -684,24 +666,21 @@ public class TestJvm {
         String jvmOptions = "-Xss128k -XX:CMSInitiatingOccupancyFraction=70 -XX:+UseCMSInitiatingOccupancyOnly "
                 + "-XX:+CMSParallelRemarkEnabled";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+UseCMSInitiatingOccupancyOnly option incorrect.", "-XX:+UseCMSInitiatingOccupancyOnly",
-                jvm.getCMSInitiatingOccupancyOnlyEnabled());
+        assertEquals("-XX:+UseCMSInitiatingOccupancyOnly",jvm.getCMSInitiatingOccupancyOnlyEnabled(),"-XX:+UseCMSInitiatingOccupancyOnly option incorrect.");
     }
 
     @Test
     public void testBiasedLockingDisabled() {
         String jvmOptions = "-Xss128k -XX:-UseBiasedLocking -XX:+CMSParallelRemarkEnabled";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:-UseBiasedLocking option incorrect.", "-XX:-UseBiasedLocking",
-                jvm.getBiasedLockingDisabled());
+        assertEquals("-XX:-UseBiasedLocking",jvm.getBiasedLockingDisabled(),"-XX:-UseBiasedLocking option incorrect.");
     }
 
     @Test
     public void testPrintApplicationConcurrentTime() {
         String jvmOptions = "-Xss128k -XX:+PrintGCApplicationConcurrentTime -XX:+CMSParallelRemarkEnabled";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:-PrintGCApplicationConcurrentTime option incorrect.", "-XX:+PrintGCApplicationConcurrentTime",
-                jvm.getPrintGcApplicationConcurrentTime());
+        assertEquals("-XX:+PrintGCApplicationConcurrentTime",jvm.getPrintGcApplicationConcurrentTime(),"-XX:-PrintGCApplicationConcurrentTime option incorrect.");
     }
 
     @Test
@@ -712,7 +691,7 @@ public class TestJvm {
                 + "JRE (1.8.0_65-b17), built on Oct  6 2015 17:16:12 by \"java_re\" with gcc 4.3.0 20080428 "
                 + "(Red Hat 4.3.0-8)";
         jvm.setVersion(version);
-        assertTrue("Jvm not identified as 64-bit.", jvm.is64Bit());
+        assertTrue(jvm.is64Bit(), "Jvm not identified as 64-bit.");
     }
 
     @Test
@@ -723,7 +702,7 @@ public class TestJvm {
                 + "JRE (1.8.0_65-b17), built on Oct  6 2015 17:16:12 by \"java_re\" with gcc 4.3.0 20080428 "
                 + "(Red Hat 4.3.0-8)";
         jvm.setVersion(version);
-        assertFalse("Jvm incorrectly not identified as 64-bit.", jvm.is64Bit());
+        assertFalse(jvm.is64Bit(), "Jvm incorrectly not identified as 64-bit.");
     }
 
     @Test
@@ -747,58 +726,56 @@ public class TestJvm {
     public void testPrintTenuringDistribution() {
         String jvmOptions = "-Xss128k -XX:+PrintTenuringDistribution -XX:MaxMetaspaceSize=1280m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+PrintTenuringDistribution option incorrect.", "-XX:+PrintTenuringDistribution",
-                jvm.getPrintTenuringDistribution());
+        assertEquals("-XX:+PrintTenuringDistribution",jvm.getPrintTenuringDistribution(),"-XX:+PrintTenuringDistribution option incorrect.");
     }
 
     @Test
     public void testMaxHeapBytes() {
         String jvmOptions = "-Xss128k -Xmx2048m -XX:MaxMetaspaceSize=1280m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max heap bytes incorrect.", bytes(2147483648L), jvm.getMaxHeapBytes());
+        assertEquals(bytes(2147483648L),jvm.getMaxHeapBytes(),"Max heap bytes incorrect.");
     }
 
     @Test
     public void testMaxHeapBytesUnknown() {
         String jvmOptions = "-Xss128k -XX:MaxMetaspaceSize=1280m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max heap bytes incorrect.", bytes(0L), jvm.getMaxHeapBytes());
+        assertEquals(bytes(0L),jvm.getMaxHeapBytes(),"Max heap bytes incorrect.");
     }
 
     @Test
     public void testMaxPermBytes() {
         String jvmOptions = "-Xss128k -Xmx2048m -XX:MaxPermSize=1280m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max perm space bytes incorrect.", bytes(1342177280), jvm.getMaxPermBytes());
+        assertEquals(bytes(1342177280),jvm.getMaxPermBytes(),"Max perm space bytes incorrect.");
     }
 
     @Test
     public void testMaxPermBytesUnknown() {
         String jvmOptions = "-Xss128k";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max perm space bytes incorrect.", bytes(0L), jvm.getMaxPermBytes());
+        assertEquals(bytes(0L),jvm.getMaxPermBytes(),"Max perm space bytes incorrect.");
     }
 
     @Test
     public void testMaxMetaspaceBytes() {
         String jvmOptions = "-Xss128k -Xmx2048m -XX:MaxMetaspaceSize=1280m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max metaspace bytes incorrect.", bytes(1342177280), jvm.getMaxMetaspaceBytes());
+        assertEquals(bytes(1342177280),jvm.getMaxMetaspaceBytes(),"Max metaspace bytes incorrect.");
     }
 
     @Test
     public void testMaxMetaspaceBytesUnknown() {
         String jvmOptions = "-Xss128k";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Max metaspace bytes incorrect.", bytes(0L), jvm.getMaxMetaspaceBytes());
+        assertEquals(bytes(0L),jvm.getMaxMetaspaceBytes(),"Max metaspace bytes incorrect.");
     }
 
     @Test
     public void testgetCompressedClassSpaceSizeBytes() {
         String jvmOptions = "-XX:CompressedClassSpaceSize=768m";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Compressed class space size bytes incorrect.", bytes(805306368),
-                jvm.getCompressedClassSpaceSizeBytes());
+        assertEquals(bytes(805306368),jvm.getCompressedClassSpaceSizeBytes(),"Compressed class space size bytes incorrect.");
     }
 
     @Test
@@ -855,7 +832,7 @@ public class TestJvm {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:G1MixedGCLiveThresholdPercent=85 -d64";
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:G1MixedGCLiveThresholdPercent=NN not found.", jvm.getG1MixedGCLiveThresholdPercent());
-        assertEquals("G1MixedGCLiveThresholdPercent incorrect.", "85", jvm.getG1MixedGCLiveThresholdPercentValue());
+        assertEquals("85",jvm.getG1MixedGCLiveThresholdPercentValue(),"G1MixedGCLiveThresholdPercent incorrect.");
     }
 
     @Test
@@ -863,7 +840,7 @@ public class TestJvm {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:G1HeapWastePercent=5 -d64";
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:G1HeapWastePercent=NN not found.", jvm.getG1HeapWastePercent());
-        assertEquals("G1HeapWastePercent incorrect.", "5", jvm.getG1HeapWastePercentValue());
+        assertEquals("5",jvm.getG1HeapWastePercentValue(),"G1HeapWastePercent incorrect.");
     }
 
     @Test
@@ -878,8 +855,8 @@ public class TestJvm {
         String jvmOptions = "-XX:+UseGCLogFileRotation -XX:GCLogFileSize=8192 -XX:NumberOfGCLogFiles=5";
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:GCLogFileSize not found.", jvm.getGcLogFileSize());
-        assertEquals("Log file size value incorrect.", "8192", jvm.getGcLogFileSizeValue());
-        assertEquals("Log file size bytes incorrect.", kilobytes(8), jvm.getGcLogFileSizeBytes());
+        assertEquals("8192",jvm.getGcLogFileSizeValue(),"Log file size value incorrect.");
+        assertEquals(kilobytes(8),jvm.getGcLogFileSizeBytes(),"Log file size bytes incorrect.");
     }
 
     @Test
@@ -887,8 +864,8 @@ public class TestJvm {
         String jvmOptions = "-XX:+UseGCLogFileRotation -XX:GCLogFileSize=8192k -XX:NumberOfGCLogFiles=5";
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:GCLogFileSize not found.", jvm.getGcLogFileSize());
-        assertEquals("Log file size value incorrect.", "8192k", jvm.getGcLogFileSizeValue());
-        assertEquals("Log file size bytes incorrect.", megabytes(8), jvm.getGcLogFileSizeBytes());
+        assertEquals("8192k",jvm.getGcLogFileSizeValue(),"Log file size value incorrect.");
+        assertEquals(megabytes(8),jvm.getGcLogFileSizeBytes(),"Log file size bytes incorrect.");
     }
 
     @Test
@@ -896,8 +873,8 @@ public class TestJvm {
         String jvmOptions = "-XX:+UseGCLogFileRotation -XX:GCLogFileSize=8192K -XX:NumberOfGCLogFiles=5";
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:GCLogFileSize not found.", jvm.getGcLogFileSize());
-        assertEquals("Log file size value incorrect.", "8192K", jvm.getGcLogFileSizeValue());
-        assertEquals("Log file size bytes incorrect.", megabytes(8), jvm.getGcLogFileSizeBytes());
+        assertEquals("8192K",jvm.getGcLogFileSizeValue(),"Log file size value incorrect.");
+        assertEquals(megabytes(8),jvm.getGcLogFileSizeBytes(),"Log file size bytes incorrect.");
     }
 
     @Test
@@ -905,8 +882,8 @@ public class TestJvm {
         String jvmOptions = "-XX:+UseGCLogFileRotation -XX:GCLogFileSize=5m -XX:NumberOfGCLogFiles=5";
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:GCLogFileSize not found.", jvm.getGcLogFileSize());
-        assertEquals("Log file size value incorrect.", "5m", jvm.getGcLogFileSizeValue());
-        assertEquals("Log file size bytes incorrect.", Memory.megabytes(5), jvm.getGcLogFileSizeBytes());
+        assertEquals("5m",jvm.getGcLogFileSizeValue(),"Log file size value incorrect.");
+        assertEquals(Memory.megabytes(5),jvm.getGcLogFileSizeBytes(),"Log file size bytes incorrect.");
     }
 
     @Test
@@ -914,8 +891,8 @@ public class TestJvm {
         String jvmOptions = "-XX:+UseGCLogFileRotation -XX:GCLogFileSize=5M -XX:NumberOfGCLogFiles=5";
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:GCLogFileSize not found.", jvm.getGcLogFileSize());
-        assertEquals("Log file size value incorrect.", "5M", jvm.getGcLogFileSizeValue());
-        assertEquals("Log file size bytes incorrect.", megabytes(5), jvm.getGcLogFileSizeBytes());
+        assertEquals("5M",jvm.getGcLogFileSizeValue(),"Log file size value incorrect.");
+        assertEquals(megabytes(5),jvm.getGcLogFileSizeBytes(),"Log file size bytes incorrect.");
     }
 
     @Test
@@ -929,24 +906,21 @@ public class TestJvm {
     public void testCmsParallelInitialMarkDisabled() {
         String jvmOptions = "-Xss128k -XX:-CMSParallelInitialMarkEnabled -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:-CMSParallelInitialMarkEnabled option incorrect.", "-XX:-CMSParallelInitialMarkEnabled",
-                jvm.getCmsParallelInitialMarkDisabled());
+        assertEquals("-XX:-CMSParallelInitialMarkEnabled",jvm.getCmsParallelInitialMarkDisabled(),"-XX:-CMSParallelInitialMarkEnabled option incorrect.");
     }
 
     @Test
     public void testCmsParallelRemarkDisabled() {
         String jvmOptions = "-Xss128k -XX:-CMSParallelRemarkEnabled -XX:+DisableExplicitGC";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:-CMSParallelRemarkEnabled option incorrect.", "-XX:-CMSParallelRemarkEnabled",
-                jvm.getCmsParallelRemarkDisabled());
+        assertEquals("-XX:-CMSParallelRemarkEnabled",jvm.getCmsParallelRemarkDisabled(),"-XX:-CMSParallelRemarkEnabled option incorrect.");
     }
 
     @Test
     public void testG1SummarizeRSetStatsEnabled() {
         String jvmOptions = "-Xss128k -XX:+UnlockExperimentalVMOptions -XX:+G1SummarizeRSetStats -d64";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("-XX:+G1SummarizeRSetStats option incorrect.", "-XX:+G1SummarizeRSetStats",
-                jvm.getG1SummarizeRSetStatsEnabled());
+        assertEquals("-XX:+G1SummarizeRSetStats",jvm.getG1SummarizeRSetStatsEnabled(),"-XX:+G1SummarizeRSetStats option incorrect.");
     }
 
     @Test
@@ -955,7 +929,7 @@ public class TestJvm {
                 + "-XX:G1SummarizeRSetStatsPeriod=1 -d64";
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:G1SummarizeRSetStatsPeriod=NNN not found.", jvm.getG1SummarizeRSetStatsPeriod());
-        assertEquals("G1SummarizeRSetStatsPeriod incorrect.", "1", jvm.getG1SummarizeRSetStatsPeriodValue());
+        assertEquals("1",jvm.getG1SummarizeRSetStatsPeriodValue(),"G1SummarizeRSetStatsPeriod incorrect.");
     }
 
     @Test
@@ -963,7 +937,7 @@ public class TestJvm {
         String jvmOptions = "-Xss128k -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/path/";
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:HeapDumpPath=/path/ not found.", jvm.getHeapDumpPathOption());
-        assertEquals("Heap dump path value incorrect.", "/path/", jvm.getHeapDumpPathValue());
+        assertEquals("/path/",jvm.getHeapDumpPathValue(),"Heap dump path value incorrect.");
     }
 
     @Test
@@ -971,7 +945,7 @@ public class TestJvm {
         String jvmOptions = "-Xss128k -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/path/to/heap.dump";
         Jvm jvm = new Jvm(jvmOptions, null);
         assertNotNull("-XX:HeapDumpPath=/path/to/heap.dump not found.", jvm.getHeapDumpPathOption());
-        assertEquals("Heap dump path value incorrect.", "/path/to/heap.dump", jvm.getHeapDumpPathValue());
+        assertEquals("/path/to/heap.dump",jvm.getHeapDumpPathValue(),"Heap dump path value incorrect.");
     }
 
     @Test
@@ -979,17 +953,12 @@ public class TestJvm {
         String jvmOptions = "-Xss128K -XX:-BackgroundCompilation -Xms1024m -Xmx2048m -XX:-UseCompressedClassPointers "
                 + "-XX:-UseCompressedOops -XX:-TraceClassUnloading";
         Jvm jvm = new Jvm(jvmOptions, null);
-        assertEquals("Disabled options count incorrect.", 4, jvm.getDisabledOptions().size());
-        assertTrue("-XX:-BackgroundCompilation not identified as disabled option.",
-                jvm.getDisabledOptions().contains("-XX:-BackgroundCompilation"));
-        assertTrue("-XX:-UseCompressedClassPointers not identified as disabled option.",
-                jvm.getDisabledOptions().contains("-XX:-UseCompressedClassPointers"));
-        assertTrue("-XX:-UseCompressedOops not identified as disabled option.",
-                jvm.getDisabledOptions().contains("-XX:-UseCompressedOops"));
-        assertTrue("-XX:-TraceClassUnloading not identified as disabled option.",
-                jvm.getDisabledOptions().contains("-XX:-TraceClassUnloading"));
+        assertEquals(4,jvm.getDisabledOptions().size(),"Disabled options count incorrect.");
+        assertTrue(jvm.getDisabledOptions().contains("-XX:-BackgroundCompilation"), "-XX:-BackgroundCompilation not identified as disabled option.");
+        assertTrue(jvm.getDisabledOptions().contains("-XX:-UseCompressedClassPointers"), "-XX:-UseCompressedClassPointers not identified as disabled option.");
+        assertTrue(jvm.getDisabledOptions().contains("-XX:-UseCompressedOops"), "-XX:-UseCompressedOops not identified as disabled option.");
+        assertTrue(jvm.getDisabledOptions().contains("-XX:-TraceClassUnloading"), "-XX:-TraceClassUnloading not identified as disabled option.");
         assertNotNull("Unaccounted disabled options not identified.", jvm.getUnaccountedDisabledOptions());
-        assertEquals("Unaccounted disabled options incorrect.", "-XX:-TraceClassUnloading",
-                jvm.getUnaccountedDisabledOptions());
+        assertEquals("-XX:-TraceClassUnloading",jvm.getUnaccountedDisabledOptions(),"Unaccounted disabled options incorrect.");
     }
 }

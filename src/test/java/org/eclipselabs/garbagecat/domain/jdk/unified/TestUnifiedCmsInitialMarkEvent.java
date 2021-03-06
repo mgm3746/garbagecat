@@ -11,9 +11,8 @@
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.List;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -32,69 +31,61 @@ public class TestUnifiedCmsInitialMarkEvent {
     @Test
     public void testLogLine() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".",
-                UnifiedCmsInitialMarkEvent.match(logLine));
+        assertTrue(UnifiedCmsInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 178 - 0, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 157, event.getDuration());
-        assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
-        assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
-        assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
+        assertEquals((long) (178 - 0),event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(157,event.getDuration(),"Duration not parsed correctly.");
+        assertEquals(0,event.getTimeUser(),"User time not parsed correctly.");
+        assertEquals(0,event.getTimeReal(),"Real time not parsed correctly.");
+        assertEquals(100,event.getParallelism(),"Parallelism not calculated correctly.");
     }
 
     @Test
     public void testIdentityEventType() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK + "not identified.",
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK, JdkUtil.identifyEventType(logLine));
+        assertEquals(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK + "not identified.");
     }
 
     @Test
     public void testParseLogLine() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not parsed.",
-                JdkUtil.parseLogLine(logLine) instanceof UnifiedCmsInitialMarkEvent);
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedCmsInitialMarkEvent, JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not parsed.");
     }
 
     @Test
     public void testBlocking() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
     public void testReportable() {
-        assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as reportable.",
-                JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK));
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK), JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as reportable.");
     }
 
     @Test
     public void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_CMS_INITIAL_MARK);
-        assertTrue(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as unified.",
-                UnifiedUtil.isUnifiedLogging(eventTypes));
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as unified.");
     }
 
     @Test
     public void testLogLineWhitespaceAtEnd() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms     ";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".",
-                UnifiedCmsInitialMarkEvent.match(logLine));
+        assertTrue(UnifiedCmsInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
     }
 
     @Test
     public void testLogLineWithTimesData() {
         String logLine = "[0.053s][info][gc           ] GC(1) Pause Initial Mark 0M->0M(2M) 0.278ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".",
-                UnifiedCmsInitialMarkEvent.match(logLine));
+        assertTrue(UnifiedCmsInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 53 - 0, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 278, event.getDuration());
-        assertEquals("User time not parsed correctly.", 0, event.getTimeUser());
-        assertEquals("Real time not parsed correctly.", 0, event.getTimeReal());
-        assertEquals("Parallelism not calculated correctly.", 100, event.getParallelism());
+        assertEquals((long) (53 - 0),event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(278,event.getDuration(),"Duration not parsed correctly.");
+        assertEquals(0,event.getTimeUser(),"User time not parsed correctly.");
+        assertEquals(0,event.getTimeReal(),"Real time not parsed correctly.");
+        assertEquals(100,event.getParallelism(),"Parallelism not calculated correctly.");
     }
 }
