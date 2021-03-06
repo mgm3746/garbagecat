@@ -12,7 +12,24 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat;
 
+import static org.eclipselabs.garbagecat.OptionsParser.usage;
+import static org.eclipselabs.garbagecat.util.Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
 import static org.eclipselabs.garbagecat.util.Constants.LINE_SEPARATOR;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_HELP_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_JVMOPTIONS_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_JVMOPTIONS_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_LATEST_VERSION_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_OUTPUT_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_OUTPUT_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_PREPROCESS_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_REORDER_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OUTPUT_FILE_NAME;
+import static org.eclipselabs.garbagecat.util.GcUtil.parseStartDateTime;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_PERM_GEN;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED;
@@ -27,15 +44,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
-import org.eclipselabs.garbagecat.util.Constants;
-import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -65,126 +78,65 @@ public class Main {
      *            inspect.
      */
     public static void main(String[] args) {
-
-        CommandLine cmd = null;
-
         try {
-            cmd = OptionsParser.parseOptions(args);
+        	CommandLine cmd = OptionsParser.parseOptions(args);
+            if (cmd != null) {
+                if (cmd.hasOption(OPTION_HELP_LONG)) {
+                    usage();
+                } else {
+					createReport(cmd);
+				}
+            }
         } catch (ParseException pe) {
             System.out.println(pe.getMessage());
-            OptionsParser.usage();
-        }
-
-        if (cmd != null) {
-            if (cmd.hasOption(Constants.OPTION_HELP_LONG)) {
-                OptionsParser.usage();
-            } else {
-
-                // Determine JVM environment information.
-                Date jvmStartDate = null;
-                if (cmd.hasOption(Constants.OPTION_STARTDATETIME_LONG)) {
-                    jvmStartDate = GcUtil.parseStartDateTime(cmd.getOptionValue(Constants.OPTION_STARTDATETIME_SHORT));
-                }
-
-                String jvmOptions = null;
-                if (cmd.hasOption(Constants.OPTION_JVMOPTIONS_LONG)) {
-                    jvmOptions = cmd.getOptionValue(Constants.OPTION_JVMOPTIONS_SHORT);
-                }
-
-                String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
-                File logFile = new File(logFileName);
-
-                GcManager gcManager = new GcManager();
-
-                // Do preprocessing
-                if (cmd.hasOption(Constants.OPTION_PREPROCESS_LONG)
-                        || cmd.hasOption(Constants.OPTION_STARTDATETIME_LONG)) {
-                    /*
-                     * Requiring the JVM start date/time for preprocessing is a hack to handle datestamps. When
-                     * garbagecat was started there was no <code>-XX:+PrintGCDateStamps</code> option. When it was
-                     * introduced in JDK 1.6 update 4, the easiest thing to do to handle datestamps was to preprocess
-                     * the datestamps and convert them to timestamps.
-                     * 
-                     * TODO: Handle datetimes separately from preprocessing so preprocessing doesn't require passing in
-                     * the JVM start date/time.
-                     */
-                    logFile = gcManager.preprocess(logFile, jvmStartDate);
-                }
-
-                // Allow logging to be reordered?
-                boolean reorder = cmd.hasOption(Constants.OPTION_REORDER_LONG);
-
-                // Store garbage collection logging in data store.
-                gcManager.store(logFile, reorder);
-
-                // Create report
-                Jvm jvm = new Jvm(jvmOptions, jvmStartDate);
-                // Determine report options
-				int throughputThreshold = cmd.hasOption(Constants.OPTION_THRESHOLD_LONG)
-						? Integer.parseInt(cmd.getOptionValue(Constants.OPTION_THRESHOLD_SHORT))
-						: Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
-
-                JvmRun jvmRun = gcManager.getJvmRun(jvm, throughputThreshold);
-                String outputFileName;
-                if (cmd.hasOption(Constants.OPTION_OUTPUT_LONG)) {
-                    outputFileName = cmd.getOptionValue(Constants.OPTION_OUTPUT_SHORT);
-                } else {
-                    outputFileName = Constants.OUTPUT_FILE_NAME;
-                }
-
-                boolean version = cmd.hasOption(Constants.OPTION_VERSION_LONG);
-                boolean latestVersion = cmd.hasOption(Constants.OPTION_LATEST_VERSION_LONG);
-                createReport(jvmRun, outputFileName, version, latestVersion, logFileName);
-            }
+            usage();
         }
     }
 
-    /**
-     * Validate command line options.
-     * 
-     * @param cmd
-     *            The command line options.
-     * 
-     * @throws ParseException
-     *             Command line options not valid.
-     */
-    public static void validateOptions(CommandLine cmd) throws ParseException {
-        // Ensure log file specified.
-        if (cmd.getArgList().size() == 0) {
-            throw new ParseException("Missing log file");
-        }
-        String logFileName = null;
-        if (cmd.getArgList().size() > 0) {
-            logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
-        }
-        // Ensure gc log file exists.
-        if (logFileName == null) {
-            throw new ParseException("Missing log file not");
-        }
-        File logFile = new File(logFileName);
-        if (!logFile.exists()) {
-            throw new ParseException("Invalid log file: '" + logFileName + "'");
-        }
-        // threshold
-        if (cmd.hasOption(Constants.OPTION_THRESHOLD_LONG)) {
-            String thresholdRegEx = "^\\d{1,3}$";
-            String thresholdOptionValue = cmd.getOptionValue(Constants.OPTION_THRESHOLD_SHORT);
-            Pattern pattern = Pattern.compile(thresholdRegEx);
-            Matcher matcher = pattern.matcher(thresholdOptionValue);
-            if (!matcher.find()) {
-                throw new ParseException("Invalid threshold: '" + thresholdOptionValue + "'");
-            }
-        }
-        // startdatetime
-        if (cmd.hasOption(Constants.OPTION_STARTDATETIME_LONG)) {
-            String startdatetimeOptionValue = cmd.getOptionValue(Constants.OPTION_STARTDATETIME_SHORT);
-            Pattern pattern = Pattern.compile(GcUtil.START_DATE_TIME_REGEX);
-            Matcher matcher = pattern.matcher(startdatetimeOptionValue);
-            if (!matcher.find()) {
-                throw new ParseException("Invalid startdatetime: '" + startdatetimeOptionValue + "'");
-            }
-        }
-    }
+	public static void createReport(CommandLine cmd) {
+		// Determine JVM environment information.
+		Date jvmStartDate = cmd.hasOption(OPTION_STARTDATETIME_LONG) ? parseStartDateTime(cmd.getOptionValue(OPTION_STARTDATETIME_SHORT)) : null;
+		String jvmOptions = cmd.hasOption(OPTION_JVMOPTIONS_LONG) ? cmd.getOptionValue(OPTION_JVMOPTIONS_SHORT) : null;
+		String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
+		File logFile = new File(logFileName);
+
+		GcManager gcManager = new GcManager();
+
+		// Do preprocessing
+		if (cmd.hasOption(OPTION_PREPROCESS_LONG)
+		        || cmd.hasOption(OPTION_STARTDATETIME_LONG)) {
+		    /*
+		     * Requiring the JVM start date/time for preprocessing is a hack to handle datestamps. When
+		     * garbagecat was started there was no <code>-XX:+PrintGCDateStamps</code> option. When it was
+		     * introduced in JDK 1.6 update 4, the easiest thing to do to handle datestamps was to preprocess
+		     * the datestamps and convert them to timestamps.
+		     * 
+		     * TODO: Handle datetimes separately from preprocessing so preprocessing doesn't require passing in
+		     * the JVM start date/time.
+		     */
+		    logFile = gcManager.preprocess(logFile, jvmStartDate);
+		}
+
+		// Allow logging to be reordered?
+		boolean reorder = cmd.hasOption(OPTION_REORDER_LONG);
+
+		// Store garbage collection logging in data store.
+		gcManager.store(logFile, reorder);
+
+		// Create report
+		Jvm jvm = new Jvm(jvmOptions, jvmStartDate);
+		// Determine report options
+		int throughputThreshold = cmd.hasOption(OPTION_THRESHOLD_LONG)
+				? Integer.parseInt(cmd.getOptionValue(OPTION_THRESHOLD_SHORT))
+				: DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
+
+		JvmRun jvmRun = gcManager.getJvmRun(jvm, throughputThreshold);
+		String outputFileName = cmd.hasOption(OPTION_OUTPUT_LONG) ? cmd.getOptionValue(OPTION_OUTPUT_SHORT)
+				: OUTPUT_FILE_NAME;
+		boolean version = cmd.hasOption(OPTION_VERSION_LONG);
+		boolean latestVersion = cmd.hasOption(OPTION_LATEST_VERSION_LONG);
+		createReport(jvmRun, outputFileName, version, latestVersion, logFileName);
+	}
 
     /**
      * Create Garbage Collection Analysis report.

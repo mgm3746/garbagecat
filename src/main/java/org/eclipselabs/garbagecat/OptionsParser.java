@@ -1,6 +1,9 @@
 package org.eclipselabs.garbagecat;
 
+import java.io.File;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -17,6 +20,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.GcUtil;
 import org.json.JSONObject;
 
 public class OptionsParser {
@@ -74,11 +78,57 @@ public class OptionsParser {
 	        System.out.println("Latest garbagecat version/tag: " + getLatestVersion());
 	    } else {
 	        cmd = parser.parse(options, args);
-	        Main.validateOptions(cmd);
+	        validateOptions(cmd);
 	    }
 	    return cmd;
 	}
-	
+
+	/**
+     * Validate command line options.
+     * 
+     * @param cmd
+     *            The command line options.
+     * 
+     * @throws ParseException
+     *             Command line options not valid.
+     */
+    private static void validateOptions(CommandLine cmd) throws ParseException {
+        // Ensure log file specified.
+        if (cmd.getArgList().size() == 0) {
+            throw new ParseException("Missing log file");
+        }
+        String logFileName = null;
+        if (cmd.getArgList().size() > 0) {
+            logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
+        }
+        // Ensure gc log file exists.
+        if (logFileName == null) {
+            throw new ParseException("Missing log file not");
+        }
+        File logFile = new File(logFileName);
+        if (!logFile.exists()) {
+            throw new ParseException("Invalid log file: '" + logFileName + "'");
+        }
+        // threshold
+        if (cmd.hasOption(Constants.OPTION_THRESHOLD_LONG)) {
+            String thresholdRegEx = "^\\d{1,3}$";
+            String thresholdOptionValue = cmd.getOptionValue(Constants.OPTION_THRESHOLD_SHORT);
+            Pattern pattern = Pattern.compile(thresholdRegEx);
+            Matcher matcher = pattern.matcher(thresholdOptionValue);
+            if (!matcher.find()) {
+                throw new ParseException("Invalid threshold: '" + thresholdOptionValue + "'");
+            }
+        }
+        // startdatetime
+        if (cmd.hasOption(Constants.OPTION_STARTDATETIME_LONG)) {
+            String startdatetimeOptionValue = cmd.getOptionValue(Constants.OPTION_STARTDATETIME_SHORT);
+            Pattern pattern = Pattern.compile(GcUtil.START_DATE_TIME_REGEX);
+            Matcher matcher = pattern.matcher(startdatetimeOptionValue);
+            if (!matcher.find()) {
+                throw new ParseException("Invalid startdatetime: '" + startdatetimeOptionValue + "'");
+            }
+        }
+    }	
 	/**
      * Output usage help.
      * 
