@@ -82,7 +82,7 @@ public class Main {
      *            The argument list includes one or more scope options followed by the name of the gc log file to
      *            inspect.
      */
-    public static void main(String[] args) {
+    public static void main(String... args) {
         try {
         	CommandLine cmd = parseOptions(args);
             if (cmd == null || cmd.hasOption(OPTION_HELP_LONG) || cmd.hasOption(OPTION_HELP_LONG)) {
