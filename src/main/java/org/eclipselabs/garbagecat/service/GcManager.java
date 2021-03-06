@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -200,10 +199,8 @@ public class GcManager {
             }
 
             // output entangled log lines
-            if (entangledLogLines.size() > 0) {
-                Iterator<String> iterator = entangledLogLines.iterator();
-                while (iterator.hasNext()) {
-                    String logLine = iterator.next();
+            if (!entangledLogLines.isEmpty()) {
+                for (String logLine : entangledLogLines) {
                     bufferedWriter.write(Constants.LINE_SEPARATOR + logLine);
                 }
                 // Reset entangled log lines
@@ -416,10 +413,8 @@ public class GcManager {
             }
         } else {
             // Output any entangled log lines
-            if (entangledLogLines != null && entangledLogLines.size() > 0) {
-                Iterator<String> iterator = entangledLogLines.iterator();
-                while (iterator.hasNext()) {
-                    String logLine = iterator.next();
+            if (entangledLogLines != null && !entangledLogLines.isEmpty()) {
+                for (String logLine : entangledLogLines) {
                     if (preprocessedLogLine == null) {
                         preprocessedLogLine = logLine;
                     } else {
@@ -859,14 +854,12 @@ public class GcManager {
      *         throughput threshold goal.
      */
     private List<String> getBottlenecks(Jvm jvm, int throughputThreshold) {
-        ArrayList<String> bottlenecks = new ArrayList<String>();
+        List<String> bottlenecks = new ArrayList<String>();
         List<BlockingEvent> blockingEvents = jvmDao.getBlockingEvents();
-        Iterator<BlockingEvent> iterator = blockingEvents.iterator();
         BlockingEvent priorEvent = null;
-        while (iterator.hasNext()) {
-            BlockingEvent event = iterator.next();
+        for (BlockingEvent event : blockingEvents) {
             if (priorEvent != null && JdkUtil.isBottleneck(event, priorEvent, throughputThreshold)) {
-                if (bottlenecks.size() == 0) {
+                if (bottlenecks.isEmpty()) {
                     // Add current and prior event
                     if (jvm.getStartDate() != null) {
                         // Convert timestamps to date/time
@@ -974,7 +967,6 @@ public class GcManager {
      * @return True if the logging event can be thrown away, false if it should be kept.
      */
     private boolean isThrowawayEvent(String logLine) {
-        LogEvent event = JdkUtil.parseLogLine(logLine);
-        return event instanceof ThrowAwayEvent;
+        return JdkUtil.parseLogLine(logLine) instanceof ThrowAwayEvent;
     }
 }

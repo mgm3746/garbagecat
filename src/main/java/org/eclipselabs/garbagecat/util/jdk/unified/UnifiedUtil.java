@@ -13,11 +13,10 @@
 package org.eclipselabs.garbagecat.util.jdk.unified;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.GcUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 /**
  * <p>
@@ -27,52 +26,50 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedUtil {
+public final class UnifiedUtil {
+	
+	private UnifiedUtil() {
+		super();
+	}
 
     /**
      * @param eventTypes
      *            The JVM event types.
-     * @return True if the JVM events indicate unified logging (JDK9+), false otherwise.
+     * @return <code>true</code> if the JVM events indicate unified logging (JDK9+), false otherwise.
      */
-    public static final boolean isUnifiedLogging(List<JdkUtil.LogEventType> eventTypes) {
-        boolean isUnifiedLogging = false;
-        if (eventTypes.size() > 0) {
-            Iterator<JdkUtil.LogEventType> iterator = eventTypes.iterator();
-            while (iterator.hasNext() && !isUnifiedLogging) {
-                JdkUtil.LogEventType eventType = iterator.next();
-                switch (eventType) {
-                case HEAP_ADDRESS:
-                case HEAP_REGION_SIZE:
-                case UNIFIED_APPLICATION_STOPPED_TIME:
-                case UNIFIED_BLANK_LINE:
-                case UNIFIED_CONCURRENT:
-                case UNIFIED_CMS_INITIAL_MARK:
-                case UNIFIED_G1_CLEANUP:
-                case UNIFIED_G1_INFO:
-                case UNIFIED_G1_MIXED_PAUSE:
-                case UNIFIED_G1_YOUNG_INITIAL_MARK:
-                case UNIFIED_G1_YOUNG_PAUSE:
-                case UNIFIED_G1_YOUNG_PREPARE_MIXED:
-                case UNIFIED_OLD:
-                case UNIFIED_REMARK:
-                case UNIFIED_PARALLEL_COMPACTING_OLD:
-                case UNIFIED_PARALLEL_SCAVENGE:
-                case UNIFIED_PAR_NEW:
-                case UNIFIED_SERIAL_NEW:
-                case UNIFIED_SERIAL_OLD:
-                case UNIFIED_YOUNG:
-                case USING_CMS:
-                case USING_G1:
-                case USING_SHENANDOAH:
-                case USING_PARALLEL:
-                case USING_SERIAL:
-                    isUnifiedLogging = true;
-                    break;
-                default:
-                }
-            }
-        }
-        return isUnifiedLogging;
+    public static final boolean isUnifiedLogging(List<LogEventType> eventTypes) {
+        for (LogEventType eventType : eventTypes) {
+		    switch (eventType) {
+		    case HEAP_ADDRESS:
+		    case HEAP_REGION_SIZE:
+		    case UNIFIED_APPLICATION_STOPPED_TIME:
+		    case UNIFIED_BLANK_LINE:
+		    case UNIFIED_CONCURRENT:
+		    case UNIFIED_CMS_INITIAL_MARK:
+		    case UNIFIED_G1_CLEANUP:
+		    case UNIFIED_G1_INFO:
+		    case UNIFIED_G1_MIXED_PAUSE:
+		    case UNIFIED_G1_YOUNG_INITIAL_MARK:
+		    case UNIFIED_G1_YOUNG_PAUSE:
+		    case UNIFIED_G1_YOUNG_PREPARE_MIXED:
+		    case UNIFIED_OLD:
+		    case UNIFIED_REMARK:
+		    case UNIFIED_PARALLEL_COMPACTING_OLD:
+		    case UNIFIED_PARALLEL_SCAVENGE:
+		    case UNIFIED_PAR_NEW:
+		    case UNIFIED_SERIAL_NEW:
+		    case UNIFIED_SERIAL_OLD:
+		    case UNIFIED_YOUNG:
+		    case USING_CMS:
+		    case USING_G1:
+		    case USING_SHENANDOAH:
+		    case USING_PARALLEL:
+		    case USING_SERIAL:
+		        return true;
+		    default:
+		    }
+		}
+        return false;
     }
 
     /**
