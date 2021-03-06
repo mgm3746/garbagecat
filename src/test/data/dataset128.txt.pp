@@ -1,0 +1,1 @@
+2017-05-25T12:24:06.040+0000: 206.156: [GC pause (young) (to-space overflow), 0.77121400 secs][Eden: 1270M(1270M)->0B(723M) Survivors: 124M->175M Heap: 2468M(3072M)->1695M(3072M)] [Times: user=1.51 sys=0.14, real=0.77 secs]

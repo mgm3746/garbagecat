@@ -1,0 +1,2 @@
+2016-10-12T11:08:53.713+0200: 4812.839: [Full GC (JvmtiEnv ForceGarbageCollection)  801M->801M(5120M), 3.3998883 secs][Eden: 0.0B(420.0M)->0.0B(420.0M) Survivors: 0.0B->0.0B Heap: 801.7M(5120.0M)->801.7M(5120.0M)], [Metaspace: 325693K->325693K(1511424K)] [Times: user=5.06 sys=0.00, real=3.40 secs]
+2016-10-12T11:08:57.114+0200: 4816.240: [GC pause (Metadata GC Threshold) (young) (initial-mark), 0.0517377 secs][Eden: 0.0B(420.0M)->0.0B(420.0M) Survivors: 0.0B->0.0B Heap: 801.7M(5120.0M)->801.7M(5120.0M)] [Times: user=0.09 sys=0.00, real=0.05 secs]

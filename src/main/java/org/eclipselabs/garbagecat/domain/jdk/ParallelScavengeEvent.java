@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +24,7 @@ import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -95,34 +98,34 @@ public class ParallelScavengeEvent extends ParallelCollector
     private long timestamp;
 
     /**
-     * Young generation size (kilobytes) at beginning of GC event.
+     * Young generation size at beginning of GC event.
      */
-    private int young;
+    private Memory young;
 
     /**
-     * Young generation size (kilobytes) at end of GC event.
+     * Young generation size at end of GC event.
      */
-    private int youngEnd;
+    private Memory youngEnd;
 
     /**
-     * Available space in young generation (kilobytes). Equals young generation allocation minus one survivor space.
+     * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private int youngAvailable;
+    private Memory youngAvailable;
 
     /**
-     * Old generation size (kilobytes) at beginning of GC event.
+     * Old generation size at beginning of GC event.
      */
-    private int old;
+    private Memory old;
 
     /**
-     * Old generation size (kilobytes) at end of GC event.
+     * Old generation size at end of GC event.
      */
-    private int oldEnd;
+    private Memory oldEnd;
 
     /**
-     * Space allocated to old generation (kilobytes).
+     * Space allocated to old generation.
      */
-    private int oldAllocation;
+    private Memory oldAllocation;
 
     /**
      * The trigger for the GC event.
@@ -173,15 +176,12 @@ public class ParallelScavengeEvent extends ParallelCollector
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             trigger = matcher.group(15);
-            young = Integer.parseInt(matcher.group(18));
-            youngEnd = Integer.parseInt(matcher.group(19));
-            youngAvailable = Integer.parseInt(matcher.group(20));
-            int totalBegin = Integer.parseInt(matcher.group(21));
-            old = totalBegin - young;
-            int totalEnd = Integer.parseInt(matcher.group(22));
-            oldEnd = totalEnd - youngEnd;
-            int totalAllocation = Integer.parseInt(matcher.group(23));
-            oldAllocation = totalAllocation - youngAvailable;
+            young = kilobytes((matcher.group(18)));
+            youngEnd = kilobytes((matcher.group(19)));
+            youngAvailable = kilobytes((matcher.group(20)));
+            old = kilobytes(matcher.group(21)).minus(young);
+            oldEnd = kilobytes(matcher.group(22)).minus(youngEnd);
+            oldAllocation = kilobytes(matcher.group(23)).minus(youngAvailable);
             duration = JdkMath.convertSecsToMicros(matcher.group(24)).intValue();
             if (matcher.group(27) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
@@ -219,27 +219,27 @@ public class ParallelScavengeEvent extends ParallelCollector
         return timestamp;
     }
 
-    public int getYoungOccupancyInit() {
+    public Memory getYoungOccupancyInit() {
         return young;
     }
 
-    public int getYoungOccupancyEnd() {
+    public Memory getYoungOccupancyEnd() {
         return youngEnd;
     }
 
-    public int getYoungSpace() {
+    public Memory getYoungSpace() {
         return youngAvailable;
     }
 
-    public int getOldOccupancyInit() {
+    public Memory getOldOccupancyInit() {
         return old;
     }
 
-    public int getOldOccupancyEnd() {
+    public Memory getOldOccupancyEnd() {
         return oldEnd;
     }
 
-    public int getOldSpace() {
+    public Memory getOldSpace() {
         return oldAllocation;
     }
 

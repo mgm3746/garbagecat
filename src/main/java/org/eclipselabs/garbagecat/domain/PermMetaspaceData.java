@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
+import org.eclipselabs.garbagecat.util.Memory;
+
 /**
  * Permanent generation or metaspace data.
  * 
@@ -47,15 +49,15 @@ public interface PermMetaspaceData {
     /**
      * @return Perm generation initial occupancy in kilobytes.
      */
-    int getPermOccupancyInit();
+    Memory getPermOccupancyInit();
 
     /**
      * @return Total perm generation space at the end of the event (i.e. it reflects any resizing) in kilobytes.
      */
-    int getPermSpace();
+    Memory getPermSpace();
 
     /**
      * @return Perm generation end occupancy in kilobytes.
      */
-    int getPermOccupancyEnd();
+    Memory getPermOccupancyEnd();
 }

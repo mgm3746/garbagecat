@@ -12,40 +12,46 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.junit.Assert;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
+
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+
+
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestApplicationStoppedTimePreprocessAction extends TestCase {
+public class TestApplicationStoppedTimePreprocessAction {
 
+    @Test
     public void testLine2CmsConcurrent() {
         String priorLogLine = "6545.692Total time for which application threads were stopped: 0.0007993 seconds";
         String logLine = ": [CMS-concurrent-abortable-preclean: 0.025/0.042 secs] "
                 + "[Times: user=0.04 sys=0.00, real=0.04 secs]";
-        Assert.assertTrue(
+        assertTrue(
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".",
                 ApplicationStoppedTimePreprocessAction.match(logLine, priorLogLine));
     }
 
+    @Test
     public void testLine2TimesBlock() {
         String priorLogLine = "234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for"
                 + " which application threads were stopped: 0.0123330 seconds";
         String logLine = " [Times: user=0.10 sys=0.00, real=0.12 secs]";
-        Assert.assertTrue(
+        assertTrue(
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".",
                 ApplicationStoppedTimePreprocessAction.match(logLine, priorLogLine));
     }
 
+    @Test
     public void testLine2TimesBlockWhitespaceAtEnd() {
         String priorLogLine = "234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for"
                 + " which application threads were stopped: 0.0123330 seconds";
         String logLine = " [Times: user=0.10 sys=0.00, real=0.12 secs]   ";
-        Assert.assertTrue(
+        assertTrue(
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".",
                 ApplicationStoppedTimePreprocessAction.match(logLine, priorLogLine));
     }

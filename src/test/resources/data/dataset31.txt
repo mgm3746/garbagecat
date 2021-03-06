@@ -1,0 +1,5 @@
+ [Times: user=0.01 sys=0.00, real=0.00 secs]
+929950.291: [GC [PSYoungGen: 698048K->0K(698496K)] 808652K->110604K(2096640K), 0.0044750 secs] [Times: user=0.00 sys=0.01, real=0.01 secs]
+929954.428: [GC [PSYoungGen: 698048K->0K(698624K)] 808652K->110604K(2096768K), 0.0041380 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
+929958.646: [GC [PSYoungGen: 698176K->0K(698560K)] 808780K->110604K(2096704K), 0.0037550 secs] [Times: user=0.00 sys=0.01, real=0.00 secs]
+929962.808: [GC [PSYoungGen: 698176K->0K(698688K)] 808780K->110604K(2096832K), 0.0018380 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]

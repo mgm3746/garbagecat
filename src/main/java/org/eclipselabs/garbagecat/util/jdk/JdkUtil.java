@@ -109,7 +109,7 @@ import org.eclipselabs.garbagecat.util.GcUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class JdkUtil {
+public final class JdkUtil {
 
     /**
      * Defined logging events.
@@ -184,7 +184,7 @@ public class JdkUtil {
      * Make default constructor private so the class cannot be instantiated.
      */
     private JdkUtil() {
-
+    	super();
     }
 
     /**
@@ -385,253 +385,175 @@ public class JdkUtil {
      */
     public static final LogEvent parseLogLine(String logLine) {
         LogEventType eventType = identifyEventType(logLine);
-        LogEvent event = null;
         switch (eventType) {
         // Unified (order of appearance)
         case HEAP_ADDRESS:
-            event = new HeapAddressEvent(logLine);
-            break;
+            return new HeapAddressEvent(logLine);
         case HEAP_REGION_SIZE:
-            event = new HeapRegionSizeEvent(logLine);
-            break;
+        	return new HeapRegionSizeEvent(logLine);
         case UNIFIED_APPLICATION_STOPPED_TIME:
-            event = new UnifiedApplicationStoppedTimeEvent(logLine);
-            break;
+        	return new UnifiedApplicationStoppedTimeEvent(logLine);
         case UNIFIED_BLANK_LINE:
-            event = new UnifiedBlankLineEvent(logLine);
-            break;
+        	return new UnifiedBlankLineEvent(logLine);
         case UNIFIED_CONCURRENT:
-            event = new UnifiedConcurrentEvent();
-            break;
+        	return new UnifiedConcurrentEvent();
         case UNIFIED_CMS_INITIAL_MARK:
-            event = new UnifiedCmsInitialMarkEvent(logLine);
-            break;
+        	return new UnifiedCmsInitialMarkEvent(logLine);
         case UNIFIED_G1_CLEANUP:
-            event = new UnifiedG1CleanupEvent(logLine);
-            break;
+        	return new UnifiedG1CleanupEvent(logLine);
         case UNIFIED_G1_INFO:
-            event = new UnifiedG1InfoEvent(logLine);
-            break;
+        	return new UnifiedG1InfoEvent(logLine);
         case UNIFIED_G1_MIXED_PAUSE:
-            event = new UnifiedG1MixedPauseEvent(logLine);
-            break;
+        	return new UnifiedG1MixedPauseEvent(logLine);
         case UNIFIED_G1_YOUNG_INITIAL_MARK:
-            event = new UnifiedG1YoungInitialMarkEvent(logLine);
-            break;
+        	return new UnifiedG1YoungInitialMarkEvent(logLine);
         case UNIFIED_G1_YOUNG_PAUSE:
-            event = new UnifiedG1YoungPauseEvent(logLine);
-            break;
+        	return new UnifiedG1YoungPauseEvent(logLine);
         case UNIFIED_G1_YOUNG_PREPARE_MIXED:
-            event = new UnifiedG1YoungPrepareMixedEvent(logLine);
-            break;
+        	return new UnifiedG1YoungPrepareMixedEvent(logLine);
         case UNIFIED_OLD:
-            event = new UnifiedOldEvent(logLine);
-            break;
+        	return new UnifiedOldEvent(logLine);
         case UNIFIED_PARALLEL_COMPACTING_OLD:
-            event = new UnifiedParallelCompactingOldEvent(logLine);
-            break;
+        	return new UnifiedParallelCompactingOldEvent(logLine);
         case UNIFIED_PARALLEL_SCAVENGE:
-            event = new UnifiedParallelScavengeEvent(logLine);
-            break;
+        	return new UnifiedParallelScavengeEvent(logLine);
         case UNIFIED_PAR_NEW:
-            event = new UnifiedParNewEvent(logLine);
-            break;
+        	return new UnifiedParNewEvent(logLine);
         case UNIFIED_REMARK:
-            event = new UnifiedRemarkEvent(logLine);
-            break;
+        	return new UnifiedRemarkEvent(logLine);
         case UNIFIED_SERIAL_NEW:
-            event = new UnifiedSerialNewEvent(logLine);
-            break;
+        	return new UnifiedSerialNewEvent(logLine);
         case UNIFIED_SERIAL_OLD:
-            event = new UnifiedSerialOldEvent(logLine);
-            break;
+        	return new UnifiedSerialOldEvent(logLine);
         case UNIFIED_YOUNG:
-            event = new UnifiedYoungEvent(logLine);
-            break;
+        	return new UnifiedYoungEvent(logLine);
         case USING_CMS:
-            event = new UsingCmsEvent(logLine);
-            break;
+        	return new UsingCmsEvent(logLine);
         case USING_G1:
-            event = new UsingG1Event(logLine);
-            break;
+        	return new UsingG1Event(logLine);
         case USING_SHENANDOAH:
-            event = new UsingShenandoahEvent(logLine);
-            break;
+        	return new UsingShenandoahEvent(logLine);
         case FOOTER_HEAP:
-            event = new FooterHeapEvent(logLine);
-            break;
+        	return new FooterHeapEvent(logLine);
         case FOOTER_STATS:
-            event = new FooterStatsEvent(logLine);
-            break;
+        	return new FooterStatsEvent(logLine);
         case USING_PARALLEL:
-            event = new UsingParallelEvent(logLine);
-            break;
+        	return new UsingParallelEvent(logLine);
         case USING_SERIAL:
-            event = new UsingSerialEvent(logLine);
-            break;
+        	return new UsingSerialEvent(logLine);
 
         // G1
         case G1_CLEANUP:
-            event = new G1CleanupEvent(logLine);
-            break;
+        	return new G1CleanupEvent(logLine);
         case G1_CONCURRENT:
-            event = new G1ConcurrentEvent(logLine);
-            break;
+        	return new G1ConcurrentEvent(logLine);
         case G1_FULL_GC:
-            event = new G1FullGCEvent(logLine);
-            break;
+        	return new G1FullGCEvent(logLine);
         case G1_MIXED_PAUSE:
-            event = new G1MixedPauseEvent(logLine);
-            break;
+        	return new G1MixedPauseEvent(logLine);
         case G1_REMARK:
-            event = new G1RemarkEvent(logLine);
-            break;
+        	return new G1RemarkEvent(logLine);
         case G1_YOUNG_INITIAL_MARK:
-            event = new G1YoungInitialMarkEvent(logLine);
-            break;
+        	return new G1YoungInitialMarkEvent(logLine);
         case G1_YOUNG_PAUSE:
-            event = new G1YoungPauseEvent(logLine);
-            break;
+        	return new G1YoungPauseEvent(logLine);
 
         // Shenandoah
         case SHENANDOAH_CANCELLING_GC:
-            event = new ShenandoahCancellingGcEvent();
-            break;
+        	return new ShenandoahCancellingGcEvent();
         case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
-            event = new ShenandoahConsiderClassUnloadingConcMarkEvent(logLine);
-            break;
+        	return new ShenandoahConsiderClassUnloadingConcMarkEvent(logLine);
         case SHENANDOAH_CONCURRENT:
-            event = new ShenandoahConcurrentEvent(logLine);
-            break;
+        	return new ShenandoahConcurrentEvent(logLine);
         case SHENANDOAH_DEGENERATED_GC_MARK:
-            event = new ShenandoahDegeneratedGcMarkEvent(logLine);
-            break;
+        	return new ShenandoahDegeneratedGcMarkEvent(logLine);
         case SHENANDOAH_FINAL_EVAC:
-            event = new ShenandoahFinalEvacEvent(logLine);
-            break;
+        	return new ShenandoahFinalEvacEvent(logLine);
         case SHENANDOAH_FINAL_MARK:
-            event = new ShenandoahFinalMarkEvent(logLine);
-            break;
+        	return new ShenandoahFinalMarkEvent(logLine);
         case SHENANDOAH_FINAL_UPDATE:
-            event = new ShenandoahFinalUpdateEvent(logLine);
-            break;
+        	return new ShenandoahFinalUpdateEvent(logLine);
         case SHENANDOAH_INIT_MARK:
-            event = new ShenandoahInitMarkEvent(logLine);
-            break;
+        	return new ShenandoahInitMarkEvent(logLine);
         case SHENANDOAH_INIT_UPDATE:
-            event = new ShenandoahInitUpdateEvent(logLine);
-            break;
+        	return new ShenandoahInitUpdateEvent(logLine);
         case SHENANDOAH_STATS:
-            event = new ShenandoahStatsEvent();
-            break;
+        	return new ShenandoahStatsEvent();
         case SHENANDOAH_TRIGGER:
-            event = new ShenandoahTriggerEvent();
-            break;
+        	return new ShenandoahTriggerEvent();
 
         // CMS
         case PAR_NEW:
-            event = new ParNewEvent(logLine);
-            break;
+        	return new ParNewEvent(logLine);
         case CMS_CONCURRENT:
-            event = new CmsConcurrentEvent();
-            break;
+        	return new CmsConcurrentEvent();
         case CMS_INITIAL_MARK:
-            event = new CmsInitialMarkEvent(logLine);
-            break;
+        	return new CmsInitialMarkEvent(logLine);
         case CMS_REMARK:
-            event = new CmsRemarkEvent(logLine);
-            break;
+        	return new CmsRemarkEvent(logLine);
         case CMS_SERIAL_OLD:
-            event = new CmsSerialOldEvent(logLine);
-            break;
+        	return new CmsSerialOldEvent(logLine);
 
         // Parallel
         case PARALLEL_COMPACTING_OLD:
-            event = new ParallelCompactingOldEvent(logLine);
-            break;
+        	return new ParallelCompactingOldEvent(logLine);
         case PARALLEL_SCAVENGE:
-            event = new ParallelScavengeEvent(logLine);
-            break;
+        	return new ParallelScavengeEvent(logLine);
         case PARALLEL_SERIAL_OLD:
-            event = new ParallelSerialOldEvent(logLine);
-            break;
+        	return new ParallelSerialOldEvent(logLine);
 
         // Serial
         case SERIAL_NEW:
-            event = new SerialNewEvent(logLine);
-            break;
+        	return new SerialNewEvent(logLine);
         case SERIAL_OLD:
-            event = new SerialOldEvent(logLine);
-            break;
+        	return new SerialOldEvent(logLine);
 
         // Other
         case APPLICATION_CONCURRENT_TIME:
-            event = new ApplicationConcurrentTimeEvent();
-            break;
+        	return new ApplicationConcurrentTimeEvent();
         case APPLICATION_LOGGING:
-            event = new ApplicationLoggingEvent(logLine);
-            break;
+        	return new ApplicationLoggingEvent(logLine);
         case APPLICATION_STOPPED_TIME:
-            event = new ApplicationStoppedTimeEvent(logLine);
-            break;
+        	return new ApplicationStoppedTimeEvent(logLine);
         case BLANK_LINE:
-            event = new BlankLineEvent(logLine);
-            break;
+        	return new BlankLineEvent(logLine);
         case CLASS_HISTOGRAM:
-            event = new ClassHistogramEvent(logLine);
-            break;
+        	return new ClassHistogramEvent(logLine);
         case CLASS_UNLOADING:
-            event = new ClassUnloadingEvent(logLine);
-            break;
+        	return new ClassUnloadingEvent(logLine);
         case FLS_STATISTICS:
-            event = new FlsStatisticsEvent(logLine);
-            break;
+        	return new FlsStatisticsEvent(logLine);
         case GC_INFO:
-            event = new GcInfoEvent(logLine);
-            break;
+        	return new GcInfoEvent(logLine);
         case GC_LOCKER:
-            event = new GcLockerEvent(logLine);
-            break;
+        	return new GcLockerEvent(logLine);
         case HEAP_AT_GC:
-            event = new HeapAtGcEvent(logLine);
-            break;
+        	return new HeapAtGcEvent(logLine);
         case GC_OVERHEAD_LIMIT:
-            event = new GcOverheadLimitEvent(logLine);
-            break;
+        	return new GcOverheadLimitEvent(logLine);
         case LOG_FILE:
-            event = new LogFileEvent(logLine);
-            break;
+        	return new LogFileEvent(logLine);
         case REFERENCE_GC:
-            event = new ReferenceGcEvent(logLine);
-            break;
+        	return new ReferenceGcEvent(logLine);
         case TENURING_DISTRIBUTION:
-            event = new TenuringDistributionEvent(logLine);
-            break;
+        	return new TenuringDistributionEvent(logLine);
         case THREAD_DUMP:
-            event = new ThreadDumpEvent(logLine);
-            break;
+        	return new ThreadDumpEvent(logLine);
         case UNKNOWN:
-            event = new UnknownEvent(logLine);
-            break;
+        	return new UnknownEvent(logLine);
         case VERBOSE_GC_OLD:
-            event = new VerboseGcOldEvent(logLine);
-            break;
+        	return new VerboseGcOldEvent(logLine);
         case VERBOSE_GC_YOUNG:
-            event = new VerboseGcYoungEvent(logLine);
-            break;
+        	return new VerboseGcYoungEvent(logLine);
         case HEADER_COMMAND_LINE_FLAGS:
-            event = new HeaderCommandLineFlagsEvent(logLine);
-            break;
+        	return new HeaderCommandLineFlagsEvent(logLine);
         case HEADER_MEMORY:
-            event = new HeaderMemoryEvent(logLine);
-            break;
+        	return new HeaderMemoryEvent(logLine);
         case HEADER_VERSION:
-            event = new HeaderVersionEvent(logLine);
-            break;
+        	return new HeaderVersionEvent(logLine);
         default:
             throw new AssertionError("Unexpected event type value: " + eventType);
         }
-        return event;
     }
 
     /**
@@ -649,133 +571,93 @@ public class JdkUtil {
      */
     public static final BlockingEvent hydrateBlockingEvent(LogEventType eventType, String logEntry, long timestamp,
             int duration) {
-        BlockingEvent event = null;
         switch (eventType) {
 
         // Unified (alphabetical)
         case UNIFIED_CMS_INITIAL_MARK:
-            event = new UnifiedCmsInitialMarkEvent(logEntry, timestamp, duration);
-            break;
+            return new UnifiedCmsInitialMarkEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_CLEANUP:
-            event = new UnifiedG1CleanupEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedG1CleanupEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_YOUNG_INITIAL_MARK:
-            event = new UnifiedG1YoungInitialMarkEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedG1YoungInitialMarkEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_MIXED_PAUSE:
-            event = new UnifiedG1MixedPauseEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedG1MixedPauseEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_YOUNG_PAUSE:
-            event = new UnifiedG1YoungPauseEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedG1YoungPauseEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_YOUNG_PREPARE_MIXED:
-            event = new UnifiedG1YoungPrepareMixedEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedG1YoungPrepareMixedEvent(logEntry, timestamp, duration);
         case UNIFIED_OLD:
-            event = new UnifiedOldEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedOldEvent(logEntry, timestamp, duration);
         case UNIFIED_PARALLEL_COMPACTING_OLD:
-            event = new UnifiedParallelCompactingOldEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedParallelCompactingOldEvent(logEntry, timestamp, duration);
         case UNIFIED_PARALLEL_SCAVENGE:
-            event = new UnifiedParallelScavengeEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedParallelScavengeEvent(logEntry, timestamp, duration);
         case UNIFIED_PAR_NEW:
-            event = new UnifiedParNewEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedParNewEvent(logEntry, timestamp, duration);
         case UNIFIED_REMARK:
-            event = new UnifiedRemarkEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedRemarkEvent(logEntry, timestamp, duration);
         case UNIFIED_SERIAL_NEW:
-            event = new UnifiedSerialNewEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedSerialNewEvent(logEntry, timestamp, duration);
         case UNIFIED_SERIAL_OLD:
-            event = new UnifiedSerialOldEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedSerialOldEvent(logEntry, timestamp, duration);
         case UNIFIED_YOUNG:
-            event = new UnifiedYoungEvent(logEntry, timestamp, duration);
-            break;
+        	return new UnifiedYoungEvent(logEntry, timestamp, duration);
 
         // G1
         case G1_YOUNG_PAUSE:
-            event = new G1YoungPauseEvent(logEntry, timestamp, duration);
-            break;
+        	return new G1YoungPauseEvent(logEntry, timestamp, duration);
         case G1_MIXED_PAUSE:
-            event = new G1MixedPauseEvent(logEntry, timestamp, duration);
-            break;
+        	return new G1MixedPauseEvent(logEntry, timestamp, duration);
         case G1_YOUNG_INITIAL_MARK:
-            event = new G1YoungInitialMarkEvent(logEntry, timestamp, duration);
-            break;
+        	return new G1YoungInitialMarkEvent(logEntry, timestamp, duration);
         case G1_REMARK:
-            event = new G1RemarkEvent(logEntry, timestamp, duration);
-            break;
+        	return new G1RemarkEvent(logEntry, timestamp, duration);
         case G1_CLEANUP:
-            event = new G1CleanupEvent(logEntry, timestamp, duration);
-            break;
+        	return new G1CleanupEvent(logEntry, timestamp, duration);
         case G1_FULL_GC:
-            event = new G1FullGCEvent(logEntry, timestamp, duration);
-            break;
+        	return new G1FullGCEvent(logEntry, timestamp, duration);
         // Shenandoah
         case SHENANDOAH_DEGENERATED_GC_MARK:
-            event = new ShenandoahDegeneratedGcMarkEvent(logEntry, timestamp, duration);
-            break;
+        	return new ShenandoahDegeneratedGcMarkEvent(logEntry, timestamp, duration);
         case SHENANDOAH_FINAL_EVAC:
-            event = new ShenandoahFinalEvacEvent(logEntry, timestamp, duration);
-            break;
+        	return new ShenandoahFinalEvacEvent(logEntry, timestamp, duration);
         case SHENANDOAH_FINAL_MARK:
-            event = new ShenandoahFinalMarkEvent(logEntry, timestamp, duration);
-            break;
+        	return new ShenandoahFinalMarkEvent(logEntry, timestamp, duration);
         case SHENANDOAH_FINAL_UPDATE:
-            event = new ShenandoahFinalUpdateEvent(logEntry, timestamp, duration);
-            break;
+        	return new ShenandoahFinalUpdateEvent(logEntry, timestamp, duration);
         case SHENANDOAH_INIT_MARK:
-            event = new ShenandoahInitMarkEvent(logEntry, timestamp, duration);
-            break;
+        	return new ShenandoahInitMarkEvent(logEntry, timestamp, duration);
         case SHENANDOAH_INIT_UPDATE:
-            event = new ShenandoahInitUpdateEvent(logEntry, timestamp, duration);
-            break;
+        	return new ShenandoahInitUpdateEvent(logEntry, timestamp, duration);
         // CMS
         case PAR_NEW:
-            event = new ParNewEvent(logEntry, timestamp, duration);
-            break;
+        	return new ParNewEvent(logEntry, timestamp, duration);
         case CMS_SERIAL_OLD:
-            event = new CmsSerialOldEvent(logEntry, timestamp, duration);
-            break;
+        	return new CmsSerialOldEvent(logEntry, timestamp, duration);
         case CMS_INITIAL_MARK:
-            event = new CmsInitialMarkEvent(logEntry, timestamp, duration);
-            break;
+        	return new CmsInitialMarkEvent(logEntry, timestamp, duration);
         case CMS_REMARK:
-            event = new CmsRemarkEvent(logEntry, timestamp, duration);
-            break;
+        	return new CmsRemarkEvent(logEntry, timestamp, duration);
         // Parallel
         case PARALLEL_SCAVENGE:
-            event = new ParallelScavengeEvent(logEntry, timestamp, duration);
-            break;
+        	return new ParallelScavengeEvent(logEntry, timestamp, duration);
         case PARALLEL_SERIAL_OLD:
-            event = new ParallelSerialOldEvent(logEntry, timestamp, duration);
-            break;
+        	return new ParallelSerialOldEvent(logEntry, timestamp, duration);
         case PARALLEL_COMPACTING_OLD:
-            event = new ParallelCompactingOldEvent(logEntry, timestamp, duration);
-            break;
+        	return new ParallelCompactingOldEvent(logEntry, timestamp, duration);
         // Serial
         case SERIAL_OLD:
-            event = new SerialOldEvent(logEntry, timestamp, duration);
-            break;
+        	return new SerialOldEvent(logEntry, timestamp, duration);
         case SERIAL_NEW:
-            event = new SerialNewEvent(logEntry, timestamp, duration);
-            break;
+        	return new SerialNewEvent(logEntry, timestamp, duration);
         // Other
         case VERBOSE_GC_YOUNG:
-            event = new VerboseGcYoungEvent(logEntry, timestamp, duration);
-            break;
+        	return new VerboseGcYoungEvent(logEntry, timestamp, duration);
         case VERBOSE_GC_OLD:
-            event = new VerboseGcOldEvent(logEntry, timestamp, duration);
-            break;
-
+        	return new VerboseGcOldEvent(logEntry, timestamp, duration);
         default:
             throw new AssertionError("Unexpected event type value: " + eventType + ": " + logEntry);
         }
-        return event;
     }
 
     /**
@@ -784,9 +666,6 @@ public class JdkUtil {
      * @return true if the log event is blocking, false if it is concurrent or informational.
      */
     public static final boolean isBlocking(LogEventType eventType) {
-
-        boolean isBlocking = true;
-
         switch (eventType) {
         case APPLICATION_CONCURRENT_TIME:
         case APPLICATION_STOPPED_TIME:
@@ -824,24 +703,21 @@ public class JdkUtil {
         case USING_CMS:
         case USING_G1:
         case USING_SHENANDOAH:
-            isBlocking = false;
+            return false;
         default:
-            break;
+            return true;
         }
 
-        return isBlocking;
     }
 
     public static final LogEventType determineEventType(String eventTypeString) {
-        LogEventType logEventType = null;
         LogEventType[] logEventTypes = LogEventType.values();
-        for (int i = 0; i < logEventTypes.length; i++) {
-            if (logEventTypes[i].toString().equals(eventTypeString)) {
-                logEventType = logEventTypes[i];
-                break;
+        for (LogEventType logEventType : logEventTypes) {
+            if (logEventType.toString().equals(eventTypeString)) {
+                return logEventType;
             }
         }
-        return logEventType;
+		return null;
     }
 
     /**
@@ -852,14 +728,10 @@ public class JdkUtil {
      * @return True if the log line includes a datestamp, false otherwise..
      */
     public static final String getDateStamp(String logLine) {
-        String datestamp = null;
         String regex = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(logLine);
-        if (matcher.find()) {
-            datestamp = matcher.group(2);
-        }
-        return datestamp;
+        return matcher.find() ? matcher.group(2) : null;
     }
 
     /**
@@ -971,7 +843,7 @@ public class JdkUtil {
             durationThreshold = durationThreshold.movePointLeft(2);
             durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
             durationThreshold.setScale(0, RoundingMode.DOWN);
-            return (JdkMath.convertMicrosToMillis(gcEvent.getDuration()).longValue() > durationThreshold.intValue());
+            return JdkMath.convertMicrosToMillis(gcEvent.getDuration()).longValue() > durationThreshold.intValue();
         }
     }
 
@@ -984,106 +856,15 @@ public class JdkUtil {
      * @return The JVM option value.
      */
     public static final String getOptionValue(String option) {
-        String value = null;
         if (option != null) {
             String regex = "^-[a-zA-Z:.]+(=)?(\\d{1,12}(" + JdkRegEx.OPTION_SIZE + ")?)$";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(option);
             if (matcher.find()) {
-                value = matcher.group(2);
+                return matcher.group(2);
             }
         }
-        return value;
-    }
-
-    /**
-     * Convert SIZE_G1_DETAILS to SIZE.
-     * 
-     * @param size
-     *            The size (e.g. '128.0').
-     * @param units
-     *            The units (e.g. 'G').
-     * @return The size block in G1 format (e.g. '131072M').
-     */
-    public static String convertSizeG1DetailsToSizeG1(final String size, final char units) {
-
-        BigDecimal sizeG1 = new BigDecimal(size);
-        char unitsG1;
-
-        switch (units) {
-
-        case 'B':
-            // Convert to K
-            sizeG1 = sizeG1.divide(new BigDecimal("1024"));
-            unitsG1 = 'K';
-            break;
-        case 'K':
-            unitsG1 = 'K';
-            break;
-        case 'M':
-            unitsG1 = 'M';
-            break;
-        case 'G':
-            // Convert to M
-            sizeG1 = sizeG1.multiply(new BigDecimal("1024"));
-            unitsG1 = 'M';
-            break;
-        default:
-            throw new AssertionError("Unexpected units value: " + units);
-
-        }
-        sizeG1 = sizeG1.setScale(0, RoundingMode.HALF_EVEN);
-        return Integer.toString(sizeG1.intValue()) + unitsG1;
-    }
-
-    /**
-     * Convert JVM size option to bytes.
-     * 
-     * @param size
-     *            The size in various units (e.g. 'k').
-     * @return The size in bytes.
-     */
-    public static long convertOptionSizeToBytes(final String size) {
-
-        String regex = "(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?";
-
-        String value = null;
-        char units = 'b';
-
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(size);
-        if (matcher.find()) {
-            value = matcher.group(1);
-            if (matcher.group(2) != null) {
-                units = matcher.group(2).charAt(0);
-            }
-        }
-
-        BigDecimal bytes = new BigDecimal(value);
-
-        switch (units) {
-
-        case 'b':
-        case 'B':
-            // do nothing
-            break;
-        case 'k':
-        case 'K':
-            bytes = bytes.multiply(Constants.KILOBYTE);
-            break;
-        case 'm':
-        case 'M':
-            bytes = bytes.multiply(Constants.MEGABYTE);
-            break;
-        case 'g':
-        case 'G':
-            bytes = bytes.multiply(Constants.GIGABYTE);
-            break;
-        default:
-            throw new AssertionError("Unexpected units value: " + units);
-
-        }
-        return bytes.longValue();
+        return null;
     }
 
     /**
@@ -1092,9 +873,6 @@ public class JdkUtil {
      * @return true if the log event is should be included in the report event list, false otherwise.
      */
     public static final boolean isReportable(LogEventType eventType) {
-
-        boolean reportable = true;
-
         switch (eventType) {
         case APPLICATION_CONCURRENT_TIME:
         case APPLICATION_LOGGING:
@@ -1123,12 +901,10 @@ public class JdkUtil {
         case UNIFIED_BLANK_LINE:
         case UNIFIED_G1_INFO:
         case UNKNOWN:
-            reportable = false;
-            break;
+            return false;
         default:
-            break;
+            return true;
         }
 
-        return reportable;
     }
 }

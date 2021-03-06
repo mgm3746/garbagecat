@@ -14,28 +14,26 @@ package org.eclipselabs.garbagecat.service;
 
 import java.io.File;
 
-import org.eclipselabs.garbagecat.util.Constants;
-import org.junit.Assert;
+import org.eclipselabs.garbagecat.TestUtil;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestGcManager extends TestCase {
+public class TestGcManager {
 
     /**
      * Test for NullPointerException caused by Issue 17:
      * http://code.google.com/a/eclipselabs.org/p/garbagecat/issues/detail?id=17
      */
+    @Test
     public void testNullPointerExceptionNotRaised() {
-        File testFile = new File(Constants.TEST_DATA_DIR + "dataset31.txt");
+        File testFile = TestUtil.getFile("dataset31.txt");
         GcManager gcManager = new GcManager();
-        try {
-            gcManager.preprocess(testFile, null);
-        } catch (NullPointerException e) {
-            Assert.fail("Preprocessing results in NullPointerException.");
-        }
+        gcManager.preprocess(testFile, null);
     }
+
 }

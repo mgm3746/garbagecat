@@ -12,6 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.megabytes;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.BYTES;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -20,7 +23,7 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.Memory;
 
 /**
  * JVM environment information
@@ -51,24 +54,24 @@ public class Jvm {
     private String memory;
 
     /**
-     * Physical memory (bytes).
+     * Physical memory. 
      */
-    private long physicalMemory;
+    private Memory physicalMemory = Memory.ZERO;
 
     /**
-     * Physical memory free (bytes).
+     * Physical memory free.
      */
-    private long physicalMemoryFree;
+    private Memory physicalMemoryFree = Memory.ZERO;
 
     /**
-     * Swap size (bytes).
+     * Swap size.
      */
-    private long swap;
+    private Memory swap = Memory.ZERO;
 
     /**
-     * Swap free (bytes).
+     * Swap free.
      */
-    private long swapFree;
+    private Memory swapFree = Memory.ZERO;
 
     /**
      * Constructor accepting list of JVM options.
@@ -135,35 +138,35 @@ public class Jvm {
         this.memory = memory;
     }
 
-    public long getPhysicalMemory() {
+    public Memory getPhysicalMemory() {
         return physicalMemory;
     }
 
-    public void setPhysicalMemory(long physicalMemory) {
+    public void setPhysicalMemory(Memory physicalMemory) {
         this.physicalMemory = physicalMemory;
     }
 
-    public long getPhysicalMemoryFree() {
+    public Memory getPhysicalMemoryFree() {
         return physicalMemoryFree;
     }
 
-    public void setPhysicalMemoryFree(long physicalMemoryFree) {
+    public void setPhysicalMemoryFree(Memory physicalMemoryFree) {
         this.physicalMemoryFree = physicalMemoryFree;
     }
 
-    public long getSwap() {
+    public Memory getSwap() {
         return swap;
     }
 
-    public void setSwap(long swap) {
+    public void setSwap(Memory swap) {
         this.swap = swap;
     }
 
-    public long getSwapFree() {
+    public Memory getSwapFree() {
         return swapFree;
     }
 
-    public void setSwapFree(long swapFree) {
+    public void setSwapFree(Memory swapFree) {
         this.swapFree = swapFree;
     }
 
@@ -264,36 +267,24 @@ public class Jvm {
     }
 
     /**
-     * @return The maximum heap space in bytes, or 0 if not set.
+     * @return The maximum heap space, or 0 if not set.
      */
-    public long getMaxHeapBytes() {
-        long maxHeapBytes = 0;
-        if (getMaxHeapValue() != null) {
-            maxHeapBytes = JdkUtil.convertOptionSizeToBytes(getMaxHeapValue());
-        }
-        return maxHeapBytes;
+    public Memory getMaxHeapBytes() {
+        return getMaxHeapValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxHeapValue());
     }
 
     /**
      * @return The maximum perm space in bytes, or 0 if not set.
      */
-    public long getMaxPermBytes() {
-        long maxPermBytes = 0;
-        if (getMaxPermValue() != null) {
-            maxPermBytes = JdkUtil.convertOptionSizeToBytes(getMaxPermValue());
-        }
-        return maxPermBytes;
+    public Memory getMaxPermBytes() {
+		return getMaxPermValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxPermValue());
     }
 
     /**
      * @return The maximum metaspace in bytes, or 0 if not set.
      */
-    public long getMaxMetaspaceBytes() {
-        long maxMetaspaceBytes = 0;
-        if (getMaxMetaspaceValue() != null) {
-            maxMetaspaceBytes = JdkUtil.convertOptionSizeToBytes(getMaxMetaspaceValue());
-        }
-        return maxMetaspaceBytes;
+    public Memory getMaxMetaspaceBytes() {
+        return getMaxMetaspaceValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxMetaspaceValue());
     }
 
     /**
@@ -1018,12 +1009,9 @@ public class Jvm {
     /**
      * @return The gc log file size in bytes, or 0 if not set.
      */
-    public long getGcLogFileSizeBytes() {
-        long gcLogFileSizeBytes = 0;
-        if (getGcLogFileSizeValue() != null) {
-            gcLogFileSizeBytes = JdkUtil.convertOptionSizeToBytes(getGcLogFileSizeValue());
-        }
-        return gcLogFileSizeBytes;
+    public Memory getGcLogFileSizeBytes() {
+		return getGcLogFileSizeValue() == null ? Memory.ZERO
+				: Memory.fromOptionSize(getGcLogFileSizeValue());
     }
 
     /**
@@ -1085,12 +1073,9 @@ public class Jvm {
     /**
      * @return The compressed class space in bytes, or 0 if not set.
      */
-    public long getCompressedClassSpaceSizeBytes() {
-        long compressedClassSpaceSizeBytes = 0;
-        if (getCompressedClassSpaceSizeValue() != null) {
-            compressedClassSpaceSizeBytes = JdkUtil.convertOptionSizeToBytes(getCompressedClassSpaceSizeValue());
-        }
-        return compressedClassSpaceSizeBytes;
+    public Memory getCompressedClassSpaceSizeBytes() {
+		return getCompressedClassSpaceSizeValue() == null ? Memory.ZERO
+				: Memory.fromOptionSize(getCompressedClassSpaceSizeValue());
     }
 
     /**
@@ -1472,9 +1457,9 @@ public class Jvm {
      * @return True if the minimum and maximum permanent generation space are set equal.
      */
     public boolean isMinAndMaxPermSpaceEqual() {
-        return (getMinPermValue() == null && getMaxPermValue() == null) || (getMinPermValue() != null
-                && getMaxPermValue() != null && JdkUtil.convertOptionSizeToBytes(getMinPermValue()) == JdkUtil
-                        .convertOptionSizeToBytes(getMaxPermValue()));
+		return (getMinPermValue() == null && getMaxPermValue() == null) || (getMinPermValue() != null
+				&& getMaxPermValue() != null && Memory.fromOptionSize(getMinPermValue())
+						.equals(Memory.fromOptionSize(getMaxPermValue())));
     }
 
     /**
@@ -1498,15 +1483,9 @@ public class Jvm {
      * @return True if stack size &gt;= 1024k, false otherwise.
      */
     public boolean hasLargeThreadStackSize() {
-        boolean hasLargeThreadStackSize = false;
-
         String threadStackSize = getThreadStackSizeValue();
-        if (threadStackSize != null
-                && JdkUtil.convertOptionSizeToBytes(threadStackSize) >= Constants.MEGABYTE.longValue()) {
-            hasLargeThreadStackSize = true;
-        }
-
-        return hasLargeThreadStackSize;
+        return threadStackSize != null
+                && Memory.fromOptionSize(threadStackSize).compareTo(megabytes(1)) >= 0;
     }
 
     /**
@@ -1564,16 +1543,13 @@ public class Jvm {
      * @return The percentage of swap that is free. 100 means no swap used. 0 means all swap used.
      */
     public long getPercentSwapFree() {
-        long percentSwapFree;
-        if (swap > 0) {
-            BigDecimal percentFree = new BigDecimal(swapFree);
-            percentFree = percentFree.divide(new BigDecimal(swap), 2, RoundingMode.HALF_EVEN);
-            percentFree = percentFree.movePointRight(2);
-            percentSwapFree = percentFree.longValue();
-        } else {
-            percentSwapFree = 100L;
+        if (!swap.greaterThan(Memory.ZERO)) {
+            return 100L;
         }
-        return percentSwapFree;
+		BigDecimal percentFree = new BigDecimal(swapFree.getValue(BYTES));
+		percentFree = percentFree.divide(new BigDecimal(swap.getValue(BYTES)), 2, RoundingMode.HALF_EVEN);
+		percentFree = percentFree.movePointRight(2);
+		return percentFree.longValue();
     }
 
     /**

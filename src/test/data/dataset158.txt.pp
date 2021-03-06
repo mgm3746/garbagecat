@@ -1,0 +1,1 @@
+[0.333s][info][gc,start     ] GC(0) Pause Young (G1 Evacuation Pause) Metaspace: 6591K->6591K(1056768K) 25M->4M(254M) 3.523ms User=0.00s Sys=0.00s Real=0.00s

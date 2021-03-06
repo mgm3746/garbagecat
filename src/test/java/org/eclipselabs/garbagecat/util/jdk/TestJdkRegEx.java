@@ -12,231 +12,278 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
-import org.eclipselabs.garbagecat.domain.TimesData;
-import org.junit.Assert;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.eclipselabs.garbagecat.domain.TimesData;
+
+
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestJdkRegEx extends TestCase {
+public class TestJdkRegEx {
 
+    @Test
     public void testTimestampWithCharacter() {
         String timestamp = "A.123";
-        Assert.assertFalse("Timestamps are decimal numbers.", timestamp.matches(JdkRegEx.TIMESTAMP));
+        assertFalse("Timestamps are decimal numbers.", timestamp.matches(JdkRegEx.TIMESTAMP));
     }
 
+    @Test
     public void testTimestampWithFewerDecimalPlaces() {
         String timestamp = "1.12";
-        Assert.assertFalse("Timestamps have 3 decimal places.", timestamp.matches(JdkRegEx.TIMESTAMP));
+        assertFalse("Timestamps have 3 decimal places.", timestamp.matches(JdkRegEx.TIMESTAMP));
     }
 
+    @Test
     public void testTimestampWithMoreDecimalPlaces() {
         String timestamp = "1.1234";
-        Assert.assertFalse("Timestamps have 3 decimal places.", timestamp.matches(JdkRegEx.TIMESTAMP));
+        assertFalse("Timestamps have 3 decimal places.", timestamp.matches(JdkRegEx.TIMESTAMP));
     }
 
+    @Test
     public void testTimestampWithNoDecimal() {
         String timestamp = "11234";
-        Assert.assertFalse("Timestamps have 3 decimal places.", timestamp.matches(JdkRegEx.TIMESTAMP));
+        assertFalse("Timestamps have 3 decimal places.", timestamp.matches(JdkRegEx.TIMESTAMP));
     }
 
+    @Test
     public void testTimestampLessThanOne() {
         String timestamp = ".123";
-        Assert.assertTrue("Timestamps less than one do not have a leading zero.",
+        assertTrue("Timestamps less than one do not have a leading zero.",
                 timestamp.matches(JdkRegEx.TIMESTAMP));
     }
 
+    @Test
     public void testTimestampValid() {
         String timestamp = "1.123";
-        Assert.assertTrue("'" + timestamp + "' is a valid timestamp.", timestamp.matches(JdkRegEx.TIMESTAMP));
+        assertTrue("'" + timestamp + "' is a valid timestamp.", timestamp.matches(JdkRegEx.TIMESTAMP));
     }
 
+    @Test
     public void testTimestampDecimalComma() {
         String timestamp = "1,123";
-        Assert.assertTrue("'" + timestamp + "' is a valid timestamp.", timestamp.matches(JdkRegEx.TIMESTAMP));
+        assertTrue("'" + timestamp + "' is a valid timestamp.", timestamp.matches(JdkRegEx.TIMESTAMP));
     }
 
+    @Test
     public void testSizeWithoutUnits() {
         String size = "1234";
-        Assert.assertFalse("Size must have capital K (kilobytes).", size.matches(JdkRegEx.SIZE_K));
+        assertFalse("Size must have capital K (kilobytes).", size.matches(JdkRegEx.SIZE_K));
     }
 
+    @Test
     public void testZeroSize() {
         String size = "0K";
-        Assert.assertTrue("Zero sizes are valid.", size.matches(JdkRegEx.SIZE_K));
+        assertTrue("Zero sizes are valid.", size.matches(JdkRegEx.SIZE_K));
     }
 
+    @Test
     public void testSizeUnitsCase() {
         String size = "1234k";
-        Assert.assertFalse("Size must have capital K (kilobytes).", size.matches(JdkRegEx.SIZE_K));
+        assertFalse("Size must have capital K (kilobytes).", size.matches(JdkRegEx.SIZE_K));
     }
 
+    @Test
     public void testSizeWithDecimal() {
         String size = "1.234K";
-        Assert.assertFalse("Size is a whole number.", size.matches(JdkRegEx.SIZE_K));
+        assertFalse("Size is a whole number.", size.matches(JdkRegEx.SIZE_K));
     }
 
+    @Test
     public void testSizeValid() {
         String size = "1234K";
-        Assert.assertTrue("'1234K' is a valid size.", size.matches(JdkRegEx.SIZE_K));
+        assertTrue("'1234K' is a valid size.", size.matches(JdkRegEx.SIZE_K));
     }
 
+    @Test
     public void testSizeWithInvalidCharacter() {
         String size = "A234K";
-        Assert.assertFalse("Size is a decimal number.", size.matches(JdkRegEx.SIZE_K));
+        assertFalse("Size is a decimal number.", size.matches(JdkRegEx.SIZE_K));
     }
 
+    @Test
     public void testSizeWithNineTensPlaces() {
         String size = "129092672K";
-        Assert.assertTrue("'129092672K' is a valid size.", size.matches(JdkRegEx.SIZE_K));
+        assertTrue("'129092672K' is a valid size.", size.matches(JdkRegEx.SIZE_K));
     }
 
+    @Test
     public void testDurationWithCharacter() {
         String duration = "0.02A5213 secs";
-        Assert.assertFalse("Duration is a decimal number.", duration.matches(JdkRegEx.DURATION));
+        assertFalse("Duration is a decimal number.", duration.matches(JdkRegEx.DURATION));
     }
 
+    @Test
     public void testDurationWithFewer7DecimalPlaces() {
         String duration = "0.022521 secs";
-        Assert.assertFalse("Duration has 7-8 decimal places.", duration.matches(JdkRegEx.DURATION));
+        assertFalse("Duration has 7-8 decimal places.", duration.matches(JdkRegEx.DURATION));
     }
 
+    @Test
     public void testDurationWithMore8DecimalPlaces() {
         String duration = "0.022521394 secs";
-        Assert.assertFalse("Duration has 7 decimal places.", duration.matches(JdkRegEx.DURATION));
+        assertFalse("Duration has 7 decimal places.", duration.matches(JdkRegEx.DURATION));
     }
 
+    @Test
     public void testDurationWithNoDecimal() {
         String duration = "00225213 secs";
-        Assert.assertFalse("Duration has 7 decimal places.", duration.matches(JdkRegEx.DURATION));
+        assertFalse("Duration has 7 decimal places.", duration.matches(JdkRegEx.DURATION));
     }
 
+    @Test
     public void testDurationLessThanOne() {
         String duration = ".0225213 secs";
-        Assert.assertFalse("Durations less than one have a leading zero.", duration.matches(JdkRegEx.DURATION));
+        assertFalse("Durations less than one have a leading zero.", duration.matches(JdkRegEx.DURATION));
     }
 
+    @Test
     public void testDurationWithSec() {
         String duration = "0.0225213 sec";
-        Assert.assertTrue("'0.0225213 sec' is a valid duration.", duration.matches(JdkRegEx.DURATION));
+        assertTrue("'0.0225213 sec' is a valid duration.", duration.matches(JdkRegEx.DURATION));
     }
 
+    @Test
     public void testDurationWithoutUnits() {
         String duration = "0.0225213";
-        Assert.assertTrue("'0.0225213' is a valid duration.", duration.matches(JdkRegEx.DURATION));
+        assertTrue("'0.0225213' is a valid duration.", duration.matches(JdkRegEx.DURATION));
     }
 
+    @Test
     public void testDurationValid7() {
         String duration = "0.0225213 secs";
-        Assert.assertTrue("'0.0225213 secs' is a valid duration.", duration.matches(JdkRegEx.DURATION));
+        assertTrue("'0.0225213 secs' is a valid duration.", duration.matches(JdkRegEx.DURATION));
     }
 
+    @Test
     public void testDurationValid8() {
         String duration = "0.02252132 secs";
-        Assert.assertTrue("'0.02252132 secs' is a valid duration.", duration.matches(JdkRegEx.DURATION));
+        assertTrue("'0.02252132 secs' is a valid duration.", duration.matches(JdkRegEx.DURATION));
     }
 
+    @Test
     public void testDurationDecimalComma() {
         String duration = "0,0225213 secs";
-        Assert.assertTrue("'0,0225213 secs' is a valid duration.", duration.matches(JdkRegEx.DURATION));
+        assertTrue("'0,0225213 secs' is a valid duration.", duration.matches(JdkRegEx.DURATION));
     }
 
+    @Test
     public void testUnloadingClassBlock() {
         String unloadingClassBlock = "[Unloading class sun.reflect.GeneratedSerializationConstructorAccessor13565]";
-        Assert.assertTrue("'" + unloadingClassBlock + "' " + "is a valid class unloading block.",
+        assertTrue("'" + unloadingClassBlock + "' " + "is a valid class unloading block.",
                 unloadingClassBlock.matches(JdkRegEx.UNLOADING_CLASS_BLOCK));
     }
 
+    @Test
     public void testUnloadingClassProxyBlock() {
         String unloadingClassBlock = "[Unloading class $Proxy109]";
-        Assert.assertTrue("'" + unloadingClassBlock + "' " + "is a valid class unloading block.",
+        assertTrue("'" + unloadingClassBlock + "' " + "is a valid class unloading block.",
                 unloadingClassBlock.matches(JdkRegEx.UNLOADING_CLASS_BLOCK));
     }
 
+    @Test
     public void testDatestampGmtMinus() {
         String datestamp = "2010-02-26T09:32:12.486-0600";
-        Assert.assertTrue("Datestamp not recognized.", datestamp.matches(JdkRegEx.DATESTAMP));
+        assertTrue("Datestamp not recognized.", datestamp.matches(JdkRegEx.DATESTAMP));
     }
 
+    @Test
     public void testDatestampGmtPlus() {
         String datestamp = "2010-04-16T12:11:18.979+0200";
-        Assert.assertTrue("Datestamp not recognized.", datestamp.matches(JdkRegEx.DATESTAMP));
+        assertTrue("Datestamp not recognized.", datestamp.matches(JdkRegEx.DATESTAMP));
     }
 
+    @Test
     public void testTimesBlock5Digits() {
         String timesBlock = " [Times: user=29858.25 sys=2074.63, real=35140.48 secs]";
-        Assert.assertTrue("'" + timesBlock + "' " + "is a valid times block.", timesBlock.matches(TimesData.REGEX));
+        assertTrue("'" + timesBlock + "' " + "is a valid times block.", timesBlock.matches(TimesData.REGEX));
     }
 
+    @Test
     public void testDurationFractionk5Digits() {
         String durationFraction = "4.583/35144.874 secs";
-        Assert.assertTrue("'" + durationFraction + "' " + "is a valid duration fraction.",
+        assertTrue("'" + durationFraction + "' " + "is a valid duration fraction.",
                 durationFraction.matches(JdkRegEx.DURATION_FRACTION));
     }
 
+    @Test
     public void testSizeWholeBytes() {
         String size = "0B";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
+        assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
+    @Test
     public void testSizeWholeKilobytes() {
         String size = "8192K";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
+        assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
+    @Test
     public void testSizeWholeMegabytes() {
         String size = "28M";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
+        assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
+    @Test
     public void testSizeWholeGigabytes() {
         String size = "30G";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
+        assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
+    @Test
     public void testSizeDecimalBytes() {
         String size = "0.0B";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
+        assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
+    @Test
     public void testSizeDecimalKilobytes() {
         String size = "8192.0K";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
+        assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
+    @Test
     public void testSizeDecimalMegabytes() {
         String size = "28.0M";
-        Assert.assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
+        assertTrue("'" + size + "' " + "is a valid size.", size.matches(JdkRegEx.SIZE));
     }
 
+    @Test
     public void testMegabytesM() {
         String unit = "M";
-        Assert.assertTrue("'" + unit + "' " + "is a valid unit.", unit.matches(JdkRegEx.MEGABYTES));
+        assertTrue("'" + unit + "' " + "is a valid unit.", unit.matches(JdkRegEx.MEGABYTES));
     }
 
+    @Test
     public void testSizeDecimalGigabytes() {
         String size = "30.0G";
-        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE));
+        assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE));
     }
 
+    @Test
     public void testSizeComma() {
         String size = "306,0M";
-        Assert.assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE));
+        assertTrue("'" + size + "' " + "is a valid G1 details size.", size.matches(JdkRegEx.SIZE));
     }
 
+    @Test
     public void testPercent() {
         String percent = "54.8%";
-        Assert.assertTrue("'" + percent + "' " + "not a valid percent.", percent.matches(JdkRegEx.PERCENT));
+        assertTrue("'" + percent + "' " + "not a valid percent.", percent.matches(JdkRegEx.PERCENT));
     }
 
+    @Test
     public void testDateTime() {
         String datetime = "2016-10-18 01:50:54";
-        Assert.assertTrue("'" + datetime + "' " + "not a valid datetime.", datetime.matches(JdkRegEx.DATETIME));
+        assertTrue("'" + datetime + "' " + "not a valid datetime.", datetime.matches(JdkRegEx.DATETIME));
     }
 
+    @Test
     public void testPromotionFailure() {
         String promotionFailure = " (0: promotion failure size = 200)  (1: promotion failure size = 8)  "
                 + "(2: promotion failure size = 200)  (3: promotion failure size = 200)  "
@@ -255,12 +302,13 @@ public class TestJdkRegEx extends TestCase {
                 + "(28: promotion failure size = 10)  (29: promotion failure size = 200)  "
                 + "(30: promotion failure size = 200)  (31: promotion failure size = 200)  "
                 + "(32: promotion failure size = 200) ";
-        Assert.assertTrue("'" + promotionFailure + "' " + "not a valid PROMOTION_FAILURE.",
+        assertTrue("'" + promotionFailure + "' " + "not a valid PROMOTION_FAILURE.",
                 promotionFailure.matches(JdkRegEx.PRINT_PROMOTION_FAILURE));
     }
 
+    @Test
     public void testDecoratorTimeUptime() {
         String decorator = "2020-03-10T08:03:29.311-0400: 0.373:";
-        Assert.assertTrue("'" + decorator + "' " + "not a valid decorator.", decorator.matches(JdkRegEx.DECORATOR));
+        assertTrue("'" + decorator + "' " + "not a valid decorator.", decorator.matches(JdkRegEx.DECORATOR));
     }
 }

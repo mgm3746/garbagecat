@@ -1,0 +1,1 @@
+116.957: [GC (Allocation Failure) 116.957: [DefNew (promotion failed) : 229660K->235967K(235968K), 0.2897884 secs]117.247: [Tenured: 524288K->144069K(524288K), 0.3905008 secs] 674654K->144069K(760256K), [Metaspace: 65384K->65384K(1114112K)], 0.6804246 secs] [Times: user=0.67 sys=0.01, real=0.69 secs]

@@ -12,6 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.memory;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +27,7 @@ import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -110,34 +114,34 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
     private long timestamp;
 
     /**
-     * Combined size (kilobytes) at beginning of GC event.
+     * Combined size at beginning of GC event.
      */
-    private int combined;
+    private Memory combined = Memory.ZERO;
 
     /**
-     * Combined size (kilobytes) at end of GC event.
+     * Combined size at end of GC event.
      */
-    private int combinedEnd;
+    private Memory combinedEnd = Memory.ZERO;
 
     /**
-     * Combined available space (kilobytes).
+     * Combined available space.
      */
-    private int combinedAvailable;
+    private Memory combinedAvailable = Memory.ZERO;
 
     /**
-     * Permanent generation size (kilobytes) at beginning of GC event.
+     * Permanent generation size at beginning of GC event.
      */
-    private int permGen;
+    private Memory permGen = Memory.ZERO;
 
     /**
-     * Permanent generation size (kilobytes) at end of GC event.
+     * Permanent generation size at end of GC event.
      */
-    private int permGenEnd;
+    private Memory permGenEnd = Memory.ZERO;
 
     /**
-     * Space allocated to permanent generation (kilobytes).
+     * Space allocated to permanent generation.
      */
-    private int permGenAllocation;
+    private Memory permGenAllocation = Memory.ZERO;
 
     /**
      * The trigger for the GC event.
@@ -160,10 +164,9 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
                 if (matcher.group(14) != null) {
                     trigger = matcher.group(14);
                 }
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(18).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)),
-                        matcher.group(24).charAt(0));
+                combined = memory(matcher.group(16), matcher.group(18).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
@@ -181,11 +184,9 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
                 combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(74), matcher.group(76).charAt(0));
                 duration = JdkMath.convertSecsToMicros(matcher.group(44)).intValue();
                 if (matcher.group(77) != null) {
-                    permGen = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(79)), matcher.group(81).charAt(0));
-                    permGenEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(82)),
-                            matcher.group(84).charAt(0));
-                    permGenAllocation = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(85)),
-                            matcher.group(87).charAt(0));
+                    permGen = memory(matcher.group(79), matcher.group(81).charAt(0)).convertTo(KILOBYTES);
+                    permGenEnd = memory(matcher.group(82), matcher.group(84).charAt(0)).convertTo(KILOBYTES);
+                    permGenAllocation = memory(matcher.group(85), matcher.group(87).charAt(0)).convertTo(KILOBYTES);
                 }
             }
         }
@@ -231,39 +232,39 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
         this.timestamp = timestamp;
     }
 
-    public int getCombinedOccupancyInit() {
+    public Memory getCombinedOccupancyInit() {
         return combined;
     }
 
-    public int getCombinedOccupancyEnd() {
+    public Memory getCombinedOccupancyEnd() {
         return combinedEnd;
     }
 
-    public int getCombinedSpace() {
+    public Memory getCombinedSpace() {
         return combinedAvailable;
     }
 
-    public int getPermOccupancyInit() {
+    public Memory getPermOccupancyInit() {
         return permGen;
     }
 
-    protected void setPermOccupancyInit(int permGen) {
+    protected void setPermOccupancyInit(Memory permGen) {
         this.permGen = permGen;
     }
 
-    public int getPermOccupancyEnd() {
+    public Memory getPermOccupancyEnd() {
         return permGenEnd;
     }
 
-    protected void setPermOccupancyEnd(int permGenEnd) {
+    protected void setPermOccupancyEnd(Memory permGenEnd) {
         this.permGenEnd = permGenEnd;
     }
 
-    public int getPermSpace() {
+    public Memory getPermSpace() {
         return permGenAllocation;
     }
 
-    protected void setPermSpace(int permGenAllocation) {
+    protected void setPermSpace(Memory permGenAllocation) {
         this.permGenAllocation = permGenAllocation;
     }
 

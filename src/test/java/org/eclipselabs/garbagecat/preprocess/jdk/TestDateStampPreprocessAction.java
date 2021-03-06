@@ -12,24 +12,29 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Calendar;
 import java.util.Date;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.junit.Assert;
 
-import junit.framework.TestCase;
+
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestDateStampPreprocessAction extends TestCase {
+public class TestDateStampPreprocessAction {
 
+    @Test
     public void testLogLine() {
         String logLine = "2010-02-26T09:32:12.486-0600: [GC [ParNew: 150784K->3817K(169600K), 0.0328800 secs]"
                 + " 150784K->3817K(1029760K), 0.0329790 secs] [Times: user=0.00 sys=0.00, real=0.03 secs]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP.toString() + ".",
                 DateStampPreprocessAction.match(logLine));
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 2010);
@@ -43,6 +48,6 @@ public class TestDateStampPreprocessAction extends TestCase {
         DateStampPreprocessAction preprocessAction = new DateStampPreprocessAction(logLine, jvmStartDate);
         String preprocessedLogLine = "34332.486: [GC [ParNew: 150784K->3817K(169600K), 0.0328800 secs]"
                 + " 150784K->3817K(1029760K), 0.0329790 secs] [Times: user=0.00 sys=0.00, real=0.03 secs]";
-        Assert.assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
+        assertEquals("Log line not parsed correctly.", preprocessedLogLine, preprocessAction.getLogEntry());
     }
 }

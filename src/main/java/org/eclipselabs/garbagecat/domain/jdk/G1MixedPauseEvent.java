@@ -12,6 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.memory;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +23,7 @@ import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -115,19 +119,19 @@ public class G1MixedPauseEvent extends G1Collector
     private long timestamp;
 
     /**
-     * Combined generation size (kilobytes) at beginning of GC event.
+     * Combined generation size at beginning of GC event.
      */
-    private int combined;
+    private Memory combined;
 
     /**
-     * Combined generation size (kilobytes) at end of GC event.
+     * Combined generation size at end of GC event.
      */
-    private int combinedEnd;
+    private Memory combinedEnd;
 
     /**
-     * Available space in multiple generation (kilobytes).
+     * Available space in multiple generation.
      */
-    private int combinedAvailable;
+    private Memory combinedAvailable;
 
     /**
      * The trigger for the GC event.
@@ -164,10 +168,9 @@ public class G1MixedPauseEvent extends G1Collector
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 trigger = matcher.group(14);
-                combined = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(16)), matcher.group(18).charAt(0));
-                combinedEnd = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(19)), matcher.group(21).charAt(0));
-                combinedAvailable = JdkMath.calcKilobytes(Integer.parseInt(matcher.group(22)),
-                        matcher.group(24).charAt(0));
+                combined = memory(matcher.group(16), matcher.group(18).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
                 if (matcher.group(28) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
@@ -228,15 +231,15 @@ public class G1MixedPauseEvent extends G1Collector
         return timestamp;
     }
 
-    public int getCombinedOccupancyInit() {
+    public Memory getCombinedOccupancyInit() {
         return combined;
     }
 
-    public int getCombinedOccupancyEnd() {
+    public Memory getCombinedOccupancyEnd() {
         return combinedEnd;
     }
 
-    public int getCombinedSpace() {
+    public Memory getCombinedSpace() {
         return combinedAvailable;
     }
 

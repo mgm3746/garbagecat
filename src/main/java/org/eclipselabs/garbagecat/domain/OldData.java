@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
+import org.eclipselabs.garbagecat.util.Memory;
+
 /**
  * Old generation data.
  * 
@@ -21,33 +23,33 @@ package org.eclipselabs.garbagecat.domain;
 public interface OldData {
 
     /**
-     * @return Young generation initial occupancy (kilobytes).
+     * @return Young generation initial occupancy.
      */
-    int getYoungOccupancyInit();
+	Memory getYoungOccupancyInit();
 
     /**
-     * @return Total young generation space (kilobytes) at the end of the event (i.e. it reflects any resizing). Equals
+     * @return Total young generation space at the end of the event (i.e. it reflects any resizing). Equals
      *         young generation allocation minus one survivor space.
      */
-    int getYoungSpace();
+    Memory getYoungSpace();
 
     /**
-     * @return Young generation end occupancy (kilobytes).
+     * @return Young generation end occupancy.
      */
-    int getYoungOccupancyEnd();
+    Memory getYoungOccupancyEnd();
 
     /**
-     * @return Old generation initial occupancy (kilobytes).
+     * @return Old generation initial occupancy.
      */
-    int getOldOccupancyInit();
+    Memory getOldOccupancyInit();
 
     /**
-     * @return Total old generation space (kilobytes) at the end of the event (i.e. it reflects any resizing).
+     * @return Total old generation space at the end of the event (i.e. it reflects any resizing).
      */
-    int getOldSpace();
+    Memory getOldSpace();
 
     /**
-     * @return Old generation end occupancy (kilobytes).
+     * @return Old generation end occupancy.
      */
-    int getOldOccupancyEnd();
+    Memory getOldOccupancyEnd();
 }

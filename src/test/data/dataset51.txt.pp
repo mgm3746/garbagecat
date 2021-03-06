@@ -1,0 +1,2 @@
+2016-02-11T18:15:35.429-0500: 14974.499: [GC pause (young), 0.1454640 secs][Eden: 1240.0M(1240.0M)->0.0B(3000.0M) Survivors: 88.0M->88.0M Heap: 13.4G(26.0G)->12.2G(26.0G)] [Times: user=0.57 sys=0.00, real=0.15 secs]
+2016-02-11T18:15:35.431-0500: 14974.501: [GC concurrent-cleanup-end, 0.0033880 secs]

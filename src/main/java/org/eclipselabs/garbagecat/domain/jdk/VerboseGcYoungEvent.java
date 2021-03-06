@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +21,7 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -83,19 +86,19 @@ public class VerboseGcYoungEvent extends UnknownCollector
     private long timestamp;
 
     /**
-     * Combined young + old generation size (kilobytes) at beginning of GC event.
+     * Combined young + old generation size at beginning of GC event.
      */
-    private int combinedBegin;
+    private Memory combinedBegin;
 
     /**
-     * Combined young + old generation size (kilobytes) at end of GC event.
+     * Combined young + old generation size at end of GC event.
      */
-    private int combinedEnd;
+    private Memory combinedEnd;
 
     /**
-     * Combined young + old generation allocation (kilobytes).
+     * Combined young + old generation allocation.
      */
-    private int combinedAllocation;
+    private Memory combinedAllocation;
 
     /**
      * The trigger for the GC event.
@@ -132,13 +135,13 @@ public class VerboseGcYoungEvent extends UnknownCollector
             timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             trigger = matcher.group(14);
             if (matcher.group(17) != null) {
-                combinedBegin = Integer.parseInt(matcher.group(18));
+                combinedBegin = kilobytes(matcher.group(18));
             } else {
                 // set it to the end
-                combinedBegin = Integer.parseInt(matcher.group(19));
+                combinedBegin = kilobytes(matcher.group(19));
             }
-            combinedEnd = Integer.parseInt(matcher.group(19));
-            combinedAllocation = Integer.parseInt(matcher.group(20));
+            combinedEnd = kilobytes(matcher.group(19));
+            combinedAllocation = kilobytes(matcher.group(20));
             duration = JdkMath.convertSecsToMicros(matcher.group(21)).intValue();
         }
     }
@@ -175,15 +178,15 @@ public class VerboseGcYoungEvent extends UnknownCollector
         return timestamp;
     }
 
-    public int getCombinedOccupancyInit() {
+    public Memory getCombinedOccupancyInit() {
         return combinedBegin;
     }
 
-    public int getCombinedOccupancyEnd() {
+    public Memory getCombinedOccupancyEnd() {
         return combinedEnd;
     }
 
-    public int getCombinedSpace() {
+    public Memory getCombinedSpace() {
         return combinedAllocation;
     }
 

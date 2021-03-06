@@ -12,6 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.service;
 
+import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.BYTES;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -78,6 +81,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.ShenandoahPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -739,14 +743,10 @@ public class GcManager {
                     jvmDao.setOptions(((HeaderCommandLineFlagsEvent) event).getJvmOptions());
                 } else if (event instanceof HeaderMemoryEvent) {
                     jvmDao.setMemory(((HeaderMemoryEvent) event).getLogEntry());
-                    BigDecimal size = new BigDecimal(((HeaderMemoryEvent) event).getPhysicalMemory());
-                    jvmDao.setPhysicalMemory(size.multiply(Constants.KILOBYTE).longValue());
-                    size = new BigDecimal(((HeaderMemoryEvent) event).getPhysicalMemoryFree());
-                    jvmDao.setPhysicalMemoryFree(size.multiply(Constants.KILOBYTE).longValue());
-                    size = new BigDecimal(((HeaderMemoryEvent) event).getSwap());
-                    jvmDao.setSwap(size.multiply(Constants.KILOBYTE).longValue());
-                    size = new BigDecimal(((HeaderMemoryEvent) event).getSwapFree());
-                    jvmDao.setSwapFree(size.multiply(Constants.KILOBYTE).longValue());
+                    jvmDao.setPhysicalMemory((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemory()));
+                    jvmDao.setPhysicalMemoryFree((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemoryFree()));
+                    jvmDao.setSwap((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwap()));
+                    jvmDao.setSwapFree((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwapFree()));
                 } else if (event instanceof HeaderVersionEvent) {
                     jvmDao.setVersion(((HeaderVersionEvent) event).getLogEntry());
                 } else if (event instanceof GcOverheadLimitEvent) {
@@ -758,17 +758,17 @@ public class GcManager {
                         jvmDao.addAnalysis(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED);
                     }
                 } else if (event instanceof ShenandoahConcurrentEvent) {
-                    if (((CombinedData) event).getCombinedOccupancyInit() > jvmDao.getMaxHeapOccupancyNonBlocking()) {
-                        jvmDao.setMaxHeapOccupancyNonBlocking(((CombinedData) event).getCombinedOccupancyInit());
+                    if (greater(((CombinedData) event).getCombinedOccupancyInit(), jvmDao.getMaxHeapOccupancyNonBlocking())) {
+                        jvmDao.setMaxHeapOccupancyNonBlocking((int) ((CombinedData) event).getCombinedOccupancyInit().getValue(KILOBYTES));
                     }
-                    if (((CombinedData) event).getCombinedSpace() > jvmDao.getMaxHeapSpaceNonBlocking()) {
-                        jvmDao.setMaxHeapSpaceNonBlocking(((CombinedData) event).getCombinedSpace());
+                    if (greater(((CombinedData) event).getCombinedSpace(), jvmDao.getMaxHeapSpaceNonBlocking())) {
+                        jvmDao.setMaxHeapSpaceNonBlocking((int) ((CombinedData) event).getCombinedSpace().getValue(KILOBYTES));
                     }
-                    if (((PermMetaspaceData) event).getPermOccupancyInit() > jvmDao.getMaxPermOccupancyNonBlocking()) {
-                        jvmDao.setMaxPermOccupancyNonBlocking(((PermMetaspaceData) event).getPermOccupancyInit());
+                    if (greater(((PermMetaspaceData) event).getPermOccupancyInit(), jvmDao.getMaxPermOccupancyNonBlocking())) {
+                        jvmDao.setMaxPermOccupancyNonBlocking((int) ((PermMetaspaceData) event).getPermOccupancyInit().getValue(KILOBYTES));
                     }
-                    if (((PermMetaspaceData) event).getPermSpace() > jvmDao.getMaxPermSpaceNonBlocking()) {
-                        jvmDao.setMaxPermSpaceNonBlocking(((PermMetaspaceData) event).getPermSpace());
+                    if (greater(((PermMetaspaceData) event).getPermSpace(), jvmDao.getMaxPermSpaceNonBlocking())) {
+                        jvmDao.setMaxPermSpaceNonBlocking((int) ((PermMetaspaceData) event).getPermSpace().getValue(KILOBYTES));
                     }
                 } else if (event instanceof UnknownEvent) {
                     // Don't count reportable events with datestamp only as unidentified
@@ -836,6 +836,10 @@ public class GcManager {
         }
 
     }
+
+	private static boolean greater(Memory memory, int value) {
+		return memory != null && memory.getValue(KILOBYTES) > value;
+	}
 
     /**
      * Determine <code>BlockingEvent</code>s where throughput since last event does not meet the throughput goal.
@@ -916,18 +920,18 @@ public class GcManager {
             jvmRun.getJvm().setOptions(jvmDao.getOptions());
         }
         jvmRun.getJvm().setMemory(jvmDao.getMemory());
-        jvmRun.getJvm().setPhysicalMemory(jvmDao.getPhysicalMemory());
-        jvmRun.getJvm().setPhysicalMemoryFree(jvmDao.getPhysicalMemoryFree());
-        jvmRun.getJvm().setSwap(jvmDao.getSwap());
-        jvmRun.getJvm().setSwapFree(jvmDao.getSwapFree());
+        jvmRun.getJvm().setPhysicalMemory(new Memory(jvmDao.getPhysicalMemory(), BYTES));
+        jvmRun.getJvm().setPhysicalMemoryFree(new Memory(jvmDao.getPhysicalMemoryFree(), BYTES));
+        jvmRun.getJvm().setSwap(new Memory(jvmDao.getSwap(), BYTES));
+        jvmRun.getJvm().setSwapFree(new Memory(jvmDao.getSwapFree(), BYTES));
         jvmRun.getJvm().setVersion(jvmDao.getVersion());
         jvmRun.setFirstGcEvent(jvmDao.getFirstGcEvent());
         jvmRun.setLastGcEvent(jvmDao.getLastGcEvent());
-        jvmRun.setMaxYoungSpace(jvmDao.getMaxYoungSpace());
-        jvmRun.setMaxOldSpace(jvmDao.getMaxOldSpace());
-        jvmRun.setMaxHeapSpace(jvmDao.getMaxHeapSpace());
-        jvmRun.setMaxHeapOccupancy(jvmDao.getMaxHeapOccupancy());
-        jvmRun.setMaxHeapAfterGc(jvmDao.getMaxHeapAfterGc());
+        jvmRun.setMaxYoungSpace(kilobytes(jvmDao.getMaxYoungSpace()));
+        jvmRun.setMaxOldSpace(kilobytes(jvmDao.getMaxOldSpace()));
+        jvmRun.setMaxHeapSpace(kilobytes(jvmDao.getMaxHeapSpace()));
+        jvmRun.setMaxHeapOccupancy(kilobytes(jvmDao.getMaxHeapOccupancy()));
+        jvmRun.setMaxHeapAfterGc(kilobytes(jvmDao.getMaxHeapAfterGc()));
         jvmRun.setMaxPermSpace(jvmDao.getMaxPermSpace());
         jvmRun.setMaxPermOccupancy(jvmDao.getMaxPermOccupancy());
         jvmRun.setMaxPermAfterGc(jvmDao.getMaxPermAfterGc());
@@ -947,10 +951,10 @@ public class GcManager {
         jvmRun.setParallelCount(jvmDao.getParallelCount());
         jvmRun.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount());
         jvmRun.setWorstInvertedParallelismEvent(jvmDao.getWorstInvertedParallelismEvent());
-        jvmRun.setMaxHeapOccupancyNonBlocking(jvmDao.getMaxHeapOccupancyNonBlocking());
-        jvmRun.setMaxHeapSpaceNonBlocking(jvmDao.getMaxHeapSpaceNonBlocking());
-        jvmRun.setMaxPermOccupancyNonBlocking(jvmDao.getMaxPermOccupancyNonBlocking());
-        jvmRun.setMaxPermSpaceNonBlocking(jvmDao.getMaxPermSpaceNonBlocking());
+        jvmRun.setMaxHeapOccupancyNonBlocking(kilobytes(jvmDao.getMaxHeapOccupancyNonBlocking()));
+        jvmRun.setMaxHeapSpaceNonBlocking(kilobytes(jvmDao.getMaxHeapSpaceNonBlocking()));
+        jvmRun.setMaxPermOccupancyNonBlocking(kilobytes(jvmDao.getMaxPermOccupancyNonBlocking()));
+        jvmRun.setMaxPermSpaceNonBlocking(kilobytes(jvmDao.getMaxPermSpaceNonBlocking()));
         jvmRun.doAnalysis();
         return jvmRun;
     }

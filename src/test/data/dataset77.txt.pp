@@ -1,0 +1,7 @@
+2016-10-12T11:15:46.044+0200: 5225.170: [Full GC (Metadata GC Threshold) 812M->811M(5120M), 3.4414988 secs][Eden: 0.0B(3070.0M)->0.0B(3072.0M) Survivors: 2048.0K->0.0B Heap: 812.3M(5120.0M)->811.7M(5120.0M)], [Metaspace: 326146K->326146K(1511424K)] [Times: user=5.06 sys=0.00, real=3.44 secs]
+2016-10-12T11:15:46.044+0200: 5225.170: [GC concurrent-root-region-scan-start]
+2016-10-12T11:15:46.045+0200: 5225.170: [GC concurrent-root-region-scan-end, 0.0003856 secs]
+2016-10-12T11:15:46.045+0200: 5225.170: [GC concurrent-mark-start]
+2016-10-12T11:15:49.486+0200: 5228.612: [Full GC (Last ditch collection)  811M->811M(5120M), 3.4434102 secs][Eden: 0.0B(3072.0M)->0.0B(3072.0M) Survivors: 0.0B->0.0B Heap: 811.7M(5120.0M)->811.6M(5120.0M)], [Metaspace: 326146K->326146K(1511424K)] [Times: user=5.16 sys=0.00, real=3.44 secs]
+2016-10-12T11:15:52.930+0200: 5232.055: [GC concurrent-mark-abort]
+2016-10-12T11:15:53.155+0200: 5232.280: [GC pause (Metadata GC Threshold) (young) (initial-mark), 0.0529489 secs][Eden: 8192.0K(3072.0M)->0.0B(3070.0M) Survivors: 0.0B->2048.0K Heap: 818.6M(5120.0M)->812.6M(5120.0M)] [Times: user=0.13 sys=0.00, real=0.05 secs]

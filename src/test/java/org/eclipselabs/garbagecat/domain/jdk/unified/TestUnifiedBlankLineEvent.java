@@ -12,69 +12,82 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
-import org.junit.Assert;
 
-import junit.framework.TestCase;
+
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedBlankLineEvent extends TestCase {
+public class TestUnifiedBlankLineEvent {
 
+    @Test
     public void testIdentityEventType() {
         String logLine = "[69.946s][info][gc,stats     ]";
-        Assert.assertEquals(JdkUtil.LogEventType.UNIFIED_BLANK_LINE + "not identified.",
+        assertEquals(JdkUtil.LogEventType.UNIFIED_BLANK_LINE + "not identified.",
                 JdkUtil.LogEventType.UNIFIED_BLANK_LINE, JdkUtil.identifyEventType(logLine));
     }
 
+    @Test
     public void testReportable() {
         String logLine = "[69.946s][info][gc,stats     ]";
-        Assert.assertFalse(
+        assertFalse(
                 JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " incorrectly indentified as reportable.",
                 JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)));
     }
 
+    @Test
     public void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_BLANK_LINE);
-        Assert.assertTrue(JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " not indentified as unified.",
+        assertTrue(JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " not indentified as unified.",
                 UnifiedUtil.isUnifiedLogging(eventTypes));
     }
 
+    @Test
     public void testLineUnifiedFooterStats() {
         String logLine = "[69.946s][info][gc,stats     ]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".",
                 UnifiedBlankLineEvent.match(logLine));
     }
 
+    @Test
     public void testLineUnifiedFooterHeap() {
         String logLine = "[69.946s][info][gc,heap,exit ]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".",
                 UnifiedBlankLineEvent.match(logLine));
     }
 
+    @Test
     public void testLineTimeUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".",
                 UnifiedBlankLineEvent.match(logLine));
     }
 
+    @Test
     public void testLineUptimeMillis() {
         String logLine = "[1357910ms]";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".",
                 UnifiedBlankLineEvent.match(logLine));
     }
 
+    @Test
     public void testLogLineWhitespaceAtEnd() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]   ";
-        Assert.assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".",
+        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".",
                 UnifiedBlankLineEvent.match(logLine));
     }
 }

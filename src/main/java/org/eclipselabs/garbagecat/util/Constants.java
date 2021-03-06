@@ -12,8 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util;
 
-import java.math.BigDecimal;
-
 /**
  * Global constants.
  * 
@@ -39,21 +37,6 @@ public class Constants {
      * The ratio of GC time vs. Stopped time for reporting excessive Stopped time.
      */
     public static final int GC_STOPPED_RATIO_THRESHOLD = 80;
-
-    /**
-     * kilobyte
-     */
-    public static final BigDecimal KILOBYTE = new BigDecimal("1024");
-
-    /**
-     * megabyte
-     */
-    public static final BigDecimal MEGABYTE = new BigDecimal("1048576");
-
-    /**
-     * gigabyte
-     */
-    public static final BigDecimal GIGABYTE = new BigDecimal("1073741824");
 
     /**
      * Help command line short option.
@@ -170,6 +153,6 @@ public class Constants {
      * Make default constructor private so the class cannot be instantiated.
      */
     private Constants() {
-
+    	super();
     }
 }
