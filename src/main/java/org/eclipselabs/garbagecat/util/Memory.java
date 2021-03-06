@@ -158,7 +158,7 @@ public class Memory implements Comparable<Memory> {
 
 	}
 
-	private static final Pattern optionSizePttern = Pattern.compile("(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?");
+	private static final Pattern optionSizePattern = Pattern.compile("(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?");
 
 	public static final Memory ZERO = new Memory(0, BYTES);
 
@@ -218,7 +218,7 @@ public class Memory implements Comparable<Memory> {
 	 * @return The size in bytes.
 	 */
 	public static Memory fromOptionSize(String size) {
-		Matcher matcher = optionSizePttern.matcher(size);
+		Matcher matcher = optionSizePattern.matcher(size);
 		return matcher.find()
 				? memory(parseLong(matcher.group(1)), matcher.group(2) == null ? BYTES : forUnit(matcher.group(2)))
 				: null;

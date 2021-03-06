@@ -29,9 +29,8 @@ public class MemoryTest {
 
 	@Test
 	public void hasToString() {
-		Memory thirtyTwoMegabytes = memory("32M");
-		assertThat(thirtyTwoMegabytes.toString(), is(equalTo("32M")));
-		assertThat(thirtyTwoMegabytes.convertTo(KILOBYTES).toString(), is(equalTo(32 * 1024 + "K")));
+		assertThat(memory("32M").toString(), is(equalTo("32M")));
+		assertThat(memory("32M").convertTo(KILOBYTES).toString(), is(equalTo("32768K")));
 	}
 
 	@Test
