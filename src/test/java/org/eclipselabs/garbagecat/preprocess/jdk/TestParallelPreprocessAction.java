@@ -34,10 +34,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestParallelPreprocessAction {
+class TestParallelPreprocessAction {
 
     @Test
-    public void testLogLineEndFull() {
+    void testLogLineEndFull() {
         String logLine = " [PSYoungGen: 32064K->0K(819840K)] [PSOldGen: 355405K->387085K(699072K)] "
                 + "387470K->387085K(1518912K) [PSPermGen: 115215K->115215K(238912K)], 1.5692400 secs]";
         String nextLogLine = null;
@@ -48,7 +48,7 @@ public class TestParallelPreprocessAction {
     }
 
     @Test
-    public void testLogLineEndTimes() {
+    void testLogLineEndTimes() {
         String logLine = ", 33.6887649 secs] [Times: user=33.68 sys=0.02, real=33.69 secs]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
@@ -58,7 +58,7 @@ public class TestParallelPreprocessAction {
     }
 
     @Test
-    public void testLogLineClassUnloading() {
+    void testLogLineClassUnloading() {
         String logLine = "65.343: [Full GC[Unloading class $Proxy111]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
@@ -68,7 +68,7 @@ public class TestParallelPreprocessAction {
     }
 
     @Test
-    public void testLogLineGcTimeLimitExceedLineExceed() {
+    void testLogLineGcTimeLimitExceedLineExceed() {
         String logLine = "3743.645: [Full GC [PSYoungGen: 419840K->415020K(839680K)] [PSOldGen: "
                 + "5008922K->5008922K(5033984K)] 5428762K->5423942K(5873664K) [PSPermGen: "
                 + "193275K->193275K(262144K)]      GC time would exceed GCTimeLimit of 98%";
@@ -76,7 +76,7 @@ public class TestParallelPreprocessAction {
     }
 
     @Test
-    public void testLogLineGcTimeLimitExceeding() {
+    void testLogLineGcTimeLimitExceeding() {
         String logLine = "3924.453: [Full GC [PSYoungGen: 419840K->418436K(839680K)] [PSOldGen: "
                 + "5008601K->5008601K(5033984K)] 5428441K->5427038K(5873664K) [PSPermGen: "
                 + "193278K->193278K(262144K)]      GC time is exceeding GCTimeLimit of 98%";
@@ -84,7 +84,7 @@ public class TestParallelPreprocessAction {
     }
 
     @Test
-    public void testLogLineGcTimeLimitExceedMoreSpaces() {
+    void testLogLineGcTimeLimitExceedMoreSpaces() {
         String logLine = "52843.722: [Full GC [PSYoungGen: 109696K->95191K(184960K)] [ParOldGen: "
                 + "1307240K->1307182K(1310720K)] 1416936K->1402374K(1495680K) [PSPermGen: "
                 + "113631K->113623K(196608K)]\tGC time is exceeding GCTimeLimit of 98%";
@@ -92,7 +92,7 @@ public class TestParallelPreprocessAction {
     }
 
     @Test
-    public void testLogLineGcTimeLimitExceedWithDatestamp() {
+    void testLogLineGcTimeLimitExceedWithDatestamp() {
         String logLine = "2017-06-02T11:11:29.244+0530: 165944.630: [Full GC [PSYoungGen: 230400K->217423K(268800K)] "
                 + "[PSOldGen: 1789951K->1789951K(1789952K)] 2020351K->2007375K(2058752K) "
                 + "[PSPermGen: 188837K->188837K(524288K)]      GC time would exceed GCTimeLimit of 98%";
@@ -100,7 +100,7 @@ public class TestParallelPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningParallelScavenge() {
+    void testLogLineBeginningParallelScavenge() {
         String logLine = "10.392: [GC";
         assertTrue(ParallelPreprocessAction.match(logLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.PARALLEL.toString() + ".");
     }
@@ -109,7 +109,7 @@ public class TestParallelPreprocessAction {
      * Test preprocessing <code>GcTimeLimitExceededEvent</code>.
      */
     @Test
-    public void testSplitParallelSerialOldEventLogging() {
+    void testSplitParallelSerialOldEventLogging() {
         File testFile = TestUtil.getFile("dataset9.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -127,7 +127,7 @@ public class TestParallelPreprocessAction {
      * <code>ParallelSerialOldEvent</code>.
      */
     @Test
-    public void testUnloadingClassPreprocessActionParallelSerialOldEventLogging() {
+    void testUnloadingClassPreprocessActionParallelSerialOldEventLogging() {
         File testFile = TestUtil.getFile("dataset24.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -142,7 +142,7 @@ public class TestParallelPreprocessAction {
      * <code>ParallelScavengeEvent</code>.
      */
     @Test
-    public void testSplitParallelScavengeEventLogging() {
+    void testSplitParallelScavengeEventLogging() {
         File testFile = TestUtil.getFile("dataset30.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -157,7 +157,7 @@ public class TestParallelPreprocessAction {
      * Test preprocessing <code>GcTimeLimitExceededEvent</code> with logging mixed across multiple lines.
      */
     @Test
-    public void testParallelSerialOldAcrossMultipleLinesMixedGcTimeLimitLogging() {
+    void testParallelSerialOldAcrossMultipleLinesMixedGcTimeLimitLogging() {
         File testFile = TestUtil.getFile("dataset132.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

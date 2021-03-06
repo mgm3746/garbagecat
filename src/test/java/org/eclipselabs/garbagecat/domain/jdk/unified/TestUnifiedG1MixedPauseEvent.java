@@ -36,10 +36,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedG1MixedPauseEvent {
+class TestUnifiedG1MixedPauseEvent {
 
     @Test
-    public void testLogLinePreprocessed() {
+    void testLogLinePreprocessed() {
         String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
@@ -60,28 +60,28 @@ public class TestUnifiedG1MixedPauseEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1MixedPauseEvent, JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not parsed.");
     }
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testHydration() {
+    void testHydration() {
         LogEventType eventType = JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE;
         String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
@@ -92,19 +92,19 @@ public class TestUnifiedG1MixedPauseEvent {
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE), JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_G1_MIXED_PAUSE);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s     ";
         ;
@@ -112,7 +112,7 @@ public class TestUnifiedG1MixedPauseEvent {
     }
 
     @Test
-    public void testPreprocessing() {
+    void testPreprocessing() {
         File testFile = TestUtil.getFile("dataset169.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

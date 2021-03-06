@@ -29,10 +29,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedSerialOldEvent {
+class TestUnifiedSerialOldEvent {
 
     @Test
-    public void testPreprocessed() {
+    void testPreprocessed() {
         String logLine = "[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: "
                 + "1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
@@ -54,7 +54,7 @@ public class TestUnifiedSerialOldEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: "
                 + "1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
@@ -62,7 +62,7 @@ public class TestUnifiedSerialOldEvent {
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: "
                 + "1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
@@ -70,7 +70,7 @@ public class TestUnifiedSerialOldEvent {
     }
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: "
                 + "1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
@@ -78,7 +78,7 @@ public class TestUnifiedSerialOldEvent {
     }
 
     @Test
-    public void testHydration() {
+    void testHydration() {
         LogEventType eventType = JdkUtil.LogEventType.UNIFIED_SERIAL_OLD;
         String logLine = "[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: "
                 + "1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms "
@@ -89,19 +89,19 @@ public class TestUnifiedSerialOldEvent {
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_SERIAL_OLD), JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_SERIAL_OLD);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: "
                 + "1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms "
                 + "User=0.00s Sys=0.00s Real=0.00s    ";
@@ -109,7 +109,7 @@ public class TestUnifiedSerialOldEvent {
     }
 
     @Test
-    public void testLogLine7SpacesAfterStart() {
+    void testLogLine7SpacesAfterStart() {
         String logLine = "[0.119s][info][gc,start       ] GC(5) Pause Full (Allocation Failure) DefNew: "
                 + "1142K->110K(1152K) Tenured: 1044K->1934K(1936K) Metaspace: 1295K->1295K(1056768K) 2M->1M(4M) "
                 + "3.178ms User=0.00s Sys=0.00s Real=0.00s";
@@ -117,7 +117,7 @@ public class TestUnifiedSerialOldEvent {
     }
 
     @Test
-    public void testPreprocessedTriggerErgonomics() {
+    void testPreprocessedTriggerErgonomics() {
         String logLine = "[0.091s][info][gc,start     ] GC(3) Pause Full (Ergonomics) PSYoungGen: 502K->436K(1536K) "
                 + "PSOldGen: 460K->511K(2048K) Metaspace: 701K->701K(1056768K) 0M->0M(3M) 1.849ms "
                 + "User=0.01s Sys=0.00s Real=0.00s";

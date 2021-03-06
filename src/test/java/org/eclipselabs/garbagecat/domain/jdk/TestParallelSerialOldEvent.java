@@ -24,10 +24,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestParallelSerialOldEvent {
+class TestParallelSerialOldEvent {
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
                 + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
                 + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]";
@@ -47,7 +47,7 @@ public class TestParallelSerialOldEvent {
     }
 
     @Test
-    public void testLogLineWhiteSpaceAtEnd() {
+    void testLogLineWhiteSpaceAtEnd() {
         String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
                 + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
                 + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]  ";
@@ -55,7 +55,7 @@ public class TestParallelSerialOldEvent {
     }
 
     @Test
-    public void testLogLineJdk16() {
+    void testLogLineJdk16() {
         String logLine = "4.165: [Full GC (System) [PSYoungGen: 1784K->0K(12736K)] "
                 + "[PSOldGen: 1081K->2855K(116544K)] 2865K->2855K(129280K) "
                 + "[PSPermGen: 8600K->8600K(131072K)], 0.0427680 secs]";
@@ -76,7 +76,7 @@ public class TestParallelSerialOldEvent {
     }
 
     @Test
-    public void testLogLineTriggerErgonomicsWithMetaspace() {
+    void testLogLineTriggerErgonomicsWithMetaspace() {
         String logLine = "2018-12-06T19:04:46.807-0500: 0.122: [Full GC (Ergonomics) [PSYoungGen: 508K->385K(1536K)] "
                 + "[PSOldGen: 408K->501K(2048K)] 916K->887K(3584K), "
                 + "[Metaspace: 3680K->3680K(1056768K)], 0.0030057 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]";
@@ -97,7 +97,7 @@ public class TestParallelSerialOldEvent {
     }
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
                 + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
                 + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]";

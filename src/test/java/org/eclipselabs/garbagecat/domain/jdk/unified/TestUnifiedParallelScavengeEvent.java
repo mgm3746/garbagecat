@@ -29,10 +29,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedParallelScavengeEvent {
+class TestUnifiedParallelScavengeEvent {
 
     @Test
-    public void testPreprocessed() {
+    void testPreprocessed() {
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
@@ -57,7 +57,7 @@ public class TestUnifiedParallelScavengeEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
@@ -65,7 +65,7 @@ public class TestUnifiedParallelScavengeEvent {
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
@@ -73,7 +73,7 @@ public class TestUnifiedParallelScavengeEvent {
     }
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
@@ -81,7 +81,7 @@ public class TestUnifiedParallelScavengeEvent {
     }
 
     @Test
-    public void testHydration() {
+    void testHydration() {
         LogEventType eventType = JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE;
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
@@ -93,19 +93,19 @@ public class TestUnifiedParallelScavengeEvent {
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE), JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_PARALLEL_SCAVENGE);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s    ";
@@ -113,7 +113,7 @@ public class TestUnifiedParallelScavengeEvent {
     }
 
     @Test
-    public void testLogLine7SpacesAfterStart() {
+    void testLogLine7SpacesAfterStart() {
         String logLine = "[15.030s][info][gc,start       ] GC(1199) Pause Young (Allocation Failure) PSYoungGen: "
                 + "20544K->64K(20992K) PSOldGen: 15496K->15504K(17920K) Metaspace: 3779K->3779K(1056768K) "
                 + "35M->15M(38M) 0.402ms User=0.00s Sys=0.00s Real=0.00s";
@@ -121,7 +121,7 @@ public class TestUnifiedParallelScavengeEvent {
     }
 
     @Test
-    public void testPreprocessedParallelCompactingOld() {
+    void testPreprocessedParallelCompactingOld() {
         String logLine = "[0.029s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->432K(1024K) ParOldGen: 0K->8K(512K) Metaspace: 121K->121K(1056768K) 0M->0M(1M) 0.762ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";

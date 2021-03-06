@@ -29,10 +29,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedG1YoungInitialMarkEvent {
+class TestUnifiedG1YoungInitialMarkEvent {
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "[2.752s][info][gc            ] GC(53) Pause Initial Mark (G1 Humongous Allocation) "
                 + "562M->5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");
@@ -47,47 +47,47 @@ public class TestUnifiedG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[2.752s][info][gc            ] GC(53) Pause Initial Mark (G1 Humongous Allocation) "
                 + "562M->5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s";
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[2.752s][info][gc            ] GC(53) Pause Initial Mark (G1 Humongous Allocation) "
                 + "562M->5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1YoungInitialMarkEvent, JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not parsed.");
     }
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "[2.752s][info][gc            ] GC(53) Pause Initial Mark (G1 Humongous Allocation) "
                 + "562M->5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK), JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[2.752s][info][gc            ] GC(53) Pause Initial Mark (G1 Humongous Allocation) "
                 + "562M->5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");
     }
 
     @Test
-    public void testLogLine11Spaces() {
+    void testLogLine11Spaces() {
         String logLine = "[2.727s][info][gc           ] GC(51) Pause Initial Mark (G1 Humongous Allocation) "
                 + "1162M->5M(1250M) 1.336ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");

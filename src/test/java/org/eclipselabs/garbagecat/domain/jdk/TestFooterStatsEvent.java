@@ -34,372 +34,372 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestFooterStatsEvent {
+class TestFooterStatsEvent {
 
     @Test
-    public void testLineJdk8() {
+    void testLineJdk8() {
         String logLine = "GC STATISTICS:";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnified() {
+    void testLineUnified() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] GC STATISTICS:";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] GC STATISTICS:";
         assertEquals(JdkUtil.LogEventType.FOOTER_STATS,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.FOOTER_STATS + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] GC STATISTICS:";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof FooterStatsEvent, JdkUtil.LogEventType.FOOTER_STATS.toString() + " not parsed.");
     }
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] GC STATISTICS:";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.FOOTER_STATS.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.FOOTER_STATS), JdkUtil.LogEventType.FOOTER_STATS.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.FOOTER_STATS);
         assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.FOOTER_STATS.toString() + " incorrectly indentified as unified.");
     }
 
     @Test
-    public void testLineJdk8UThreadRoots() {
+    void testLineJdk8UThreadRoots() {
         String logLine = "    U: Thread Roots         =     0.03 s (a =       14 us) "
                 + "(n =  2498) (lvls, us =        7,       10,       12,       16,      178)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedUThreadRoots() {
+    void testLineUnifiedUThreadRoots() {
         String logLine = "[103.683s][info][gc,stats     ]     U: Thread Roots         =     0.03 s (a =       14 us) "
                 + "(n =  2498) (lvls, us =        7,       10,       12,       16,      178)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8RetireTLabs() {
+    void testLineJdk8RetireTLabs() {
         String logLine = "  Retire TLABs              =     0.01 s (a =        2 us) "
                 + "(n =  3151) (lvls, us =        1,        1,        1,        2,       18))";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedRetireTLabs() {
+    void testLineUnifiedRetireTLabs() {
         String logLine = "[103.683s][info][gc,stats     ]   Retire TLABs              =     0.01 s (a =        2 us) "
                 + "(n =  3151) (lvls, us =        1,        1,        1,        2,       18))";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8SyncPinned() {
+    void testLineJdk8SyncPinned() {
         String logLine = "  Sync Pinned               =     0.01 s (a =        2 us) "
                 + "(n =  3151) (lvls, us =        1,        2,        2,        2,       19)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedSyncPinned() {
+    void testLineUnifiedSyncPinned() {
         String logLine = "[103.683s][info][gc,stats     ]   Sync Pinned               =     0.01 s (a =        2 us) "
                 + "(n =  3151) (lvls, us =        1,        2,        2,        2,       19)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8TrashCSet() {
+    void testLineJdk8TrashCSet() {
         String logLine = "  Trash CSet                =     0.00 s (a =        1 us) "
                 + "(n =  3151) (lvls, us =        0,        1,        1,        1,       21)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedTrashCSet() {
+    void testLineUnifiedTrashCSet() {
         String logLine = "[103.683s][info][gc,stats     ]   Trash CSet                =     0.00 s (a =        1 us) "
                 + "(n =  3151) (lvls, us =        0,        1,        1,        1,       21)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8PauseFinalEvacG() {
+    void testLineJdk8PauseFinalEvacG() {
         String logLine = "Pause Final Evac (G)        =     0.42 s (a =      170 us) "
                 + "(n =  2499) (lvls, us =       44,       82,      107,      146,     4911)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedPauseFinalEvacG() {
+    void testLineUnifiedPauseFinalEvacG() {
         String logLine = "[103.683s][info][gc,stats     ] Pause Final Evac (G)        =     0.42 s (a =      170 us) "
                 + "(n =  2499) (lvls, us =       44,       82,      107,      146,     4911)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8PauseFinalEvacN() {
+    void testLineJdk8PauseFinalEvacN() {
         String logLine = "Pause Final Evac (N)        =     0.05 s (a =       21 us) "
                 + "(n =  2499) (lvls, us =       12,       15,       18,       23,      139)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedPauseFinalEvacN() {
+    void testLineUnifiedPauseFinalEvacN() {
         String logLine = "[103.683s][info][gc,stats     ] Pause Final Evac (N)        =     0.05 s (a =       21 us) "
                 + "(n =  2499) (lvls, us =       12,       15,       18,       23,      139)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8RetireGcLabs() {
+    void testLineJdk8RetireGcLabs() {
         String logLine = "  Retire GCLABs             =     0.00 s (a =        1 us) "
                 + "(n =  2499) (lvls, us =        0,        1,        1,        1,       20)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedRetireGcLabs() {
+    void testLineUnifiedRetireGcLabs() {
         String logLine = "[103.683s][info][gc,stats     ]   Retire GCLABs             =     0.00 s (a =        1 us) "
                 + "(n =  2499) (lvls, us =        0,        1,        1,        1,       20)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8Prepare() {
+    void testLineJdk8Prepare() {
         String logLine = "  Prepare                   =     0.00 s (a =        3 us) "
                 + "(n =   652) (lvls, us =        1,        2,        3,        4,       20)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedPrepare() {
+    void testLineUnifiedPrepare() {
         String logLine = "[103.683s][info][gc,stats     ]   Prepare                   =     0.00 s (a =        3 us) "
                 + "(n =   652) (lvls, us =        1,        2,        3,        4,       20)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8SuccessfulConcurrentGCs() {
+    void testLineJdk8SuccessfulConcurrentGCs() {
         String logLine = " 3151 successful concurrent GCs";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedSuccessfulConcurrentGCs() {
+    void testLineUnifiedSuccessfulConcurrentGCs() {
         String logLine = "[103.683s][info][gc,stats     ]  3151 successful concurrent GCs";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8InvokedImplicitly() {
+    void testLineJdk8InvokedImplicitly() {
         String logLine = "      0 invoked implicitly";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedInvokedImplicitly() {
+    void testLineUnifiedInvokedImplicitly() {
         String logLine = "[103.683s][info][gc,stats     ]       0 invoked implicitly";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8FromToCountSumData() {
+    void testLineJdk8FromToCountSumData() {
         String logLine = "      1 ms -       2 ms:         1998         999 ms";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedFromToCountSumData() {
+    void testLineUnifiedFromToCountSumData() {
         String logLine = "[103.684s][info][gc,stats     ]       1 ms -       2 ms:         1998         999 ms";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8FromToCountSumData5DigitSum() {
+    void testLineJdk8FromToCountSumData5DigitSum() {
         String logLine = "      8 ms -      16 ms:         4192       16768 ms";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedFromToCountSumData5DigitSum() {
+    void testLineUnifiedFromToCountSumData5DigitSum() {
         String logLine = "[103.684s][info][gc,stats     ]       8 ms -      16 ms:         4192       16768 ms";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8FromToCountSumData2DigitSum() {
+    void testLineJdk8FromToCountSumData2DigitSum() {
         String logLine = "     16 ms -      32 ms:          114         912 ms";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedFromToCountSumData2DigitSum() {
+    void testLineUnifiedFromToCountSumData2DigitSum() {
         String logLine = "[96.867s]      16 ms -      32 ms:            6          48 ms";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8PacingDelays() {
+    void testLineJdk8PacingDelays() {
         String logLine = "Pacing delays are measured from entering the pacing code " + "till exiting it. Therefore,";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedPacingDelays() {
+    void testLineUnifiedPacingDelays() {
         String logLine = "[103.684s][info][gc,stats     ] Pacing delays are measured from entering the pacing code "
                 + "till exiting it. Therefore,";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedPacingDelays3Spaces() {
+    void testLineUnifiedPacingDelays3Spaces() {
         String logLine = "[66.558s][info][gc,stats      ]   Pacing delays are measured from entering the pacing code "
                 + "till exiting it. Therefore,";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8ObservedPacing() {
+    void testLineJdk8ObservedPacing() {
         String logLine = "observed pacing delays may be higher than the threshold " + "when paced thread spent more";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedObservedPacing() {
+    void testLineUnifiedObservedPacing() {
         String logLine = "[103.684s][info][gc,stats     ] observed pacing delays may be higher than the threshold "
                 + "when paced thread spent more";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedObservedPacing3Spaces() {
+    void testLineUnifiedObservedPacing3Spaces() {
         String logLine = "[66.558s][info][gc,stats      ]   observed pacing delays may be higher than the threshold "
                 + "when paced thread spent more";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8TimeInThePacing() {
+    void testLineJdk8TimeInThePacing() {
         String logLine = "time in the pacing code. It usually happens when thread is " + "de-scheduled while paced,";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedTimeInThePacing() {
+    void testLineUnifiedTimeInThePacing() {
         String logLine = "[103.684s][info][gc,stats     ] time in the pacing code. It usually happens when thread is "
                 + "de-scheduled while paced,";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8OsTakesLonger() {
+    void testLineJdk8OsTakesLonger() {
         String logLine = "OS takes longer to unblock the thread, or JVM experiences " + "an STW pause.";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedOsTakesLonger() {
+    void testLineUnifiedOsTakesLonger() {
         String logLine = "[103.684s][info][gc,stats     ] OS takes longer to unblock the thread, or JVM experiences "
                 + "an STW pause.";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedOsTakesLonger3Spaces() {
+    void testLineUnifiedOsTakesLonger3Spaces() {
         String logLine = "[66.558s][info][gc,stats      ]   OS takes longer to unblock the thread, or JVM experiences "
                 + "an STW pause.";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8FromToCount5Sum5() {
+    void testLineJdk8FromToCount5Sum5() {
         String logLine = "      8 ms -      16 ms:        11145       44580 ms";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8SFlatProfilerRoots() {
+    void testLineJdk8SFlatProfilerRoots() {
         String logLine = "    S: FlatProfiler Roots   =     0.00 s (a =        0 us) (n =  7119) (lvls, us =        "
                 + "0,        0,        0,        0,       20)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8Enqueue() {
+    void testLineJdk8Enqueue() {
         String logLine = "    Enqueue                 =     0.12 s (a =       81 us) (n =  1424) (lvls, us =       "
                 + "14,       20,       75,       99,      929)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8EFlatProfilerRoots() {
+    void testLineJdk8EFlatProfilerRoots() {
         String logLine = "    E: FlatProfiler Roots   =     0.00 s (a =        0 us) (n =  7118) (lvls, us =        "
                 + "0,        0,        0,        0,       16)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineJdk8URFlatProfilerRoots() {
+    void testLineJdk8URFlatProfilerRoots() {
         String logLine = "    UR: FlatProfiler Roots  =     0.00 s (a =        1 us) (n =  1117) (lvls, us =        "
                 + "0,        0,        0,        0,       13)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineSystemPurge() {
+    void testLineSystemPurge() {
         String logLine = "[57.108s][info][gc,stats     ]   System Purge              =     0.10 s (a =       73 us) "
                 + "(n =  1378) (lvls, us =       29,       45,       69,       85,      349)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineSystemParallelCleanup() {
+    void testLineSystemParallelCleanup() {
         String logLine = "[57.108s][info][gc,stats     ]     Parallel Cleanup        =     0.10 s (a =       72 us) "
                 + "(n =  1378) (lvls, us =       28,       45,       69,       85,      348)";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineHigherDelay() {
+    void testLineHigherDelay() {
         String logLine = "[66.558s][info][gc,stats      ]   Higher delay would prevent application outpacing the GC, "
                 + "but it will hide the GC latencies";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineFromTheStw() {
+    void testLineFromTheStw() {
         String logLine = "[66.558s][info][gc,stats      ]   from the STW pause times. Pacing affects the individual "
                 + "threads, and so it would also be";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineInvisible() {
+    void testLineInvisible() {
         String logLine = "[66.558s][info][gc,stats      ]   invisible to the usual profiling tools, but would add up "
                 + "to end-to-end application latency.";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineRaiseMax() {
+    void testLineRaiseMax() {
         String logLine = "[66.558s][info][gc,stats      ]   Raise max pacing delay with care.";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test
-    public void testLineHappenedAtOutsideOfCycle() {
+    void testLineHappenedAtOutsideOfCycle() {
         String logLine = "[74.874s]         1 happened at Outside of Cycle";
         assertTrue(FooterStatsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
@@ -408,7 +408,7 @@ public class TestFooterStatsEvent {
      * Test logging.
      */
     @Test
-    public void testUnifiedUptimeMillis() {
+    void testUnifiedUptimeMillis() {
         File testFile = TestUtil.getFile("dataset165.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -419,7 +419,7 @@ public class TestFooterStatsEvent {
     }
 
     @Test
-    public void testJdk11Time() {
+    void testJdk11Time() {
         File testFile = TestUtil.getFile("dataset196.txt");
         GcManager gcManager1 = new GcManager();
         gcManager1.store(testFile, false);
@@ -438,7 +438,7 @@ public class TestFooterStatsEvent {
     }
 
     @Test
-    public void testJdk8() {
+    void testJdk8() {
         File testFile = TestUtil.getFile("dataset198.txt");
         GcManager gcManager1 = new GcManager();
         gcManager1.store(testFile, false);

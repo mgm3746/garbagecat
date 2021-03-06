@@ -36,10 +36,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedG1YoungPrepareMixedEvent {
+class TestUnifiedG1YoungPrepareMixedEvent {
 
     @Test
-    public void testLogLinePreprocessed() {
+    void testLogLinePreprocessed() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
@@ -60,28 +60,28 @@ public class TestUnifiedG1YoungPrepareMixedEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1YoungPrepareMixedEvent, JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not parsed.");
     }
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testHydration() {
+    void testHydration() {
         LogEventType eventType = JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
@@ -92,26 +92,26 @@ public class TestUnifiedG1YoungPrepareMixedEvent {
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED), JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s    ";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
     }
 
     @Test
-    public void testPreprocessing() {
+    void testPreprocessing() {
         File testFile = TestUtil.getFile("dataset168.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

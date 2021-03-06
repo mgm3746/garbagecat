@@ -24,10 +24,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestSerialOldEvent {
+class TestSerialOldEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "187.159: [Full GC 187.160: "
                 + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
                 + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
@@ -35,7 +35,7 @@ public class TestSerialOldEvent {
     }
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "187.159: [Full GC 187.160: "
                 + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
                 + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
@@ -56,7 +56,7 @@ public class TestSerialOldEvent {
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "187.159: [Full GC 187.160: "
                 + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
                 + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]       ";
@@ -64,7 +64,7 @@ public class TestSerialOldEvent {
     }
 
     @Test
-    public void testLogLineJdk16WithTrigger() {
+    void testLogLineJdk16WithTrigger() {
         String logLine = "2.457: [Full GC (System) 2.457: "
                 + "[Tenured: 1092K->2866K(116544K), 0.0489980 secs] 11012K->2866K(129664K), "
                 + "[Perm : 8602K->8604K(131072K)], 0.0490880 secs]";
@@ -85,7 +85,7 @@ public class TestSerialOldEvent {
     }
 
     @Test
-    public void testLogLineWithSerialNewBlock() {
+    void testLogLineWithSerialNewBlock() {
         String logLine = "3727.365: [GC 3727.365: [DefNew: 400314K->400314K(400384K), 0.0000550 secs]"
                 + "3727.365: [Tenured: 837793K->597490K(889536K), 44.7498530 secs] 1238107K->597490K(1289920K), "
                 + "[Perm : 54745K->54745K(54784K)], 44.7501880 secs]";
@@ -105,7 +105,7 @@ public class TestSerialOldEvent {
     }
 
     @Test
-    public void testLogLineWithDateStamps() {
+    void testLogLineWithDateStamps() {
         String logLine = "2017-03-26T13:16:18.668+0200: 24.296: [GC2017-03-26T13:16:18.668+0200: 24.296: [DefNew: "
                 + "4928K->511K(4928K), 0.0035715 secs]2017-03-26T13:16:18.684+0200: 24.300: [Tenured: "
                 + "11239K->9441K(11328K), 0.1110369 secs] 15728K->9441K(16256K), [Perm : 15599K->15599K(65536K)], "
@@ -126,7 +126,7 @@ public class TestSerialOldEvent {
     }
 
     @Test
-    public void testLogLineFullGcWithMetadatGcThresholdTrigger() {
+    void testLogLineFullGcWithMetadatGcThresholdTrigger() {
         String logLine = "2.447: [Full GC (Metadata GC Threshold) 2.447: [Tenured: 0K->12062K(524288K), "
                 + "0.1248607 secs] 62508K->12062K(760256K), [Metaspace: 20526K->20526K(1069056K)], 0.1249442 secs] "
                 + "[Times: user=0.18 sys=0.08, real=0.13 secs]";
@@ -147,7 +147,7 @@ public class TestSerialOldEvent {
     }
 
     @Test
-    public void testLogLineGcWithAllocationFailureTrigger() {
+    void testLogLineGcWithAllocationFailureTrigger() {
         String logLine = "38.922: [GC (Allocation Failure) 38.922: [DefNew: 229570K->229570K(235968K), "
                 + "0.0000182 secs]38.922: [Tenured: 459834K->79151K(524288K), 0.2871383 secs] "
                 + "689404K->79151K(760256K), [Metaspace: 68373K->68373K(1114112K)], 0.2881307 secs] "
@@ -169,7 +169,7 @@ public class TestSerialOldEvent {
     }
 
     @Test
-    public void testLogLineGcPromotionFailedTrigger() {
+    void testLogLineGcPromotionFailedTrigger() {
         String logLine = "116.957: [GC (Allocation Failure) 116.957: [DefNew (promotion failed) : "
                 + "229660K->235967K(235968K), 0.2897884 secs]117.247: [Tenured: 524288K->144069K(524288K), "
                 + "0.3905008 secs] 674654K->144069K(760256K), [Metaspace: 65384K->65384K(1114112K)], 0.6804246 secs] "

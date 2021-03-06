@@ -35,17 +35,17 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestParNewEvent {
+class TestParNewEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
                 + "89399K->11655K(907328K), 0.0387074 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.PAR_NEW.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
                 + "89399K->11655K(907328K), 0.0387074 secs]";
         assertTrue(ParNewEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
@@ -62,7 +62,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineWithTimesData() {
+    void testLogLineWithTimesData() {
         String logLine = "68331.885: [GC 68331.885: [ParNew: 149120K->18211K(149120K), "
                 + "0.0458577 secs] 4057776K->3931241K(8367360K), 0.0461448 secs] "
                 + "[Times: user=0.34 sys=0.01, real=0.05 secs]";
@@ -84,7 +84,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineWithIcmsDcData() {
+    void testLogLineWithIcmsDcData() {
         String logLine = "42514.965: [GC 42514.966: [ParNew: 54564K->1006K(59008K), 0.0221640 secs] "
                 + "417639K->364081K(1828480K) icms_dc=0 , 0.0225090 secs] "
                 + "[Times: user=0.05 sys=0.00, real=0.02 secs]";
@@ -106,7 +106,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "68331.885: [GC 68331.885: [ParNew: 149120K->18211K(149120K), "
                 + "0.0458577 secs] 4057776K->3931241K(8367360K), 0.0461448 secs] "
                 + "[Times: user=0.34 sys=0.01, real=0.05 secs]    ";
@@ -114,7 +114,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineHugeTimestamp() {
+    void testLogLineHugeTimestamp() {
         String logLine = "4687597.901: [GC 4687597.901: [ParNew: 342376K->16369K(368640K), "
                 + "0.0865160 secs] 1561683K->1235676K(2056192K), 0.0869060 secs]";
         ParNewEvent event = new ParNewEvent(logLine);
@@ -122,7 +122,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineAfterPreprocessing() {
+    void testLogLineAfterPreprocessing() {
         String logLine = "13.086: [GC13.086: [ParNew: 272640K->33532K(306688K), 0.0381419 secs] "
                 + "272640K->33532K(1014528K), 0.0383306 secs] " + "[Times: user=0.11 sys=0.02, real=0.04 secs]";
         ParNewEvent event = new ParNewEvent(logLine);
@@ -130,7 +130,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineJdk8WithTrigger() {
+    void testLogLineJdk8WithTrigger() {
         String logLine = "6.703: [GC (Allocation Failure) 6.703: [ParNew: 886080K->11485K(996800K), 0.0193349 secs] "
                 + "886080K->11485K(1986432K), 0.0198375 secs] [Times: user=0.09 sys=0.01, real=0.02 secs]";
         assertTrue(ParNewEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
@@ -152,7 +152,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineJdk8NoSpaceAfterTrigger() {
+    void testLogLineJdk8NoSpaceAfterTrigger() {
         String logLine = "1.948: [GC (Allocation Failure)1.948: [ParNew: 136576K->17023K(153600K), 0.0303800 secs] "
                 + "136576K->19515K(494976K), 0.0305360 secs] [Times: user=0.10 sys=0.01, real=0.03 secs]";
         assertTrue(ParNewEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
@@ -174,7 +174,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineGcLockerTrigger() {
+    void testLogLineGcLockerTrigger() {
         String logLine = "2.480: [GC (GCLocker Initiated GC) 2.480: [ParNew: 1228800K->30695K(1382400K), "
                 + "0.0395910 secs] 1228800K->30695K(8235008K), 0.0397980 secs] "
                 + "[Times: user=0.23 sys=0.01, real=0.04 secs]";
@@ -197,7 +197,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineCmsScavengeBeforeRemark() {
+    void testLogLineCmsScavengeBeforeRemark() {
         String logLine = "7236.341: [GC[YG occupancy: 1388745 K (4128768 K)]7236.341: [GC7236.341: [ParNew: "
                 + "1388745K->458752K(4128768K), 0.5246295 secs] 2977822K->2161212K(13172736K), 0.5248785 secs] "
                 + "[Times: user=0.92 sys=0.03, real=0.51 secs]";
@@ -219,7 +219,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineSystemGcTrigger() {
+    void testLogLineSystemGcTrigger() {
         String logLine = "27880.710: [GC (System.gc()) 27880.710: [ParNew: 925502K->58125K(996800K), 0.0133005 secs] "
                 + "5606646K->4742781K(8277888K), 0.0138294 secs] [Times: user=0.14 sys=0.00, real=0.02 secs]";
         assertTrue(ParNewEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
@@ -241,7 +241,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLinePromotionFailed() {
+    void testLogLinePromotionFailed() {
         String logLine = "393747.603: [GC393747.603: [ParNew (promotion failed): 476295K->476295K(4128768K), "
                 + "0.5193071 secs] 7385012K->7555732K(13172736K), 0.5196411 secs] "
                 + "[Times: user=0.92 sys=0.00, real=0.55 secs]";
@@ -263,7 +263,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineWithDatestamp() {
+    void testLogLineWithDatestamp() {
         String logLine = "2010-04-16T12:11:18.979+0200: 84.335: [GC 84.336: [ParNew: 273152K->858K(341376K), "
                 + "0.0030008 secs] 273152K->858K(980352K), 0.0031183 secs] "
                 + "[Times: user=0.00 sys=0.00, real=0.00 secs]";
@@ -285,7 +285,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineWithDatestampNoTimestamp() {
+    void testLogLineWithDatestampNoTimestamp() {
         String logLine = "2017-02-27T07:23:39.571+0100: [GC [ParNew: 2304000K->35161K(2688000K), 0.0759285 secs] "
                 + "2304000K->35161K(9856000K), 0.0760907 secs] [Times: user=0.21 sys=0.05, real=0.08 secs]";
         // Datestamp only is handled by preparsing.
@@ -293,7 +293,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineWithDoubleDatestamp() {
+    void testLogLineWithDoubleDatestamp() {
         String logLine = "2013-12-09T16:18:17.813+0000: 13.086: [GC2013-12-09T16:18:17.813+0000: 13.086: [ParNew: "
                 + "272640K->33532K(306688K), 0.0381419 secs] 272640K->33532K(1014528K), 0.0383306 secs] "
                 + "[Times: user=0.11 sys=0.02, real=0.04 secs]";
@@ -315,7 +315,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineTriggerCmsFinalRemarkJdk8() {
+    void testLogLineTriggerCmsFinalRemarkJdk8() {
         String logLine = "4.506: [GC (CMS Final Remark) [YG occupancy: 100369 K (153344 K)]"
                 + "4.506: [GC (CMS Final Remark) 4.506: [ParNew: 100369K->10116K(153344K), 0.0724021 secs] "
                 + "100369K->16685K(4177280K), 0.0724907 secs] [Times: user=0.13 sys=0.01, real=0.07 secs]";
@@ -338,7 +338,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineTriggerCmsFinalRemarkJdk8WithTimeStamps() {
+    void testLogLineTriggerCmsFinalRemarkJdk8WithTimeStamps() {
         String logLine = "2017-01-07T22:02:15.504+0300: 66.504: [GC (CMS Final Remark)[YG occupancy: 4266790 K "
                 + "(8388608 K)]2017-01-07T22:02:15.504+0300: 66.504: [GC (CMS Final Remark)"
                 + "2017-01-07T22:02:15.504+0300: 66.504: [ParNew: 4266790K->922990K(8388608K), 0.6540990 secs] "
@@ -363,7 +363,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineNoSpaceAfterTrigger() {
+    void testLogLineNoSpaceAfterTrigger() {
         String logLine = "78.251: [GC (CMS Final Remark)[YG occupancy: 2619547 K (8388608 K)]"
                 + "78.251: [GC (CMS Final Remark)78.251: [ParNew: 2619547K->569438K(8388608K), 0.3405110 secs] "
                 + "6555444K->5043068K(22020096K) icms_dc=100 , 0.3406250 secs] "
@@ -387,7 +387,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineTriggerPromotionFailed() {
+    void testLogLineTriggerPromotionFailed() {
         String logLine = "58427.547: [GC (CMS Final Remark)[YG occupancy: 5117539 K (8388608 K)]"
                 + "58427.548: [GC (CMS Final Remark)58427.548: [ParNew (promotion failed): "
                 + "5117539K->5001473K(8388608K), 27.6557600 secs] 17958061K->18622281K(22020096K) icms_dc=57 , "
@@ -411,7 +411,7 @@ public class TestParNewEvent {
     }
 
     @Test
-    public void testLogLineTriggerScavengeBeforeRemarkNoGcDetailsPreprocessed() {
+    void testLogLineTriggerScavengeBeforeRemarkNoGcDetailsPreprocessed() {
         String logLine = "2017-04-03T03:12:02.133-0500: 30.385: [GC (CMS Final Remark) 2017-04-03T03:12:02.134-0500: "
                 + "30.385: [GC (CMS Final Remark)  890910K->620060K(7992832K), 0.1223879 secs] 620060K(7992832K), "
                 + "0.2328529 secs]";
@@ -433,7 +433,7 @@ public class TestParNewEvent {
      * failure" text.
      */
     @Test
-    public void testSplitParNewCmsConcurrentEventAbortablePrecleanLogging() {
+    void testSplitParNewCmsConcurrentEventAbortablePrecleanLogging() {
         File testFile = TestUtil.getFile("dataset15.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -448,7 +448,7 @@ public class TestParNewEvent {
      * Test identifying <code>ParNewEvent</code> running in incremental mode.
      */
     @Test
-    public void testCmsIncrementalModeAnalysis() {
+    void testCmsIncrementalModeAnalysis() {
         File testFile = TestUtil.getFile("dataset68.txt");
         String jvmOptions = "Xss128k -XX:+CMSIncrementalMode -XX:CMSInitiatingOccupancyFraction=70 -Xms2048M";
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -464,7 +464,7 @@ public class TestParNewEvent {
      * Test datestamp only logging without passing in JVM start datetime.
      */
     @Test
-    public void testParNewDatestampNoTimestampNoJvmStartDate() {
+    void testParNewDatestampNoTimestampNoJvmStartDate() {
         File testFile = TestUtil.getFile("dataset113.txt");
         Jvm jvm = new Jvm(null, null);
         GcManager gcManager = new GcManager();
@@ -482,7 +482,7 @@ public class TestParNewEvent {
      * Test datestamp only logging with passing in JVM start datetime.
      */
     @Test
-    public void testParNewDatestampNoTimestampJvmStartDate() {
+    void testParNewDatestampNoTimestampJvmStartDate() {
         File testFile = TestUtil.getFile("dataset113.txt");
         Date jvmStartDate = GcUtil.parseStartDateTime("2017-02-28 11:26:24,135");
         Jvm jvm = new Jvm(null, jvmStartDate);

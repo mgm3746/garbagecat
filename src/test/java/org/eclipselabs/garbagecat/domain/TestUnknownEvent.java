@@ -21,10 +21,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnknownEvent {
+class TestUnknownEvent {
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "Mike was here!!!";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnknownEvent, "Log line not recognized as " + JdkUtil.LogEventType.UNKNOWN.toString() + ".");
     }

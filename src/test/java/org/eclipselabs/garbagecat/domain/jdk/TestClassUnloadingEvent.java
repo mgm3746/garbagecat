@@ -32,34 +32,34 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestClassUnloadingEvent {
+class TestClassUnloadingEvent {
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = " [Unloading class $Proxy225]";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         String logLine = " [Unloading class $Proxy225]";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
-    public void testLine() {
+    void testLine() {
         String logLine = "[Unloading class $Proxy61]";
         assertTrue(ClassUnloadingEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
     }
 
     @Test
-    public void testLineWithUnderline() {
+    void testLineWithUnderline() {
         String logLine = "[Unloading class MyClass_1234153487841_717989]";
         assertTrue(ClassUnloadingEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
     }
 
     @Test
-    public void testLogLineWithBeginningSpace() {
+    void testLogLineWithBeginningSpace() {
         String logLine = " [Unloading class $Proxy225]";
         assertTrue(ClassUnloadingEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
     }
@@ -69,7 +69,7 @@ public class TestClassUnloadingEvent {
      * 
      */
     @Test
-    public void testTraceClassUnloadingPreprocessing() {
+    void testTraceClassUnloadingPreprocessing() {
         File testFile = TestUtil.getFile("dataset84.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

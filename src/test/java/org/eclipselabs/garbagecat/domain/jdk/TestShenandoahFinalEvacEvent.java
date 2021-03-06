@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestShenandoahFinalEvacEvent {
+class TestShenandoahFinalEvacEvent {
 
     @Test
-    public void testLogLineJdk8() {
+    void testLogLineJdk8() {
         String logLine = "2020-03-10T08:03:46.251-0400: 17.313: [Pause Final Evac, 0.009 ms]";
         assertTrue(ShenandoahFinalEvacEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
         ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
@@ -40,7 +40,7 @@ public class TestShenandoahFinalEvacEvent {
     }
 
     @Test
-    public void testLogLineUnified() {
+    void testLogLineUnified() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
         assertTrue(ShenandoahFinalEvacEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
         ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
@@ -49,25 +49,25 @@ public class TestShenandoahFinalEvacEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
         assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahFinalEvacEvent, JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not parsed.");
     }
 
     @Test
-    public void testBlocking() {
+    void testBlocking() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testHydration() {
+    void testHydration() {
         LogEventType eventType = JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC;
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
         long timestamp = 521;
@@ -77,25 +77,25 @@ public class TestShenandoahFinalEvacEvent {
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC), JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_FINAL_EVAC);
         assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " incorrectly indentified as unified.");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms    ";
         assertTrue(ShenandoahFinalEvacEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
     }
 
     @Test
-    public void testLogLineUnifiedDetailed() {
+    void testLogLineUnifiedDetailed() {
         String logLine = "[41.912s][info][gc           ] GC(1500) Pause Final Evac 0.022ms";
         assertTrue(ShenandoahFinalEvacEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
         ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);

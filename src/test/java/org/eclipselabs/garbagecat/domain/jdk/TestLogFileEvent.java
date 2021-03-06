@@ -29,30 +29,30 @@ import org.junit.jupiter.api.Test;
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
-public class TestLogFileEvent {
+class TestLogFileEvent {
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "2016-03-24 10:28:33 GC log file has reached the maximum size. "
                 + "Saved as /path/to/gc.log.0";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.LOG_FILE.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testNotReportable() {
+    void testNotReportable() {
         String logLine = "2016-03-24 10:28:33 GC log file has reached the maximum size. "
                 + "Saved as /path/to/gc.log.0";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.LOG_FILE.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
-    public void testLogLineCreated() {
+    void testLogLineCreated() {
         String logLine = "2016-10-18 01:50:54 GC log file created /path/to/gc.log";
         assertTrue(LogFileEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.LOG_FILE.toString() + ".");
     }
 
     @Test
-    public void testLogLineRotations() {
+    void testLogLineRotations() {
         String logLine = "2016-03-24 10:28:33 GC log file has reached the maximum size. "
                 + "Saved as /path/to/gc.log.0";
         assertTrue(LogFileEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.LOG_FILE.toString() + ".");
@@ -62,7 +62,7 @@ public class TestLogFileEvent {
      * Test preparsing throws event away.
      */
     @Test
-    public void testPreparsing() {
+    void testPreparsing() {
         File testFile = TestUtil.getFile("dataset88.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

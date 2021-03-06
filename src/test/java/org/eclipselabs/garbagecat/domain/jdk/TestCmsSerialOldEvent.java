@@ -34,10 +34,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestCmsSerialOldEvent {
+class TestCmsSerialOldEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "262372.344: [Full GC (JvmtiEnv ForceGarbageCollection) 262372.344: [CMS "
                 + "(concurrent mode interrupted): 49392K->48780K(1756416K), 0.2620228 secs] "
                 + "49392K->48780K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.2624794 secs] "
@@ -46,7 +46,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "5.980: [Full GC 5.980: "
                 + "[CMS: 5589K->5796K(122880K), 0.0889610 secs] 11695K->5796K(131072K), "
                 + "[CMS Perm : 13140K->13124K(131072K)], 0.0891270 secs]";
@@ -67,7 +67,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "5.980: [Full GC 5.980: "
                 + "[CMS: 5589K->5796K(122880K), 0.0889610 secs] 11695K->5796K(131072K), "
                 + "[CMS Perm : 13140K->13124K(131072K)], 0.0891270 secs] ";
@@ -75,7 +75,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineJdk16WithTrigger() {
+    void testLogLineJdk16WithTrigger() {
         String logLine = "2.425: [Full GC (System) 2.425: "
                 + "[CMS: 1231K->2846K(114688K), 0.0827010 secs] 8793K->2846K(129472K), "
                 + "[CMS Perm : 8602K->8593K(131072K)], 0.0828090 secs]";
@@ -97,7 +97,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineIcmsDcData() {
+    void testLogLineIcmsDcData() {
         String logLine = "165.805: [Full GC 165.805: [CMS: 101481K->97352K(1572864K), 1.1183800 secs] "
                 + "287075K->97352K(2080768K), [CMS Perm : 68021K->67965K(262144K)] icms_dc=10 , 1.1186020 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
@@ -117,7 +117,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineAfterPreprocessingNoSpaceAfterFullGC() {
+    void testLogLineAfterPreprocessingNoSpaceAfterFullGC() {
         String logLine = "1504.625: [Full GC1504.625: [CMS: 1172695K->840574K(1549164K), 3.7572507 secs] "
                 + "1301420K->840574K(1855852K), [CMS Perm : 226817K->226813K(376168K)], "
                 + "3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]";
@@ -128,7 +128,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineTriggerConcurrentModeFailure() {
+    void testLogLineTriggerConcurrentModeFailure() {
         String logLine = "44.684: [Full GC44.684: [CMS (concurrent mode failure): 1218548K->413373K(1465840K), "
                 + "1.3656970 secs] 1229657K->413373K(1581168K), [CMS Perm : 83805K->80520K(83968K)], 1.3659420 secs] "
                 + "[Times: user=1.33 sys=0.01, real=1.37 secs]";
@@ -150,7 +150,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineTriggerConcurrentModeInterrupted() {
+    void testLogLineTriggerConcurrentModeInterrupted() {
         String logLine = "85030.389: [Full GC 85030.390: [CMS (concurrent mode interrupted): "
                 + "861863K->904027K(1797568K), 42.9053262 secs] 1045947K->904027K(2047232K), "
                 + "[CMS Perm : 252246K->252202K(262144K)], 42.9070278 secs] "
@@ -173,7 +173,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineTriggerHeapInspectionInitiatedGc() {
+    void testLogLineTriggerHeapInspectionInitiatedGc() {
         String logLine = "2854.464: [Full GC (Heap Inspection Initiated GC) 2854.465: "
                 + "[CMS: 945496K->961540K(4755456K), 0.8503670 secs] 1432148K->961540K(6137856K), "
                 + "[Metaspace: 73362K->73362K(1118208K)], 0.8553350 secs] "
@@ -196,7 +196,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testFullGcBailing() {
+    void testFullGcBailing() {
         String logLine = "4300.825: [Full GC 4300.825: [CMSbailing out to foreground collection (concurrent mode "
                 + "failure): 6014591K->6014592K(6014592K), 79.9352305 secs] 6256895K->6147510K(6256896K), [CMS Perm "
                 + ": 206989K->206977K(262144K)], 79.9356622 secs] [Times: user=101.02 sys=3.09, real=79.94 secs]";
@@ -218,7 +218,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineIncrementalModeMetaspace() {
+    void testLogLineIncrementalModeMetaspace() {
         String logLine = "706.707: [Full GC (Allocation Failure) 706.708: [CMS (concurrent mode failure): "
                 + "2655937K->2373842K(2658304K), 11.6746550 secs] 3973407K->2373842K(4040704K), "
                 + "[Metaspace: 72496K->72496K(1118208K)] icms_dc=77 , 11.6770830 secs] "
@@ -242,7 +242,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedClassHistogram() {
+    void testLogLinePreprocessedClassHistogram() {
         String logLine = "11662.232: [Full GC 11662.233: [Class Histogram:, 38.6969442 secs]11700.930: "
                 + "[CMS: 2844387K->635365K(7331840K), 46.4488813 secs]11747.379: [Class Histogram, 9.7637786 secs] "
                 + "3198859K->635365K(7848704K), [CMS Perm : 851635K->408849K(1048576K)], 94.9116214 secs] "
@@ -266,7 +266,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedConcurrentModeFailureRemarkBlock() {
+    void testLogLinePreprocessedConcurrentModeFailureRemarkBlock() {
         String logLine = "85217.903: [Full GC 85217.903: [CMS (concurrent mode failure) (concurrent mode failure)"
                 + "[YG occupancy: 33620K (153344K)]85217.919: [Rescan (parallel) , 0.0116680 secs]85217.931: "
                 + "[weak refs processing, 0.0167100 secs]85217.948: [class unloading, 0.0571300 secs]85218.005: "
@@ -292,7 +292,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedClassHistogramWithOldData() {
+    void testLogLinePreprocessedClassHistogramWithOldData() {
         String logLine = "11662.232: [Full GC 11662.233: [Class Histogram:, 38.6969442 secs]11700.930: "
                 + "[CMS: 2844387K->635365K(7331840K), 46.4488813 secs]11747.379: [Class Histogram, 9.7637786 secs] "
                 + "3198859K->635365K(7848704K), [CMS Perm : 851635K->408849K(1048576K)], 94.9116214 secs] "
@@ -316,7 +316,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineTriggerMetadataGcThreshold() {
+    void testLogLineTriggerMetadataGcThreshold() {
         String logLine = "262371.895: [Full GC (Metadata GC Threshold) 262371.895: [CMS: 42863K->49512K(1756416K), "
                 + "0.2337314 secs] 176820K->49512K(2063104K), [Metaspace: 256586K->256586K(1230848K)], "
                 + "0.2343092 secs] [Times: user=0.23 sys=0.00, real=0.23 secs]";
@@ -338,7 +338,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineTriggerLastDitchCollection() {
+    void testLogLineTriggerLastDitchCollection() {
         String logLine = "262372.130: [Full GC (Last ditch collection) 262372.130: [CMS: 49512K->49392K(1756416K), "
                 + "0.2102326 secs] 49512K->49392K(2063104K), [Metaspace: 256586K->256586K(1230848K)], 0.2108635 secs] "
                 + "[Times: user=0.20 sys=0.00, real=0.21 secs]";
@@ -360,7 +360,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineTriggerJvmtiEnvForceGarbageCollectionWithConcurrentModeInterrupted() {
+    void testLogLineTriggerJvmtiEnvForceGarbageCollectionWithConcurrentModeInterrupted() {
         String logLine = "262372.344: [Full GC (JvmtiEnv ForceGarbageCollection) 262372.344: [CMS "
                 + "(concurrent mode interrupted): 49392K->48780K(1756416K), 0.2620228 secs] "
                 + "49392K->48780K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.2624794 secs] "
@@ -383,7 +383,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineParNewPromotionFailed() {
+    void testLogLineParNewPromotionFailed() {
         String logLine = "144501.626: [GC 144501.627: [ParNew (promotion failed): 680066K->680066K(707840K), "
                 + "3.7067346 secs] 1971073K->1981370K(2018560K), 3.7084059 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
@@ -404,7 +404,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewPromotionFailedIncrementalMode() {
+    void testParNewPromotionFailedIncrementalMode() {
         String logLine = "159275.552: [GC 159275.552: [ParNew (promotion failed): 2007040K->2007040K(2007040K), "
                 + "4.3393411 secs] 5167424K->5187429K(12394496K) icms_dc=7 , 4.3398519 secs] "
                 + "[Times: user=4.96 sys=1.91, real=4.34 secs]";
@@ -417,7 +417,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testLogLineParNewPromotionFailedWithCmsBlock() {
+    void testLogLineParNewPromotionFailedWithCmsBlock() {
         String logLine = "1181.943: [GC 1181.943: [ParNew (promotion failed): 145542K->142287K(149120K), "
                 + "0.1316193 secs]1182.075: [CMS: 6656483K->548489K(8218240K), 9.1244297 secs] "
                 + "6797120K->548489K(8367360K), 9.2564476 secs]";
@@ -439,7 +439,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewPromotionFailedTruncated() {
+    void testParNewPromotionFailedTruncated() {
         String logLine = "5881.424: [GC 5881.424: [ParNew (promotion failed): 153272K->152257K(153344K), "
                 + "0.2143850 secs]5881.639: [CMS";
         assertTrue(CmsSerialOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
@@ -451,13 +451,13 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testFirstLineOfMultiLineParallelScavengeEvent() {
+    void testFirstLineOfMultiLineParallelScavengeEvent() {
         String logLine = "10.392: [GC";
         assertFalse(CmsSerialOldEvent.match(logLine), "Log line incorrectly recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
     }
 
     @Test
-    public void testLogLineParNewPromotionFailedMissingTrigger() {
+    void testLogLineParNewPromotionFailedMissingTrigger() {
         String logLine = "3546.690: [GC 3546.691: [ParNew: 532480K->532480K(599040K), 0.0000400 secs]3546.691: "
                 + "[CMS: 887439K->893801K(907264K), 9.6413020 secs] 1419919K->893801K(1506304K), 9.6419180 secs] "
                 + "[Times: user=9.54 sys=0.10, real=9.65 secs]";
@@ -479,7 +479,7 @@ public class TestCmsSerialOldEvent {
      * Has "Tenured" instead of "CMS" label in old generation block.
      */
     @Test
-    public void testLogLineParNewPromotionFailedTenuredLabel() {
+    void testLogLineParNewPromotionFailedTenuredLabel() {
         String logLine = "289985.117: [GC 289985.117: [ParNew (promotion failed): 144192K->144192K(144192K), "
                 + "0.1347360 secs]289985.252: [Tenured: 1281600K->978341K(1281600K), 3.6577930 secs] "
                 + "1409528K->978341K(1425792K), 3.7930200 secs]";
@@ -498,7 +498,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewPromotionFailedCmsSerialOldPermData() {
+    void testParNewPromotionFailedCmsSerialOldPermData() {
         String logLine = "395950.370: [GC 395950.370: [ParNew (promotion failed): "
                 + "53094K->53606K(59008K), 0.0510880 secs]395950.421: "
                 + "[CMS: 664527K->317110K(1507328K), 2.9523520 secs] 697709K->317110K(1566336K), "
@@ -521,7 +521,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewPromotionFailedCmsSerialOldPermDataIncrementalMode() {
+    void testParNewPromotionFailedCmsSerialOldPermDataIncrementalMode() {
         String logLine = "4595.651: [GC 4595.651: [ParNew (promotion failed): 1304576K->1304576K(1304576K), "
                 + "1.7740754 secs]4597.425: [CMS: 967034K->684015K(4886528K), 3.2678588 secs] "
                 + "2022731K->684015K(6191104K), [CMS Perm : 201541K->201494K(524288K)] icms_dc=21 , "
@@ -544,7 +544,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewPromotionFailedNoSpaceAfterGc() {
+    void testParNewPromotionFailedNoSpaceAfterGc() {
         String logLine = "108537.519: [GC108537.520: [ParNew (promotion failed): 1409215K->1426861K(1567616K), "
                 + "0.4259330 secs]108537.946: [CMS: 13135135K->4554003K(16914880K), 14.7637760 secs] "
                 + "14542753K->4554003K(18482496K), [CMS Perm : 227503K->226115K(378908K)], 15.1927120 secs] "
@@ -567,7 +567,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewPromotionFailedCmsSerialOldPermDataPreprocessedPrintClassHistogram() {
+    void testParNewPromotionFailedCmsSerialOldPermDataPreprocessedPrintClassHistogram() {
         String logLine = "182314.858: [GC 182314.859: [ParNew (promotion failed): 516864K->516864K(516864K), "
                 + "2.0947428 secs]182316.954: [Class Histogram: , 41.3875632 secs]182358.342: "
                 + "[CMS: 3354568K->756393K(7331840K), 53.1398170 secs]182411.482: [Class Histogram, 11.0299920 secs]"
@@ -591,7 +591,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewConcurrentModeFailure() {
+    void testParNewConcurrentModeFailure() {
         String logLine = "26683.209: [GC 26683.210: [ParNew: 261760K->261760K(261952K), "
                 + "0.0000130 secs]26683.210: [CMS (concurrent mode failure): 1141548K->1078465K(1179648K), "
                 + "7.3835370 secs] 1403308K->1078465K(1441600K), 7.3838390 secs]";
@@ -610,7 +610,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewPromotionFailedConcurrentModeFailure() {
+    void testParNewPromotionFailedConcurrentModeFailure() {
         String logLine = "25281.015: [GC 25281.015: [ParNew (promotion failed): 261760K->261760K(261952K), "
                 + "0.1785000 secs]25281.193: [CMS (concurrent mode failure): 1048384K->1015603K(1179648K), "
                 + "7.6767910 secs] 1292923K->1015603K(1441600K), 7.8557660 secs]";
@@ -629,7 +629,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewPromotionFailedPrintPromotionFailure() {
+    void testParNewPromotionFailedPrintPromotionFailure() {
         String logLine = "2017-02-28T00:43:55.587+0000: 36843.783: [GC (Allocation Failure) "
                 + "2017-02-28T00:43:55.587+0000: 36843.783: [ParNew (promotion failed): 2304000K->2304000K(2304000K), "
                 + "0.4501923 secs]2017-02-28T00:43:56.037+0000: 36844.234: [CMS: 2818067K->2769354K(5120000K), "
@@ -650,7 +650,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewCmsSerialOld() {
+    void testParNewCmsSerialOld() {
         String logLine = "42782.086: [GC 42782.086: [ParNew: 254464K->7680K(254464K), 0.2853553 secs]"
                 + "42782.371: [Tenured: 1082057K->934941K(1082084K), 6.2719770 secs] "
                 + "1310721K->934941K(1336548K), 6.5587770 secs]";
@@ -669,7 +669,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewCmsSerialOldWithPerm() {
+    void testParNewCmsSerialOldWithPerm() {
         String logLine = "6.102: [GC6.102: [ParNew: 19648K->2176K(19648K), 0.0184470 secs]6.121: "
                 + "[Tenured: 44849K->25946K(44864K), 0.2586250 secs] 60100K->25946K(64512K), "
                 + "[Perm : 43759K->43759K(262144K)], 0.2773070 secs] [Times: user=0.16 sys=0.01, real=0.28 secs]";
@@ -691,7 +691,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewCmsSerialOldJdk8() {
+    void testParNewCmsSerialOldJdk8() {
         String logLine = "1817.644: [GC (Allocation Failure) 1817.646: [ParNew: 1382383K->1382383K(1382400K), "
                 + "0.0000530 secs]1817.646: [CMS: 2658303K->2658303K(2658304K), 8.7951430 secs] "
                 + "4040686K->2873414K(4040704K), [Metaspace: 72200K->72200K(1118208K)], 8.7986750 secs] "
@@ -714,7 +714,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewConcurrentModeFailurePermData() {
+    void testParNewConcurrentModeFailurePermData() {
         String logLine = "3070.289: [GC 3070.289: [ParNew: 207744K->207744K(242304K), 0.0000682 secs]3070.289: "
                 + "[CMS (concurrent mode failure): 6010121K->6014591K(6014592K), 79.0505229 secs] "
                 + "6217865K->6028029K(6256896K), [CMS Perm : 206688K->206662K(262144K)], 79.0509595 secs] "
@@ -737,7 +737,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testGcBailing() {
+    void testGcBailing() {
         String logLine = "1901.217: [GC 1901.217: [ParNew: 261760K->261760K(261952K), 0.0000570 secs]1901.217: "
                 + "[CMSJava HotSpot(TM) Server VM warning: bailing out to foreground collection (concurrent mode "
                 + "failure): 1794415K->909664K(1835008K), 124.5953890 secs] 2056175K->909664K(2096960K) "
@@ -757,7 +757,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewConcurrentModeFailurePermDataMetaspaceIcrementalMode() {
+    void testParNewConcurrentModeFailurePermDataMetaspaceIcrementalMode() {
         String logLine = "719.519: [GC (Allocation Failure) 719.521: [ParNew: 1382400K->1382400K(1382400K), "
                 + "0.0000470 secs] (concurrent mode failure): 2542828K->2658278K(2658304K), 12.3447910 secs] "
                 + "3925228K->2702358K(4040704K), [Metaspace: 72175K->72175K(1118208K)] icms_dc=100 , 12.3480570 secs] "
@@ -780,7 +780,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewConcurrentModeFailurePermDataMetaspaceNotIcrementalMode() {
+    void testParNewConcurrentModeFailurePermDataMetaspaceNotIcrementalMode() {
         String logLine = "1202.526: [GC (Allocation Failure) 1202.528: [ParNew: 1355422K->1355422K(1382400K), "
                 + "0.0000500 secs]1202.528: [CMS (concurrent mode failure): 2656311K->2658289K(2658304K), "
                 + "9.3575580 secs] 4011734K->2725109K(4040704K), [Metaspace: 72111K->72111K(1118208K)], "
@@ -803,7 +803,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewConcurrentModeFailurePermDataPreProcessedClassHistogram() {
+    void testParNewConcurrentModeFailurePermDataPreProcessedClassHistogram() {
         String logLine = "572264.304: [GC 572264.306: [ParNew (promotion failed): 516864K->516864K(516864K), "
                 + "1.4978605 secs]572265.804: [Class Histogram:, 23.6901531 secs]"
                 + "572289.495: [CMS (concurrent mode failure): 5350445K->891234K(7331840K), 59.8600601 secs]"
@@ -828,7 +828,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewConcurrentModeFailurePermDataPreProcessedClassHistogramConcurrentModeFailure() {
+    void testParNewConcurrentModeFailurePermDataPreProcessedClassHistogramConcurrentModeFailure() {
         String logLine = "576460.444: [GC 576460.446: [ParNew (promotion failed): 516864K->516864K(516864K), "
                 + "1.9697779 secs]576462.416: [Class Histogram:, 23.3548450 secs]"
                 + "576485.771: [CMS: 5074711K->905970K(7331840K), 46.0517345 secs]"
@@ -853,7 +853,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testTriggerGcLockerInitiatedGc() {
+    void testTriggerGcLockerInitiatedGc() {
         String logLine = "58626.878: [Full GC (GCLocker Initiated GC)58626.878: [CMS (concurrent mode failure): "
                 + "13441202K->12005469K(13631488K), 23.1836190 secs] 19349630K->12005469K(22020096K), "
                 + "[CMS Perm : 1257346K->1257346K(2097152K)] icms_dc=100 , 23.1838500 secs] "
@@ -876,7 +876,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testJdk6ParNewPromotionFailedConcurrentModeFailureWithClassHistogram() {
+    void testJdk6ParNewPromotionFailedConcurrentModeFailureWithClassHistogram() {
         String logLine = "2017-04-22T13:58:35.287+0100: 471391.741: [GC 471391.743: [ParNew (promotion failed): "
                 + "516864K->516864K(516864K), 2.1875738 secs]471393.931: [Class Histogram:, 25.2253758 secs]"
                 + "471419.156: [CMS (concurrent mode failure): 5977264K->1290167K(7331840K), 59.2834068 secs]"
@@ -900,7 +900,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewPromotionFailedConcurrentModeFailureWithClassHistogramDatestamps() {
+    void testParNewPromotionFailedConcurrentModeFailureWithClassHistogramDatestamps() {
         String logLine = "2017-05-03T14:51:32.659-0400: 2057.323: [Full GC 2017-05-03T14:51:32.680-0400: 2057.341: "
                 + "[Class Histogram:, 13.8859570 secs]2017-05-03T14:51:46.579-0400: "
                 + "2071.240: [CMS (concurrent mode failure): 9216000K->9215999K(9216000K), 62.4046040 secs]"
@@ -925,7 +925,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testSplitParNewPromotionFailedCmsConcurrentModeFailure() {
+    void testSplitParNewPromotionFailedCmsConcurrentModeFailure() {
         File testFile = TestUtil.getFile("dataset5.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -944,7 +944,7 @@ public class TestCmsSerialOldEvent {
      * Test preprocessing <code>HeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */
     @Test
-    public void testSplitPrintHeapAtGcParNewConcurrentModeFailureEventLogging() {
+    void testSplitPrintHeapAtGcParNewConcurrentModeFailureEventLogging() {
         File testFile = TestUtil.getFile("dataset7.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -959,7 +959,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testSplitParNewPromotionFailedCmsConcurrentModeFailurePermData() {
+    void testSplitParNewPromotionFailedCmsConcurrentModeFailurePermData() {
         File testFile = TestUtil.getFile("dataset12.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -973,7 +973,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testSplitParNewCmsConcurrentModeFailurePermData() {
+    void testSplitParNewCmsConcurrentModeFailurePermData() {
         File testFile = TestUtil.getFile("dataset13.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -986,7 +986,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testSplit3LinesParNewPromotionFailedCmsConcurrentModeFailurePermDataEventMarkLogging() {
+    void testSplit3LinesParNewPromotionFailedCmsConcurrentModeFailurePermDataEventMarkLogging() {
         File testFile = TestUtil.getFile("dataset16.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1004,7 +1004,7 @@ public class TestCmsSerialOldEvent {
      * 
      */
     @Test
-    public void testSplit3LinesParNewConcurrentModeFailureEventLogging() {
+    void testSplit3LinesParNewConcurrentModeFailureEventLogging() {
         File testFile = TestUtil.getFile("dataset29.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1018,7 +1018,7 @@ public class TestCmsSerialOldEvent {
     }
 
     @Test
-    public void testParNewConcurrentModeFailureMixedCmsConcurrentJdk8() {
+    void testParNewConcurrentModeFailureMixedCmsConcurrentJdk8() {
         File testFile = TestUtil.getFile("dataset70.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1037,7 +1037,7 @@ public class TestCmsSerialOldEvent {
      * 
      */
     @Test
-    public void testHeapInspectionInitiatedGcAnalysis() {
+    void testHeapInspectionInitiatedGcAnalysis() {
         File testFile = TestUtil.getFile("dataset72.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1055,7 +1055,7 @@ public class TestCmsSerialOldEvent {
      * 
      */
     @Test
-    public void testParNewPromotionFailedCmsSerialOldPermDataPrintClassHistogramTriggerAcross6Lines() {
+    void testParNewPromotionFailedCmsSerialOldPermDataPrintClassHistogramTriggerAcross6Lines() {
         File testFile = TestUtil.getFile("dataset82.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1073,7 +1073,7 @@ public class TestCmsSerialOldEvent {
      * 
      */
     @Test
-    public void testLogLineTriggerHeapDumpedInitiatedGc() {
+    void testLogLineTriggerHeapDumpedInitiatedGc() {
         File testFile = TestUtil.getFile("dataset92.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

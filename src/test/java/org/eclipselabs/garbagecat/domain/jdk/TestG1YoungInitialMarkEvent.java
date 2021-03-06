@@ -34,16 +34,16 @@ import org.junit.jupiter.api.Test;
  * @author James Livingston
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
-public class TestG1YoungInitialMarkEvent {
+class TestG1YoungInitialMarkEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "1244.357: [GC pause (young) (initial-mark) 847M->599M(970M), 0.0566840 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testInitialMark() {
+    void testInitialMark() {
         String logLine = "1244.357: [GC pause (young) (initial-mark) 847M->599M(970M), 0.0566840 secs] "
                 + "[Times: user=0.18 sys=0.02, real=0.06 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
@@ -60,13 +60,13 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testNotYoungPause() {
+    void testNotYoungPause() {
         String logLine = "1113.145: [GC pause (young) 849M->583M(968M), 0.0392710 secs]";
         assertFalse(G1YoungInitialMarkEvent.match(logLine), "Log line recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
     }
 
     @Test
-    public void testLogLineMetadataGCThresholdTrigger() {
+    void testLogLineMetadataGCThresholdTrigger() {
         String logLine = "1.471: [GC pause (Metadata GC Threshold) (young) (initial-mark) 992M->22M(110G), "
                 + "0.0210012 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
@@ -80,7 +80,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testLogLineGCLockerInitiatedGCTriggerBeforeInitialMark() {
+    void testLogLineGCLockerInitiatedGCTriggerBeforeInitialMark() {
         String logLine = "2.443: [GC pause (GCLocker Initiated GC) (young) (initial-mark) 1061M->52M(110G), "
                 + "0.0280096 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
@@ -94,7 +94,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testLogLineToSpaceExhaustedTriggerAfterInitialMark() {
+    void testLogLineToSpaceExhaustedTriggerAfterInitialMark() {
         String logLine = "60346.050: [GC pause (young) (initial-mark) (to-space exhausted), 1.0224350 secs]"
                 + "[Eden: 14.2G(14.5G)->0.0B(1224.0M) Survivors: 40.0M->104.0M Heap: 22.9G(26.0G)->19.2G(26.0G)]"
                 + " [Times: user=3.03 sys=0.02, real=1.02 secs]";
@@ -113,7 +113,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testLogLineNoTriggerNoInitialMark() {
+    void testLogLineNoTriggerNoInitialMark() {
         String logLine = "44620.073: [GC pause (young), 0.2752700 secs]"
                 + "[Eden: 11.3G(11.3G)->0.0B(11.3G) Survivors: 192.0M->176.0M Heap: 23.0G(26.0G)->11.7G(26.0G)]"
                 + " [Times: user=1.09 sys=0.00, real=0.27 secs]";
@@ -132,7 +132,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedNoTrigger() {
+    void testLogLinePreprocessedNoTrigger() {
         String logLine = "27474.176: [GC pause (young) (initial-mark), 0.4234530 secs]"
                 + "[Eden: 5376.0M(7680.0M)->0.0B(6944.0M) Survivors: 536.0M->568.0M "
                 + "Heap: 13.8G(26.0G)->8821.4M(26.0G)] [Times: user=1.66 sys=0.02, real=0.43 secs]";
@@ -151,7 +151,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedTriggerMetadataGcThreshold() {
+    void testLogLinePreprocessedTriggerMetadataGcThreshold() {
         String logLine = "87.830: [GC pause (Metadata GC Threshold) (young) (initial-mark), 0.2932700 secs]"
                 + "[Eden: 716.0M(1850.0M)->0.0B(1522.0M) Survivors: 96.0M->244.0M "
                 + "Heap: 2260.0M(5120.0M)->1831.0M(5120.0M)] [Times: user=0.56 sys=0.04, real=0.29 secs]";
@@ -169,7 +169,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedTriggerGcLockerInitiatedGc() {
+    void testLogLinePreprocessedTriggerGcLockerInitiatedGc() {
         String logLine = "6896.482: [GC pause (GCLocker Initiated GC) (young) (initial-mark), 0.0525160 secs]"
                 + "[Eden: 16.0M(3072.0M)->0.0B(3070.0M) Survivors: 0.0B->2048.0K "
                 + "Heap: 828.8M(5120.0M)->814.8M(5120.0M)] [Times: user=0.09 sys=0.00, real=0.05 secs]";
@@ -188,7 +188,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedTriggerG1HumongousAllocation() {
+    void testLogLinePreprocessedTriggerG1HumongousAllocation() {
         String logLine = "182.037: [GC pause (G1 Humongous Allocation) (young) (initial-mark), 0.0233585 secs]"
                 + "[Eden: 424.0M(1352.0M)->0.0B(1360.0M) Survivors: 80.0M->72.0M Heap: 500.9M(28.0G)->72.0M(28.0G)] "
                 + "[Times: user=0.14 sys=0.01, real=0.02 secs]";
@@ -207,7 +207,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedTriggerSystemGc() {
+    void testLogLinePreprocessedTriggerSystemGc() {
         String logLine = "2020-02-26T17:18:26.505+0000: 130.241: [GC pause (System.gc()) (young) (initial-mark), "
                 + "0.1009346 secs][Eden: 220.0M(241.0M)->0.0B(277.0M) Survivors: 28.0M->34.0M "
                 + "Heap: 924.5M(2362.0M)->713.5M(2362.0M)] [Times: user=0.19 sys=0.00, real=0.10 secs]";
@@ -225,7 +225,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedNoTriggerWholeNumberSizes() {
+    void testLogLinePreprocessedNoTriggerWholeNumberSizes() {
         String logLine = "449391.255: [GC pause (young) (initial-mark), 0.02147900 secs]"
                 + "[Eden: 1792M(1792M)->0B(2044M) Survivors: 256M->4096K Heap: 7582M(12288M)->5537M(12288M)] "
                 + "[Times: user=0.13 sys=0.00, real=0.02 secs]";
@@ -243,7 +243,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedDatestamp() {
+    void testLogLinePreprocessedDatestamp() {
         String logLine = "2016-02-09T06:12:45.414-0500: 27474.176: [GC pause (young) (initial-mark), 0.4234530 secs]"
                 + "[Eden: 5376.0M(7680.0M)->0.0B(6944.0M) Survivors: 536.0M->568.0M "
                 + "Heap: 13.8G(26.0G)->8821.4M(26.0G)] [Times: user=1.66 sys=0.02, real=0.43 secs]";
@@ -260,7 +260,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedTriggerG1HumongousAllocationNoSizeData() {
+    void testLogLinePreprocessedTriggerG1HumongousAllocationNoSizeData() {
         String logLine = "2017-02-20T20:17:04.874-0500: 40442.077: [GC pause (G1 Humongous Allocation) (young) "
                 + "(initial-mark), 0.0142482 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
@@ -273,7 +273,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedNoDuration() {
+    void testLogLinePreprocessedNoDuration() {
         String logLine = "2017-06-23T10:50:04.403-0400: 9.915: [GC pause (Metadata GC Threshold) (young) "
                 + "(initial-mark)[Eden: 304.0M(1552.0M)->0.0B(1520.0M) Survivors: 0.0B->32.0M Heap: "
                 + "296.0M(30.5G)->23.2M(30.5G)] [Times: user=0.12 sys=0.01, real=0.03 secs]";
@@ -287,7 +287,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testTriggerG1EvacuationPause() {
+    void testTriggerG1EvacuationPause() {
         String logLine = "7.190: [GC pause (G1 Evacuation Pause) (young) (initial-mark) 407M->100M(8192M), "
                 + "0.0720459 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
@@ -305,7 +305,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testTriggerG1EvacuationPauseDashDash() {
+    void testTriggerG1EvacuationPauseDashDash() {
         String logLine = "424753.803: [GC pause (G1 Evacuation Pause) (young) (initial-mark)-- 8184M->8184M(8192M), "
                 + "0.1294400 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
@@ -323,7 +323,7 @@ public class TestG1YoungInitialMarkEvent {
     }
 
     @Test
-    public void testAnalysisExplicitGc() {
+    void testAnalysisExplicitGc() {
         File testFile = TestUtil.getFile("dataset179.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

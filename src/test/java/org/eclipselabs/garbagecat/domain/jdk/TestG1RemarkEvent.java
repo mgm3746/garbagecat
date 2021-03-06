@@ -22,16 +22,16 @@ import org.junit.jupiter.api.Test;
  * @author James Livingston
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
-public class TestG1RemarkEvent {
+class TestG1RemarkEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "106.129: [GC remark, 0.0450170 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.G1_REMARK.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testRemark() {
+    void testRemark() {
         String logLine = "106.129: [GC remark, 0.0450170 secs]";
         assertTrue(G1RemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");
         G1RemarkEvent event = new G1RemarkEvent(logLine);
@@ -50,7 +50,7 @@ public class TestG1RemarkEvent {
     }
 
     @Test
-    public void testRemarkWithTimesDate() {
+    void testRemarkWithTimesDate() {
         String logLine = "2016-11-08T09:40:55.346-0800: 35563.088: [GC remark, 0.0827210 secs] "
                 + "[Times: user=0.37 sys=0.00, real=0.08 secs]";
         assertTrue(G1RemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");

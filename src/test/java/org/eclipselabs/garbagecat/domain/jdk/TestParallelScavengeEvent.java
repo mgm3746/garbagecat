@@ -24,17 +24,17 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestParallelScavengeEvent {
+class TestParallelScavengeEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
                 + "160183K->133159K(585088K), 0.0225213 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
                 + "160183K->133159K(585088K), 0.0225213 secs]";
         assertTrue(ParallelScavengeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
@@ -50,14 +50,14 @@ public class TestParallelScavengeEvent {
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
                 + "160183K->133159K(585088K), 0.0225213 secs]     ";
         assertTrue(ParallelScavengeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
     }
 
     @Test
-    public void testStressedJvmLogLine() {
+    void testStressedJvmLogLine() {
         String logLine = "14112.691: [GC-- [PSYoungGen: 313864K->313864K(326656K)] "
                 + "879670K->1012935K(1025728K), 0.9561947 secs]";
         assertTrue(ParallelScavengeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
@@ -73,7 +73,7 @@ public class TestParallelScavengeEvent {
     }
 
     @Test
-    public void testSizeWithNineTensPlacesLogLine() {
+    void testSizeWithNineTensPlacesLogLine() {
         String logLine = "1006.751: [GC [PSYoungGen: 61139904K->20643840K(67413056K)] "
                 + "119561147K->80396669K(129092672K), 3.8993460 secs] [Times: user=66.40 sys=3.73, real=3.89 secs]";
         assertTrue(ParallelScavengeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
@@ -93,7 +93,7 @@ public class TestParallelScavengeEvent {
     }
 
     @Test
-    public void testJDK8LogLineWithMetatdataGcThreshholdTrigger() {
+    void testJDK8LogLineWithMetatdataGcThreshholdTrigger() {
         String logLine = "1.219: [GC (Metadata GC Threshold) [PSYoungGen: 1226834K->17779K(1835008K)] "
                 + "1226834K->17795K(6029312K), 0.0144911 secs] [Times: user=0.04 sys=0.00, real=0.01 secs]";
         assertTrue(ParallelScavengeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
@@ -114,7 +114,7 @@ public class TestParallelScavengeEvent {
     }
 
     @Test
-    public void testJDK8LogLineWithGcLockerInitiateGcTrigger() {
+    void testJDK8LogLineWithGcLockerInitiateGcTrigger() {
         String logLine = "4.172: [GC (GCLocker Initiated GC) [PSYoungGen: 649034K->114285K(1223168K)] "
                 + "673650K->138909K(4019712K), 0.0711412 secs] [Times: user=0.24 sys=0.01, real=0.08 secs]";
         assertTrue(ParallelScavengeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
@@ -135,7 +135,7 @@ public class TestParallelScavengeEvent {
     }
 
     @Test
-    public void testJDK8LogLineWithAllocationFailureTrigger() {
+    void testJDK8LogLineWithAllocationFailureTrigger() {
         String logLine = "7.682: [GC (Allocation Failure) [PSYoungGen: 1048576K->131690K(1223168K)] "
                 + "1118082K->201204K(4019712K), 0.0657426 secs] [Times: user=0.13 sys=0.00, real=0.07 secs]";
         assertTrue(ParallelScavengeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
@@ -156,7 +156,7 @@ public class TestParallelScavengeEvent {
     }
 
     @Test
-    public void testLastDitchCollectionTrigger() {
+    void testLastDitchCollectionTrigger() {
         String logLine = "372405.495: [GC (Last ditch collection) [PSYoungGen: 0K->0K(1569280K)] "
                 + "773083K->773083K(6287872K), 0.2217060 secs] [Times: user=0.76 sys=0.00, real=0.22 secs]";
         assertTrue(ParallelScavengeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
@@ -177,7 +177,7 @@ public class TestParallelScavengeEvent {
     }
 
     @Test
-    public void testHeapInspectionInitiatedGcTrigger() {
+    void testHeapInspectionInitiatedGcTrigger() {
         String logLine = "285196.842: [GC (Heap Inspection Initiated GC) [PSYoungGen: 1475708K->47669K(1514496K)] "
                 + "4407360K->2982516K(6233088K), 0.2635940 secs] [Times: user=0.86 sys=0.00, real=0.27 secs]";
         assertTrue(ParallelScavengeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
@@ -198,7 +198,7 @@ public class TestParallelScavengeEvent {
     }
 
     @Test
-    public void testSystemGcTrigger() {
+    void testSystemGcTrigger() {
         String logLine = "180069.616: [GC (System.gc()) [PSYoungGen: 553672K->22188K(1472512K)] "
                 + "2900456K->2372732K(6191104K), 0.1668270 secs] [Times: user=0.58 sys=0.00, real=0.17 secs]";
         assertTrue(ParallelScavengeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
@@ -219,7 +219,7 @@ public class TestParallelScavengeEvent {
     }
 
     @Test
-    public void testHeapDumpInitiatedGcTrigger() {
+    void testHeapDumpInitiatedGcTrigger() {
         String logLine = "2017-02-01T17:09:50.155+0000: 1029482.045: [GC (Heap Dump Initiated GC) "
                 + "[PSYoungGen: 335699K->33192K(397312K)] 1220565K->918194K(1287680K), 0.0243428 secs] "
                 + "[Times: user=0.07 sys=0.01, real=0.03 secs]";
@@ -241,7 +241,7 @@ public class TestParallelScavengeEvent {
     }
 
     @Test
-    public void testDoubleDash() {
+    void testDoubleDash() {
         String logLine = "2017-02-01T15:56:24.437+0000: 1025076.327: [GC (Allocation Failure) "
                 + "--[PSYoungGen: 385537K->385537K(397824K)] 1271095K->1275901K(1288192K), 0.1674611 secs] "
                 + "[Times: user=0.24 sys=0.00, real=0.17 secs]";

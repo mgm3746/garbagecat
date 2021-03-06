@@ -37,10 +37,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedYoungEvent {
+class TestUnifiedYoungEvent {
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
         assertTrue(UnifiedYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
         UnifiedYoungEvent event = new UnifiedYoungEvent(logLine);
@@ -54,43 +54,43 @@ public class TestUnifiedYoungEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
         assertEquals(JdkUtil.LogEventType.UNIFIED_YOUNG,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_YOUNG + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedYoungEvent, JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not parsed.");
     }
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_YOUNG), JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_YOUNG);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[1.102s][info][gc] GC(48) Pause Young (Allocation Failure) 23M->3M(25M) 0.409ms     ";
         assertTrue(UnifiedYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
     }
 
     @Test
-    public void testTriggerExplicitGc() {
+    void testTriggerExplicitGc() {
         String logLine = "[7.487s][info][gc] GC(497) Pause Young (System.gc()) 16M->10M(36M) 0.940ms";
         assertTrue(UnifiedYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
         UnifiedYoungEvent event = new UnifiedYoungEvent(logLine);
@@ -104,13 +104,13 @@ public class TestUnifiedYoungEvent {
     }
 
     @Test
-    public void testNoData() {
+    void testNoData() {
         String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure)";
         assertEquals(JdkUtil.LogEventType.UNKNOWN,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNKNOWN + "not identified.");
     }
 
     @Test
-    public void testUnifiedYoungStandardLogging() {
+    void testUnifiedYoungStandardLogging() {
         File testFile = TestUtil.getFile("dataset149.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -124,7 +124,7 @@ public class TestUnifiedYoungEvent {
     }
 
     @Test
-    public void testUnifiedYoungExplictGc() {
+    void testUnifiedYoungExplictGc() {
         File testFile = TestUtil.getFile("dataset154.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

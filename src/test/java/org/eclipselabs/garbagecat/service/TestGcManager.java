@@ -21,14 +21,14 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestGcManager {
+class TestGcManager {
 
     /**
      * Test for NullPointerException caused by Issue 17:
      * http://code.google.com/a/eclipselabs.org/p/garbagecat/issues/detail?id=17
      */
     @Test
-    public void testNullPointerExceptionNotRaised() {
+    void testNullPointerExceptionNotRaised() {
         File testFile = TestUtil.getFile("dataset31.txt");
         GcManager gcManager = new GcManager();
         gcManager.preprocess(testFile, null);

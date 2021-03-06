@@ -22,80 +22,80 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestApplicationConcurrentTimeEvent {
+class TestApplicationConcurrentTimeEvent {
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "Application time: 130.5284640 seconds   ";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         String logLine = "Application time: 130.5284640 seconds   ";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "Application time: 130.5284640 seconds";
         assertTrue(ApplicationConcurrentTimeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
     }
 
     @Test
-    public void testLogLineWithSpacesAtEnd() {
+    void testLogLineWithSpacesAtEnd() {
         String logLine = "Application time: 130.5284640 seconds   ";
         assertTrue(ApplicationConcurrentTimeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
     }
 
     @Test
-    public void testLogLineWithTimestamp() {
+    void testLogLineWithTimestamp() {
         String logLine = "0.193: Application time: 0.0430320 seconds";
         assertTrue(ApplicationConcurrentTimeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
     }
 
     @Test
-    public void testLogLineNoTimestampStartingSemicolon() {
+    void testLogLineNoTimestampStartingSemicolon() {
         String logLine = ": Application time: 1.0001619 seconds";
         assertTrue(ApplicationConcurrentTimeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
     }
 
     @Test
-    public void testLogLineDatestamp() {
+    void testLogLineDatestamp() {
         String logLine = "2016-12-21T14:28:11.159-0500: 0.311: Application time: 0.0060964 seconds";
         assertTrue(ApplicationConcurrentTimeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
     }
 
     @Test
-    public void testLogLineDatestampTimestampDatestamp() {
+    void testLogLineDatestampTimestampDatestamp() {
         String logLine = "2020-02-19T07:18:10.490-0500: 698914.875: 2020-02-19T07:18:10.490-0500: Application time: "
                 + "0.0000605 seconds";
         assertTrue(ApplicationConcurrentTimeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
     }
 
     @Test
-    public void testLogLineDatestampTimestampDatestampMissingColonSpace() {
+    void testLogLineDatestampTimestampDatestampMissingColonSpace() {
         String logLine = "2020-02-19T11:46:53.624-0500: 715038.009: 2020-02-19T11:46:53.624-0500Application time: "
                 + "0.0001082 seconds";
         assertTrue(ApplicationConcurrentTimeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
     }
 
     @Test
-    public void testLogLineDatestampDatestampTimestamp() {
+    void testLogLineDatestampDatestampTimestamp() {
         String logLine = "2020-02-19T12:41:32.898-0500: 2020-02-19T12:41:32.898-0500: 718317.283: Application time: "
                 + "0.0000496 seconds";
         assertTrue(ApplicationConcurrentTimeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
     }
 
     @Test
-    public void testLogLineDatestampDatestampTimestampTimestamp() {
+    void testLogLineDatestampDatestampTimestampTimestamp() {
         String logLine = "2020-02-19T10:24:29.418-0500: 2020-02-19T10:24:29.418-0500: 710093.803: 710093.803: "
                 + "Application time: 0.0000610 seconds";
         assertTrue(ApplicationConcurrentTimeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
     }
 
     @Test
-    public void testLogLineDatestampDatestampTimestampTimestampMisplacedSemicolons() {
+    void testLogLineDatestampDatestampTimestampTimestampMisplacedSemicolons() {
         String logLine = "2020-02-19T10:09:47.141-05002020-02-19T10:09:47.141-0500: : 709211.526: "
                 + "709211.526Application time: 0.0000505 seconds";
         assertTrue(ApplicationConcurrentTimeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");

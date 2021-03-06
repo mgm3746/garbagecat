@@ -29,10 +29,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedSerialNewEvent {
+class TestUnifiedSerialNewEvent {
 
     @Test
-    public void testPreprocessed() {
+    void testPreprocessed() {
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
@@ -54,7 +54,7 @@ public class TestUnifiedSerialNewEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
@@ -62,7 +62,7 @@ public class TestUnifiedSerialNewEvent {
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
@@ -70,7 +70,7 @@ public class TestUnifiedSerialNewEvent {
     }
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
@@ -78,7 +78,7 @@ public class TestUnifiedSerialNewEvent {
     }
 
     @Test
-    public void testHydration() {
+    void testHydration() {
         LogEventType eventType = JdkUtil.LogEventType.UNIFIED_SERIAL_NEW;
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
@@ -89,19 +89,19 @@ public class TestUnifiedSerialNewEvent {
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW), JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_SERIAL_NEW);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s   ";
@@ -109,7 +109,7 @@ public class TestUnifiedSerialNewEvent {
     }
 
     @Test
-    public void testLogLine7SpacesAfterStart() {
+    void testLogLine7SpacesAfterStart() {
         String logLine = "[0.112s][info][gc,start       ] GC(3) Pause Young (Allocation Failure) DefNew: "
                 + "1016K->128K(1152K) Tenured: 929K->1044K(1552K) Metaspace: 1222K->1222K(1056768K) 1M->1M(2M) "
                 + "0.700ms User=0.00s Sys=0.00s Real=0.00s";

@@ -24,16 +24,16 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestVerboseGcOldEvent {
+class TestVerboseGcOldEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "2143132.151: [Full GC 1606823K->1409859K(2976064K), 12.0855599 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "2143132.151: [Full GC 1606823K->1409859K(2976064K), 12.0855599 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
@@ -46,13 +46,13 @@ public class TestVerboseGcOldEvent {
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "2143132.151: [Full GC 1606823K->1409859K(2976064K), 12.0855599 secs]    ";
         assertTrue(VerboseGcOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
     }
 
     @Test
-    public void testLogLineTriggerMetadataGcThreshold() {
+    void testLogLineTriggerMetadataGcThreshold() {
         String logLine = "18129.496: [Full GC (Metadata GC Threshold)  629455K->457103K(3128704K), 4.4946967 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
@@ -66,7 +66,7 @@ public class TestVerboseGcOldEvent {
     }
 
     @Test
-    public void testLogLineTriggerLastDitchCollection() {
+    void testLogLineTriggerLastDitchCollection() {
         String logLine = "18134.427: [Full GC (Last ditch collection)  457103K->449140K(3128704K), 5.6081071 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
@@ -80,7 +80,7 @@ public class TestVerboseGcOldEvent {
     }
 
     @Test
-    public void testLogLineDatestamp() {
+    void testLogLineDatestamp() {
         String logLine = "2016-06-22T14:04:51.080+0100: 22561.627: [Full GC (Last ditch collection)  "
                 + "500269K->500224K(3128704K), 4.2311820 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
@@ -95,7 +95,7 @@ public class TestVerboseGcOldEvent {
     }
 
     @Test
-    public void testLogLineG1Sizes() {
+    void testLogLineG1Sizes() {
         String logLine = "2017-03-20T04:30:01.936+0800: 2950.666: [Full GC 8134M->2349M(8192M), 10.3726320 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
@@ -109,7 +109,7 @@ public class TestVerboseGcOldEvent {
     }
 
     @Test
-    public void testLogLineTriggerAllocationFailure() {
+    void testLogLineTriggerAllocationFailure() {
         String logLine = "2017-04-06T15:22:40.708-0500: 303068.960: [Full GC (Allocation Failure)  "
                 + "7455264K->4498878K(7992832K), 13.2445067 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
@@ -124,7 +124,7 @@ public class TestVerboseGcOldEvent {
     }
 
     @Test
-    public void testLogLineTriggerErgonomics() {
+    void testLogLineTriggerErgonomics() {
         String logLine = "2412.683: [Full GC (Ergonomics)  728595K->382365K(932352K), 1.2268902 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
@@ -138,7 +138,7 @@ public class TestVerboseGcOldEvent {
     }
 
     @Test
-    public void testLogLineTriggerExplicitGc() {
+    void testLogLineTriggerExplicitGc() {
         String logLine = "8453.778: [Full GC (System.gc())  457601K->176797K(939520K), 1.5623937 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);

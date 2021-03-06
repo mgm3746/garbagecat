@@ -34,13 +34,13 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestAnalysis {
+class TestAnalysis {
 
     /**
      * Verify analysis file property key/value lookup.
      */
     @Test
-    public void testPropertyKeyValueLookup() {
+    void testPropertyKeyValueLookup() {
         Analysis[] analysis = Analysis.values();
         for (int i = 0; i < analysis.length; i++) {
             assertNotNull(analysis[i].getKey() + " not found.", analysis[i].getValue());
@@ -48,7 +48,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testBisasedLockingDisabled() {
+    void testBisasedLockingDisabled() {
         String jvmOptions = "-Xss128k -XX:-UseBiasedLocking -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -65,7 +65,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testPrintClassHistogramEnabled() {
+    void testPrintClassHistogramEnabled() {
         String jvmOptions = "-Xss128k -XX:+PrintClassHistogram -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -77,7 +77,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testPrintClassHistogramAfterFullGcEnabled() {
+    void testPrintClassHistogramAfterFullGcEnabled() {
         String jvmOptions = "-Xss128k -XX:+PrintClassHistogramAfterFullGC -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -89,7 +89,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testPrintClassHistogramBeforeFullGcEnabled() {
+    void testPrintClassHistogramBeforeFullGcEnabled() {
         String jvmOptions = "-Xss128k -XX:+PrintClassHistogramBeforeFullGC -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -101,7 +101,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testPrintApplicationConcurrentTime() {
+    void testPrintApplicationConcurrentTime() {
         String jvmOptions = "-Xss128k -XX:+PrintGCApplicationConcurrentTime -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -111,7 +111,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testTraceClassUnloading() {
+    void testTraceClassUnloading() {
         String jvmOptions = "-Xss128k -XX:+TraceClassUnloading -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -121,7 +121,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCompressedClassPointersEnabledCompressedOopsDisabledHeapUnknown() {
+    void testCompressedClassPointersEnabledCompressedOopsDisabledHeapUnknown() {
         String jvmOptions = "-Xss128k -XX:+UseCompressedClassPointers -XX:-UseCompressedOops -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -131,7 +131,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCompressedClassPointersEnabledHeapGt32G() {
+    void testCompressedClassPointersEnabledHeapGt32G() {
         String jvmOptions = "-Xss128k -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -Xmx32g";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -141,7 +141,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCompressedClassPointersDisabledHeapLt32G() {
+    void testCompressedClassPointersDisabledHeapLt32G() {
         String jvmOptions = "-Xss128k -XX:-UseCompressedClassPointers -XX:+UseCompressedOops -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -151,7 +151,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCompressedClassPointersDisabledHeapUnknown() {
+    void testCompressedClassPointersDisabledHeapUnknown() {
         String jvmOptions = "-Xss128k -XX:-UseCompressedClassPointers -XX:+UseCompressedOops";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -161,7 +161,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCompressedClassSpaceSizeWithCompressedOopsDisabledHeapUnknown() {
+    void testCompressedClassSpaceSizeWithCompressedOopsDisabledHeapUnknown() {
         String jvmOptions = "-Xss128k -XX:CompressedClassSpaceSize=1G -XX:-UseCompressedOops -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -172,7 +172,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCompressedClassSpaceSizeWithCompressedClassPointersDisabledHeapUnknown() {
+    void testCompressedClassSpaceSizeWithCompressedClassPointersDisabledHeapUnknown() {
         String jvmOptions = "-Xss128k -XX:CompressedClassSpaceSize=1G -XX:-UseCompressedClassPointers -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -183,7 +183,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCompressedOopsDisabledHeapLess32G() {
+    void testCompressedOopsDisabledHeapLess32G() {
         String jvmOptions = "-Xss128k -XX:-UseCompressedOops -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -193,7 +193,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCompressedOopsDisabledHeapEqual32G() {
+    void testCompressedOopsDisabledHeapEqual32G() {
         String jvmOptions = "-Xss128k -XX:-UseCompressedOops -Xmx32G";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -204,7 +204,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCompressedOopsDisabledHeapGreater32G() {
+    void testCompressedOopsDisabledHeapGreater32G() {
         String jvmOptions = "-Xss128k -XX:-UseCompressedOops -Xmx40G";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -214,7 +214,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCompressedOopsEnabledHeapGreater32G() {
+    void testCompressedOopsEnabledHeapGreater32G() {
         String jvmOptions = "-Xss128k -XX:+UseCompressedOops -Xmx40G";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -224,7 +224,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testPrintFlsStatistics() {
+    void testPrintFlsStatistics() {
         String jvmOptions = "-Xss128k -XX:PrintFLSStatistics=1 -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -234,7 +234,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testTieredCompilation() {
+    void testTieredCompilation() {
         String jvmOptions = "-Xss128k -XX:+TieredCompilation -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -247,7 +247,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testLogFileRotationDisabled() {
+    void testLogFileRotationDisabled() {
         String jvmOptions = "-Xss128k -XX:-UseGCLogFileRotation -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -257,7 +257,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testLogFileNumberWithRotationDisabled() {
+    void testLogFileNumberWithRotationDisabled() {
         String jvmOptions = "-Xss128k -XX:NumberOfGCLogFiles=5 -XX:-UseGCLogFileRotation -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -271,7 +271,7 @@ public class TestAnalysis {
      * Test passing JVM options on the command line.
      */
     @Test
-    public void testThreadStackSizeLarge() {
+    void testThreadStackSizeLarge() {
         String options = "-o \"-Xss1024k\"";
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -283,7 +283,7 @@ public class TestAnalysis {
      * Test DGC redundant options analysis.
      */
     @Test
-    public void testDgcRedundantOptions() {
+    void testDgcRedundantOptions() {
         String jvmOptions = "-XX:+DisableExplicitGC -Dsun.rmi.dgc.client.gcInterval=14400000 "
                 + "-Dsun.rmi.dgc.server.gcInterval=24400000";
         GcManager gcManager = new GcManager();
@@ -297,7 +297,7 @@ public class TestAnalysis {
      * Test analysis not small DGC intervals.
      */
     @Test
-    public void testDgcNotSmallIntervals() {
+    void testDgcNotSmallIntervals() {
         String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -310,7 +310,7 @@ public class TestAnalysis {
      * Test analysis small DGC intervals
      */
     @Test
-    public void testDgcSmallIntervals() {
+    void testDgcSmallIntervals() {
         String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=3599999 -Dsun.rmi.dgc.server.gcInterval=3599999";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -323,7 +323,7 @@ public class TestAnalysis {
      * Test analysis if heap dump on OOME enabled.
      */
     @Test
-    public void testHeapDumpOnOutOfMemoryError() {
+    void testHeapDumpOnOutOfMemoryError() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -336,7 +336,7 @@ public class TestAnalysis {
      * Test analysis if instrumentation being used.
      */
     @Test
-    public void testInstrumentation() {
+    void testInstrumentation() {
         String jvmOptions = "-Xss128k -Xms2048M -javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -348,7 +348,7 @@ public class TestAnalysis {
      * Test analysis if native library being used.
      */
     @Test
-    public void testNative() {
+    void testNative() {
         String jvmOptions = "-Xss128k -Xms2048M -agentpath:/path/to/agent.so -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -360,7 +360,7 @@ public class TestAnalysis {
      * Test analysis background compilation disabled.
      */
     @Test
-    public void testBackgroundCompilationDisabled() {
+    void testBackgroundCompilationDisabled() {
         String jvmOptions = "-Xss128k -XX:-BackgroundCompilation -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -372,7 +372,7 @@ public class TestAnalysis {
      * Test analysis background compilation disabled.
      */
     @Test
-    public void testBackgroundCompilationDisabledXBatch() {
+    void testBackgroundCompilationDisabledXBatch() {
         String jvmOptions = "-Xss128k -Xbatch -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -384,7 +384,7 @@ public class TestAnalysis {
      * Test analysis compilation on first invocation enabled.
      */
     @Test
-    public void testCompilationOnFirstInvocation() {
+    void testCompilationOnFirstInvocation() {
         String jvmOptions = "-Xss128k -Xcomp-Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -396,7 +396,7 @@ public class TestAnalysis {
      * Test analysis just in time (JIT) compiler disabled.
      */
     @Test
-    public void testCompilationDisabled() {
+    void testCompilationDisabled() {
         String jvmOptions = "-Xss128k -Xint -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -408,7 +408,7 @@ public class TestAnalysis {
      * Test MaxMetaspaceSize is less than CompressedClassSpaceSize.
      */
     @Test
-    public void testMetaspaceSizeLtCompClassSize() {
+    void testMetaspaceSizeLtCompClassSize() {
         String jvmOptions = "-XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=512M -XX:CompressedClassSpaceSize=1024M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -420,7 +420,7 @@ public class TestAnalysis {
      * Test analysis explicit GC not concurrent.
      */
     @Test
-    public void testExplicitGcNotConcurrentG1() {
+    void testExplicitGcNotConcurrentG1() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -439,7 +439,7 @@ public class TestAnalysis {
      * Test analysis explicit GC not concurrent.
      */
     @Test
-    public void testExplicitGcNotConcurrentCms() {
+    void testExplicitGcNotConcurrentCms() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -458,7 +458,7 @@ public class TestAnalysis {
      * Test DisableExplicitGC in combination with ExplicitGCInvokesConcurrent.
      */
     @Test
-    public void testDisableExplictGcWithConcurrentHandling() {
+    void testDisableExplictGcWithConcurrentHandling() {
         String jvmOptions = "-Xss128k -XX:+DisableExplicitGC -XX:+ExplicitGCInvokesConcurrent -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -470,7 +470,7 @@ public class TestAnalysis {
      * Test HeapDumpOnOutOfMemoryError disabled.
      */
     @Test
-    public void testHeapDumpOnOutOfMemoryErrorDisabled() {
+    void testHeapDumpOnOutOfMemoryErrorDisabled() {
         String jvmOptions = "-Xss128k -XX:-HeapDumpOnOutOfMemoryError -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -483,7 +483,7 @@ public class TestAnalysis {
      * Test PrintCommandLineFlags missing.
      */
     @Test
-    public void testPrintCommandlineFlagsNoGcLogging() {
+    void testPrintCommandlineFlagsNoGcLogging() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -496,7 +496,7 @@ public class TestAnalysis {
      * Test PrintCommandLineFlags missing.
      */
     @Test
-    public void testPrintCommandlineFlagsMissing() {
+    void testPrintCommandlineFlagsMissing() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -512,7 +512,7 @@ public class TestAnalysis {
      * Test PrintCommandLineFlags not missing.
      */
     @Test
-    public void testPrintCommandlineFlagsNotMissing() {
+    void testPrintCommandlineFlagsNotMissing() {
         String jvmOptions = "-Xss128k -XX:+PrintCommandLineFlags -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -525,7 +525,7 @@ public class TestAnalysis {
      * Test PrintGCDetails missing.
      */
     @Test
-    public void testPrintGCDetailsMissing() {
+    void testPrintGCDetailsMissing() {
         String jvmOptions = "-Xss128k -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -538,7 +538,7 @@ public class TestAnalysis {
      * Test PrintGCDetails not missing.
      */
     @Test
-    public void testPrintGCDetailsNotMissing() {
+    void testPrintGCDetailsNotMissing() {
         String jvmOptions = "-Xss128k -XX:+PrintGCDetails -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -551,7 +551,7 @@ public class TestAnalysis {
      * Test PrintGCDetails disabled.
      */
     @Test
-    public void testPrintGCDetailsDisabled() {
+    void testPrintGCDetailsDisabled() {
         String jvmOptions = "-Xss128k -XX:-PrintGCDetails -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -564,7 +564,7 @@ public class TestAnalysis {
      * Test CMS not being used to collect old generation.
      */
     @Test
-    public void testCmsYoungSerialOld() {
+    void testCmsYoungSerialOld() {
         String jvmOptions = "-Xss128k -XX:+UseParNewGC -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -577,7 +577,7 @@ public class TestAnalysis {
      * Test CMS being used to collect old generation.
      */
     @Test
-    public void testCmsYoungCmsOld() {
+    void testCmsYoungCmsOld() {
         String jvmOptions = "-Xss128k -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -590,7 +590,7 @@ public class TestAnalysis {
      * Test CMS being used to collect old generation.
      */
     @Test
-    public void testCMSClassUnloadingEnabledMissing() {
+    void testCMSClassUnloadingEnabledMissing() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -610,7 +610,7 @@ public class TestAnalysis {
      * Test CMS handling perm/metaspace collections.
      */
     @Test
-    public void testCMSClassUnloadingEnabledMissingButNotCms() {
+    void testCMSClassUnloadingEnabledMissingButNotCms() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -620,7 +620,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testPrintAdaptiveResizePolicyEnabled() {
+    void testPrintAdaptiveResizePolicyEnabled() {
         String jvmOptions = "-Xss128k -XX:+PrintAdaptiveSizePolicy -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -630,7 +630,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testTenuringDisabled() {
+    void testTenuringDisabled() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=0 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -640,7 +640,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testMaxTenuringOverrideParallel() {
+    void testMaxTenuringOverrideParallel() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=6 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -653,7 +653,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testMaxTenuringOverrideCms() {
+    void testMaxTenuringOverrideCms() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=14 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -666,7 +666,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testMaxTenuringOverrideG1() {
+    void testMaxTenuringOverrideG1() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=6 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -679,7 +679,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testSurvivorRatio() {
+    void testSurvivorRatio() {
         String jvmOptions = "-Xss128k -XX:SurvivorRatio=6 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -689,7 +689,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testTargetSurvivorRatio() {
+    void testTargetSurvivorRatio() {
         String jvmOptions = "-Xss128k -XX:TargetSurvivorRatio=90 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -699,7 +699,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testExperimentalOptionsEnabled() {
+    void testExperimentalOptionsEnabled() {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -710,7 +710,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testUseFastUnorderedTimeStamps() {
+    void testUseFastUnorderedTimeStamps() {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:+UseFastUnorderedTimeStamps -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -721,7 +721,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testJdk8G1PriorUpdate40() {
+    void testJdk8G1PriorUpdate40() {
         String jvmOptions = "";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -737,7 +737,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testJdk8G1PriorUpdate40NoLoggingEvents() {
+    void testJdk8G1PriorUpdate40NoLoggingEvents() {
         String jvmOptions = "-XX:+UseG1GC";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -750,7 +750,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testJdk8NotG1PriorUpdate40() {
+    void testJdk8NotG1PriorUpdate40() {
         String jvmOptions = "";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -766,7 +766,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testJdk8G1PriorUpdate40WithRecommendedJvmOptions() {
+    void testJdk8G1PriorUpdate40WithRecommendedJvmOptions() {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:G1MixedGCLiveThresholdPercent=85 "
                 + "-XX:G1HeapWastePercent=5";
         GcManager gcManager = new GcManager();
@@ -783,7 +783,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testJdk8Update40() {
+    void testJdk8Update40() {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -796,7 +796,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCmsParallelInitialMarkDisabled() {
+    void testCmsParallelInitialMarkDisabled() {
         String jvmOptions = "-XX:-CMSParallelInitialMarkEnabled";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -806,7 +806,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCmsParallelRemarkDisabled() {
+    void testCmsParallelRemarkDisabled() {
         String jvmOptions = "-XX:-CMSParallelRemarkEnabled";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -816,7 +816,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testG1SummarizeRSetStatsPeriod0() {
+    void testG1SummarizeRSetStatsPeriod0() {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:+G1SummarizeRSetStats "
                 + "-XX:G1SummarizeRSetStatsPeriod=0";
         GcManager gcManager = new GcManager();
@@ -827,7 +827,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testApplicationStoppedTimeMissingNoData() {
+    void testApplicationStoppedTimeMissingNoData() {
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(null, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -840,7 +840,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testCGroupMemoryLimit() {
+    void testCGroupMemoryLimit() {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -851,7 +851,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testAdaptiveSizePolicy() {
+    void testAdaptiveSizePolicy() {
         String jvmOptions = "-XX:InitialHeapSize=2147483648 -XX:MaxHeapSize=8589934592 -XX:-UseAdaptiveSizePolicy";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -863,7 +863,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testHeaderLogging() {
+    void testHeaderLogging() {
         File testFile = TestUtil.getFile("dataset42.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -881,7 +881,7 @@ public class TestAnalysis {
      * 
      */
     @Test
-    public void testAnalysisPermSizeNotSet() {
+    void testAnalysisPermSizeNotSet() {
         File testFile = TestUtil.getFile("dataset60.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -896,7 +896,7 @@ public class TestAnalysis {
      * <code>Analysis.KEY_SERIAL_GC_CMS</code>.
      */
     @Test
-    public void testCmsSerialOldExplicitGc() {
+    void testCmsSerialOldExplicitGc() {
         File testFile = TestUtil.getFile("dataset85.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -914,7 +914,7 @@ public class TestAnalysis {
      * Test PARALLEL_COMPACTING_OLD caused by <code>Analysis.KEY_EXPLICIT_GC_SERIAL</code>.
      */
     @Test
-    public void testParallelOldCompactingExplicitGc() {
+    void testParallelOldCompactingExplicitGc() {
         File testFile = TestUtil.getFile("dataset86.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -930,7 +930,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testThreadStackSizeAnalysis32Bit() {
+    void testThreadStackSizeAnalysis32Bit() {
         File testFile = TestUtil.getFile("dataset87.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -940,7 +940,7 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testHeapDumpPathFilename() {
+    void testHeapDumpPathFilename() {
         File testFile = TestUtil.getFile("dataset95.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -953,7 +953,7 @@ public class TestAnalysis {
      * Test PAR_NEW disabled with -XX:-UseParNewGC.
      */
     @Test
-    public void testParNewDisabled() {
+    void testParNewDisabled() {
         File testFile = TestUtil.getFile("dataset101.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -974,7 +974,7 @@ public class TestAnalysis {
      * Test compressed oops disabled with heap >= 32G.
      */
     @Test
-    public void testCompressedOopsDisabledLargeHeap() {
+    void testCompressedOopsDisabledLargeHeap() {
         File testFile = TestUtil.getFile("dataset106.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -990,7 +990,7 @@ public class TestAnalysis {
      * Test physical memory less than heap + perm/metaspace.
      */
     @Test
-    public void testPhysicalMemoryLessThanJvmMemoryWithoutCompressedClassPointerSpace() {
+    void testPhysicalMemoryLessThanJvmMemoryWithoutCompressedClassPointerSpace() {
         File testFile = TestUtil.getFile("dataset106.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1008,7 +1008,7 @@ public class TestAnalysis {
      * Test PrintGCDetails disabled with VERBOSE_GC logging.
      */
     @Test
-    public void testPrintGcDetailsDisabledWithVerboseGc() {
+    void testPrintGcDetailsDisabledWithVerboseGc() {
         File testFile = TestUtil.getFile("dataset107.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1023,7 +1023,7 @@ public class TestAnalysis {
      * Test physical memory less than heap + perm/metaspace.
      */
     @Test
-    public void testPhysicalMemoryLessThanJvmMemoryWithCompressedClassPointerSpace() {
+    void testPhysicalMemoryLessThanJvmMemoryWithCompressedClassPointerSpace() {
         File testFile = TestUtil.getFile("dataset107.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1040,7 +1040,7 @@ public class TestAnalysis {
      * Test physical memory less than heap + perm/metaspace.
      */
     @Test
-    public void testPhysicalMemoryLessThanHeapAllocation() {
+    void testPhysicalMemoryLessThanHeapAllocation() {
         File testFile = TestUtil.getFile("dataset109.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1057,7 +1057,7 @@ public class TestAnalysis {
      * Test CMS class unloading disabled.
      */
     @Test
-    public void testCmsClassunloadingDisabled() {
+    void testCmsClassunloadingDisabled() {
         File testFile = TestUtil.getFile("dataset110.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1073,7 +1073,7 @@ public class TestAnalysis {
      * Test application/gc logging mixed.
      */
     @Test
-    public void testApplicationLogging() {
+    void testApplicationLogging() {
         File testFile = TestUtil.getFile("dataset114.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1089,7 +1089,7 @@ public class TestAnalysis {
      * Test <code>-XX:PrintFLSStatistics</code> and <code>-XX:PrintPromotionFailure</code>.
      */
     @Test
-    public void testPrintFlsStatisticsPrintPromotionFailure() {
+    void testPrintFlsStatisticsPrintPromotionFailure() {
         File testFile = TestUtil.getFile("dataset115.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1105,7 +1105,7 @@ public class TestAnalysis {
      * Test humongous allocations on old JDK not able to reclaim humongous objects during young collections.
      */
     @Test
-    public void testHumongousAllocationsNotCollectedYoung() {
+    void testHumongousAllocationsNotCollectedYoung() {
         File testFile = TestUtil.getFile("dataset118.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1121,7 +1121,7 @@ public class TestAnalysis {
      * Test CMS_SERIAL_OLD triggered by GCLocker promotion failure.
      */
     @Test
-    public void testCmsSerialOldGcLocker() {
+    void testCmsSerialOldGcLocker() {
         File testFile = TestUtil.getFile("dataset119.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1136,7 +1136,7 @@ public class TestAnalysis {
      * Test VERBOSE_GC_OLD triggered by explicit GC.
      */
     @Test
-    public void testVerboseGcOldExplicitGc() {
+    void testVerboseGcOldExplicitGc() {
         File testFile = TestUtil.getFile("dataset125.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1150,7 +1150,7 @@ public class TestAnalysis {
      * Test VERBOSE_GC_YOUNG triggered by explicit GC.
      */
     @Test
-    public void testVerboseGcYoungExplicitGc() {
+    void testVerboseGcYoungExplicitGc() {
         File testFile = TestUtil.getFile("dataset126.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1163,7 +1163,7 @@ public class TestAnalysis {
      * Test serial promotion failed is not reported as cms promotion failed.
      */
     @Test
-    public void testSerialPromotionFailed() {
+    void testSerialPromotionFailed() {
         File testFile = TestUtil.getFile("dataset129.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1176,7 +1176,7 @@ public class TestAnalysis {
      * Test CMS initial mark low parallelism.
      */
     @Test
-    public void testCmsInitialMarkSerial() {
+    void testCmsInitialMarkSerial() {
         File testFile = TestUtil.getFile("dataset130.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1189,7 +1189,7 @@ public class TestAnalysis {
      * Test CMS remark low parallelism.
      */
     @Test
-    public void testCmsRemarkSerial() {
+    void testCmsRemarkSerial() {
         File testFile = TestUtil.getFile("dataset131.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1202,7 +1202,7 @@ public class TestAnalysis {
      * Test CMS remark low parallelism not reported with pause times less than zero.
      */
     @Test
-    public void testInitialMarkLowParallelismFalseReportZeroReal() {
+    void testInitialMarkLowParallelismFalseReportZeroReal() {
         File testFile = TestUtil.getFile("dataset137.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1215,7 +1215,7 @@ public class TestAnalysis {
      * Test CMS remark low parallelism not reported with pause times less than times data centisecond precision.
      */
     @Test
-    public void testInitialMarkLowParallelismFalseReportSmallPause() {
+    void testInitialMarkLowParallelismFalseReportSmallPause() {
         File testFile = TestUtil.getFile("dataset138.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1229,7 +1229,7 @@ public class TestAnalysis {
      * Test small gc log file size.
      */
     @Test
-    public void testGcLogFileSizeSmall() {
+    void testGcLogFileSizeSmall() {
         File testFile = TestUtil.getFile("dataset181.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1242,7 +1242,7 @@ public class TestAnalysis {
      * Test heap dump location missing
      */
     @Test
-    public void testHeapDumpPathMissing() {
+    void testHeapDumpPathMissing() {
         File testFile = TestUtil.getFile("dataset181.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1255,7 +1255,7 @@ public class TestAnalysis {
      * Test swap disabled.
      */
     @Test
-    public void testSwapDisabled() {
+    void testSwapDisabled() {
         File testFile = TestUtil.getFile("dataset187.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1268,7 +1268,7 @@ public class TestAnalysis {
      * Test diagnostic options
      */
     @Test
-    public void testDiagnosticOptions() {
+    void testDiagnosticOptions() {
         File testFile = TestUtil.getFile("dataset192.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1282,7 +1282,7 @@ public class TestAnalysis {
      * Test -XX:+UseFastUnorderedTimeStamps
      */
     @Test
-    public void testFastUnorderedTimestamps() {
+    void testFastUnorderedTimestamps() {
         File testFile = TestUtil.getFile("dataset193.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1295,7 +1295,7 @@ public class TestAnalysis {
      * Test Metadata GC Threshold
      */
     @Test
-    public void testMetadataGcThreshold() {
+    void testMetadataGcThreshold() {
         File testFile = TestUtil.getFile("dataset199.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

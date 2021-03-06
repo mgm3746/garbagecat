@@ -26,10 +26,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedCmsInitialMarkEvent {
+class TestUnifiedCmsInitialMarkEvent {
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertTrue(UnifiedCmsInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
@@ -41,43 +41,43 @@ public class TestUnifiedCmsInitialMarkEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertEquals(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedCmsInitialMarkEvent, JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not parsed.");
     }
 
     @Test
-    public void testBlocking() {
+    void testBlocking() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK), JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_CMS_INITIAL_MARK);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms     ";
         assertTrue(UnifiedCmsInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
     }
 
     @Test
-    public void testLogLineWithTimesData() {
+    void testLogLineWithTimesData() {
         String logLine = "[0.053s][info][gc           ] GC(1) Pause Initial Mark 0M->0M(2M) 0.278ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedCmsInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");

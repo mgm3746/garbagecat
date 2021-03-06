@@ -23,16 +23,16 @@ import org.junit.jupiter.api.Test;
  * @author James Livingston
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
-public class TestG1CleanupEvent {
+class TestG1CleanupEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "2972.698: [GC cleanup 13G->12G(30G), 0.0358748 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.G1_CLEANUP.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testCleanup() {
+    void testCleanup() {
         String logLine = "18.650: [GC cleanup 297M->236M(512M), 0.0014690 secs]";
         assertTrue(G1CleanupEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".");
         G1CleanupEvent event = new G1CleanupEvent(logLine);
@@ -44,13 +44,13 @@ public class TestG1CleanupEvent {
     }
 
     @Test
-    public void testCleanupWhiteSpacesAtEnd() {
+    void testCleanupWhiteSpacesAtEnd() {
         String logLine = "18.650: [GC cleanup 297M->236M(512M), 0.0014690 secs]   ";
         assertTrue(G1CleanupEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".");
     }
 
     @Test
-    public void testLogLineGigabytes() {
+    void testLogLineGigabytes() {
         String logLine = "2972.698: [GC cleanup 13G->12G(30G), 0.0358748 secs]";
         assertTrue(G1CleanupEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".");
         G1CleanupEvent event = new G1CleanupEvent(logLine);
@@ -62,7 +62,7 @@ public class TestG1CleanupEvent {
     }
 
     @Test
-    public void testLogLineWithTimesData() {
+    void testLogLineWithTimesData() {
         String logLine = "2016-11-08T09:36:22.388-0800: 35290.131: [GC cleanup 5252M->3592M(12G), 0.0154490 secs] "
                 + "[Times: user=0.19 sys=0.00, real=0.01 secs]";
         assertTrue(G1CleanupEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".");
@@ -79,7 +79,7 @@ public class TestG1CleanupEvent {
     }
 
     @Test
-    public void testLogLineMissingSizes() {
+    void testLogLineMissingSizes() {
         String logLine = "2017-05-09T00:46:14.766+1000: 288368.997: [GC cleanup, 0.0000910 secs] "
                 + "[Times: user=0.00 sys=0.00, real=0.00 secs]";
         assertTrue(G1CleanupEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".");
@@ -96,7 +96,7 @@ public class TestG1CleanupEvent {
     }
 
     @Test
-    public void testLogLineMixedErgonomics() {
+    void testLogLineMixedErgonomics() {
         String logLine = "2020-04-29T22:05:39.708+0200: 1745.417: [GC cleanup 1745.419: [G1Ergonomics "
                 + "(Concurrent Cycles) finish cleanup, occupancy: 22498457048 bytes, capacity: 32212254720 bytes, "
                 + "known garbage: 9291782792 bytes (28.85 %)]21456M->20543M(30720M), 0.0155840 secs] "

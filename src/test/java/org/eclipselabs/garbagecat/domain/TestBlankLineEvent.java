@@ -22,22 +22,22 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestBlankLineEvent {
+class TestBlankLineEvent {
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof BlankLineEvent, JdkUtil.LogEventType.BLANK_LINE.toString() + " not parsed.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         String logLine = "";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.BLANK_LINE.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "";
         assertTrue(BlankLineEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.BLANK_LINE.toString() + ".");
     }

@@ -38,14 +38,14 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestJvmRun {
+class TestJvmRun {
 
     /**
      * Test passing JVM options on the command line.
      * 
      */
     @Test
-    public void testJvmOptionsPassedInOnCommandLine() {
+    void testJvmOptionsPassedInOnCommandLine() {
         String options = "MGM was here!";
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -57,7 +57,7 @@ public class TestJvmRun {
      * Test if -XX:+PrintReferenceGC enabled by inspecting logging events.
      */
     @Test
-    public void testPrintReferenceGCByLogging() {
+    void testPrintReferenceGCByLogging() {
         String jvmOptions = null;
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -73,7 +73,7 @@ public class TestJvmRun {
      * Test if -XX:+PrintReferenceGC enabled by inspecting jvm options.
      */
     @Test
-    public void testPrintReferenceGCByOptions() {
+    void testPrintReferenceGCByOptions() {
         String jvmOptions = "-Xss128k -XX:+PrintReferenceGC -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -86,7 +86,7 @@ public class TestJvmRun {
      * Test if -XX:+PrintStringDeduplicationStatistics enabled by inspecting jvm options.
      */
     @Test
-    public void testPrintStringDeduplicationStatistics() {
+    void testPrintStringDeduplicationStatistics() {
         String jvmOptions = "-Xss128k -XX:+PrintStringDeduplicationStatistics -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -99,7 +99,7 @@ public class TestJvmRun {
      * Test if PrintGCDetails disabled with -XX:-PrintGCDetails.
      */
     @Test
-    public void testPrintGCDetailsDisabled() {
+    void testPrintGCDetailsDisabled() {
         String jvmOptions = "-Xss128k -XX:-PrintGCDetails -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -113,7 +113,7 @@ public class TestJvmRun {
      * Test if PAR_NEW collector disabled with -XX:-UseParNewGC.
      */
     @Test
-    public void testUseParNewGcDisabled() {
+    void testUseParNewGcDisabled() {
         String jvmOptions = "-Xss128k -XX:-UseParNewGC -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -126,7 +126,7 @@ public class TestJvmRun {
      * Test percent swap free at threshold.
      */
     @Test
-    public void testPercentSwapFreeAtThreshold() {
+    void testPercentSwapFreeAtThreshold() {
         String jvmOptions = null;
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -142,7 +142,7 @@ public class TestJvmRun {
      * Test percent swap free below threshold.
      */
     @Test
-    public void testPercentSwapFreeBelowThreshold() {
+    void testPercentSwapFreeBelowThreshold() {
         String jvmOptions = null;
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -158,7 +158,7 @@ public class TestJvmRun {
      * Test physical memory equals heap + perm/metaspace.
      */
     @Test
-    public void testPhysicalMemoryEqualJvmAllocation() {
+    void testPhysicalMemoryEqualJvmAllocation() {
         String jvmOptions = "-Xmx1024M -XX:MaxPermSize=128M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -172,7 +172,7 @@ public class TestJvmRun {
      * Test physical memory less than heap + perm/metaspace.
      */
     @Test
-    public void testPhysicalMemoryLessThanJvmAllocation() {
+    void testPhysicalMemoryLessThanJvmAllocation() {
         String jvmOptions = "-Xmx1024M -XX:MaxPermSize=128M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -183,7 +183,7 @@ public class TestJvmRun {
     }
 
     @Test
-    public void testLastTimestampNoEvents() {
+    void testLastTimestampNoEvents() {
         GcManager gcManager = new GcManager();
         gcManager.store(null, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -191,7 +191,7 @@ public class TestJvmRun {
     }
 
     @Test
-    public void testSummaryStatsParallel() {
+    void testSummaryStatsParallel() {
         File testFile = TestUtil.getFile("dataset1.txt");
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
@@ -213,7 +213,7 @@ public class TestJvmRun {
     }
 
     @Test
-    public void testSummaryStatsParNew() {
+    void testSummaryStatsParNew() {
         File testFile = TestUtil.getFile("dataset2.txt");
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
@@ -237,7 +237,7 @@ public class TestJvmRun {
      * Test parsing logging with -XX:+PrintGCApplicationConcurrentTime and -XX:+PrintGCApplicationStoppedTime output.
      */
     @Test
-    public void testParseLoggingWithApplicationTime() {
+    void testParseLoggingWithApplicationTime() {
         File testFile = TestUtil.getFile("dataset3.txt");
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
@@ -258,7 +258,7 @@ public class TestJvmRun {
      * .
      */
     @Test
-    public void testSplitParallelOldCompactingEventLogging() {
+    void testSplitParallelOldCompactingEventLogging() {
         File testFile = TestUtil.getFile("dataset28.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -276,7 +276,7 @@ public class TestJvmRun {
      * split across 2 lines.
      */
     @Test
-    public void testCombinedCmsConcurrentApplicationConcurrentTimeLogging() {
+    void testCombinedCmsConcurrentApplicationConcurrentTimeLogging() {
         File testFile = TestUtil.getFile("dataset19.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -291,7 +291,7 @@ public class TestJvmRun {
      * across 2 lines.
      */
     @Test
-    public void testCombinedCmsConcurrentApplicationStoppedTimeLogging() {
+    void testCombinedCmsConcurrentApplicationStoppedTimeLogging() {
         File testFile = TestUtil.getFile("dataset27.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -303,7 +303,7 @@ public class TestJvmRun {
     }
 
     @Test
-    public void testRemoveBlankLines() {
+    void testRemoveBlankLines() {
         File testFile = TestUtil.getFile("dataset20.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -319,7 +319,7 @@ public class TestJvmRun {
      * Test <code>DateStampPreprocessAction</code>.
      */
     @Test
-    public void testDateStampPreprocessActionLogging() {
+    void testDateStampPreprocessActionLogging() {
         File testFile = TestUtil.getFile("dataset25.txt");
         GcManager gcManager = new GcManager();
         Calendar calendar = Calendar.getInstance();
@@ -338,7 +338,7 @@ public class TestJvmRun {
     }
 
     @Test
-    public void testSummaryStatsStoppedTime() {
+    void testSummaryStatsStoppedTime() {
         File testFile = TestUtil.getFile("dataset41.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -365,7 +365,7 @@ public class TestJvmRun {
     }
 
     @Test
-    public void testSummaryStatsUnifiedStoppedTime() {
+    void testSummaryStatsUnifiedStoppedTime() {
         File testFile = TestUtil.getFile("dataset182.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -399,7 +399,7 @@ public class TestJvmRun {
      * 
      */
     @Test
-    public void testExplicitGcAnalsysisParallelSerialOld() {
+    void testExplicitGcAnalsysisParallelSerialOld() {
         File testFile = TestUtil.getFile("dataset56.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -417,7 +417,7 @@ public class TestJvmRun {
      * 
      */
     @Test
-    public void testHeaders() {
+    void testHeaders() {
         File testFile = TestUtil.getFile("dataset59.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -436,7 +436,7 @@ public class TestJvmRun {
      * 
      */
     @Test
-    public void testPrintTenuringDistributionPreprocessActionNoSpaceAfterGc() {
+    void testPrintTenuringDistributionPreprocessActionNoSpaceAfterGc() {
         File testFile = TestUtil.getFile("dataset66.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -450,7 +450,7 @@ public class TestJvmRun {
      * Test application stopped time w/o timestamps.
      */
     @Test
-    public void testApplicationStoppedTimeNoTimestamps() {
+    void testApplicationStoppedTimeNoTimestamps() {
         File testFile = TestUtil.getFile("dataset96.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -477,7 +477,7 @@ public class TestJvmRun {
      * dataset41.txt with 1000 seconds added to each timestamp.
      */
     @Test
-    public void testSummaryStatsPartialLog() {
+    void testSummaryStatsPartialLog() {
         File testFile = TestUtil.getFile("dataset98.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -506,7 +506,7 @@ public class TestJvmRun {
      * Test summary stats with batching.
      */
     @Test
-    public void testStoppedTime() {
+    void testStoppedTime() {
         File testFile = TestUtil.getFile("dataset103.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -536,7 +536,7 @@ public class TestJvmRun {
      * Test no gc logging events, only stopped time events.
      */
     @Test
-    public void testStoppedTimeWithoutGcEvents() {
+    void testStoppedTimeWithoutGcEvents() {
         File testFile = TestUtil.getFile("dataset108.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -550,7 +550,7 @@ public class TestJvmRun {
      * Test identifying <code>ParNewEvent</code> running in incremental mode.
      */
     @Test
-    public void testPrintGcApplicationConcurrentTimeAnalysis() {
+    void testPrintGcApplicationConcurrentTimeAnalysis() {
         File testFile = TestUtil.getFile("dataset104.txt");
         Jvm jvm = new Jvm(null, null);
         GcManager gcManager = new GcManager();

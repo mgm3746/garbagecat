@@ -24,16 +24,16 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestVerboseGcYoungEvent {
+class TestVerboseGcYoungEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]";
         assertTrue(VerboseGcYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
@@ -46,13 +46,13 @@ public class TestVerboseGcYoungEvent {
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]        ";
         assertTrue(VerboseGcYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
     }
 
     @Test
-    public void testLogLineMissingBeginningOccupancy() {
+    void testLogLineMissingBeginningOccupancy() {
         String logLine = "90.168: [GC 876593K(1851392K), 0.0701780 secs]";
         assertTrue(VerboseGcYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
@@ -66,7 +66,7 @@ public class TestVerboseGcYoungEvent {
     }
 
     @Test
-    public void testLogLineTriggerAllocationFailure() {
+    void testLogLineTriggerAllocationFailure() {
         String logLine = "4.970: [GC (Allocation Failure)  136320K->18558K(3128704K), 0.1028162 secs]";
         assertTrue(VerboseGcYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
@@ -80,7 +80,7 @@ public class TestVerboseGcYoungEvent {
     }
 
     @Test
-    public void testLogLineTriggerCmsInitialMark() {
+    void testLogLineTriggerCmsInitialMark() {
         String logLine = "12.915: [GC (CMS Initial Mark)  59894K(3128704K), 0.0058845 secs]";
         assertTrue(VerboseGcYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
@@ -95,7 +95,7 @@ public class TestVerboseGcYoungEvent {
     }
 
     @Test
-    public void testLogLineTriggerCmsFinalRemark() {
+    void testLogLineTriggerCmsFinalRemark() {
         String logLine = "70.096: [GC (CMS Final Remark)  521627K(3128704K), 0.2481277 secs]";
         assertTrue(VerboseGcYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
@@ -110,7 +110,7 @@ public class TestVerboseGcYoungEvent {
     }
 
     @Test
-    public void testLogLineTriggerGcLockerInitiatedGc() {
+    void testLogLineTriggerGcLockerInitiatedGc() {
         String logLine = "37.357: [GC (GCLocker Initiated GC)  128035K->124539K(3128704K), 0.0713498 secs]";
         assertTrue(VerboseGcYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
@@ -124,7 +124,7 @@ public class TestVerboseGcYoungEvent {
     }
 
     @Test
-    public void testLogLineWithDashes() {
+    void testLogLineWithDashes() {
         String logLine = "1582.746: [GC-- 5524217K->5911480K(5911488K), 1.5564360 secs]";
         assertTrue(VerboseGcYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
@@ -137,7 +137,7 @@ public class TestVerboseGcYoungEvent {
     }
 
     @Test
-    public void testLogLineTriggerWithDashes() {
+    void testLogLineTriggerWithDashes() {
         String logLine = "1020971.877: [GC (Allocation Failure) -- 1044870K->1045980K(1046016K), 0.1061259 secs]";
         assertTrue(VerboseGcYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
@@ -150,7 +150,7 @@ public class TestVerboseGcYoungEvent {
     }
 
     @Test
-    public void testLogLineWithDatestamp() {
+    void testLogLineWithDatestamp() {
         String logLine = "2016-07-22T11:49:00.678+0100: 4.970: [GC (Allocation Failure)  136320K->18558K(3128704K), "
                 + "0.1028162 secs]";
         assertTrue(VerboseGcYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
@@ -164,7 +164,7 @@ public class TestVerboseGcYoungEvent {
     }
 
     @Test
-    public void testLogLineTriggerMetadataGcThreshold() {
+    void testLogLineTriggerMetadataGcThreshold() {
         String logLine = "20.748: [GC (Metadata GC Threshold)  288163K->251266K(1253376K), 0.0183041 secs]";
         assertTrue(VerboseGcYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
@@ -178,7 +178,7 @@ public class TestVerboseGcYoungEvent {
     }
 
     @Test
-    public void testLogLineTriggerExplicitGc() {
+    void testLogLineTriggerExplicitGc() {
         String logLine = "8453.745: [GC (System.gc())  525225K->457601K(939520K), 0.0325441 secs]";
         assertTrue(VerboseGcYoungEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
         VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);

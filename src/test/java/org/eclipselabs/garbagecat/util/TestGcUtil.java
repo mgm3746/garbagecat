@@ -28,23 +28,23 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestGcUtil {
+class TestGcUtil {
 
     @Test
-    public void testStartDateTime() {
+    void testStartDateTime() {
         String startDateTime = "2009-09-18 00:00:08,172";
         assertTrue(GcUtil.isValidStartDateTime(startDateTime), "Start date/time not recognized as a valid format.");
     }
 
     @Test
-    public void testInvalidStartDateTime() {
+    void testInvalidStartDateTime() {
         // Replace comma with space
         String startDateTime = "2009-09-18 00:00:08 172";
         assertFalse(GcUtil.isValidStartDateTime(startDateTime), "Start date/time recognized as a valid format.");
     }
 
     @Test
-    public void testConvertStartDateTimeStringToDate() {
+    void testConvertStartDateTimeStringToDate() {
         String startDateTime = "2009-09-18 16:24:08,172";
         Date date = GcUtil.parseStartDateTime(startDateTime);
         assertNotNull(date);
@@ -60,31 +60,31 @@ public class TestGcUtil {
     }
 
     @Test
-    public void testNumberOfDaysInZeroMilliSeconds() {
+    void testNumberOfDaysInZeroMilliSeconds() {
         long milliSeconds = 0;
         assertEquals(0,GcUtil.daysInMilliSeconds(milliSeconds),"Number of days calculated wrong.");
     }
 
     @Test
-    public void testNumberOfDaysInMilliSecondsLessThanOneDay() {
+    void testNumberOfDaysInMilliSecondsLessThanOneDay() {
         long milliSeconds = 82800000L;
         assertEquals(0,GcUtil.daysInMilliSeconds(milliSeconds),"Number of days calculated wrong.");
     }
 
     @Test
-    public void testNumberOfDaysInMilliSecondsEqualOneDay() {
+    void testNumberOfDaysInMilliSecondsEqualOneDay() {
         long milliSeconds = 86400000L;
         assertEquals(1,GcUtil.daysInMilliSeconds(milliSeconds),"Number of days calculated wrong.");
     }
 
     @Test
-    public void testNumberOfDaysInMilliSeconds9Days() {
+    void testNumberOfDaysInMilliSeconds9Days() {
         long milliSeconds = 863999999L;
         assertEquals(9,GcUtil.daysInMilliSeconds(milliSeconds),"Number of days calculated wrong.");
     }
 
     @Test
-    public void testAddingDateAndTimestampZero() {
+    void testAddingDateAndTimestampZero() {
         // 1966-08-18 19:21:44,012
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 1966);
@@ -100,7 +100,7 @@ public class TestGcUtil {
     }
 
     @Test
-    public void testAddingDateAndTimestamp10Ms() {
+    void testAddingDateAndTimestamp10Ms() {
         // 1966-08-18 19:21:44,012
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 1966);
@@ -116,7 +116,7 @@ public class TestGcUtil {
     }
 
     @Test
-    public void testAddingDateAndTimestamp1Sec() {
+    void testAddingDateAndTimestamp1Sec() {
         // 1966-08-18 19:21:44,012
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 1966);
@@ -132,7 +132,7 @@ public class TestGcUtil {
     }
 
     @Test
-    public void testAddingDateAndTimestamp1Min() {
+    void testAddingDateAndTimestamp1Min() {
         // 1966-08-18 19:21:44,012
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 1966);
@@ -148,7 +148,7 @@ public class TestGcUtil {
     }
 
     @Test
-    public void testAddingDateAndTimestamp1Hr() {
+    void testAddingDateAndTimestamp1Hr() {
         // 1966-08-18 19:21:44,012
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 1966);
@@ -164,7 +164,7 @@ public class TestGcUtil {
     }
 
     @Test
-    public void testAddingDateAndTimestamp1Day() {
+    void testAddingDateAndTimestamp1Day() {
         // 1966-08-18 19:21:44,012
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 1966);
@@ -180,7 +180,7 @@ public class TestGcUtil {
     }
 
     @Test
-    public void testAddingDateAndTimestamp30Days() {
+    void testAddingDateAndTimestamp30Days() {
         // 1966-08-18 19:21:44,012
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 1966);
@@ -196,7 +196,7 @@ public class TestGcUtil {
     }
 
     @Test
-    public void testAddingDateWith2DigitMonth() {
+    void testAddingDateWith2DigitMonth() {
         String jvmStarted = "2009-11-01 02:30:52,917";
         long gcLogTimestamp = 353647157L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
@@ -204,7 +204,7 @@ public class TestGcUtil {
     }
 
     @Test
-    public void testGetPropertyValues() {
+    void testGetPropertyValues() {
         assertNotNull("Could not retrieve " + Analysis.WARN_THREAD_STACK_SIZE_NOT_SET.getKey() + ".",
                 GcUtil.getPropertyValue("analysis", Analysis.WARN_THREAD_STACK_SIZE_NOT_SET.getKey()));
         assertNotNull("Could not retrieve " + Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX.getKey() + ".",
@@ -212,7 +212,7 @@ public class TestGcUtil {
     }
 
     @Test
-    public void testConvertDateStampStringToDate() {
+    void testConvertDateStampStringToDate() {
         String datestamp = "2010-02-26T09:32:12.486-0600";
         Date date = GcUtil.parseDateStamp(datestamp);
         assertNotNull(date);
@@ -228,7 +228,7 @@ public class TestGcUtil {
     }
 
     @Test
-    public void testDateDiff() {
+    void testDateDiff() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 2010);
         calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
@@ -250,7 +250,7 @@ public class TestGcUtil {
     }
 
     @Test
-    public void testPartialLog() {
+    void testPartialLog() {
         assertFalse(GcUtil.isPartialLog(59999), "Not a partial log.");
         assertTrue(GcUtil.isPartialLog(60001), "Is a partial log.");
     }

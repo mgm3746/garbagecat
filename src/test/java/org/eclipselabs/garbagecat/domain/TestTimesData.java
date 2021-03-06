@@ -20,16 +20,16 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestTimesData {
+class TestTimesData {
 
     @Test
-    public void testTimesData() {
+    void testTimesData() {
         String timesData = " [Times: user=0.44 sys=0.00, real=0.08 secs]";
         assertTrue(timesData.matches(TimesData.REGEX), "'" + timesData + "' is a valid duration.");
     }
 
     @Test
-    public void testTimesDataJdk9() {
+    void testTimesDataJdk9() {
         String timesData = " User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(timesData.matches(TimesData.REGEX_JDK9), "'" + timesData + "' is a valid duration.");
     }

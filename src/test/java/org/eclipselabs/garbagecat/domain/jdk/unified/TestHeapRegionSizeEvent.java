@@ -28,46 +28,46 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestHeapRegionSizeEvent {
+class TestHeapRegionSizeEvent {
 
     @Test
-    public void testLine() {
+    void testLine() {
         String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
         assertTrue(HeapRegionSizeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + ".");
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
         assertEquals(JdkUtil.LogEventType.HEAP_REGION_SIZE,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.HEAP_REGION_SIZE + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapRegionSizeEvent, JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " not parsed.");
     }
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "[25.016s][info][gc,heap,exit  ] Heap";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.HEAP_REGION_SIZE), JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.HEAP_REGION_SIZE);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testUptimeMillis() {
+    void testUptimeMillis() {
         String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Regions: 2606 x 512K";
         assertTrue(HeapRegionSizeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + ".");
     }

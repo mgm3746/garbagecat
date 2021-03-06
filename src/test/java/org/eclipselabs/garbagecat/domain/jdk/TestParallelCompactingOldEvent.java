@@ -24,10 +24,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestParallelCompactingOldEvent {
+class TestParallelCompactingOldEvent {
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] "
                 + "[ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) "
                 + "[PSPermGen: 81960K->81783K(164352K)], 2.4749181 secs]";
@@ -47,7 +47,7 @@ public class TestParallelCompactingOldEvent {
     }
 
     @Test
-    public void testLogLineWhiteSpaceAtEnd() {
+    void testLogLineWhiteSpaceAtEnd() {
         String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
                 + "[ParOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
                 + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]  ";
@@ -55,7 +55,7 @@ public class TestParallelCompactingOldEvent {
     }
 
     @Test
-    public void testLogLineJdk16() {
+    void testLogLineJdk16() {
         String logLine = "2.417: [Full GC (System) [PSYoungGen: 1788K->0K(12736K)] "
                 + "[ParOldGen: 1084K->2843K(116544K)] 2872K->2843K(129280K) "
                 + "[PSPermGen: 8602K->8593K(131072K)], 0.1028360 secs]";
@@ -76,7 +76,7 @@ public class TestParallelCompactingOldEvent {
     }
 
     @Test
-    public void testLogLineJdk8() {
+    void testLogLineJdk8() {
         String logLine = "1.234: [Full GC (Metadata GC Threshold) [PSYoungGen: 17779K->0K(1835008K)] "
                 + "[ParOldGen: 16K->16894K(4194304K)] 17795K->16894K(6029312K), [Metaspace: 19114K->19114K(1067008K)], "
                 + "0.0352132 secs] [Times: user=0.09 sys=0.00, real=0.04 secs]";
@@ -101,7 +101,7 @@ public class TestParallelCompactingOldEvent {
     }
 
     @Test
-    public void testLogLineLastDitchCollectionTrigger() {
+    void testLogLineLastDitchCollectionTrigger() {
         String logLine = "372405.718: [Full GC (Last ditch collection) [PSYoungGen: 0K->0K(1569280K)] "
                 + "[ParOldGen: 773083K->773083K(4718592K)] 773083K->773083K(6287872K), "
                 + "[Metaspace: 4177368K->4177368K(4194304K)], 1.9708670 secs] "
@@ -127,7 +127,7 @@ public class TestParallelCompactingOldEvent {
     }
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] "
                 + "[ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) "
                 + "[PSPermGen: 81960K->81783K(164352K)], 2.4749181 secs]";
@@ -135,7 +135,7 @@ public class TestParallelCompactingOldEvent {
     }
 
     @Test
-    public void testLogLineErgonomicsTrigger() {
+    void testLogLineErgonomicsTrigger() {
         String logLine = "21415.385: [Full GC (Ergonomics) [PSYoungGen: 105768K->0K(547840K)] "
                 + "[ParOldGen: 1390311K->861344K(1398272K)] 1496080K->861344K(1946112K), "
                 + "[Metaspace: 136339K->135256K(1177600K)], 3.4522057 secs] "
@@ -161,7 +161,7 @@ public class TestParallelCompactingOldEvent {
     }
 
     @Test
-    public void testHeapInspectionInitiatedGcTrigger() {
+    void testHeapInspectionInitiatedGcTrigger() {
         String logLine = "285197.105: [Full GC (Heap Inspection Initiated GC) [PSYoungGen: 47669K->0K(1514496K)] "
                 + "[ParOldGen: 2934846K->851463K(4718592K)] 2982516K->851463K(6233088K), "
                 + "[Metaspace: 3959933K->3959881K(3977216K)], 2.4308400 secs] "
@@ -187,7 +187,7 @@ public class TestParallelCompactingOldEvent {
     }
 
     @Test
-    public void testAllocationFailureTrigger() {
+    void testAllocationFailureTrigger() {
         String logLine = "3203650.654: [Full GC (Allocation Failure) [PSYoungGen: 393482K->393073K(532992K)] "
                 + "[ParOldGen: 1398224K->1398199K(1398272K)] 1791707K->1791273K(1931264K), "
                 + "[Metaspace: 170955K->170731K(1220608K)], 3.5730395 secs] "
@@ -213,7 +213,7 @@ public class TestParallelCompactingOldEvent {
     }
 
     @Test
-    public void testHeapDumpInitiatedGcTrigger() {
+    void testHeapDumpInitiatedGcTrigger() {
         String logLine = "2017-02-01T17:09:50.180+0000: 1029482.070: [Full GC (Heap Dump Initiated GC) "
                 + "[PSYoungGen: 33192K->0K(397312K)] [ParOldGen: 885002K->812903K(890368K)] "
                 + "918194K->812903K(1287680K), [Metaspace: 142181K->141753K(1185792K)], 2.3728899 secs] "

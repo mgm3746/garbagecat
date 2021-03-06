@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestShenandoahFinalMarkEvent {
+class TestShenandoahFinalMarkEvent {
 
     @Test
-    public void testLogLineJdk8() {
+    void testLogLineJdk8() {
         String logLine = "2020-03-10T08:03:29.427-0400: 0.489: [Pause Final Mark, 0.313 ms]";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
@@ -40,7 +40,7 @@ public class TestShenandoahFinalMarkEvent {
     }
 
     @Test
-    public void testLogLineUnifiedUnified() {
+    void testLogLineUnifiedUnified() {
         String logLine = "[0.531s][info][gc] GC(1) Pause Final Mark 1.004ms";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
@@ -49,25 +49,25 @@ public class TestShenandoahFinalMarkEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[0.531s][info][gc] GC(1) Pause Final Mark 1.004ms";
         assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[0.531s][info][gc] GC(1) Pause Final Mark 1.004ms";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahFinalMarkEvent, JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " not parsed.");
     }
 
     @Test
-    public void testBlocking() {
+    void testBlocking() {
         String logLine = "[0.531s][info][gc] GC(1) Pause Final Mark 1.004ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testHydration() {
+    void testHydration() {
         LogEventType eventType = JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK;
         String logLine = "[0.531s][info][gc] GC(1) Pause Final Mark 1.004ms";
         long timestamp = 456;
@@ -77,25 +77,25 @@ public class TestShenandoahFinalMarkEvent {
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK), JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_FINAL_MARK);
         assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " inocrrectly indentified as unified.");
     }
 
     @Test
-    public void testLogLineUnifiedWhitespaceAtEnd() {
+    void testLogLineUnifiedWhitespaceAtEnd() {
         String logLine = "[0.531s][info][gc] GC(1) Pause Final Mark 1.004ms   ";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
     }
 
     @Test
-    public void testLogLineJdk8ProcessWeakrefs() {
+    void testLogLineJdk8ProcessWeakrefs() {
         String logLine = "2020-03-10T08:03:29.491-0400: 0.553: [Pause Final Mark (process weakrefs), 0.508 ms]";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
@@ -104,7 +104,7 @@ public class TestShenandoahFinalMarkEvent {
     }
 
     @Test
-    public void testLogLineUnifiedProcessWeakrefs() {
+    void testLogLineUnifiedProcessWeakrefs() {
         String logLine = "[0.472s][info][gc] GC(0) Pause Final Mark (process weakrefs) 1.772ms";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
@@ -113,7 +113,7 @@ public class TestShenandoahFinalMarkEvent {
     }
 
     @Test
-    public void testLogLineJdk8UpdateRefs() {
+    void testLogLineJdk8UpdateRefs() {
         String logLine = "2020-03-10T08:03:46.283-0400: 17.345: [Pause Final Mark (update refs), 0.659 ms]";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
@@ -122,7 +122,7 @@ public class TestShenandoahFinalMarkEvent {
     }
 
     @Test
-    public void testLogLineUnifiedUpdateRefs() {
+    void testLogLineUnifiedUpdateRefs() {
         String logLine = "[10.459s][info][gc] GC(279) Pause Final Mark (update refs) 0.253ms";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
@@ -131,7 +131,7 @@ public class TestShenandoahFinalMarkEvent {
     }
 
     @Test
-    public void testLogLineUnifiedUpdateRefsProcessWeakrefs() {
+    void testLogLineUnifiedUpdateRefsProcessWeakrefs() {
         String logLine = "[11.012s][info][gc] GC(300) Pause Final Mark (update refs) (process weakrefs) 0.200ms";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
@@ -140,7 +140,7 @@ public class TestShenandoahFinalMarkEvent {
     }
 
     @Test
-    public void testLogLineUnifiedDetailed() {
+    void testLogLineUnifiedDetailed() {
         String logLine = "[41.911s][info][gc           ] GC(1500) Pause Final Mark (update refs) (process weakrefs) "
                 + "0.429ms";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
@@ -150,7 +150,7 @@ public class TestShenandoahFinalMarkEvent {
     }
 
     @Test
-    public void testLogLineUnifiedUptimeMillis() {
+    void testLogLineUnifiedUptimeMillis() {
         String logLine = "[2019-02-05T14:47:34.202-0200][3114ms] GC(0) Pause Final Mark (process weakrefs) 2.517ms";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
@@ -159,7 +159,7 @@ public class TestShenandoahFinalMarkEvent {
     }
 
     @Test
-    public void testLogLineUnloadClasses() {
+    void testLogLineUnloadClasses() {
         String logLine = "[5.602s][info][gc            ] GC(99) Pause Final Mark (unload classes) 1.561ms";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);

@@ -29,53 +29,53 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedBlankLineEvent {
+class TestUnifiedBlankLineEvent {
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[69.946s][info][gc,stats     ]";
         assertEquals(JdkUtil.LogEventType.UNIFIED_BLANK_LINE,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_BLANK_LINE + "not identified.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         String logLine = "[69.946s][info][gc,stats     ]";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_BLANK_LINE);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLineUnifiedFooterStats() {
+    void testLineUnifiedFooterStats() {
         String logLine = "[69.946s][info][gc,stats     ]";
         assertTrue(UnifiedBlankLineEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".");
     }
 
     @Test
-    public void testLineUnifiedFooterHeap() {
+    void testLineUnifiedFooterHeap() {
         String logLine = "[69.946s][info][gc,heap,exit ]";
         assertTrue(UnifiedBlankLineEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".");
     }
 
     @Test
-    public void testLineTimeUptimeMillis() {
+    void testLineTimeUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]";
         assertTrue(UnifiedBlankLineEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".");
     }
 
     @Test
-    public void testLineUptimeMillis() {
+    void testLineUptimeMillis() {
         String logLine = "[1357910ms]";
         assertTrue(UnifiedBlankLineEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]   ";
         assertTrue(UnifiedBlankLineEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + ".");
     }

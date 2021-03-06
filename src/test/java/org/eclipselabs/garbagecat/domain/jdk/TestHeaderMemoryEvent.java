@@ -23,16 +23,16 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestHeaderMemoryEvent {
+class TestHeaderMemoryEvent {
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "Memory: 4k page, physical 65806300k(58281908k free), swap 16777212k(16777212k free)";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.HEADER_MEMORY.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testLine() {
+    void testLine() {
         String logLine = "Memory: 4k page, physical 65806300k(58281908k free), swap 16777212k(16777212k free)";
         assertTrue(HeaderMemoryEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.HEADER_MEMORY.toString() + ".");
         HeaderMemoryEvent event = new HeaderMemoryEvent(logLine);
@@ -45,7 +45,7 @@ public class TestHeaderMemoryEvent {
     }
 
     @Test
-    public void testLineMemoryPage8kNoSwapData() {
+    void testLineMemoryPage8kNoSwapData() {
         String logLine = "Memory: 8k page, physical 535035904k(398522432k free)";
         assertTrue(HeaderMemoryEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.HEADER_MEMORY.toString() + ".");
         HeaderMemoryEvent event = new HeaderMemoryEvent(logLine);

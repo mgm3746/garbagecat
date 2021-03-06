@@ -21,10 +21,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestApplicationStoppedTimePreprocessAction {
+class TestApplicationStoppedTimePreprocessAction {
 
     @Test
-    public void testLine2CmsConcurrent() {
+    void testLine2CmsConcurrent() {
         String priorLogLine = "6545.692Total time for which application threads were stopped: 0.0007993 seconds";
         String logLine = ": [CMS-concurrent-abortable-preclean: 0.025/0.042 secs] "
                 + "[Times: user=0.04 sys=0.00, real=0.04 secs]";
@@ -32,7 +32,7 @@ public class TestApplicationStoppedTimePreprocessAction {
     }
 
     @Test
-    public void testLine2TimesBlock() {
+    void testLine2TimesBlock() {
         String priorLogLine = "234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for"
                 + " which application threads were stopped: 0.0123330 seconds";
         String logLine = " [Times: user=0.10 sys=0.00, real=0.12 secs]";
@@ -40,7 +40,7 @@ public class TestApplicationStoppedTimePreprocessAction {
     }
 
     @Test
-    public void testLine2TimesBlockWhitespaceAtEnd() {
+    void testLine2TimesBlockWhitespaceAtEnd() {
         String priorLogLine = "234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for"
                 + " which application threads were stopped: 0.0123330 seconds";
         String logLine = " [Times: user=0.10 sys=0.00, real=0.12 secs]   ";

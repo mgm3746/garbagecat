@@ -34,28 +34,28 @@ import org.junit.jupiter.api.Test;
  * @author James Livingston
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
-public class TestG1YoungPauseEvent {
+class TestG1YoungPauseEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "1113.145: [GC pause (young) 849M->583M(968M), 0.0392710 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testYoungPause() {
+    void testYoungPause() {
         String logLine = "1113.145: [GC pause (young) 849M->583M(968M), 0.0392710 secs]";
         assertTrue(G1YoungPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
     }
 
     @Test
-    public void testNotInitialMark() {
+    void testNotInitialMark() {
         String logLine = "1244.357: [GC pause (young) (initial-mark) 847M->599M(970M), 0.0566840 secs]";
         assertFalse(G1YoungPauseEvent.match(logLine), "Log line recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
     }
 
     @Test
-    public void testLogLineKilobytes() {
+    void testLogLineKilobytes() {
         String logLine = "0.308: [GC pause (young) 8192K->2028K(59M), 0.0078140 secs] "
                 + "[Times: user=0.01 sys=0.00, real=0.02 secs]";
         assertTrue(G1YoungPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
@@ -72,7 +72,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testTriggerGcLockerInitiatedGc() {
+    void testTriggerGcLockerInitiatedGc() {
         String logLine = "9.466: [GC pause (GCLocker Initiated GC) (young) 523M->198M(8192M), 0.0500110 secs]";
         assertTrue(G1YoungPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
         G1YoungPauseEvent event = new G1YoungPauseEvent(logLine);
@@ -89,7 +89,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testDatestameTriggerG1EvacuationPause() {
+    void testDatestameTriggerG1EvacuationPause() {
         String logLine = "2018-01-22T12:43:33.359-0700: 17.629: [GC pause (G1 Evacuation Pause) (young) "
                 + "511M->103M(10G), 0.1343977 secs]";
         assertTrue(G1YoungPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
@@ -107,7 +107,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testTriggerG1EvacuationPauseDashDash() {
+    void testTriggerG1EvacuationPauseDashDash() {
         String logLine = "424751.601: [GC pause (G1 Evacuation Pause) (young)-- 8172M->8168M(8192M), 0.4589730 secs]";
         assertTrue(G1YoungPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
         G1YoungPauseEvent event = new G1YoungPauseEvent(logLine);
@@ -124,7 +124,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedG1Details() {
+    void testLogLinePreprocessedG1Details() {
         String logLine = "2.847: [GC pause (G1 Evacuation Pause) (young), 0.0414530 secs]"
                 + "[Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: 136.9M(30.0G)->70.9M(30.0G)]";
         assertTrue(G1YoungPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
@@ -138,7 +138,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedG1Sizes() {
+    void testLogLinePreprocessedG1Sizes() {
         String logLine = "0.807: [GC pause (young), 0.00290200 secs][ 29M->2589K(59M)]"
                 + " [Times: user=0.01 sys=0.00, real=0.01 secs]";
         assertTrue(G1YoungPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
@@ -156,7 +156,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedG1DetailsTriggerGcLockerInitiatedGc() {
+    void testLogLinePreprocessedG1DetailsTriggerGcLockerInitiatedGc() {
         String logLine = "5.293: [GC pause (GCLocker Initiated GC) (young), 0.0176868 secs]"
                 + "[Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: 415.0M(30.0G)->313.0M(30.0G)]"
                 + " [Times: user=0.01 sys=0.00, real=0.02 secs]";
@@ -175,7 +175,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedG1DetailsTriggerAfterYoungToSpaceExhausted() {
+    void testLogLinePreprocessedG1DetailsTriggerAfterYoungToSpaceExhausted() {
         String logLine = "27997.968: [GC pause (young) (to-space exhausted), 0.1208740 secs]"
                 + "[Eden: 1280.0M(1280.0M)->0.0B(1288.0M) Survivors: 48.0M->40.0M Heap: 18.9G(26.0G)->17.8G(26.0G)]"
                 + " [Times: user=0.41 sys=0.02, real=0.12 secs]";
@@ -194,7 +194,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedNoTrigger() {
+    void testLogLinePreprocessedNoTrigger() {
         String logLine = "44620.073: [GC pause (young), 0.2752700 secs]"
                 + "[Eden: 11.3G(11.3G)->0.0B(11.3G) Survivors: 192.0M->176.0M Heap: 23.0G(26.0G)->11.7G(26.0G)]"
                 + " [Times: user=1.09 sys=0.00, real=0.27 secs]";
@@ -213,7 +213,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedNoSizeDetails() {
+    void testLogLinePreprocessedNoSizeDetails() {
         String logLine = "785,047: [GC pause (young), 0,73936800 secs][Eden: 4096M(4096M)->0B(3528M) "
                 + "Survivors: 0B->568M Heap: 4096M(16384M)->567M(16384M)] [Times: user=4,42 sys=0,38, real=0,74 secs]";
         assertTrue(G1YoungPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
@@ -227,7 +227,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedDoubleTrigger() {
+    void testLogLinePreprocessedDoubleTrigger() {
         String logLine = "6049.175: [GC pause (G1 Evacuation Pause) (young) (to-space exhausted), 3.1713585 secs]"
                 + "[Eden: 27.1G(50.7G)->0.0B(50.7G) Survivors: 112.0M->0.0B Heap: 27.9G(28.0G)->16.1G(28.0G)] "
                 + "[Times: user=17.73 sys=0.00, real=3.18 secs]";
@@ -246,7 +246,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedTriggerHumongousAllocatioin() {
+    void testLogLinePreprocessedTriggerHumongousAllocatioin() {
         String logLine = "2020-02-16T23:24:09.668+0000: 880272.698: [GC pause (G1 Humongous Allocation) (young) "
                 + "(to-space exhausted), 0.6167306 secs][Eden: 545.0M(1691.0M)->0.0B(1691.0M) "
                 + "Survivors: 0.0B->1024.0K Heap: 3038.2M(3072.0M)->2748.7M(3072.0M)] "
@@ -265,7 +265,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedDatestamp() {
+    void testLogLinePreprocessedDatestamp() {
         String logLine = "2016-12-21T14:28:11.672-0500: 0.823: [GC pause (G1 Evacuation Pause) (young), "
                 + "0.0124023 secs][Eden: 75.0M(75.0M)->0.0B(66.0M) Survivors: 0.0B->9216.0K "
                 + "Heap: 75.0M(1500.0M)->8749.6K(1500.0M)] [Times: user=0.03 sys=0.00, real=0.02 secs]";
@@ -284,7 +284,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedNoDuration() {
+    void testLogLinePreprocessedNoDuration() {
         String logLine = "2017-04-05T09:09:00.416-0500: 201626.141: [GC pause (G1 Evacuation Pause) (young)"
                 + "[Eden: 3808.0M(3808.0M)->0.0B(3760.0M) Survivors: 40.0M->64.0M "
                 + "Heap: 7253.9M(8192.0M)->3472.3M(8192.0M)] [Times: user=0.22 sys=0.00, real=0.11 secs]";
@@ -303,7 +303,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedToSpaceOverflow() {
+    void testLogLinePreprocessedToSpaceOverflow() {
         String logLine = "2017-05-25T12:24:06.040+0000: 206.156: [GC pause (young) (to-space overflow), "
                 + "0.77121400 secs][Eden: 1270M(1270M)->0B(723M) Survivors: 124M->175M Heap: "
                 + "2468M(3072M)->1695M(3072M)] [Times: user=1.51 sys=0.14, real=0.77 secs]";
@@ -322,7 +322,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedWithCommas() {
+    void testLogLinePreprocessedWithCommas() {
         String logLine = "2018-09-20T14:57:22.095+0300: 6,350: [GC pause (young), 0,1275790 secs]"
                 + "[Eden: 306,0M(306,0M)->0,0B(266,0M) Survivors: 0,0B->40,0M Heap: 306,0M(6144,0M)->57,7M(6144,0M)] "
                 + "[Times: user=0,25 sys=0,05, real=0,12 secs]";
@@ -340,7 +340,7 @@ public class TestG1YoungPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedNoSpaceAfterYoung() {
+    void testLogLinePreprocessedNoSpaceAfterYoung() {
         String logLine = "2018-12-07T11:26:56.282-0500: 0.314: [GC pause (G1 Evacuation Pause) "
                 + "(young)3589K->2581K(6144K), 0.0063282 secs]";
         assertTrue(G1YoungPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
@@ -361,7 +361,7 @@ public class TestG1YoungPauseEvent {
      * 
      */
     @Test
-    public void testPreprocessingTriggerToSpaceOverflow() {
+    void testPreprocessingTriggerToSpaceOverflow() {
         File testFile = TestUtil.getFile("dataset128.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -378,7 +378,7 @@ public class TestG1YoungPauseEvent {
      * 
      */
     @Test
-    public void testPreprocessingNoSpaceAfterYoung() {
+    void testPreprocessingNoSpaceAfterYoung() {
         File testFile = TestUtil.getFile("dataset146.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

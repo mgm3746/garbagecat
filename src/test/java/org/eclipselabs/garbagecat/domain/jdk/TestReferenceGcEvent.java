@@ -23,10 +23,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestReferenceGcEvent {
+class TestReferenceGcEvent {
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "0.341: [GC (Allocation Failure) 0.344: [SoftReference, 0 refs, 0.0000327 secs]0.344: "
                 + "[WeakReference, 19 refs, 0.0000049 secs]0.344: [FinalReference, 296 refs, 0.0002385 secs]0.344: "
                 + "[PhantomReference, 0 refs, 0 refs, 0.0000033 secs]0.344: [JNI Weak Reference, 0.0000041 secs]"
@@ -36,7 +36,7 @@ public class TestReferenceGcEvent {
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         String logLine = "0.341: [GC (Allocation Failure) 0.344: [SoftReference, 0 refs, 0.0000327 secs]0.344: "
                 + "[WeakReference, 19 refs, 0.0000049 secs]0.344: [FinalReference, 296 refs, 0.0002385 secs]0.344: "
                 + "[PhantomReference, 0 refs, 0 refs, 0.0000033 secs]0.344: [JNI Weak Reference, 0.0000041 secs]"
@@ -46,7 +46,7 @@ public class TestReferenceGcEvent {
     }
 
     @Test
-    public void testLogLineParallelScavenge() {
+    void testLogLineParallelScavenge() {
         String logLine = "0.341: [GC (Allocation Failure) 0.344: [SoftReference, 0 refs, 0.0000327 secs]0.344: "
                 + "[WeakReference, 19 refs, 0.0000049 secs]0.344: [FinalReference, 296 refs, 0.0002385 secs]0.344: "
                 + "[PhantomReference, 0 refs, 0 refs, 0.0000033 secs]0.344: [JNI Weak Reference, 0.0000041 secs]"
@@ -58,7 +58,7 @@ public class TestReferenceGcEvent {
     }
 
     @Test
-    public void testLogLineConcurrent() {
+    void testLogLineConcurrent() {
         String logLine = "6.698: [Preclean SoftReferences, 0.0000060 secs]6.698: [Preclean WeakReferences, "
                 + "0.0000045 secs]6.698: [Preclean FinalReferences, 0.0000025 secs]6.698: "
                 + "[Preclean PhantomReferences, 0.0000026 secs]2015-12-12T08:59:10.539+0000: 6.717: "
@@ -69,7 +69,7 @@ public class TestReferenceGcEvent {
     }
 
     @Test
-    public void testLogLineDatestamps() {
+    void testLogLineDatestamps() {
         String logLine = "2017-04-05T09:07:18.552-0500: 201524.276: [SoftReference, 0 refs, 0.0002257 secs]"
                 + "2017-04-05T09:07:18.552-0500: 201524.277: [WeakReference, 48 refs, 0.0001397 secs]"
                 + "2017-04-05T09:07:18.552-0500: 201524.277: [FinalReference, 2813 refs, 0.0026465 secs]"

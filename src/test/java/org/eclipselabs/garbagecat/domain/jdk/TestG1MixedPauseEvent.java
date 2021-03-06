@@ -34,16 +34,16 @@ import org.junit.jupiter.api.Test;
  * @author James Livingston
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
-public class TestG1MixedPauseEvent {
+class TestG1MixedPauseEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "72.598: [GC pause (mixed) 643M->513M(724M), 0.1686650 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "72.598: [GC pause (mixed) 643M->513M(724M), 0.1686650 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
@@ -55,7 +55,7 @@ public class TestG1MixedPauseEvent {
     }
 
     @Test
-    public void testLogLineWithTimesData() {
+    void testLogLineWithTimesData() {
         String logLine = "72.598: [GC pause (mixed) 643M->513M(724M), 0.1686650 secs] "
                 + "[Times: user=0.22 sys=0.00, real=0.22 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
@@ -72,7 +72,7 @@ public class TestG1MixedPauseEvent {
     }
 
     @Test
-    public void testLogLineSpacesAtEnd() {
+    void testLogLineSpacesAtEnd() {
         String logLine = "72.598: [GC pause (mixed) 643M->513M(724M), 0.1686650 secs] "
                 + "[Times: user=0.22 sys=0.00, real=0.22 secs]   ";
         assertTrue(G1MixedPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
@@ -86,7 +86,7 @@ public class TestG1MixedPauseEvent {
     }
 
     @Test
-    public void testTriggerG1EvacuationPause() {
+    void testTriggerG1EvacuationPause() {
         String logLine = "81.757: [GC pause (G1 Evacuation Pause) (mixed) 1584M->1390M(8192M), 0.1472883 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
@@ -103,7 +103,7 @@ public class TestG1MixedPauseEvent {
     }
 
     @Test
-    public void testTriggerG1EvacuationPauseDashDash() {
+    void testTriggerG1EvacuationPauseDashDash() {
         String logLine = "424692.063: [GC pause (G1 Evacuation Pause) (mixed)-- 8129M->7812M(8192M), 0.0890849 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
@@ -120,7 +120,7 @@ public class TestG1MixedPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedTriggerBeforeG1EvacuationPause() {
+    void testLogLinePreprocessedTriggerBeforeG1EvacuationPause() {
         String logLine = "2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs]"
                 + "[Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: 12.9G(30.0G)->11.3G(30.0G)]"
                 + " [Times: user=0.19 sys=0.00, real=0.05 secs]";
@@ -139,7 +139,7 @@ public class TestG1MixedPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedNoTrigger() {
+    void testLogLinePreprocessedNoTrigger() {
         String logLine = "3082.652: [GC pause (mixed), 0.0762060 secs]"
                 + "[Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: 40.0M->40.0M Heap: 11.8G(26.0G)->9058.4M(26.0G)]"
                 + " [Times: user=0.30 sys=0.00, real=0.08 secs]";
@@ -157,7 +157,7 @@ public class TestG1MixedPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedNoTriggerWholeSizes() {
+    void testLogLinePreprocessedNoTriggerWholeSizes() {
         String logLine = "449412.888: [GC pause (mixed), 0.06137400 secs][Eden: 2044M(2044M)->0B(1792M) "
                 + "Survivors: 4096K->256M Heap: 2653M(12288M)->435M(12288M)] "
                 + "[Times: user=0.43 sys=0.00, real=0.06 secs]";
@@ -175,7 +175,7 @@ public class TestG1MixedPauseEvent {
     }
 
     @Test
-    public void testLogLineWithDatestamp() {
+    void testLogLineWithDatestamp() {
         String logLine = "2018-03-02T07:08:35.683+0000: 47788.145: [GC pause (G1 Evacuation Pause) (mixed) "
                 + "1239M->949M(4096M), 0.0245500 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
@@ -192,7 +192,7 @@ public class TestG1MixedPauseEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedWithDatestamp() {
+    void testLogLinePreprocessedWithDatestamp() {
         String logLine = "2016-02-09T23:27:04.149-0500: 3082.652: [GC pause (mixed), 0.0762060 secs]"
                 + "[Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: 40.0M->40.0M Heap: 11.8G(26.0G)->9058.4M(26.0G)] "
                 + "[Times: user=0.30 sys=0.00, real=0.08 secs]";
@@ -210,7 +210,7 @@ public class TestG1MixedPauseEvent {
     }
 
     @Test
-    public void testNoTriggerToSpaceExhausted() {
+    void testNoTriggerToSpaceExhausted() {
         String logLine = "615375.044: [GC pause (mixed) (to-space exhausted), 1.5026320 secs]"
                 + "[Eden: 3416.0M(3416.0M)->0.0B(3464.0M) Survivors: 264.0M->216.0M Heap: 17.7G(18.0G)->17.8G(18.0G)] "
                 + "[Times: user=11.35 sys=0.00, real=1.50 secs]";
@@ -229,7 +229,7 @@ public class TestG1MixedPauseEvent {
     }
 
     @Test
-    public void testDoubleTriggerToSpaceExhausted() {
+    void testDoubleTriggerToSpaceExhausted() {
         String logLine = "506146.808: [GC pause (G1 Evacuation Pause) (mixed) (to-space exhausted), 8.6429024 secs]"
                 + "[Eden: 22.9G(24.3G)->0.0B(24.3G) Survivors: 112.0M->0.0B Heap: 27.7G(28.0G)->23.5G(28.0G)] "
                 + "[Times: user=34.39 sys=13.70, real=8.64 secs]";
@@ -248,7 +248,7 @@ public class TestG1MixedPauseEvent {
     }
 
     @Test
-    public void testTriggerGcLockerInitiatedGc() {
+    void testTriggerGcLockerInitiatedGc() {
         String logLine = "55.647: [GC pause (GCLocker Initiated GC) (mixed), 0.0210214 secs][Eden: "
                 + "44.0M(44.0M)->0.0B(248.0M) Survivors: 31.0M->10.0M Heap: 1141.0M(1500.0M)->1064.5M(1500.0M)] "
                 + "[Times: user=0.07 sys=0.00, real=0.02 secs]";
@@ -271,7 +271,7 @@ public class TestG1MixedPauseEvent {
      * 
      */
     @Test
-    public void testPreprocessingTriggerToSpaceExhausted() {
+    void testPreprocessingTriggerToSpaceExhausted() {
         File testFile = TestUtil.getFile("dataset99.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -288,7 +288,7 @@ public class TestG1MixedPauseEvent {
      * 
      */
     @Test
-    public void testPreprocessingDoubleTriggerG1EvacuationPauseToSpaceExhausted() {
+    void testPreprocessingDoubleTriggerG1EvacuationPauseToSpaceExhausted() {
         File testFile = TestUtil.getFile("dataset102.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -305,7 +305,7 @@ public class TestG1MixedPauseEvent {
      * 
      */
     @Test
-    public void testPreprocessingDoubleTriggerHumongousAllocationToSpaceExhausted() {
+    void testPreprocessingDoubleTriggerHumongousAllocationToSpaceExhausted() {
         File testFile = TestUtil.getFile("dataset133.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

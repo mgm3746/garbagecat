@@ -22,117 +22,117 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestClassHistogramEvent {
+class TestClassHistogramEvent {
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "49709.036: [Class Histogram (after full gc):, 2.4232900 secs] "
                 + "[Times: user=29.91 sys=0.08, real=22.24 secs]";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         String logLine = "49709.036: [Class Histogram (after full gc):, 2.4232900 secs] "
                 + "[Times: user=29.91 sys=0.08, real=22.24 secs]";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
-    public void testColumnsNameLine() {
+    void testColumnsNameLine() {
         String logLine = " num     #instances         #bytes  class name";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void testHeaderDividerLine() {
+    void testHeaderDividerLine() {
         String logLine = "----------------------------------------------";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void testClassDataWithBracketLine() {
+    void testClassDataWithBracketLine() {
         String logLine = "   1:       9249662      876131272  [C";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void testClassDataWithNumberLine() {
+    void testClassDataWithNumberLine() {
         String logLine = "27714:             1             16  sun.reflect.GeneratedMethodAccessor1500";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void testClassDataWithInnerClassLine() {
+    void testClassDataWithInnerClassLine() {
         String logLine = "27714:             1             16  sun.reflect.GeneratedMethodAccessor1500";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void testClassDataWithUnderscoreLine() {
+    void testClassDataWithUnderscoreLine() {
         String logLine = "27647:             1             16  com.example.Myclass$MyInner_someThing";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void testClassDataWithSemicolonLine() {
+    void testClassDataWithSemicolonLine() {
         String logLine = "   4:       4149724      232421736  [Ljava.lang.Object;";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void testTotalLine() {
+    void testTotalLine() {
         String logLine = "Total      16227637     1059670840";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void test5SpacesBeforeTenDigitBytesLine() {
+    void test5SpacesBeforeTenDigitBytesLine() {
         String logLine = "   1:       3786335     1564600208  [Ljava.lang.Object;";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void test6DigitLineNumberLine() {
+    void test6DigitLineNumberLine() {
         String logLine = "100000:             1             16  com.msh.rules.regimensearch.Rule_regimen"
                 + "SearchRule_841_a1deb60c00004d67b538438881011c7aDefaultConsequenceInvoker";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void test6SpacesBeforeInstancesLine() {
+    void test6SpacesBeforeInstancesLine() {
         String logLine = "   1:      98460990     7018731456  [I";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void testTotal11DigitBytesLine() {
+    void testTotal11DigitBytesLine() {
         String logLine = "Total     159091427    12666890520";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void testG1PreprocessedLine() {
+    void testG1PreprocessedLine() {
         String logLine = "49709.036: [Class Histogram (after full gc):, 2.4232900 secs] "
                 + "[Times: user=29.91 sys=0.08, real=22.24 secs]";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void testJdk6PreprocessedLine() {
+    void testJdk6PreprocessedLine() {
         String logLine = "471478.440: [Class Histogram, 15.6352805 secs]";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void testClassWithForwardSlash() {
+    void testClassWithForwardSlash() {
         String logLine = " 116:           318           7632  "
                 + "io.micrometer.prometheus.PrometheusMeterRegistry$$Lambda$53/635371680";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
 
     @Test
-    public void testTotal8SpacesBeforeInstances() {
+    void testTotal8SpacesBeforeInstances() {
         String logLine = "Total        271481       20043160";
         assertTrue(ClassHistogramEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }

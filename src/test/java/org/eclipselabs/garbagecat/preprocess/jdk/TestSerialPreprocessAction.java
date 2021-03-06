@@ -31,10 +31,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestSerialPreprocessAction {
+class TestSerialPreprocessAction {
 
     @Test
-    public void testLogLineBeginSerialNew() {
+    void testLogLineBeginSerialNew() {
         String logLine = "10.204: [GC 10.204: [DefNew";
         Set<String> context = new HashSet<String>();
         assertTrue(SerialPreprocessAction.match(logLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.SERIAL.toString() + ".");
@@ -43,7 +43,7 @@ public class TestSerialPreprocessAction {
     }
 
     @Test
-    public void testLogLineEndSerialNew() {
+    void testLogLineEndSerialNew() {
         String logLine = ": 36825K->4352K(39424K), 0.0224830 secs] 44983K->14441K(126848K), 0.0225800 secs]";
         Set<String> context = new HashSet<String>();
         assertTrue(SerialPreprocessAction.match(logLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.SERIAL.toString() + ".");
@@ -52,7 +52,7 @@ public class TestSerialPreprocessAction {
     }
 
     @Test
-    public void testSerialNewPrintTenuringDistributionPreprocessing() {
+    void testSerialNewPrintTenuringDistributionPreprocessing() {
         File testFile = TestUtil.getFile("dataset17.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

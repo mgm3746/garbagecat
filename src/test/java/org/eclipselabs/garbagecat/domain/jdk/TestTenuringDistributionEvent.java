@@ -23,40 +23,40 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestTenuringDistributionEvent {
+class TestTenuringDistributionEvent {
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
         assertTrue(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " incorrectly indentified as not reportable.");
     }
 
     @Test
-    public void testIdentifyEventType() {
+    void testIdentifyEventType() {
         String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
         assertTrue(JdkUtil.identifyEventType(logLine).equals(LogEventType.TENURING_DISTRIBUTION), JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " not indentified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof TenuringDistributionEvent, JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " not indentified.");
     }
 
     @Test
-    public void testDesiredSurvivorSizeLine() {
+    void testDesiredSurvivorSizeLine() {
         String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
         assertTrue(TenuringDistributionEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + ".");
     }
 
     @Test
-    public void testAgeLine() {
+    void testAgeLine() {
         String logLine = "- age 1: 3177664 bytes, 3177664 total";
         assertTrue(TenuringDistributionEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + ".");
     }

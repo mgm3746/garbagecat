@@ -23,10 +23,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestHeaderCommandLineFlagsEvent {
+class TestHeaderCommandLineFlagsEvent {
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "CommandLine flags: -XX:+CMSClassUnloadingEnabled -XX:CMSInitiatingOccupancyFraction=75 "
                 + "-XX:+CMSScavengeBeforeRemark -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "
                 + "-XX:GCLogFileSize=8388608 -XX:InitialHeapSize=13958643712 -XX:MaxHeapSize=13958643712 "
@@ -38,7 +38,7 @@ public class TestHeaderCommandLineFlagsEvent {
     }
 
     @Test
-    public void testLine() {
+    void testLine() {
         String logLine = "CommandLine flags: -XX:+CMSClassUnloadingEnabled -XX:CMSInitiatingOccupancyFraction=75 "
                 + "-XX:+CMSScavengeBeforeRemark -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "
                 + "-XX:GCLogFileSize=8388608 -XX:InitialHeapSize=13958643712 -XX:MaxHeapSize=13958643712 "
@@ -59,7 +59,7 @@ public class TestHeaderCommandLineFlagsEvent {
     }
 
     @Test
-    public void testJBossHeader() {
+    void testJBossHeader() {
         String logLine = "  JAVA_OPTS: -Dprogram.name=run.sh -d64 -server -Xms10000m -Xmx10000m -ss512k "
                 + "-XX:PermSize=512m -XX:MaxPermSize=512m -XX:NewSize=3000m -XX:MaxNewSize=3000m -XX:SurvivorRatio=6 "
                 + "-XX:TargetSurvivorRatio=90 -XX:MaxTenuringThreshold=5 -verbose:gc -XX:+PrintGC -XX:+PrintGCDetails "

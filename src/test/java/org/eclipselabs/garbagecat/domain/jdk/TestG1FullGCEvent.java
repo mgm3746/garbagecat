@@ -34,22 +34,22 @@ import org.junit.jupiter.api.Test;
  * @author James Livingston
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  */
-public class TestG1FullGCEvent {
+class TestG1FullGCEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "1302.524: [Full GC (System.gc()) 653M->586M(979M), 1.6364900 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.G1_FULL_GC.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testNotVerboseGcOld() {
+    void testNotVerboseGcOld() {
         String logLine = "424753.957: [Full GC (Allocation Failure)  8184M->6998M(8192M), 24.1990452 secs]";
         assertFalse(G1YoungPauseEvent.match(logLine), "Log line recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
     }
 
     @Test
-    public void testLogLineTriggerSystemGC() {
+    void testLogLineTriggerSystemGC() {
         String logLine = "1302.524: [Full GC (System.gc()) 653M->586M(979M), 1.6364900 secs]";
         assertTrue(G1FullGCEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".");
         G1FullGCEvent event = new G1FullGCEvent(logLine);
@@ -65,7 +65,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testTriggerAllocationFailure() {
+    void testTriggerAllocationFailure() {
         String logLine = "424753.957: [Full GC (Allocation Failure)  8184M->6998M(8192M), 24.1990452 secs]";
         assertTrue(G1FullGCEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".");
         G1FullGCEvent event = new G1FullGCEvent(logLine);
@@ -81,7 +81,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedDetailsTriggerToSpaceExhausted() {
+    void testLogLinePreprocessedDetailsTriggerToSpaceExhausted() {
         String logLine = "105.151: [Full GC (System.gc()) 5820M->1381M(30G), 5.5390169 secs]"
                 + "[Eden: 80.0M(112.0M)->0.0B(128.0M) Survivors: 16.0M->0.0B Heap: 5820.3M(30.0G)->1381.9M(30.0G)]"
                 + " [Times: user=5.76 sys=1.00, real=5.53 secs]";
@@ -99,7 +99,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedDetailsNoTriggerPerm() {
+    void testLogLinePreprocessedDetailsNoTriggerPerm() {
         String logLine = "178.892: [Full GC 999M->691M(3072M), 3.4262061 secs]"
                 + "[Eden: 143.0M(1624.0M)->0.0B(1843.0M) Survivors: 219.0M->0.0B "
                 + "Heap: 999.5M(3072.0M)->691.1M(3072.0M)], [Perm: 175031K->175031K(175104K)]"
@@ -118,7 +118,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedDetailsPermNoSpaceAfterTriggerWithDatestamp() {
+    void testLogLinePreprocessedDetailsPermNoSpaceAfterTriggerWithDatestamp() {
         String logLine = "2017-02-27T02:55:32.523+0300: 35911.404: [Full GC (Allocation Failure)21G->20G(22G), "
                 + "40.6782890 secs][Eden: 0.0B(1040.0M)->0.0B(1120.0M) Survivors: 80.0M->0.0B "
                 + "Heap: 22.0G(22.0G)->20.6G(22.0G)], [Perm: 1252884K->1252884K(2097152K)] "
@@ -137,7 +137,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedDetailsTriggerMetadatGcThresholdMetaspace() {
+    void testLogLinePreprocessedDetailsTriggerMetadatGcThresholdMetaspace() {
         String logLine = "188.123: [Full GC (Metadata GC Threshold) 1831M->1213M(5120M), 5.1353878 secs]"
                 + "[Eden: 0.0B(1522.0M)->0.0B(2758.0M) Survivors: 244.0M->0.0B "
                 + "Heap: 1831.0M(5120.0M)->1213.5M(5120.0M)], [Metaspace: 396834K->324903K(1511424K)]"
@@ -156,7 +156,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedDetailsTriggerLastDitchCollection2SpacesAfterTrigger() {
+    void testLogLinePreprocessedDetailsTriggerLastDitchCollection2SpacesAfterTrigger() {
         String logLine = "98.150: [Full GC (Last ditch collection)  1196M->1118M(5120M), 4.4628626 secs]"
                 + "[Eden: 0.0B(3072.0M)->0.0B(3072.0M) Survivors: 0.0B->0.0B "
                 + "Heap: 1196.3M(5120.0M)->1118.8M(5120.0M)], [Metaspace: 324984K->323866K(1511424K)] "
@@ -175,7 +175,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedDetailsTriggerJvmTi() {
+    void testLogLinePreprocessedDetailsTriggerJvmTi() {
         String logLine = "102.621: [Full GC (JvmtiEnv ForceGarbageCollection)  1124M->1118M(5120M), 3.8954775 secs]"
                 + "[Eden: 6144.0K(3072.0M)->0.0B(3072.0M) Survivors: 0.0B->0.0B "
                 + "Heap: 1124.8M(5120.0M)->1118.9M(5120.0M)], [Metaspace: 323874K->323874K(1511424K)]"
@@ -194,7 +194,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedClassHistogram() {
+    void testLogLinePreprocessedClassHistogram() {
         String logLine = "49689.217: [Full GC49689.217: [Class Histogram (before full gc):, 8.8690440 secs]"
                 + "11G->2270M(12G), 19.8185620 secs][Eden: 0.0B(612.0M)->0.0B(7372.0M) Survivors: 0.0B->0.0B "
                 + "Heap: 11.1G(12.0G)->2270.1M(12.0G)], [Perm: 730823K->730823K(2097152K)]";
@@ -212,7 +212,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedDetailsTriggerAllocationFailure() {
+    void testLogLinePreprocessedDetailsTriggerAllocationFailure() {
         String logLine = "56965.451: [Full GC (Allocation Failure)  28G->387M(28G), 1.1821630 secs]"
                 + "[Eden: 0.0B(45.7G)->0.0B(34.4G) Survivors: 0.0B->0.0B Heap: 28.0G(28.0G)->387.6M(28.0G)], "
                 + "[Metaspace: 65867K->65277K(1112064K)] [Times: user=1.43 sys=0.00, real=1.18 secs]";
@@ -230,7 +230,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedNoDetailsNoTrigger() {
+    void testLogLinePreprocessedNoDetailsNoTrigger() {
         String logLine = "2017-05-25T13:00:52.772+0000: 2412.888: [Full GC 1630M->1281M(3072M), 4.1555250 secs] "
                 + "[Times: user=7.02 sys=0.01, real=4.16 secs]";
         assertTrue(G1FullGCEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC.toString() + ".");
@@ -244,7 +244,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedTriggerHeapInspection() {
+    void testLogLinePreprocessedTriggerHeapInspection() {
         String logLine = "2020-06-26T00:00:06.152+0200: 21424.319: [Full GC (Heap Inspection Initiated GC)  "
                 + "3198M->827M(4096M), 4.1354492 secs][Eden: 1404.0M(1794.0M)->0.0B(2456.0M) Survivors: 102.0M->0.0B "
                 + "Heap: 3198.1M(4096.0M)->827.6M(4096.0M)], [Metaspace: 319076K->318118K(1343488K)] "
@@ -260,7 +260,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedTriggerHeapDumpInitiatedGc() {
+    void testLogLinePreprocessedTriggerHeapDumpInitiatedGc() {
         String logLine = "2020-07-14T14:51:39.493-0500: 5590.760: [Full GC (Heap Dump Initiated GC)  "
                 + "277M->16M(1024M), 0.1206075 secs][Eden: 259.0M(614.0M)->0.0B(614.0M) Survivors: 0.0B->0.0B "
                 + "Heap: 277.7M(1024.0M)->16.7M(1024.0M)], [Metaspace: 41053K->41053K(1085440K)] "
@@ -276,7 +276,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testHeapInspectionInitiatedGc() {
+    void testHeapInspectionInitiatedGc() {
         File testFile = TestUtil.getFile("dataset188.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -289,7 +289,7 @@ public class TestG1FullGCEvent {
     }
 
     @Test
-    public void testTriggerHeapDumpInitiatedGc() {
+    void testTriggerHeapDumpInitiatedGc() {
         File testFile = TestUtil.getFile("dataset189.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

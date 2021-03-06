@@ -32,10 +32,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestCmsRemarkEvent {
+class TestCmsRemarkEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "253.103: [GC[YG occupancy: 16172 K (149120 K)]253.103: "
                 + "[Rescan (parallel) , 0.0226730 secs]253.126: [weak refs processing, 0.0624566 secs] "
                 + "[1 CMS-remark: 4173470K(8218240K)] 4189643K(8367360K), 0.0857010 secs]";
@@ -43,7 +43,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "253.103: [GC[YG occupancy: 16172 K (149120 K)]253.103: "
                 + "[Rescan (parallel) , 0.0226730 secs]253.126: [weak refs processing, 0.0624566 secs] "
                 + "[1 CMS-remark: 4173470K(8218240K)] 4189643K(8367360K), 0.0857010 secs]";
@@ -56,7 +56,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "253.103: [GC[YG occupancy: 16172 K (149120 K)]253.103: "
                 + "[Rescan (parallel) , 0.0226730 secs]253.126: [weak refs processing, 0.0624566 secs] "
                 + "[1 CMS-remark: 4173470K(8218240K)] 4189643K(8367360K), 0.0857010 secs]  ";
@@ -64,7 +64,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineWithTimesData() {
+    void testLogLineWithTimesData() {
         String logLine = "253.103: [GC[YG occupancy: 16172 K (149120 K)]253.103: "
                 + "[Rescan (parallel) , 0.0226730 secs]253.126: [weak refs processing, 0.0624566 secs] "
                 + "[1 CMS-remark: 4173470K(8218240K)] 4189643K(8367360K), 0.0857010 secs] "
@@ -82,7 +82,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineJdk8WithTriggerAndDatestamps() {
+    void testLogLineJdk8WithTriggerAndDatestamps() {
         String logLine = "13.749: [GC (CMS Final Remark)[YG occupancy: 149636 K (153600 K)]13.749: "
                 + "[Rescan (parallel) , 0.0216980 secs]13.771: [weak refs processing, 0.0005180 secs]13.772: "
                 + "[scrub string table, 0.0015820 secs] [1 CMS-remark: 217008K(341376K)] "
@@ -101,7 +101,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineDatestamp() {
+    void testLogLineDatestamp() {
         String logLine = "2016-10-27T19:06:06.651-0400: 6.458: [GC[YG occupancy: 480317 K (5505024 K)]6.458: "
                 + "[Rescan (parallel) , 0.0103480 secs]6.469: [weak refs processing, 0.0000110 secs]6.469: "
                 + "[scrub string table, 0.0001750 secs] [1 CMS-remark: 0K(37748736K)] 480317K(43253760K), "
@@ -119,7 +119,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineAllDatestamps() {
+    void testLogLineAllDatestamps() {
         String logLine = "2017-03-04T05:36:05.691-0500: 214.303: [GC[YG occupancy: 1674105 K (2752512 K)]"
                 + "2017-03-04T05:36:05.691-0500: 214.303: [Rescan (parallel) , 0.2958890 secs]"
                 + "2017-03-04T05:36:05.987-0500: 214.599: [weak refs processing, 0.0046990 secs]"
@@ -139,7 +139,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineSpaceBeforeYgBlockAndNoSpaceBeforeCmsRemarkBlock() {
+    void testLogLineSpaceBeforeYgBlockAndNoSpaceBeforeCmsRemarkBlock() {
         String logLine = "61.013: [GC (CMS Final Remark) [YG occupancy: 237181 K (471872 K)]61.014: [Rescan (parallel)"
                 + " , 0.0335675 secs]61.047: [weak refs processing, 0.0011687 secs][1 CMS-remark: 1137616K(1572864K)] "
                 + "1374798K(2044736K), 0.0351204 secs] [Times: user=0.12 sys=0.00, real=0.04 secs]";
@@ -156,7 +156,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineClassUnloading() {
+    void testLogLineClassUnloading() {
         String logLine = "76694.727: [GC[YG occupancy: 80143 K (153344 K)]76694.727: "
                 + "[Rescan (parallel) , 0.0574180 secs]76694.785: [weak refs processing, 0.0170540 secs]76694.802: "
                 + "[class unloading, 0.0363010 secs]76694.838: [scrub symbol & string tables, 0.0276600 secs] "
@@ -169,7 +169,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineClassUnloadingWhitespaceAtEnd() {
+    void testLogLineClassUnloadingWhitespaceAtEnd() {
         String logLine = "76694.727: [GC[YG occupancy: 80143 K (153344 K)]76694.727: "
                 + "[Rescan (parallel) , 0.0574180 secs]76694.785: [weak refs processing, 0.0170540 secs]76694.802: "
                 + "[class unloading, 0.0363010 secs]76694.838: [scrub symbol & string tables, 0.0276600 secs] "
@@ -178,7 +178,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineClassUnloadingWithTimesData() {
+    void testLogLineClassUnloadingWithTimesData() {
         String logLine = "76694.727: [GC[YG occupancy: 80143 K (153344 K)]76694.727: "
                 + "[Rescan (parallel) , 0.0574180 secs]76694.785: [weak refs processing, 0.0170540 secs]76694.802: "
                 + "[class unloading, 0.0363010 secs]76694.838: [scrub symbol & string tables, 0.0276600 secs] "
@@ -195,7 +195,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineClassUnloadingJdk7() {
+    void testLogLineClassUnloadingJdk7() {
         String logLine = "75.500: [GC[YG occupancy: 163958 K (306688 K)]75.500: [Rescan (parallel) , 0.0491823 secs]"
                 + "75.549: [weak refs processing, 0.0088472 secs]75.558: [class unloading, 0.0049468 secs]75.563: "
                 + "[scrub symbol table, 0.0034342 secs]75.566: [scrub string table, 0.0005542 secs] [1 CMS-remark: "
@@ -208,7 +208,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineClassUnloadingJdk7WithTimesData() {
+    void testLogLineClassUnloadingJdk7WithTimesData() {
         String logLine = "75.500: [GC[YG occupancy: 163958 K (306688 K)]75.500: [Rescan (parallel) , 0.0491823 secs]"
                 + "75.549: [weak refs processing, 0.0088472 secs]75.558: [class unloading, 0.0049468 secs]75.563: "
                 + "[scrub symbol table, 0.0034342 secs]75.566: [scrub string table, 0.0005542 secs] [1 CMS-remark: "
@@ -217,7 +217,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineClassUnloadingJdk8WithTrigger() {
+    void testLogLineClassUnloadingJdk8WithTrigger() {
         String logLine = "13.758: [GC (CMS Final Remark) [YG occupancy: 235489 K (996800 K)]13.758: "
                 + "[Rescan (parallel) , 0.0268664 secs]13.785: [weak refs processing, 0.0000365 secs]13.785: "
                 + "[class unloading, 0.0058936 secs]13.791: [scrub symbol table, 0.0081277 secs]13.799: "
@@ -236,7 +236,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineClassUnloadingJdk7NonParallelRescan() {
+    void testLogLineClassUnloadingJdk7NonParallelRescan() {
         String logLine = "7.294: [GC[YG occupancy: 42599 K (76672 K)]7.294: [Rescan (non-parallel) 7.294: "
                 + "[grey object rescan, 0.0049340 secs]7.299: [root rescan, 0.0230250 secs], 0.0280700 secs]7.322: "
                 + "[weak refs processing, 0.0001950 secs]7.322: [class unloading, 0.0034660 secs]7.326: "
@@ -255,7 +255,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineJdk8NoGcYgBlockClassUnloading() {
+    void testLogLineJdk8NoGcYgBlockClassUnloading() {
         String logLine = "4.578: [Rescan (parallel) , 0.0185521 secs]4.597: [weak refs processing, 0.0008993 secs]"
                 + "4.598: [class unloading, 0.0046742 secs]4.603: [scrub symbol table, 0.0044444 secs]"
                 + "4.607: [scrub string table, 0.0005670 secs][1 CMS-remark: 6569K(4023936K)] 16685K(4177280K), "
@@ -272,7 +272,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineJdk8NoGcYgBlockNoClassUnloading() {
+    void testLogLineJdk8NoGcYgBlockNoClassUnloading() {
         String logLine = "4237.354: [Rescan (parallel) , 0.1378986 secs]4237.492: [weak refs processing, "
                 + "0.1842394 secs] [1 CMS-remark: 4271964K(8388608K)] 4271964K(12582848K), 0.4124068 secs] "
                 + "[Times: user=2.82 sys=0.04, real=0.41 secs]";
@@ -288,7 +288,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineClassUnloadingNoSpaceAfterTrigger() {
+    void testLogLineClassUnloadingNoSpaceAfterTrigger() {
         String logLine = "38.695: [GC (CMS Final Remark)[YG occupancy: 4251867 K (8388608 K)]"
                 + "38.695: [Rescan (parallel) , 0.5678440 secs]39.263: [weak refs processing, 0.0000540 secs]"
                 + "39.263: [class unloading, 0.0065460 secs]39.270: [scrub symbol table, 0.0118150 secs]"
@@ -308,7 +308,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineClassUnloadingDatestamp() {
+    void testLogLineClassUnloadingDatestamp() {
         String logLine = "2016-10-10T18:43:51.337-0700: 3.674: [GC (CMS Final Remark) [YG occupancy: 87907 K "
                 + "(153344 K)]2016-10-10T18:43:51.337-0700: 3.674: [Rescan (parallel) , 0.0590379 secs]"
                 + "2016-10-10T18:43:51.396-0700: 3.733: [weak refs processing, 0.0000785 secs]"
@@ -330,7 +330,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testLogLineTruncated() {
+    void testLogLineTruncated() {
         String logLine = "2017-09-15T09:53:41.262+0200: 19763.069: [GC (CMS Final Remark) "
                 + "[YG occupancy: 425526 K (613440 K)]";
         assertTrue(CmsRemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
@@ -342,7 +342,7 @@ public class TestCmsRemarkEvent {
     }
 
     @Test
-    public void testTruncatedPreprocessing() {
+    void testTruncatedPreprocessing() {
         File testFile = TestUtil.getFile("dataset142.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

@@ -34,10 +34,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUsingCmsEvent {
+class TestUsingCmsEvent {
 
     @Test
-    public void testLine() {
+    void testLine() {
         String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
         assertTrue(UsingCmsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_CMS.toString() + ".");
         UsingCmsEvent event = new UsingCmsEvent(logLine);
@@ -45,37 +45,37 @@ public class TestUsingCmsEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
         assertEquals(JdkUtil.LogEventType.USING_CMS,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.USING_CMS + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingCmsEvent, JdkUtil.LogEventType.USING_CMS.toString() + " not parsed.");
     }
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.USING_CMS.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_CMS), JdkUtil.LogEventType.USING_CMS.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.USING_CMS);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.USING_CMS.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLineWithSpaces() {
+    void testLineWithSpaces() {
         String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep     ";
         assertTrue(UsingCmsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_CMS.toString() + ".");
     }
@@ -84,7 +84,7 @@ public class TestUsingCmsEvent {
      * Test logging.
      */
     @Test
-    public void testLog() {
+    void testLog() {
         File testFile = TestUtil.getFile("dataset151.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

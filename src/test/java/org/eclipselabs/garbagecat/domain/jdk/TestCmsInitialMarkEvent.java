@@ -23,17 +23,17 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestCmsInitialMarkEvent {
+class TestCmsInitialMarkEvent {
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "8.722: [GC (CMS Initial Mark) [1 CMS-initial-mark: 0K(989632K)] 187663K(1986432K), "
                 + "0.0157899 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "251.763: [GC [1 CMS-initial-mark: 4133273K(8218240K)] "
                 + "4150346K(8367360K), 0.0174433 secs]";
         assertTrue(CmsInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + ".");
@@ -43,14 +43,14 @@ public class TestCmsInitialMarkEvent {
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "251.763: [GC [1 CMS-initial-mark: 4133273K(8218240K)] "
                 + "4150346K(8367360K), 0.0174433 secs]         ";
         assertTrue(CmsInitialMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + ".");
     }
 
     @Test
-    public void testLogLineWithTimesData() {
+    void testLogLineWithTimesData() {
         String logLine = "251.763: [GC [1 CMS-initial-mark: 4133273K(8218240K)] "
                 + "4150346K(8367360K), 0.0174433 secs] " + "[Times: user=0.02 sys=0.00, real=0.02 secs]";
         assertTrue(CmsInitialMarkEvent.match(logLine), "Log line not recognized as CMS Initial Mark event.");
@@ -63,7 +63,7 @@ public class TestCmsInitialMarkEvent {
     }
 
     @Test
-    public void testLogLineJdk8WithTrigger() {
+    void testLogLineJdk8WithTrigger() {
         String logLine = "8.722: [GC (CMS Initial Mark) [1 CMS-initial-mark: 0K(989632K)] 187663K(1986432K), "
                 + "0.0157899 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]";
         assertTrue(CmsInitialMarkEvent.match(logLine), "Log line not recognized as CMS Initial Mark event.");
@@ -77,7 +77,7 @@ public class TestCmsInitialMarkEvent {
     }
 
     @Test
-    public void testLogLineDatestamp() {
+    void testLogLineDatestamp() {
         String logLine = "2016-10-10T18:43:50.728-0700: 3.065: [GC (CMS Initial Mark) [1 CMS-initial-mark: "
                 + "6993K(8218240K)] 26689K(8371584K), 0.0091989 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]";
         assertTrue(CmsInitialMarkEvent.match(logLine), "Log line not recognized as CMS Initial Mark event.");

@@ -27,10 +27,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedRemarkEvent {
+class TestUnifiedRemarkEvent {
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
         assertTrue(UnifiedRemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");
         UnifiedRemarkEvent event = new UnifiedRemarkEvent(logLine);
@@ -39,43 +39,43 @@ public class TestUnifiedRemarkEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
         assertEquals(JdkUtil.LogEventType.UNIFIED_REMARK,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_REMARK + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedRemarkEvent, JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not parsed.");
     }
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_REMARK), JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_REMARK);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms           ";
         assertTrue(UnifiedRemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");
     }
 
     @Test
-    public void testLogLinePreprocessedWithTimesData() {
+    void testLogLinePreprocessedWithTimesData() {
         String logLine = "[16.053s][info][gc            ] GC(969) Pause Remark 29M->29M(46M) 2.328ms "
                 + "User=0.01s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedRemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");
@@ -88,7 +88,7 @@ public class TestUnifiedRemarkEvent {
     }
 
     @Test
-    public void testLogLinePreprocessedWithTimesData12SpacesAfterGc() {
+    void testLogLinePreprocessedWithTimesData12SpacesAfterGc() {
         String logLine = "[0.091s][info][gc           ] GC(3) Pause Remark 0M->0M(2M) 0.414ms User=0.00s "
                 + "Sys=0.00s Real=0.00s";
         assertTrue(UnifiedRemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");

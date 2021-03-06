@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedG1CleanupEvent {
+class TestUnifiedG1CleanupEvent {
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "[15.101s][info][gc] GC(1099) Pause Cleanup 30M->30M(44M) 0.058ms";
         assertTrue(UnifiedG1CleanupEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + ".");
         UnifiedG1CleanupEvent event = new UnifiedG1CleanupEvent(logLine);
@@ -44,43 +44,43 @@ public class TestUnifiedG1CleanupEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[15.101s][info][gc] GC(1099) Pause Cleanup 30M->30M(44M) 0.058ms";
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_CLEANUP,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_G1_CLEANUP + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[15.101s][info][gc] GC(1099) Pause Cleanup 30M->30M(44M) 0.058ms";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1CleanupEvent, JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " not parsed.");
     }
 
     @Test
-    public void testIsBlocking() {
+    void testIsBlocking() {
         String logLine = "[15.101s][info][gc] GC(1099) Pause Cleanup 30M->30M(44M) 0.058ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_CLEANUP), JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_G1_CLEANUP);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[15.101s][info][gc] GC(1099) Pause Cleanup 30M->30M(44M) 0.058ms     ";
         assertTrue(UnifiedG1CleanupEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + ".");
     }
 
     @Test
-    public void testLogLinePreprocessed() {
+    void testLogLinePreprocessed() {
         String logLine = "[16.082s][info][gc            ] GC(969) Pause Cleanup 28M->28M(46M) 0.064ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1CleanupEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + ".");

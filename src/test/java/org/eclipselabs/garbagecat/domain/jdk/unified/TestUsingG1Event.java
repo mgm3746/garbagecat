@@ -34,10 +34,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUsingG1Event {
+class TestUsingG1Event {
 
     @Test
-    public void testLine() {
+    void testLine() {
         String logLine = "[0.005s][info][gc] Using G1";
         assertTrue(UsingG1Event.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
         UsingG1Event event = new UsingG1Event(logLine);
@@ -45,49 +45,49 @@ public class TestUsingG1Event {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[0.005s][info][gc] Using G1";
         assertEquals(JdkUtil.LogEventType.USING_G1,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.USING_G1 + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[0.005s][info][gc] Using G1";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingG1Event, JdkUtil.LogEventType.USING_G1.toString() + " not parsed.");
     }
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "[0.005s][info][gc] Using G1";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.USING_G1.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_G1), JdkUtil.LogEventType.USING_G1.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.USING_G1);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.USING_G1.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLineWithSpaces() {
+    void testLineWithSpaces() {
         String logLine = "[0.005s][info][gc] Using G1   ";
         assertTrue(UsingG1Event.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
     }
 
     @Test
-    public void testLineDetailedLogging() {
+    void testLineDetailedLogging() {
         String logLine = "[0.003s][info][gc     ] Using G1";
         assertTrue(UsingG1Event.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
     }
 
     @Test
-    public void testLineDatestampMillisNoLevelNoGc() {
+    void testLineDatestampMillisNoLevelNoGc() {
         String logLine = "[2019-05-09T01:38:55.426+0000][18ms] Using G1";
         assertTrue(UsingG1Event.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
         UsingG1Event event = new UsingG1Event(logLine);
@@ -98,7 +98,7 @@ public class TestUsingG1Event {
      * Test logging.
      */
     @Test
-    public void testLog() {
+    void testLog() {
         File testFile = TestUtil.getFile("dataset152.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

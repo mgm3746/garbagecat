@@ -37,10 +37,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestCmsPreprocessAction {
+class TestCmsPreprocessAction {
 
     @Test
-    public void testLogLineParNewMixedConcurrent() {
+    void testLogLineParNewMixedConcurrent() {
         String logLine = "46674.719: [GC (Allocation Failure)46674.719: [ParNew46674.749: "
                 + "[CMS-concurrent-abortable-preclean: 1.427/2.228 secs] [Times: user=1.56 sys=0.01, real=2.23 secs]";
         String nextLogLine = " (concurrent mode failure): 2542828K->2658278K(2658304K), 12.3447910 secs] "
@@ -50,7 +50,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineParNewMixedConcurrentReset() {
+    void testLogLineParNewMixedConcurrentReset() {
         String priorLogLine = null;
         String logLine = "2017-03-21T16:02:23.633+0530: 53277.279: [GC 53277.279: [ParNew: "
                 + "2853312K->2853312K(2853312K), 0.0000310 secs]53277.279: [CMS2017-03-21T16:02:23.655+0530: "
@@ -67,7 +67,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineParNewMixedConcurrentWithWhitespaceEnd() {
+    void testLogLineParNewMixedConcurrentWithWhitespaceEnd() {
         String logLine = "46674.719: [GC (Allocation Failure)46674.719: [ParNew46674.749: "
                 + "[CMS-concurrent-abortable-preclean: 1.427/2.228 secs] "
                 + "[Times: user=1.56 sys=0.01, real=2.23 secs]   ";
@@ -78,7 +78,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineEnd() {
+    void testLogLineEnd() {
         String logLine = ": 153599K->17023K(153600K), 0.0383370 secs] 229326K->114168K(494976K), 0.0384820 secs] "
                 + "[Times: user=0.15 sys=0.01, real=0.04 secs]";
         String priorLogLine = "46674.719: [GC (Allocation Failure)46674.719: [ParNew46674.749: "
@@ -88,7 +88,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineEndWithWhitespaceEnd() {
+    void testLogLineEndWithWhitespaceEnd() {
         String logLine = ": 153599K->17023K(153600K), 0.0383370 secs] 229326K->114168K(494976K), 0.0384820 secs] "
                 + "[Times: user=0.15 sys=0.01, real=0.04 secs]    ";
         String priorLogLine = "46674.719: [GC (Allocation Failure)46674.719: [ParNew46674.749: "
@@ -98,7 +98,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineParNewNoTriggerMixedConcurrent() {
+    void testLogLineParNewNoTriggerMixedConcurrent() {
         String logLine = "10.963: [GC10.963: [ParNew10.977: [CMS-concurrent-abortable-preclean: 0.088/0.197 secs] "
                 + "[Times: user=0.33 sys=0.05, real=0.20 secs]";
         String nextLogLine = " (concurrent mode failure): 2542828K->2658278K(2658304K), 12.3447910 secs] "
@@ -108,7 +108,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineParNewPromotionFailed() {
+    void testLogLineParNewPromotionFailed() {
         String logLine = "233333.318: [GC 233333.319: [ParNew (promotion failed): 673108K->673108K(707840K), "
                 + "1.5366054 secs]233334.855: [CMS233334.856: [CMS-concurrent-abortable-preclean: 12.033/27.431 secs]";
         String nextLogLine = " (concurrent mode failure): 2542828K->2658278K(2658304K), 12.3447910 secs] "
@@ -118,13 +118,13 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineMiddle() {
+    void testLogLineMiddle() {
         String logLine = "1907.974: [CMS-concurrent-mark: 23.751/40.476 secs]";
         assertTrue(CmsPreprocessAction.match(logLine, null, null), "Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".");
     }
 
     @Test
-    public void testLogLineParNewTriggerMixedConcurrentJdk8() {
+    void testLogLineParNewTriggerMixedConcurrentJdk8() {
         String logLine = "45.574: [GC (Allocation Failure) 45.574: [ParNew45.670: [CMS-concurrent-abortable-preclean: "
                 + "3.276/4.979 secs] [Times: user=7.75 sys=0.28, real=4.98 secs]";
         String nextLogLine = " (concurrent mode failure): 2542828K->2658278K(2658304K), 12.3447910 secs] "
@@ -138,7 +138,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineParNewConcurrentModeFailureMixedConcurrentJdk8() {
+    void testLogLineParNewConcurrentModeFailureMixedConcurrentJdk8() {
         String logLine = "719.519: [GC (Allocation Failure) 719.521: [ParNew: 1382400K->1382400K(1382400K), "
                 + "0.0000470 secs]719.521: [CMS722.601: [CMS-concurrent-mark: 3.567/3.633 secs] "
                 + "[Times: user=10.91 sys=0.69, real=3.63 secs]";
@@ -149,7 +149,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineCmsSerialOldMixedConcurrentMark() {
+    void testLogLineCmsSerialOldMixedConcurrentMark() {
         String logLine = "2016-02-26T16:37:58.740+1100: 44.684: [Full GC2016-02-26T16:37:58.740+1100: 44.684: [CMS"
                 + "2016-02-26T16:37:58.933+1100: 44.877: [CMS-concurrent-mark: 1.508/2.428 secs] "
                 + "[Times: user=3.44 sys=0.49, real=2.42 secs]";
@@ -157,14 +157,14 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineCmsSerialOldMixedConcurrentAbortablePreclean() {
+    void testLogLineCmsSerialOldMixedConcurrentAbortablePreclean() {
         String logLine = "85217.903: [Full GC 85217.903: [CMS85217.919: [CMS-concurrent-abortable-preclean: "
                 + "0.723/3.756 secs] [Times: user=2.54 sys=0.08, real=3.76 secs]";
         assertTrue(CmsPreprocessAction.match(logLine, null, null), "Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".");
     }
 
     @Test
-    public void testLogLineCmsSerialOldMixedAbortPrecleanConcurrentAbortablePreclean() {
+    void testLogLineCmsSerialOldMixedAbortPrecleanConcurrentAbortablePreclean() {
         String logLine = "2017-06-22T21:22:03.269-0400: 23.858: [Full GC 23.859: [CMS CMS: abort preclean due to "
                 + "time 2017-06-22T21:22:03.269-0400: 23.859: [CMS-concurrent-abortable-preclean: 0.338/5.115 secs] "
                 + "[Times: user=14.57 sys=0.83, real=5.11 secs]";
@@ -179,21 +179,21 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineCmsSerialOldMixedConcurrentSpaceAfterGC() {
+    void testLogLineCmsSerialOldMixedConcurrentSpaceAfterGC() {
         String logLine = "85238.030: [Full GC 85238.030: [CMS85238.672: [CMS-concurrent-mark: 0.666/0.686 secs] "
                 + "[Times: user=1.40 sys=0.01, real=0.69 secs]";
         assertTrue(CmsPreprocessAction.match(logLine, null, null), "Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".");
     }
 
     @Test
-    public void testLogLineCmsSerialOldWithTriggerMixedConcurrent() {
+    void testLogLineCmsSerialOldWithTriggerMixedConcurrent() {
         String logLine = "706.707: [Full GC (Allocation Failure) 706.708: [CMS709.137: [CMS-concurrent-mark: "
                 + "3.381/5.028 secs] [Times: user=23.92 sys=3.02, real=5.03 secs]";
         assertTrue(CmsPreprocessAction.match(logLine, null, null), "Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".");
     }
 
     @Test
-    public void testLogLineEndWithPerm() {
+    void testLogLineEndWithPerm() {
         String logLine = " (concurrent mode failure): 1218548K->413373K(1465840K), 1.3656970 secs] "
                 + "1229657K->413373K(1581168K), [CMS Perm : 83805K->80520K(83968K)], 1.3659420 secs] "
                 + "[Times: user=1.33 sys=0.01, real=1.37 secs]";
@@ -203,7 +203,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineEndWithMetaspace() {
+    void testLogLineEndWithMetaspace() {
         String logLine = " (concurrent mode failure): 2655937K->2373842K(2658304K), 11.6746550 secs] "
                 + "3973407K->2373842K(4040704K), [Metaspace: 72496K->72496K(1118208K)] icms_dc=77 , 11.6770830 secs] "
                 + "[Times: user=14.05 sys=0.02, real=11.68 secs]";
@@ -214,7 +214,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineEndPromotionFailedConcurrentModeFailure() {
+    void testLogLineEndPromotionFailedConcurrentModeFailure() {
         String logLine = " (promotion failed): 471871K->471872K(471872K), 0.7685416 secs]66645.266: [CMS (concurrent "
                 + "mode failure): 1572864K->1572863K(1572864K), 6.3611861 secs] 2001479K->1657572K(2044736K), "
                 + "[Metaspace: 567956K->567956K(1609728K)], 7.1304658 secs] "
@@ -226,7 +226,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineParNewNoTriggerMixedConcurrentWithCommas() {
+    void testLogLineParNewNoTriggerMixedConcurrentWithCommas() {
         String logLine = "32552,602: [GC32552,602: [ParNew32552,610: "
                 + "[CMS-concurrent-abortable-preclean: 3,090/4,993 secs] "
                 + "[Times: user=3,17 sys=0,02, real=5,00 secs]";
@@ -237,7 +237,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineEndWithCommas() {
+    void testLogLineEndWithCommas() {
         String logLine = ": 289024K->17642K(306688K), 0,0788160 secs] 4086255K->3814874K(12548864K), 0,0792920 secs] "
                 + "[Times: user=0,28 sys=0,00, real=0,08 secs]";
         String priorLogLine = "46674.719: [GC (Allocation Failure)46674.719: [ParNew46674.749: "
@@ -247,33 +247,33 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineSerialBailing() {
+    void testLogLineSerialBailing() {
         String logLine = "4300.825: [Full GC 4300.825: [CMSbailing out to foreground collection";
         assertTrue(CmsPreprocessAction.match(logLine, null, null), "Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".");
     }
 
     @Test
-    public void testLogLineParNewBailing() {
+    void testLogLineParNewBailing() {
         String logLine = "2137.769: [GC 2137.769: [ParNew (promotion failed): 242304K->242304K(242304K), "
                 + "8.4066690 secs]2146.176: [CMSbailing out to foreground collection";
         assertTrue(CmsPreprocessAction.match(logLine, null, null), "Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".");
     }
 
     @Test
-    public void testLogLineParNewHotspotBailing() {
+    void testLogLineParNewHotspotBailing() {
         String logLine = "1901.217: [GC 1901.217: [ParNew: 261760K->261760K(261952K), 0.0000570 secs]1901.217: "
                 + "[CMSJava HotSpot(TM) Server VM warning: bailing out to foreground collection";
         assertTrue(CmsPreprocessAction.match(logLine, null, ""), "Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".");
     }
 
     @Test
-    public void testLogLineParTriggerPromotionFailed() {
+    void testLogLineParTriggerPromotionFailed() {
         String logLine = "182314.858: [GC 182314.859: [ParNew (promotion failed)";
         assertTrue(CmsPreprocessAction.match(logLine, null, ""), "Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".");
     }
 
     @Test
-    public void testLogLineParNewConcurrentModeFailurePermDataMixedConcurrentSweep() {
+    void testLogLineParNewConcurrentModeFailurePermDataMixedConcurrentSweep() {
         String logLine = "11202.526: [GC (Allocation Failure) 1202.528: [ParNew: 1355422K->1355422K(1382400K), "
                 + "0.0000500 secs]1202.528: [CMS1203.491: [CMS-concurrent-sweep: 1.009/1.060 secs] "
                 + "[Times: user=1.55 sys=0.12, real=1.06 secs]";
@@ -284,7 +284,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineCmsSerialOldWithConcurrentModeFailureMixedConcurrentPreclean() {
+    void testLogLineCmsSerialOldWithConcurrentModeFailureMixedConcurrentPreclean() {
         String logLine = "1278.200: [Full GC (Allocation Failure) 1278.202: [CMS1280.173: "
                 + "[CMS-concurrent-preclean: 2.819/2.865 secs] [Times: user=6.97 sys=0.41, real=2.87 secs]";
         String nextLogLine = " (concurrent mode failure): 2658303K->2658303K(2658304K), 9.1546180 secs] "
@@ -294,7 +294,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineCmsSerialOldWithConcurrentModeFailureMixedConcurrentSweep() {
+    void testLogLineCmsSerialOldWithConcurrentModeFailureMixedConcurrentSweep() {
         String logLine = "2440.336: [Full GC (Allocation Failure) 2440.338: [CMS"
                 + "2440.542: [CMS-concurrent-sweep: 1.137/1.183 secs] [Times: user=5.33 sys=0.51, real=1.18 secs]";
         String nextLogLine = " (concurrent mode failure): 2658304K->2658303K(2658304K), 9.4908960 secs] "
@@ -304,7 +304,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineParNewMixedCmsConcurrentAbortablePreclean() {
+    void testLogLineParNewMixedCmsConcurrentAbortablePreclean() {
         String priorLogLine = "";
         String logLine = "2210.281: [GC 2210.282: [ParNew2210.314: [CMS-concurrent-abortable-preclean: "
                 + "0.043/0.144 secs] [Times: user=0.58 sys=0.03, real=0.14 secs]";
@@ -314,7 +314,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineParNewMixedCmsConcurrentAbortablePreclean2() {
+    void testLogLineParNewMixedCmsConcurrentAbortablePreclean2() {
         String priorLogLine = "2210.281: [GC 2210.282: [ParNew2210.314: [CMS-concurrent-abortable-preclean: "
                 + "0.043/0.144 secs] [Times: user=0.58 sys=0.03, real=0.14 secs]";
         String logLine = ": 212981K->3156K(242304K), 0.0364435 secs] 4712182K->4502357K(4971420K), "
@@ -324,7 +324,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineParNewMixedCmsConcurrentSweep() {
+    void testLogLineParNewMixedCmsConcurrentSweep() {
         String priorLogLine = "";
         String logLine = "1821.661: [GC 1821.661: [ParNew1821.661: [CMS-concurrent-sweep: "
                 + "42.841/48.076 secs] [Times: user=19.45 sys=0.45, real=48.06 secs]";
@@ -334,7 +334,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineConcurrentModeInterrupted() {
+    void testLogLineConcurrentModeInterrupted() {
         String priorLogLine = "";
         String logLine = " (concurrent mode interrupted): 861863K->904027K(1797568K), 42.9053262 secs] "
                 + "1045947K->904027K(2047232K), [CMS Perm : 252246K->252202K(262144K)], 42.9070278 secs] "
@@ -344,7 +344,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLinePrintHeapAtGcBeginSerial() {
+    void testLogLinePrintHeapAtGcBeginSerial() {
         String priorLogLine = "";
         String logLine = "28282.075: [Full GC {Heap before gc invocations=528:";
         String nextLogLine = "";
@@ -352,7 +352,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLinePrintHeapAtGcBeginParNew() {
+    void testLogLinePrintHeapAtGcBeginParNew() {
         String priorLogLine = "";
         String logLine = "27067.966: [GC {Heap before gc invocations=498:";
         String nextLogLine = "";
@@ -360,7 +360,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLinePrintHeapAtGcBeginCmsRemark() {
+    void testLogLinePrintHeapAtGcBeginCmsRemark() {
         String priorLogLine = "";
         String logLine = "2017-04-03T08:55:45.544-0500: 20653.796: [GC (CMS Final Remark) {Heap before GC "
                 + "invocations=686 (full 15):";
@@ -369,7 +369,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLinePrintHeapAtGcBeginCmsRemarkJdk8() {
+    void testLogLinePrintHeapAtGcBeginCmsRemarkJdk8() {
         String priorLogLine = "";
         String logLine = "2017-06-18T05:23:16.634-0500: 15.364: [GC (CMS Final Remark) [YG occupancy: 576424 K "
                 + "(1677760 K)]{Heap before GC invocations=8 (full 2):";
@@ -378,7 +378,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogMiddleSerialConcurrentPrecleanMixed() {
+    void testLogMiddleSerialConcurrentPrecleanMixed() {
         String priorLogLine = "";
         String logLine = "28282.075: [CMS28284.687: [CMS-concurrent-preclean: 3.706/3.706 secs]";
         String nextLogLine = "";
@@ -386,7 +386,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogMiddleParNewConcurrentAbortablePrecleanMixed() {
+    void testLogMiddleParNewConcurrentAbortablePrecleanMixed() {
         String priorLogLine = "";
         String logLine = "27067.966: [ParNew: 261760K->261760K(261952K), 0.0000160 secs]27067.966: [CMS"
                 + "27067.966: [CMS-concurrent-abortable-preclean: 2.272/29.793 secs]";
@@ -395,7 +395,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogMiddleParNewConcurrentMarkMixed() {
+    void testLogMiddleParNewConcurrentMarkMixed() {
         String priorLogLine = "";
         String logLine = "28308.701: [ParNew (promotion failed): 261951K->261951K(261952K), 0.7470390 secs]28309.448: "
                 + "[CMS28312.544: [CMS-concurrent-mark: 5.114/5.863 secs]";
@@ -404,7 +404,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogMiddleParNewTruncatedConcurrentMarkMixed() {
+    void testLogMiddleParNewTruncatedConcurrentMarkMixed() {
         String priorLogLine = "";
         String logLine = ": 153344K->153344K(153344K), 0.2049130 secs]2017-02-15T16:22:05.602+0900: 1223922.433: "
                 + "[CMS2017-02-15T16:22:06.001+0900: 1223922.832: [CMS-concurrent-mark: 3.589/4.431 secs] "
@@ -414,7 +414,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLinePrintHeapAtGcMiddleSerial() {
+    void testLogLinePrintHeapAtGcMiddleSerial() {
         String priorLogLine = "";
         String logLine = "49830.934: [CMS: 1640998K->1616248K(3407872K), 11.0964500 secs] "
                 + "1951125K->1616248K(4193600K), [CMS Perm : 507386K->499194K(786432K)]"
@@ -424,7 +424,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLinePrintClassHistogramMiddleSerial() {
+    void testLogLinePrintClassHistogramMiddleSerial() {
         String priorLogLine = "";
         String logLine = "11700.930: [CMS: 2844387K->635365K(7331840K), 46.4488813 secs]11747.379: [Class Histogram";
         String nextLogLine = "";
@@ -432,7 +432,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLinePrintHeapAtGcMiddleSerialConcurrentModeFailure() {
+    void testLogLinePrintHeapAtGcMiddleSerialConcurrentModeFailure() {
         String priorLogLine = "";
         String logLine = " (concurrent mode failure): 1179601K->1179648K(1179648K), 10.7510650 secs] "
                 + "1441361K->1180553K(1441600K), [CMS Perm : 71172K->71171K(262144K)]Heap after gc invocations=529:";
@@ -441,7 +441,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLinePrintHeapAtGcParNewConcurrentModeFailure() {
+    void testLogLinePrintHeapAtGcParNewConcurrentModeFailure() {
         String priorLogLine = "";
         String logLine = " (concurrent mode failure): 1147900K->1155037K(1179648K), 7.3953900 secs] "
                 + "1409660K->1155037K(1441600K)Heap after gc invocations=499:";
@@ -450,7 +450,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineDuration() {
+    void testLogLineDuration() {
         String priorLogLine = "";
         String logLine = ", 10.7515460 secs]";
         String nextLogLine = "";
@@ -458,7 +458,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineClassHistogramTrigger() {
+    void testLogLineClassHistogramTrigger() {
         String priorLogLine = "";
         String logLine = "1662.232: [Full GC 11662.233: [Class Histogram:";
         String nextLogLine = "";
@@ -466,7 +466,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineDateStampClassHistogramTrigger() {
+    void testLogLineDateStampClassHistogramTrigger() {
         String priorLogLine = "";
         String logLine = "2017-04-24T21:07:32.713+0100: 669928.617: [Full GC 669928.619: [Class Histogram:";
         String nextLogLine = "";
@@ -474,7 +474,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineRetainMiddleClassHistogram() {
+    void testLogLineRetainMiddleClassHistogram() {
         String priorLogLine = "";
         String logLine = ": 516864K->516864K(516864K), 2.0947428 secs]182316.954: [Class Histogram: ";
         String nextLogLine = "";
@@ -482,7 +482,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineRetainEndClassHistogram() {
+    void testLogLineRetainEndClassHistogram() {
         String priorLogLine = "";
         String logLine = " 3863904K->756393K(7848704K), [CMS Perm : 682507K->442221K(1048576K)], 107.6553710 secs]"
                 + " [Times: user=112.83 sys=0.28, real=107.66 secs]";
@@ -491,7 +491,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineRetainBeginningConcurrentModeFailure() {
+    void testLogLineRetainBeginningConcurrentModeFailure() {
         String priorLogLine = "";
         String logLine = " (concurrent mode failure): 5355855K->991044K(7331840K), 58.3748587 secs]639860.666: "
                 + "[Class Histogram";
@@ -500,7 +500,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineRetainMiddleSerialConcurrentMixed() {
+    void testLogLineRetainMiddleSerialConcurrentMixed() {
         String priorLogLine = "";
         String logLine = ": 917504K->917504K(917504K), 5.5887120 secs]877375.047: [CMS877378.691: "
                 + "[CMS-concurrent-mark: 5.714/11.380 secs] [Times: user=14.72 sys=4.81, real=11.38 secs]";
@@ -509,7 +509,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineRetainBeginningParNewNoSpaceAfterGc() {
+    void testLogLineRetainBeginningParNewNoSpaceAfterGc() {
         String priorLogLine = "";
         String logLine = "12.891: [GC12.891: [ParNew";
         String nextLogLine = "";
@@ -517,7 +517,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineParNewPrefixed() {
+    void testLogLineParNewPrefixed() {
         String priorLogLine = "";
         String logLine = "831626.089: [ParNew831628.158: [ParNew833918.729: [GC (Allocation Failure) 833918.729: "
                 + "[ParNew: 595103K->12118K(619008K), 0.0559019 secs] 1247015K->664144K(4157952K), 0.0561698 secs] "
@@ -531,7 +531,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningSerialConcurrentWithJvmtiEnvForceGarbageCollectionTrigger() {
+    void testLogLineBeginningSerialConcurrentWithJvmtiEnvForceGarbageCollectionTrigger() {
         String priorLogLine = "";
         String logLine = "262372.344: [Full GC (JvmtiEnv ForceGarbageCollection) 262372.344: [CMS262372.426: "
                 + "[CMS-concurrent-mark: 0.082/0.083 secs] [Times: user=0.08 sys=0.00, real=0.09 secs]";
@@ -544,7 +544,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningSerialConcurrentWithMetadataGcThreshold() {
+    void testLogLineBeginningSerialConcurrentWithMetadataGcThreshold() {
         String priorLogLine = "";
         String logLine = "262375.122: [Full GC (Metadata GC Threshold) 262375.122: [CMS262375.200: "
                 + "[CMS-concurrent-mark: 0.082/0.082 secs] [Times: user=0.08 sys=0.00, real=0.08 secs]";
@@ -557,7 +557,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningSerialNoSpaceAfterTrigger() {
+    void testLogLineBeginningSerialNoSpaceAfterTrigger() {
         String priorLogLine = "";
         String logLine = "5026.107: [Full GC (Allocation Failure)5026.108: [CMS"
                 + "5027.062: [CMS-concurrent-sweep: 9.543/33.853 secs] "
@@ -571,7 +571,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningSerialConcurrentWithGcLockerInitiatedGc() {
+    void testLogLineBeginningSerialConcurrentWithGcLockerInitiatedGc() {
         String priorLogLine = "";
         String logLine = "58626.878: [Full GC (GCLocker Initiated GC)58626.878: [CMS"
                 + "58630.075: [CMS-concurrent-sweep: 3.220/3.228 secs] [Times: user=3.38 sys=0.01, real=3.22 secs]";
@@ -584,7 +584,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningParNewWithFlsStatistics() {
+    void testLogLineBeginningParNewWithFlsStatistics() {
         String priorLogLine = "";
         String logLine = "1.118: [GC Before GC:";
         String nextLogLine = "";
@@ -596,7 +596,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineMiddleParNewWithFlsStatistics() {
+    void testLogLineMiddleParNewWithFlsStatistics() {
         String priorLogLine = "";
         String logLine = "1.118: [ParNew: 377487K->8426K(5505024K), 0.0535260 secs] 377487K->8426K(43253760K)After GC:";
         String nextLogLine = "";
@@ -608,7 +608,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineDurationWithTimeStamp() {
+    void testLogLineDurationWithTimeStamp() {
         String priorLogLine = "";
         String logLine = ", 0.0536040 secs] [Times: user=0.89 sys=0.01, real=0.06 secs]";
         String nextLogLine = "";
@@ -620,7 +620,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLinParNewPromotionFailedTruncatedWithCmsConcurrentMark() {
+    void testLogLinParNewPromotionFailedTruncatedWithCmsConcurrentMark() {
         String priorLogLine = "";
         String logLine = "36455.096: [GC 36455.096: [ParNew (promotion failed): 153344K->153344K(153344K), "
                 + "0.6818450 secs]36455.778: [CMS36459.090: [CMS-concurrent-mark: 3.439/4.155 secs] "
@@ -635,7 +635,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLinParNewPromotionFailedTruncatedWithCmsConcurrentPreclean() {
+    void testLogLinParNewPromotionFailedTruncatedWithCmsConcurrentPreclean() {
         String priorLogLine = "";
         String logLine = "65778.258: [GC65778.258: [ParNew (promotion failed): 8300210K->8088352K(8388608K), "
                 + "1.4967400 secs]65779.755: [CMS65781.579: [CMS-concurrent-preclean: 2.150/47.638 secs] "
@@ -650,7 +650,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningParNewWithNoParNewWithCmsConcurrentPreclean() {
+    void testLogLineBeginningParNewWithNoParNewWithCmsConcurrentPreclean() {
         String priorLogLine = "";
         String logLine = "3576157.596: [GC 3576157.596: [CMS-concurrent-abortable-preclean: 0.997/1.723 secs] "
                 + "[Times: user=3.20 sys=0.03, real=1.73 secs]";
@@ -663,7 +663,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLinParNewPromotionFailedWithCmsAbortPrecleanDueToTime() {
+    void testLogLinParNewPromotionFailedWithCmsAbortPrecleanDueToTime() {
         String priorLogLine = "";
         String logLine = "73241.738: [GC (Allocation Failure)73241.738: [ParNew (promotion failed): "
                 + "8205461K->8187503K(8388608K), 2.1449990 secs]73243.883: [CMS CMS: abort preclean due to time "
@@ -679,7 +679,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineEndParNew() {
+    void testLogLineEndParNew() {
         String priorLogLine = "";
         String logLine = "3576157.596: [ParNew: 147599K->17024K(153344K), 0.0795160 secs] "
                 + "2371401K->2244459K(6274432K), 0.0810030 secs] [Times: user=0.44 sys=0.00, real=0.08 secs]";
@@ -693,7 +693,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningParNewDatestamp() {
+    void testLogLineBeginningParNewDatestamp() {
         String priorLogLine = "";
         String logLine = "2016-09-07T16:59:44.005-0400: 26536.942: [GC"
                 + "2016-09-07T16:59:44.005-0400: 26536.943: [ParNew";
@@ -707,7 +707,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineCmsSerialOldCombinedConcurrentDatestamp() {
+    void testLogLineCmsSerialOldCombinedConcurrentDatestamp() {
         String priorLogLine = "";
         String logLine = "2016-10-10T19:17:37.771-0700: 2030.108: [GC (Allocation Failure) "
                 + "2016-10-10T19:17:37.771-0700: 2030.108: [ParNew2016-10-10T19:17:37.773-0700: "
@@ -724,7 +724,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginParNewCombinedFlsStatistics() {
+    void testLogLineBeginParNewCombinedFlsStatistics() {
         String priorLogLine = "";
         String logLine = "2017-02-27T14:29:54.533+0000: 2.730: [GC (Allocation Failure) Before GC:";
         String nextLogLine = "";
@@ -737,7 +737,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineMiddleParNewCombinedFlsStatistics() {
+    void testLogLineMiddleParNewCombinedFlsStatistics() {
         String priorLogLine = "";
         String logLine = "2017-02-27T14:29:54.534+0000: 2.730: [ParNew: 2048000K->191475K(2304000K), 0.0366288 secs] "
                 + "2048000K->191475K(7424000K)After GC:";
@@ -752,7 +752,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineMiddleParNewCombinedFlsStatisticsPrintPromotionFailure() {
+    void testLogLineMiddleParNewCombinedFlsStatisticsPrintPromotionFailure() {
         String priorLogLine = "";
         String logLine = "2017-02-28T00:43:55.587+0000: 36843.783: [ParNew (0: promotion failure size = 200)  "
                 + "(1: promotion failure size = 8)  (2: promotion failure size = 200)  "
@@ -802,7 +802,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineMiddleSerialFlsStatistics() {
+    void testLogLineMiddleSerialFlsStatistics() {
         String priorLogLine = "";
         String logLine = ": 2818067K->2769354K(5120000K), 3.8341757 secs] 5094036K->2769354K(7424000K), "
                 + "[Metaspace: 18583K->18583K(1067008K)]After GC:";
@@ -817,7 +817,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineMiddleParNewTruncatedBeginMixedConcurrentFlsStatistics2() {
+    void testLogLineMiddleParNewTruncatedBeginMixedConcurrentFlsStatistics2() {
         String priorLogLine = "";
         String logLine = "2017-03-19T11:48:55.207+0000: 356616.193: [ParNew2017-03-19T11:48:55.211+0000: 356616.198: "
                 + "[CMS-concurrent-abortable-preclean: 1.046/3.949 secs] [Times: user=1.16 sys=0.05, real=3.95 secs]";
@@ -831,7 +831,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineMiddleParNewTruncatedEndMixedConcurrentFlsStatistics2() {
+    void testLogLineMiddleParNewTruncatedEndMixedConcurrentFlsStatistics2() {
         String priorLogLine = "";
         String logLine = ": 66097K->7194K(66368K), 0.0440189 secs] 5274098K->5219953K(10478400K)After GC:";
         String nextLogLine = "";
@@ -844,7 +844,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineEndCmsScavengeBeforeRemark() {
+    void testLogLineEndCmsScavengeBeforeRemark() {
         String priorLogLine = "";
         String logLine = " 1677988K(7992832K), 0.3055773 secs]";
         String nextLogLine = "";
@@ -857,7 +857,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineCmsRemarkWithoutGcDetails() {
+    void testLogLineCmsRemarkWithoutGcDetails() {
         String priorLogLine = "";
         String logLine = "2017-04-03T03:12:02.134-0500: 30.385: [GC (CMS Final Remark)  890910K->620060K(7992832K), "
                 + "0.1223879 secs]";
@@ -871,7 +871,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineMiddleCmsSerialOldMixedAbortPrecleanDueToTime() {
+    void testLogLineMiddleCmsSerialOldMixedAbortPrecleanDueToTime() {
         String priorLogLine = "";
         String logLine = "471419.156: [CMS CMS: abort preclean due to time 2017-04-22T13:59:06.831+0100: 471423.282: "
                 + "[CMS-concurrent-abortable-preclean: 3.663/31.735 secs] "
@@ -886,7 +886,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineMiddleCmsSerialOldMixedConcurrentSweep() {
+    void testLogLineMiddleCmsSerialOldMixedConcurrentSweep() {
         String priorLogLine = "";
         String logLine = "669950.539: [CMS2017-04-24T21:08:04.965+0100: 669960.868: [CMS-concurrent-sweep: "
                 + "13.324/39.970 secs] [Times: user=124.31 sys=2.44, real=39.97 secs]";
@@ -900,7 +900,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineMiddleCmsSerialOldWithDatestampMixedConcurrentSweep() {
+    void testLogLineMiddleCmsSerialOldWithDatestampMixedConcurrentSweep() {
         String priorLogLine = "";
         String logLine = "2017-05-03T14:47:16.910-0400: 1801.570: [CMS2017-05-03T14:47:22.416-0400: 1807.075: "
                 + "[CMS-concurrent-mark: 29.707/71.001 secs] [Times: user=121.03 sys=35.41, real=70.99 secs]";
@@ -914,7 +914,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineEndCmsSerialOld() {
+    void testLogLineEndCmsSerialOld() {
         String priorLogLine = "";
         String logLine = " 7778348K->1168095K(7848704K), [CMS Perm : 481281K->451017K(771512K)], 123.0277354 secs] "
                 + "[Times: user=123.19 sys=0.18, real=123.03 secs]";
@@ -928,7 +928,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningParNewConcurrentModeFailureClassHistogram() {
+    void testLogLineBeginningParNewConcurrentModeFailureClassHistogram() {
         String priorLogLine = "";
         String logLine = "2017-04-22T12:43:48.008+0100: 466904.470: [GC 466904.473: [ParNew: "
                 + "516864K->516864K(516864K), 0.0001999 secs]466904.473: [Class Histogram:";
@@ -942,7 +942,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningParNewConcurrentModeFailureClassHistogramWithDatestamps() {
+    void testLogLineBeginningParNewConcurrentModeFailureClassHistogramWithDatestamps() {
         String priorLogLine = "";
         String logLine = "2017-05-03T14:47:00.002-0400: 1784.661: [GC 2017-05-03T14:47:00.006-0400: 1784.664: "
                 + "[ParNew: 4147200K->4147200K(4147200K), 0.0677200 secs]"
@@ -957,7 +957,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineMiddleConcurrentModeFailureMixedClassHistogram() {
+    void testLogLineMiddleConcurrentModeFailureMixedClassHistogram() {
         String priorLogLine = "";
         String logLine = " (concurrent mode failure): 7835032K->8154090K(9216000K), 56.0787320 secs]"
                 + "2017-05-03T14:48:13.002-0400: 1857.661: [Class Histogram";
@@ -970,7 +970,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningSerialMixedClassHistogramWithDatestamp() {
+    void testLogLineBeginningSerialMixedClassHistogramWithDatestamp() {
         String priorLogLine = "";
         String logLine = "2017-05-03T14:51:32.659-0400: 2057.323: [Full GC "
                 + "2017-05-03T14:51:32.680-0400: 2057.341: [Class Histogram:";
@@ -983,7 +983,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningCmsConcurrentMixedApplicationConcurrentTime() {
+    void testLogLineBeginningCmsConcurrentMixedApplicationConcurrentTime() {
         String priorLogLine = "";
         String logLine = "2017-06-18T05:23:03.452-0500: 2.182: 2017-06-18T05:23:03.452-0500: "
                 + "[CMS-concurrent-preclean: 0.016/0.048 secs]2.182: Application time: 0.0055079 seconds";
@@ -996,7 +996,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineEndTimesData() {
+    void testLogLineEndTimesData() {
         String priorLogLine = "2017-06-18T05:23:03.452-0500: 2.182: 2017-06-18T05:23:03.452-0500: "
                 + "[CMS-concurrent-preclean: 0.016/0.048 secs]2.182: Application time: 0.0055079 seconds";
         String logLine = " [Times: user=0.15 sys=0.02, real=0.05 secs]";
@@ -1010,7 +1010,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineMiddleCmsRemarkJdk8() {
+    void testLogLineMiddleCmsRemarkJdk8() {
         String priorLogLine = "";
         String logLine = "2017-06-18T05:23:16.634-0500: 15.364: [GC (CMS Final Remark) 2017-06-18T05:23:16.634-0500: "
                 + "15.364: [ParNew";
@@ -1023,7 +1023,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningParNewTenuringDistribution() {
+    void testLogLineBeginningParNewTenuringDistribution() {
         String priorLogLine = "";
         String logLine = "2016-09-23T09:05:18.745-0700: 2.372: [GC (Allocation Failure) "
                 + "2016-09-23T09:05:18.745-0700: 2.372: [ParNew";
@@ -1036,7 +1036,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testLogLineBeginningParNewMixedHeapAtGc() {
+    void testLogLineBeginningParNewMixedHeapAtGc() {
         String priorLogLine = "";
         String logLine = "4237.297: [GC[YG occupancy: 905227 K (4194240 K)]{Heap before GC invocations=85 (full 1):";
         String nextLogLine = "";
@@ -1051,7 +1051,7 @@ public class TestCmsPreprocessAction {
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */
     @Test
-    public void testSplitPrintHeapAtGcCmsSerialOldLogging() {
+    void testSplitPrintHeapAtGcCmsSerialOldLogging() {
         File testFile = TestUtil.getFile("dataset6.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1066,7 +1066,7 @@ public class TestCmsPreprocessAction {
      * Test with underlying <code>CmsSerialOld</code> triggered by concurrent mode failure.
      */
     @Test
-    public void testSplitPrintHeapAtGcCmsSerialOldConcurrentModeFailureLogging() {
+    void testSplitPrintHeapAtGcCmsSerialOldConcurrentModeFailureLogging() {
         File testFile = TestUtil.getFile("dataset8.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1083,7 +1083,7 @@ public class TestCmsPreprocessAction {
      * Test <code>CmsPreprocessAction</code>: split <code>CmsSerialOldEvent</code> and <code>CmsConcurrentEvent</code>.
      */
     @Test
-    public void testSplitCmsConcurrentModeFailureEventMarkLogging() {
+    void testSplitCmsConcurrentModeFailureEventMarkLogging() {
         File testFile = TestUtil.getFile("dataset10.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1100,7 +1100,7 @@ public class TestCmsPreprocessAction {
      * Test <code>CmsPreprocessAction</code>: split <code>CmsSerialOldEvent</code> and <code>CmsConcurrentEvent</code>.
      */
     @Test
-    public void testSplitCmsConcurrentModeFailureEventAbortablePrecleanLogging() {
+    void testSplitCmsConcurrentModeFailureEventAbortablePrecleanLogging() {
         File testFile = TestUtil.getFile("dataset11.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1117,7 +1117,7 @@ public class TestCmsPreprocessAction {
      * Test preprocessing <code>CmsSerialOldConcurrentModeFailureEvent</code> split over 3 lines.
      */
     @Test
-    public void testSplit3LinesCmsConcurrentModeFailureEventLogging() {
+    void testSplit3LinesCmsConcurrentModeFailureEventLogging() {
         File testFile = TestUtil.getFile("dataset14.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1134,7 +1134,7 @@ public class TestCmsPreprocessAction {
      * -XX:+PrintTenuringDistribution logging between the initial and final lines.
      */
     @Test
-    public void testSplitMixedTenuringParNewPromotionFailedEventLogging() {
+    void testSplitMixedTenuringParNewPromotionFailedEventLogging() {
         File testFile = TestUtil.getFile("dataset18.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1150,7 +1150,7 @@ public class TestCmsPreprocessAction {
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>ParNewConcurrentModeFailureEvent</code>.
      */
     @Test
-    public void testSplitPrintHeapAtGcParNewPromotionFailedCmsConcurrentModeFailureEventLogging() {
+    void testSplitPrintHeapAtGcParNewPromotionFailedCmsConcurrentModeFailureEventLogging() {
         File testFile = TestUtil.getFile("dataset21.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1164,7 +1164,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testParNewPromotionFailedTruncatedEventLogging() {
+    void testParNewPromotionFailedTruncatedEventLogging() {
         File testFile = TestUtil.getFile("dataset23.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1183,7 +1183,7 @@ public class TestCmsPreprocessAction {
      * 
      */
     @Test
-    public void testParNewMixedCmsConcurrent() {
+    void testParNewMixedCmsConcurrent() {
         File testFile = TestUtil.getFile("dataset58.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1200,7 +1200,7 @@ public class TestCmsPreprocessAction {
      * 
      */
     @Test
-    public void testCmsSerialConcurrentModeFailureMixedCmsConcurrent() {
+    void testCmsSerialConcurrentModeFailureMixedCmsConcurrent() {
         File testFile = TestUtil.getFile("dataset61.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1218,7 +1218,7 @@ public class TestCmsPreprocessAction {
      * and final lines.
      */
     @Test
-    public void testSplitMixedTenuringParNewPromotionEventWithTriggerLogging() {
+    void testSplitMixedTenuringParNewPromotionEventWithTriggerLogging() {
         File testFile = TestUtil.getFile("dataset67.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1233,7 +1233,7 @@ public class TestCmsPreprocessAction {
      * 
      */
     @Test
-    public void testCmsSerialConcurrentModeFailureMixedCmsConcurrentJdk8() {
+    void testCmsSerialConcurrentModeFailureMixedCmsConcurrentJdk8() {
         File testFile = TestUtil.getFile("dataset69.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1252,7 +1252,7 @@ public class TestCmsPreprocessAction {
      * 
      */
     @Test
-    public void testCmsSerialOldConcurrentModeInterruptedMixedCmsConcurrent() {
+    void testCmsSerialOldConcurrentModeInterruptedMixedCmsConcurrent() {
         File testFile = TestUtil.getFile("dataset71.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1270,7 +1270,7 @@ public class TestCmsPreprocessAction {
      * 
      */
     @Test
-    public void testCmsSerialOldPrintClassHistogramTriggerAcross5Lines() {
+    void testCmsSerialOldPrintClassHistogramTriggerAcross5Lines() {
         File testFile = TestUtil.getFile("dataset81.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1286,7 +1286,7 @@ public class TestCmsPreprocessAction {
      * 
      */
     @Test
-    public void testParNewPrintHeapAtGc() {
+    void testParNewPrintHeapAtGc() {
         File testFile = TestUtil.getFile("dataset83.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1303,7 +1303,7 @@ public class TestCmsPreprocessAction {
      * 
      */
     @Test
-    public void testParNewPrefixed() {
+    void testParNewPrefixed() {
         File testFile = TestUtil.getFile("dataset89.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1319,7 +1319,7 @@ public class TestCmsPreprocessAction {
      * 
      */
     @Test
-    public void testCmsSerialOldTriggerJvmtiEnvForceGarbageCollectionWithConcurrentModeInterrupted() {
+    void testCmsSerialOldTriggerJvmtiEnvForceGarbageCollectionWithConcurrentModeInterrupted() {
         File testFile = TestUtil.getFile("dataset90.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1337,7 +1337,7 @@ public class TestCmsPreprocessAction {
      * 
      */
     @Test
-    public void testCmsSerialOldTriggerMetadataGcThresholdWithConcurrentModeInterrupted() {
+    void testCmsSerialOldTriggerMetadataGcThresholdWithConcurrentModeInterrupted() {
         File testFile = TestUtil.getFile("dataset91.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1355,7 +1355,7 @@ public class TestCmsPreprocessAction {
      * 
      */
     @Test
-    public void testParNewWithFlsStatistics() {
+    void testParNewWithFlsStatistics() {
         File testFile = TestUtil.getFile("dataset94.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1368,7 +1368,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testBeginningParNewWithNoParNewWithCmsConcurrentPreclean() {
+    void testBeginningParNewWithNoParNewWithCmsConcurrentPreclean() {
         File testFile = TestUtil.getFile("dataset105.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1384,7 +1384,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testUnknownWithCmsConcurrent() {
+    void testUnknownWithCmsConcurrent() {
         File testFile = TestUtil.getFile("dataset111.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1401,7 +1401,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testParNewCmsConcurrentOver3Lines() {
+    void testParNewCmsConcurrentOver3Lines() {
         File testFile = TestUtil.getFile("dataset112.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1414,7 +1414,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testPrintPromotionFailure() {
+    void testPrintPromotionFailure() {
         File testFile = TestUtil.getFile("dataset115.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1426,7 +1426,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testPrintFLSStatistics2ParNewOver4Lines() {
+    void testPrintFLSStatistics2ParNewOver4Lines() {
         File testFile = TestUtil.getFile("dataset117.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1439,7 +1439,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testCmsScavengeBeforeRemarkNoPrintGcDetails() {
+    void testCmsScavengeBeforeRemarkNoPrintGcDetails() {
         File testFile = TestUtil.getFile("dataset120.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1450,7 +1450,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testParNewConcurrentModeFailureMixedAbortPrecleanDueToTime() {
+    void testParNewConcurrentModeFailureMixedAbortPrecleanDueToTime() {
         File testFile = TestUtil.getFile("dataset121.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1463,7 +1463,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testParNewConcurrentModeFailureMixedConcurrentPreclean() {
+    void testParNewConcurrentModeFailureMixedConcurrentPreclean() {
         File testFile = TestUtil.getFile("dataset122.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1476,7 +1476,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testParNewConcurrentModeFailureMixedConcurrentMark() {
+    void testParNewConcurrentModeFailureMixedConcurrentMark() {
         File testFile = TestUtil.getFile("dataset123.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1489,7 +1489,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testCmsSerialOldConcurrentModeFailureMixedConcurrentMark() {
+    void testCmsSerialOldConcurrentModeFailureMixedConcurrentMark() {
         File testFile = TestUtil.getFile("dataset124.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1502,7 +1502,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testCmsConcurrentMixedApplicationConcurrentTime() {
+    void testCmsConcurrentMixedApplicationConcurrentTime() {
         File testFile = TestUtil.getFile("dataset135.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1516,7 +1516,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testCmsScavengeBeforeRemarkJdk8MixedHeapAtGc() {
+    void testCmsScavengeBeforeRemarkJdk8MixedHeapAtGc() {
         File testFile = TestUtil.getFile("dataset136.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1529,7 +1529,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testCmsScavengeBeforeRemarkJMixedHeapAtGc() {
+    void testCmsScavengeBeforeRemarkJMixedHeapAtGc() {
         File testFile = TestUtil.getFile("dataset140.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -1542,7 +1542,7 @@ public class TestCmsPreprocessAction {
     }
 
     @Test
-    public void testParNewMixedHeapAtGc() {
+    void testParNewMixedHeapAtGc() {
         File testFile = TestUtil.getFile("dataset141.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

@@ -34,10 +34,10 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUsingSerialEvent {
+class TestUsingSerialEvent {
 
     @Test
-    public void testLine() {
+    void testLine() {
         String logLine = "[0.003s][info][gc] Using Serial";
         assertTrue(UsingSerialEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_SERIAL.toString() + ".");
         UsingSerialEvent event = new UsingSerialEvent(logLine);
@@ -45,37 +45,37 @@ public class TestUsingSerialEvent {
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[0.003s][info][gc] Using Serial";
         assertEquals(JdkUtil.LogEventType.USING_SERIAL,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.USING_SERIAL + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[0.003s][info][gc] Using Serial";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingSerialEvent, JdkUtil.LogEventType.USING_SERIAL.toString() + " not parsed.");
     }
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "[0.003s][info][gc] Using Serial";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.USING_SERIAL.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
+    void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_SERIAL), JdkUtil.LogEventType.USING_SERIAL.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.USING_SERIAL);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.USING_SERIAL.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLineWithSpaces() {
+    void testLineWithSpaces() {
         String logLine = "[0.003s][info][gc] Using Serial     ";
         assertTrue(UsingSerialEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_SERIAL.toString() + ".");
     }
@@ -84,7 +84,7 @@ public class TestUsingSerialEvent {
      * Test logging.
      */
     @Test
-    public void testLog() {
+    void testLog() {
         File testFile = TestUtil.getFile("dataset147.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
