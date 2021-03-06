@@ -16,6 +16,7 @@ import static org.eclipselabs.garbagecat.util.Memory.bytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
@@ -26,6 +27,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -133,11 +135,7 @@ class TestJdkUtil {
         // Decrease timestamp by 1 ms to 2nd event start before 1st event finishes
         timestamp2 = 10999L;
         gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
-        try {
-            assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold), "Event should have been flagged as a bottleneck.");
-        } catch (Exception e) {
-            assertTrue(e instanceof TimeWarpException, "Expected TimeWarpException not thrown.");
-        }
+        assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold), "Event should have been flagged as a bottleneck.");
     }
 
     /**
@@ -165,21 +163,24 @@ class TestJdkUtil {
     void testTimeWarpLoggingReverseOrder() {
         String previousLogLine = "26536.942: [GC26536.943: [ParNew: 792678K->4248K(917504K), 0.0170310 secs] "
                 + "1139860K->351466K(6160384K), 0.0172140 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]";
-        BlockingEvent priorEvent = new ParNewEvent(previousLogLine);
+        final BlockingEvent priorEvent = new ParNewEvent(previousLogLine);
 
         // 2nd event starts before first
         String logLine = "26509.631: [GC26509.631: [ParNew: 791446K->4818K(917504K), 0.0255680 secs] "
                 + "1096208K->309629K(6160384K), 0.0257810 secs] [Times: user=0.07 sys=0.01, real=0.03 secs]";
-        BlockingEvent gcEvent = new ParNewEvent(logLine);
+        final BlockingEvent gcEvent = new ParNewEvent(logLine);
 
         // Test boundary
-        int throughputThreshold = 100;
+        final int throughputThreshold = 100;
 
-        try {
-            assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold), "Event should have been flagged as a bottleneck.");
-        } catch (Exception e) {
-            assertTrue(e instanceof TimeWarpException, "Expected TimeWarpException not thrown.");
-        }
+		// we cannot use lambdas while source level is not at least 1.8 (and we cannot
+		// use effective final)
+        assertThrows(TimeWarpException.class, new Executable() {
+			@Override
+			public void execute() throws Throwable {
+				JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold);				
+			}
+		});
     }
 
     @Test
