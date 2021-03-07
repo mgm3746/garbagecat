@@ -34,7 +34,8 @@ class TestHeaderCommandLineFlagsEvent {
                 + "-XX:OldPLABSize=16 -XX:PermSize=402653184 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails "
                 + "-XX:+PrintGCTimeStamps -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseGCLogFileRotation "
                 + "-XX:+UseParNewGC";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " incorrectly indentified as blocking.");
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
@@ -46,7 +47,8 @@ class TestHeaderCommandLineFlagsEvent {
                 + "-XX:OldPLABSize=16 -XX:PermSize=402653184 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails "
                 + "-XX:+PrintGCTimeStamps -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseGCLogFileRotation "
                 + "-XX:+UseParNewGC";
-        assertTrue(HeaderCommandLineFlagsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + ".");
+        assertTrue(HeaderCommandLineFlagsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + ".");
         HeaderCommandLineFlagsEvent event = new HeaderCommandLineFlagsEvent(logLine);
         String jvmOptions = "-XX:+CMSClassUnloadingEnabled -XX:CMSInitiatingOccupancyFraction=75 "
                 + "-XX:+CMSScavengeBeforeRemark -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "
@@ -55,7 +57,7 @@ class TestHeaderCommandLineFlagsEvent {
                 + "-XX:OldPLABSize=16 -XX:PermSize=402653184 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails "
                 + "-XX:+PrintGCTimeStamps -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseGCLogFileRotation "
                 + "-XX:+UseParNewGC";
-        assertEquals(jvmOptions,event.getJvmOptions(),"Flags not parsed correctly.");
+        assertEquals(jvmOptions, event.getJvmOptions(), "Flags not parsed correctly.");
     }
 
     @Test
@@ -76,7 +78,8 @@ class TestHeaderCommandLineFlagsEvent {
                 + "-DconfigurationEngine.configDir=/opt/odigeo/properties/ "
                 + "-Djavax.net.ssl.keyStore=/opt/edreams/keys/java/keyStore "
                 + "-Djavax.net.ssl.keyStorePassword=changeit";
-        assertTrue(HeaderCommandLineFlagsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + ".");
+        assertTrue(HeaderCommandLineFlagsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + ".");
         HeaderCommandLineFlagsEvent event = new HeaderCommandLineFlagsEvent(logLine);
         String jvmOptions = "-Dprogram.name=run.sh -d64 -server -Xms10000m -Xmx10000m -ss512k "
                 + "-XX:PermSize=512m -XX:MaxPermSize=512m -XX:NewSize=3000m -XX:MaxNewSize=3000m -XX:SurvivorRatio=6 "
@@ -94,6 +97,6 @@ class TestHeaderCommandLineFlagsEvent {
                 + "-DconfigurationEngine.configDir=/opt/odigeo/properties/ "
                 + "-Djavax.net.ssl.keyStore=/opt/edreams/keys/java/keyStore "
                 + "-Djavax.net.ssl.keyStorePassword=changeit";
-        assertEquals(jvmOptions,event.getJvmOptions(),"Flags not parsed correctly.");
+        assertEquals(jvmOptions, event.getJvmOptions(), "Flags not parsed correctly.");
     }
 }

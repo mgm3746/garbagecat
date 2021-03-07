@@ -31,7 +31,8 @@ class TestDateStampPreprocessAction {
     void testLogLine() {
         String logLine = "2010-02-26T09:32:12.486-0600: [GC [ParNew: 150784K->3817K(169600K), 0.0328800 secs]"
                 + " 150784K->3817K(1029760K), 0.0329790 secs] [Times: user=0.00 sys=0.00, real=0.03 secs]";
-        assertTrue(DateStampPreprocessAction.match(logLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP.toString() + ".");
+        assertTrue(DateStampPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP.toString() + ".");
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 2010);
         calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
@@ -44,6 +45,6 @@ class TestDateStampPreprocessAction {
         DateStampPreprocessAction preprocessAction = new DateStampPreprocessAction(logLine, jvmStartDate);
         String preprocessedLogLine = "34332.486: [GC [ParNew: 150784K->3817K(169600K), 0.0328800 secs]"
                 + " 150784K->3817K(1029760K), 0.0329790 secs] [Times: user=0.00 sys=0.00, real=0.03 secs]";
-        assertEquals(preprocessedLogLine,preprocessAction.getLogEntry(),"Log line not parsed correctly.");
+        assertEquals(preprocessedLogLine, preprocessAction.getLogEntry(), "Log line not parsed correctly.");
     }
 }

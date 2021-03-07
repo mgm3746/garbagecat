@@ -36,21 +36,22 @@ class TestUnifiedSerialNewEvent {
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(UnifiedSerialNewEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
+        assertTrue(UnifiedSerialNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
         UnifiedSerialNewEvent event = new UnifiedSerialNewEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString(),event.getName(),"Event name incorrect.");
-        assertEquals((long) 41,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString(), event.getName(), "Event name incorrect.");
+        assertEquals((long) 41, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE), "Trigger not parsed correctly.");
-        assertEquals(kilobytes(983),event.getYoungOccupancyInit(),"Young begin size not parsed correctly.");
-        assertEquals(kilobytes(128),event.getYoungOccupancyEnd(),"Young end size not parsed correctly.");
-        assertEquals(kilobytes(1152),event.getYoungSpace(),"Young available size not parsed correctly.");
-        assertEquals(kilobytes(0),event.getOldOccupancyInit(),"Old begin size not parsed correctly.");
-        assertEquals(kilobytes(458),event.getOldOccupancyEnd(),"Old end size not parsed correctly.");
-        assertEquals(kilobytes(768),event.getOldSpace(),"Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(246),event.getPermOccupancyInit(),"Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(246),event.getPermOccupancyEnd(),"Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1056768),event.getPermSpace(),"Perm gen allocation size not parsed correctly.");
-        assertEquals(1393,event.getDuration(),"Duration not parsed correctly.");
+        assertEquals(kilobytes(983), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(128), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
+        assertEquals(kilobytes(1152), event.getYoungSpace(), "Young available size not parsed correctly.");
+        assertEquals(kilobytes(0), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
+        assertEquals(kilobytes(458), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
+        assertEquals(kilobytes(768), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(kilobytes(246), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
+        assertEquals(kilobytes(246), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
+        assertEquals(kilobytes(1056768), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(1393, event.getDuration(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -58,7 +59,8 @@ class TestUnifiedSerialNewEvent {
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_SERIAL_NEW + "not identified.");
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW + "not identified.");
     }
 
     @Test
@@ -66,7 +68,8 @@ class TestUnifiedSerialNewEvent {
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedSerialNewEvent, JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not parsed.");
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedSerialNewEvent,
+                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not parsed.");
     }
 
     @Test
@@ -74,7 +77,8 @@ class TestUnifiedSerialNewEvent {
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as blocking.");
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -85,19 +89,23 @@ class TestUnifiedSerialNewEvent {
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
         long timestamp = 27091;
         int duration = 0;
-        assertTrue(JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof UnifiedSerialNewEvent, JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not parsed.");
+        assertTrue(
+                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof UnifiedSerialNewEvent,
+                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW), JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW),
+                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as reportable.");
     }
 
     @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_SERIAL_NEW);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as unified.");
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as unified.");
     }
 
     @Test
@@ -105,7 +113,8 @@ class TestUnifiedSerialNewEvent {
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s   ";
-        assertTrue(UnifiedSerialNewEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
+        assertTrue(UnifiedSerialNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
     }
 
     @Test
@@ -113,6 +122,7 @@ class TestUnifiedSerialNewEvent {
         String logLine = "[0.112s][info][gc,start       ] GC(3) Pause Young (Allocation Failure) DefNew: "
                 + "1016K->128K(1152K) Tenured: 929K->1044K(1552K) Metaspace: 1222K->1222K(1056768K) 1M->1M(2M) "
                 + "0.700ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(UnifiedSerialNewEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
+        assertTrue(UnifiedSerialNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
     }
 }

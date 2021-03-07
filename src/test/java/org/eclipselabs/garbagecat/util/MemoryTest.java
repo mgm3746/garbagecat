@@ -29,49 +29,49 @@ import org.junit.jupiter.api.Test;
  */
 public class MemoryTest {
 
-	@Test
-	public void canParse() {
-		Memory oneKilobyte = memory("1K");
-		assertEquals(oneKilobyte.getValue(KILOBYTES), 1L);
-		assertEquals(oneKilobyte.getValue(BYTES), 1024L);
-	}
+    @Test
+    public void canParse() {
+        Memory oneKilobyte = memory("1K");
+        assertEquals(oneKilobyte.getValue(KILOBYTES), 1L);
+        assertEquals(oneKilobyte.getValue(BYTES), 1024L);
+    }
 
-	@Test
-	public void parseIsCaseInsensitiv() {
-		String string = "8K";
-		assertEquals(memory(string.toLowerCase()), memory(string.toUpperCase()));
-	}
+    @Test
+    public void parseIsCaseInsensitiv() {
+        String string = "8K";
+        assertEquals(memory(string.toLowerCase()), memory(string.toUpperCase()));
+    }
 
-	@Test
-	public void hasToString() {
-		assertEquals(memory("32M").toString(), "32M");
-		assertEquals(memory("32M").convertTo(KILOBYTES).toString(), "32768K");
-	}
+    @Test
+    public void hasToString() {
+        assertEquals(memory("32M").toString(), "32M");
+        assertEquals(memory("32M").convertTo(KILOBYTES).toString(), "32768K");
+    }
 
-	@Test
-	public void canEqualOnInstancesUsingDifferentUnits() {
-		assertEquals(kilobytes(2048), megabytes(2));
-	}
+    @Test
+    public void canEqualOnInstancesUsingDifferentUnits() {
+        assertEquals(kilobytes(2048), megabytes(2));
+    }
 
-	@Test
-	public void canAdd() {
-		assertEquals(megabytes(2).plus(kilobytes(1)), kilobytes(2049));
-	}
+    @Test
+    public void canAdd() {
+        assertEquals(megabytes(2).plus(kilobytes(1)), kilobytes(2049));
+    }
 
-	@Test
-	public void canSubtract() {
-		assertEquals(megabytes(2).minus(kilobytes(1)), kilobytes(2047));
-	}
+    @Test
+    public void canSubtract() {
+        assertEquals(megabytes(2).minus(kilobytes(1)), kilobytes(2047));
+    }
 
-	@Test
-	public void canCompare() {
-		assertFalse(bytes(1).greaterThan(bytes(2)));
-		assertFalse(bytes(1).greaterThan(bytes(1)));
-		assertTrue(bytes(2).greaterThan(bytes(1)));
+    @Test
+    public void canCompare() {
+        assertFalse(bytes(1).greaterThan(bytes(2)));
+        assertFalse(bytes(1).greaterThan(bytes(1)));
+        assertTrue(bytes(2).greaterThan(bytes(1)));
 
-		assertTrue(bytes(1).lessThan(bytes(2)));
-		assertFalse(bytes(1).lessThan(bytes(1)));
-		assertFalse(bytes(2).lessThan(bytes(1)));
-	}
+        assertTrue(bytes(1).lessThan(bytes(2)));
+        assertFalse(bytes(1).lessThan(bytes(1)));
+        assertFalse(bytes(2).lessThan(bytes(1)));
+    }
 
 }

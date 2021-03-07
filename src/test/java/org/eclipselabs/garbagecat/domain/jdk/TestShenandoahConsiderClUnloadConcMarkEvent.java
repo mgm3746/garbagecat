@@ -35,46 +35,52 @@ class TestShenandoahConsiderClUnloadConcMarkEvent {
         String logLine = "[0.001s][info][gc] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are "
                 + "observed on class-unloading sensitive workloads";
         assertTrue(ShenandoahConsiderClassUnloadingConcMarkEvent.match(logLine), "Log line not recognized as "
-		+ JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString() + ".");
+                + JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString() + ".");
         ShenandoahConsiderClassUnloadingConcMarkEvent event = new ShenandoahConsiderClassUnloadingConcMarkEvent(
                 logLine);
-        assertEquals((long) 1,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals((long) 1, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[0.001s][info][gc] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are "
                 + "observed on class-unloading sensitive workloads";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK + "not identified.");
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK,
+                JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK + "not identified.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.001s][info][gc] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are "
                 + "observed on class-unloading sensitive workloads";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahConsiderClassUnloadingConcMarkEvent, JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString() + " not parsed.");
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahConsiderClassUnloadingConcMarkEvent,
+                JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString() + " not parsed.");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "[0.001s][info][gc] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are "
                 + "observed on class-unloading sensitive workloads";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString()
-		+ " incorrectly indentified as blocking.");
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString()
+                        + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK), JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString()
-		+ " indentified as reportable.");
+        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK),
+                JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString()
+                        + " indentified as reportable.");
     }
 
     @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK);
-        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString()
-		+ " incorrectly indentified as unified.");
+        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString()
+                        + " incorrectly indentified as unified.");
     }
 
     @Test
@@ -82,7 +88,7 @@ class TestShenandoahConsiderClUnloadConcMarkEvent {
         String logLine = "[0.001s][info][gc] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are "
                 + "observed on class-unloading sensitive workloads     ";
         assertTrue(ShenandoahConsiderClassUnloadingConcMarkEvent.match(logLine), "Log line not recognized as "
-		+ JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString() + ".");
+                + JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString() + ".");
     }
 
     @Test
@@ -90,9 +96,9 @@ class TestShenandoahConsiderClUnloadConcMarkEvent {
         String logLine = "[2019-02-05T14:47:31.090-0200][2ms] Consider -XX:+ClassUnloadingWithConcurrentMark if large "
                 + "pause times are observed on class-unloading sensitive workloads";
         assertTrue(ShenandoahConsiderClassUnloadingConcMarkEvent.match(logLine), "Log line not recognized as "
-		+ JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString() + ".");
+                + JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString() + ".");
         ShenandoahConsiderClassUnloadingConcMarkEvent event = new ShenandoahConsiderClassUnloadingConcMarkEvent(
                 logLine);
-        assertEquals((long) 2,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals((long) 2, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 }

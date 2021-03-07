@@ -32,13 +32,13 @@ class TestJdkMath {
     @Test
     void testConvertDurationToMillis() {
         String secs = "0.0225213";
-        assertEquals(22,JdkMath.convertSecsToMillis(secs).intValue(),"Secs not converted to milliseconds properly.");
+        assertEquals(22, JdkMath.convertSecsToMillis(secs).intValue(), "Secs not converted to milliseconds properly.");
     }
 
     @Test
     void testConvertDurationDecimalCommaToMillis() {
         String secs = "0,0225213";
-        assertEquals(22,JdkMath.convertSecsToMillis(secs).intValue(),"Secs not converted to milliseconds properly.");
+        assertEquals(22, JdkMath.convertSecsToMillis(secs).intValue(), "Secs not converted to milliseconds properly.");
     }
 
     /**
@@ -47,43 +47,50 @@ class TestJdkMath {
     @Test
     void testConvertDurationToMillisRoundDownOddFive() {
         String secs = "0.0975";
-        assertEquals(97,JdkMath.convertSecsToMillis(secs).intValue(),"Secs not converted to milliseconds with expected rounding mode.");
+        assertEquals(97, JdkMath.convertSecsToMillis(secs).intValue(),
+                "Secs not converted to milliseconds with expected rounding mode.");
     }
 
     @Test
     void testConvertDurationToMillisRoundDownEvenFive() {
         String secs = "0.0985";
-        assertEquals(98,JdkMath.convertSecsToMillis(secs).intValue(),"Secs not converted to milliseconds with expected rounding mode.");
+        assertEquals(98, JdkMath.convertSecsToMillis(secs).intValue(),
+                "Secs not converted to milliseconds with expected rounding mode.");
     }
 
     @Test
     void testConvertDurationToMicrosRoundUp() {
         String secs = "0.0968475";
-        assertEquals(96847,JdkMath.convertSecsToMicros(secs).intValue(),"Secs not converted to microseconds with expected rounding mode.");
+        assertEquals(96847, JdkMath.convertSecsToMicros(secs).intValue(),
+                "Secs not converted to microseconds with expected rounding mode.");
     }
 
     @Test
     void testConvertDurationToMicrosRoundDown() {
         String secs = "0.0968485";
-        assertEquals(96848,JdkMath.convertSecsToMicros(secs).intValue(),"Secs not converted to milliseconds with expected rounding mode.");
+        assertEquals(96848, JdkMath.convertSecsToMicros(secs).intValue(),
+                "Secs not converted to milliseconds with expected rounding mode.");
     }
 
     @Test
     void testConvertMillisToMicros() {
         String millis = "0.0975";
-        assertEquals(97,JdkMath.convertMillisToMicros(millis).intValue(),"Secs not converted to milliseconds with expected rounding mode.");
+        assertEquals(97, JdkMath.convertMillisToMicros(millis).intValue(),
+                "Secs not converted to milliseconds with expected rounding mode.");
     }
 
     @Test
     void testRoundMillis() {
         String millis = "2.169";
-        assertEquals(2,JdkMath.roundMillis(millis).intValue(),"Secs not converted to milliseconds with expected rounding mode.");
+        assertEquals(2, JdkMath.roundMillis(millis).intValue(),
+                "Secs not converted to milliseconds with expected rounding mode.");
     }
 
     @Test
     void testRoundMillisDown() {
         String millis = "2.969";
-        assertEquals(2,JdkMath.roundMillis(millis).intValue(),"Secs not converted to milliseconds with expected rounding mode.");
+        assertEquals(2, JdkMath.roundMillis(millis).intValue(),
+                "Secs not converted to milliseconds with expected rounding mode.");
     }
 
     @Test
@@ -92,7 +99,7 @@ class TestJdkMath {
         long timestamp = 1000;
         int priorDuration = 10;
         long priorTimestamp = 900;
-        assertEquals(50,JdkMath.calcThroughput(duration, timestamp, priorDuration, priorTimestamp));
+        assertEquals(50, JdkMath.calcThroughput(duration, timestamp, priorDuration, priorTimestamp));
     }
 
     @Test
@@ -101,7 +108,7 @@ class TestJdkMath {
         durations[0] = "0.0226730";
         durations[1] = "0.0624566";
         durations[2] = "0.0857010";
-        assertEquals(170,JdkMath.totalDuration(durations),"CMS Remark times not added properly.");
+        assertEquals(170, JdkMath.totalDuration(durations), "CMS Remark times not added properly.");
     }
 
     @Test
@@ -110,58 +117,64 @@ class TestJdkMath {
         durations[0] = "0,0226730";
         durations[1] = "0,0624566";
         durations[2] = "0,0857010";
-        assertEquals(170,JdkMath.totalDuration(durations),"CMS Remark times not added properly.");
+        assertEquals(170, JdkMath.totalDuration(durations), "CMS Remark times not added properly.");
     }
 
     @Test
     void testConvertDurationMillisToSecs() {
         long duration = 123456;
-        assertEquals("123.456",JdkMath.convertMillisToSecs(duration).toString(),"Millis not converted to seconds with expected rounding mode.");
+        assertEquals("123.456", JdkMath.convertMillisToSecs(duration).toString(),
+                "Millis not converted to seconds with expected rounding mode.");
     }
 
     @Test
     void testCalcKilobytesMegabytes() {
-        assertEquals(kilobytes(1024),new Memory(1, MEGABYTES),"Megabytes not converted to kilobytes.");
+        assertEquals(kilobytes(1024), new Memory(1, MEGABYTES), "Megabytes not converted to kilobytes.");
     }
 
     @Test
     void testCalcKilobytesGigabytes() {
-        assertEquals(kilobytes(1024 * 1024),new Memory(1, GIGABYTES),"Megabytes not converted to kilobytes.");
+        assertEquals(kilobytes(1024 * 1024), new Memory(1, GIGABYTES), "Megabytes not converted to kilobytes.");
     }
 
     @Test
     void testConvertSizeG1DetailsToKilobytesB() {
         String size = "102400";
         char units = 'B';
-        assertEquals(kilobytes(100),JdkMath.convertSizeToKilobytes(size, units),"G1 details not converted to kilobytes.");
+        assertEquals(kilobytes(100), JdkMath.convertSizeToKilobytes(size, units),
+                "G1 details not converted to kilobytes.");
     }
 
     @Test
     void testConvertSizeG1DetailsToKilobytesK() {
         String size = "1234567";
         char units = 'K';
-        assertEquals(kilobytes(1234567),JdkMath.convertSizeToKilobytes(size, units),"G1 details not converted to kilobytes.");
+        assertEquals(kilobytes(1234567), JdkMath.convertSizeToKilobytes(size, units),
+                "G1 details not converted to kilobytes.");
     }
 
     @Test
     void testConvertSizeG1DetailsToKilobytesM() {
         String size = "10";
         char units = 'M';
-        assertEquals(kilobytes(10240),JdkMath.convertSizeToKilobytes(size, units),"G1 details not converted to kilobytes.");
+        assertEquals(kilobytes(10240), JdkMath.convertSizeToKilobytes(size, units),
+                "G1 details not converted to kilobytes.");
     }
 
     @Test
     void testConvertSizeG1DetailsToKilobytesMWithComma() {
         String size = "306,0";
         char units = 'M';
-        assertEquals(kilobytes(313344),JdkMath.convertSizeToKilobytes(size, units),"G1 details not converted to kilobytes.");
+        assertEquals(kilobytes(313344), JdkMath.convertSizeToKilobytes(size, units),
+                "G1 details not converted to kilobytes.");
     }
 
     @Test
     void testConvertSizeG1DetailsToKilobytesG() {
         String size = "100";
         char units = 'G';
-        assertEquals(kilobytes(104857600),JdkMath.convertSizeToKilobytes(size, units),"G1 details not converted to kilobytes.");
+        assertEquals(kilobytes(104857600), JdkMath.convertSizeToKilobytes(size, units),
+                "G1 details not converted to kilobytes.");
     }
 
     @Test
@@ -169,7 +182,8 @@ class TestJdkMath {
         int timeUser = 90;
         int timeSys = 10;
         int timeReal = 10;
-        assertEquals(1000,JdkMath.calcParallelism(timeUser, timeSys, timeReal),"Parallelism not calculated correctly.");
+        assertEquals(1000, JdkMath.calcParallelism(timeUser, timeSys, timeReal),
+                "Parallelism not calculated correctly.");
     }
 
     @Test
@@ -177,7 +191,7 @@ class TestJdkMath {
         int timeUser = 90;
         int timeSys = 10;
         int timeReal = 1000;
-        assertEquals(10,JdkMath.calcParallelism(timeUser, timeSys, timeReal),"Parallelism not calculated correctly.");
+        assertEquals(10, JdkMath.calcParallelism(timeUser, timeSys, timeReal), "Parallelism not calculated correctly.");
     }
 
     @Test
@@ -185,7 +199,7 @@ class TestJdkMath {
         int timeUser = 90;
         int timeSys = 10;
         int timeReal = 199;
-        assertEquals(51,JdkMath.calcParallelism(timeUser, timeSys, timeReal),"Parallelism not calculated correctly.");
+        assertEquals(51, JdkMath.calcParallelism(timeUser, timeSys, timeReal), "Parallelism not calculated correctly.");
     }
 
     @Test
@@ -193,7 +207,7 @@ class TestJdkMath {
         int timeUser = 0;
         int timeSys = 0;
         int timeReal = 100;
-        assertEquals(0,JdkMath.calcParallelism(timeUser, timeSys, timeReal),"Parallelism not calculated correctly.");
+        assertEquals(0, JdkMath.calcParallelism(timeUser, timeSys, timeReal), "Parallelism not calculated correctly.");
     }
 
     @Test
@@ -201,7 +215,8 @@ class TestJdkMath {
         int timeUser = 100;
         int timeSys = 0;
         int timeReal = 0;
-        assertEquals(Integer.MAX_VALUE,JdkMath.calcParallelism(timeUser, timeSys, timeReal),"Parallelism not calculated correctly.");
+        assertEquals(Integer.MAX_VALUE, JdkMath.calcParallelism(timeUser, timeSys, timeReal),
+                "Parallelism not calculated correctly.");
     }
 
     @Test
@@ -209,7 +224,8 @@ class TestJdkMath {
         int timeUser = 0;
         int timeSys = 0;
         int timeReal = 0;
-        assertEquals(100,JdkMath.calcParallelism(timeUser, timeSys, timeReal),"Parallelism not calculated correctly.");
+        assertEquals(100, JdkMath.calcParallelism(timeUser, timeSys, timeReal),
+                "Parallelism not calculated correctly.");
     }
 
     @Test
@@ -217,7 +233,8 @@ class TestJdkMath {
         int timeUser = TimesData.NO_DATA;
         int timeSys = TimesData.NO_DATA;
         int timeReal = TimesData.NO_DATA;
-        assertEquals(100,JdkMath.calcParallelism(timeUser, timeSys, timeReal),"Parallelism not calculated correctly.");
+        assertEquals(100, JdkMath.calcParallelism(timeUser, timeSys, timeReal),
+                "Parallelism not calculated correctly.");
     }
 
     @Test

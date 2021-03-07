@@ -171,13 +171,15 @@ class TestJdkRegEx {
     @Test
     void testUnloadingClassBlock() {
         String unloadingClassBlock = "[Unloading class sun.reflect.GeneratedSerializationConstructorAccessor13565]";
-        assertTrue(unloadingClassBlock.matches(JdkRegEx.UNLOADING_CLASS_BLOCK), "'" + unloadingClassBlock + "' " + "is a valid class unloading block.");
+        assertTrue(unloadingClassBlock.matches(JdkRegEx.UNLOADING_CLASS_BLOCK),
+                "'" + unloadingClassBlock + "' " + "is a valid class unloading block.");
     }
 
     @Test
     void testUnloadingClassProxyBlock() {
         String unloadingClassBlock = "[Unloading class $Proxy109]";
-        assertTrue(unloadingClassBlock.matches(JdkRegEx.UNLOADING_CLASS_BLOCK), "'" + unloadingClassBlock + "' " + "is a valid class unloading block.");
+        assertTrue(unloadingClassBlock.matches(JdkRegEx.UNLOADING_CLASS_BLOCK),
+                "'" + unloadingClassBlock + "' " + "is a valid class unloading block.");
     }
 
     @Test
@@ -201,7 +203,8 @@ class TestJdkRegEx {
     @Test
     void testDurationFractionk5Digits() {
         String durationFraction = "4.583/35144.874 secs";
-        assertTrue(durationFraction.matches(JdkRegEx.DURATION_FRACTION), "'" + durationFraction + "' " + "is a valid duration fraction.");
+        assertTrue(durationFraction.matches(JdkRegEx.DURATION_FRACTION),
+                "'" + durationFraction + "' " + "is a valid duration fraction.");
     }
 
     @Test
@@ -295,7 +298,8 @@ class TestJdkRegEx {
                 + "(28: promotion failure size = 10)  (29: promotion failure size = 200)  "
                 + "(30: promotion failure size = 200)  (31: promotion failure size = 200)  "
                 + "(32: promotion failure size = 200) ";
-        assertTrue(promotionFailure.matches(JdkRegEx.PRINT_PROMOTION_FAILURE), "'" + promotionFailure + "' " + "not a valid PROMOTION_FAILURE.");
+        assertTrue(promotionFailure.matches(JdkRegEx.PRINT_PROMOTION_FAILURE),
+                "'" + promotionFailure + "' " + "not a valid PROMOTION_FAILURE.");
     }
 
     @Test

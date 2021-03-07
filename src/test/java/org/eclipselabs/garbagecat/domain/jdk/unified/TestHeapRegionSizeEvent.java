@@ -33,42 +33,49 @@ class TestHeapRegionSizeEvent {
     @Test
     void testLine() {
         String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
-        assertTrue(HeapRegionSizeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + ".");
+        assertTrue(HeapRegionSizeEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + ".");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
-        assertEquals(JdkUtil.LogEventType.HEAP_REGION_SIZE,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.HEAP_REGION_SIZE + "not identified.");
+        assertEquals(JdkUtil.LogEventType.HEAP_REGION_SIZE, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.HEAP_REGION_SIZE + "not identified.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapRegionSizeEvent, JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " not parsed.");
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapRegionSizeEvent,
+                JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " not parsed.");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "[25.016s][info][gc,heap,exit  ] Heap";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " incorrectly indentified as blocking.");
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.HEAP_REGION_SIZE), JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " incorrectly indentified as reportable.");
+        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.HEAP_REGION_SIZE),
+                JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.HEAP_REGION_SIZE);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " not indentified as unified.");
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " not indentified as unified.");
     }
 
     @Test
     void testUptimeMillis() {
         String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Regions: 2606 x 512K";
-        assertTrue(HeapRegionSizeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + ".");
+        assertTrue(HeapRegionSizeEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + ".");
     }
 }

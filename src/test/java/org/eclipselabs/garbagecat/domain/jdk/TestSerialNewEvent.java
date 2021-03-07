@@ -29,46 +29,50 @@ class TestSerialNewEvent {
     void testIsBlocking() {
         String logLine = "7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] "
                 + "41677K->10314K(126720K), 0.0210210 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.SERIAL_NEW.toString() + " not indentified as blocking.");
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.SERIAL_NEW.toString() + " not indentified as blocking.");
     }
 
     @Test
     void testLogLine() {
         String logLine = "7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] "
                 + "41677K->10314K(126720K), 0.0210210 secs]";
-        assertTrue(SerialNewEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
+        assertTrue(SerialNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
         SerialNewEvent event = new SerialNewEvent(logLine);
-        assertEquals((long) 7798,event.getTimestamp(),"Time stamp not parsed correctly.");
-        assertEquals(kilobytes(37172),event.getYoungOccupancyInit(),"Young begin size not parsed correctly.");
-        assertEquals(kilobytes(3631),event.getYoungOccupancyEnd(),"Young end size not parsed correctly.");
-        assertEquals(kilobytes(39296),event.getYoungSpace(),"Young available size not parsed correctly.");
-        assertEquals(kilobytes(4505),event.getOldOccupancyInit(),"Old begin size not parsed correctly.");
-        assertEquals(kilobytes(6683),event.getOldOccupancyEnd(),"Old end size not parsed correctly.");
-        assertEquals(kilobytes(87424),event.getOldSpace(),"Old allocation size not parsed correctly.");
-        assertEquals(21021,event.getDuration(),"Duration not parsed correctly.");
+        assertEquals((long) 7798, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(37172), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(3631), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
+        assertEquals(kilobytes(39296), event.getYoungSpace(), "Young available size not parsed correctly.");
+        assertEquals(kilobytes(4505), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
+        assertEquals(kilobytes(6683), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
+        assertEquals(kilobytes(87424), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(21021, event.getDuration(), "Duration not parsed correctly.");
     }
 
     @Test
     void testLogLineWhitespaceAtEnd() {
         String logLine = "7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] "
                 + "41677K->10314K(126720K), 0.0210210 secs] ";
-        assertTrue(SerialNewEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
+        assertTrue(SerialNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
     }
 
     @Test
     void testLogLineNoSpaceAfterGC() {
         String logLine = "4.296: [GC4.296: [DefNew: 68160K->8512K(76672K), 0.0528470 secs] "
                 + "68160K->11664K(1325760K), 0.0530640 secs] [Times: user=0.04 sys=0.00, real=0.05 secs]";
-        assertTrue(SerialNewEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
+        assertTrue(SerialNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
         SerialNewEvent event = new SerialNewEvent(logLine);
-        assertEquals((long) 4296,event.getTimestamp(),"Time stamp not parsed correctly.");
-        assertEquals(kilobytes(68160),event.getYoungOccupancyInit(),"Young begin size not parsed correctly.");
-        assertEquals(kilobytes(8512),event.getYoungOccupancyEnd(),"Young end size not parsed correctly.");
-        assertEquals(kilobytes(76672),event.getYoungSpace(),"Young available size not parsed correctly.");
-        assertEquals(kilobytes(68160 - 68160),event.getOldOccupancyInit(),"Old begin size not parsed correctly.");
-        assertEquals(kilobytes(11664 - 8512),event.getOldOccupancyEnd(),"Old end size not parsed correctly.");
-        assertEquals(kilobytes(1325760 - 76672),event.getOldSpace(),"Old allocation size not parsed correctly.");
-        assertEquals(53064,event.getDuration(),"Duration not parsed correctly.");
+        assertEquals((long) 4296, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(68160), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(8512), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
+        assertEquals(kilobytes(76672), event.getYoungSpace(), "Young available size not parsed correctly.");
+        assertEquals(kilobytes(68160 - 68160), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
+        assertEquals(kilobytes(11664 - 8512), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
+        assertEquals(kilobytes(1325760 - 76672), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(53064, event.getDuration(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -76,31 +80,33 @@ class TestSerialNewEvent {
         String logLine = "2016-11-22T09:07:01.358+0100: 1,319: [GC2016-11-22T09:07:01.359+0100: 1,320: [DefNew: "
                 + "68160K->4425K(76672K), 0,0354890 secs] 68160K->4425K(3137216K), 0,0360580 secs] "
                 + "[Times: user=0,04 sys=0,00, real=0,03 secs]";
-        assertTrue(SerialNewEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
+        assertTrue(SerialNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
         SerialNewEvent event = new SerialNewEvent(logLine);
-        assertEquals((long) 1319,event.getTimestamp(),"Time stamp not parsed correctly.");
-        assertEquals(kilobytes(68160),event.getYoungOccupancyInit(),"Young begin size not parsed correctly.");
-        assertEquals(kilobytes(4425),event.getYoungOccupancyEnd(),"Young end size not parsed correctly.");
-        assertEquals(kilobytes(76672),event.getYoungSpace(),"Young available size not parsed correctly.");
-        assertEquals(kilobytes(68160 - 68160),event.getOldOccupancyInit(),"Old begin size not parsed correctly.");
-        assertEquals(kilobytes(4425 - 4425),event.getOldOccupancyEnd(),"Old end size not parsed correctly.");
-        assertEquals(kilobytes(3137216 - 76672),event.getOldSpace(),"Old allocation size not parsed correctly.");
-        assertEquals(36058,event.getDuration(),"Duration not parsed correctly.");
+        assertEquals((long) 1319, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(68160), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(4425), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
+        assertEquals(kilobytes(76672), event.getYoungSpace(), "Young available size not parsed correctly.");
+        assertEquals(kilobytes(68160 - 68160), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
+        assertEquals(kilobytes(4425 - 4425), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
+        assertEquals(kilobytes(3137216 - 76672), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(36058, event.getDuration(), "Duration not parsed correctly.");
     }
 
     @Test
     void testLogLineWithTrigger() {
         String logLine = "2.218: [GC (Allocation Failure) 2.218: [DefNew: 209792K->15933K(235968K), 0.0848369 secs] "
                 + "209792K->15933K(760256K), 0.0849244 secs] [Times: user=0.03 sys=0.06, real=0.08 secs]";
-        assertTrue(SerialNewEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
+        assertTrue(SerialNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
         SerialNewEvent event = new SerialNewEvent(logLine);
-        assertEquals((long) 2218,event.getTimestamp(),"Time stamp not parsed correctly.");
-        assertEquals(kilobytes(209792),event.getYoungOccupancyInit(),"Young begin size not parsed correctly.");
-        assertEquals(kilobytes(15933),event.getYoungOccupancyEnd(),"Young end size not parsed correctly.");
-        assertEquals(kilobytes(235968),event.getYoungSpace(),"Young available size not parsed correctly.");
-        assertEquals(kilobytes(209792 - 209792),event.getOldOccupancyInit(),"Old begin size not parsed correctly.");
-        assertEquals(kilobytes(15933 - 15933),event.getOldOccupancyEnd(),"Old end size not parsed correctly.");
-        assertEquals(kilobytes(760256 - 235968),event.getOldSpace(),"Old allocation size not parsed correctly.");
-        assertEquals(84924,event.getDuration(),"Duration not parsed correctly.");
+        assertEquals((long) 2218, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(209792), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(15933), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
+        assertEquals(kilobytes(235968), event.getYoungSpace(), "Young available size not parsed correctly.");
+        assertEquals(kilobytes(209792 - 209792), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
+        assertEquals(kilobytes(15933 - 15933), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
+        assertEquals(kilobytes(760256 - 235968), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(84924, event.getDuration(), "Duration not parsed correctly.");
     }
 }

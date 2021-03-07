@@ -42,42 +42,48 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     void testLogLinePreprocessed() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+        assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(),event.getName(),"Event name incorrect.");
-        assertEquals((long) (16627 - 0),event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
+                "Event name incorrect.");
+        assertEquals((long) (16627 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE), "Trigger not parsed correctly.");
-        assertEquals(kilobytes(3801),event.getPermOccupancyInit(),"Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(3801),event.getPermOccupancyEnd(),"Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1056768),event.getPermSpace(),"Perm gen allocation size not parsed correctly.");
-        assertEquals(kilobytes(24 * 1024),event.getCombinedOccupancyInit(),"Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(13 * 1024),event.getCombinedOccupancyEnd(),"Combined end size not parsed correctly.");
-        assertEquals(kilobytes(31 * 1024),event.getCombinedSpace(),"Combined allocation size not parsed correctly.");
-        assertEquals(361,event.getDuration(),"Duration not parsed correctly.");
-        assertEquals(0,event.getTimeUser(),"User time not parsed correctly.");
-        assertEquals(0,event.getTimeReal(),"Real time not parsed correctly.");
-        assertEquals(100,event.getParallelism(),"Parallelism not calculated correctly.");
+        assertEquals(kilobytes(3801), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
+        assertEquals(kilobytes(3801), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
+        assertEquals(kilobytes(1056768), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(kilobytes(24 * 1024), event.getCombinedOccupancyInit(),
+                "Combined begin size not parsed correctly.");
+        assertEquals(kilobytes(13 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(31 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(361, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED + "not identified.");
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED + "not identified.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1YoungPrepareMixedEvent, JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not parsed.");
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1YoungPrepareMixedEvent,
+                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not parsed.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as blocking.");
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -87,27 +93,32 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
         long timestamp = 15108;
         int duration = 0;
-        assertTrue(JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-		duration) instanceof UnifiedG1YoungPrepareMixedEvent, JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not parsed.");
+        assertTrue(
+                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
+                        duration) instanceof UnifiedG1YoungPrepareMixedEvent,
+                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED), JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED),
+                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as reportable.");
     }
 
     @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as unified.");
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as unified.");
     }
 
     @Test
     void testLogLineWhitespaceAtEnd() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s    ";
-        assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+        assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
     }
 
     @Test
@@ -117,9 +128,11 @@ class TestUnifiedG1YoungPrepareMixedEvent {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1,jvmRun.getEventTypes().size(),"Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN), JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
     }
 
 }

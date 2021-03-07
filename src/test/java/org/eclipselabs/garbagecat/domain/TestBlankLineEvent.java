@@ -27,19 +27,22 @@ class TestBlankLineEvent {
     @Test
     void testParseLogLine() {
         String logLine = "";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof BlankLineEvent, JdkUtil.LogEventType.BLANK_LINE.toString() + " not parsed.");
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof BlankLineEvent,
+                JdkUtil.LogEventType.BLANK_LINE.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
         String logLine = "";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.BLANK_LINE.toString() + " incorrectly indentified as reportable.");
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.BLANK_LINE.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
     void testLogLine() {
         String logLine = "";
-        assertTrue(BlankLineEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.BLANK_LINE.toString() + ".");
+        assertTrue(BlankLineEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.BLANK_LINE.toString() + ".");
     }
 
 }
