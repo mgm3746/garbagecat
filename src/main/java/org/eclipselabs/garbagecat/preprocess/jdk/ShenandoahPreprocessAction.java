@@ -323,7 +323,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             // Sometimes this is the end of a logging event
-            if (entangledLogLines != null && entangledLogLines.size() > 0 && newLoggingEvent(nextLogEntry)) {
+            if (entangledLogLines != null && !entangledLogLines.isEmpty() && newLoggingEvent(nextLogEntry)) {
                 clearEntangledLines(entangledLogLines);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);

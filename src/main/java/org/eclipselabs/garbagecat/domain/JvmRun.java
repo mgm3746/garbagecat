@@ -663,7 +663,7 @@ public class JvmRun {
         }
 
         // Unidentified logging lines
-        if (getUnidentifiedLogLines().size() > 0) {
+        if (!getUnidentifiedLogLines().isEmpty()) {
             if (!preprocessed) {
                 analysis.add(ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE);
                 // Don't double report
@@ -804,7 +804,7 @@ public class JvmRun {
         }
 
         // Check for command line flags output.
-        if (jvm.getPrintCommandLineFlagsOption() == null && getEventTypes().size() > 0
+        if (jvm.getPrintCommandLineFlagsOption() == null && !getEventTypes().isEmpty()
                 && !getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS)) {
             analysis.add(WARN_PRINT_COMMANDLINE_FLAGS);
         }

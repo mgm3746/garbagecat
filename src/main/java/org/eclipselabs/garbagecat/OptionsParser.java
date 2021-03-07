@@ -121,7 +121,7 @@ public class OptionsParser {
      */
     private static void validateOptions(CommandLine cmd) throws ParseException {
         // Ensure log file specified.
-        if (cmd.getArgList().size() == 0) {
+        if (cmd.getArgList().isEmpty()) {
             throw new ParseException("Missing log file");
         }
         if (cmd.getArgList().isEmpty()) {

@@ -740,7 +740,7 @@ public class JvmDao {
     public synchronized BlockingEvent getLastGcEvent() {
         BlockingEvent event = null;
         // Retrieve last event from batch or database.
-        if (blockingBatch.size() > 0) {
+        if (!blockingBatch.isEmpty()) {
             event = blockingBatch.get(blockingBatch.size() - 1);
         } else {
             event = queryGcLastEvent();
@@ -1256,7 +1256,7 @@ public class JvmDao {
     public synchronized ApplicationStoppedTimeEvent getLastStoppedEvent() {
         ApplicationStoppedTimeEvent event;
         // Retrieve last event from batch or database.
-        if (stoppedTimeBatch.size() > 0) {
+        if (!stoppedTimeBatch.isEmpty()) {
             event = stoppedTimeBatch.get(stoppedTimeBatch.size() - 1);
         } else {
             event = queryStoppedLastEvent();
