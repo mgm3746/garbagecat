@@ -31,6 +31,7 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OUTPUT_FILE_NAME;
+import static org.eclipselabs.garbagecat.util.GcUtil.START_DATE_TIME_REGEX;
 
 import java.io.File;
 import java.util.ResourceBundle;
@@ -50,7 +51,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.eclipselabs.garbagecat.util.GcUtil;
 import org.json.JSONObject;
 
 /**
@@ -145,9 +145,7 @@ public class OptionsParser {
         // startdatetime
         if (cmd.hasOption(OPTION_STARTDATETIME_LONG)) {
             String startdatetimeOptionValue = cmd.getOptionValue(OPTION_STARTDATETIME_SHORT);
-            Pattern pattern = Pattern.compile(GcUtil.START_DATE_TIME_REGEX);
-            Matcher matcher = pattern.matcher(startdatetimeOptionValue);
-            if (!matcher.find()) {
+            if (!START_DATE_TIME_REGEX.matcher(startdatetimeOptionValue).find()) {
                 throw new ParseException("Invalid startdatetime: '" + startdatetimeOptionValue + "'");
             }
         }
