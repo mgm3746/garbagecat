@@ -76,8 +76,7 @@ class TestMain {
         assertHasOption(cmd, OPTION_LATEST_VERSION_SHORT);
     }
 
-
-	@Test
+    @Test
     void testLongOptions(@TempDir File tmpFolder) throws Exception {
         // Method arguments
         String[] args = new String[] { //
@@ -99,15 +98,15 @@ class TestMain {
         };
         CommandLine cmd = OptionsParser.parseOptions(args);
         assertNotNull(cmd);
-		assertHasOption(cmd, OPTION_HELP_LONG);
-		assertHasOption(cmd, OPTION_JVMOPTIONS_LONG);
-		assertHasOption(cmd, OPTION_PREPROCESS_LONG);
-		assertHasOption(cmd, OPTION_STARTDATETIME_LONG);
-		assertHasOption(cmd, OPTION_THRESHOLD_LONG);
-		assertHasOption(cmd, OPTION_REORDER_LONG);
-		assertHasOption(cmd, OPTION_OUTPUT_LONG);
-		assertHasOption(cmd, OPTION_VERSION_LONG);
-		assertHasOption(cmd, OPTION_LATEST_VERSION_LONG);
+        assertHasOption(cmd, OPTION_HELP_LONG);
+        assertHasOption(cmd, OPTION_JVMOPTIONS_LONG);
+        assertHasOption(cmd, OPTION_PREPROCESS_LONG);
+        assertHasOption(cmd, OPTION_STARTDATETIME_LONG);
+        assertHasOption(cmd, OPTION_THRESHOLD_LONG);
+        assertHasOption(cmd, OPTION_REORDER_LONG);
+        assertHasOption(cmd, OPTION_OUTPUT_LONG);
+        assertHasOption(cmd, OPTION_VERSION_LONG);
+        assertHasOption(cmd, OPTION_LATEST_VERSION_LONG);
     }
 
     @Test
@@ -130,7 +129,7 @@ class TestMain {
     }
 
     private static void assertHasOption(CommandLine cmd, String option) {
-    	assertTrue(cmd.hasOption(option), "'-" + option + "' is a valid option");
+        assertTrue(cmd.hasOption(option), "'-" + option + "' is a valid option");
     }
 
 }

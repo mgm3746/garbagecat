@@ -39,59 +39,68 @@ class TestUsingShenandoahEvent {
     @Test
     void testLine() {
         String logLine = "[0.006s][info][gc] Using Shenandoah";
-        assertTrue(UsingShenandoahEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
+        assertTrue(UsingShenandoahEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
         UsingShenandoahEvent event = new UsingShenandoahEvent(logLine);
-        assertEquals((long) 6,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals((long) 6, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[0.006s][info][gc] Using Shenandoah";
-        assertEquals(JdkUtil.LogEventType.USING_SHENANDOAH,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.USING_SHENANDOAH + "not identified.");
+        assertEquals(JdkUtil.LogEventType.USING_SHENANDOAH, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.USING_SHENANDOAH + "not identified.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.006s][info][gc] Using Shenandoah";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingShenandoahEvent, JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not parsed.");
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingShenandoahEvent,
+                JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not parsed.");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "[0.006s][info][gc] Using Shenandoah";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " incorrectly indentified as blocking.");
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_SHENANDOAH), JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_SHENANDOAH),
+                JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not indentified as reportable.");
     }
 
     @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.USING_SHENANDOAH);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not indentified as unified.");
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not indentified as unified.");
     }
 
     @Test
     void testLineWithSpaces() {
         String logLine = "[0.006s][info][gc] Using Shenandoah    ";
-        assertTrue(UsingShenandoahEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
+        assertTrue(UsingShenandoahEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
     }
 
     @Test
     void testLineDetailedLogging() {
         String logLine = "[0.005s][info][gc     ] Using Shenandoah";
-        assertTrue(UsingShenandoahEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
+        assertTrue(UsingShenandoahEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
     }
 
     @Test
     void testLineWithTimeUptimemillis() {
         String logLine = "[2019-02-05T14:47:31.092-0200][4ms] Using Shenandoah";
-        assertTrue(UsingShenandoahEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
+        assertTrue(UsingShenandoahEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
         UsingShenandoahEvent event = new UsingShenandoahEvent(logLine);
-        assertEquals((long) 4,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals((long) 4, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     /**
@@ -104,8 +113,10 @@ class TestUsingShenandoahEvent {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1,jvmRun.getEventTypes().size(),"Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN), JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_SHENANDOAH), "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_SHENANDOAH),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
     }
 }

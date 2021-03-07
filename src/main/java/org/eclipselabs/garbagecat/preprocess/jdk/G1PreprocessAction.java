@@ -967,12 +967,12 @@ public class G1PreprocessAction implements PreprocessAction {
                 || logLine.matches(REGEX_RETAIN_END_CONCURRENT_YOUNG)) {
             return true;
         }
-		// TODO: Get rid of this and make them throwaway events?
-		for (String element : REGEX_THROWAWAY) {
-		    if (logLine.matches(element)) {
-		        return true;
-		    }
-		}
+        // TODO: Get rid of this and make them throwaway events?
+        for (String element : REGEX_THROWAWAY) {
+            if (logLine.matches(element)) {
+                return true;
+            }
+        }
         return false;
     }
 

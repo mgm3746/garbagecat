@@ -66,7 +66,8 @@ class TestJvmRun {
         eventTypes.add(LogEventType.REFERENCE_GC);
         jvmRun.setEventTypes(eventTypes);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED), Analysis.WARN_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED),
+                Analysis.WARN_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.");
     }
 
     /**
@@ -79,7 +80,8 @@ class TestJvmRun {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED), Analysis.WARN_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED),
+                Analysis.WARN_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.");
     }
 
     /**
@@ -92,7 +94,8 @@ class TestJvmRun {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED), Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED),
+                Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED + " analysis not identified.");
     }
 
     /**
@@ -105,8 +108,10 @@ class TestJvmRun {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED), Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " analysis not identified.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING), Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED),
+                Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING),
+                Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.");
     }
 
     /**
@@ -119,7 +124,8 @@ class TestJvmRun {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_PAR_NEW_DISABLED), Analysis.WARN_CMS_PAR_NEW_DISABLED + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_PAR_NEW_DISABLED),
+                Analysis.WARN_CMS_PAR_NEW_DISABLED + " analysis not identified.");
     }
 
     /**
@@ -134,8 +140,9 @@ class TestJvmRun {
         jvmRun.getJvm().setSwap(new Memory(1000, BYTES));
         jvmRun.getJvm().setSwapFree(new Memory(946, BYTES));
         jvmRun.doAnalysis();
-        assertEquals((long) 95,jvmRun.getJvm().getPercentSwapFree(),"Percent swap free not correct.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_SWAPPING), Analysis.INFO_SWAPPING + " analysis incorrectly identified.");
+        assertEquals((long) 95, jvmRun.getJvm().getPercentSwapFree(), "Percent swap free not correct.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_SWAPPING),
+                Analysis.INFO_SWAPPING + " analysis incorrectly identified.");
     }
 
     /**
@@ -150,8 +157,9 @@ class TestJvmRun {
         jvmRun.getJvm().setSwap(new Memory(1000, BYTES));
         jvmRun.getJvm().setSwapFree(new Memory(945, BYTES));
         jvmRun.doAnalysis();
-        assertEquals((long) 94,jvmRun.getJvm().getPercentSwapFree(),"Percent swap free not correct.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_SWAPPING), Analysis.INFO_SWAPPING + " analysis not identified.");
+        assertEquals((long) 94, jvmRun.getJvm().getPercentSwapFree(), "Percent swap free not correct.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_SWAPPING),
+                Analysis.INFO_SWAPPING + " analysis not identified.");
     }
 
     /**
@@ -165,7 +173,8 @@ class TestJvmRun {
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.getJvm().setPhysicalMemory(new Memory(1207959552, BYTES));
         jvmRun.doAnalysis();
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY), Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY),
+                Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.");
     }
 
     /**
@@ -179,7 +188,8 @@ class TestJvmRun {
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.getJvm().setPhysicalMemory(new Memory(1207959551, BYTES));
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY), Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY),
+                Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.");
     }
 
     @Test
@@ -187,7 +197,7 @@ class TestJvmRun {
         GcManager gcManager = new GcManager();
         gcManager.store(null, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertNull(jvmRun.getLastGcEvent(),"Last GC event not correct.");
+        assertNull(jvmRun.getLastGcEvent(), "Last GC event not correct.");
     }
 
     @Test
@@ -196,20 +206,24 @@ class TestJvmRun {
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(kilobytes(248192),jvmRun.getMaxYoungSpace(),"Max young space not calculated correctly.");
-        assertEquals(kilobytes(786432),jvmRun.getMaxOldSpace(),"Max old space not calculated correctly.");
-        assertEquals((long) 3,jvmRun.getNewRatio(),"NewRatio not calculated correctly.");
-        assertEquals(kilobytes(1034624),jvmRun.getMaxHeapSpace(),"Max heap space not calculated correctly.");
-        assertEquals(kilobytes(1013058),jvmRun.getMaxHeapOccupancy(),"Max heap occupancy not calculated correctly.");
-        assertEquals(2782,jvmRun.getMaxGcPause(),"Max pause not calculated correctly.");
-        assertEquals(159936,jvmRun.getMaxPermSpace(),"Max perm gen space not calculated correctly.");
-        assertEquals(76972,jvmRun.getMaxPermOccupancy(),"Max perm gen occupancy not calculated correctly.");
-        assertEquals((long) 5615,jvmRun.getTotalGcPause(),"Total GC duration not calculated correctly.");
-        assertEquals(2,jvmRun.getEventTypes().size(),"GC Event count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE), JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD), JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING), Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL), Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis not identified.");
+        assertEquals(kilobytes(248192), jvmRun.getMaxYoungSpace(), "Max young space not calculated correctly.");
+        assertEquals(kilobytes(786432), jvmRun.getMaxOldSpace(), "Max old space not calculated correctly.");
+        assertEquals((long) 3, jvmRun.getNewRatio(), "NewRatio not calculated correctly.");
+        assertEquals(kilobytes(1034624), jvmRun.getMaxHeapSpace(), "Max heap space not calculated correctly.");
+        assertEquals(kilobytes(1013058), jvmRun.getMaxHeapOccupancy(), "Max heap occupancy not calculated correctly.");
+        assertEquals(2782, jvmRun.getMaxGcPause(), "Max pause not calculated correctly.");
+        assertEquals(159936, jvmRun.getMaxPermSpace(), "Max perm gen space not calculated correctly.");
+        assertEquals(76972, jvmRun.getMaxPermOccupancy(), "Max perm gen occupancy not calculated correctly.");
+        assertEquals((long) 5615, jvmRun.getTotalGcPause(), "Total GC duration not calculated correctly.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "GC Event count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE),
+                JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD),
+                JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING),
+                Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL),
+                Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis not identified.");
     }
 
     @Test
@@ -218,19 +232,22 @@ class TestJvmRun {
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(kilobytes(348864),jvmRun.getMaxYoungSpace(),"Max young space not calculated correctly.");
-        assertEquals(kilobytes(699392),jvmRun.getMaxOldSpace(),"Max old space not calculated correctly.");
-        assertEquals((long) 2,jvmRun.getNewRatio(),"NewRatio not calculated correctly.");
-        assertEquals(kilobytes(1048256),jvmRun.getMaxHeapSpace(),"Max heap space not calculated correctly.");
-        assertEquals(kilobytes(424192),jvmRun.getMaxHeapOccupancy(),"Max heap occupancy not calculated correctly.");
-        assertEquals(1070,jvmRun.getMaxGcPause(),"Max pause not calculated correctly.");
-        assertEquals(99804,jvmRun.getMaxPermSpace(),"Max perm gen space not calculated correctly.");
-        assertEquals(60155,jvmRun.getMaxPermOccupancy(),"Max perm gen occupancy not calculated correctly.");
-        assertEquals((long) 1283,jvmRun.getTotalGcPause(),"Total GC duration not calculated correctly.");
-        assertEquals(2,jvmRun.getEventTypes().size(),"GC Event count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PAR_NEW), JdkUtil.LogEventType.PAR_NEW.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD), JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS), Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
+        assertEquals(kilobytes(348864), jvmRun.getMaxYoungSpace(), "Max young space not calculated correctly.");
+        assertEquals(kilobytes(699392), jvmRun.getMaxOldSpace(), "Max old space not calculated correctly.");
+        assertEquals((long) 2, jvmRun.getNewRatio(), "NewRatio not calculated correctly.");
+        assertEquals(kilobytes(1048256), jvmRun.getMaxHeapSpace(), "Max heap space not calculated correctly.");
+        assertEquals(kilobytes(424192), jvmRun.getMaxHeapOccupancy(), "Max heap occupancy not calculated correctly.");
+        assertEquals(1070, jvmRun.getMaxGcPause(), "Max pause not calculated correctly.");
+        assertEquals(99804, jvmRun.getMaxPermSpace(), "Max perm gen space not calculated correctly.");
+        assertEquals(60155, jvmRun.getMaxPermOccupancy(), "Max perm gen occupancy not calculated correctly.");
+        assertEquals((long) 1283, jvmRun.getTotalGcPause(), "Total GC duration not calculated correctly.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "GC Event count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PAR_NEW),
+                JdkUtil.LogEventType.PAR_NEW.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
+                JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS),
+                Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
 
     /**
@@ -242,15 +259,19 @@ class TestJvmRun {
         GcManager gcManager = new GcManager();
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(kilobytes(1100288),jvmRun.getMaxYoungSpace(),"Max young space not calculated correctly.");
-        assertEquals(kilobytes(1100288),jvmRun.getMaxOldSpace(),"Max old space not calculated correctly.");
-        assertEquals((long) 1,jvmRun.getNewRatio(),"NewRatio not calculated correctly.");
-        assertEquals(3,jvmRun.getEventTypes().size(),"Event count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN), JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertEquals(0,jvmRun.getUnidentifiedLogLines().size(),"Should not be any unidentified log lines.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW), "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME), "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_NEW_RATIO_INVERTED), Analysis.INFO_NEW_RATIO_INVERTED + " analysis not identified.");
+        assertEquals(kilobytes(1100288), jvmRun.getMaxYoungSpace(), "Max young space not calculated correctly.");
+        assertEquals(kilobytes(1100288), jvmRun.getMaxOldSpace(), "Max old space not calculated correctly.");
+        assertEquals((long) 1, jvmRun.getNewRatio(), "NewRatio not calculated correctly.");
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(0, jvmRun.getUnidentifiedLogLines().size(), "Should not be any unidentified log lines.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
+                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME),
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_NEW_RATIO_INVERTED),
+                Analysis.INFO_NEW_RATIO_INVERTED + " analysis not identified.");
     }
 
     /**
@@ -264,11 +285,15 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2,jvmRun.getEventTypes().size(),"Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN), JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED), Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED + " analysis not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED), Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED + " analysis not identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD),
+                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED),
+                Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED),
+                Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED + " analysis not identified.");
     }
 
     /**
@@ -282,8 +307,9 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2,jvmRun.getEventTypes().size(),"Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT), "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
     }
 
     /**
@@ -297,9 +323,11 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2,jvmRun.getEventTypes().size(),"Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT), "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME), "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME),
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
     }
 
     @Test
@@ -309,9 +337,11 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1,jvmRun.getEventTypes().size(),"Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW), "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME), Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
+                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME),
+                Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
 
     }
 
@@ -333,8 +363,9 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, calendar.getTime());
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1,jvmRun.getEventTypes().size(),"Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW), "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
+                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
     }
 
     @Test
@@ -344,24 +375,27 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE), JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME), JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " not identified.");
-        assertEquals(2,jvmRun.getEventTypes().size(),"GC Event count not correct.");
-        assertEquals((long) 62,jvmRun.getTotalGcPause(),"GC pause total not correct.");
-        assertEquals((long) 2192,jvmRun.getFirstGcEvent().getTimestamp(),"GC first timestamp not correct.");
-        assertEquals((long) 2847,jvmRun.getLastGcEvent().getTimestamp(),"GC last timestamp not correct.");
-        assertEquals(41453,jvmRun.getLastGcEvent().getDuration(),"GC last duration not correct.");
-        assertEquals(6,jvmRun.getStoppedTimeEventCount(),"Stopped Time event count not correct.");
-        assertEquals(1064,jvmRun.getTotalStoppedTime(),"Stopped time total not correct.");
-        assertEquals((long) 964,jvmRun.getFirstStoppedEvent().getTimestamp(),"Stopped first timestamp not correct.");
-        assertEquals((long) 3884,jvmRun.getLastStoppedEvent().getTimestamp(),"Stopped last timestamp not correct.");
-        assertEquals(1000688,jvmRun.getLastStoppedEvent().getDuration(),"Stopped last duration not correct.");
-        assertEquals((long) 964,jvmRun.getFirstEvent().getTimestamp(),"JVM first event timestamp not correct.");
-        assertEquals((long) 3884,jvmRun.getLastEvent().getTimestamp(),"JVM last event timestamp not correct.");
-        assertEquals((long) 4884,jvmRun.getJvmRunDuration(),"JVM run duration not correct.");
-        assertEquals((long) 99,jvmRun.getGcThroughput(),"GC throughput not correct.");
-        assertEquals((long) 78,jvmRun.getStoppedTimeThroughput(),"Stopped time throughput not correct.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO), Analysis.WARN_GC_STOPPED_RATIO + " analysis not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
+                JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME),
+                JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " not identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "GC Event count not correct.");
+        assertEquals((long) 62, jvmRun.getTotalGcPause(), "GC pause total not correct.");
+        assertEquals((long) 2192, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
+        assertEquals((long) 2847, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
+        assertEquals(41453, jvmRun.getLastGcEvent().getDuration(), "GC last duration not correct.");
+        assertEquals(6, jvmRun.getStoppedTimeEventCount(), "Stopped Time event count not correct.");
+        assertEquals(1064, jvmRun.getTotalStoppedTime(), "Stopped time total not correct.");
+        assertEquals((long) 964, jvmRun.getFirstStoppedEvent().getTimestamp(), "Stopped first timestamp not correct.");
+        assertEquals((long) 3884, jvmRun.getLastStoppedEvent().getTimestamp(), "Stopped last timestamp not correct.");
+        assertEquals(1000688, jvmRun.getLastStoppedEvent().getDuration(), "Stopped last duration not correct.");
+        assertEquals((long) 964, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
+        assertEquals((long) 3884, jvmRun.getLastEvent().getTimestamp(), "JVM last event timestamp not correct.");
+        assertEquals((long) 4884, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
+        assertEquals((long) 99, jvmRun.getGcThroughput(), "GC throughput not correct.");
+        assertEquals((long) 78, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO),
+                Analysis.WARN_GC_STOPPED_RATIO + " analysis not identified.");
     }
 
     @Test
@@ -371,27 +405,33 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE), JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT), JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK), JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_CLEANUP), JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_APPLICATION_STOPPED_TIME), JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not identified.");
-        assertEquals(5,jvmRun.getEventTypes().size(),"GC Event count not correct.");
-        assertEquals((long) 24,jvmRun.getTotalGcPause(),"GC pause total not correct.");
-        assertEquals((long) 53,jvmRun.getFirstGcEvent().getTimestamp(),"GC first timestamp not correct.");
-        assertEquals((long) 167,jvmRun.getLastGcEvent().getTimestamp(),"GC last timestamp not correct.");
-        assertEquals(362,jvmRun.getLastGcEvent().getDuration(),"GC last duration not correct.");
-        assertEquals(12,jvmRun.getStoppedTimeEventCount(),"Stopped Time event count not correct.");
-        assertEquals(25,jvmRun.getTotalStoppedTime(),"Stopped time total not correct.");
-        assertEquals((long) 29,jvmRun.getFirstStoppedEvent().getTimestamp(),"Stopped first timestamp not correct.");
-        assertEquals((long) 167,jvmRun.getLastStoppedEvent().getTimestamp(),"Stopped last timestamp not correct.");
-        assertEquals(418,jvmRun.getLastStoppedEvent().getDuration(),"Stopped last duration not correct.");
-        assertEquals((long) 29,jvmRun.getFirstEvent().getTimestamp(),"JVM first event timestamp not correct.");
-        assertEquals((long) 167,jvmRun.getLastEvent().getTimestamp(),"JVM last event timestamp not correct.");
-        assertEquals((long) 167,jvmRun.getJvmRunDuration(),"JVM run duration not correct.");
-        assertEquals((long) 86,jvmRun.getGcThroughput(),"GC throughput not correct.");
-        assertEquals((long) 85,jvmRun.getStoppedTimeThroughput(),"Stopped time throughput not correct.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO), Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
+                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK),
+                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_CLEANUP),
+                JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_APPLICATION_STOPPED_TIME),
+                JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not identified.");
+        assertEquals(5, jvmRun.getEventTypes().size(), "GC Event count not correct.");
+        assertEquals((long) 24, jvmRun.getTotalGcPause(), "GC pause total not correct.");
+        assertEquals((long) 53, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
+        assertEquals((long) 167, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
+        assertEquals(362, jvmRun.getLastGcEvent().getDuration(), "GC last duration not correct.");
+        assertEquals(12, jvmRun.getStoppedTimeEventCount(), "Stopped Time event count not correct.");
+        assertEquals(25, jvmRun.getTotalStoppedTime(), "Stopped time total not correct.");
+        assertEquals((long) 29, jvmRun.getFirstStoppedEvent().getTimestamp(), "Stopped first timestamp not correct.");
+        assertEquals((long) 167, jvmRun.getLastStoppedEvent().getTimestamp(), "Stopped last timestamp not correct.");
+        assertEquals(418, jvmRun.getLastStoppedEvent().getDuration(), "Stopped last duration not correct.");
+        assertEquals((long) 29, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
+        assertEquals((long) 167, jvmRun.getLastEvent().getTimestamp(), "JVM last event timestamp not correct.");
+        assertEquals((long) 167, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
+        assertEquals((long) 86, jvmRun.getGcThroughput(), "GC throughput not correct.");
+        assertEquals((long) 85, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO),
+                Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
     }
 
     /**
@@ -405,11 +445,15 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2,jvmRun.getEventTypes().size(),"Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE), JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD), JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL), Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL + " analysis not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL), Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis not identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE),
+                JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD),
+                JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL),
+                Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL),
+                Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis not identified.");
     }
 
     /**
@@ -423,12 +467,17 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN), JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertEquals(3,jvmRun.getEventTypes().size(),"Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS), JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY), JdkUtil.LogEventType.HEADER_MEMORY.toString() + " not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION), JdkUtil.LogEventType.HEADER_VERSION.toString() + " not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_DISABLED), Analysis.WARN_EXPLICIT_GC_DISABLED + " analysis not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS),
+                JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY),
+                JdkUtil.LogEventType.HEADER_MEMORY.toString() + " not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION),
+                JdkUtil.LogEventType.HEADER_VERSION.toString() + " not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_DISABLED),
+                Analysis.WARN_EXPLICIT_GC_DISABLED + " analysis not identified.");
     }
 
     /**
@@ -442,8 +491,9 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1,jvmRun.getEventTypes().size(),"Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW), "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
+                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
     }
 
     /**
@@ -456,20 +506,20 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals((long) 2097,jvmRun.getTotalGcPause(),"GC pause total not correct.");
-        assertEquals((long) 16517,jvmRun.getFirstGcEvent().getTimestamp(),"GC first timestamp not correct.");
-        assertEquals((long) 31432,jvmRun.getLastGcEvent().getTimestamp(),"GC last timestamp not correct.");
-        assertEquals(271019,jvmRun.getLastGcEvent().getDuration(),"GC last duration not correct.");
-        assertEquals(1830,jvmRun.getTotalStoppedTime(),"Stopped time total not correct.");
-        assertEquals((long) 0,jvmRun.getFirstStoppedEvent().getTimestamp(),"Stopped first timestamp not correct.");
-        assertEquals((long) 0,jvmRun.getLastStoppedEvent().getTimestamp(),"Stopped last timestamp not correct.");
-        assertEquals(50,jvmRun.getLastStoppedEvent().getDuration(),"Stopped last duration not correct.");
-        assertEquals((long) 16517,jvmRun.getFirstEvent().getTimestamp(),"JVM first event timestamp not correct.");
-        assertEquals((long) 31432,jvmRun.getLastEvent().getTimestamp(),"JVM last event timestamp not correct.");
-        assertEquals((long) 31703,jvmRun.getJvmRunDuration(),"JVM run duration not correct.");
-        assertEquals((long) 93,jvmRun.getGcThroughput(),"GC throughput not correct.");
-        assertEquals((long) 94,jvmRun.getStoppedTimeThroughput(),"Stopped time throughput not correct.");
-        assertEquals((long) 0,jvmRun.getInvertedParallelismCount(),"Inverted parallelism event count not correct.");
+        assertEquals((long) 2097, jvmRun.getTotalGcPause(), "GC pause total not correct.");
+        assertEquals((long) 16517, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
+        assertEquals((long) 31432, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
+        assertEquals(271019, jvmRun.getLastGcEvent().getDuration(), "GC last duration not correct.");
+        assertEquals(1830, jvmRun.getTotalStoppedTime(), "Stopped time total not correct.");
+        assertEquals((long) 0, jvmRun.getFirstStoppedEvent().getTimestamp(), "Stopped first timestamp not correct.");
+        assertEquals((long) 0, jvmRun.getLastStoppedEvent().getTimestamp(), "Stopped last timestamp not correct.");
+        assertEquals(50, jvmRun.getLastStoppedEvent().getDuration(), "Stopped last duration not correct.");
+        assertEquals((long) 16517, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
+        assertEquals((long) 31432, jvmRun.getLastEvent().getTimestamp(), "JVM last event timestamp not correct.");
+        assertEquals((long) 31703, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
+        assertEquals((long) 93, jvmRun.getGcThroughput(), "GC throughput not correct.");
+        assertEquals((long) 94, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
+        assertEquals((long) 0, jvmRun.getInvertedParallelismCount(), "Inverted parallelism event count not correct.");
     }
 
     /**
@@ -483,23 +533,26 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2,jvmRun.getEventTypes().size(),"GC event type count not correct.");
-        assertEquals(2,jvmRun.getBlockingEventCount(),"GC blocking event count not correct.");
-        assertEquals((long) 62,jvmRun.getTotalGcPause(),"GC pause total not correct.");
-        assertEquals((long) 1002192,jvmRun.getFirstGcEvent().getTimestamp(),"GC first timestamp not correct.");
-        assertEquals((long) 1002847,jvmRun.getLastGcEvent().getTimestamp(),"GC last timestamp not correct.");
-        assertEquals(41453,jvmRun.getLastGcEvent().getDuration(),"GC last duration not correct.");
-        assertEquals(6,jvmRun.getStoppedTimeEventCount(),"Stopped Time event count not correct.");
-        assertEquals(1064,jvmRun.getTotalStoppedTime(),"Stopped time total not correct.");
-        assertEquals((long) 1000964,jvmRun.getFirstStoppedEvent().getTimestamp(),"Stopped first timestamp not correct.");
-        assertEquals((long) 1003884,jvmRun.getLastStoppedEvent().getTimestamp(),"Stopped last timestamp not correct.");
-        assertEquals(1000688,jvmRun.getLastStoppedEvent().getDuration(),"Stopped last duration not correct.");
-        assertEquals((long) 1000964,jvmRun.getFirstEvent().getTimestamp(),"JVM first event timestamp not correct.");
-        assertEquals((long) 1003884,jvmRun.getLastEvent().getTimestamp(),"JVM last event timestamp not correct.");
-        assertEquals((long) 3920,jvmRun.getJvmRunDuration(),"JVM run duration not correct.");
-        assertEquals((long) 98,jvmRun.getGcThroughput(),"GC throughput not correct.");
-        assertEquals((long) 73,jvmRun.getStoppedTimeThroughput(),"Stopped time throughput not correct.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO), Analysis.WARN_GC_STOPPED_RATIO + " analysis not identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "GC event type count not correct.");
+        assertEquals(2, jvmRun.getBlockingEventCount(), "GC blocking event count not correct.");
+        assertEquals((long) 62, jvmRun.getTotalGcPause(), "GC pause total not correct.");
+        assertEquals((long) 1002192, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
+        assertEquals((long) 1002847, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
+        assertEquals(41453, jvmRun.getLastGcEvent().getDuration(), "GC last duration not correct.");
+        assertEquals(6, jvmRun.getStoppedTimeEventCount(), "Stopped Time event count not correct.");
+        assertEquals(1064, jvmRun.getTotalStoppedTime(), "Stopped time total not correct.");
+        assertEquals((long) 1000964, jvmRun.getFirstStoppedEvent().getTimestamp(),
+                "Stopped first timestamp not correct.");
+        assertEquals((long) 1003884, jvmRun.getLastStoppedEvent().getTimestamp(),
+                "Stopped last timestamp not correct.");
+        assertEquals(1000688, jvmRun.getLastStoppedEvent().getDuration(), "Stopped last duration not correct.");
+        assertEquals((long) 1000964, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
+        assertEquals((long) 1003884, jvmRun.getLastEvent().getTimestamp(), "JVM last event timestamp not correct.");
+        assertEquals((long) 3920, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
+        assertEquals((long) 98, jvmRun.getGcThroughput(), "GC throughput not correct.");
+        assertEquals((long) 73, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO),
+                Analysis.WARN_GC_STOPPED_RATIO + " analysis not identified.");
     }
 
     /**
@@ -512,24 +565,25 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3,jvmRun.getEventTypes().size(),"GC event type count not correct.");
-        assertEquals(160,jvmRun.getBlockingEventCount(),"GC blocking event count not correct.");
-        assertEquals((long) 2568199,jvmRun.getTotalGcPause(),"GC pause total not correct.");
-        assertEquals((long) 4364,jvmRun.getFirstGcEvent().getTimestamp(),"GC first timestamp not correct.");
-        assertEquals((long) 2801954,jvmRun.getLastGcEvent().getTimestamp(),"GC last timestamp not correct.");
-        assertEquals(25963804,jvmRun.getLastGcEvent().getDuration(),"GC last duration not correct.");
-        assertEquals(151,jvmRun.getStoppedTimeEventCount(),"Stopped Time event count not correct.");
-        assertEquals(2721420,jvmRun.getTotalStoppedTime(),"Stopped time total not correct.");
-        assertEquals((long) 0,jvmRun.getFirstStoppedEvent().getTimestamp(),"Stopped first timestamp not correct.");
-        assertEquals((long) 0,jvmRun.getLastStoppedEvent().getTimestamp(),"Stopped last timestamp not correct.");
-        assertEquals(36651675,jvmRun.getLastStoppedEvent().getDuration(),"Stopped last duration not correct.");
-        assertEquals((long) 4364,jvmRun.getFirstEvent().getTimestamp(),"JVM first event timestamp not correct.");
-        assertEquals((long) 2801954,jvmRun.getLastEvent().getTimestamp(),"JVM last timestamp not correct.");
-        assertEquals((long) 2827917,jvmRun.getJvmRunDuration(),"JVM run duration not correct.");
-        assertEquals((long) 9,jvmRun.getGcThroughput(),"GC throughput not correct.");
-        assertEquals((long) 4,jvmRun.getStoppedTimeThroughput(),"Stopped time throughput not correct.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO), Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
-        assertEquals((long) 0,jvmRun.getInvertedParallelismCount(),"Inverted parallelism event count not correct.");
+        assertEquals(3, jvmRun.getEventTypes().size(), "GC event type count not correct.");
+        assertEquals(160, jvmRun.getBlockingEventCount(), "GC blocking event count not correct.");
+        assertEquals((long) 2568199, jvmRun.getTotalGcPause(), "GC pause total not correct.");
+        assertEquals((long) 4364, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
+        assertEquals((long) 2801954, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
+        assertEquals(25963804, jvmRun.getLastGcEvent().getDuration(), "GC last duration not correct.");
+        assertEquals(151, jvmRun.getStoppedTimeEventCount(), "Stopped Time event count not correct.");
+        assertEquals(2721420, jvmRun.getTotalStoppedTime(), "Stopped time total not correct.");
+        assertEquals((long) 0, jvmRun.getFirstStoppedEvent().getTimestamp(), "Stopped first timestamp not correct.");
+        assertEquals((long) 0, jvmRun.getLastStoppedEvent().getTimestamp(), "Stopped last timestamp not correct.");
+        assertEquals(36651675, jvmRun.getLastStoppedEvent().getDuration(), "Stopped last duration not correct.");
+        assertEquals((long) 4364, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
+        assertEquals((long) 2801954, jvmRun.getLastEvent().getTimestamp(), "JVM last timestamp not correct.");
+        assertEquals((long) 2827917, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
+        assertEquals((long) 9, jvmRun.getGcThroughput(), "GC throughput not correct.");
+        assertEquals((long) 4, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO),
+                Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
+        assertEquals((long) 0, jvmRun.getInvertedParallelismCount(), "Inverted parallelism event count not correct.");
     }
 
     /**
@@ -543,7 +597,7 @@ class TestJvmRun {
         gcManager.store(preprocessedFile, false);
         gcManager.store(testFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals((long) 0,jvmRun.getStoppedTimeThroughput(),"Stopped time throughput not correct.");
+        assertEquals((long) 0, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
     }
 
     /**
@@ -557,7 +611,8 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME), Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME),
+                Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
     }
 
 }

@@ -39,53 +39,61 @@ class TestUsingParallelEvent {
     @Test
     void testLine() {
         String logLine = "[0.002s][info][gc] Using Parallel";
-        assertTrue(UsingParallelEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
+        assertTrue(UsingParallelEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
         UsingParallelEvent event = new UsingParallelEvent(logLine);
-        assertEquals((long) 2,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals((long) 2, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[0.002s][info][gc] Using Parallel";
-        assertEquals(JdkUtil.LogEventType.USING_PARALLEL,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.USING_PARALLEL + "not identified.");
+        assertEquals(JdkUtil.LogEventType.USING_PARALLEL, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.USING_PARALLEL + "not identified.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.002s][info][gc] Using Parallel";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingParallelEvent, JdkUtil.LogEventType.USING_PARALLEL.toString() + " not parsed.");
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingParallelEvent,
+                JdkUtil.LogEventType.USING_PARALLEL.toString() + " not parsed.");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "[0.002s][info][gc] Using Parallel";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.USING_PARALLEL.toString() + " incorrectly indentified as blocking.");
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.USING_PARALLEL.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_PARALLEL), JdkUtil.LogEventType.USING_PARALLEL.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_PARALLEL),
+                JdkUtil.LogEventType.USING_PARALLEL.toString() + " not indentified as reportable.");
     }
 
     @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.USING_PARALLEL);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.USING_PARALLEL.toString() + " not indentified as unified.");
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.USING_PARALLEL.toString() + " not indentified as unified.");
     }
 
     @Test
     void testLineWithSpaces() {
         String logLine = "[0.002s][info][gc] Using Parallel     ";
-        assertTrue(UsingParallelEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
+        assertTrue(UsingParallelEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
     }
 
     @Test
     void testLineUptimemillsis() {
         String logLine = "[18ms][info][gc] Using Parallel";
-        assertTrue(UsingParallelEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
+        assertTrue(UsingParallelEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
         UsingParallelEvent event = new UsingParallelEvent(logLine);
-        assertEquals((long) 18,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals((long) 18, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     /**
@@ -98,8 +106,10 @@ class TestUsingParallelEvent {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1,jvmRun.getEventTypes().size(),"Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN), JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_PARALLEL), "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_PARALLEL),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
     }
 }

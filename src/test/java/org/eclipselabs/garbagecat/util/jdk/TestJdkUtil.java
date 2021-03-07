@@ -50,7 +50,8 @@ class TestJdkUtil {
                 + "89399K->11655K(907328K), 0.0387074 secs]";
         String logLineConverted = "1966-08-18 19:22:04,201: [GC 1966-08-18 19:22:04,202: "
                 + "[ParNew: 86199K->8454K(91712K), 0.0375060 secs] 89399K->11655K(907328K), 0.0387074 secs]";
-        assertEquals(logLineConverted,JdkUtil.convertLogEntryTimestampsToDateStamp(logLine, calendar.getTime()),"Timestamps not converted to date/time correctly");
+        assertEquals(logLineConverted, JdkUtil.convertLogEntryTimestampsToDateStamp(logLine, calendar.getTime()),
+                "Timestamps not converted to date/time correctly");
     }
 
     @Test
@@ -69,12 +70,14 @@ class TestJdkUtil {
 
         // Test boundary
         int throughputThreshold = 50;
-        assertFalse(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold), "Event incorrectly flagged as a bottleneck.");
+        assertFalse(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
+                "Event incorrectly flagged as a bottleneck.");
 
         // Test bottleneck
         duration2 = 501000;
         gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
-        assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold), "Event should have been flagged as a bottleneck.");
+        assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
+                "Event should have been flagged as a bottleneck.");
 
     }
 
@@ -94,11 +97,13 @@ class TestJdkUtil {
 
         // Test boundary
         int throughputThreshold = 41;
-        assertFalse(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold), "Event incorrectly flagged as a bottleneck.");
+        assertFalse(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
+                "Event incorrectly flagged as a bottleneck.");
 
         // Test boundary
         throughputThreshold = 42;
-        assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold), "Event should have been flagged as a bottleneck.");
+        assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
+                "Event should have been flagged as a bottleneck.");
     }
 
     @Test
@@ -111,7 +116,8 @@ class TestJdkUtil {
         BlockingEvent gcEvent = new ParNewEvent(logLine);
         // Test boundary
         int throughputThreshold = 90;
-        assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold), "Event should have been flagged as a bottleneck.");
+        assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
+                "Event should have been flagged as a bottleneck.");
     }
 
     @Test
@@ -130,12 +136,14 @@ class TestJdkUtil {
         // Test boundary
         int throughputThreshold = 100;
 
-        assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold), "Event should have been flagged as a bottleneck.");
+        assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
+                "Event should have been flagged as a bottleneck.");
 
         // Decrease timestamp by 1 ms to 2nd event start before 1st event finishes
         timestamp2 = 10999L;
         gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
-        assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold), "Event should have been flagged as a bottleneck.");
+        assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
+                "Event should have been flagged as a bottleneck.");
     }
 
     /**
@@ -173,26 +181,27 @@ class TestJdkUtil {
         // Test boundary
         final int throughputThreshold = 100;
 
-		// we cannot use lambdas while source level is not at least 1.8 (and we cannot
-		// use effective final)
+        // we cannot use lambdas while source level is not at least 1.8 (and we cannot
+        // use effective final)
         assertThrows(TimeWarpException.class, new Executable() {
-			@Override
-			public void execute() throws Throwable {
-				JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold);				
-			}
-		});
+            @Override
+            public void execute() throws Throwable {
+                JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold);
+            }
+        });
     }
 
     @Test
     void testGetOptionValue() {
-        assertEquals("256k",JdkUtil.getOptionValue("-Xss256k"),"Option value not correct.");
-        assertEquals("2G",JdkUtil.getOptionValue("-Xmx2G"),"Option value not correct.");
-        assertEquals("128M",JdkUtil.getOptionValue("-XX:MaxPermSize=128M"),"Option value not correct.");
-        assertEquals("3865051136",JdkUtil.getOptionValue("-XX:InitialHeapSize=3865051136"),"Option value not correct.");
-        assertEquals("7730102272",JdkUtil.getOptionValue("-XX:MaxHeapSize=7730102272"),"Option value not correct.");
-        assertEquals("268435456",JdkUtil.getOptionValue("-XX:MaxPermSize=268435456"),"Option value not correct.");
-        assertEquals("67108864",JdkUtil.getOptionValue("-XX:PermSize=67108864"),"Option value not correct.");
-        assertNull(JdkUtil.getOptionValue(null),"Option value not correct.");
+        assertEquals("256k", JdkUtil.getOptionValue("-Xss256k"), "Option value not correct.");
+        assertEquals("2G", JdkUtil.getOptionValue("-Xmx2G"), "Option value not correct.");
+        assertEquals("128M", JdkUtil.getOptionValue("-XX:MaxPermSize=128M"), "Option value not correct.");
+        assertEquals("3865051136", JdkUtil.getOptionValue("-XX:InitialHeapSize=3865051136"),
+                "Option value not correct.");
+        assertEquals("7730102272", JdkUtil.getOptionValue("-XX:MaxHeapSize=7730102272"), "Option value not correct.");
+        assertEquals("268435456", JdkUtil.getOptionValue("-XX:MaxPermSize=268435456"), "Option value not correct.");
+        assertEquals("67108864", JdkUtil.getOptionValue("-XX:PermSize=67108864"), "Option value not correct.");
+        assertNull(JdkUtil.getOptionValue(null), "Option value not correct.");
     }
 
     @Test
@@ -212,68 +221,77 @@ class TestJdkUtil {
     @Test
     void testConvertOptionSizeToBytesNoUnits() {
         String optionSize = "45097156608";
-        assertEquals(bytes(45097156608L),Memory.fromOptionSize(optionSize),"'" + optionSize + "' not converted to expected bytes.");
+        assertEquals(bytes(45097156608L), Memory.fromOptionSize(optionSize),
+                "'" + optionSize + "' not converted to expected bytes.");
     }
 
     @Test
     void testConvertOptionSizeToBytesLowercaseB() {
         String optionSize = "12345678b";
-        assertEquals(bytes(12345678),Memory.fromOptionSize(optionSize),"'" + optionSize + "' not converted to expected bytes.");
+        assertEquals(bytes(12345678), Memory.fromOptionSize(optionSize),
+                "'" + optionSize + "' not converted to expected bytes.");
     }
 
     @Test
     void testConvertOptionSizeToBytesUppercaseB() {
         String optionSize = "12345678B";
-        assertEquals(bytes(12345678),Memory.fromOptionSize(optionSize),"'" + optionSize + "' not converted to expected bytes.");
+        assertEquals(bytes(12345678), Memory.fromOptionSize(optionSize),
+                "'" + optionSize + "' not converted to expected bytes.");
     }
 
     @Test
     void testConvertOptionSizeToBytesLowercaseK() {
         String optionSize = "1k";
-        assertEquals(bytes(1024),Memory.fromOptionSize(optionSize),"'" + optionSize + "' not converted to expected bytes.");
+        assertEquals(bytes(1024), Memory.fromOptionSize(optionSize),
+                "'" + optionSize + "' not converted to expected bytes.");
     }
 
     @Test
     void testConvertOptionSizeToBytesUppercaseK() {
         String optionSize = "1K";
-        assertEquals(bytes(1024),Memory.fromOptionSize(optionSize),"'" + optionSize + "' not converted to expected bytes.");
+        assertEquals(bytes(1024), Memory.fromOptionSize(optionSize),
+                "'" + optionSize + "' not converted to expected bytes.");
     }
 
     @Test
     void testConvertOptionSizeToBytesLowercaseM() {
         String optionSize = "1m";
-        assertEquals(bytes(1048576),Memory.fromOptionSize(optionSize),"'" + optionSize + "' not converted to expected bytes.");
+        assertEquals(bytes(1048576), Memory.fromOptionSize(optionSize),
+                "'" + optionSize + "' not converted to expected bytes.");
     }
 
     @Test
     void testConvertOptionSizeToBytesUppercaseM() {
         String optionSize = "1M";
-        assertEquals(bytes(1048576),Memory.fromOptionSize(optionSize),"'" + optionSize + "' not converted to expected bytes.");
+        assertEquals(bytes(1048576), Memory.fromOptionSize(optionSize),
+                "'" + optionSize + "' not converted to expected bytes.");
     }
 
     @Test
     void testConvertOptionSizeToBytesLowercaseG() {
         String optionSize = "1g";
-        assertEquals(bytes(1073741824),Memory.fromOptionSize(optionSize),"'" + optionSize + "' not converted to expected bytes.");
+        assertEquals(bytes(1073741824), Memory.fromOptionSize(optionSize),
+                "'" + optionSize + "' not converted to expected bytes.");
     }
 
     @Test
     void testConvertOptionSizeToBytesUppercaseG() {
         String optionSize = "1G";
-        assertEquals(bytes(1073741824),Memory.fromOptionSize(optionSize),"'" + optionSize + "' not converted to expected bytes.");
+        assertEquals(bytes(1073741824), Memory.fromOptionSize(optionSize),
+                "'" + optionSize + "' not converted to expected bytes.");
     }
 
     @Test
     void testDateStampBeginning() {
         String logLine = "2017-01-30T10:06:50.070+0400: 2232356.357: [GC [PSYoungGen: 242595K->5980K(1324544K)] "
                 + "1264815K->1037853K(4121088K), 0.0173240 secs] [Times: user=0.08 sys=0.00, real=0.02 secs]";
-        assertEquals("2017-01-30T10:06:50.070+0400",JdkUtil.getDateStamp(logLine),"Datestamp not parsed correctly.");
+        assertEquals("2017-01-30T10:06:50.070+0400", JdkUtil.getDateStamp(logLine), "Datestamp not parsed correctly.");
     }
 
     @Test
     void testDateStampMiddle() {
         String logLine = "85030.389: [Full GC 85030.390: [CMS2012-06-20T12:29:58.094+0200: 85030.443: "
                 + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
-        assertEquals("2012-06-20T12:29:58.094+0200",JdkUtil.getDateStamp(logLine),"Datestamp not parsed correctly.");
+        assertEquals("2012-06-20T12:29:58.094+0200", JdkUtil.getDateStamp(logLine), "Datestamp not parsed correctly.");
     }
 }

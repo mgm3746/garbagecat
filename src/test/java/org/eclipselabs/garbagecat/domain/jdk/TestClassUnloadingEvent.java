@@ -37,31 +37,36 @@ class TestClassUnloadingEvent {
     @Test
     void testNotBlocking() {
         String logLine = " [Unloading class $Proxy225]";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as blocking.");
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testReportable() {
         String logLine = " [Unloading class $Proxy225]";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as reportable.");
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
     void testLine() {
         String logLine = "[Unloading class $Proxy61]";
-        assertTrue(ClassUnloadingEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
+        assertTrue(ClassUnloadingEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
     }
 
     @Test
     void testLineWithUnderline() {
         String logLine = "[Unloading class MyClass_1234153487841_717989]";
-        assertTrue(ClassUnloadingEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
+        assertTrue(ClassUnloadingEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
     }
 
     @Test
     void testLogLineWithBeginningSpace() {
         String logLine = " [Unloading class $Proxy225]";
-        assertTrue(ClassUnloadingEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
+        assertTrue(ClassUnloadingEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
     }
 
     /**
@@ -75,9 +80,12 @@ class TestClassUnloadingEvent {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN), JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertEquals(1,jvmRun.getEventTypes().size(),"Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD), JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING), Analysis.WARN_TRACE_CLASS_UNLOADING + " analysis not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD),
+                JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING),
+                Analysis.WARN_TRACE_CLASS_UNLOADING + " analysis not identified.");
     }
 }

@@ -27,10 +27,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
  * 
  */
 public final class UnifiedUtil {
-	
-	private UnifiedUtil() {
-		super();
-	}
+
+    private UnifiedUtil() {
+        super();
+    }
 
     /**
      * @param eventTypes
@@ -39,36 +39,36 @@ public final class UnifiedUtil {
      */
     public static final boolean isUnifiedLogging(List<LogEventType> eventTypes) {
         for (LogEventType eventType : eventTypes) {
-		    switch (eventType) {
-		    case HEAP_ADDRESS:
-		    case HEAP_REGION_SIZE:
-		    case UNIFIED_APPLICATION_STOPPED_TIME:
-		    case UNIFIED_BLANK_LINE:
-		    case UNIFIED_CONCURRENT:
-		    case UNIFIED_CMS_INITIAL_MARK:
-		    case UNIFIED_G1_CLEANUP:
-		    case UNIFIED_G1_INFO:
-		    case UNIFIED_G1_MIXED_PAUSE:
-		    case UNIFIED_G1_YOUNG_INITIAL_MARK:
-		    case UNIFIED_G1_YOUNG_PAUSE:
-		    case UNIFIED_G1_YOUNG_PREPARE_MIXED:
-		    case UNIFIED_OLD:
-		    case UNIFIED_REMARK:
-		    case UNIFIED_PARALLEL_COMPACTING_OLD:
-		    case UNIFIED_PARALLEL_SCAVENGE:
-		    case UNIFIED_PAR_NEW:
-		    case UNIFIED_SERIAL_NEW:
-		    case UNIFIED_SERIAL_OLD:
-		    case UNIFIED_YOUNG:
-		    case USING_CMS:
-		    case USING_G1:
-		    case USING_SHENANDOAH:
-		    case USING_PARALLEL:
-		    case USING_SERIAL:
-		        return true;
-		    default:
-		    }
-		}
+            switch (eventType) {
+            case HEAP_ADDRESS:
+            case HEAP_REGION_SIZE:
+            case UNIFIED_APPLICATION_STOPPED_TIME:
+            case UNIFIED_BLANK_LINE:
+            case UNIFIED_CONCURRENT:
+            case UNIFIED_CMS_INITIAL_MARK:
+            case UNIFIED_G1_CLEANUP:
+            case UNIFIED_G1_INFO:
+            case UNIFIED_G1_MIXED_PAUSE:
+            case UNIFIED_G1_YOUNG_INITIAL_MARK:
+            case UNIFIED_G1_YOUNG_PAUSE:
+            case UNIFIED_G1_YOUNG_PREPARE_MIXED:
+            case UNIFIED_OLD:
+            case UNIFIED_REMARK:
+            case UNIFIED_PARALLEL_COMPACTING_OLD:
+            case UNIFIED_PARALLEL_SCAVENGE:
+            case UNIFIED_PAR_NEW:
+            case UNIFIED_SERIAL_NEW:
+            case UNIFIED_SERIAL_OLD:
+            case UNIFIED_YOUNG:
+            case USING_CMS:
+            case USING_G1:
+            case USING_SHENANDOAH:
+            case USING_PARALLEL:
+            case USING_SERIAL:
+                return true;
+            default:
+            }
+        }
         return false;
     }
 

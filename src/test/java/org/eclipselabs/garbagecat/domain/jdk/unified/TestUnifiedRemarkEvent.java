@@ -32,66 +32,75 @@ class TestUnifiedRemarkEvent {
     @Test
     void testLogLine() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
-        assertTrue(UnifiedRemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");
+        assertTrue(UnifiedRemarkEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");
         UnifiedRemarkEvent event = new UnifiedRemarkEvent(logLine);
-        assertEquals((long) (7944 - 1),event.getTimestamp(),"Time stamp not parsed correctly.");
-        assertEquals(1767,event.getDuration(),"Duration not parsed correctly.");
+        assertEquals((long) (7944 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(1767, event.getDuration(), "Duration not parsed correctly.");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_REMARK,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_REMARK + "not identified.");
+        assertEquals(JdkUtil.LogEventType.UNIFIED_REMARK, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_REMARK + "not identified.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedRemarkEvent, JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not parsed.");
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedRemarkEvent,
+                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not parsed.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as blocking.");
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as blocking.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_REMARK), JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_REMARK),
+                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as reportable.");
     }
 
     @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_REMARK);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as unified.");
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as unified.");
     }
 
     @Test
     void testLogLineWhitespaceAtEnd() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms           ";
-        assertTrue(UnifiedRemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");
+        assertTrue(UnifiedRemarkEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");
     }
 
     @Test
     void testLogLinePreprocessedWithTimesData() {
         String logLine = "[16.053s][info][gc            ] GC(969) Pause Remark 29M->29M(46M) 2.328ms "
                 + "User=0.01s Sys=0.00s Real=0.00s";
-        assertTrue(UnifiedRemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");
+        assertTrue(UnifiedRemarkEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");
         UnifiedRemarkEvent event = new UnifiedRemarkEvent(logLine);
-        assertEquals((long) (16053 - 2),event.getTimestamp(),"Time stamp not parsed correctly.");
-        assertEquals(2328,event.getDuration(),"Duration not parsed correctly.");
-        assertEquals(1,event.getTimeUser(),"User time not parsed correctly.");
-        assertEquals(0,event.getTimeReal(),"Real time not parsed correctly.");
-        assertEquals(Integer.MAX_VALUE,event.getParallelism(),"Parallelism not calculated correctly.");
+        assertEquals((long) (16053 - 2), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(2328, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(Integer.MAX_VALUE, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
     @Test
     void testLogLinePreprocessedWithTimesData12SpacesAfterGc() {
         String logLine = "[0.091s][info][gc           ] GC(3) Pause Remark 0M->0M(2M) 0.414ms User=0.00s "
                 + "Sys=0.00s Real=0.00s";
-        assertTrue(UnifiedRemarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");
+        assertTrue(UnifiedRemarkEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");
     }
 
 }

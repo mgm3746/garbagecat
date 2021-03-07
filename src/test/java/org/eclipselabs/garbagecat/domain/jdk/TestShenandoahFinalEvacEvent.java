@@ -33,37 +33,42 @@ class TestShenandoahFinalEvacEvent {
     @Test
     void testLogLineJdk8() {
         String logLine = "2020-03-10T08:03:46.251-0400: 17.313: [Pause Final Evac, 0.009 ms]";
-        assertTrue(ShenandoahFinalEvacEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
+        assertTrue(ShenandoahFinalEvacEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
         ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
-        assertEquals((long) 17313,event.getTimestamp(),"Time stamp not parsed correctly.");
-        assertEquals(9,event.getDuration(),"Duration not parsed correctly.");
+        assertEquals((long) 17313, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(9, event.getDuration(), "Duration not parsed correctly.");
     }
 
     @Test
     void testLogLineUnified() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
-        assertTrue(ShenandoahFinalEvacEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
+        assertTrue(ShenandoahFinalEvacEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
         ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
-        assertEquals((long) (10486 - 0),event.getTimestamp(),"Time stamp not parsed correctly.");
-        assertEquals(2,event.getDuration(),"Duration not parsed correctly.");
+        assertEquals((long) (10486 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(2, event.getDuration(), "Duration not parsed correctly.");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC + "not identified.");
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC + "not identified.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahFinalEvacEvent, JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not parsed.");
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahFinalEvacEvent,
+                JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not parsed.");
     }
 
     @Test
     void testBlocking() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not indentified as blocking.");
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -72,34 +77,40 @@ class TestShenandoahFinalEvacEvent {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
         long timestamp = 521;
         int duration = 0;
-        assertTrue(JdkUtil
-		.hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof ShenandoahFinalEvacEvent, JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not parsed.");
+        assertTrue(
+                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
+                        duration) instanceof ShenandoahFinalEvacEvent,
+                JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC), JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC),
+                JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not indentified as reportable.");
     }
 
     @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_FINAL_EVAC);
-        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " incorrectly indentified as unified.");
+        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " incorrectly indentified as unified.");
     }
 
     @Test
     void testLogLineWhitespaceAtEnd() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms    ";
-        assertTrue(ShenandoahFinalEvacEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
+        assertTrue(ShenandoahFinalEvacEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
     }
 
     @Test
     void testLogLineUnifiedDetailed() {
         String logLine = "[41.912s][info][gc           ] GC(1500) Pause Final Evac 0.022ms";
-        assertTrue(ShenandoahFinalEvacEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
+        assertTrue(ShenandoahFinalEvacEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
         ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
-        assertEquals((long) (41912 - 0),event.getTimestamp(),"Time stamp not parsed correctly.");
-        assertEquals(22,event.getDuration(),"Duration not parsed correctly.");
+        assertEquals((long) (41912 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(22, event.getDuration(), "Duration not parsed correctly.");
     }
 }

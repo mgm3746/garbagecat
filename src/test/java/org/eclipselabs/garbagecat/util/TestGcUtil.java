@@ -50,37 +50,37 @@ class TestGcUtil {
         assertNotNull(date);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        assertEquals(2009,calendar.get(Calendar.YEAR),"Start year not parsed correctly.");
-        assertEquals(8,calendar.get(Calendar.MONTH),"Start month not parsed correctly.");
-        assertEquals(18,calendar.get(Calendar.DAY_OF_MONTH),"Start day not parsed correctly.");
-        assertEquals(16,calendar.get(Calendar.HOUR_OF_DAY),"Start hour not parsed correctly.");
-        assertEquals(24,calendar.get(Calendar.MINUTE),"Start minute not parsed correctly.");
-        assertEquals(8,calendar.get(Calendar.SECOND),"Start second not parsed correctly.");
-        assertEquals(172,calendar.get(Calendar.MILLISECOND),"Start millisecond not parsed correctly.");
+        assertEquals(2009, calendar.get(Calendar.YEAR), "Start year not parsed correctly.");
+        assertEquals(8, calendar.get(Calendar.MONTH), "Start month not parsed correctly.");
+        assertEquals(18, calendar.get(Calendar.DAY_OF_MONTH), "Start day not parsed correctly.");
+        assertEquals(16, calendar.get(Calendar.HOUR_OF_DAY), "Start hour not parsed correctly.");
+        assertEquals(24, calendar.get(Calendar.MINUTE), "Start minute not parsed correctly.");
+        assertEquals(8, calendar.get(Calendar.SECOND), "Start second not parsed correctly.");
+        assertEquals(172, calendar.get(Calendar.MILLISECOND), "Start millisecond not parsed correctly.");
     }
 
     @Test
     void testNumberOfDaysInZeroMilliSeconds() {
         long milliSeconds = 0;
-        assertEquals(0,GcUtil.daysInMilliSeconds(milliSeconds),"Number of days calculated wrong.");
+        assertEquals(0, GcUtil.daysInMilliSeconds(milliSeconds), "Number of days calculated wrong.");
     }
 
     @Test
     void testNumberOfDaysInMilliSecondsLessThanOneDay() {
         long milliSeconds = 82800000L;
-        assertEquals(0,GcUtil.daysInMilliSeconds(milliSeconds),"Number of days calculated wrong.");
+        assertEquals(0, GcUtil.daysInMilliSeconds(milliSeconds), "Number of days calculated wrong.");
     }
 
     @Test
     void testNumberOfDaysInMilliSecondsEqualOneDay() {
         long milliSeconds = 86400000L;
-        assertEquals(1,GcUtil.daysInMilliSeconds(milliSeconds),"Number of days calculated wrong.");
+        assertEquals(1, GcUtil.daysInMilliSeconds(milliSeconds), "Number of days calculated wrong.");
     }
 
     @Test
     void testNumberOfDaysInMilliSeconds9Days() {
         long milliSeconds = 863999999L;
-        assertEquals(9,GcUtil.daysInMilliSeconds(milliSeconds),"Number of days calculated wrong.");
+        assertEquals(9, GcUtil.daysInMilliSeconds(milliSeconds), "Number of days calculated wrong.");
     }
 
     @Test
@@ -96,7 +96,8 @@ class TestGcUtil {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 0L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        assertEquals("1966-08-18 19:21:44,012",formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)),"Date calculated wrong.");
+        assertEquals("1966-08-18 19:21:44,012",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)), "Date calculated wrong.");
     }
 
     @Test
@@ -112,7 +113,8 @@ class TestGcUtil {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 10L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        assertEquals("1966-08-18 19:21:44,022",formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)),"Date calculated wrong.");
+        assertEquals("1966-08-18 19:21:44,022",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)), "Date calculated wrong.");
     }
 
     @Test
@@ -128,7 +130,8 @@ class TestGcUtil {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 1000L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        assertEquals("1966-08-18 19:21:45,012",formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)),"Date calculated wrong.");
+        assertEquals("1966-08-18 19:21:45,012",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)), "Date calculated wrong.");
     }
 
     @Test
@@ -144,7 +147,8 @@ class TestGcUtil {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 60000L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        assertEquals("1966-08-18 19:22:44,012",formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)),"Date calculated wrong.");
+        assertEquals("1966-08-18 19:22:44,012",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)), "Date calculated wrong.");
     }
 
     @Test
@@ -160,7 +164,8 @@ class TestGcUtil {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 3600000L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        assertEquals("1966-08-18 20:21:44,012",formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)),"Date calculated wrong.");
+        assertEquals("1966-08-18 20:21:44,012",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)), "Date calculated wrong.");
     }
 
     @Test
@@ -176,7 +181,8 @@ class TestGcUtil {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 86400000L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        assertEquals("1966-08-19 19:21:44,012",formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)),"Date calculated wrong.");
+        assertEquals("1966-08-19 19:21:44,012",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)), "Date calculated wrong.");
     }
 
     @Test
@@ -192,7 +198,8 @@ class TestGcUtil {
         calendar.set(Calendar.MILLISECOND, 12);
         long timestamp = 2592000000L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        assertEquals("1966-09-17 19:21:44,012",formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)),"Date calculated wrong.");
+        assertEquals("1966-09-17 19:21:44,012",
+                formatter.format(GcUtil.getDatePlusTimestamp(calendar.getTime(), timestamp)), "Date calculated wrong.");
     }
 
     @Test
@@ -200,7 +207,9 @@ class TestGcUtil {
         String jvmStarted = "2009-11-01 02:30:52,917";
         long gcLogTimestamp = 353647157L;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        assertEquals("2009-11-05 04:45:00,074",formatter.format(GcUtil.getDatePlusTimestamp(GcUtil.parseStartDateTime(jvmStarted), gcLogTimestamp)),"Date calculated wrong.");
+        assertEquals("2009-11-05 04:45:00,074",
+                formatter.format(GcUtil.getDatePlusTimestamp(GcUtil.parseStartDateTime(jvmStarted), gcLogTimestamp)),
+                "Date calculated wrong.");
     }
 
     @Test
@@ -218,13 +227,13 @@ class TestGcUtil {
         assertNotNull(date);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        assertEquals(2010,calendar.get(Calendar.YEAR),"Datestamp year not parsed correctly.");
-        assertEquals(1,calendar.get(Calendar.MONTH),"Datestamp month not parsed correctly.");
-        assertEquals(26,calendar.get(Calendar.DAY_OF_MONTH),"Datestamp day not parsed correctly.");
-        assertEquals(9,calendar.get(Calendar.HOUR_OF_DAY),"Datestamp hour not parsed correctly.");
-        assertEquals(32,calendar.get(Calendar.MINUTE),"Datestamp minute not parsed correctly.");
-        assertEquals(12,calendar.get(Calendar.SECOND),"Datestamp second not parsed correctly.");
-        assertEquals(486,calendar.get(Calendar.MILLISECOND),"Datestamp millisecond not parsed correctly.");
+        assertEquals(2010, calendar.get(Calendar.YEAR), "Datestamp year not parsed correctly.");
+        assertEquals(1, calendar.get(Calendar.MONTH), "Datestamp month not parsed correctly.");
+        assertEquals(26, calendar.get(Calendar.DAY_OF_MONTH), "Datestamp day not parsed correctly.");
+        assertEquals(9, calendar.get(Calendar.HOUR_OF_DAY), "Datestamp hour not parsed correctly.");
+        assertEquals(32, calendar.get(Calendar.MINUTE), "Datestamp minute not parsed correctly.");
+        assertEquals(12, calendar.get(Calendar.SECOND), "Datestamp second not parsed correctly.");
+        assertEquals(486, calendar.get(Calendar.MILLISECOND), "Datestamp millisecond not parsed correctly.");
     }
 
     @Test
@@ -246,7 +255,7 @@ class TestGcUtil {
         calendar.set(Calendar.MILLISECOND, 1);
         Date end = calendar.getTime();
 
-        assertEquals(90061001L,GcUtil.dateDiff(start, end),"Date difference incorrect.");
+        assertEquals(90061001L, GcUtil.dateDiff(start, end), "Date difference incorrect.");
     }
 
     @Test

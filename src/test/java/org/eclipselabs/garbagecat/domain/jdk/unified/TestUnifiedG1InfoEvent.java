@@ -33,42 +33,49 @@ class TestUnifiedG1InfoEvent {
     @Test
     void testLogLine() {
         String logLine = "[2.726s][info][gc,start     ] GC(51) Pause Initial Mark (G1 Humongous Allocation)";
-        assertTrue(UnifiedG1InfoEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + ".");
+        assertTrue(UnifiedG1InfoEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + ".");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[2.726s][info][gc,start     ] GC(51) Pause Initial Mark (G1 Humongous Allocation)";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_INFO,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_G1_INFO + "not identified.");
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_INFO, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_G1_INFO + "not identified.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[2.726s][info][gc,start     ] GC(51) Pause Initial Mark (G1 Humongous Allocation)";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1InfoEvent, JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + " not parsed.");
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1InfoEvent,
+                JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + " not parsed.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[2.726s][info][gc,start     ] GC(51) Pause Initial Mark (G1 Humongous Allocation)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + " indentified as blocking.");
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + " indentified as blocking.");
     }
 
     @Test
     void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_INFO), JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + " indentified as reportable.");
+        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_INFO),
+                JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + " indentified as reportable.");
     }
 
     @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_G1_INFO);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + " not indentified as unified.");
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + " not indentified as unified.");
     }
 
     @Test
     void testLogLine6Spaces() {
         String logLine = "[2.751s][info][gc,start      ] GC(53) Pause Initial Mark (G1 Humongous Allocation)";
-        assertTrue(UnifiedG1InfoEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + ".");
+        assertTrue(UnifiedG1InfoEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + ".");
     }
 }
