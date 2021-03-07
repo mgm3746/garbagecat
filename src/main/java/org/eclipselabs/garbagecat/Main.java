@@ -46,7 +46,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -193,13 +192,12 @@ public class Main {
 
             // Bottlenecks
             List<String> bottlenecks = jvmRun.getBottlenecks();
-            if (bottlenecks.size() > 0) {
+            if (!bottlenecks.isEmpty()) {
                 bufferedWriter.write("========================================" + LINE_SEPARATOR);
                 bufferedWriter.write("Throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
                 bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
-                Iterator<String> iterator = bottlenecks.iterator();
-                while (iterator.hasNext()) {
-                    bufferedWriter.write(iterator.next() + LINE_SEPARATOR);
+                for (String bottleneck : bottlenecks) {
+                    bufferedWriter.write(bottleneck + LINE_SEPARATOR);
                 }
             }
 
@@ -230,10 +228,8 @@ public class Main {
             if (jvmRun.getBlockingEventCount() > 0) {
                 bufferedWriter.write("Event Types: ");
                 List<LogEventType> eventTypes = jvmRun.getEventTypes();
-                Iterator<LogEventType> iterator = eventTypes.iterator();
                 boolean firstEvent = true;
-                while (iterator.hasNext()) {
-                    LogEventType eventType = iterator.next();
+                for (LogEventType eventType : eventTypes) {
                     // Only report GC events
                     if (JdkUtil.isReportable(eventType)) {
                         if (!firstEvent) {
@@ -245,7 +241,7 @@ public class Main {
                 }
                 bufferedWriter.write(LINE_SEPARATOR);
                 // Inverted parallelism. Only report if we have Serial/Parallel/CMS/G1 events with times data.
-                if (jvmRun.getCollectorFamilies() != null && jvmRun.getCollectorFamilies().size() > 0
+                if (jvmRun.getCollectorFamilies() != null && !jvmRun.getCollectorFamilies().isEmpty()
                         && jvmRun.getParallelCount() > 0) {
                     bufferedWriter.write("# Parallel Events: " + jvmRun.getParallelCount() + LINE_SEPARATOR);
                     bufferedWriter
@@ -459,17 +455,13 @@ public class Main {
                 bufferedWriter.write(unidentifiedLogLines.size() + " UNIDENTIFIED LOG LINE(S):" + LINE_SEPARATOR);
                 bufferedWriter.write("----------------------------------------" + LINE_SEPARATOR);
 
-                Iterator<String> iterator = unidentifiedLogLines.iterator();
-                while (iterator.hasNext()) {
-                    String unidentifiedLogLine = iterator.next();
+                for (String unidentifiedLogLine : unidentifiedLogLines) {
                     bufferedWriter.write(unidentifiedLogLine);
                     bufferedWriter.write(LINE_SEPARATOR);
                 }
                 bufferedWriter.write("========================================" + LINE_SEPARATOR);
             }
-        } catch (
-
-        FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

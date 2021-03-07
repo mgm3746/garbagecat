@@ -12,9 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,72 +22,62 @@ import java.util.List;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestUnifiedApplicationStoppedTimeEvent {
+class TestUnifiedApplicationStoppedTimeEvent {
 
     @Test
-    public void testLogLine() {
+    void testLogLine() {
         String logLine = "[0.031s][info][safepoint    ] Total time for which application threads were stopped: "
                 + "0.0000643 seconds, Stopping threads took: 0.0000148 seconds";
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + ".",
-                UnifiedApplicationStoppedTimeEvent.match(logLine));
+        assertTrue(UnifiedApplicationStoppedTimeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + ".");
         UnifiedApplicationStoppedTimeEvent event = new UnifiedApplicationStoppedTimeEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 31, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 64, event.getDuration());
+        assertEquals((long) 31,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(64,event.getDuration(),"Duration not parsed correctly.");
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[0.031s][info][safepoint    ] Total time for which application threads were stopped: "
                 + "0.0000643 seconds, Stopping threads took: 0.0000148 seconds";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME + "not identified.",
-                JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME, JdkUtil.identifyEventType(logLine));
+        assertEquals(JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[0.031s][info][safepoint    ] Total time for which application threads were stopped: "
                 + "0.0000643 seconds, Stopping threads took: 0.0000148 seconds";
-        assertTrue(JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not parsed.",
-                JdkUtil.parseLogLine(logLine) instanceof UnifiedApplicationStoppedTimeEvent);
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedApplicationStoppedTimeEvent, JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not parsed.");
     }
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "[0.031s][info][safepoint    ] Total time for which application threads were stopped: "
                 + "0.0000643 seconds, Stopping threads took: 0.0000148 seconds";
-        assertFalse(
-                JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString()
-                        + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString()
+		+ " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testReportable() {
-        assertTrue(JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not indentified as reportable.",
-                JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME));
+    void testReportable() {
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME), JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_APPLICATION_STOPPED_TIME);
-        assertTrue(JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not indentified as unified.",
-                UnifiedUtil.isUnifiedLogging(eventTypes));
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not indentified as unified.");
     }
 
     @Test
-    public void testLogLineWithSpacesAtEnd() {
+    void testLogLineWithSpacesAtEnd() {
         String logLine = "[0.031s][info][safepoint    ] Total time for which application threads were stopped: "
                 + "0.0000643 seconds, Stopping threads took: 0.0000148 seconds   ";
-        assertTrue(
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + ".",
-                UnifiedApplicationStoppedTimeEvent.match(logLine));
+        assertTrue(UnifiedApplicationStoppedTimeEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + ".");
     }
 }

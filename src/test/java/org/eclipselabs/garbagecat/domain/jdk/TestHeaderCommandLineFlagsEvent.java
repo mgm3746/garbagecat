@@ -12,21 +12,21 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestHeaderCommandLineFlagsEvent {
+class TestHeaderCommandLineFlagsEvent {
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "CommandLine flags: -XX:+CMSClassUnloadingEnabled -XX:CMSInitiatingOccupancyFraction=75 "
                 + "-XX:+CMSScavengeBeforeRemark -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "
                 + "-XX:GCLogFileSize=8388608 -XX:InitialHeapSize=13958643712 -XX:MaxHeapSize=13958643712 "
@@ -34,12 +34,11 @@ public class TestHeaderCommandLineFlagsEvent {
                 + "-XX:OldPLABSize=16 -XX:PermSize=402653184 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails "
                 + "-XX:+PrintGCTimeStamps -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseGCLogFileRotation "
                 + "-XX:+UseParNewGC";
-        assertFalse(JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
-    public void testLine() {
+    void testLine() {
         String logLine = "CommandLine flags: -XX:+CMSClassUnloadingEnabled -XX:CMSInitiatingOccupancyFraction=75 "
                 + "-XX:+CMSScavengeBeforeRemark -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "
                 + "-XX:GCLogFileSize=8388608 -XX:InitialHeapSize=13958643712 -XX:MaxHeapSize=13958643712 "
@@ -47,8 +46,7 @@ public class TestHeaderCommandLineFlagsEvent {
                 + "-XX:OldPLABSize=16 -XX:PermSize=402653184 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails "
                 + "-XX:+PrintGCTimeStamps -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseGCLogFileRotation "
                 + "-XX:+UseParNewGC";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + ".",
-                HeaderCommandLineFlagsEvent.match(logLine));
+        assertTrue(HeaderCommandLineFlagsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + ".");
         HeaderCommandLineFlagsEvent event = new HeaderCommandLineFlagsEvent(logLine);
         String jvmOptions = "-XX:+CMSClassUnloadingEnabled -XX:CMSInitiatingOccupancyFraction=75 "
                 + "-XX:+CMSScavengeBeforeRemark -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "
@@ -57,11 +55,11 @@ public class TestHeaderCommandLineFlagsEvent {
                 + "-XX:OldPLABSize=16 -XX:PermSize=402653184 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails "
                 + "-XX:+PrintGCTimeStamps -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseGCLogFileRotation "
                 + "-XX:+UseParNewGC";
-        assertEquals("Flags not parsed correctly.", jvmOptions, event.getJvmOptions());
+        assertEquals(jvmOptions,event.getJvmOptions(),"Flags not parsed correctly.");
     }
 
     @Test
-    public void testJBossHeader() {
+    void testJBossHeader() {
         String logLine = "  JAVA_OPTS: -Dprogram.name=run.sh -d64 -server -Xms10000m -Xmx10000m -ss512k "
                 + "-XX:PermSize=512m -XX:MaxPermSize=512m -XX:NewSize=3000m -XX:MaxNewSize=3000m -XX:SurvivorRatio=6 "
                 + "-XX:TargetSurvivorRatio=90 -XX:MaxTenuringThreshold=5 -verbose:gc -XX:+PrintGC -XX:+PrintGCDetails "
@@ -78,8 +76,7 @@ public class TestHeaderCommandLineFlagsEvent {
                 + "-DconfigurationEngine.configDir=/opt/odigeo/properties/ "
                 + "-Djavax.net.ssl.keyStore=/opt/edreams/keys/java/keyStore "
                 + "-Djavax.net.ssl.keyStorePassword=changeit";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + ".",
-                HeaderCommandLineFlagsEvent.match(logLine));
+        assertTrue(HeaderCommandLineFlagsEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + ".");
         HeaderCommandLineFlagsEvent event = new HeaderCommandLineFlagsEvent(logLine);
         String jvmOptions = "-Dprogram.name=run.sh -d64 -server -Xms10000m -Xmx10000m -ss512k "
                 + "-XX:PermSize=512m -XX:MaxPermSize=512m -XX:NewSize=3000m -XX:MaxNewSize=3000m -XX:SurvivorRatio=6 "
@@ -97,6 +94,6 @@ public class TestHeaderCommandLineFlagsEvent {
                 + "-DconfigurationEngine.configDir=/opt/odigeo/properties/ "
                 + "-Djavax.net.ssl.keyStore=/opt/edreams/keys/java/keyStore "
                 + "-Djavax.net.ssl.keyStorePassword=changeit";
-        assertEquals("Flags not parsed correctly.", jvmOptions, event.getJvmOptions());
+        assertEquals(jvmOptions,event.getJvmOptions(),"Flags not parsed correctly.");
     }
 }

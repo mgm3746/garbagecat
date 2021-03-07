@@ -13,10 +13,10 @@
 package org.eclipselabs.garbagecat.util.jdk;
 
 import static org.eclipselabs.garbagecat.util.Memory.bytes;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,19 +28,19 @@ import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestAnalysis {
+class TestAnalysis {
 
     /**
      * Verify analysis file property key/value lookup.
      */
     @Test
-    public void testPropertyKeyValueLookup() {
+    void testPropertyKeyValueLookup() {
         Analysis[] analysis = Analysis.values();
         for (int i = 0; i < analysis.length; i++) {
             assertNotNull(analysis[i].getKey() + " not found.", analysis[i].getValue());
@@ -48,220 +48,193 @@ public class TestAnalysis {
     }
 
     @Test
-    public void testBisasedLockingDisabled() {
+    void testBisasedLockingDisabled() {
         String jvmOptions = "-Xss128k -XX:-UseBiasedLocking -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_BIASED_LOCKING_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_BIASED_LOCKING_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_BIASED_LOCKING_DISABLED), Analysis.WARN_BIASED_LOCKING_DISABLED + " analysis not identified.");
         jvmRun.getAnalysis().clear();
         List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
         collectorFamilies.add(CollectorFamily.SHENANDOAH);
         jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
-        assertFalse(Analysis.WARN_BIASED_LOCKING_DISABLED + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_BIASED_LOCKING_DISABLED));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_BIASED_LOCKING_DISABLED), Analysis.WARN_BIASED_LOCKING_DISABLED + " analysis incorrectly identified.");
 
     }
 
     @Test
-    public void testPrintClassHistogramEnabled() {
+    void testPrintClassHistogramEnabled() {
         String jvmOptions = "-Xss128k -XX:+PrintClassHistogram -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_PRINT_CLASS_HISTOGRAM + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM));
-        assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC));
-        assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM), Analysis.WARN_PRINT_CLASS_HISTOGRAM + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC), Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC), Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testPrintClassHistogramAfterFullGcEnabled() {
+    void testPrintClassHistogramAfterFullGcEnabled() {
         String jvmOptions = "-Xss128k -XX:+PrintClassHistogramAfterFullGC -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC));
-        assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM));
-        assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC), Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM), Analysis.WARN_PRINT_CLASS_HISTOGRAM + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC), Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testPrintClassHistogramBeforeFullGcEnabled() {
+    void testPrintClassHistogramBeforeFullGcEnabled() {
         String jvmOptions = "-Xss128k -XX:+PrintClassHistogramBeforeFullGC -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC));
-        assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM));
-        assertFalse(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC), Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM), Analysis.WARN_PRINT_CLASS_HISTOGRAM + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC), Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testPrintApplicationConcurrentTime() {
+    void testPrintApplicationConcurrentTime() {
         String jvmOptions = "-Xss128k -XX:+PrintGCApplicationConcurrentTime -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME), Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
     }
 
     @Test
-    public void testTraceClassUnloading() {
+    void testTraceClassUnloading() {
         String jvmOptions = "-Xss128k -XX:+TraceClassUnloading -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_TRACE_CLASS_UNLOADING + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING), Analysis.WARN_TRACE_CLASS_UNLOADING + " analysis not identified.");
     }
 
     @Test
-    public void testCompressedClassPointersEnabledCompressedOopsDisabledHeapUnknown() {
+    void testCompressedClassPointersEnabledCompressedOopsDisabledHeapUnknown() {
         String jvmOptions = "-Xss128k -XX:+UseCompressedClassPointers -XX:-UseCompressedOops -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK), Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK + " analysis not identified.");
     }
 
     @Test
-    public void testCompressedClassPointersEnabledHeapGt32G() {
+    void testCompressedClassPointersEnabledHeapGt32G() {
         String jvmOptions = "-Xss128k -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -Xmx32g";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G), Analysis.ERROR_COMP_CLASS_ENABLED_HEAP_GT_32G + " analysis not identified.");
     }
 
     @Test
-    public void testCompressedClassPointersDisabledHeapLt32G() {
+    void testCompressedClassPointersDisabledHeapLt32G() {
         String jvmOptions = "-Xss128k -XX:-UseCompressedClassPointers -XX:+UseCompressedOops -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G), Analysis.ERROR_COMP_CLASS_DISABLED_HEAP_LT_32G + " analysis not identified.");
     }
 
     @Test
-    public void testCompressedClassPointersDisabledHeapUnknown() {
+    void testCompressedClassPointersDisabledHeapUnknown() {
         String jvmOptions = "-Xss128k -XX:-UseCompressedClassPointers -XX:+UseCompressedOops";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK), Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK + " analysis not identified.");
     }
 
     @Test
-    public void testCompressedClassSpaceSizeWithCompressedOopsDisabledHeapUnknown() {
+    void testCompressedClassSpaceSizeWithCompressedOopsDisabledHeapUnknown() {
         String jvmOptions = "-Xss128k -XX:CompressedClassSpaceSize=1G -XX:-UseCompressedOops -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK));
-        assertTrue(Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK), Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED), Analysis.INFO_COMP_CLASS_SIZE_COMP_OOPS_DISABLED + " analysis not identified.");
     }
 
     @Test
-    public void testCompressedClassSpaceSizeWithCompressedClassPointersDisabledHeapUnknown() {
+    void testCompressedClassSpaceSizeWithCompressedClassPointersDisabledHeapUnknown() {
         String jvmOptions = "-Xss128k -XX:CompressedClassSpaceSize=1G -XX:-UseCompressedClassPointers -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK));
-        assertTrue(Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK), Analysis.WARN_COMP_CLASS_DISABLED_HEAP_UNK + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED), Analysis.INFO_COMP_CLASS_SIZE_COMP_CLASS_DISABLED + " analysis not identified.");
     }
 
     @Test
-    public void testCompressedOopsDisabledHeapLess32G() {
+    void testCompressedOopsDisabledHeapLess32G() {
         String jvmOptions = "-Xss128k -XX:-UseCompressedOops -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G), Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis not identified.");
     }
 
     @Test
-    public void testCompressedOopsDisabledHeapEqual32G() {
+    void testCompressedOopsDisabledHeapEqual32G() {
         String jvmOptions = "-Xss128k -XX:-UseCompressedOops -Xmx32G";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertFalse(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G));
-        assertFalse(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G), Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK), Analysis.WARN_COMP_OOPS_DISABLED_HEAP_UNK + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testCompressedOopsDisabledHeapGreater32G() {
+    void testCompressedOopsDisabledHeapGreater32G() {
         String jvmOptions = "-Xss128k -XX:-UseCompressedOops -Xmx40G";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertFalse(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G), Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testCompressedOopsEnabledHeapGreater32G() {
+    void testCompressedOopsEnabledHeapGreater32G() {
         String jvmOptions = "-Xss128k -XX:+UseCompressedOops -Xmx40G";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G), Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G + " analysis not identified.");
     }
 
     @Test
-    public void testPrintFlsStatistics() {
+    void testPrintFlsStatistics() {
         String jvmOptions = "-Xss128k -XX:PrintFLSStatistics=1 -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.INFO_PRINT_FLS_STATISTICS + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_FLS_STATISTICS));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_FLS_STATISTICS), Analysis.INFO_PRINT_FLS_STATISTICS + " analysis not identified.");
     }
 
     @Test
-    public void testTieredCompilation() {
+    void testTieredCompilation() {
         String jvmOptions = "-Xss128k -XX:+TieredCompilation -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -270,204 +243,184 @@ public class TestAnalysis {
                 + "Oct  2 2015 03:26:24 by \"java_re\" with unknown MS VC++:1600";
         jvmRun.getJvm().setVersion(version);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_TIERED_COMPILATION_ENABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_TIERED_COMPILATION_ENABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_TIERED_COMPILATION_ENABLED), Analysis.WARN_TIERED_COMPILATION_ENABLED + " analysis not identified.");
     }
 
     @Test
-    public void testLogFileRotationDisabled() {
+    void testLogFileRotationDisabled() {
         String jvmOptions = "-Xss128k -XX:-UseGCLogFileRotation -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED), Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED + " analysis not identified.");
     }
 
     @Test
-    public void testLogFileNumberWithRotationDisabled() {
+    void testLogFileNumberWithRotationDisabled() {
         String jvmOptions = "-Xss128k -XX:NumberOfGCLogFiles=5 -XX:-UseGCLogFileRotation -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED));
-        assertTrue(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED), Analysis.INFO_GC_LOG_FILE_ROTATION_DISABLED + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED), Analysis.WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED + " analysis not identified.");
     }
 
     /**
      * Test passing JVM options on the command line.
      */
     @Test
-    public void testThreadStackSizeLarge() {
+    void testThreadStackSizeLarge() {
         String options = "-o \"-Xss1024k\"";
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_THREAD_STACK_SIZE_LARGE + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_THREAD_STACK_SIZE_LARGE));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_THREAD_STACK_SIZE_LARGE), Analysis.WARN_THREAD_STACK_SIZE_LARGE + " analysis not identified.");
     }
 
     /**
      * Test DGC redundant options analysis.
      */
     @Test
-    public void testDgcRedundantOptions() {
+    void testDgcRedundantOptions() {
         String jvmOptions = "-XX:+DisableExplicitGC -Dsun.rmi.dgc.client.gcInterval=14400000 "
                 + "-Dsun.rmi.dgc.server.gcInterval=24400000";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT));
-        assertTrue(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT), Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT), Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT + " analysis not identified.");
     }
 
     /**
      * Test analysis not small DGC intervals.
      */
     @Test
-    public void testDgcNotSmallIntervals() {
+    void testDgcNotSmallIntervals() {
         String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL + " analysis identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL));
-        assertFalse(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL + " analysis identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL), Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL + " analysis identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL), Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL + " analysis identified.");
     }
 
     /**
      * Test analysis small DGC intervals
      */
     @Test
-    public void testDgcSmallIntervals() {
+    void testDgcSmallIntervals() {
         String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=3599999 -Dsun.rmi.dgc.server.gcInterval=3599999";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL));
-        assertTrue(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL), Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL), Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL + " analysis not identified.");
     }
 
     /**
      * Test analysis if heap dump on OOME enabled.
      */
     @Test
-    public void testHeapDumpOnOutOfMemoryError() {
+    void testHeapDumpOnOutOfMemoryError() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING));
-        assertFalse(Analysis.INFO_HEAP_DUMP_PATH_MISSING + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_HEAP_DUMP_PATH_MISSING));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING), Analysis.WARN_HEAP_DUMP_ON_OOME_MISSING + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_HEAP_DUMP_PATH_MISSING), Analysis.INFO_HEAP_DUMP_PATH_MISSING + " analysis incorrectly identified.");
     }
 
     /**
      * Test analysis if instrumentation being used.
      */
     @Test
-    public void testInstrumentation() {
+    void testInstrumentation() {
         String jvmOptions = "-Xss128k -Xms2048M -javaagent:byteman.jar=script:kill-3.btm,boot:byteman.jar -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.INFO_INSTRUMENTATION + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_INSTRUMENTATION));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_INSTRUMENTATION), Analysis.INFO_INSTRUMENTATION + " analysis not identified.");
     }
 
     /**
      * Test analysis if native library being used.
      */
     @Test
-    public void testNative() {
+    void testNative() {
         String jvmOptions = "-Xss128k -Xms2048M -agentpath:/path/to/agent.so -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.INFO_NATIVE + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_NATIVE));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_NATIVE), Analysis.INFO_NATIVE + " analysis not identified.");
     }
 
     /**
      * Test analysis background compilation disabled.
      */
     @Test
-    public void testBackgroundCompilationDisabled() {
+    void testBackgroundCompilationDisabled() {
         String jvmOptions = "-Xss128k -XX:-BackgroundCompilation -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED), Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED + " analysis not identified.");
     }
 
     /**
      * Test analysis background compilation disabled.
      */
     @Test
-    public void testBackgroundCompilationDisabledXBatch() {
+    void testBackgroundCompilationDisabledXBatch() {
         String jvmOptions = "-Xss128k -Xbatch -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED), Analysis.WARN_BYTECODE_BACKGROUND_COMPILE_DISABLED + " analysis not identified.");
     }
 
     /**
      * Test analysis compilation on first invocation enabled.
      */
     @Test
-    public void testCompilationOnFirstInvocation() {
+    void testCompilationOnFirstInvocation() {
         String jvmOptions = "-Xss128k -Xcomp-Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_BYTECODE_COMPILE_FIRST_INVOCATION + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_BYTECODE_COMPILE_FIRST_INVOCATION));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_BYTECODE_COMPILE_FIRST_INVOCATION), Analysis.WARN_BYTECODE_COMPILE_FIRST_INVOCATION + " analysis not identified.");
     }
 
     /**
      * Test analysis just in time (JIT) compiler disabled.
      */
     @Test
-    public void testCompilationDisabled() {
+    void testCompilationDisabled() {
         String jvmOptions = "-Xss128k -Xint -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_BYTECODE_COMPILE_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_BYTECODE_COMPILE_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_BYTECODE_COMPILE_DISABLED), Analysis.WARN_BYTECODE_COMPILE_DISABLED + " analysis not identified.");
     }
 
     /**
      * Test MaxMetaspaceSize is less than CompressedClassSpaceSize.
      */
     @Test
-    public void testMetaspaceSizeLtCompClassSize() {
+    void testMetaspaceSizeLtCompClassSize() {
         String jvmOptions = "-XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=512M -XX:CompressedClassSpaceSize=1024M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE), Analysis.ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE + " analysis not identified.");
     }
 
     /**
      * Test analysis explicit GC not concurrent.
      */
     @Test
-    public void testExplicitGcNotConcurrentG1() {
+    void testExplicitGcNotConcurrentG1() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -479,15 +432,14 @@ public class TestAnalysis {
         collectorFamilies.add(CollectorFamily.G1);
         jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT), Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.");
     }
 
     /**
      * Test analysis explicit GC not concurrent.
      */
     @Test
-    public void testExplicitGcNotConcurrentCms() {
+    void testExplicitGcNotConcurrentCms() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -499,57 +451,52 @@ public class TestAnalysis {
         collectorFamilies.add(CollectorFamily.CMS);
         jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT), Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.");
     }
 
     /**
      * Test DisableExplicitGC in combination with ExplicitGCInvokesConcurrent.
      */
     @Test
-    public void testDisableExplictGcWithConcurrentHandling() {
+    void testDisableExplictGcWithConcurrentHandling() {
         String jvmOptions = "-Xss128k -XX:+DisableExplicitGC -XX:+ExplicitGCInvokesConcurrent -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_EXPLICIT_GC_DISABLED_CONCURRENT + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_DISABLED_CONCURRENT));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_DISABLED_CONCURRENT), Analysis.WARN_EXPLICIT_GC_DISABLED_CONCURRENT + " analysis not identified.");
     }
 
     /**
      * Test HeapDumpOnOutOfMemoryError disabled.
      */
     @Test
-    public void testHeapDumpOnOutOfMemoryErrorDisabled() {
+    void testHeapDumpOnOutOfMemoryErrorDisabled() {
         String jvmOptions = "-Xss128k -XX:-HeapDumpOnOutOfMemoryError -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED));
-        assertFalse(Analysis.INFO_HEAP_DUMP_PATH_MISSING + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_HEAP_DUMP_PATH_MISSING));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED), Analysis.WARN_HEAP_DUMP_ON_OOME_DISABLED + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_HEAP_DUMP_PATH_MISSING), Analysis.INFO_HEAP_DUMP_PATH_MISSING + " analysis incorrectly identified.");
     }
 
     /**
      * Test PrintCommandLineFlags missing.
      */
     @Test
-    public void testPrintCommandlineFlagsNoGcLogging() {
+    void testPrintCommandlineFlagsNoGcLogging() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertFalse(Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_COMMANDLINE_FLAGS));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_COMMANDLINE_FLAGS), Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis identified.");
     }
 
     /**
      * Test PrintCommandLineFlags missing.
      */
     @Test
-    public void testPrintCommandlineFlagsMissing() {
+    void testPrintCommandlineFlagsMissing() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -558,99 +505,92 @@ public class TestAnalysis {
         eventTypes.add(LogEventType.UNKNOWN);
         jvmRun.setEventTypes(eventTypes);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_COMMANDLINE_FLAGS));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_COMMANDLINE_FLAGS), Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis not identified.");
     }
 
     /**
      * Test PrintCommandLineFlags not missing.
      */
     @Test
-    public void testPrintCommandlineFlagsNotMissing() {
+    void testPrintCommandlineFlagsNotMissing() {
         String jvmOptions = "-Xss128k -XX:+PrintCommandLineFlags -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertFalse(Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_COMMANDLINE_FLAGS));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_COMMANDLINE_FLAGS), Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis identified.");
     }
 
     /**
      * Test PrintGCDetails missing.
      */
     @Test
-    public void testPrintGCDetailsMissing() {
+    void testPrintGCDetailsMissing() {
         String jvmOptions = "-Xss128k -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING), Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis not identified.");
     }
 
     /**
      * Test PrintGCDetails not missing.
      */
     @Test
-    public void testPrintGCDetailsNotMissing() {
+    void testPrintGCDetailsNotMissing() {
         String jvmOptions = "-Xss128k -XX:+PrintGCDetails -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertFalse(Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING), Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis identified.");
     }
 
     /**
      * Test PrintGCDetails disabled.
      */
     @Test
-    public void testPrintGCDetailsDisabled() {
+    void testPrintGCDetailsDisabled() {
         String jvmOptions = "-Xss128k -XX:-PrintGCDetails -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED), Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " not identified.");
     }
 
     /**
      * Test CMS not being used to collect old generation.
      */
     @Test
-    public void testCmsYoungSerialOld() {
+    void testCmsYoungSerialOld() {
         String jvmOptions = "-Xss128k -XX:+UseParNewGC -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.ERROR_CMS_SERIAL_OLD + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_SERIAL_OLD));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_SERIAL_OLD), Analysis.ERROR_CMS_SERIAL_OLD + " analysis not identified.");
     }
 
     /**
      * Test CMS being used to collect old generation.
      */
     @Test
-    public void testCmsYoungCmsOld() {
+    void testCmsYoungCmsOld() {
         String jvmOptions = "-Xss128k -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -Xms2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertFalse(Analysis.ERROR_CMS_SERIAL_OLD + " analysis identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_SERIAL_OLD));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_SERIAL_OLD), Analysis.ERROR_CMS_SERIAL_OLD + " analysis identified.");
     }
 
     /**
      * Test CMS being used to collect old generation.
      */
     @Test
-    public void testCMSClassUnloadingEnabledMissing() {
+    void testCMSClassUnloadingEnabledMissing() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -662,50 +602,45 @@ public class TestAnalysis {
         collectorFamilies.add(CollectorFamily.CMS);
         jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
-        assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED), Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED), Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis identified.");
     }
 
     /**
      * Test CMS handling perm/metaspace collections.
      */
     @Test
-    public void testCMSClassUnloadingEnabledMissingButNotCms() {
+    void testCMSClassUnloadingEnabledMissingButNotCms() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED), Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis identified.");
     }
 
     @Test
-    public void testPrintAdaptiveResizePolicyEnabled() {
+    void testPrintAdaptiveResizePolicyEnabled() {
         String jvmOptions = "-Xss128k -XX:+PrintAdaptiveSizePolicy -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED), Analysis.INFO_PRINT_ADAPTIVE_RESIZE_PLCY_ENABLED + " analysis not identified.");
     }
 
     @Test
-    public void testTenuringDisabled() {
+    void testTenuringDisabled() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=0 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_TENURING_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_TENURING_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_TENURING_DISABLED), Analysis.WARN_TENURING_DISABLED + " analysis not identified.");
     }
 
     @Test
-    public void testMaxTenuringOverrideParallel() {
+    void testMaxTenuringOverrideParallel() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=6 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -714,12 +649,11 @@ public class TestAnalysis {
         collectors.add(JdkUtil.CollectorFamily.PARALLEL);
         jvmRun.setCollectorFamilies(collectors);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_MAX_TENURING_OVERRIDE));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_MAX_TENURING_OVERRIDE), Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.");
     }
 
     @Test
-    public void testMaxTenuringOverrideCms() {
+    void testMaxTenuringOverrideCms() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=14 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -728,12 +662,11 @@ public class TestAnalysis {
         collectors.add(JdkUtil.CollectorFamily.CMS);
         jvmRun.setCollectorFamilies(collectors);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_MAX_TENURING_OVERRIDE));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_MAX_TENURING_OVERRIDE), Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.");
     }
 
     @Test
-    public void testMaxTenuringOverrideG1() {
+    void testMaxTenuringOverrideG1() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=6 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -742,59 +675,53 @@ public class TestAnalysis {
         collectors.add(JdkUtil.CollectorFamily.G1);
         jvmRun.setCollectorFamilies(collectors);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_MAX_TENURING_OVERRIDE));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_MAX_TENURING_OVERRIDE), Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.");
     }
 
     @Test
-    public void testSurvivorRatio() {
+    void testSurvivorRatio() {
         String jvmOptions = "-Xss128k -XX:SurvivorRatio=6 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.INFO_SURVIVOR_RATIO + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_SURVIVOR_RATIO));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_SURVIVOR_RATIO), Analysis.INFO_SURVIVOR_RATIO + " analysis not identified.");
     }
 
     @Test
-    public void testTargetSurvivorRatio() {
+    void testTargetSurvivorRatio() {
         String jvmOptions = "-Xss128k -XX:TargetSurvivorRatio=90 -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.INFO_SURVIVOR_RATIO_TARGET + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_SURVIVOR_RATIO_TARGET));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_SURVIVOR_RATIO_TARGET), Analysis.INFO_SURVIVOR_RATIO_TARGET + " analysis not identified.");
     }
 
     @Test
-    public void testExperimentalOptionsEnabled() {
+    void testExperimentalOptionsEnabled() {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         jvm.setVersion("1.8.0_91-b14");
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS), Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis not identified.");
     }
 
     @Test
-    public void testUseFastUnorderedTimeStamps() {
+    void testUseFastUnorderedTimeStamps() {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:+UseFastUnorderedTimeStamps -Xmx2048M";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS));
-        assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS), Analysis.WARN_FAST_UNORDERED_TIMESTAMPS + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS), Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testJdk8G1PriorUpdate40() {
+    void testJdk8G1PriorUpdate40() {
         String jvmOptions = "";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -804,32 +731,26 @@ public class TestAnalysis {
         collectorFamilies.add(CollectorFamily.G1);
         jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));
-        assertTrue(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS));
-        assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40), Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS), Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS), Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testJdk8G1PriorUpdate40NoLoggingEvents() {
+    void testJdk8G1PriorUpdate40NoLoggingEvents() {
         String jvmOptions = "-XX:+UseG1GC";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.getJvm().setVersion(" JRE (1.8.0_20-b32) ");
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));
-        assertTrue(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS));
-        assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40), Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS), Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS), Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testJdk8NotG1PriorUpdate40() {
+    void testJdk8NotG1PriorUpdate40() {
         String jvmOptions = "";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
@@ -839,16 +760,13 @@ public class TestAnalysis {
         collectorFamilies.add(CollectorFamily.CMS);
         jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
-        assertFalse(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));
-        assertFalse(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS));
-        assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40), Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS), Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS), Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testJdk8G1PriorUpdate40WithRecommendedJvmOptions() {
+    void testJdk8G1PriorUpdate40WithRecommendedJvmOptions() {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:G1MixedGCLiveThresholdPercent=85 "
                 + "-XX:G1HeapWastePercent=5";
         GcManager gcManager = new GcManager();
@@ -859,66 +777,57 @@ public class TestAnalysis {
         collectorFamilies.add(CollectorFamily.G1);
         jvmRun.setCollectorFamilies(collectorFamilies);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));
-        assertFalse(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS));
-        assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40), Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS), Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS), Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testJdk8Update40() {
+    void testJdk8Update40() {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.getJvm().setVersion(" JRE (1.8.0_40-b26) ");
         jvmRun.doAnalysis();
-        assertTrue(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
-        assertFalse(Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40));
-        assertFalse(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS), Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40), Analysis.WARN_G1_JDK8_PRIOR_U40 + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_G1_JDK8_PRIOR_U40_RECS), Analysis.WARN_G1_JDK8_PRIOR_U40_RECS + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testCmsParallelInitialMarkDisabled() {
+    void testCmsParallelInitialMarkDisabled() {
         String jvmOptions = "-XX:-CMSParallelInitialMarkEnabled";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.ERROR_CMS_PARALLEL_INITIAL_MARK_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PARALLEL_INITIAL_MARK_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PARALLEL_INITIAL_MARK_DISABLED), Analysis.ERROR_CMS_PARALLEL_INITIAL_MARK_DISABLED + " analysis not identified.");
     }
 
     @Test
-    public void testCmsParallelRemarkDisabled() {
+    void testCmsParallelRemarkDisabled() {
         String jvmOptions = "-XX:-CMSParallelRemarkEnabled";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.ERROR_CMS_PARALLEL_REMARK_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PARALLEL_REMARK_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PARALLEL_REMARK_DISABLED), Analysis.ERROR_CMS_PARALLEL_REMARK_DISABLED + " analysis not identified.");
     }
 
     @Test
-    public void testG1SummarizeRSetStatsPeriod0() {
+    void testG1SummarizeRSetStatsPeriod0() {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:+G1SummarizeRSetStats "
                 + "-XX:G1SummarizeRSetStatsPeriod=0";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertFalse(Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT), Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testApplicationStoppedTimeMissingNoData() {
+    void testApplicationStoppedTimeMissingNoData() {
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(null, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -927,54 +836,44 @@ public class TestAnalysis {
         jvmRun.setEventTypes(eventTypes);
         jvmRun.getAnalysis().clear();
         jvmRun.doAnalysis();
-        assertFalse(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING), Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testCGroupMemoryLimit() {
+    void testCGroupMemoryLimit() {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_CGROUP_MEMORY_LIMIT + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CGROUP_MEMORY_LIMIT));
-        assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CGROUP_MEMORY_LIMIT), Analysis.WARN_CGROUP_MEMORY_LIMIT + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS), Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testAdaptiveSizePolicy() {
+    void testAdaptiveSizePolicy() {
         String jvmOptions = "-XX:InitialHeapSize=2147483648 -XX:MaxHeapSize=8589934592 -XX:-UseAdaptiveSizePolicy";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX));
-        assertTrue(Analysis.ERROR_ADAPTIVE_SIZE_POLICY_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_ADAPTIVE_SIZE_POLICY_DISABLED));
-        assertFalse(Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX), Analysis.WARN_HEAP_MIN_NOT_EQUAL_MAX + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_ADAPTIVE_SIZE_POLICY_DISABLED), Analysis.ERROR_ADAPTIVE_SIZE_POLICY_DISABLED + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED), Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED + " analysis incorrectly identified.");
     }
 
     @Test
-    public void testHeaderLogging() {
+    void testHeaderLogging() {
         File testFile = TestUtil.getFile("dataset42.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " information not identified.",
-                jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS));
-        assertTrue(JdkUtil.LogEventType.HEADER_MEMORY.toString() + " information not identified.",
-                jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY));
-        assertTrue(JdkUtil.LogEventType.HEADER_VERSION.toString() + " information not identified.",
-                jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION));
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS), JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " information not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY), JdkUtil.LogEventType.HEADER_MEMORY.toString() + " information not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION), JdkUtil.LogEventType.HEADER_VERSION.toString() + " information not identified.");
         // Usually no reason to set the thread stack size on 64 bit.
-        assertFalse(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET), Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + " analysis incorrectly identified.");
     }
 
     /**
@@ -982,16 +881,14 @@ public class TestAnalysis {
      * 
      */
     @Test
-    public void testAnalysisPermSizeNotSet() {
+    void testAnalysisPermSizeNotSet() {
         File testFile = TestUtil.getFile("dataset60.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_PERM_SIZE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PERM_SIZE_NOT_SET));
-        assertFalse(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PERM_SIZE_NOT_SET), Analysis.WARN_PERM_SIZE_NOT_SET + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT), Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.");
     }
 
     /**
@@ -999,232 +896,192 @@ public class TestAnalysis {
      * <code>Analysis.KEY_SERIAL_GC_CMS</code>.
      */
     @Test
-    public void testCmsSerialOldExplicitGc() {
+    void testCmsSerialOldExplicitGc() {
         File testFile = TestUtil.getFile("dataset85.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
-        assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD));
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW));
-        assertTrue(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS));
-        assertFalse(Analysis.ERROR_SERIAL_GC_CMS + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS));
+        assertEquals(2,jvmRun.getEventTypes().size(),"Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN), JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD), "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW), "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS), Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS), Analysis.ERROR_SERIAL_GC_CMS + " analysis incorrectly identified.");
     }
 
     /**
      * Test PARALLEL_COMPACTING_OLD caused by <code>Analysis.KEY_EXPLICIT_GC_SERIAL</code>.
      */
     @Test
-    public void testParallelOldCompactingExplicitGc() {
+    void testParallelOldCompactingExplicitGc() {
         File testFile = TestUtil.getFile("dataset86.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Event type count not correct.", 2, jvmRun.getEventTypes().size());
-        assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE));
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD));
-        assertTrue(Analysis.WARN_EXPLICIT_GC_PARALLEL + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_PARALLEL));
-        assertFalse(Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL));
-        assertEquals("Inverted parallelism event count not correct.", 0, jvmRun.getInvertedParallelismCount());
+        assertEquals(2,jvmRun.getEventTypes().size(),"Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN), JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD), "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_PARALLEL), Analysis.WARN_EXPLICIT_GC_PARALLEL + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL), Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis incorrectly identified.");
+        assertEquals((long) 0,jvmRun.getInvertedParallelismCount(),"Inverted parallelism event count not correct.");
     }
 
     @Test
-    public void testThreadStackSizeAnalysis32Bit() {
+    void testThreadStackSizeAnalysis32Bit() {
         File testFile = TestUtil.getFile("dataset87.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET), Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + " analysis not identified.");
     }
 
     @Test
-    public void testHeapDumpPathFilename() {
+    void testHeapDumpPathFilename() {
         File testFile = TestUtil.getFile("dataset95.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_HEAP_DUMP_PATH_FILENAME + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_PATH_FILENAME));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_PATH_FILENAME), Analysis.WARN_HEAP_DUMP_PATH_FILENAME + " analysis not identified.");
     }
 
     /**
      * Test PAR_NEW disabled with -XX:-UseParNewGC.
      */
     @Test
-    public void testParNewDisabled() {
+    void testParNewDisabled() {
         File testFile = TestUtil.getFile("dataset101.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Event type count not correct.", 4, jvmRun.getEventTypes().size());
-        assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL_NEW));
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_INITIAL_MARK));
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_REMARK));
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT));
-        assertTrue(Analysis.WARN_CMS_PAR_NEW_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_PAR_NEW_DISABLED));
-        assertFalse(Analysis.ERROR_SERIAL_GC + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC));
-        assertFalse(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED));
+        assertEquals(4,jvmRun.getEventTypes().size(),"Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN), JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL_NEW), "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_INITIAL_MARK), "Log line not recognized as " + JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_REMARK), "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT), "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_PAR_NEW_DISABLED), Analysis.WARN_CMS_PAR_NEW_DISABLED + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC), Analysis.ERROR_SERIAL_GC + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED), Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.");
     }
 
     /**
      * Test compressed oops disabled with heap >= 32G.
      */
     @Test
-    public void testCompressedOopsDisabledLargeHeap() {
+    void testCompressedOopsDisabledLargeHeap() {
         File testFile = TestUtil.getFile("dataset106.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Max heap value not parsed correctly.", "45097156608", jvmRun.getJvm().getMaxHeapValue());
-        assertFalse(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G));
-        assertFalse(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G));
-        assertTrue(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G));
+        assertEquals("45097156608",jvmRun.getJvm().getMaxHeapValue(),"Max heap value not parsed correctly.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G), Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G), Analysis.ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G + " analysis incorrectly identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G), Analysis.ERROR_COMP_CLASS_SIZE_HEAP_GT_32G + " analysis not identified.");
     }
 
     /**
      * Test physical memory less than heap + perm/metaspace.
      */
     @Test
-    public void testPhysicalMemoryLessThanJvmMemoryWithoutCompressedClassPointerSpace() {
+    void testPhysicalMemoryLessThanJvmMemoryWithoutCompressedClassPointerSpace() {
         File testFile = TestUtil.getFile("dataset106.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Physical not parsed correctly.", bytes(50465866752L), jvmRun.getJvm().getPhysicalMemory());
-        assertEquals("Heap size not parsed correctly.", bytes(45097156608L), jvmRun.getJvm().getMaxHeapBytes());
-        assertEquals("Metaspace size not parsed correctly.", bytes(5368709120L),
-                jvmRun.getJvm().getMaxMetaspaceBytes());
+        assertEquals(bytes(50465866752L),jvmRun.getJvm().getPhysicalMemory(),"Physical not parsed correctly.");
+        assertEquals(bytes(45097156608L),jvmRun.getJvm().getMaxHeapBytes(),"Heap size not parsed correctly.");
+        assertEquals(bytes(5368709120L),jvmRun.getJvm().getMaxMetaspaceBytes(),"Metaspace size not parsed correctly.");
         // Class compressed pointer space has a size, but it is ignored when calculating JVM memory.
-        assertEquals("Class compressed pointer space size not parsed correctly.", bytes(1073741824L),
-                jvmRun.getJvm().getCompressedClassSpaceSizeBytes());
-        assertFalse(Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY));
+        assertEquals(bytes(1073741824L),jvmRun.getJvm().getCompressedClassSpaceSizeBytes(),"Class compressed pointer space size not parsed correctly.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY), Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.");
     }
 
     /**
      * Test PrintGCDetails disabled with VERBOSE_GC logging.
      */
     @Test
-    public void testPrintGcDetailsDisabledWithVerboseGc() {
+    void testPrintGcDetailsDisabledWithVerboseGc() {
         File testFile = TestUtil.getFile("dataset107.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + " collector not identified.",
-                jvmRun.getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG));
-        assertTrue(Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED));
-        assertFalse(Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING));
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG), JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + " collector not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED), Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING), Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.");
     }
 
     /**
      * Test physical memory less than heap + perm/metaspace.
      */
     @Test
-    public void testPhysicalMemoryLessThanJvmMemoryWithCompressedClassPointerSpace() {
+    void testPhysicalMemoryLessThanJvmMemoryWithCompressedClassPointerSpace() {
         File testFile = TestUtil.getFile("dataset107.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Physical not parsed correctly.", bytes(16728526848L), jvmRun.getJvm().getPhysicalMemory());
-        assertEquals("Heap size not parsed correctly.", bytes(5368709120L), jvmRun.getJvm().getMaxHeapBytes());
-        assertEquals("Metaspace size not parsed correctly.", bytes(3221225472L),
-                jvmRun.getJvm().getMaxMetaspaceBytes());
-        assertEquals("Class compressed pointer space size not parsed correctly.", bytes(2147483648L),
-                jvmRun.getJvm().getCompressedClassSpaceSizeBytes());
-        assertFalse(Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY));
+        assertEquals(bytes(16728526848L),jvmRun.getJvm().getPhysicalMemory(),"Physical not parsed correctly.");
+        assertEquals(bytes(5368709120L),jvmRun.getJvm().getMaxHeapBytes(),"Heap size not parsed correctly.");
+        assertEquals(bytes(3221225472L),jvmRun.getJvm().getMaxMetaspaceBytes(),"Metaspace size not parsed correctly.");
+        assertEquals(bytes(2147483648L),jvmRun.getJvm().getCompressedClassSpaceSizeBytes(),"Class compressed pointer space size not parsed correctly.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY), Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.");
     }
 
     /**
      * Test physical memory less than heap + perm/metaspace.
      */
     @Test
-    public void testPhysicalMemoryLessThanHeapAllocation() {
+    void testPhysicalMemoryLessThanHeapAllocation() {
         File testFile = TestUtil.getFile("dataset109.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Physical not parsed correctly.", bytes(1968287744L), jvmRun.getJvm().getPhysicalMemory());
-        assertEquals("Heap size not parsed correctly.", bytes(4718592000L), jvmRun.getJvm().getMaxHeapBytes());
-        assertEquals("Metaspace size not parsed correctly.", bytes(0L), jvmRun.getJvm().getMaxMetaspaceBytes());
-        assertEquals("Class compressed pointer space size not parsed correctly.", bytes(0L),
-                jvmRun.getJvm().getCompressedClassSpaceSizeBytes());
-        assertTrue(Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY));
+        assertEquals(bytes(1968287744L),jvmRun.getJvm().getPhysicalMemory(),"Physical not parsed correctly.");
+        assertEquals(bytes(4718592000L),jvmRun.getJvm().getMaxHeapBytes(),"Heap size not parsed correctly.");
+        assertEquals(bytes(0L),jvmRun.getJvm().getMaxMetaspaceBytes(),"Metaspace size not parsed correctly.");
+        assertEquals(bytes(0L),jvmRun.getJvm().getCompressedClassSpaceSizeBytes(),"Class compressed pointer space size not parsed correctly.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY), Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.");
     }
 
     /**
      * Test CMS class unloading disabled.
      */
     @Test
-    public void testCmsClassunloadingDisabled() {
+    void testCmsClassunloadingDisabled() {
         File testFile = TestUtil.getFile("dataset110.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED));
-        assertFalse(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED));
-        assertTrue(Analysis.WARN_CLASS_UNLOADING_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CLASS_UNLOADING_DISABLED));
-        assertTrue(Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED), Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED), Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis incorrectly identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CLASS_UNLOADING_DISABLED), Analysis.WARN_CLASS_UNLOADING_DISABLED + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA), Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA + " analysis not identified.");
     }
 
     /**
      * Test application/gc logging mixed.
      */
     @Test
-    public void testApplicationLogging() {
+    void testApplicationLogging() {
         File testFile = TestUtil.getFile("dataset114.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_APPLICATION_LOGGING + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_LOGGING));
-        assertTrue("64-bit not identified.", jvmRun.getJvm().is64Bit());
-        assertFalse(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_LOGGING), Analysis.WARN_APPLICATION_LOGGING + " analysis not identified.");
+        assertTrue(jvmRun.getJvm().is64Bit(), "64-bit not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET), Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + " analysis incorrectly identified.");
 
     }
 
@@ -1232,245 +1089,219 @@ public class TestAnalysis {
      * Test <code>-XX:PrintFLSStatistics</code> and <code>-XX:PrintPromotionFailure</code>.
      */
     @Test
-    public void testPrintFlsStatisticsPrintPromotionFailure() {
+    void testPrintFlsStatisticsPrintPromotionFailure() {
         File testFile = TestUtil.getFile("dataset115.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.INFO_PRINT_FLS_STATISTICS + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_FLS_STATISTICS));
-        assertTrue(Analysis.INFO_PRINT_PROMOTION_FAILURE + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_PROMOTION_FAILURE));
-        assertTrue(Analysis.WARN_USE_MEMBAR + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_USE_MEMBAR));
-        assertTrue(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_FLS_STATISTICS), Analysis.INFO_PRINT_FLS_STATISTICS + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_PROMOTION_FAILURE), Analysis.INFO_PRINT_PROMOTION_FAILURE + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_USE_MEMBAR), Analysis.WARN_USE_MEMBAR + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING), Analysis.WARN_CMS_INIT_OCCUPANCY_ONLY_MISSING + " analysis not identified.");
     }
 
     /**
      * Test humongous allocations on old JDK not able to reclaim humongous objects during young collections.
      */
     @Test
-    public void testHumongousAllocationsNotCollectedYoung() {
+    void testHumongousAllocationsNotCollectedYoung() {
         File testFile = TestUtil.getFile("dataset118.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD));
-        assertTrue(Analysis.WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT));
-        assertFalse(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS));
-        assertFalse(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD), Analysis.ERROR_G1_HUMONGOUS_JDK_OLD + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT), Analysis.WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_EXPERIMENTAL_VM_OPTIONS), Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED), Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.");
     }
 
     /**
      * Test CMS_SERIAL_OLD triggered by GCLocker promotion failure.
      */
     @Test
-    public void testCmsSerialOldGcLocker() {
+    void testCmsSerialOldGcLocker() {
         File testFile = TestUtil.getFile("dataset119.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED));
-        assertFalse(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED));
-        assertTrue(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED), Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED), Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED + " analysis incorrectly identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED), Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis not identified.");
     }
 
     /**
      * Test VERBOSE_GC_OLD triggered by explicit GC.
      */
     @Test
-    public void testVerboseGcOldExplicitGc() {
+    void testVerboseGcOldExplicitGc() {
         File testFile = TestUtil.getFile("dataset125.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         // VERGOSE_GC_OLD looks the same as G1_FULL without -XX:+PrintGCDetails
-        assertTrue(Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN), Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.");
     }
 
     /**
      * Test VERBOSE_GC_YOUNG triggered by explicit GC.
      */
     @Test
-    public void testVerboseGcYoungExplicitGc() {
+    void testVerboseGcYoungExplicitGc() {
         File testFile = TestUtil.getFile("dataset126.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN), Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.");
     }
 
     /**
      * Test serial promotion failed is not reported as cms promotion failed.
      */
     @Test
-    public void testSerialPromotionFailed() {
+    void testSerialPromotionFailed() {
         File testFile = TestUtil.getFile("dataset129.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(Analysis.ERROR_CMS_PROMOTION_FAILED + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED), Analysis.ERROR_CMS_PROMOTION_FAILED + " analysis incorrectly identified.");
     }
 
     /**
      * Test CMS initial mark low parallelism.
      */
     @Test
-    public void testCmsInitialMarkSerial() {
+    void testCmsInitialMarkSerial() {
         File testFile = TestUtil.getFile("dataset130.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM), Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis not identified.");
     }
 
     /**
      * Test CMS remark low parallelism.
      */
     @Test
-    public void testCmsRemarkSerial() {
+    void testCmsRemarkSerial() {
         File testFile = TestUtil.getFile("dataset131.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM), Analysis.WARN_CMS_REMARK_LOW_PARALLELISM + " analysis not identified.");
     }
 
     /**
      * Test CMS remark low parallelism not reported with pause times less than zero.
      */
     @Test
-    public void testInitialMarkLowParallelismFalseReportZeroReal() {
+    void testInitialMarkLowParallelismFalseReportZeroReal() {
         File testFile = TestUtil.getFile("dataset137.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM), Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis incorrectly identified.");
     }
 
     /**
      * Test CMS remark low parallelism not reported with pause times less than times data centisecond precision.
      */
     @Test
-    public void testInitialMarkLowParallelismFalseReportSmallPause() {
+    void testInitialMarkLowParallelismFalseReportSmallPause() {
         File testFile = TestUtil.getFile("dataset138.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM));
-        assertFalse(Analysis.INFO_SWAP_DISABLED + " analysis incorrectly identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_SWAP_DISABLED));
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM), Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis incorrectly identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_SWAP_DISABLED), Analysis.INFO_SWAP_DISABLED + " analysis incorrectly identified.");
     }
 
     /**
      * Test small gc log file size.
      */
     @Test
-    public void testGcLogFileSizeSmall() {
+    void testGcLogFileSizeSmall() {
         File testFile = TestUtil.getFile("dataset181.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL), Analysis.WARN_GC_LOG_FILE_SIZE_SMALL + " analysis not identified.");
     }
 
     /**
      * Test heap dump location missing
      */
     @Test
-    public void testHeapDumpPathMissing() {
+    void testHeapDumpPathMissing() {
         File testFile = TestUtil.getFile("dataset181.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.INFO_HEAP_DUMP_PATH_MISSING + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_HEAP_DUMP_PATH_MISSING));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_HEAP_DUMP_PATH_MISSING), Analysis.INFO_HEAP_DUMP_PATH_MISSING + " analysis not identified.");
     }
 
     /**
      * Test swap disabled.
      */
     @Test
-    public void testSwapDisabled() {
+    void testSwapDisabled() {
         File testFile = TestUtil.getFile("dataset187.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.INFO_SWAP_DISABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_SWAP_DISABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_SWAP_DISABLED), Analysis.INFO_SWAP_DISABLED + " analysis not identified.");
     }
 
     /**
      * Test diagnostic options
      */
     @Test
-    public void testDiagnosticOptions() {
+    void testDiagnosticOptions() {
         File testFile = TestUtil.getFile("dataset192.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.INFO_JMX_ENABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_JMX_ENABLED));
-        assertTrue(Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_JMX_ENABLED), Analysis.INFO_JMX_ENABLED + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED), Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED + " analysis not identified.");
     }
 
     /**
      * Test -XX:+UseFastUnorderedTimeStamps
      */
     @Test
-    public void testFastUnorderedTimestamps() {
+    void testFastUnorderedTimestamps() {
         File testFile = TestUtil.getFile("dataset193.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS + " analysis not identified.",
-                jvmRun.getAnalysis().contains(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS));
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS), Analysis.WARN_FAST_UNORDERED_TIMESTAMPS + " analysis not identified.");
     }
 
     /**
      * Test Metadata GC Threshold
      */
     @Test
-    public void testMetadataGcThreshold() {
+    void testMetadataGcThreshold() {
         File testFile = TestUtil.getFile("dataset199.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        assertFalse(JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.",
-                jvmRun.getEventTypes().contains(LogEventType.UNKNOWN));
+        assertEquals(1,jvmRun.getEventTypes().size(),"Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN), JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
     }
 }

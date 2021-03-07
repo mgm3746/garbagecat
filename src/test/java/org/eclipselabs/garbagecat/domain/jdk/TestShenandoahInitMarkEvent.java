@@ -12,9 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,154 +22,139 @@ import java.util.List;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestShenandoahInitMarkEvent {
+class TestShenandoahInitMarkEvent {
 
     @Test
-    public void testLogLineJdk8() {
+    void testLogLineJdk8() {
         String logLine = "2020-03-10T08:03:29.365-0400: 0.427: [Pause Init Mark, 0.419 ms]";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".",
-                ShenandoahInitMarkEvent.match(logLine));
+        assertTrue(ShenandoahInitMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".");
         ShenandoahInitMarkEvent event = new ShenandoahInitMarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 427, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 419, event.getDuration());
+        assertEquals((long) 427,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(419,event.getDuration(),"Duration not parsed correctly.");
     }
 
     @Test
-    public void testLogLineUnified() {
+    void testLogLineUnified() {
         String logLine = "[0.521s][info][gc] GC(1) Pause Init Mark 0.453ms";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".",
-                ShenandoahInitMarkEvent.match(logLine));
+        assertTrue(ShenandoahInitMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".");
         ShenandoahInitMarkEvent event = new ShenandoahInitMarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 521 - 0, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 453, event.getDuration());
+        assertEquals((long) (521 - 0),event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(453,event.getDuration(),"Duration not parsed correctly.");
     }
 
     @Test
-    public void testIdentityEventType() {
+    void testIdentityEventType() {
         String logLine = "[0.521s][info][gc] GC(1) Pause Init Mark 0.453ms";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_INIT_MARK + "not identified.",
-                JdkUtil.LogEventType.SHENANDOAH_INIT_MARK, JdkUtil.identifyEventType(logLine));
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_INIT_MARK,JdkUtil.identifyEventType(logLine),JdkUtil.LogEventType.SHENANDOAH_INIT_MARK + "not identified.");
     }
 
     @Test
-    public void testParseLogLine() {
+    void testParseLogLine() {
         String logLine = "[0.521s][info][gc] GC(1) Pause Init Mark 0.453ms";
-        assertTrue(JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " not parsed.",
-                JdkUtil.parseLogLine(logLine) instanceof ShenandoahInitMarkEvent);
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahInitMarkEvent, JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " not parsed.");
     }
 
     @Test
-    public void testBlocking() {
+    void testBlocking() {
         String logLine = "[0.521s][info][gc] GC(1) Pause Init Mark 0.453ms";
-        assertTrue(JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " not indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
-    public void testHydration() {
+    void testHydration() {
         LogEventType eventType = JdkUtil.LogEventType.SHENANDOAH_INIT_MARK;
         String logLine = "[0.521s][info][gc] GC(1) Pause Init Mark 0.453ms";
         long timestamp = 521;
         int duration = 0;
-        assertTrue(JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " not parsed.", JdkUtil
-                .hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof ShenandoahInitMarkEvent);
+        assertTrue(JdkUtil
+		.hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof ShenandoahInitMarkEvent, JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " not parsed.");
     }
 
     @Test
-    public void testReportable() {
-        assertTrue(JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " not indentified as reportable.",
-                JdkUtil.isReportable(JdkUtil.LogEventType.SHENANDOAH_INIT_MARK));
+    void testReportable() {
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.SHENANDOAH_INIT_MARK), JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " not indentified as reportable.");
     }
 
     @Test
-    public void testUnified() {
+    void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_INIT_MARK);
-        assertFalse(JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " incorrectly indentified as unified.",
-                UnifiedUtil.isUnifiedLogging(eventTypes));
+        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes), JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " incorrectly indentified as unified.");
     }
 
     @Test
-    public void testLogLineWhitespaceAtEnd() {
+    void testLogLineWhitespaceAtEnd() {
         String logLine = "[0.521s][info][gc] GC(1) Pause Init Mark 0.453ms   ";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".",
-                ShenandoahInitMarkEvent.match(logLine));
+        assertTrue(ShenandoahInitMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".");
     }
 
     @Test
-    public void testLogLineJdk8ProcessWeakrefs() {
+    void testLogLineJdk8ProcessWeakrefs() {
         String logLine = "2020-03-10T08:03:29.489-0400: 0.551: [Pause Init Mark (process weakrefs), 0.314 ms]";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".",
-                ShenandoahInitMarkEvent.match(logLine));
+        assertTrue(ShenandoahInitMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".");
         ShenandoahInitMarkEvent event = new ShenandoahInitMarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 551, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 314, event.getDuration());
+        assertEquals((long) 551,event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(314,event.getDuration(),"Duration not parsed correctly.");
     }
 
     @Test
-    public void testLogLineUnifiedProcessWeakrefs() {
+    void testLogLineUnifiedProcessWeakrefs() {
         String logLine = "[0.456s][info][gc] GC(0) Pause Init Mark (process weakrefs) 0.868ms";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".",
-                ShenandoahInitMarkEvent.match(logLine));
+        assertTrue(ShenandoahInitMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".");
         ShenandoahInitMarkEvent event = new ShenandoahInitMarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 456 - 0, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 868, event.getDuration());
+        assertEquals((long) (456 - 0),event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(868,event.getDuration(),"Duration not parsed correctly.");
     }
 
     @Test
-    public void testLogLineUnifiedUpdateRefs() {
+    void testLogLineUnifiedUpdateRefs() {
         String logLine = "[10.453s][info][gc] GC(279) Pause Init Mark (update refs) 0.244ms";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".",
-                ShenandoahInitMarkEvent.match(logLine));
+        assertTrue(ShenandoahInitMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".");
         ShenandoahInitMarkEvent event = new ShenandoahInitMarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 10453 - 0, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 244, event.getDuration());
+        assertEquals((long) (10453 - 0),event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(244,event.getDuration(),"Duration not parsed correctly.");
     }
 
     @Test
-    public void testLogLineUnifiedUpdateRefsProcessWeakrefs() {
+    void testLogLineUnifiedUpdateRefsProcessWeakrefs() {
         String logLine = "[11.006s][info][gc] GC(300) Pause Init Mark (update refs) (process weakrefs) 0.266ms";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".",
-                ShenandoahInitMarkEvent.match(logLine));
+        assertTrue(ShenandoahInitMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".");
         ShenandoahInitMarkEvent event = new ShenandoahInitMarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 11006 - 0, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 266, event.getDuration());
+        assertEquals((long) (11006 - 0),event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(266,event.getDuration(),"Duration not parsed correctly.");
     }
 
     @Test
-    public void testLogLineUnifiedDetailed() {
+    void testLogLineUnifiedDetailed() {
         String logLine = "[41.893s][info][gc           ] GC(1500) Pause Init Mark (update refs) "
                 + "(process weakrefs) 0.295ms";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".",
-                ShenandoahInitMarkEvent.match(logLine));
+        assertTrue(ShenandoahInitMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".");
         ShenandoahInitMarkEvent event = new ShenandoahInitMarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 41893 - 0, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 295, event.getDuration());
+        assertEquals((long) (41893 - 0),event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(295,event.getDuration(),"Duration not parsed correctly.");
     }
 
     @Test
-    public void testLogLineUnifiedUptimeMillis() {
+    void testLogLineUnifiedUptimeMillis() {
         String logLine = "[2019-02-05T14:47:34.178-0200][3090ms] GC(0) Pause Init Mark (process weakrefs) 2.904ms";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".",
-                ShenandoahInitMarkEvent.match(logLine));
+        assertTrue(ShenandoahInitMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".");
         ShenandoahInitMarkEvent event = new ShenandoahInitMarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 3090 - 2, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 2904, event.getDuration());
+        assertEquals((long) (3090 - 2),event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(2904,event.getDuration(),"Duration not parsed correctly.");
     }
 
     @Test
-    public void testLogLineUnifiedUnloadClasses() {
+    void testLogLineUnifiedUnloadClasses() {
         String logLine = "[5.593s][info][gc           ] GC(99) Pause Init Mark (unload classes) 0.088ms";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".",
-                ShenandoahInitMarkEvent.match(logLine));
+        assertTrue(ShenandoahInitMarkEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + ".");
         ShenandoahInitMarkEvent event = new ShenandoahInitMarkEvent(logLine);
-        assertEquals("Time stamp not parsed correctly.", 5593 - 0, event.getTimestamp());
-        assertEquals("Duration not parsed correctly.", 88, event.getDuration());
+        assertEquals((long) (5593 - 0),event.getTimestamp(),"Time stamp not parsed correctly.");
+        assertEquals(88,event.getDuration(),"Duration not parsed correctly.");
     }
 }

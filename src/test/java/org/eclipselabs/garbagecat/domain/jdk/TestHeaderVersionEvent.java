@@ -12,39 +12,36 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestHeaderVersionEvent {
+class TestHeaderVersionEvent {
 
     @Test
-    public void testLine() {
+    void testLine() {
         String logLine = "Java HotSpot(TM) 64-Bit Server VM (24.85-b08) for linux-amd64 JRE (1.7.0_85-b34), built on "
                 + "Sep 29 2015 08:44:21 by \"java_re\" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEADER_VERSION.toString() + ".",
-                HeaderVersionEvent.match(logLine));
+        assertTrue(HeaderVersionEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.HEADER_VERSION.toString() + ".");
     }
 
     @Test
-    public void testLineOpenJdk() {
+    void testLineOpenJdk() {
         String logLine = "OpenJDK 64-Bit Server VM (24.95-b01) for linux-amd64 JRE (1.7.0_95-b00), built on "
                 + "Jan 18 2016 21:57:50 by \"mockbuild\" with gcc 4.8.5 20150623 (Red Hat 4.8.5-4)";
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.HEADER_VERSION.toString() + ".",
-                HeaderVersionEvent.match(logLine));
+        assertTrue(HeaderVersionEvent.match(logLine), "Log line not recognized as " + JdkUtil.LogEventType.HEADER_VERSION.toString() + ".");
     }
 
     @Test
-    public void testNotBlocking() {
+    void testNotBlocking() {
         String logLine = "Java HotSpot(TM) 64-Bit Server VM (24.85-b08) for linux-amd64 JRE (1.7.0_85-b34), built on "
                 + "Sep 29 2015 08:44:21 by \"java_re\" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)";
-        assertFalse(JdkUtil.LogEventType.HEADER_VERSION.toString() + " incorrectly indentified as blocking.",
-                JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)));
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)), JdkUtil.LogEventType.HEADER_VERSION.toString() + " incorrectly indentified as blocking.");
     }
 }

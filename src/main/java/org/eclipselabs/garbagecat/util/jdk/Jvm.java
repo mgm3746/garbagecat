@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1598,7 +1597,6 @@ public class Jvm {
      * @return the unaccounted disabled JVM options, null otherwise.
      */
     public String getUnaccountedDisabledOptions() {
-        String unaccountedDisabledOptions = null;
         String accountedDisabledOptions = "-XX:-HeapDumpOnOutOfMemoryError -XX:-BackgroundCompilation "
                 + "-XX:-PrintGCDetails -XX:-UseParNewGC -XX:-CMSClassUnloadingEnabled "
                 + "-XX:-PrintGCCause -XX:-UseBiasedLocking -XX:-UseCompressedOops "
@@ -1607,16 +1605,11 @@ public class Jvm {
                 + "-XX:-PrintAdaptiveSizePolicy -XX:-CMSParallelInitialMarkEnabled -XX:-CMSParallelRemarkEnabled "
                 + "-XX:-UseAdaptiveSizePolicy";
 
-        ArrayList<String> disabledOptions = getDisabledOptions();
-        Iterator<String> iterator = disabledOptions.iterator();
-        while (iterator.hasNext()) {
-            String disabledOption = iterator.next();
+        String unaccountedDisabledOptions = null;
+        for (String disabledOption : getDisabledOptions()) {
             if (accountedDisabledOptions.lastIndexOf(disabledOption) == -1) {
-                if (unaccountedDisabledOptions == null) {
-                    unaccountedDisabledOptions = disabledOption;
-                } else {
-                    unaccountedDisabledOptions = unaccountedDisabledOptions + ", " + disabledOption;
-                }
+				unaccountedDisabledOptions = unaccountedDisabledOptions == null ? disabledOption
+						: unaccountedDisabledOptions + ", " + disabledOption;
             }
         }
         return unaccountedDisabledOptions;
@@ -1633,7 +1626,6 @@ public class Jvm {
      * @return the option if it exists, null otherwise.
      */
     public String getUseAdaptiveSizePolicyDisabledOption() {
-        String regex = "(-XX:-UseAdaptiveSizePolicy)";
-        return getJvmOption(regex);
+        return getJvmOption("(-XX:-UseAdaptiveSizePolicy)");
     }
 }

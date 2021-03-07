@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -371,11 +370,9 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      *            Log lines to be output out of order.
      */
     private final void clearEntangledLines(List<String> entangledLogLines) {
-        if (entangledLogLines != null && entangledLogLines.size() > 0) {
+        if (entangledLogLines != null && !entangledLogLines.isEmpty()) {
             // Output any entangled log lines
-            Iterator<String> iterator = entangledLogLines.iterator();
-            while (iterator.hasNext()) {
-                String logLine = iterator.next();
+            for (String logLine : entangledLogLines) {
                 this.logEntry = this.logEntry + Constants.LINE_SEPARATOR + logLine;
             }
             // Reset entangled log lines

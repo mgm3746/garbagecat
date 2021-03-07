@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -948,32 +947,33 @@ public class G1PreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
-        boolean match = false;
-        if (logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_GC)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_CLASS_HISTOGRAM)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_REMARK) || logLine.matches(REGEX_RETAIN_BEGINNING_MIXED)
-                || (logLine.matches(REGEX_RETAIN_BEGINNING_CLEANUP) && nextLogLine.matches(REGEX_RETAIN_END))
-                || logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_CONCURRENT)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK) || logLine.matches(REGEX_RETAIN_MIDDLE_FULL)
-                || logLine.matches(REGEX_RETAIN_MIDDLE) || logLine.matches(REGEX_RETAIN_MIDDLE_DURATION)
-                || logLine.matches(REGEX_RETAIN_END) || logLine.matches(REGEX_RETAIN_END_CONCURRENT_YOUNG)) {
-            match = true;
-        } else {
-            // TODO: Get rid of this and make them throwaway events?
-            for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
-                if (logLine.matches(REGEX_THROWAWAY[i])) {
-                    match = true;
-                    break;
-                }
-            }
+        if (logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE) //
+                || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK) //
+                || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_GC) //
+                || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM) //
+                || logLine.matches(REGEX_RETAIN_BEGINNING_CLASS_HISTOGRAM) //
+                || logLine.matches(REGEX_RETAIN_BEGINNING_REMARK) //
+                || logLine.matches(REGEX_RETAIN_BEGINNING_MIXED) //
+                || (logLine.matches(REGEX_RETAIN_BEGINNING_CLEANUP) && nextLogLine.matches(REGEX_RETAIN_END)) //
+                || logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT) //
+                || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT) //
+                || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_CONCURRENT) //
+                || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE) //
+                || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK) //
+                || logLine.matches(REGEX_RETAIN_MIDDLE_FULL) //
+                || logLine.matches(REGEX_RETAIN_MIDDLE) //
+                || logLine.matches(REGEX_RETAIN_MIDDLE_DURATION) //
+                || logLine.matches(REGEX_RETAIN_END) //
+                || logLine.matches(REGEX_RETAIN_END_CONCURRENT_YOUNG)) {
+            return true;
         }
-        return match;
+		// TODO: Get rid of this and make them throwaway events?
+		for (String element : REGEX_THROWAWAY) {
+		    if (logLine.matches(element)) {
+		        return true;
+		    }
+		}
+        return false;
     }
 
     /**
@@ -984,11 +984,9 @@ public class G1PreprocessAction implements PreprocessAction {
      * @return
      */
     private final void clearEntangledLines(List<String> entangledLogLines) {
-        if (entangledLogLines != null && entangledLogLines.size() > 0) {
+        if (entangledLogLines != null && !entangledLogLines.isEmpty()) {
             // Output any entangled log lines
-            Iterator<String> iterator = entangledLogLines.iterator();
-            while (iterator.hasNext()) {
-                String logLine = iterator.next();
+            for (String logLine : entangledLogLines) {
                 this.logEntry = this.logEntry + Constants.LINE_SEPARATOR + logLine;
             }
             // Reset entangled log lines

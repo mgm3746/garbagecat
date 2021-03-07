@@ -12,8 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.HashSet;
@@ -25,43 +25,40 @@ import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestSerialPreprocessAction {
+class TestSerialPreprocessAction {
 
     @Test
-    public void testLogLineBeginSerialNew() {
+    void testLogLineBeginSerialNew() {
         String logLine = "10.204: [GC 10.204: [DefNew";
         Set<String> context = new HashSet<String>();
-        assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SERIAL.toString() + ".",
-                SerialPreprocessAction.match(logLine));
+        assertTrue(SerialPreprocessAction.match(logLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.SERIAL.toString() + ".");
         SerialPreprocessAction event = new SerialPreprocessAction(null, logLine, null, null, context);
-        assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+        assertEquals(logLine,event.getLogEntry(),"Log line not parsed correctly.");
     }
 
     @Test
-    public void testLogLineEndSerialNew() {
+    void testLogLineEndSerialNew() {
         String logLine = ": 36825K->4352K(39424K), 0.0224830 secs] 44983K->14441K(126848K), 0.0225800 secs]";
         Set<String> context = new HashSet<String>();
-        assertTrue("Log line not recognized as " + JdkUtil.PreprocessActionType.SERIAL.toString() + ".",
-                SerialPreprocessAction.match(logLine));
+        assertTrue(SerialPreprocessAction.match(logLine), "Log line not recognized as " + JdkUtil.PreprocessActionType.SERIAL.toString() + ".");
         SerialPreprocessAction event = new SerialPreprocessAction(null, logLine, null, null, context);
-        assertEquals("Log line not parsed correctly.", logLine, event.getLogEntry());
+        assertEquals(logLine,event.getLogEntry(),"Log line not parsed correctly.");
     }
 
     @Test
-    public void testSerialNewPrintTenuringDistributionPreprocessing() {
+    void testSerialNewPrintTenuringDistributionPreprocessing() {
         File testFile = TestUtil.getFile("dataset17.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("Event type count not correct.", 1, jvmRun.getEventTypes().size());
-        assertTrue("Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".",
-                jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL_NEW));
+        assertEquals(1,jvmRun.getEventTypes().size(),"Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL_NEW), "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
     }
 }
