@@ -130,6 +130,8 @@ public class GcManager {
         return lastLogLineUnprocessed;
     }
 
+    private static final Date jvmStartDate = GcUtil.parseStartDateTime("2000-01-01 00:00:00.000");
+
     /**
      * Preprocess log file. Remove extraneous information and format the log file for parsing.
      * 
@@ -774,7 +776,6 @@ public class GcManager {
                     }
                 } else if (event instanceof UnknownEvent) {
                     // Don't count reportable events with datestamp only as unidentified
-                    Date jvmStartDate = GcUtil.parseStartDateTime("2000-01-01 00:00:00,000");
                     DateStampPreprocessAction preprocessAction = new DateStampPreprocessAction(logLine, jvmStartDate);
                     LogEvent preprocessedEvent = null;
                     if (preprocessAction.getLogEntry() != null) {

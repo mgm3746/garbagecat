@@ -518,7 +518,7 @@ class TestParNewEvent {
     @Test
     void testParNewDatestampNoTimestampJvmStartDate() {
         File testFile = TestUtil.getFile("dataset113.txt");
-        Date jvmStartDate = GcUtil.parseStartDateTime("2017-02-28 11:26:24,135");
+        Date jvmStartDate = GcUtil.parseStartDateTime("2017-02-28 11:26:24.135");
         Jvm jvm = new Jvm(null, jvmStartDate);
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, jvmStartDate);

@@ -36,8 +36,7 @@ public class JdkRegEx {
      * 
      * 2) Plus GMT: 2010-04-16T12:11:18.979+0200
      */
-    public static final String DATESTAMP = "((\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d{3})(-|\\+)"
-            + "(\\d{4}))";
+    public static final String DATESTAMP = "((\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d{3})(-|\\+)(\\d{4}))";
 
     /**
      * Datetime.

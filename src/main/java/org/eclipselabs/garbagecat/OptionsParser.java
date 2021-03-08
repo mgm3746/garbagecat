@@ -69,7 +69,7 @@ public class OptionsParser {
         options.addOption(OPTION_JVMOPTIONS_SHORT, OPTION_JVMOPTIONS_LONG, true, "JVM options used during JVM run");
         options.addOption(OPTION_PREPROCESS_SHORT, OPTION_PREPROCESS_LONG, false, "do preprocessing");
         options.addOption(OPTION_STARTDATETIME_SHORT, OPTION_STARTDATETIME_LONG, true,
-                "JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS) required for handling datestamp-only logging");
+                "JVM start datetime (yyyy-MM-dd HH:mm:ss.SSS) required for handling datestamp-only logging");
         options.addOption(OPTION_THRESHOLD_SHORT, OPTION_THRESHOLD_LONG, true,
                 "threshold (0-100) for throughput bottleneck reporting");
         options.addOption(OPTION_REORDER_SHORT, OPTION_REORDER_LONG, false, "reorder logging by timestamp");

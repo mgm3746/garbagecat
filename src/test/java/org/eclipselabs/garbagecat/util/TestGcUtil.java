@@ -44,20 +44,13 @@ class TestGcUtil {
     
     @Test
     void testStartDateTime() {
-    	String startDateTime = "2009-09-18 00:00:08,172";
+    	String startDateTime = "2009-09-18 00:00:08.172";
     	assertTrue(isValidStartDateTime(startDateTime), "Start date/time not recognized as a valid format.");
     }
     
     @Test
-    void testInvalidStartDateTime() {
-    	// Replace comma with space
-    	String startDateTime = "2009-09-18 00:00:08 172";
-    	assertFalse(isValidStartDateTime(startDateTime), "Start date/time recognized as a valid format.");
-    }
-    
-    @Test
     void testConvertStartDateTimeStringToDate() {
-    	String startDateTime = "2009-09-18 16:24:08,172";
+    	String startDateTime = "2009-09-18 16:24:08.172";
     	Date date = parseStartDateTime(startDateTime);
     	assertEquals(parseDate("2009-09-18", "16:24:08.172"), date);
     }
@@ -137,7 +130,7 @@ class TestGcUtil {
     
     @Test
     void testAddingDateWith2DigitMonth() {
-    	String jvmStarted = "2009-11-01 02:30:52,917";
+    	String jvmStarted = "2009-11-01 02:30:52.917";
     	long gcLogTimestamp = 353647157L;
     	assertEquals(parseDate("2009-11-05", "04:45:00.074"),
     			getDatePlusTimestamp(parseStartDateTime(jvmStarted), gcLogTimestamp));

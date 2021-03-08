@@ -32,17 +32,17 @@ public final class GcUtil {
 
     /**
      * <p>
-     * Regular expression for valid JVM start date/time in yyyy-MM-dd HH:mm:ss,SSS format (see
+     * Regular expression for valid JVM start date/time in yyyy-MM-dd HH:mm:ss.SSS format (see
      * <code>SimpleDateFormat</code> for date and time pattern definitions).
      * </p>
      * 
      * For example:
      * 
      * <pre>
-     * 2009-09-18 00:00:08,172
+     * 2009-09-18 00:00:08.172
      * </pre>
      */
-    public static final Pattern START_DATE_TIME_REGEX = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}),"
+    public static final Pattern START_DATE_TIME_REGEX = Pattern.compile("^(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2})\\."
             + "(\\d{3})$");
     
     public static final Pattern DATESTAMP = Pattern.compile(JdkRegEx.DATESTAMP);

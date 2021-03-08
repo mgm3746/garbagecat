@@ -28,7 +28,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
  */
 public final class UnifiedUtil {
 
-    private UnifiedUtil() {
+	private static final Date jvmStartDate = GcUtil.parseStartDateTime("2000-01-01 00:00:00.000");
+
+	private UnifiedUtil() {
         super();
     }
 
@@ -82,7 +84,6 @@ public final class UnifiedUtil {
     public static long convertDatestampToMillis(String datestamp) {
         // Calculate uptimemillis from random date/time
         Date eventDate = GcUtil.parseDateStamp(datestamp);
-        Date jvmStartDate = GcUtil.parseStartDateTime("2000-01-01 00:00:00,000");
         return GcUtil.dateDiff(jvmStartDate, eventDate);
     }
 }
