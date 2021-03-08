@@ -205,11 +205,11 @@ public class Jvm {
      */
     public Memory getThreadStackSizeValue() {
         String threadStackSizeOption = getThreadStackSizeOption();
-		if (threadStackSizeOption == null) {
-			return null;
-		}
-		Unit unit = threadStackSizeOption.startsWith("-XX:ThreadStackSize=") ? KILOBYTES : BYTES;
-		return fromOptionSize(getOptionValue(threadStackSizeOption), unit);
+        if (threadStackSizeOption == null) {
+            return null;
+        }
+        Unit unit = threadStackSizeOption.startsWith("-XX:ThreadStackSize=") ? KILOBYTES : BYTES;
+        return fromOptionSize(getOptionValue(threadStackSizeOption), unit);
     }
 
     /**

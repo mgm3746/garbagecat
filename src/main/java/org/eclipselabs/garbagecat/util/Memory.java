@@ -234,7 +234,7 @@ public class Memory implements Comparable<Memory> {
      * @return The size in bytes.
      */
     public static Memory fromOptionSize(String size) {
-    	return fromOptionSize(size, BYTES);
+        return fromOptionSize(size, BYTES);
     }
 
     /**
@@ -246,12 +246,12 @@ public class Memory implements Comparable<Memory> {
      *            The unit to use if not unit is specified
      * @return The size in bytes.
      */
-	public static Memory fromOptionSize(String size, Unit unit) {
-		Matcher matcher = optionSizePattern.matcher(size);
-		return matcher.find()
+    public static Memory fromOptionSize(String size, Unit unit) {
+        Matcher matcher = optionSizePattern.matcher(size);
+        return matcher.find()
                 ? memory(parseLong(matcher.group(1)), matcher.group(2) == null ? unit : forUnit(matcher.group(2)))
                 : null;
-	}
+    }
 
     private final Unit size;
 
