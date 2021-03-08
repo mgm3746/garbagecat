@@ -631,7 +631,7 @@ public class JvmRun {
      * @return Ratio of old/young space sizes rounded to whole number.
      */
     public long getNewRatio() {
-        if (maxYoungSpace == null) {
+        if (maxYoungSpace == null || maxOldSpace.getValue(KILOBYTES) == 0) {
             return 0;
         }
         BigDecimal ratio = new BigDecimal(maxOldSpace.getValue(KILOBYTES));
@@ -1223,7 +1223,8 @@ public class JvmRun {
         }
 
         // Check for young space >= old space
-        if (maxYoungSpace != null && maxOldSpace != null && maxYoungSpace.compareTo(maxOldSpace) >= 0) {
+        if (maxYoungSpace != null && maxOldSpace != null && maxYoungSpace.getValue(KILOBYTES) > 0
+                && maxYoungSpace.compareTo(maxOldSpace) >= 0) {
             analysis.add(INFO_NEW_RATIO_INVERTED);
         }
 
