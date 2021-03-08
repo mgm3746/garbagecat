@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
+import static org.eclipselabs.garbagecat.TestUtil.parseDate;
 import static org.eclipselabs.garbagecat.util.Memory.bytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Calendar;
+import java.util.Date;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
@@ -37,20 +38,12 @@ class TestJdkUtil {
 
     @Test
     void testConvertLogEntryTimestampsToDate() {
-        // 1966-08-18 19:21:44,012
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, 1966);
-        calendar.set(Calendar.MONTH, Calendar.AUGUST);
-        calendar.set(Calendar.DAY_OF_MONTH, 18);
-        calendar.set(Calendar.HOUR_OF_DAY, 19);
-        calendar.set(Calendar.MINUTE, 21);
-        calendar.set(Calendar.SECOND, 44);
-        calendar.set(Calendar.MILLISECOND, 12);
-        String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
+    	Date date = parseDate("1966-08-18","19:21:44.012");
+    	String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
                 + "89399K->11655K(907328K), 0.0387074 secs]";
         String logLineConverted = "1966-08-18 19:22:04,201: [GC 1966-08-18 19:22:04,202: "
                 + "[ParNew: 86199K->8454K(91712K), 0.0375060 secs] 89399K->11655K(907328K), 0.0387074 secs]";
-        assertEquals(logLineConverted, JdkUtil.convertLogEntryTimestampsToDateStamp(logLine, calendar.getTime()),
+        assertEquals(logLineConverted, JdkUtil.convertLogEntryTimestampsToDateStamp(logLine, date),
                 "Timestamps not converted to date/time correctly");
     }
 
@@ -91,7 +84,7 @@ class TestJdkUtil {
 
         // 123 ms between GCs with duration of 33 ms
         String logLine2 = "test2";
-        long timestamp2 = 10123L;
+        long timestamp2 = timestamp1 + 123;
         int duration2 = 33000;
         BlockingEvent gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
 
@@ -129,7 +122,7 @@ class TestJdkUtil {
 
         // 2nd event starts immediately after the first
         String logLine2 = "test2";
-        long timestamp2 = 11000L;
+        long timestamp2 = timestamp1 + 1000;
         int duration2 = 500000;
         BlockingEvent gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
 
@@ -158,7 +151,7 @@ class TestJdkUtil {
 
         // 2nd event starts .001 before the first collection ends
         String logLine2 = "test2";
-        long timestamp2 = 1100L;
+        long timestamp2 = timestamp1 + 100;
         int duration2 = 200;
         BlockingEvent gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
 

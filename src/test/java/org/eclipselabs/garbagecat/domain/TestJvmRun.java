@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
+import static org.eclipselabs.garbagecat.TestUtil.parseDate;
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.BYTES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
@@ -352,15 +352,7 @@ class TestJvmRun {
     void testDateStampPreprocessActionLogging() {
         File testFile = TestUtil.getFile("dataset25.txt");
         GcManager gcManager = new GcManager();
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, 2010);
-        calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
-        calendar.set(Calendar.DAY_OF_MONTH, 26);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        File preprocessedFile = gcManager.preprocess(testFile, calendar.getTime());
+        File preprocessedFile = gcManager.preprocess(testFile, parseDate("2010-02-26"));
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
