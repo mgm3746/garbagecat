@@ -182,12 +182,12 @@ public class Memory implements Comparable<Memory> {
     }
 
     public static Memory memory(String string) {
-        return new Memory(Long.valueOf(string.substring(0, string.length() - 1)),
+        return new Memory(Long.parseLong(string.substring(0, string.length() - 1)),
                 forUnit(string.charAt(string.length() - 1)));
     }
 
     public static Memory memory(String value, char unit) {
-        return memory(Long.valueOf(value), forUnit(unit));
+        return memory(Long.parseLong(value), forUnit(unit));
     }
 
     public static Memory bytes(long value) {
