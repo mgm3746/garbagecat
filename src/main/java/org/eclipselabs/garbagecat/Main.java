@@ -252,7 +252,8 @@ public class Main {
                     }
                 }
                 // NewRatio
-                if (jvmRun.getMaxYoungSpace() != null && jvmRun.getMaxOldSpace() != null) {
+                if (jvmRun.getMaxYoungSpace() != null && jvmRun.getMaxOldSpace() != null
+                        && jvmRun.getMaxYoungSpace().getValue(KILOBYTES) > 0) {
                     bufferedWriter.write("NewRatio: " + jvmRun.getNewRatio() + LINE_SEPARATOR);
                 }
                 // Max heap occupancy.

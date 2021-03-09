@@ -12,8 +12,11 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk;
 
+import static org.eclipselabs.garbagecat.util.Memory.fromOptionSize;
 import static org.eclipselabs.garbagecat.util.Memory.megabytes;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.BYTES;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+import static org.eclipselabs.garbagecat.util.jdk.JdkUtil.getOptionValue;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.Memory.Unit;
 
 /**
  * JVM environment information
@@ -199,8 +203,13 @@ public class Jvm {
      * 
      * @return The thread stack size value, or null if not set. For example:
      */
-    public String getThreadStackSizeValue() {
-        return JdkUtil.getOptionValue(getThreadStackSizeOption());
+    public Memory getThreadStackSizeValue() {
+        String threadStackSizeOption = getThreadStackSizeOption();
+        if (threadStackSizeOption == null) {
+            return null;
+        }
+        Unit unit = threadStackSizeOption.startsWith("-XX:ThreadStackSize=") ? KILOBYTES : BYTES;
+        return fromOptionSize(getOptionValue(threadStackSizeOption), unit);
     }
 
     /**
@@ -236,7 +245,7 @@ public class Jvm {
      *         </pre>
      */
     public String getMinHeapValue() {
-        return JdkUtil.getOptionValue(getMinHeapOption());
+        return getOptionValue(getMinHeapOption());
     }
 
     /**
@@ -262,7 +271,7 @@ public class Jvm {
      *         </pre>
      */
     public String getMaxHeapValue() {
-        return JdkUtil.getOptionValue(getMaxHeapOption());
+        return getOptionValue(getMaxHeapOption());
     }
 
     /**
@@ -317,7 +326,7 @@ public class Jvm {
      *         </pre>
      */
     public String getMinPermValue() {
-        return JdkUtil.getOptionValue(getMinPermOption());
+        return getOptionValue(getMinPermOption());
     }
 
     /**
@@ -342,7 +351,7 @@ public class Jvm {
      *         </pre>
      */
     public String getMinMetaspaceValue() {
-        return JdkUtil.getOptionValue(getMinMetaspaceOption());
+        return getOptionValue(getMinMetaspaceOption());
     }
 
     /**
@@ -367,7 +376,7 @@ public class Jvm {
      *         </pre>
      */
     public String getMaxPermValue() {
-        return JdkUtil.getOptionValue(getMaxPermOption());
+        return getOptionValue(getMaxPermOption());
     }
 
     /**
@@ -392,7 +401,7 @@ public class Jvm {
      *         </pre>
      */
     public String getMaxMetaspaceValue() {
-        return JdkUtil.getOptionValue(getMaxMetaspaceOption());
+        return getOptionValue(getMaxMetaspaceOption());
     }
 
     /**
@@ -418,7 +427,7 @@ public class Jvm {
      *         </pre>
      */
     public String getRmiDgcClientGcIntervalValue() {
-        return JdkUtil.getOptionValue(getRmiDgcClientGcIntervalOption());
+        return getOptionValue(getRmiDgcClientGcIntervalOption());
     }
 
     /**
@@ -444,7 +453,7 @@ public class Jvm {
      *         </pre>
      */
     public String getRmiDgcServerGcIntervalValue() {
-        return JdkUtil.getOptionValue(getRmiDgcServerGcIntervalOption());
+        return getOptionValue(getRmiDgcServerGcIntervalOption());
     }
 
     /**
@@ -1002,7 +1011,7 @@ public class Jvm {
      * 
      */
     public String getGcLogFileSizeValue() {
-        return JdkUtil.getOptionValue(getGcLogFileSize());
+        return getOptionValue(getGcLogFileSize());
     }
 
     /**
@@ -1065,7 +1074,7 @@ public class Jvm {
      * 
      */
     public String getCompressedClassSpaceSizeValue() {
-        return JdkUtil.getOptionValue(getCompressedClassSpaceSizeOption());
+        return getOptionValue(getCompressedClassSpaceSizeOption());
     }
 
     /**
@@ -1466,23 +1475,22 @@ public class Jvm {
      * @return The JVM option, or null if not explicitly set.
      */
     public String getJvmOption(final String regex) {
-        String option = null;
         if (options != null) {
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(options);
             if (matcher.find()) {
-                option = matcher.group(1);
+                return matcher.group(1);
             }
         }
-        return option;
+        return null;
     }
 
     /**
      * @return True if stack size &gt;= 1024k, false otherwise.
      */
     public boolean hasLargeThreadStackSize() {
-        String threadStackSize = getThreadStackSizeValue();
-        return threadStackSize != null && Memory.fromOptionSize(threadStackSize).compareTo(megabytes(1)) >= 0;
+        Memory threadStackSize = getThreadStackSizeValue();
+        return threadStackSize != null && threadStackSize.compareTo(megabytes(1)) >= 0;
     }
 
     /**
