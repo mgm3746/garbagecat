@@ -147,7 +147,7 @@ class TestGcUtil {
     @Test
     void testConvertDateStampStringToDate() {
     	Date date = GcUtil.parseDateStamp("2010-02-26T09:32:12.486-0600");
-    	assertEquals(parseDate("2010-02-26", "09:32:12.486"), date);
+    	assertEquals(parseDate("2010-02-26", "16:32:12.486"), date);
     }
     
     @Test

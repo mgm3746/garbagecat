@@ -12,8 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util;
 
+import static java.util.TimeZone.getTimeZone;
 import static java.util.concurrent.TimeUnit.DAYS;
 
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -90,7 +92,7 @@ public final class GcUtil {
     public static Date parseDateStamp(String datestamp) {
         Matcher matcher = DATESTAMP.matcher(datestamp);
         return matcher.find() ? getDate(matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6),
-		        matcher.group(7), matcher.group(8)) : null;
+		        matcher.group(7), matcher.group(8), matcher.group(9) + matcher.group(10)) : null;
     }
 
     /**
@@ -112,20 +114,53 @@ public final class GcUtil {
      *            The milliseconds.
      * @return The date part strings converted to a <code>Date</code>
      */
-    private static Date getDate(String yyyy, String MM, String dd, String HH, String mm, String ss, String SSS) {
-        Calendar calendar = Calendar.getInstance();
-        if (yyyy == null || MM == null || dd == null || HH == null || mm == null || ss == null || SSS == null) {
-            throw new IllegalArgumentException("One or more date parts are missing.");
-        }
-        calendar.set(Calendar.YEAR, Integer.valueOf(yyyy));
-        calendar.set(Calendar.MONTH, Integer.valueOf(MM).intValue() - 1);
-        calendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(dd).intValue());
-        calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(HH).intValue());
-        calendar.set(Calendar.MINUTE, Integer.valueOf(mm).intValue());
-        calendar.set(Calendar.SECOND, Integer.valueOf(ss).intValue());
-        calendar.set(Calendar.MILLISECOND, Integer.valueOf(SSS).intValue());
-        return calendar.getTime();
+    private static Date getDate(String yyyy, String MM, String dd, String HH, String mm, String ss, String SSS, String offset) {
+    	
+		// boolean sub = offset.length() == 5 && offset.charAt(0) == '-';
+		// int offsetHours = Integer.parseInt(offset.substring(offset.length() - 4, offset.length() - 2));
+		// int offsetMinutes = Integer.parseInt(offset.substring(offset.length() - 2, offset.length()));
+    	
+    	Calendar calendar = Calendar.getInstance(getTimeZone(ZoneId.of(offset)));
+        return getDate(calendar, yyyy, MM, dd, HH, mm, ss, SSS);
     }
+    /**
+     * Convert date parts to a <code>Date</code>.
+     * 
+     * @param yyyy
+     *            The year.
+     * @param MM
+     *            The month.
+     * @param dd
+     *            The day.
+     * @param HH
+     *            The hour.
+     * @param mm
+     *            The minute.
+     * @param ss
+     *            The seconds.
+     * @param SSS
+     *            The milliseconds.
+     * @return The date part strings converted to a <code>Date</code>
+     */
+    private static Date getDate(String yyyy, String MM, String dd, String HH, String mm, String ss, String SSS) {
+    	Calendar calendar = Calendar.getInstance();
+    	return getDate(calendar, yyyy, MM, dd, HH, mm, ss, SSS);
+    }
+
+	public static Date getDate(Calendar calendar, String yyyy, String MM, String dd, String HH, String mm, String ss,
+			String SSS) {
+		if (yyyy == null || MM == null || dd == null || HH == null || mm == null || ss == null || SSS == null) {
+    		throw new IllegalArgumentException("One or more date parts are missing.");
+    	}
+    	calendar.set(Calendar.YEAR, Integer.valueOf(yyyy));
+    	calendar.set(Calendar.MONTH, Integer.valueOf(MM).intValue() - 1);
+    	calendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(dd).intValue());
+    	calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(HH).intValue());
+    	calendar.set(Calendar.MINUTE, Integer.valueOf(mm).intValue());
+    	calendar.set(Calendar.SECOND, Integer.valueOf(ss).intValue());
+    	calendar.set(Calendar.MILLISECOND, Integer.valueOf(SSS).intValue());
+    	return calendar.getTime();
+	}
 
     /**
      * Add milliseconds to a given <code>Date</code>.
