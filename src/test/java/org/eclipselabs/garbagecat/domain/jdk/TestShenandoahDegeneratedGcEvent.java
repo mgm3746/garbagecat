@@ -127,7 +127,7 @@ class TestShenandoahDegeneratedGcEvent {
         assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
                 "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
         ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
-        assertEquals(657035501386L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(657057101386L, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(megabytes(90), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
         assertEquals(megabytes(12), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
