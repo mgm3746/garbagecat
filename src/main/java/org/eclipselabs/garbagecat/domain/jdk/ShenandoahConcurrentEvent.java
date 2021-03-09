@@ -205,41 +205,41 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 int duration = 0;
-                if (matcher.group(52) != null) {
-                    duration = JdkMath.convertMillisToMicros(matcher.group(52)).intValue();
+                if (matcher.group(50) != null) {
+                    duration = JdkMath.convertMillisToMicros(matcher.group(50)).intValue();
                 }
 
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;
-                    if (matcher.group(13).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        endTimestamp = Long.parseLong(matcher.group(29));
-                    } else if (matcher.group(13).matches(UnifiedRegEx.UPTIME)) {
-                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(24)).longValue();
+                    if (matcher.group(12).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        endTimestamp = Long.parseLong(matcher.group(27));
+                    } else if (matcher.group(12).matches(UnifiedRegEx.UPTIME)) {
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(22)).longValue();
                     } else {
-                        if (matcher.group(27) != null) {
-                            if (matcher.group(27).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                                endTimestamp = Long.parseLong(matcher.group(29));
+                        if (matcher.group(25) != null) {
+                            if (matcher.group(25).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                                endTimestamp = Long.parseLong(matcher.group(27));
                             } else {
-                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(28)).longValue();
+                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(26)).longValue();
                             }
                         } else {
                             // Datestamp only.
-                            endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(13));
+                            endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(12));
                         }
                     }
                     timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 } else {
                     // JDK8
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 }
-                if (matcher.group(42) != null) {
-                    combined = memory(matcher.group(43), matcher.group(45).charAt(0)).convertTo(KILOBYTES);
-                    combinedEnd = memory(matcher.group(46), matcher.group(48).charAt(0)).convertTo(KILOBYTES);
-                    combinedAvailable = memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
-                    if (matcher.group(53) != null) {
-                        permGen = memory(matcher.group(54), matcher.group(56).charAt(0)).convertTo(KILOBYTES);
-                        permGenEnd = memory(matcher.group(57), matcher.group(59).charAt(0)).convertTo(KILOBYTES);
-                        permGenAllocation = memory(matcher.group(60), matcher.group(62).charAt(0)).convertTo(KILOBYTES);
+                if (matcher.group(40) != null) {
+                    combined = memory(matcher.group(41), matcher.group(43).charAt(0)).convertTo(KILOBYTES);
+                    combinedEnd = memory(matcher.group(44), matcher.group(46).charAt(0)).convertTo(KILOBYTES);
+                    combinedAvailable = memory(matcher.group(47), matcher.group(49).charAt(0)).convertTo(KILOBYTES);
+                    if (matcher.group(51) != null) {
+                        permGen = memory(matcher.group(52), matcher.group(54).charAt(0)).convertTo(KILOBYTES);
+                        permGenEnd = memory(matcher.group(55), matcher.group(57).charAt(0)).convertTo(KILOBYTES);
+                        permGenAllocation = memory(matcher.group(58), matcher.group(60).charAt(0)).convertTo(KILOBYTES);
                     }
                 }
 

@@ -163,16 +163,16 @@ public class G1YoungInitialMarkEvent extends G1Collector
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                trigger = matcher.group(14);
-                combined = memory(matcher.group(16), matcher.group(18).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
-                duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
-                if (matcher.group(28) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(31)).intValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                trigger = matcher.group(13);
+                combined = memory(matcher.group(15), matcher.group(17).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(18), matcher.group(20).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = memory(matcher.group(21), matcher.group(23).charAt(0)).convertTo(KILOBYTES);
+                duration = JdkMath.convertSecsToMicros(matcher.group(24)).intValue();
+                if (matcher.group(27) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
                 }
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
@@ -180,29 +180,29 @@ public class G1YoungInitialMarkEvent extends G1Collector
             Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                if (matcher.group(14) != null) {
-                    trigger = matcher.group(14);
-                } else if (matcher.group(18) != null) {
-                    trigger = matcher.group(18);
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                if (matcher.group(13) != null) {
+                    trigger = matcher.group(13);
+                } else if (matcher.group(17) != null) {
+                    trigger = matcher.group(17);
                 }
-                if (matcher.group(19) != null) {
-                    duration = JdkMath.convertSecsToMicros(matcher.group(20)).intValue();
+                if (matcher.group(18) != null) {
+                    duration = JdkMath.convertSecsToMicros(matcher.group(19)).intValue();
                 } else {
-                    if (matcher.group(54) != null) {
+                    if (matcher.group(53) != null) {
                         // Use Times block duration
-                        duration = JdkMath.convertSecsToMicros(matcher.group(56)).intValue();
+                        duration = JdkMath.convertSecsToMicros(matcher.group(55)).intValue();
                     }
                 }
-                if (matcher.group(23) != null) {
-                    combined = JdkMath.convertSizeToKilobytes(matcher.group(42), matcher.group(44).charAt(0));
-                    combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(48), matcher.group(50).charAt(0));
-                    combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(51), matcher.group(53).charAt(0));
+                if (matcher.group(22) != null) {
+                    combined = JdkMath.convertSizeToKilobytes(matcher.group(41), matcher.group(43).charAt(0));
+                    combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(47), matcher.group(49).charAt(0));
+                    combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(50), matcher.group(52).charAt(0));
                 }
-                if (matcher.group(54) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(55)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(57)).intValue();
+                if (matcher.group(53) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(54)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(55)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
                 }
             }
         }

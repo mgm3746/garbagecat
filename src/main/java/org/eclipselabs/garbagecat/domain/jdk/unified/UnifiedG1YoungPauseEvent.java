@@ -185,7 +185,7 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                     endTimestamp = Long.parseLong(matcher.group(13));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {
                     if (matcher.group(15) != null) {
                         if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
@@ -198,11 +198,11 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                trigger = matcher.group(26);
-                combinedBegin = memory(matcher.group(27), matcher.group(29).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(30), matcher.group(32).charAt(0)).convertTo(KILOBYTES);
-                combinedAllocation = memory(matcher.group(33), matcher.group(35).charAt(0)).convertTo(KILOBYTES);
-                duration = JdkMath.convertMillisToMicros(matcher.group(36)).intValue();
+                trigger = matcher.group(25);
+                combinedBegin = memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(32), matcher.group(34).charAt(0)).convertTo(KILOBYTES);
+                duration = JdkMath.convertMillisToMicros(matcher.group(35)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
@@ -214,31 +214,31 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                     timestamp = Long.parseLong(matcher.group(13));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {
-                    if (matcher.group(15) != null) {
-                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            timestamp = Long.parseLong(matcher.group(17));
+                    if (matcher.group(14) != null) {
+                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            timestamp = Long.parseLong(matcher.group(16));
                         } else {
-                            timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
                         }
                     } else {
                         // Datestamp only.
                         timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                trigger = matcher.group(27);
-                permGen = memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
-                permGenEnd = memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
-                permGenAllocation = memory(matcher.group(34), matcher.group(36).charAt(0)).convertTo(KILOBYTES);
-                combinedBegin = memory(matcher.group(37), matcher.group(39).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(40), matcher.group(42).charAt(0)).convertTo(KILOBYTES);
-                combinedAllocation = memory(matcher.group(43), matcher.group(45).charAt(0)).convertTo(KILOBYTES);
-                duration = JdkMath.convertMillisToMicros(matcher.group(46)).intValue();
-                if (matcher.group(47) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(48)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(49)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(50)).intValue();
+                trigger = matcher.group(26);
+                permGen = memory(matcher.group(27), matcher.group(29).charAt(0)).convertTo(KILOBYTES);
+                permGenEnd = memory(matcher.group(30), matcher.group(32).charAt(0)).convertTo(KILOBYTES);
+                permGenAllocation = memory(matcher.group(33), matcher.group(35).charAt(0)).convertTo(KILOBYTES);
+                combinedBegin = memory(matcher.group(36), matcher.group(38).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(39), matcher.group(41).charAt(0)).convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(42), matcher.group(44).charAt(0)).convertTo(KILOBYTES);
+                duration = JdkMath.convertMillisToMicros(matcher.group(45)).intValue();
+                if (matcher.group(46) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(47)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(48)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(49)).intValue();
                 } else {
                     timeUser = TimesData.NO_DATA;
                     timeReal = TimesData.NO_DATA;

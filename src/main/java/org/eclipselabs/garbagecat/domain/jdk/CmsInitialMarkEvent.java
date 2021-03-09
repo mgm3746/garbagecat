@@ -113,13 +113,13 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
             Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                trigger = matcher.group(14);
-                duration = JdkMath.convertSecsToMicros(matcher.group(19)).intValue();
-                if (matcher.group(22) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(23)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(24)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(25)).intValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                trigger = matcher.group(13);
+                duration = JdkMath.convertSecsToMicros(matcher.group(18)).intValue();
+                if (matcher.group(21) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(22)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(23)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(24)).intValue();
                 }
             }
         }

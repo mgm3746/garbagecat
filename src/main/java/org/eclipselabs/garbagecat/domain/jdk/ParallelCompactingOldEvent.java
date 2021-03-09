@@ -197,23 +197,23 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            trigger = matcher.group(14);
-            young = kilobytes(matcher.group(16));
-            youngEnd = kilobytes(matcher.group(17));
-            youngAvailable = kilobytes(matcher.group(18));
-            old = kilobytes(matcher.group(19));
-            oldEnd = kilobytes(matcher.group(20));
-            oldAllocation = kilobytes(matcher.group(21));
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+            trigger = matcher.group(13);
+            young = kilobytes(matcher.group(15));
+            youngEnd = kilobytes(matcher.group(16));
+            youngAvailable = kilobytes(matcher.group(17));
+            old = kilobytes(matcher.group(18));
+            oldEnd = kilobytes(matcher.group(19));
+            oldAllocation = kilobytes(matcher.group(20));
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = kilobytes(matcher.group(27));
-            permGenEnd = kilobytes(matcher.group(28));
-            permGenAllocation = kilobytes(matcher.group(29));
-            duration = JdkMath.convertSecsToMicros(matcher.group(30)).intValue();
-            if (matcher.group(33) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
+            permGen = kilobytes(matcher.group(26));
+            permGenEnd = kilobytes(matcher.group(27));
+            permGenAllocation = kilobytes(matcher.group(28));
+            duration = JdkMath.convertSecsToMicros(matcher.group(29)).intValue();
+            if (matcher.group(32) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(33)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
             }
         }
     }

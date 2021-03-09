@@ -132,17 +132,17 @@ public class VerboseGcYoungEvent extends UnknownCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            trigger = matcher.group(14);
-            if (matcher.group(17) != null) {
-                combinedBegin = kilobytes(matcher.group(18));
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+            trigger = matcher.group(13);
+            if (matcher.group(16) != null) {
+                combinedBegin = kilobytes(matcher.group(17));
             } else {
                 // set it to the end
-                combinedBegin = kilobytes(matcher.group(19));
+                combinedBegin = kilobytes(matcher.group(18));
             }
-            combinedEnd = kilobytes(matcher.group(19));
-            combinedAllocation = kilobytes(matcher.group(20));
-            duration = JdkMath.convertSecsToMicros(matcher.group(21)).intValue();
+            combinedEnd = kilobytes(matcher.group(18));
+            combinedAllocation = kilobytes(matcher.group(19));
+            duration = JdkMath.convertSecsToMicros(matcher.group(20)).intValue();
         }
     }
 

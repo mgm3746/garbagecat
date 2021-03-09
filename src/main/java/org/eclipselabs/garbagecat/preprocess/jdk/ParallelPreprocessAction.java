@@ -159,7 +159,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
-                entangledLogLines.add(matcher.group(28));
+                entangledLogLines.add(matcher.group(27));
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);

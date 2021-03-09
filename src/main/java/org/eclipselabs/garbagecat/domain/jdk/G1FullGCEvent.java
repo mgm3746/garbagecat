@@ -160,33 +160,34 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                if (matcher.group(14) != null) {
-                    trigger = matcher.group(14);
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                if (matcher.group(13) != null) {
+                    trigger = matcher.group(13);
                 }
-                combined = memory(matcher.group(16), matcher.group(18).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
-                duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
+                combined = memory(matcher.group(15), matcher.group(17).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(18), matcher.group(20).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = memory(matcher.group(21), matcher.group(23).charAt(0)).convertTo(KILOBYTES);
+                duration = JdkMath.convertSecsToMicros(matcher.group(24)).intValue();
             }
         } else if (logEntry.matches(REGEX_PREPROCESSED)) {
             Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                if (matcher.group(14) != null) {
-                    trigger = matcher.group(14);
-                } else if (matcher.group(13) != null) {
-                    trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                if (matcher.group(12) != null) {
+                    if (matcher.group(12).matches(ClassHistogramEvent.REGEX_PREPROCESSED)) {
+                        trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
+                    } else
+                        trigger = matcher.group(13);
                 }
-                combined = JdkMath.convertSizeToKilobytes(matcher.group(65), matcher.group(67).charAt(0));
-                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(71), matcher.group(73).charAt(0));
-                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(74), matcher.group(76).charAt(0));
-                duration = JdkMath.convertSecsToMicros(matcher.group(44)).intValue();
-                if (matcher.group(77) != null) {
-                    permGen = memory(matcher.group(79), matcher.group(81).charAt(0)).convertTo(KILOBYTES);
-                    permGenEnd = memory(matcher.group(82), matcher.group(84).charAt(0)).convertTo(KILOBYTES);
-                    permGenAllocation = memory(matcher.group(85), matcher.group(87).charAt(0)).convertTo(KILOBYTES);
+                combined = JdkMath.convertSizeToKilobytes(matcher.group(63), matcher.group(65).charAt(0));
+                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(69), matcher.group(71).charAt(0));
+                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(72), matcher.group(74).charAt(0));
+                duration = JdkMath.convertSecsToMicros(matcher.group(42)).intValue();
+                if (matcher.group(75) != null) {
+                    permGen = memory(matcher.group(77), matcher.group(79).charAt(0)).convertTo(KILOBYTES);
+                    permGenEnd = memory(matcher.group(80), matcher.group(82).charAt(0)).convertTo(KILOBYTES);
+                    permGenAllocation = memory(matcher.group(83), matcher.group(85).charAt(0)).convertTo(KILOBYTES);
                 }
             }
         }

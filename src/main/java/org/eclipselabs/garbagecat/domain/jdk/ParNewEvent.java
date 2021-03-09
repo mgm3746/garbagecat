@@ -210,31 +210,31 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             if (matcher.group(13) != null) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
             } else {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(29)).longValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(27)).longValue();
             }
-            if (matcher.group(51) != null) {
-                trigger = matcher.group(51);
+            if (matcher.group(48) != null) {
+                trigger = matcher.group(48);
             } else {
-                trigger = matcher.group(33);
+                trigger = matcher.group(31);
             }
-            young = kilobytes(matcher.group(52));
-            youngEnd = kilobytes(matcher.group(53));
-            youngAvailable = kilobytes(matcher.group(54));
-            oldEnd = kilobytes(matcher.group(60)).minus(youngEnd);
-            old = matcher.group(58) == null ? oldEnd : kilobytes(matcher.group(59)).minus(young);
-            oldAllocation = kilobytes(matcher.group(61)).minus(youngAvailable);
-            duration = JdkMath.convertSecsToMicros(matcher.group(63)).intValue();
-            if (matcher.group(62) != null) {
+            young = kilobytes(matcher.group(49));
+            youngEnd = kilobytes(matcher.group(50));
+            youngAvailable = kilobytes(matcher.group(51));
+            oldEnd = kilobytes(matcher.group(57)).minus(youngEnd);
+            old = matcher.group(55) == null ? oldEnd : kilobytes(matcher.group(56)).minus(young);
+            oldAllocation = kilobytes(matcher.group(58)).minus(youngAvailable);
+            duration = JdkMath.convertSecsToMicros(matcher.group(60)).intValue();
+            if (matcher.group(59) != null) {
                 super.setIncrementalMode(true);
             } else {
                 super.setIncrementalMode(false);
             }
-            if (matcher.group(66) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(67)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(68)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(69)).intValue();
+            if (matcher.group(63) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(64)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(65)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(66)).intValue();
             }
         }
     }

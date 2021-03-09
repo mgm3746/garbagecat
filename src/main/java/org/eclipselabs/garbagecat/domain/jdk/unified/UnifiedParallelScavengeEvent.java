@@ -176,35 +176,35 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                timestamp = Long.parseLong(matcher.group(13));
+                timestamp = Long.parseLong(matcher.group(12));
             } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
             } else {
-                if (matcher.group(15) != null) {
-                    if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        timestamp = Long.parseLong(matcher.group(17));
+                if (matcher.group(14) != null) {
+                    if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        timestamp = Long.parseLong(matcher.group(16));
                     } else {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                        timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
                     }
                 } else {
                     // Datestamp only.
                     timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(25);
-            young = memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
-            youngEnd = memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
-            youngAvailable = memory(matcher.group(32), matcher.group(34).charAt(0)).convertTo(KILOBYTES);
-            old = memory(matcher.group(36), matcher.group(38).charAt(0)).convertTo(KILOBYTES);
-            oldEnd = memory(matcher.group(39), matcher.group(41).charAt(0)).convertTo(KILOBYTES);
-            oldAllocation = memory(matcher.group(42), matcher.group(44).charAt(0)).convertTo(KILOBYTES);
-            permGen = memory(matcher.group(45), matcher.group(47).charAt(0)).convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(48), matcher.group(50).charAt(0)).convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(51), matcher.group(53).charAt(0)).convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(63)).intValue();
-            timeUser = JdkMath.convertSecsToCentis(matcher.group(65)).intValue();
-            timeSys = JdkMath.convertSecsToCentis(matcher.group(66)).intValue();
-            timeReal = JdkMath.convertSecsToCentis(matcher.group(67)).intValue();
+            trigger = matcher.group(24);
+            young = memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
+            youngEnd = memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
+            youngAvailable = memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
+            old = memory(matcher.group(35), matcher.group(37).charAt(0)).convertTo(KILOBYTES);
+            oldEnd = memory(matcher.group(38), matcher.group(40).charAt(0)).convertTo(KILOBYTES);
+            oldAllocation = memory(matcher.group(41), matcher.group(43).charAt(0)).convertTo(KILOBYTES);
+            permGen = memory(matcher.group(44), matcher.group(46).charAt(0)).convertTo(KILOBYTES);
+            permGenEnd = memory(matcher.group(47), matcher.group(49).charAt(0)).convertTo(KILOBYTES);
+            permGenAllocation = memory(matcher.group(50), matcher.group(52).charAt(0)).convertTo(KILOBYTES);
+            duration = JdkMath.convertMillisToMicros(matcher.group(62)).intValue();
+            timeUser = JdkMath.convertSecsToCentis(matcher.group(64)).intValue();
+            timeSys = JdkMath.convertSecsToCentis(matcher.group(65)).intValue();
+            timeReal = JdkMath.convertSecsToCentis(matcher.group(66)).intValue();
         }
     }
 

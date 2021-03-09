@@ -126,24 +126,24 @@ public class VerboseGcOldEvent extends UnknownCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            trigger = matcher.group(14);
-            if (matcher.group(16).matches(JdkRegEx.SIZE_K)) {
-                combinedBegin = kilobytes(matcher.group(17));
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+            trigger = matcher.group(13);
+            if (matcher.group(15).matches(JdkRegEx.SIZE_K)) {
+                combinedBegin = kilobytes(matcher.group(16));
             } else {
-                combinedBegin = memory(matcher.group(18), matcher.group(20).charAt(0)).convertTo(KILOBYTES);
+                combinedBegin = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
             }
-            if (matcher.group(21).matches(JdkRegEx.SIZE_K)) {
-                combinedEnd = kilobytes(matcher.group(22));
+            if (matcher.group(20).matches(JdkRegEx.SIZE_K)) {
+                combinedEnd = kilobytes(matcher.group(21));
             } else {
-                combinedEnd = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
             }
-            if (matcher.group(26).matches(JdkRegEx.SIZE_K)) {
-                combinedAllocation = kilobytes(matcher.group(27));
+            if (matcher.group(25).matches(JdkRegEx.SIZE_K)) {
+                combinedAllocation = kilobytes(matcher.group(26));
             } else {
-                combinedAllocation = memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(27), matcher.group(29).charAt(0)).convertTo(KILOBYTES);
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(31)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(30)).intValue();
         }
     }
 

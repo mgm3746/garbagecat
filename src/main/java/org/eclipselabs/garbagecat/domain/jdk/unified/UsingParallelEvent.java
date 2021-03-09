@@ -72,15 +72,15 @@ public class UsingParallelEvent extends ParallelCollector implements UnifiedLogg
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    timestamp = Long.parseLong(matcher.group(13));
+                    timestamp = Long.parseLong(matcher.group(12));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {
-                    if (matcher.group(15) != null) {
-                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            timestamp = Long.parseLong(matcher.group(17));
+                    if (matcher.group(14) != null) {
+                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            timestamp = Long.parseLong(matcher.group(16));
                         } else {
-                            timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
                         }
                     } else {
                         // Datestamp only.

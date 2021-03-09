@@ -733,7 +733,7 @@ public class G1PreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(16));
+                entangledLogLines.add(matcher.group(15));
             }
             // Output beginning of young line
             this.logEntry = matcher.group(1);
@@ -743,14 +743,14 @@ public class G1PreprocessAction implements PreprocessAction {
             // Handle concurrent mixed with full collections. See dataset 74.
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_FULL_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
-            int indexG1FullDatestamp = 12;
-            int indexG1FullTimestamp = 23;
-            int indexFullBlock = 40;
-            int indexConcurrentLine = 42;
-            int indexConcurrentDatestamp = 43;
-            int indexConcurrentTimestamp = 54;
-            int indexConcurrentBlock = 57;
-            int indexG1DetailsBlock = 64;
+            int indexG1FullDatestamp = 11;
+            int indexG1FullTimestamp = 21;
+            int indexFullBlock = 37;
+            int indexConcurrentLine = 39;
+            int indexConcurrentDatestamp = 40;
+            int indexConcurrentTimestamp = 50;
+            int indexConcurrentBlock = 53;
+            int indexG1DetailsBlock = 60;
             if (matcher.matches()) {
                 if (matcher.group(indexConcurrentTimestamp) != null) {
                     entangledLogLines.add(matcher.group(indexConcurrentLine));
@@ -807,24 +807,24 @@ public class G1PreprocessAction implements PreprocessAction {
                 // Handle concurrent mixed with young collections. See datasets 47-48 and 51-52, 54.
                 if (!context.contains(TOKEN)) {
                     // Output now
-                    if (matcher.group(2) != null && matcher.group(13) != null) {
-                        this.logEntry = matcher.group(2) + matcher.group(25) + ": " + matcher.group(50);
+                    if (matcher.group(2) != null && matcher.group(12) != null) {
+                        this.logEntry = matcher.group(2) + matcher.group(23) + ": " + matcher.group(46);
                     } else {
                         if (matcher.group(13) != null) {
-                            this.logEntry = matcher.group(25) + ": " + matcher.group(50);
+                            this.logEntry = matcher.group(23) + ": " + matcher.group(46);
                         } else if (matcher.group(2) != null) {
-                            this.logEntry = matcher.group(25) + ": " + matcher.group(50);
+                            this.logEntry = matcher.group(23) + ": " + matcher.group(46);
                         }
                     }
                 } else {
                     // Output later
-                    if (matcher.group(2) != null && matcher.group(13) != null) {
-                        entangledLogLines.add(matcher.group(2) + matcher.group(25) + ": " + matcher.group(50));
+                    if (matcher.group(2) != null && matcher.group(12) != null) {
+                        entangledLogLines.add(matcher.group(2) + matcher.group(23) + ": " + matcher.group(46));
                     } else {
-                        if (matcher.group(13) != null) {
-                            entangledLogLines.add(matcher.group(25) + ": " + matcher.group(50));
+                        if (matcher.group(12) != null) {
+                            entangledLogLines.add(matcher.group(23) + ": " + matcher.group(46));
                         } else if (matcher.group(2) != null) {
-                            entangledLogLines.add(matcher.group(25) + ": " + matcher.group(50));
+                            entangledLogLines.add(matcher.group(23) + ": " + matcher.group(46));
                         }
                     }
                 }
@@ -844,7 +844,7 @@ public class G1PreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_REMARK);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1) + matcher.group(61);
+                this.logEntry = matcher.group(1) + matcher.group(57);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);

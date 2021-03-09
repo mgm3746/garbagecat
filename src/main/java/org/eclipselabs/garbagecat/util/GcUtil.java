@@ -75,7 +75,7 @@ public class GcUtil {
         Matcher matcher = pattern.matcher(startDateTime);
         if (matcher.find()) {
             date = getDate(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5),
-                    matcher.group(6), matcher.group(7));
+                    matcher.group(6), matcher.group(7), null);
         }
         return date;
     }
@@ -93,7 +93,7 @@ public class GcUtil {
         Matcher matcher = pattern.matcher(datestamp);
         if (matcher.find()) {
             date = getDate(matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6),
-                    matcher.group(7), matcher.group(8));
+                    matcher.group(7), matcher.group(8), matcher.group(9));
         }
         return date;
     }
@@ -115,9 +115,12 @@ public class GcUtil {
      *            The seconds.
      * @param SSS
      *            The milliseconds.
+     * @param timezone
+     *            The timezone.
      * @return The date part strings converted to a <code>Date</code>
      */
-    private static final Date getDate(String yyyy, String MM, String dd, String HH, String mm, String ss, String SSS) {
+    private static final Date getDate(String yyyy, String MM, String dd, String HH, String mm, String ss, String SSS,
+            String timezone) {
         Calendar calendar = Calendar.getInstance();
         if (yyyy == null || MM == null || dd == null || HH == null || mm == null || ss == null || SSS == null) {
             throw new IllegalArgumentException("One or more date parts are missing.");

@@ -194,24 +194,24 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
             // Use last trigger
-            if (matcher.group(31) != null) {
-                trigger = matcher.group(31);
-            } else if (matcher.group(15) != null) {
-                trigger = matcher.group(15);
+            if (matcher.group(29) != null) {
+                trigger = matcher.group(29);
+            } else if (matcher.group(14) != null) {
+                trigger = matcher.group(14);
             }
-            old = kilobytes(matcher.group(51));
-            oldEnd = kilobytes(matcher.group(52));
-            oldAllocation = kilobytes(matcher.group(53));
-            young = kilobytes(matcher.group(57)).minus(getOldOccupancyInit());
-            youngEnd = kilobytes(matcher.group(58)).minus(getOldOccupancyEnd());
-            youngAvailable = kilobytes(matcher.group(59)).minus(getOldSpace());
+            old = kilobytes(matcher.group(48));
+            oldEnd = kilobytes(matcher.group(49));
+            oldAllocation = kilobytes(matcher.group(50));
+            young = kilobytes(matcher.group(54)).minus(getOldOccupancyInit());
+            youngEnd = kilobytes(matcher.group(55)).minus(getOldOccupancyEnd());
+            youngAvailable = kilobytes(matcher.group(56)).minus(getOldSpace());
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = kilobytes(matcher.group(61));
-            permGenEnd = kilobytes(matcher.group(62));
-            permGenAllocation = kilobytes(matcher.group(63));
-            duration = JdkMath.convertSecsToMicros(matcher.group(64)).intValue();
+            permGen = kilobytes(matcher.group(58));
+            permGenEnd = kilobytes(matcher.group(59));
+            permGenAllocation = kilobytes(matcher.group(60));
+            duration = JdkMath.convertSecsToMicros(matcher.group(61)).intValue();
         }
     }
 

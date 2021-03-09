@@ -134,17 +134,17 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
             if (matcher.group(18) != null) {
-                combined = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
+                combined = memory(matcher.group(18), matcher.group(20).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(21), matcher.group(23).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = memory(matcher.group(24), matcher.group(26).charAt(0)).convertTo(KILOBYTES);
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(28)).intValue();
-            if (matcher.group(31) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(32)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(33)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(27)).intValue();
+            if (matcher.group(30) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(31)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(32)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(33)).intValue();
             }
         }
     }

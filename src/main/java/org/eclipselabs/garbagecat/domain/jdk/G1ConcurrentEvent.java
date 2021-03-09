@@ -143,8 +143,8 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent, Parallel
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                if (matcher.group(27) != null) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(27)).longValue();
+                if (matcher.group(25) != null) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(25)).longValue();
                 }
             }
         }

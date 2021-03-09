@@ -95,7 +95,7 @@ public class DateStampPreprocessAction implements PreprocessAction {
     public DateStampPreprocessAction(String logEntry, Date jvmStartDate) {
         Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
-            String logEntryMinusDateStamp = matcher.group(12);
+            String logEntryMinusDateStamp = matcher.group(11);
             Date datestamp = GcUtil.parseDateStamp(matcher.group(1));
             long diff = GcUtil.dateDiff(jvmStartDate, datestamp);
             if (diff < 0) {

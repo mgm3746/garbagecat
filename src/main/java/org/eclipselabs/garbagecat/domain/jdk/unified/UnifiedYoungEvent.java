@@ -117,26 +117,26 @@ public class UnifiedYoungEvent extends UnknownCollector
         if (matcher.find()) {
             long endTimestamp;
             if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                endTimestamp = Long.parseLong(matcher.group(13));
+                endTimestamp = Long.parseLong(matcher.group(12));
             } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
             } else {
-                if (matcher.group(15) != null) {
-                    if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        endTimestamp = Long.parseLong(matcher.group(17));
+                if (matcher.group(14) != null) {
+                    if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        endTimestamp = Long.parseLong(matcher.group(16));
                     } else {
-                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
                     }
                 } else {
                     // Datestamp only.
                     endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(25);
-            combinedBegin = memory(matcher.group(27), matcher.group(29).charAt(0)).convertTo(KILOBYTES);
-            combinedEnd = memory(matcher.group(30), matcher.group(32).charAt(0)).convertTo(KILOBYTES);
-            combinedAllocation = memory(matcher.group(33), matcher.group(35).charAt(0)).convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(36)).intValue();
+            trigger = matcher.group(24);
+            combinedBegin = memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
+            combinedEnd = memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
+            combinedAllocation = memory(matcher.group(32), matcher.group(34).charAt(0)).convertTo(KILOBYTES);
+            duration = JdkMath.convertMillisToMicros(matcher.group(35)).intValue();
             timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
         }
     }

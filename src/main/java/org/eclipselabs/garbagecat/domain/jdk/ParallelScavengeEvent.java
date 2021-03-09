@@ -174,19 +174,19 @@ public class ParallelScavengeEvent extends ParallelCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            trigger = matcher.group(15);
-            young = kilobytes((matcher.group(18)));
-            youngEnd = kilobytes((matcher.group(19)));
-            youngAvailable = kilobytes((matcher.group(20)));
-            old = kilobytes(matcher.group(21)).minus(young);
-            oldEnd = kilobytes(matcher.group(22)).minus(youngEnd);
-            oldAllocation = kilobytes(matcher.group(23)).minus(youngAvailable);
-            duration = JdkMath.convertSecsToMicros(matcher.group(24)).intValue();
-            if (matcher.group(27) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+            trigger = matcher.group(14);
+            young = kilobytes((matcher.group(17)));
+            youngEnd = kilobytes((matcher.group(18)));
+            youngAvailable = kilobytes((matcher.group(19)));
+            old = kilobytes(matcher.group(20)).minus(young);
+            oldEnd = kilobytes(matcher.group(21)).minus(youngEnd);
+            oldAllocation = kilobytes(matcher.group(22)).minus(youngAvailable);
+            duration = JdkMath.convertSecsToMicros(matcher.group(23)).intValue();
+            if (matcher.group(26) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(27)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
             }
         }
     }
