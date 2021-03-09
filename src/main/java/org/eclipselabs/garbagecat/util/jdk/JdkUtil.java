@@ -765,8 +765,7 @@ public final class JdkUtil {
         while (matcher.find()) {
             Date date = GcUtil.getDatePlusTimestamp(jvmStartDate,
                     JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-            // Only update the timestamp, keep the colon or space.
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             matcher.appendReplacement(sb, formatter.format(date) + matcher.group(2));
         }
         matcher.appendTail(sb);
@@ -792,8 +791,7 @@ public final class JdkUtil {
 
             Date date = GcUtil.getDatePlusTimestamp(jvmStartDate,
                     JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-            // Only update the datestamp, keep the colon or space.
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             matcher.appendReplacement(sb, formatter.format(date) + matcher.group(2));
         }
         matcher.appendTail(sb);

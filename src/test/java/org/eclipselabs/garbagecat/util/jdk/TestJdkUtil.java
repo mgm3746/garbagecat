@@ -41,7 +41,7 @@ class TestJdkUtil {
     	Date date = parseDate("1966-08-18","19:21:44.012");
     	String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
                 + "89399K->11655K(907328K), 0.0387074 secs]";
-        String logLineConverted = "1966-08-18 19:22:04,201: [GC 1966-08-18 19:22:04,202: "
+        String logLineConverted = "1966-08-18 19:22:04.201: [GC 1966-08-18 19:22:04.202: "
                 + "[ParNew: 86199K->8454K(91712K), 0.0375060 secs] 89399K->11655K(907328K), 0.0387074 secs]";
         assertEquals(logLineConverted, JdkUtil.convertLogEntryTimestampsToDateStamp(logLine, date),
                 "Timestamps not converted to date/time correctly");
