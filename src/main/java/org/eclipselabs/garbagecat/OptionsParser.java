@@ -80,7 +80,11 @@ public class OptionsParser {
     /**
      * Parse command line options.
      * 
-     * @return
+     * @param args
+     *            The command line options.
+     * @return <code>CommnandLine</code> from command line options.
+     * @throws ParseException
+     *             if the command line options are not valid.
      */
     public static final CommandLine parseOptions(String[] args) throws ParseException {
         CommandLineParser parser = new BasicParser();

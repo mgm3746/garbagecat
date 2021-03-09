@@ -34,21 +34,21 @@ public final class TestUtil {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static Date parseDate(String date) {
-    	return parse(new SimpleDateFormat("yyyy-MM-dd"), date);
-     }
+        return parse(new SimpleDateFormat("yyyy-MM-dd"), date);
+    }
 
     public static Date parseDate(String date, String time) {
-    	return parse(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"), date + " " + time);
+        return parse(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"), date + " " + time);
     }
 
     private static Date parse(SimpleDateFormat pattern, String date) {
-		try {
-			return pattern.parse(date);
+        try {
+            return pattern.parse(date);
         } catch (ParseException e) {
-        	throw new RuntimeException(e); 
+            throw new RuntimeException(e);
         }
-	}
+    }
 
 }

@@ -31,7 +31,7 @@ public final class GcUtil {
      * Make default constructor private so the class cannot be instantiated.
      */
     private GcUtil() {
-    	super();
+        super();
     }
 
     /**
@@ -42,7 +42,7 @@ public final class GcUtil {
      * @return <code>true</code> if a valid format, <code>false</code> otherwise.
      */
     public static boolean isValidStartDateTime(String startDateTime) {
-    	return parseStartDateTime(startDateTime) != null;
+        return parseStartDateTime(startDateTime) != null;
     }
 
     /**
@@ -53,11 +53,11 @@ public final class GcUtil {
      * @return the startdatetime <code>Date</code>.
      */
     public static Date parseStartDateTime(String startDateTime) {
-		try {
-		    return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(startDateTime);
-		} catch (ParseException e) {
-			return null;
-    }
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(startDateTime);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 
     /**
@@ -68,12 +68,12 @@ public final class GcUtil {
      * @return the datestamp in <code>Date</code> format.
      */
     public static Date parseDateStamp(String datestamp) {
-    try {
-		    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZ").parse(datestamp);
-		} catch (ParseException e) {
-			return null;
-		}
-
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZ").parse(datestamp);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
 
     /**
      * Add milliseconds to a given <code>Date</code>.
@@ -96,7 +96,7 @@ public final class GcUtil {
      * @return the number of whole days.
      */
     public static int daysInMilliSeconds(long timestamp) {
-		return (int) (timestamp / DAYS.toMillis(1));
+        return (int) (timestamp / DAYS.toMillis(1));
     }
 
     /**

@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 
+import org.eclipselabs.garbagecat.util.GcUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.junit.jupiter.api.Test;
 
@@ -34,8 +36,11 @@ class TestDateStampPreprocessAction {
         assertTrue(DateStampPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.DATE_STAMP.toString() + ".");
         Date jvmStartDate = parseDate("2010-02-26");
+        Date datestamp = GcUtil.parseDateStamp("2010-02-26T09:32:12.486-0600");
+        long diff = GcUtil.dateDiff(jvmStartDate, datestamp);
         DateStampPreprocessAction preprocessAction = new DateStampPreprocessAction(logLine, jvmStartDate);
-        String preprocessedLogLine = "59532.486: [GC [ParNew: 150784K->3817K(169600K), 0.0328800 secs]"
+        String preprocessedLogLine = JdkMath.convertMillisToSecs(diff)
+                + ": [GC [ParNew: 150784K->3817K(169600K), 0.0328800 secs]"
                 + " 150784K->3817K(1029760K), 0.0329790 secs] [Times: user=0.00 sys=0.00, real=0.03 secs]";
         assertEquals(preprocessedLogLine, preprocessAction.getLogEntry(), "Log line not parsed correctly.");
     }

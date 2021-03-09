@@ -29,6 +29,7 @@
 		<!-- http://checkstyle.sf.net/config.html#properties -->
 		<property name="headerFile"
 			value="src/main/config/checkstyle/java.header" />
+			<property name="fileExtensions" value="java"/>
 	</module>
 
 	<!-- Checks that a package-info.java file exists for each package. -->
@@ -63,6 +64,13 @@
 	<!-- <property name="maximum" value="0" /> -->
 	<!-- <property name="message" value="Line has trailing spaces." /> -->
 	<!-- </module> -->
+	
+	<module name="LineLength">
+		<property name="max" value="120" />
+		<property name="fileExtensions" value="java"/>
+		<!-- Ignore GC logging examples in comments. -->
+		<property name="ignorePattern" value="^ \* " />
+	</module>
 
 	<module name="TreeWalker">
 
@@ -102,11 +110,6 @@
 
 		<!-- Checks for Size Violations. -->
 		<!-- See http://checkstyle.sf.net/config_sizes.html -->
-		<module name="LineLength">
-			<property name="max" value="120" />
-			<!-- Ignore GC logging examples in comments. -->
-			<property name="ignorePattern" value="^ \* " />
-		</module>
 		<!-- <module name="MethodLength" /> -->
 		<!-- <module name="ParameterNumber" /> -->
 

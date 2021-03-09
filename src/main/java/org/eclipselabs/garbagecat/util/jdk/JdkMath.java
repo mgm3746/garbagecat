@@ -176,7 +176,7 @@ public final class JdkMath {
     public static int calcThroughput(final int currentDuration, final long currentTimestamp, final int priorDuration,
             final long priorTimestamp) {
         long timeTotal = currentTimestamp + currentDuration - priorTimestamp;
-		long timeNotGc = timeTotal - currentDuration - priorDuration;
+        long timeNotGc = timeTotal - currentDuration - priorDuration;
         BigDecimal throughput = new BigDecimal(timeNotGc);
         throughput = throughput.divide(new BigDecimal(timeTotal), 2, RoundingMode.HALF_EVEN);
         throughput = throughput.movePointRight(2);

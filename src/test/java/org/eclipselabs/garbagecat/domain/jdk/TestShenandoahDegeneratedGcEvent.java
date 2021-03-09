@@ -40,8 +40,7 @@ class TestShenandoahDegeneratedGcEvent {
                 "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
         ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
         assertEquals((long) (52937 - 53), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(megabytes(60), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
+        assertEquals(megabytes(60), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(megabytes(30), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(64), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
         assertEquals(53697, event.getDuration(), "Duration not parsed correctly.");
@@ -91,8 +90,7 @@ class TestShenandoahDegeneratedGcEvent {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(SHENANDOAH_DEGENERATED_GC_MARK);
         assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
-                SHENANDOAH_DEGENERATED_GC_MARK
-                        + " incorrectly indentified as unified.");
+                SHENANDOAH_DEGENERATED_GC_MARK + " incorrectly indentified as unified.");
     }
 
     @Test
@@ -111,12 +109,9 @@ class TestShenandoahDegeneratedGcEvent {
                 "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
         ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
         assertEquals((long) 854868165, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(megabytes(93058), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(megabytes(29873), event.getCombinedOccupancyEnd(),
-                "Combined end size not parsed correctly.");
-        assertEquals(megabytes(98304), event.getCombinedSpace(),
-                "Combined allocation size not parsed correctly.");
+        assertEquals(megabytes(93058), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
+        assertEquals(megabytes(29873), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(megabytes(98304), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
         assertEquals(1285045, event.getDuration(), "Duration not parsed correctly.");
     }
 
@@ -127,9 +122,9 @@ class TestShenandoahDegeneratedGcEvent {
         assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
                 "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
         ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
-        assertEquals(657057101386L, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(megabytes(90), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
+        assertEquals(UnifiedUtil.convertDatestampToMillis("2020-10-26T14:51:41.413-0400") - 27, event.getTimestamp(),
+                "Time stamp not parsed correctly.");
+        assertEquals(megabytes(90), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(megabytes(12), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(96), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
         assertEquals(27501, event.getDuration(), "Duration not parsed correctly.");
@@ -146,8 +141,7 @@ class TestShenandoahDegeneratedGcEvent {
                 "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
         ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
         assertEquals((long) (8084 - 23), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(megabytes(90), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
+        assertEquals(megabytes(90), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(megabytes(6), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(96), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
         assertEquals(23018, event.getDuration(), "Duration not parsed correctly.");
