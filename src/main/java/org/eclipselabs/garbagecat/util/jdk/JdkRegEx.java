@@ -18,7 +18,7 @@ package org.eclipselabs.garbagecat.util.jdk;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class JdkRegEx {
+public final class JdkRegEx {
 
     /**
      * Timestamp. Milliseconds since JVM started.
@@ -428,13 +428,13 @@ public class JdkRegEx {
      * 2020-03-10T08:03:29.311-0400: 0.373: [Concurrent reset 16991K-&gt;17152K(17408K), 0.435 ms]
      * </pre>
      */
-    public static final String DECORATOR = JdkRegEx.DATESTAMP + ": " + JdkRegEx.TIMESTAMP + ":";
+    public static final String DECORATOR = DATESTAMP + ": " + TIMESTAMP + ":";
 
     /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private JdkRegEx() {
-
+    	super();
     }
 
 }
