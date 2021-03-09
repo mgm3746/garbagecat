@@ -31,6 +31,7 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OUTPUT_FILE_NAME;
+import static org.eclipselabs.garbagecat.util.GcUtil.isValidStartDateTime;
 
 import java.io.File;
 import java.util.ResourceBundle;
@@ -50,7 +51,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.eclipselabs.garbagecat.util.GcUtil;
 import org.json.JSONObject;
 
 /**
@@ -69,7 +69,7 @@ public class OptionsParser {
         options.addOption(OPTION_JVMOPTIONS_SHORT, OPTION_JVMOPTIONS_LONG, true, "JVM options used during JVM run");
         options.addOption(OPTION_PREPROCESS_SHORT, OPTION_PREPROCESS_LONG, false, "do preprocessing");
         options.addOption(OPTION_STARTDATETIME_SHORT, OPTION_STARTDATETIME_LONG, true,
-                "JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS) required for handling datestamp-only logging");
+                "JVM start datetime (yyyy-MM-dd HH:mm:ss.SSS) required for handling datestamp-only logging");
         options.addOption(OPTION_THRESHOLD_SHORT, OPTION_THRESHOLD_LONG, true,
                 "threshold (0-100) for throughput bottleneck reporting");
         options.addOption(OPTION_REORDER_SHORT, OPTION_REORDER_LONG, false, "reorder logging by timestamp");
@@ -145,9 +145,7 @@ public class OptionsParser {
         // startdatetime
         if (cmd.hasOption(OPTION_STARTDATETIME_LONG)) {
             String startdatetimeOptionValue = cmd.getOptionValue(OPTION_STARTDATETIME_SHORT);
-            Pattern pattern = Pattern.compile(GcUtil.START_DATE_TIME_REGEX);
-            Matcher matcher = pattern.matcher(startdatetimeOptionValue);
-            if (!matcher.find()) {
+            if (!isValidStartDateTime(startdatetimeOptionValue)) {
                 throw new ParseException("Invalid startdatetime: '" + startdatetimeOptionValue + "'");
             }
         }

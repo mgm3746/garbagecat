@@ -621,7 +621,7 @@ public class JvmRun {
         if (getJvmRunDuration() <= 0) {
             return 0L;
         }
-        long timeNotStopped = getJvmRunDuration() - Long.valueOf(totalStoppedTime).longValue();
+        long timeNotStopped = getJvmRunDuration() - totalStoppedTime;
         BigDecimal throughput = new BigDecimal(timeNotStopped);
         throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
         return throughput.movePointRight(2).longValue();
@@ -741,14 +741,14 @@ public class JvmRun {
 
         // Check for small DGC intervals.
         if (jvm.getRmiDgcClientGcIntervalOption() != null) {
-            long rmiDgcClientGcInterval = Long.valueOf(jvm.getRmiDgcClientGcIntervalValue()).longValue();
-            if (rmiDgcClientGcInterval < 3600000) {
+            long rmiDgcClientGcInterval = Long.parseLong(jvm.getRmiDgcClientGcIntervalValue());
+            if (rmiDgcClientGcInterval < 3_600_000) {
                 analysis.add(WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL);
             }
         }
         if (jvm.getRmiDgcServerGcIntervalOption() != null) {
-            long rmiDgcServerGcInterval = Long.valueOf(jvm.getRmiDgcServerGcIntervalValue()).longValue();
-            if (rmiDgcServerGcInterval < 3600000) {
+            long rmiDgcServerGcInterval = Long.parseLong(jvm.getRmiDgcServerGcIntervalValue());
+            if (rmiDgcServerGcInterval < 3_600_000) {
                 analysis.add(WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL);
             }
         }

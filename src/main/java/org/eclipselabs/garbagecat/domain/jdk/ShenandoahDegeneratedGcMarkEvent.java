@@ -128,7 +128,6 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
     public ShenandoahDegeneratedGcMarkEvent(String logEntry) {
         this.logEntry = logEntry;
         if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 duration = JdkMath.convertMillisToMicros(matcher.group(45)).intValue();

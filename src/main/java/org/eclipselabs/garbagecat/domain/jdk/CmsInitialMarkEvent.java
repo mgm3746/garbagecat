@@ -109,8 +109,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
      */
     public CmsInitialMarkEvent(String logEntry) {
         this.logEntry = logEntry;
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
+        if (match(logEntry)) {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();

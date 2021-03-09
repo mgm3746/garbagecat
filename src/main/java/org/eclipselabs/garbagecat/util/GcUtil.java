@@ -12,14 +12,12 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util;
 
-import java.math.BigDecimal;
-import java.util.Calendar;
+import static java.util.concurrent.TimeUnit.DAYS;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 
 /**
  * Common garbage collection utility methods and constants.
@@ -27,28 +25,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class GcUtil {
-
-    /**
-     * <p>
-     * Regular expression for valid JVM start date/time in yyyy-MM-dd HH:mm:ss,SSS format (see
-     * <code>SimpleDateFormat</code> for date and time pattern definitions).
-     * </p>
-     * 
-     * For example:
-     * 
-     * <pre>
-     * 2009-09-18 00:00:08,172
-     * </pre>
-     */
-    public static final String START_DATE_TIME_REGEX = "^(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}),"
-            + "(\\d{3})$";
+public final class GcUtil {
 
     /**
      * Make default constructor private so the class cannot be instantiated.
      */
     private GcUtil() {
-
+    	super();
     }
 
     /**
@@ -56,10 +39,10 @@ public class GcUtil {
      * 
      * @param startDateTime
      *            The startdatetime <code>String</code>.
-     * @return true if a valid format, false otherwise.
+     * @return <code>true</code> if a valid format, <code>false</code> otherwise.
      */
-    public static final boolean isValidStartDateTime(String startDateTime) {
-        return startDateTime.matches(START_DATE_TIME_REGEX);
+    public static boolean isValidStartDateTime(String startDateTime) {
+    	return parseStartDateTime(startDateTime) != null;
     }
 
     /**
@@ -69,15 +52,12 @@ public class GcUtil {
      *            The startdatetime <code>String</code> in <code>START_DATE_TIME_REGEX</code> format.
      * @return the startdatetime <code>Date</code>.
      */
-    public static final Date parseStartDateTime(String startDateTime) {
-        Date date = null;
-        Pattern pattern = Pattern.compile(START_DATE_TIME_REGEX);
-        Matcher matcher = pattern.matcher(startDateTime);
-        if (matcher.find()) {
-            date = getDate(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5),
-                    matcher.group(6), matcher.group(7), null);
-        }
-        return date;
+    public static Date parseStartDateTime(String startDateTime) {
+		try {
+		    return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(startDateTime);
+		} catch (ParseException e) {
+			return null;
+    }
     }
 
     /**
@@ -87,53 +67,13 @@ public class GcUtil {
      *            The datestamp <code>String</code> in <code>JdkRegEx.DATESTAMP</code> format.
      * @return the datestamp in <code>Date</code> format.
      */
-    public static final Date parseDateStamp(String datestamp) {
-        Date date = null;
-        Pattern pattern = Pattern.compile(JdkRegEx.DATESTAMP);
-        Matcher matcher = pattern.matcher(datestamp);
-        if (matcher.find()) {
-            date = getDate(matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6),
-                    matcher.group(7), matcher.group(8), matcher.group(9));
-        }
-        return date;
-    }
+    public static Date parseDateStamp(String datestamp) {
+    try {
+		    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZ").parse(datestamp);
+		} catch (ParseException e) {
+			return null;
+		}
 
-    /**
-     * Convert date parts to a <code>Date</code>.
-     * 
-     * @param yyyy
-     *            The year.
-     * @param MM
-     *            The month.
-     * @param dd
-     *            The day.
-     * @param HH
-     *            The hour.
-     * @param mm
-     *            The minute.
-     * @param ss
-     *            The seconds.
-     * @param SSS
-     *            The milliseconds.
-     * @param timezone
-     *            The timezone.
-     * @return The date part strings converted to a <code>Date</code>
-     */
-    private static final Date getDate(String yyyy, String MM, String dd, String HH, String mm, String ss, String SSS,
-            String timezone) {
-        Calendar calendar = Calendar.getInstance();
-        if (yyyy == null || MM == null || dd == null || HH == null || mm == null || ss == null || SSS == null) {
-            throw new IllegalArgumentException("One or more date parts are missing.");
-        }
-        calendar.set(Calendar.YEAR, Integer.valueOf(yyyy));
-        calendar.set(Calendar.MONTH, Integer.valueOf(MM).intValue() - 1);
-        calendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(dd).intValue());
-        calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(HH).intValue());
-        calendar.set(Calendar.MINUTE, Integer.valueOf(mm).intValue());
-        calendar.set(Calendar.SECOND, Integer.valueOf(ss).intValue());
-        calendar.set(Calendar.MILLISECOND, Integer.valueOf(SSS).intValue());
-        return calendar.getTime();
-    }
 
     /**
      * Add milliseconds to a given <code>Date</code>.
@@ -144,9 +84,8 @@ public class GcUtil {
      *            Time interval in milliseconds.
      * @return start <code>Date</code> + timestamp.
      */
-    public static final Date getDatePlusTimestamp(Date start, long timestamp) {
-        long millis = start.getTime() + timestamp;
-        return new Date(millis);
+    public static Date getDatePlusTimestamp(Date start, long timestamp) {
+        return new Date(start.getTime() + timestamp);
     }
 
     /**
@@ -156,9 +95,8 @@ public class GcUtil {
      *            Time in milliseconds.
      * @return the number of whole days.
      */
-    public static final int daysInMilliSeconds(long timestamp) {
-        BigDecimal days = new BigDecimal(timestamp);
-        return days.divideToIntegralValue(new BigDecimal(1000 * 60 * 60 * 24)).intValue();
+    public static int daysInMilliSeconds(long timestamp) {
+		return (int) (timestamp / DAYS.toMillis(1));
     }
 
     /**
@@ -169,8 +107,8 @@ public class GcUtil {
      *            The first JVM event timestamp (milliseconds).
      * @return True if the first timestamp is within the first timestamp threshold, false otherwise.
      */
-    public static final boolean isPartialLog(long firstTimestamp) {
-        return (firstTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000);
+    public static boolean isPartialLog(long firstTimestamp) {
+        return firstTimestamp > Constants.FIRST_TIMESTAMP_THRESHOLD * 1000;
     }
 
     /**
@@ -182,9 +120,8 @@ public class GcUtil {
      *            The property key.
      * @return The value for the given property file and key.
      */
-    public static final String getPropertyValue(String propertyFile, String key) {
-        ResourceBundle rb = ResourceBundle.getBundle("META-INF." + propertyFile);
-        return rb.getString(key);
+    public static String getPropertyValue(String propertyFile, String key) {
+        return ResourceBundle.getBundle("META-INF." + propertyFile).getString(key);
     }
 
     /**
@@ -196,7 +133,7 @@ public class GcUtil {
      *            End <code>Date</code>.
      * @return The interval between two dates in milliseconds.
      */
-    public static final long dateDiff(Date start, Date end) {
+    public static long dateDiff(Date start, Date end) {
         return end.getTime() - start.getTime();
     }
 }
