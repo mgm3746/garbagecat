@@ -68,7 +68,7 @@ public class ReferenceGcEvent implements ThrowAwayEvent {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
         }
     }
 

@@ -132,12 +132,12 @@ public class ApplicationStoppedTimeEvent implements LogEvent {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            if (matcher.group(26) != null) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(26)).longValue();
-            } else if (matcher.group(41) != null) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(41)).longValue();
+            if (matcher.group(24) != null) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(24)).longValue();
+            } else if (matcher.group(38) != null) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(38)).longValue();
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(46)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(43)).intValue();
         }
     }
 

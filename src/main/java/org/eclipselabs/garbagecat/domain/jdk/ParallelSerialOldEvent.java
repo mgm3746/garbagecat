@@ -173,24 +173,24 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            this.timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            this.timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
 
-            if (matcher.group(14) != null) {
-                this.trigger = matcher.group(14);
+            if (matcher.group(13) != null) {
+                this.trigger = matcher.group(13);
             }
-            this.young = kilobytes(matcher.group(16));
-            this.youngEnd = kilobytes(matcher.group(17));
-            this.youngAvailable = kilobytes(matcher.group(18));
+            this.young = kilobytes(matcher.group(15));
+            this.youngEnd = kilobytes(matcher.group(16));
+            this.youngAvailable = kilobytes(matcher.group(17));
 
-            this.old = kilobytes(matcher.group(19));
-            this.oldEnd = kilobytes(matcher.group(20));
-            this.oldAllocation = kilobytes(matcher.group(21));
+            this.old = kilobytes(matcher.group(18));
+            this.oldEnd = kilobytes(matcher.group(19));
+            this.oldAllocation = kilobytes(matcher.group(20));
 
-            this.permGen = kilobytes(matcher.group(26));
-            this.permGenEnd = kilobytes(matcher.group(27));
-            this.permGenAllocation = kilobytes(matcher.group(28));
+            this.permGen = kilobytes(matcher.group(25));
+            this.permGenEnd = kilobytes(matcher.group(26));
+            this.permGenAllocation = kilobytes(matcher.group(27));
 
-            this.duration = JdkMath.convertSecsToMicros(matcher.group(29)).intValue();
+            this.duration = JdkMath.convertSecsToMicros(matcher.group(28)).intValue();
         }
     }
 

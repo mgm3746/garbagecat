@@ -118,7 +118,7 @@ public class UnifiedRemarkEvent extends UnknownCollector
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                     endTimestamp = Long.parseLong(matcher.group(13));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {
                     if (matcher.group(15) != null) {
                         if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
@@ -131,7 +131,7 @@ public class UnifiedRemarkEvent extends UnknownCollector
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(34)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(33)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
@@ -142,27 +142,27 @@ public class UnifiedRemarkEvent extends UnknownCollector
             if (matcher.find()) {
                 long endTimestamp;
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(13));
+                    endTimestamp = Long.parseLong(matcher.group(12));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {
-                    if (matcher.group(15) != null) {
-                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(17));
+                    if (matcher.group(14) != null) {
+                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            endTimestamp = Long.parseLong(matcher.group(16));
                         } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
                         }
                     } else {
                         // Datestamp only.
                         endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(34)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(33)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                if (matcher.group(35) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(38)).intValue();
+                if (matcher.group(34) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
                 } else {
                     timeUser = TimesData.NO_DATA;
                     timeReal = TimesData.NO_DATA;

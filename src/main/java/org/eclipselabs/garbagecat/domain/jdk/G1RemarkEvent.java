@@ -102,12 +102,12 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            duration = JdkMath.convertSecsToMicros(matcher.group(13)).intValue();
-            if (matcher.group(16) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(17)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(18)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(19)).intValue();
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(12)).intValue();
+            if (matcher.group(15) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(16)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(17)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(18)).intValue();
             }
         }
     }

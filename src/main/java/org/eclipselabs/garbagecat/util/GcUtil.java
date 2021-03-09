@@ -57,7 +57,7 @@ public final class GcUtil {
 		    return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(startDateTime);
 		} catch (ParseException e) {
 			return null;
-		}
+    }
     }
 
     /**
@@ -68,12 +68,12 @@ public final class GcUtil {
      * @return the datestamp in <code>Date</code> format.
      */
     public static Date parseDateStamp(String datestamp) {
-    	try {
+    try {
 		    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZ").parse(datestamp);
 		} catch (ParseException e) {
 			return null;
 		}
-    }
+
 
     /**
      * Add milliseconds to a given <code>Date</code>.

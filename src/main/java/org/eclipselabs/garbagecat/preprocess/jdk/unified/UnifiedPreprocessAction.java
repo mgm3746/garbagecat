@@ -526,7 +526,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_SPACE_DATA);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(25);
+                this.logEntry = matcher.group(24);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA)) {
@@ -534,7 +534,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 if (context.contains(TOKEN)) {
-                    this.logEntry = matcher.group(25);
+                    this.logEntry = matcher.group(24);
                 } else {
                     // Single line event
                     this.logEntry = Constants.LINE_SEPARATOR + logEntry;
@@ -547,7 +547,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA);
                 Matcher matcher = pattern.matcher(logEntry);
                 if (matcher.matches()) {
-                    this.logEntry = matcher.group(27);
+                    this.logEntry = matcher.group(26);
                 }
             } else if (!context.contains(TOKEN)) {
                 // Single line event
@@ -560,7 +560,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
                 Matcher matcher = pattern.matcher(logEntry);
                 if (matcher.matches()) {
-                    this.logEntry = matcher.group(28);
+                    this.logEntry = matcher.group(27);
                 }
             } else if (!context.contains(TOKEN)) {
                 // Single line event
@@ -572,7 +572,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(25);
+                this.logEntry = matcher.group(24);
             }
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);

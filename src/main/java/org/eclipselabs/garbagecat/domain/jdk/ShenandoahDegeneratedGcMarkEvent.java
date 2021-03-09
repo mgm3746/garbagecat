@@ -130,36 +130,36 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
         if (logEntry.matches(REGEX)) {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                duration = JdkMath.convertMillisToMicros(matcher.group(47)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(45)).intValue();
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;
-                    if (matcher.group(13).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        endTimestamp = Long.parseLong(matcher.group(25));
-                    } else if (matcher.group(13).matches(UnifiedRegEx.UPTIME)) {
-                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(24)).longValue();
+                    if (matcher.group(12).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        endTimestamp = Long.parseLong(matcher.group(23));
+                    } else if (matcher.group(12).matches(UnifiedRegEx.UPTIME)) {
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(22)).longValue();
                     } else {
-                        if (matcher.group(27) != null) {
-                            if (matcher.group(27).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                                endTimestamp = Long.parseLong(matcher.group(29));
+                        if (matcher.group(25) != null) {
+                            if (matcher.group(25).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                                endTimestamp = Long.parseLong(matcher.group(27));
                             } else {
-                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(28)).longValue();
+                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(26)).longValue();
                             }
                         } else {
                             // Datestamp only.
-                            endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(13));
+                            endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(12));
                         }
                     }
                     timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 } else {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 }
-                combined = memory(matcher.group(38), matcher.group(40).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(41), matcher.group(43).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = memory(matcher.group(44), matcher.group(46).charAt(0)).convertTo(KILOBYTES);
-                if (matcher.group(48) != null) {
-                    permGen = memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
-                    permGenEnd = memory(matcher.group(52), matcher.group(54).charAt(0)).convertTo(KILOBYTES);
-                    permGenAllocation = memory(matcher.group(55), matcher.group(57).charAt(0)).convertTo(KILOBYTES);
+                combined = memory(matcher.group(36), matcher.group(38).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(39), matcher.group(41).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = memory(matcher.group(42), matcher.group(44).charAt(0)).convertTo(KILOBYTES);
+                if (matcher.group(46) != null) {
+                    permGen = memory(matcher.group(47), matcher.group(49).charAt(0)).convertTo(KILOBYTES);
+                    permGenEnd = memory(matcher.group(50), matcher.group(52).charAt(0)).convertTo(KILOBYTES);
+                    permGenAllocation = memory(matcher.group(53), matcher.group(55).charAt(0)).convertTo(KILOBYTES);
                 }
             }
         }

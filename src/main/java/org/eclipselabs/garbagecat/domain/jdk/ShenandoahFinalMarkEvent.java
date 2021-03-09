@@ -129,29 +129,29 @@ public class ShenandoahFinalMarkEvent extends ShenandoahCollector implements Blo
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                duration = JdkMath.convertMillisToMicros(matcher.group(40)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(38)).intValue();
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;
-                    if (matcher.group(13).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        endTimestamp = Long.parseLong(matcher.group(29));
-                    } else if (matcher.group(13).matches(UnifiedRegEx.UPTIME)) {
-                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(24)).longValue();
+                    if (matcher.group(12).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        endTimestamp = Long.parseLong(matcher.group(27));
+                    } else if (matcher.group(12).matches(UnifiedRegEx.UPTIME)) {
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(22)).longValue();
                     } else {
-                        if (matcher.group(27) != null) {
-                            if (matcher.group(27).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                                endTimestamp = Long.parseLong(matcher.group(29));
+                        if (matcher.group(25) != null) {
+                            if (matcher.group(25).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                                endTimestamp = Long.parseLong(matcher.group(27));
                             } else {
-                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(28)).longValue();
+                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(26)).longValue();
                             }
                         } else {
                             // Datestamp only.
-                            endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(13));
+                            endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(12));
                         }
                     }
                     timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 } else {
                     // JDK8
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 }
             }
         }

@@ -214,18 +214,18 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             if (matcher.find()) {
                 if (matcher.group(1) != null) {
                     // Initial GC[YG block exists
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
-                    trigger = matcher.group(15);
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                    trigger = matcher.group(14);
                 } else {
                     // Initial GC[YG block missing
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(29)).longValue();
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(27)).longValue();
                 }
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMicros(matcher.group(68)).intValue();
-                if (matcher.group(71) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(72)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(73)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(74)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(64)).intValue();
+                if (matcher.group(67) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(68)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(69)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(70)).intValue();
                 }
             }
             classUnloading = false;
@@ -235,18 +235,18 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             if (matcher.find()) {
                 if (matcher.group(1) != null) {
                     // Initial GC[YG block exists
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
-                    trigger = matcher.group(15);
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                    trigger = matcher.group(14);
                 } else {
                     // Initial GC[YG block missing
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(29)).longValue();
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(27)).longValue();
                 }
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMicros(matcher.group(136)).intValue();
-                if (matcher.group(139) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(140)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(141)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(142)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(128)).intValue();
+                if (matcher.group(131) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(132)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(133)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(134)).intValue();
                 }
             }
             classUnloading = true;
@@ -254,8 +254,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             Pattern pattern = Pattern.compile(REGEX_TRUNCATED);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                trigger = matcher.group(14);
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                trigger = matcher.group(13);
             }
             classUnloading = false;
         }

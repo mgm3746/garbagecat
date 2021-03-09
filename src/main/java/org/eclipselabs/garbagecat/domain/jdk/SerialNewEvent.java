@@ -154,17 +154,17 @@ public class SerialNewEvent extends SerialCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            if (matcher.group(15) != null) {
-                trigger = matcher.group(15);
+            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+            if (matcher.group(14) != null) {
+                trigger = matcher.group(14);
             }
-            young = kilobytes(matcher.group(29));
-            youngEnd = kilobytes(matcher.group(30));
-            youngAvailable = kilobytes(matcher.group(31));
-            old = kilobytes(matcher.group(35)).minus(young);
-            oldEnd = kilobytes(matcher.group(36)).minus(youngEnd);
-            oldAllocation = kilobytes(matcher.group(37)).minus(youngAvailable);
-            duration = JdkMath.convertSecsToMicros(matcher.group(38)).intValue();
+            young = kilobytes(matcher.group(27));
+            youngEnd = kilobytes(matcher.group(28));
+            youngAvailable = kilobytes(matcher.group(29));
+            old = kilobytes(matcher.group(33)).minus(young);
+            oldEnd = kilobytes(matcher.group(34)).minus(youngEnd);
+            oldAllocation = kilobytes(matcher.group(35)).minus(youngAvailable);
+            duration = JdkMath.convertSecsToMicros(matcher.group(36)).intValue();
         }
     }
 

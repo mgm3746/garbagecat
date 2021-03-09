@@ -107,20 +107,20 @@ public class UnifiedApplicationStoppedTimeEvent extends ApplicationStoppedTimeEv
             if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                 timestamp = Long.parseLong(matcher.group(13));
             } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
             } else {
-                if (matcher.group(15) != null) {
-                    if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        timestamp = Long.parseLong(matcher.group(17));
+                if (matcher.group(14) != null) {
+                    if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        timestamp = Long.parseLong(matcher.group(16));
                     } else {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                        timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
                     }
                 } else {
                     // Datestamp only.
                     timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(24)).intValue();
         }
     }
 

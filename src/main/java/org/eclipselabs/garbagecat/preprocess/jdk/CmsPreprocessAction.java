@@ -529,7 +529,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(49));
+                entangledLogLines.add(matcher.group(46));
             }
             // Output beginning of PAR_NEW line
             this.logEntry = matcher.group(1);
@@ -550,7 +550,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(30));
+                entangledLogLines.add(matcher.group(28));
             }
             // Output beginning of CMS_SERIAL_OLD line
             this.logEntry = matcher.group(1);
@@ -610,11 +610,11 @@ public class CmsPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1) + matcher.group(25);
-                if (matcher.group(14) != null) {
-                    entangledLogLines.add(matcher.group(14) + matcher.group(27));
+                this.logEntry = matcher.group(1) + matcher.group(23);
+                if (matcher.group(13) != null) {
+                    entangledLogLines.add(matcher.group(13) + matcher.group(25));
                 } else {
-                    entangledLogLines.add(matcher.group(27));
+                    entangledLogLines.add(matcher.group(25));
                 }
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
@@ -638,7 +638,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
-                entangledLogLines.add(matcher.group(21));
+                entangledLogLines.add(matcher.group(20));
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED)) {
@@ -647,7 +647,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
-                entangledLogLines.add(matcher.group(35));
+                entangledLogLines.add(matcher.group(33));
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS)) {

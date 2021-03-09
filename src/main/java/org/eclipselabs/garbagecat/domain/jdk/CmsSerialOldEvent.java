@@ -280,84 +280,84 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
             Pattern pattern = Pattern.compile(REGEX_FULL_GC);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                this.timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                this.timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 // If multiple triggers, use last one.
-                if (matcher.group(52) != null) {
-                    this.trigger = matcher.group(52);
-                } else if (matcher.group(50) != null) {
-                    this.trigger = matcher.group(50);
-                } else if (matcher.group(16) != null || matcher.group(89) != null) {
+                if (matcher.group(49) != null) {
+                    this.trigger = matcher.group(49);
+                } else if (matcher.group(47) != null) {
+                    this.trigger = matcher.group(47);
+                } else if (matcher.group(14) != null || matcher.group(86) != null) {
                     this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
-                } else if (matcher.group(14) != null) {
-                    this.trigger = matcher.group(14);
+                } else if (matcher.group(13) != null) {
+                    this.trigger = matcher.group(13);
                 }
-                this.old = kilobytes(matcher.group(72));
-                this.oldEnd = kilobytes(matcher.group(73));
-                this.oldAllocation = kilobytes(matcher.group(74));
-                this.young = kilobytes(matcher.group(98)).minus(this.old);
-                this.youngEnd = kilobytes(matcher.group(99)).minus(this.oldEnd);
-                this.youngAvailable = kilobytes(matcher.group(100)).minus(this.oldAllocation);
-                this.permGen = kilobytes(matcher.group(102));
-                this.permGenEnd = kilobytes(matcher.group(103));
-                this.permGenAllocation = kilobytes(matcher.group(104));
-                if (matcher.group(105) != null) {
+                this.old = kilobytes(matcher.group(69));
+                this.oldEnd = kilobytes(matcher.group(70));
+                this.oldAllocation = kilobytes(matcher.group(71));
+                this.young = kilobytes(matcher.group(94)).minus(this.old);
+                this.youngEnd = kilobytes(matcher.group(95)).minus(this.oldEnd);
+                this.youngAvailable = kilobytes(matcher.group(96)).minus(this.oldAllocation);
+                this.permGen = kilobytes(matcher.group(98));
+                this.permGenEnd = kilobytes(matcher.group(99));
+                this.permGenAllocation = kilobytes(matcher.group(100));
+                if (matcher.group(101) != null) {
                     super.setIncrementalMode(true);
                 }
-                this.duration = JdkMath.convertSecsToMicros(matcher.group(106)).intValue();
+                this.duration = JdkMath.convertSecsToMicros(matcher.group(102)).intValue();
             }
         } else if (logEntry.matches(REGEX_GC)) {
             Pattern pattern = Pattern.compile(REGEX_GC);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                this.timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                this.timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 // If multiple triggers, use last one.
-                if (matcher.group(75) != null) {
-                    this.trigger = matcher.group(75);
-                } else if (matcher.group(30) != null) {
-                    this.trigger = matcher.group(30);
-                } else if (matcher.group(14) != null) {
-                    this.trigger = matcher.group(14);
+                if (matcher.group(71) != null) {
+                    this.trigger = matcher.group(71);
+                } else if (matcher.group(28) != null) {
+                    this.trigger = matcher.group(28);
+                } else if (matcher.group(13) != null) {
+                    this.trigger = matcher.group(13);
                 } else {
                     // assume promotion failure
                     this.trigger = JdkRegEx.TRIGGER_PROMOTION_FAILED;
                 }
-                this.young = kilobytes(matcher.group(31));
+                this.young = kilobytes(matcher.group(29));
                 // No data to determine young end size.
                 this.youngEnd = Memory.ZERO;
-                this.youngAvailable = kilobytes(matcher.group(33));
+                this.youngAvailable = kilobytes(matcher.group(31));
 
                 // use young block duration for truncated events
-                if (matcher.group(113) == null) {
-                    this.duration = JdkMath.convertSecsToMicros(matcher.group(34)).intValue();
+                if (matcher.group(107) == null) {
+                    this.duration = JdkMath.convertSecsToMicros(matcher.group(32)).intValue();
                 }
 
                 // old block after young
-                if (matcher.group(76) != null) {
-                    this.old = kilobytes(matcher.group(77));
-                    this.oldEnd = kilobytes(matcher.group(78));
-                    this.oldAllocation = kilobytes(matcher.group(79));
-                    if (matcher.group(105) != null) {
-                        this.youngEnd = kilobytes(matcher.group(105)).minus(this.oldEnd);
+                if (matcher.group(72) != null) {
+                    this.old = kilobytes(matcher.group(73));
+                    this.oldEnd = kilobytes(matcher.group(74));
+                    this.oldAllocation = kilobytes(matcher.group(75));
+                    if (matcher.group(101) != null) {
+                        this.youngEnd = kilobytes(matcher.group(100)).minus(this.oldEnd);
                     }
                 } else {
-                    if (matcher.group(103) != null) {
-                        this.old = kilobytes(matcher.group(104)).minus(this.young);
+                    if (matcher.group(98) != null) {
+                        this.old = kilobytes(matcher.group(99)).minus(this.young);
                         // No data to determine old end size.
                         this.oldEnd = Memory.ZERO;
-                        this.oldAllocation = kilobytes(matcher.group(106)).minus(this.youngAvailable);
+                        this.oldAllocation = kilobytes(matcher.group(101)).minus(this.youngAvailable);
                     }
                 }
                 // perm/metaspace data
-                if (matcher.group(107) != null) {
-                    this.permGen = kilobytes(matcher.group(109));
-                    this.permGenEnd = kilobytes(matcher.group(110));
-                    this.permGenAllocation = kilobytes(matcher.group(111));
+                if (matcher.group(102) != null) {
+                    this.permGen = kilobytes(matcher.group(104));
+                    this.permGenEnd = kilobytes(matcher.group(105));
+                    this.permGenAllocation = kilobytes(matcher.group(106));
                 }
-                if (matcher.group(112) != null) {
+                if (matcher.group(107) != null) {
                     super.setIncrementalMode(true);
                 }
-                if (matcher.group(113) != null) {
-                    this.duration = JdkMath.convertSecsToMicros(matcher.group(113)).intValue();
+                if (matcher.group(108) != null) {
+                    this.duration = JdkMath.convertSecsToMicros(matcher.group(108)).intValue();
                 }
             }
         }
