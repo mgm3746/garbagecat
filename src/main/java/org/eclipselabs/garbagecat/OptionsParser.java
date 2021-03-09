@@ -31,7 +31,7 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OUTPUT_FILE_NAME;
-import static org.eclipselabs.garbagecat.util.GcUtil.START_DATE_TIME_REGEX;
+import static org.eclipselabs.garbagecat.util.GcUtil.isValidStartDateTime;
 
 import java.io.File;
 import java.util.ResourceBundle;
@@ -145,7 +145,7 @@ public class OptionsParser {
         // startdatetime
         if (cmd.hasOption(OPTION_STARTDATETIME_LONG)) {
             String startdatetimeOptionValue = cmd.getOptionValue(OPTION_STARTDATETIME_SHORT);
-            if (!START_DATE_TIME_REGEX.matcher(startdatetimeOptionValue).find()) {
+            if (!isValidStartDateTime(startdatetimeOptionValue)) {
                 throw new ParseException("Invalid startdatetime: '" + startdatetimeOptionValue + "'");
             }
         }
