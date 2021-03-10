@@ -933,9 +933,9 @@ public class GcManager {
         jvmRun.setMaxHeapSpace(kilobytes(jvmDao.getMaxHeapSpace()));
         jvmRun.setMaxHeapOccupancy(kilobytes(jvmDao.getMaxHeapOccupancy()));
         jvmRun.setMaxHeapAfterGc(kilobytes(jvmDao.getMaxHeapAfterGc()));
-        jvmRun.setMaxPermSpace(jvmDao.getMaxPermSpace());
-        jvmRun.setMaxPermOccupancy(jvmDao.getMaxPermOccupancy());
-        jvmRun.setMaxPermAfterGc(jvmDao.getMaxPermAfterGc());
+        jvmRun.setMaxPermSpace(kilobytes(jvmDao.getMaxPermSpace()));
+        jvmRun.setMaxPermOccupancy(kilobytes(jvmDao.getMaxPermOccupancy()));
+        jvmRun.setMaxPermAfterGc(kilobytes(jvmDao.getMaxPermAfterGc()));
         jvmRun.setMaxGcPause(jvmDao.getMaxGcPause());
         jvmRun.setTotalGcPause(jvmDao.getTotalGcPause());
         jvmRun.setBlockingEventCount(jvmDao.getBlockingEventCount());

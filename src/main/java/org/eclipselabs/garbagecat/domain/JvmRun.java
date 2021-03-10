@@ -185,23 +185,23 @@ public class JvmRun {
     /**
      * Maximum perm gen size (kilobytes).
      */
-    private int maxPermSpace;
+    private Memory maxPermSpace;
 
     /**
      * Maximum perm gen occupancy (kilobytes).
      */
-    private int maxPermOccupancy;
+    private Memory maxPermOccupancy;
 
     /**
      * Maximum perm gen after gC (kilobytes).
      */
-    private int maxPermAfterGc;
+    private Memory maxPermAfterGc;
 
-    public int getMaxPermAfterGc() {
+    public Memory getMaxPermAfterGc() {
         return maxPermAfterGc;
     }
 
-    public void setMaxPermAfterGc(int maxPermAfterGc) {
+    public void setMaxPermAfterGc(Memory maxPermAfterGc) {
         this.maxPermAfterGc = maxPermAfterGc;
     }
 
@@ -386,19 +386,19 @@ public class JvmRun {
         this.maxHeapOccupancy = maxHeapOccupancy;
     }
 
-    public int getMaxPermSpace() {
+    public Memory getMaxPermSpace() {
         return maxPermSpace;
     }
 
-    public void setMaxPermSpace(int maxPermSpace) {
+    public void setMaxPermSpace(Memory maxPermSpace) {
         this.maxPermSpace = maxPermSpace;
     }
 
-    public int getMaxPermOccupancy() {
+    public Memory getMaxPermOccupancy() {
         return maxPermOccupancy;
     }
 
-    public void setMaxPermOccupancy(int maxPermOccupancy) {
+    public void setMaxPermOccupancy(Memory maxPermOccupancy) {
         this.maxPermOccupancy = maxPermOccupancy;
     }
 

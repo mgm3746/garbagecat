@@ -278,25 +278,27 @@ public class Main {
                             + LINE_SEPARATOR);
                 }
 
-                if (jvmRun.getMaxPermSpace() > 0) {
+                if (jvmRun.getMaxPermSpace() != null) {
                     if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(INFO_PERM_GEN)) {
                         // Max perm occupancy.
-                        bufferedWriter.write(
-                                "Max Perm Gen Occupancy: " + jvmRun.getMaxPermOccupancy() + "K" + LINE_SEPARATOR);
+                        bufferedWriter.write("Max Perm Gen Occupancy: "
+                                + jvmRun.getMaxPermOccupancy().convertTo(KILOBYTES) + LINE_SEPARATOR);
                         // Max perm after GC.
-                        bufferedWriter
-                                .write("Max Perm Gen After GC: " + jvmRun.getMaxPermAfterGc() + "K" + LINE_SEPARATOR);
+                        bufferedWriter.write("Max Perm Gen After GC: " + jvmRun.getMaxPermAfterGc().convertTo(KILOBYTES)
+                                + LINE_SEPARATOR);
                         // Max perm space.
-                        bufferedWriter.write("Max Perm Gen Space: " + jvmRun.getMaxPermSpace() + "K" + LINE_SEPARATOR);
+                        bufferedWriter.write("Max Perm Gen Space: " + jvmRun.getMaxPermSpace().convertTo(KILOBYTES)
+                                + LINE_SEPARATOR);
                     } else {
                         // Max metaspace occupancy.
-                        bufferedWriter.write(
-                                "Max Metaspace Occupancy: " + jvmRun.getMaxPermOccupancy() + "K" + LINE_SEPARATOR);
+                        bufferedWriter.write("Max Metaspace Occupancy: "
+                                + jvmRun.getMaxPermOccupancy().convertTo(KILOBYTES) + LINE_SEPARATOR);
                         // Max metaspace after GC.
-                        bufferedWriter
-                                .write("Max Metaspace After GC: " + jvmRun.getMaxPermAfterGc() + "K" + LINE_SEPARATOR);
+                        bufferedWriter.write("Max Metaspace After GC: "
+                                + jvmRun.getMaxPermAfterGc().convertTo(KILOBYTES) + LINE_SEPARATOR);
                         // Max metaspace space.
-                        bufferedWriter.write("Max Metaspace Space: " + jvmRun.getMaxPermSpace() + "K" + LINE_SEPARATOR);
+                        bufferedWriter.write("Max Metaspace Space: " + jvmRun.getMaxPermSpace().convertTo(KILOBYTES)
+                                + LINE_SEPARATOR);
                     }
                 } else if (jvmRun.getMaxPermSpaceNonBlocking().greaterThan(ZERO)) {
                     if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(INFO_PERM_GEN)) {
