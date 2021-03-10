@@ -133,7 +133,7 @@ usage: garbagecat [OPTION]... [FILE]
  -o,--output <arg>          output file name (default report.txt)
  -p,--preprocess            do preprocessing
  -r,--reorder               reorder logging by timestamp
- -s,--startdatetime <arg>   JVM start datetime (yyyy-MM-dd HH:mm:ss,SSS)
+ -s,--startdatetime <arg>   JVM start datetime (yyyy-MM-dd HH:mm:ss.SSS)
                             for converting GC logging timestamps to datetime
  -t,--threshold <arg>       threshold (0-100) for throughput bottleneck
                             reporting
