@@ -121,6 +121,21 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
     }
 
+    /**
+     * Test with time, uptime decorator.
+     */
+    @Test
+    void testTimeUptime() {
+        String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] GC(6) Pause Young (Prepare Mixed) "
+                + "(G1 Evacuation Pause) Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+        UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
+                "Event name incorrect.");
+    }
+
     @Test
     void testPreprocessing() {
         File testFile = TestUtil.getFile("dataset168.txt");
@@ -134,5 +149,4 @@ class TestUnifiedG1YoungPrepareMixedEvent {
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
     }
-
 }

@@ -88,6 +88,18 @@ class TestUsingCmsEvent {
     }
 
     /**
+     * Test with uptime decorator.
+     */
+    @Test
+    void testMillis() {
+        String logLine = "[3ms] GC(6) Using Concurrent Mark Sweep";
+        assertTrue(UsingCmsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_CMS.toString() + ".");
+        UsingCmsEvent event = new UsingCmsEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.USING_CMS.toString(), event.getName(), "Event name incorrect.");
+    }
+
+    /**
      * Test logging.
      */
     @Test

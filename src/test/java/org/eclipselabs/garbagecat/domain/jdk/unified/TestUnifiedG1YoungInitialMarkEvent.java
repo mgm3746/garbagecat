@@ -14,20 +14,13 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipselabs.garbagecat.TestUtil;
-import org.eclipselabs.garbagecat.domain.JvmRun;
-import org.eclipselabs.garbagecat.service.GcManager;
-import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -110,5 +103,19 @@ class TestUnifiedG1YoungInitialMarkEvent {
                 + "1162M->5M(1250M) 1.336ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungInitialMarkEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");
+    }
+
+    /**
+     * Test with time, uptime decorator.
+     */
+    @Test
+    void testTimeUptime() {
+        String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] GC(6) Pause Initial Mark (G1 Humongous Allocation) "
+                + "1162M->5M(1250M) 1.336ms User=0.00s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1YoungInitialMarkEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");
+        UnifiedG1YoungInitialMarkEvent event = new UnifiedG1YoungInitialMarkEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString(), event.getName(),
+                "Event name incorrect.");
     }
 }

@@ -810,7 +810,7 @@ public class G1PreprocessAction implements PreprocessAction {
                     if (matcher.group(2) != null && matcher.group(12) != null) {
                         this.logEntry = matcher.group(2) + matcher.group(23) + ": " + matcher.group(46);
                     } else {
-                        if (matcher.group(13) != null) {
+                        if (matcher.group(12) != null) {
                             this.logEntry = matcher.group(23) + ": " + matcher.group(46);
                         } else if (matcher.group(2) != null) {
                             this.logEntry = matcher.group(23) + ": " + matcher.group(46);

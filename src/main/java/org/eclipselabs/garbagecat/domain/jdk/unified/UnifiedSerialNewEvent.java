@@ -150,7 +150,7 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                timestamp = Long.parseLong(matcher.group(13));
+                timestamp = Long.parseLong(matcher.group(12));
             } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
             } else {
