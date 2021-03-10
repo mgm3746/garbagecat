@@ -1,0 +1,1 @@
+[2021-03-09T14:44:53.712-0300][3.353s] GC(0) Pause Young (Concurrent Start) (Metadata GC Threshold) 100M->8M(16384M) 24.518ms
