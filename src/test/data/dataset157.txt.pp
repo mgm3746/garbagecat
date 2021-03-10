@@ -1,1 +1,0 @@
-[16.082s][info][gc            ] GC(969) Pause Cleanup 28M->28M(46M) 0.064ms User=0.00s Sys=0.00s Real=0.00s

@@ -1,3 +1,0 @@
-OpenJDK 64-Bit Server VM (25.232-b09) for linux-amd64 JRE (1.8.0_232-b09), built on Oct 13 2019 10:47:01 by "mockbuild" with gcc 4.8.5 20150623 (Red Hat 4.8.5-39)
-Memory: 4k page, physical 131855192k(88155828k free), swap 0k(0k free)
-CommandLine flags: -XX:AdaptiveSizePolicyWeight=90 -XX:+ExitOnOutOfMemoryError -XX:GCLogFileSize=3145728 -XX:GCTimeRatio=4 -XX:InitialHeapSize=8589934592 -XX:MaxHeapFreeRatio=20 -XX:MaxHeapSize=8589934592 -XX:MaxMetaspaceSize=1572864000 -XX:MetaspaceSize=1572864000 -XX:MinHeapFreeRatio=10 -XX:NativeMemoryTracking=summary -XX:NumberOfGCLogFiles=5 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:-TraceClassUnloading -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseG1GC -XX:+UseGCLogFileRotation

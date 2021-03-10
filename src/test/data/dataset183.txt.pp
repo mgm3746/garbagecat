@@ -1,1 +1,0 @@
-[2020-06-24T18:11:52.676-0700][58671ms] GC(44) Pause Young (Concurrent Start) (Metadata GC Threshold) Metaspace: 88802K->88802K(1134592K) 733M->588M(1223M) 105.541ms User=0.18s Sys=0.00s Real=0.11s

@@ -1,2 +1,0 @@
-2017-03-19T11:48:55.206+0000: 356616.192: [GC (Allocation Failure) 2017-03-19T11:48:55.207+0000: 356616.193: [ParNew: 66097K->7194K(66368K), 0.0440189 secs] 5274098K->5219953K(10478400K), 0.0454889 secs] [Times: user=0.09 sys=0.00, real=0.05 secs]
-2017-03-19T11:48:55.211+0000: 356616.198: [CMS-concurrent-abortable-preclean: 1.046/3.949 secs] [Times: user=1.16 sys=0.05, real=3.95 secs]

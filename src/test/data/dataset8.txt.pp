@@ -1,2 +1,0 @@
-28282.075: [Full GC 28282.075: [CMS (concurrent mode failure): 1179601K->1179648K(1179648K), 10.7510650 secs] 1441361K->1180553K(1441600K), [CMS Perm : 71172K->71171K(262144K)], 10.7515460 secs]
-28284.687: [CMS-concurrent-preclean: 3.706/3.706 secs]

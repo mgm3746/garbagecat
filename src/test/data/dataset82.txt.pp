@@ -1,2 +1,0 @@
-2016-09-19T18:37:30.354+0100: 572264.304: [GC 572264.306: [ParNew (promotion failed): 516864K->516864K(516864K), 1.4978605 secs]572265.804: [Class Histogram:, 23.6901531 secs]572289.495: [CMS (concurrent mode failure): 5350445K->891234K(7331840K), 59.8600601 secs]572349.355: [Class Histogram, 12.1674045 secs] 5825751K->891234K(7848704K), [CMS Perm : 500357K->443269K(1048576K)], 97.2188825 secs] [Times: user=100.78 sys=0.18, real=97.22 secs]
-2016-09-19T18:38:10.734+0100: 572304.683: [CMS-concurrent-sweep: 17.692/44.143 secs] [Times: user=97.86 sys=1.85, real=44.14 secs]

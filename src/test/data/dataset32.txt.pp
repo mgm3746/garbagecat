@@ -1,1 +1,0 @@
-0.807: [GC pause (young), 0.00290200 secs][ 29M->2589K(59M)] [Times: user=0.01 sys=0.00, real=0.01 secs]

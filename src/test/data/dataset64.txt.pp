@@ -1,1 +1,0 @@
-2016-03-14T16:06:17.747-0700: 9.501: [GC concurrent-string-deduplication, 526.1K->328.9K(197.2K), avg 48.4%, 0.0118158 secs]

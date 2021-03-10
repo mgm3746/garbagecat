@@ -1,1 +1,0 @@
-2017-05-25T14:39:00.986+0000: 456.552: [GC pause (young) (initial-mark), 0.12895600 secs][Eden: 792M(792M)->0B(855M) Survivors: 168M->120M Heap: 2423M(3072M)->1615M(3072M)] [Times: user=0.76 sys=0.02, real=0.13 secs]

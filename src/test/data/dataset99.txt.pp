@@ -1,1 +1,0 @@
-2016-11-09T14:24:05.941-0500: 615375.044: [GC pause (mixed) (to-space exhausted), 1.5026320 secs][Eden: 3416.0M(3416.0M)->0.0B(3464.0M) Survivors: 264.0M->216.0M Heap: 17.7G(18.0G)->17.8G(18.0G)] [Times: user=11.35 sys=0.00, real=1.50 secs]

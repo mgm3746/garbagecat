@@ -1,1 +1,0 @@
-2017-06-18T18:39:09.631-0500: 47768.361: [GC (CMS Initial Mark) [1 CMS-initial-mark: 2522842K(3145728K)] 2523466K(4823488K), 0.0052224 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]

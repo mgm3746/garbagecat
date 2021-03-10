@@ -1,3 +1,0 @@
-Java HotSpot(TM) 64-Bit Server VM (25.73-b02) for linux-amd64 JRE (1.8.0_73-b02), built on Jan 29 2016 17:39:45 by "java_re" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
-Memory: 4k page, physical 32880756k(20297532k free), swap 16383996k(16259932k free)
-CommandLine flags: -XX:+DoEscapeAnalysis -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/path/to/heap.hprof -XX:InitialHeapSize=1073741824 -XX:MaxHeapSize=3221225472 -XX:MaxJavaStackTraceDepth=100 -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseParallelGC -XX:+UseParallelOldGC

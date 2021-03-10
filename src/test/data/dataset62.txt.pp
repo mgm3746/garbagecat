@@ -1,2 +1,0 @@
-2016-03-07T14:54:28.456-0600: 1.515: [GC cleanup 165M->165M(110G), 0.0028925 secs]
-2016-03-07T14:54:29.384-0600: 2.443: [GC pause (GCLocker Initiated GC) (young) (initial-mark) 1061M->52M(110G), 0.0280096 secs]

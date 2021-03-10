@@ -1,6 +1,0 @@
-2016-02-18T02:01:28.575-0500: 44620.073: [GC pause (young), 0.2752700 secs][Eden: 11.3G(11.3G)->0.0B(11.3G) Survivors: 192.0M->176.0M Heap: 23.0G(26.0G)->11.7G(26.0G)] [Times: user=1.09 sys=0.00, real=0.27 secs]
-2016-02-18T02:01:30.793-0500: 44622.291: [GC pause (young) (initial-mark), 0.2619800 secs][Eden: 11.3G(11.3G)->0.0B(11.3G) Survivors: 176.0M->176.0M Heap: 23.0G(26.0G)->11.7G(26.0G)] [Times: user=1.04 sys=0.00, real=0.27 secs]
-2016-02-18T02:01:31.055-0500: 44622.553: [GC concurrent-root-region-scan-start]
-2016-02-18T02:01:33.286-0500: 44624.785: [GC pause (young), 0.2792870 secs][Eden: 11.3G(11.3G)->0.0B(11.3G) Survivors: 176.0M->176.0M Heap: 23.0G(26.0G)->11.7G(26.0G)] [Times: user=1.10 sys=0.00, real=0.28 secs]
-2016-02-18T02:01:31.343-0500: 44622.841: [GC concurrent-root-region-scan-end, 0.2879600 secs]
-2016-02-18T02:01:31.343-0500: 44622.841: [GC concurrent-mark-start]

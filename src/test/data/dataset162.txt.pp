@@ -1,1 +1,0 @@
-[41.912s][info][gc           ] GC(1500) Pause Final Evac 0.022ms

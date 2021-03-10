@@ -1,1 +1,0 @@
-[0.005s][info][gc] Using G1

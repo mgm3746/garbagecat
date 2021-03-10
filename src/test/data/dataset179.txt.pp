@@ -1,1 +1,0 @@
-2020-02-26T17:18:26.505+0000: 130.241: [GC pause (System.gc()) (young) (initial-mark), 0.1009346 secs][Eden: 220.0M(241.0M)->0.0B(277.0M) Survivors: 28.0M->34.0M Heap: 924.5M(2362.0M)->713.5M(2362.0M)] [Times: user=0.19 sys=0.00, real=0.10 secs]

@@ -1,1 +1,0 @@
-[0.369s][info][gc,start     ] GC(6) Pause Young (Normal) (G1 Evacuation Pause) Metaspace: 9085K->9085K(1058816K) 3M->2M(7M) 0.929ms User=0.01s Sys=0.00s Real=0.01s

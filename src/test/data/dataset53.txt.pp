@@ -1,1 +1,0 @@
-2016-02-12T07:02:40.753-0500: 60346.050: [GC pause (young) (initial-mark) (to-space exhausted), 1.0224350 secs][Eden: 14.2G(14.5G)->0.0B(1224.0M) Survivors: 40.0M->104.0M Heap: 22.9G(26.0G)->19.2G(26.0G)] [Times: user=3.03 sys=0.02, real=1.02 secs]

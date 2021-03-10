@@ -1,4 +1,0 @@
-OpenJDK 64-Bit Server VM (25.131-b12) for linux-amd64 JRE (1.8.0_131-b12), built on Jun 13 2017 11:27:53 by "mockbuild" with gcc 4.8.5 20150623 (Red Hat 4.8.5-16)
-Memory: 4k page, physical 16114616k(2375300k free), swap 8069116k(7237076k free)
-CommandLine flags: -XX:+G1SummarizeRSetStats -XX:G1SummarizeRSetStatsPeriod=1 -XX:InitialHeapSize=536870912 -XX:MaxHeapSize=1073741824 -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UnlockDiagnosticVMOptions -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseG1GC
-0.547: [GC pause (G1 Evacuation Pause) (young), 0.0167272 secs][Eden: 21.0M(21.0M)->0.0B(26.0M) Survivors: 4096.0K->4096.0K Heap: 28.7M(512.0M)->18.3M(512.0M)] [Times: user=0.12 sys=0.00, real=0.02 secs]

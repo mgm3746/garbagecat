@@ -1,8 +1,0 @@
-1,319: [GC1,320: [DefNew: 68160K->4425K(76672K), 0,0354890 secs] 68160K->4425K(3137216K), 0,0360580 secs] [Times: user=0,04 sys=0,00, real=0,03 secs]
-3,021: [GC3,021: [DefNew: 72585K->8511K(76672K), 0,0473880 secs] 72585K->16477K(3137216K), 0,0475130 secs] [Times: user=0,04 sys=0,00, real=0,05 secs]
-3,089: [GC [1 CMS-initial-mark: 7965K(3060544K)] 16867K(3137216K), 0,0088540 secs] [Times: user=0,01 sys=0,00, real=0,01 secs]
-3,098: [CMS-concurrent-mark-start]
-3,169: [CMS-concurrent-mark: 0,053/0,071 secs] [Times: user=0,07 sys=0,00, real=0,07 secs]
-3,169: [CMS-concurrent-preclean-start]
-3,191: [CMS-concurrent-preclean: 0,007/0,022 secs] [Times: user=0,02 sys=0,00, real=0,02 secs]
-3,192: [GC[YG occupancy: 9676 K (76672 K)]3,192: [Rescan (non-parallel) 3,192: [grey object rescan, 0,0085590 secs]3,200: [root rescan, 0,0103640 secs], 0,0189740 secs]3,211: [weak refs processing, 0,0000310 secs]3,211: [class unloading, 0,0012570 secs]3,212: [scrub symbol table, 0,0043780 secs]3,216: [scrub string table, 0,0004340 secs] [1 CMS-remark: 7965K(3060544K)] 17642K(3137216K), 0,0252690 secs] [Times: user=0,02 sys=0,00, real=0,03 secs]

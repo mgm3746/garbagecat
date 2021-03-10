@@ -1,1 +1,0 @@
-2020-07-14T14:51:39.493-0500: 5590.760: [Full GC (Heap Dump Initiated GC)  277M->16M(1024M), 0.1206075 secs][Eden: 259.0M(614.0M)->0.0B(614.0M) Survivors: 0.0B->0.0B Heap: 277.7M(1024.0M)->16.7M(1024.0M)], [Metaspace: 41053K->41053K(1085440K)] [Times: user=0.14 sys=0.00, real=0.12 secs]

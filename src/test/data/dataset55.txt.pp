@@ -1,2 +1,0 @@
-2016-02-16T01:02:06.283-0500: 16023.627: [GC pause (young), 0.2455640 secs][Eden: 1216.0M(1216.0M)->0.0B(1232.0M) Survivors: 112.0M->96.0M Heap: 22.0G(26.0G)->20.8G(26.0G)] [Times: user=0.81 sys=0.00, real=0.24 secs]
-2016-02-16T01:02:06.338-0500: 16023.683: [GC concurrent-mark-start]

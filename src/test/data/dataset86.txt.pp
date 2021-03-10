@@ -1,2 +1,0 @@
-253.161: [GC [PSYoungGen: 11734K->384K(647360K)] 578296K->566945K(1536896K), 0.0361840 secs] [Times: user=0.05 sys=0.00, real=0.04 secs]
-253.197: [Full GC (System) [PSYoungGen: 384K->0K(647360K)] [ParOldGen: 566561K->564118K(889536K)] 566945K->564118K(1536896K) [PSPermGen: 381589K->381589K(446208K)], 2.4491360 secs] [Times: user=3.46 sys=0.02, real=2.45 secs]

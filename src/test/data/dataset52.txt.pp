@@ -1,2 +1,0 @@
-2016-02-12T00:05:06.280-0500: 35945.350: [GC pause (young), 0.2491300 secs][Eden: 1200.0M(1200.0M)->0.0B(9008.0M) Survivors: 128.0M->96.0M Heap: 10.5G(26.0G)->9593.3M(26.0G)] [Times: user=0.78 sys=0.00, real=0.25 secs]
-2016-02-12T00:05:06.347-0500: 35945.418: [GC concurrent-root-region-scan-end, 0.2394270 secs]
