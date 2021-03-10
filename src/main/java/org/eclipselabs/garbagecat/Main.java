@@ -278,7 +278,7 @@ public class Main {
                             + LINE_SEPARATOR);
                 }
 
-                if (jvmRun.getMaxPermSpace() != null) {
+                if (jvmRun.getMaxPermSpace().greaterThan(ZERO)) {
                     if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(INFO_PERM_GEN)) {
                         // Max perm occupancy.
                         bufferedWriter.write("Max Perm Gen Occupancy: "
