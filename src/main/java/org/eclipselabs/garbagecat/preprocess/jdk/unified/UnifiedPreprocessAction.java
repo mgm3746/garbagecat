@@ -537,7 +537,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     this.logEntry = matcher.group(24);
                 } else {
                     // Single line event
-                    this.logEntry = Constants.LINE_SEPARATOR + logEntry;
+                    if (priorLogEntry != null && priorLogEntry.equals("")) {
+                        // first line in log file
+                        this.logEntry = logEntry;
+                    } else {
+                        this.logEntry = Constants.LINE_SEPARATOR + logEntry;
+                    }
                 }
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
@@ -551,7 +556,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 }
             } else if (!context.contains(TOKEN)) {
                 // Single line event
-                this.logEntry = Constants.LINE_SEPARATOR + logEntry;
+                if (priorLogEntry != null && priorLogEntry.equals("")) {
+                    // first line in log file
+                    this.logEntry = logEntry;
+                } else {
+                    this.logEntry = Constants.LINE_SEPARATOR + logEntry;
+                }
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA)) {
@@ -564,7 +574,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 }
             } else if (!context.contains(TOKEN)) {
                 // Single line event
-                this.logEntry = Constants.LINE_SEPARATOR + logEntry;
+                if (priorLogEntry != null && priorLogEntry.equals("")) {
+                    // first line in log file
+                    this.logEntry = logEntry;
+                } else {
+                    this.logEntry = Constants.LINE_SEPARATOR + logEntry;
+                }
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_END_TIMES_DATA)) {
