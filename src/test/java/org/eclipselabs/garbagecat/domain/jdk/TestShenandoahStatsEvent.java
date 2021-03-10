@@ -548,6 +548,13 @@ class TestShenandoahStatsEvent {
         assertTrue(ShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
     }
+    
+    @Test
+    void testLineC2CompilerThread2() {
+        String logLine = "[2.160s][info][gc,stats     ]       3 of    41 ms (  6.7%): C2 CompilerThread0";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
 
     @Test
     void testJdk11() {
