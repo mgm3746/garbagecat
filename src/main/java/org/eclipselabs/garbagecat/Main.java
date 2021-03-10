@@ -258,7 +258,8 @@ public class Main {
                 }
                 // Max heap occupancy.
                 if (jvmRun.getMaxHeapOccupancy() != null) {
-                    bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy() + "K" + LINE_SEPARATOR);
+                    bufferedWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy().convertTo(KILOBYTES)
+                            + LINE_SEPARATOR);
                 } else if (jvmRun.getMaxHeapOccupancyNonBlocking() != null) {
                     bufferedWriter.write("Max Heap Occupancy: "
                             + jvmRun.getMaxHeapOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
