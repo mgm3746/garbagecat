@@ -94,7 +94,7 @@ Put the YUM repo file into your /etc/yum/repos.d/:
 
 Download the latest Maven: [http://maven.apache.org/download.html](http://maven.apache.org/download.html).
 
-Copy the download to where you want to install it (MAVEN_HOME) and unzip it. For example:
+Copy the download to where you want to install it and unzip it. For example:
 
 ```
 cp ~/Downloads/apache-maven-3.6.3-bin.tar.gz ~/opt/
@@ -113,10 +113,10 @@ Build it:
 
 ```
 cd garbagecat
-MAVEN_HOME/bin/mvn clean (rebuilding)
-MAVEN_HOME/bin/mvn assembly:assembly
+/opt/apache-maven-3.6.3/bin/mvn clean (rebuilding)
+/opt/apache-maven-3.6.3/bin/mvn assembly:assembly
 export JAVA_HOME=/usr/lib/jvm/java/ (or wherever a JDK is installed)
-MAVEN_HOME/bin/mvn javadoc:javadoc
+/opt/apache-maven-3.6.3/bin/mvn javadoc:javadoc
 ```
 
 If you get the following error:
@@ -127,7 +127,7 @@ If you get the following error:
 Run the following command:
 
 ```
-MAVEN_HOME/bin/mvn -U -fn clean install
+/opt/apache-maven-3.6.3/bin/mvn -U -fn clean install
 ```
 
 ## Usage ##
@@ -336,4 +336,4 @@ info
 
 Copyright (c) 2008-2021 Mike Millson
 
-All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html.                                                                                                             
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://java_home tokenwww.eclipse.org/legal/epl-v10.html.                                                                                                             
