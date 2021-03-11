@@ -4,8 +4,12 @@ A command line tool that parses Java garbage collection logging and does analysi
 
 ## Supports ##
 
-  * OpenJDK
-  * Sun/Oracle JDK 1.5 and higher
+OpenJDK derivatives:
+* Red Hat build of OpenJDK
+* Oracle JDK
+* AdoptOpenJDK
+* Azul
+* etc.
 
 ### Recommended GC Logging Options ###
 
@@ -97,26 +101,26 @@ Download the latest Maven: [http://maven.apache.org/download.html](http://maven.
 Copy the download to where you want to install it and unzip it. For example:
 
 ```
-cp ~/Downloads/apache-maven-3.6.3-bin.tar.gz ~/opt/
-cd ~/opt/
-tar -xvzf apache-maven-3.6.3-bin.tar.gz
-rm apache-maven-3.6.3-bin.tar.gz
+$ cp ~/Downloads/apache-maven-3.6.3-bin.tar.gz ~/opt/
+$ cd ~/opt/
+$ tar -xvzf apache-maven-3.6.3-bin.tar.gz
+$ rm apache-maven-3.6.3-bin.tar.gz
 ```
 
 Get source:
 
 ```
-git clone https://github.com/mgm3746/garbagecat.git
+$ git clone https://github.com/mgm3746/garbagecat.git
 ```
 
 Build it:
 
 ```
-cd garbagecat
-/opt/apache-maven-3.6.3/bin/mvn clean (rebuilding)
-/opt/apache-maven-3.6.3/bin/mvn assembly:assembly
-export JAVA_HOME=/usr/lib/jvm/java/ (or wherever a JDK is installed)
-/opt/apache-maven-3.6.3/bin/mvn javadoc:javadoc
+$ cd garbagecat
+$ /opt/apache-maven-3.6.3/bin/mvn clean (rebuilding)
+$ /opt/apache-maven-3.6.3/bin/mvn assembly:assembly
+$ export JAVA_HOME=/usr/lib/jvm/java/ (or wherever a JDK is installed)
+$ /opt/apache-maven-3.6.3/bin/mvn javadoc:javadoc
 ```
 
 If you get the following error:
@@ -127,13 +131,13 @@ If you get the following error:
 Run the following command:
 
 ```
-/opt/apache-maven-3.6.3/bin/mvn -U -fn clean install
+$ /opt/apache-maven-3.6.3/bin/mvn -U -fn clean install
 ```
 
 ## Usage ##
 
 ```
-java -jar garbagecat-3.0.1-SNAPSHOT.jar --help
+$ java -jar garbagecat-3.0.1-SNAPSHOT.jar --help
 usage: garbagecat [OPTION]... [FILE]
  -h,--help                  help
  -j,--jvmoptions <arg>      JVM options used during JVM run
@@ -160,70 +164,77 @@ Notes:
   1. If threshold is not defined, it defaults to 90.
   1. Throughput = (Time spent not doing gc) / (Total Time). Throughput of 100 means no time spent doing gc (good). Throughput of 0 means all time spent doing gc (bad).
 
-## Report ##
+## Example ##
+
+https://github.com/mgm3746/garbagecat/tree/master/src/test/gc-example.log
 
 ```
+$ java -jar garbagecat.jar -v -l /path/to/garbagecat/src/test/gc-example.log
+```
+
+### Report ###
+
+```
+gc-example.log
 ========================================
-Running garbagecat version: 3.0.2-SNAPSHOT
-Latest garbagecat version/tag: v3.0.1
+Running garbagecat version: 3.0.6-SNAPSHOT
+Latest garbagecat version/tag: v3.0.5
 ========================================
-Throughput less than 90%
+Throughput less than 20%
 ----------------------------------------
-...
-2017-01-12T05:17:38.064-0500: 2163.994: [GC remark, 0.0614813 secs] [Times: user=1.48 sys=0.01, real=0.06 secs]
-2017-01-12T05:17:38.126-0500: 2164.057: [GC cleanup 24G->23G(42G), 0.0188102 secs] [Times: user=0.49 sys=0.00, real=0.02 secs]
-...
-2017-01-12T05:21:43.121-0500: 2409.051: [GC remark, 0.0317641 secs] [Times: user=0.81 sys=0.00, real=0.03 secs]
-2017-01-12T05:21:43.153-0500: 2409.084: [GC cleanup 21G->21G(42G), 0.0174042 secs] [Times: user=0.45 sys=0.00, real=0.02 secs]
+2016-10-10T18:47:59.652-0700: 251.989: [GC (Allocation Failure) 2016-10-10T18:47:59.652-0700: 251.989: [ParNew: 145807K->13146K(153344K), 0.0868632 secs] 1534115K->1401453K(8371584K), 0.0872680 secs] [Times: user=0.18 sys=0.00, real=0.09 secs]
+2016-10-10T18:47:59.741-0700: 252.078: [GC (GCLocker Initiated GC) 2016-10-10T18:47:59.741-0700: 252.078: [ParNew: 13469K->2777K(153344K), 0.0824395 secs] 1401777K->1403693K(8371584K), 0.0827643 secs] [Times: user=0.16 sys=0.00, real=0.09 secs]
 ...
 ========================================
 JVM:
 ----------------------------------------
-Version: Java HotSpot(TM) 64-Bit Server VM (25.45-b02) for linux-amd64 JRE (1.8.0_45-b14), built on Apr 10 2015 10:07:45 by "java_re" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
-Options: -XX:CompressedClassSpaceSize=1073741824 -XX:+DoEscapeAnalysis -XX:GCLogFileSize=2097152 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/fi/logs/rpdswafir1/rpdswafir1-ahs1-tcs1 -XX:InitialHeapSize=45097156608 -XX:MaxGCPauseMillis=500 -XX:MaxHeapSize=45097156608 -XX:MaxMetaspaceSize=5368709120 -XX:MetaspaceSize=5368709120 -XX:NumberOfGCLogFiles=5 -XX:+PrintGC -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:ThreadStackSize=256 -XX:-UseCompressedOops -XX:+UseG1GC -XX:-UseGCLogFileRotation -XX:+UseLargePages
-Memory: Memory: 4k page, physical 528792532k(351929072k free), swap 30736380k(30736380k free)
+Version: Java HotSpot(TM) 64-Bit Server VM (25.102-b14) for linux-amd64 JRE (1.8.0_102-b14), built on Jun 22 2016 18:43:17 by "java_re" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
+Options: -XX:CMSInitiatingOccupancyFraction=80 -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:+DoEscapeAnalysis -XX:ErrorFile=/home/jbcures/errors/hs_err_pid%p.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/jboss/app-files/crash/cures/ -XX:InitialHeapSize=8589934592 -XX:MaxHeapSize=8589934592 -XX:MaxNewSize=174485504 -XX:MaxTenuringThreshold=6 -XX:NewSize=174485504 -XX:OldPLABSize=16 -XX:OldSize=348971008 -XX:ParallelGCThreads=2 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseParNewGC
+Memory: Memory: 4k page, physical 32878232k(18756444k free), swap 4194300k(4194300k free)
 ========================================
 SUMMARY:
 ----------------------------------------
-# GC Events: 99
-Event Types: G1_YOUNG_PAUSE, G1_YOUNG_INITIAL_MARK, G1_CONCURRENT, G1_REMARK, G1_CLEANUP, G1_MIXED_PAUSE
-# Parallel Events: 75
-# Parallel Events with Low Parallelism: 0
-Max Heap Occupancy: 38063309K
-Max Heap Space: 44040192K
-GC Throughput: 100%
-GC Max Pause: 0.682 secs
-GC Total Pause: 17.702 secs
-Stopped Time Throughput: 100%
-Stopped Time Max Pause: 0.683 secs
-Stopped Time Total: 18.756 secs
-GC/Stopped Ratio: 94%
-First Datestamp: 2017-01-12T04:41:34.411-0500
-First Timestamp: 0.341 secs
-Last Datestamp: 2017-01-12T06:50:33.313-0500
-Last Timestamp: 7739.244 secs
+# GC Events: 36546
+Event Types: PAR_NEW, CMS_INITIAL_MARK, CMS_CONCURRENT, CMS_REMARK, CMS_SERIAL_OLD
+# Parallel Events: 36545
+# Inverted Parallelism: 2
+Max Inverted Parallelism: 2016-10-11T08:06:39.037-0700: 48171.374: [GC (CMS Initial Mark) [1 CMS-initial-mark: 6578959K(8218240K)] 6599305K(8371584K), 0.0118105 secs] [Times: user=0.01 sys=0.00, real=0.02 secs]
+NewRatio: 54
+Max Heap Occupancy: 7092037K
+Max Heap After GC: 6988066K
+Max Heap Space: 8371584K
+Max Metaspace Occupancy: 167164K
+Max Metaspace After GC: 167164K
+Max Metaspace Space: 1204224K
+GC Throughput: 96%
+GC Max Pause: 7.527 secs
+GC Total Pause: 2623.499 secs
+First Datestamp: 2016-10-10T18:43:49.025-0700
+First Timestamp: 1.362 secs
+Last Datestamp: 2016-10-11T12:34:47.720-0700
+Last Timestamp: 64260.057 secs
 ========================================
 ANALYSIS:
 ----------------------------------------
 error
 ----------------------------------------
-*Compressed class pointers space size is set (-XX:CompressedClassSpaceSize), and heap >= 32G. Remove -XX:CompressedClassSpaceSize, as compressed object references should not be used on heaps >= 32G.
-*Humongous objects are being allocated on an old version of the JDK that is not able to fully reclaim humongous objects during young collections. Upgrade to JDK8 update 60 or later.
+*The CMS_SERIAL_OLD collector is being invoked for one of the following reasons: (1) Fragmentation. The concurrent low pause collector does not compact. When fragmentation becomes an issue a serial collection compacts the heap. If the old generation has available space, the cause is likely fragmentation. Fragmentation can be avoided by increasing the heap size. (2) Metaspace class metadata or compressed class pointers allocation failure. The GC attempts to free/resize metaspace. (3) Resizing perm gen. If perm gen occupancy is near perm gen allocation, the cause is likely perm gen. Perm gen resizing can be avoided by setting the minimum perm gen size equal to the the maximum perm gen size. For example: -XX:PermSize=256M -XX:MaxPermSize=256M. (4) Undetermined reasons. Possibly the JVM requires a certain amount of heap or combination of resources that is not being met, and consequently the concurrent low pause collector is not used despite being specified with the -XX:+UseConcMarkSweepGC option. The CMS_SERIAL_OLD collector is a serial (single-threaded) collector, which means it will take a very long time to collect a large heap. For optimal performance, tune to avoid serial collections.
+...
 ----------------------------------------
 warn
 ----------------------------------------
-*Many environments (e.g. JBoss versions prior to EAP6) cause the RMI subsystem to be loaded. RMI manages Distributed Garbage Collection (DGC) by calling System.gc() to clean up unreachable remote objects, resulting in unnecessary major (full) garbage collection that can seriously impact performance. The default interval changed from 1 minute to 1 hour in JDK6 update 45. DGC is required to prevent memory leaks when making remote method calls or exporting remote objects like EJBs; however, test explicitly setting the DGC client and server intervals to longer intervals to minimize the impact of explicit garbage collection. For example, 4 hours (values in milliseconds): -Dsun.rmi.dgc.client.gcInterval=14400000 -Dsun.rmi.dgc.server.gcInterval=14400000. Or if not making remote method calls and not exporting remote objects like EJBs (everything runs in the same JVM), disable explicit garbage collection altogether with -XX:+DisableExplicitGC.
-*Consider adding -XX:+ExplicitGCInvokesConcurrent so explicit garbage collection is handled concurrently by the CMS and G1 collectors. Or if not making remote method calls and not exporting remote objects like EJBs (everything runs in the same JVM), disable explicit garbage collection altogether with -XX:+DisableExplicitGC.
-*Number of GC log files is defined (-XX:NumberOfGCLogFiles), yet GC log file rotation is disabled. Either remove -XX:NumberOfGCLogFiles or enable GC log file rotation with -XX:+UseGCLogFileRotation.
+*CMS remark low parallelism: (1) If using JDK7 or earlier, add -XX:+CMSParallelRemarkEnabled, as remark is single-threaded by default in JDK7 and earlier. (2) Check if multi-threaded remark is disabled with -XX:-CMSParallelRemarkEnabled, and replace with -XX:+CMSParallelRemarkEnabled. (4) Add -XX:+ParallelRefProcEnabled to enable multi-threaded reference processing if the "weak refs processing" time is a significant amount of the total CMS remark time. (5) Check for swapping and if the number of GC threads (-XX:ParallelGCThreads=<n>) is appropriate for the number of cpu/cores and any processes sharing cpu.
+...
 ----------------------------------------
 info
 ----------------------------------------
-*Last log line not identified. This is typically caused by the gc log being copied while the JVM is in the middle of logging an event, resulting in truncated logging. If it is not due to truncated logging, report the unidentified logging line: https://github.com/mgm3746/garbagecat/issues.
-*GC log file rotation is disabled (-XX:-UseGCLogFileRotation). Consider enabling rotation to protect disk space.
+*GC log file rotation is not enabled. Consider enabling rotation (-XX:+UseGCLogFileRotation -XX:GCLogFileSize=N[K|M|G] -XX:NumberOfGCLogFiles=N) to protect disk spac
+...
 ========================================
-1 UNIDENTIFIED LOG LINE(S):
+80 UNIDENTIFIED LOG LINE(S):
 ----------------------------------------
-2017-01-12T06:50:34.314-0500: 7740.244
+2016-10-10T19:17:37.771-0700: 2030.108: [GC (Allocation Failure) 2016-10-10T19:17:37.771-0700: 2030.108: [ParNew2016-10-10T19:17:37.773-0700: 2030.110: [CMS-concurrent-abortable-preclean: 0.050/0.150 secs] [Times: user=0.11 sys=0.03, real=0.15 secs]
+...
 ========================================
 ```
 
@@ -238,15 +249,10 @@ Notes:
   1. There is a limit of 1000 unidentified log lines that will be reported. If there are any unidentified logging lines, try running again with the -p preprocess option enabled. Note that it is fairly common for the last line to be truncated, and this is not an issue.
   1. Please report unidentified log lines by opening an issue and zipping up and attaching the garbage collection logging: https://github.com/mgm3746/garbagecat/issues.
 
-## Example ##
-
-https://github.com/mgm3746/garbagecat/tree/master/src/test/data/gc.log
-
-```
-java -jar garbagecat.jar /path/to/gc.log
-```
+### Analysis ###
 
 The bottom of the report shows 80 unidentified lines:
+
 ```
 ========================================
 80 UNIDENTIFIED LOG LINE(S):
@@ -259,13 +265,13 @@ The bottom of the report shows 80 unidentified lines:
 Run with the preprocess flag:
 
 ```
-java -jar garbagecat.jar -p /path/to/gc.log
+$ java -jar garbagecat.jar -v -l -p ~/path/to/garbagecat/src/test/gc-example.log
 ```
 
 There are no unidentified log lines after preprocessing. However, there are many bottlenecks where throughput is < 90% (default). To get a better idea of bottlenecks, run with -t 50 to see stretches where more time is spent running gc/jvm threads than application threads.
 
 ```
-java -jar garbagecat.jar -t 50 -p /path/to/gc.log
+$ java -jar garbagecat.jar -v -l -p -t 50 ~/path/to/garbagecat/src/test/gc-example.log
 ```
 
 There are still a lot of bottlenecks reported; however, none are for a very long stretch. For example, the following lines show 3 gc events where more time was spent doing gc than running application threads, but it covers less than 1 second: 62339.274 --> 62339.684:
@@ -290,16 +296,18 @@ SUMMARY:
 # GC Events: 36586
 Event Types: PAR_NEW, CMS_INITIAL_MARK, CMS_CONCURRENT, CMS_REMARK, CMS_SERIAL_OLD
 # Parallel Events: 36585
-# Parallel Events with Low Parallelism: 78
-Parallel Event with Lowest Parallelism: 2016-10-10T19:17:36.730-0700: 2029.067: [GC (CMS Initial Mark) [1 CMS-initial-mark: 6579305K(8218240K)] 6609627K(8371584K), 0.0088184 secs] [Times: user=0.01 sys=0.00, real=0.01 secs]
+# Inverted Parallelism: 2
+Max Inverted Parallelism: 2016-10-11T08:06:39.037-0700: 48171.374: [GC (CMS Initial Mark) [1 CMS-initial-mark: 6578959K(8218240K)] 6599305K(8371584K), 0.0118105 secs] [Times: user=0.01 sys=0.00, real=0.02 secs]
 NewRatio: 54
 Max Heap Occupancy: 7092037K
+Max Heap After GC: 6988066K
 Max Heap Space: 8371584K
-Max Perm/Metaspace Occupancy: 167164K
-Max Perm/Metaspace Space: 1204224K
+Max Metaspace Occupancy: 167164K
+Max Metaspace After GC: 167164K
+Max Metaspace Space: 1204224K
 GC Throughput: 96%
 GC Max Pause: 7.527 secs
-GC Total Pause: 2608.102 secs
+GC Total Pause: 2626.402 secs
 First Datestamp: 2016-10-10T18:43:49.025-0700
 First Timestamp: 1.362 secs
 Last Datestamp: 2016-10-11T12:34:47.720-0700
@@ -315,20 +323,23 @@ ANALYSIS:
 ----------------------------------------
 error
 ----------------------------------------
-*The CMS_SERIAL_OLD collector is being invoked for one of the following reasons: (1) Fragmentation. The concurrent low pause collector does not compact. When fragmentation becomes an issue a serial collection compacts the heap. If the old generation has available space, the cause is likely fragmentation. Fragmentation can be avoided by increasing the heap size. (2) Resizing Perm/Metaspace. If Perm/Metaspace occupancy is near Perm/Metaspace allocation, the cause is likely Perm/Metaspace. Perm/Metaspace resizing can be avoided by setting the minimum Perm/Metaspace size equal to the the maximum Perm/Metaspace size. For example: -XX:PermSize=256M -XX:MaxPermSize=256M (Perm) or -XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=512M (Metaspace). (3) Undetermined reasons. Possibly the JVM requires a certain amount of heap or combination of resources that is not being met, and consequently the concurrent low pause collector is not used despite being specified with the -XX:+UseConcMarkSweepGC option. The CMS_SERIAL_OLD collector is a serial (single-threaded) collector, which means it will take a very long time to collect a large heap. For optimal performance, tune to avoid serial collections.
-*CMS promotion failed. A young generation collection is not able to complete because there is not enough space in the old generation for promotion. The old generation has available space, but it is not contiguous. When fragmentation is an issue, the concurrent low pause collector invokes a slow (single-threaded) serial collector to compact the heap. Tune to avoid fragmentation: (1) Increase the heap size. (2) Use -XX:CMSInitiatingOccupancyFraction=NN (default 92) to run the CMS cycle more frequently to increase sweeping of dead objects in the old generation to free lists (e.g. -XX:CMSInitiatingOccupancyFraction=85 -XX:+UseCMSInitiatingOccupancyOnly). (3) Do heap dump analysis to determine if there is unintended object retention that can be addressed to decrease heap demands. Or move to a collector that handles fragmentation more efficiently: (1) G1 compacts the young and old generations during evacuation using a multi-threaded collector. (2) Shenandoah compacts concurrently. Temporarily add -XX:PrintFLSStatistics=1 and -XX:+PrintPromotionFailure to get additional insight into fragmentation.
+*The CMS_SERIAL_OLD collector is being invoked for one of the following reasons: (1) Fragmentation. The concurrent low pause collector does not compact. When fragmentation becomes an issue a serial collection compacts the heap. If the old generation has available space, the cause is likely fragmentation. Fragmentation can be avoided by increasing the heap size. (2) Metaspace class metadata or compressed class pointers allocation failure. The GC attempts to free/resize metaspace. (3) Resizing perm gen. If perm gen occupancy is near perm gen allocation, the cause is likely perm gen. Perm gen resizing can be avoided by setting the minimum perm gen size equal to the the maximum perm gen size. For example: -XX:PermSize=256M -XX:MaxPermSize=256M. (4) Undetermined reasons. Possibly the JVM requires a certain amount of heap or combination of resources that is not being met, and consequently the concurrent low pause collector is not used despite being specified with the -XX:+UseConcMarkSweepGC option. The CMS_SERIAL_OLD collector is a serial (single-threaded) collector, which means it will take a very long time to collect a large heap. For optimal performance, tune to avoid serial collections.
+*CMS promotion failed. A young generation collection is not able to complete because there is not enough space in the old generation for promotion. The old generation has available space, but it is not contiguous. When fragmentation is an issue, the concurrent low pause collector invokes a slow (single-threaded) serial collector to compact the heap. Tune to avoid fragmentation: (1) Increase the heap size. (2) Use -XX:CMSInitiatingOccupancyFraction=N (default 92) to run the CMS cycle more frequently to increase sweeping of dead objects in the old generation to free lists (e.g. -XX:CMSInitiatingOccupancyFraction=85 -XX:+UseCMSInitiatingOccupancyOnly). (3) Do heap dump analysis to determine if there is unintended object retention that can be addressed to decrease heap demands. Or move to a collector that handles fragmentation more efficiently: (1) G1 compacts the young and old generations during evacuation using a multi-threaded collector. (2) Shenandoah compacts concurrently. Temporarily add -XX:PrintFLSStatistics=1 and -XX:+PrintPromotionFailure to get additional insight into fragmentation.
 ----------------------------------------
 warn
 ----------------------------------------
-*The Metaspace size should be explicitly set. The Metaspace size is unlimited by default and will auto increase in size up to what the OS will allow, so not setting it can swamp the OS. Explicitly set the Metaspace size. For example: -XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=512M.
-*Explicit garbage collection has been disabled with -XX:+DisableExplicitGC. That is fine if the JVM is not making remote method calls and not exporting remote objects like EJBs (everything runs in the same JVM). If there are remote objects, do not use -XX:+DisableExplicitGC, as it can result in a memory leak. It is also possible the application depends on explicit garbage collection in some other way. If explicit garbage collection is required, remove -XX:+DisableExplicitGC and set sun.rmi.dgc.client.gcInterval and sun.rmi.dgc.server.gcInterval to values longer than the default 1 hour. Also add -XX:+ExplicitGCInvokesConcurrent so explicit garbage collection is handled concurrently if using the CMS or G1 collectors. For example, 4 hours (values in milliseconds): -Dsun.rmi.dgc.client.gcInterval=14400000 -Dsun.rmi.dgc.server.gcInterval=14400000 -XX:+ExplicitGCInvokesConcurrent.
+*CMS remark low parallelism: (1) If using JDK7 or earlier, add -XX:+CMSParallelRemarkEnabled, as remark is single-threaded by default in JDK7 and earlier. (2) Check if multi-threaded remark is disabled with -XX:-CMSParallelRemarkEnabled, and replace with -XX:+CMSParallelRemarkEnabled. (4) Add -XX:+ParallelRefProcEnabled to enable multi-threaded reference processing if the "weak refs processing" time is a significant amount of the total CMS remark time. (5) Check for swapping and if the number of GC threads (-XX:ParallelGCThreads=<n>) is appropriate for the number of cpu/cores and any processes sharing cpu.
+*CMS initial mark low parallelism: (1) If using JDK6 or earlier, initial mark is single-threaded. Consider upgrading to JDK7 or later for multi-threaded initial mark. (2) If using JDK7, add -XX:+CMSParallelInitialMarkEnabled, as initial mark is single-threaded by default in JDK7. (3) Check if multi-threaded remark is disabled with -XX:-CMSParallelInitialMarkEnabled, and replace with -XX:+CMSParallelInitialMarkEnabled. (3) Check for swapping and if the number of GC threads (-XX:ParallelGCThreads=<n>) is appropriate for the number of cpu/cores and any processes sharing cpu.
+*Explicit garbage collection has been disabled with -XX:+DisableExplicitGC. The JVM uses explicit garbage collection to manage direct memory (to free space when MaxDirectMemorySize is reached) and the Remote Method Invocation (RMI) system (to clean up unreachable remote objects). Disabling it for those use cases can cause a memory leak. Verify the application does not use direct memory (e.g. java.nio.DirectByteBuffer), does not make remote method calls or export remote objects like EJBs (everything runs in the same JVM), and does not depend on explicit garbage collection in some other way. Known applications that use direct memory: JBoss EAP7 (IO subsystem). If explicit garbage collection is required, remove -XX:+DisableExplicitGC, and if using the CMS or G1 collector, add -XX:+ExplicitGCInvokesConcurrent so explicit garbage collection is handled concurrently.
 *The CMS collector does not always collect Perm/Metaspace by default (e.g. prior to JDK 1.8). Add -XX:+CMSClassUnloadingEnabled to collect Perm/Metaspace in the CMS concurrent cycle and avoid Perm/Metaspace collections being done by a slow (single threaded) serial collector.
-*-XX:+PrintGCApplicationStoppedTime missing. Required to determine overall throughput and identify throughput and pause issues not related to garbage collection, as many JVM operations besides garbage collection require all threads to reach a safepoint to execute.
+*A heap dump file name has been specified with the -XX:HeapDumpPath (e.g. -XX:HeapDumpPath=/mydir/heapdump.hprof). Generally you only want to specify a directory (e.g. -XX:HeapDumpPath=/mydir/) and let the JVM use the default file name, which includes the process id. If you specify a file name, heap dumps will overwrite each other. Unless disk space is a concern, you typically do not want to overwrite heap dumps and lose data. Reference: https://access.redhat.com/solutions/21109
+*Application stopped time missing. Enable with -XX:+PrintGCApplicationStoppedTime (<= JDK8) or with safepoint logging at info level (e.g. -Xlog:gc*,safepoint=info:file=gc.log:uptime:filecount=4,filesize=50M). Required to determine overall throughput and identify throughput and pause issues not related to garbage collection, as many JVM operations besides garbage collection require all threads to reach a safepoint to execute. Reference: https://access.redhat.com/solutions/18656
+*There is evidence of inverted parallelism. With parallel (multi-threaded) collector events, the "user" + "sys" time should be approximately equal to the "real" (wall) time multiplied by the # of GC threads. For example, if there are 3 GC threads we would expect a parallel collection that takes 1 second of "real" time to take approximately 3 seconds of "user" + "sys" time. The parallelism is 3x. If the parallelism is 1x ("user" + "sys" = "real"), the parallel collection is not offering any efficiency over a serial (single-threaded) collection. When "user" + "sys" < "real", the parallelism is inverted. Inverted parallelism can be a sign of high i/o (e.g. disk or network access) or not enough CPU (e.g. GC threads competing with each other or other processes). Check for swapping and if the number of GC threads (-XX:ParallelGCThreads=<n>) is appropriate for the number of cpu/cores and any processes sharing cpu.
 ----------------------------------------
 info
 ----------------------------------------
-*When UseCompressedOops and UseCompressedClassesPointers (JDK 1.8 u40+) are enabled (default) the Metaspace reported in the GC logging is the sum of two native memory spaces: (1) class metadata. (2) compressed class pointers. It is recommended to explicitly set the compressed class pointers space. For example: -XX:CompressedClassSpaceSize=1G.
-*GC log file rotation is not enabled. Consider enabling rotation (-XX:+UseGCLogFileRotation -XX:GCLogFileSize=N -XX:NumberOfGCLogFiles=N) to protect disk space.
+*GC log file rotation is not enabled. Consider enabling rotation (-XX:+UseGCLogFileRotation -XX:GCLogFileSize=N[K|M|G] -XX:NumberOfGCLogFiles=N) to protect disk space.
+*The number of times an object is copied between survivor spaces is being set with -XX:MaxTenuringThreshold=N (0-15). 0 = disabled. 15 (default) = promote when the survivor space fills. Unless testing has shown this improves performance, consider removing this option to allow the default value to be applied.
 ========================================
 ```
 
