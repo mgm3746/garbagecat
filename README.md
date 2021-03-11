@@ -5,10 +5,10 @@ A command line tool that parses Java garbage collection logging and does analysi
 ## Supports ##
 
 OpenJDK derivatives:
-* Red Hat build of OpenJDK
-* Oracle JDK
 * AdoptOpenJDK
 * Azul
+* Oracle JDK
+* Red Hat build of OpenJDK
 * etc.
 
 ### Recommended GC Logging Options ###
