@@ -66,7 +66,9 @@ Note: The Fedora and RHEL installs are release dependent. To ensure you have the
 # dnf install garbagecat
 ```
 
-### RHEL 7 Method #1 ###
+### RHEL Method #1 ###
+
+#### RHEL7 ####
 
 ```
 # yum install yum-plugin-copr --enablerepo=rhel-7-server-optional-rpms
@@ -74,41 +76,47 @@ Note: The Fedora and RHEL installs are release dependent. To ensure you have the
 # yum install garbagecat
 ```
 
-### RHEL 7 Method #2 ###
+#### RHEL8 ####
 
-Put the YUM repo file into your /etc/yum/repos.d/. Here's the repo file for [RHEL 7](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-7/bostrt-garbagecat-epel-7.repo).
+```
+# yum install dnf-plugins-core
+# yum copr enable bostrt/garbagecat
+# yum install garbagecat
+```
+
+### RHEL Method #2 ###
+
+Put the YUM repo file into your /etc/yum/repos.d/:
+* [RHEL 7 repo file](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-7/bostrt-garbagecat-epel-7.repo)
+* [RHEL 8 repo file](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-8/bostrt-garbagecat-epel-78.repo)
 
 ## Building ##
 
-Maven 2.2 is required. Download the latest Maven 2.2 (2.2.1): http://maven.apache.org/download.html
+Download the latest Maven: [http://maven.apache.org/download.html](http://maven.apache.org/download.html).
 
-Copy the download to where you want to install it and unzip it:
+Copy the download to where you want to install it (MAVEN_HOME) and unzip it. For example:
+
 ```
-cp ~/Downloads/apache-maven-2.2.1-bin.tar.gz ~/opt/
+cp ~/Downloads/apache-maven-3.6.3-bin.tar.gz ~/opt/
 cd ~/opt/
-tar -xvzf apache-maven-2.2.1-bin.tar.gz
-rm apache-maven-2.2.1-bin.tar.gz
-```
-
-
-Set M2\_HOME and add the maven executables to your PATH. For example, in  ~/.bash\_profile:
-```
-M2_HOME=/home/mmillson/opt/apache-maven-2.2.1
-PATH=$M2_HOME/bin:$PATH
-export PATH M2_HOME
+tar -xvzf apache-maven-3.6.3-bin.tar.gz
+rm apache-maven-3.6.3-bin.tar.gz
 ```
 
 Get source:
+
 ```
 git clone https://github.com/mgm3746/garbagecat.git
 ```
 
 Build it:
+
 ```
 cd garbagecat
-mvn clean (rebuilding)
-mvn assembly:assembly
-mvn javadoc:javadoc
+MAVEN_HOME/bin/mvn clean (rebuilding)
+MAVEN_HOME/bin/mvn assembly:assembly
+export JAVA_HOME=/usr/lib/jvm/java/ (or wherever a JDK is installed)
+MAVEN_HOME/bin/mvn javadoc:javadoc
 ```
 
 If you get the following error:
@@ -119,7 +127,7 @@ If you get the following error:
 Run the following command:
 
 ```
-mvn -U -fn clean install
+MAVEN_HOME/bin/mvn -U -fn clean install
 ```
 
 ## Usage ##
