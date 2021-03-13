@@ -34,7 +34,6 @@ import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
@@ -583,8 +582,7 @@ public class JvmDao {
      * @return The time first stopped event.
      */
     public synchronized ApplicationStoppedTimeEvent getFirstStoppedEvent() {
-        return stoppedTimeEvents.isEmpty() ? null
-                : (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(stoppedTimeEvents.get(0).getLogEntry());
+        return stoppedTimeEvents.isEmpty() ? null : stoppedTimeEvents.get(0);
     }
 
     /**
@@ -594,8 +592,7 @@ public class JvmDao {
      */
     public synchronized ApplicationStoppedTimeEvent getLastStoppedEvent() {
         // Retrieve last event from batch or database.
-        return stoppedTimeEvents.isEmpty() ? queryStoppedLastEvent()
-                : stoppedTimeEvents.get(stoppedTimeEvents.size() - 1);
+        return stoppedTimeEvents.isEmpty() ? null : stoppedTimeEvents.get(stoppedTimeEvents.size() - 1);
     }
 
     /**
@@ -603,12 +600,6 @@ public class JvmDao {
      * 
      * @return The last stopped event in database.
      */
-
-    private synchronized ApplicationStoppedTimeEvent queryStoppedLastEvent() {
-        return stoppedTimeEvents.isEmpty() ? null
-                : (ApplicationStoppedTimeEvent) JdkUtil
-                        .parseLogLine(stoppedTimeEvents.get(stoppedTimeEvents.size() - 1).getLogEntry());
-    }
 
     /**
      * The maximum stopped time event pause time.
