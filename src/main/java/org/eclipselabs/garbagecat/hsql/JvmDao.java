@@ -18,19 +18,15 @@ import static java.util.stream.Collectors.toList;
 import static org.eclipselabs.garbagecat.util.Memory.ZERO;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 import static org.eclipselabs.garbagecat.util.jdk.JdkMath.convertMicrosToMillis;
-import static org.eclipselabs.garbagecat.util.jdk.JdkUtil.determineEventType;
-import static org.eclipselabs.garbagecat.util.jdk.JdkUtil.hydrateBlockingEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
@@ -51,91 +47,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
  * 
  */
 public class JvmDao {
-
-    private static class Pst {
-
-        private long timeStamp;
-        private String eventName;
-        private int duration;
-        private Memory youngSpace;
-        private Memory youngOccupancyInit;
-        private Memory youngOccupancyEnd;
-        private Memory oldSpace;
-        private Memory oldOccupancyInit;
-        private Memory oldOccupancyEnd;
-        private Memory combinedSpace;
-        private Memory combinedOccupancyInit;
-        private Memory combinedOccupancyEnd;
-        private Memory permSpace;
-        private Memory permOccupancyInit;
-        private Memory permOccupancyEnd;
-        private String logEntry;
-
-        public long getTimeStamp() {
-            return timeStamp;
-        }
-
-        public String getEventName() {
-            return eventName;
-        }
-
-        public int getDuration() {
-            return duration;
-        }
-
-        public Memory getYoungSpace() {
-            return youngSpace;
-        }
-
-        public Memory getYoungOccupancyInit() {
-            return youngOccupancyInit;
-        }
-
-        public Memory getYoungOccupancyEnd() {
-            return youngOccupancyEnd;
-        }
-
-        public Memory getOldSpace() {
-            return oldSpace;
-        }
-
-        public Memory getOldOccupancyInit() {
-            return oldOccupancyInit;
-        }
-
-        public Memory getOldOccupancyEnd() {
-            return oldOccupancyEnd;
-        }
-
-        public Memory getCombinedSpace() {
-            return combinedSpace;
-        }
-
-        public Memory getCombinedOccupancyInit() {
-            return combinedOccupancyInit;
-        }
-
-        public Memory getCombinedOccupancyEnd() {
-            return combinedOccupancyEnd;
-        }
-
-        public Memory getPermSpace() {
-            return permSpace;
-        }
-
-        public Memory getPermOccupancyInit() {
-            return permOccupancyInit;
-        }
-
-        public Memory getPermOccupancyEnd() {
-            return permOccupancyEnd;
-        }
-
-        public String getLogEntry() {
-            return logEntry;
-        }
-
-    }
 
     /**
      * List of all event types associate with JVM run.
@@ -160,7 +71,7 @@ public class JvmDao {
     /**
      * Batch blocking database inserts for improved performance.
      */
-    private List<Pst> blockingEvents = new ArrayList<>();
+    private List<BlockingEvent> blockingEvents = new ArrayList<>();
 
     /**
      * Batch stopped time database inserts for improved performance.
@@ -271,7 +182,7 @@ public class JvmDao {
     }
 
     public void addBlockingEvent(BlockingEvent event) {
-        blockingEvents.add(intern(event));
+        blockingEvents.add(event);
     }
 
     public void addStoppedTimeEvent(ApplicationStoppedTimeEvent event) {
@@ -481,39 +392,6 @@ public class JvmDao {
         this.maxPermOccupancyNonBlocking = maxPermOccupancyNonBlocking;
     }
 
-    private static Pst intern(BlockingEvent event) {
-        Pst pst = new Pst();
-        pst.timeStamp = event.getTimestamp();
-        pst.eventName = event.getName();
-        pst.duration = event.getDuration();
-        pst.logEntry = event.getLogEntry();
-        if (event instanceof YoungData) {
-            YoungData youngData = (YoungData) event;
-            pst.youngSpace = youngData.getYoungSpace();
-            pst.youngOccupancyInit = youngData.getYoungOccupancyInit();
-            pst.youngOccupancyEnd = youngData.getYoungOccupancyEnd();
-        }
-        if (event instanceof OldData) {
-            OldData oldData = (OldData) event;
-            pst.oldSpace = oldData.getOldSpace();
-            pst.oldOccupancyInit = oldData.getOldOccupancyInit();
-            pst.oldOccupancyEnd = oldData.getOldOccupancyEnd();
-        }
-        if (event instanceof CombinedData) {
-            CombinedData combinedData = (CombinedData) event;
-            pst.combinedSpace = combinedData.getCombinedSpace();
-            pst.combinedOccupancyInit = combinedData.getCombinedOccupancyInit();
-            pst.combinedOccupancyEnd = combinedData.getCombinedOccupancyEnd();
-        }
-        if (event instanceof PermMetaspaceData) {
-            PermMetaspaceData permMetaspaceData = (PermMetaspaceData) event;
-            pst.permSpace = permMetaspaceData.getPermSpace();
-            pst.permOccupancyInit = permMetaspaceData.getPermOccupancyInit();
-            pst.permOccupancyEnd = permMetaspaceData.getPermOccupancyEnd();
-        }
-        return pst;
-    }
-
     /**
      * The maximum GC blocking event pause time.
      * 
@@ -521,7 +399,8 @@ public class JvmDao {
      */
     public synchronized int getMaxGcPause() {
         return convertMicrosToMillis(
-                ints(this.blockingEvents, Pst::getDuration).mapToInt(Integer::valueOf).max().orElse(0)).intValue();
+                ints(this.blockingEvents, BlockingEvent::getDuration).mapToInt(Integer::valueOf).max().orElse(0))
+                        .intValue();
     }
 
     /**
@@ -530,16 +409,12 @@ public class JvmDao {
      * @return total pause duration (milliseconds).
      */
     public synchronized long getTotalGcPause() {
-        return convertMicrosToMillis(ints(this.blockingEvents, Pst::getDuration).collect(summingLong(Long::valueOf)))
-                .longValue();
+        return convertMicrosToMillis(
+                ints(this.blockingEvents, BlockingEvent::getDuration).collect(summingLong(Long::valueOf))).longValue();
     }
 
     private static <T> Stream<Integer> ints(List<T> list, Function<T, Integer> function) {
         return list.stream().map(function).filter(Objects::nonNull);
-    }
-
-    private static <T> LongStream longs(List<T> list, Function<T, Memory> function) {
-        return list.stream().map(function).filter(Objects::nonNull).mapToLong(m -> m.getValue(KILOBYTES));
     }
 
     /**
@@ -550,6 +425,7 @@ public class JvmDao {
      * @return The first blocking event.
      */
     public synchronized BlockingEvent getFirstGcEvent() {
+        // TODO return directly?
         return this.blockingEvents.isEmpty() ? null
                 : (BlockingEvent) JdkUtil.parseLogLine(this.blockingEvents.get(0).getLogEntry());
     }
@@ -563,6 +439,7 @@ public class JvmDao {
      */
     public synchronized BlockingEvent getLastGcEvent() {
         // Retrieve last event from batch or database.
+        // TODO return directly?
         return this.blockingEvents.isEmpty() ? null
                 : (BlockingEvent) JdkUtil
                         .parseLogLine(this.blockingEvents.get(blockingEvents.size() - 1).getLogEntry());
@@ -582,9 +459,7 @@ public class JvmDao {
      * @return <code>List</code> of events.
      */
     public synchronized List<BlockingEvent> getBlockingEvents() {
-        return this.blockingEvents.stream().sorted(comparing(Pst::getTimeStamp))
-                .map(pst -> hydrateBlockingEvent(determineEventType(pst.getEventName()), pst.getLogEntry(),
-                        pst.getTimeStamp(), pst.getDuration()))
+        return this.blockingEvents.stream().sorted(comparing(BlockingEvent::getTimestamp)).map(JvmDao::toBlockingEvent)
                 .collect(toList());
     }
 
@@ -595,10 +470,15 @@ public class JvmDao {
      * @return <code>List</code> of events.
      */
     public synchronized List<BlockingEvent> getBlockingEvents(LogEventType eventType) {
-        return this.blockingEvents.stream().filter(e -> e.getEventName().equals(eventType.toString()))
-                .sorted(comparing(Pst::getTimeStamp))
-                .map(pst -> hydrateBlockingEvent(eventType, pst.getLogEntry(), pst.getTimeStamp(), pst.getDuration()))
-                .collect(toList());
+        return this.blockingEvents.stream().filter(e -> e.getName().equals(eventType.toString()))
+                .sorted(comparing(BlockingEvent::getTimestamp)).map(JvmDao::toBlockingEvent).collect(toList());
+    }
+
+    private static BlockingEvent toBlockingEvent(BlockingEvent e) {
+        return e;
+        // TODO hydrateBlockingEvent no longer needed
+        // return hydrateBlockingEvent(determineEventType(e.getName()), e.getLogEntry(),
+        // e.getTimestamp(), e.getDuration());
     }
 
     /**
@@ -616,7 +496,7 @@ public class JvmDao {
      * @return maximum young space size (kilobytes).
      */
     public synchronized int getMaxYoungSpace() {
-        return (int) longs(this.blockingEvents, Pst::getYoungSpace).max().orElse(0);
+        return (int) kilobytes(YoungData.class, YoungData::getYoungSpace).max().orElse(0);
     }
 
     /**
@@ -625,7 +505,7 @@ public class JvmDao {
      * @return maximum old space size (kilobytes).
      */
     public synchronized int getMaxOldSpace() {
-        return (int) longs(this.blockingEvents, Pst::getOldSpace).max().orElse(0);
+        return (int) kilobytes(OldData.class, OldData::getOldSpace).max().orElse(0);
     }
 
     /**
@@ -634,8 +514,7 @@ public class JvmDao {
      * @return maximum heap size (kilobytes).
      */
     public synchronized int getMaxHeapSpace() {
-        return (int) this.blockingEvents.stream().map(t -> add(t.getYoungSpace(), t.getOldSpace()))
-                .mapToLong(m -> m.getValue(KILOBYTES)).max().orElse(0);
+        return (int) kilobytes(OldData.class, t -> add(t.getYoungSpace(), t.getOldSpace())).max().orElse(0);
     }
 
     /**
@@ -644,16 +523,8 @@ public class JvmDao {
      * @return maximum heap occupancy (kilobytes).
      */
     public synchronized int getMaxHeapOccupancy() {
-        return (int) this.blockingEvents.stream().map(t -> add(t.getYoungOccupancyInit(), t.getOldOccupancyInit()))
-                .mapToLong(m -> m.getValue(KILOBYTES)).max().orElse(0);
-    }
-
-    private static Memory add(Memory m1, Memory m2) {
-        return m1 == null ? nullSafe(m2) : m1.plus(nullSafe(m2));
-    }
-
-    private static Memory nullSafe(Memory memory) {
-        return memory == null ? ZERO : memory;
+        return (int) kilobytes(OldData.class, t -> add(t.getYoungOccupancyInit(), t.getOldOccupancyInit())).max()
+                .orElse(0);
     }
 
     /**
@@ -662,8 +533,8 @@ public class JvmDao {
      * @return maximum heap after GC (kilobytes).
      */
     public synchronized int getMaxHeapAfterGc() {
-        return (int) this.blockingEvents.stream().map(t -> add(t.getYoungOccupancyEnd(), t.getOldOccupancyEnd()))
-                .mapToLong(m -> m.getValue(KILOBYTES)).max().orElse(0);
+        return (int) kilobytes(OldData.class, t -> add(t.getYoungOccupancyEnd(), t.getOldOccupancyEnd())).max()
+                .orElse(0);
     }
 
     /**
@@ -672,7 +543,7 @@ public class JvmDao {
      * @return maximum perm/metaspace footprint (kilobytes).
      */
     public synchronized int getMaxPermSpace() {
-        return (int) longs(this.blockingEvents, Pst::getPermSpace).max().orElse(0);
+        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermSpace).max().orElse(0);
     }
 
     /**
@@ -681,7 +552,7 @@ public class JvmDao {
      * @return maximum perm/metaspac occupancy (kilobytes).
      */
     public synchronized int getMaxPermOccupancy() {
-        return (int) longs(this.blockingEvents, Pst::getPermOccupancyInit).max().orElse(0);
+        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermOccupancyInit).max().orElse(0);
     }
 
     /**
@@ -690,7 +561,23 @@ public class JvmDao {
      * @return maximum perm/metaspac after GC (kilobytes).
      */
     public synchronized int getMaxPermAfterGc() {
-        return (int) longs(this.blockingEvents, Pst::getPermOccupancyEnd).max().orElse(0);
+        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermOccupancyEnd).max().orElse(0);
+    }
+
+    private <T> LongStream kilobytes(Class<T> clazz, Function<T, Memory> func) {
+        return this.blockingEvents.stream() //
+                .filter(clazz::isInstance) //
+                .map(clazz::cast).map(func) //
+                .filter(Objects::nonNull) //
+                .mapToLong(m -> m.getValue(KILOBYTES));
+    }
+
+    private static Memory add(Memory m1, Memory m2) {
+        return m1 == null ? nullSafe(m2) : m1.plus(nullSafe(m2));
+    }
+
+    private static Memory nullSafe(Memory memory) {
+        return memory == null ? ZERO : memory;
     }
 
     /**
