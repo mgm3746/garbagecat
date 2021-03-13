@@ -817,13 +817,7 @@ public class GcManager {
                     }
                 }
             }
-
-            // Process final batches
-            jvmDao.processBlockingBatch();
-            jvmDao.processStoppedTimeBatch();
-        } catch (
-
-        FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
