@@ -425,9 +425,8 @@ public class JvmDao {
      * @return The first blocking event.
      */
     public synchronized BlockingEvent getFirstGcEvent() {
-        // TODO return directly?
-        return this.blockingEvents.isEmpty() ? null
-                : (BlockingEvent) JdkUtil.parseLogLine(this.blockingEvents.get(0).getLogEntry());
+        // TODO JdkUtil#parseLogLine no longer needed?
+        return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(0);
     }
 
     /**
@@ -439,10 +438,8 @@ public class JvmDao {
      */
     public synchronized BlockingEvent getLastGcEvent() {
         // Retrieve last event from batch or database.
-        // TODO return directly?
-        return this.blockingEvents.isEmpty() ? null
-                : (BlockingEvent) JdkUtil
-                        .parseLogLine(this.blockingEvents.get(blockingEvents.size() - 1).getLogEntry());
+        // TODO JdkUtil#parseLogLine no longer needed?
+        return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(blockingEvents.size() - 1);
     }
 
     /**
@@ -476,7 +473,7 @@ public class JvmDao {
 
     private static BlockingEvent toBlockingEvent(BlockingEvent e) {
         return e;
-        // TODO hydrateBlockingEvent no longer needed
+        // TODO JdkUtil#hydrateBlockingEvent no longer needed
         // return hydrateBlockingEvent(determineEventType(e.getName()), e.getLogEntry(),
         // e.getTimestamp(), e.getDuration());
     }
