@@ -56,22 +56,25 @@ class TestJdkUtil {
 
         String logLine1 = "test1";
         long timestamp1 = 10000L;
-        int duration1 = 500000;
+        int duration1 = 400000;
         BlockingEvent priorEvent = new ParallelScavengeEvent(logLine1, timestamp1, duration1);
 
         // 1 second between GCs with duration of .5 seconds
         String logLine2 = "test2";
         long timestamp2 = 11000L;
-        int duration2 = 500000;
+        int duration2 = 600000;
         BlockingEvent gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
+
+        // Interval = 11.6 (end of gc2) - 10.4 (end of gc1) = 1.2 secs = 1200000 microsecs
+        // throughput = gc time / total time = 600000/120000 = 50%
 
         // Test boundary
         int throughputThreshold = 50;
         assertFalse(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
                 "Event incorrectly flagged as a bottleneck.");
 
-        // Test bottleneck
-        duration2 = 501000;
+        // Add 1 microsecond to make it a bottleneck
+        duration2 = 600001;
         gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
         assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
                 "Event should have been flagged as a bottleneck.");

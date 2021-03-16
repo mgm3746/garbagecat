@@ -808,7 +808,7 @@ public final class JdkUtil {
     /**
      * Determine if the <code>BlockingEvent</code> should be classified as a bottleneck.
      * 
-     * @param gcEvent
+     * @param event
      *            Current <code>BlockingEvent</code>.
      * @param priorEvent
      *            Previous <code>BlockingEvent</code>.
@@ -817,36 +817,36 @@ public final class JdkUtil {
      *            be considered a bottleneck. Whole number 0-100.
      * @return True if the <code>BlockingEvent</code> pause time meets the bottleneck definition.
      */
-    public static final boolean isBottleneck(BlockingEvent gcEvent, BlockingEvent priorEvent, int throughputThreshold)
+    public static final boolean isBottleneck(BlockingEvent event, BlockingEvent priorEvent, int throughputThreshold)
             throws TimeWarpException {
         /*
          * Check for logging time warps, which could be an indication of mixed logging from multiple JVM runs. JDK8
          * seems to have threading issues where sometimes logging gets mixed up under heavy load, and an event appears
          * to start before the previous event finished. They are mainly very small overlaps or a few milliseconds.
          */
-        long gcEventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(gcEvent.getTimestamp())).longValue();
+        long eventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(event.getTimestamp())).longValue();
         long priorEventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(priorEvent.getTimestamp()))
                 .longValue();
-        if (gcEventTimestampMicros < priorEventTimestampMicros) {
+        if (eventTimestampMicros < priorEventTimestampMicros) {
             throw new TimeWarpException("Bad order: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
-                    + Constants.LINE_SEPARATOR + gcEvent.getLogEntry());
-        } else if (gcEventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 1000000) {
+                    + Constants.LINE_SEPARATOR + event.getLogEntry());
+        } else if (eventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 1000000) {
             // Only report if overlap > 1 sec to account for small overlaps due to JDK threading issues
             throw new TimeWarpException("Event overlap: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
-                    + Constants.LINE_SEPARATOR + gcEvent.getLogEntry());
+                    + Constants.LINE_SEPARATOR + event.getLogEntry());
         } else {
             /*
              * Timestamp is the start of a vm event; therefore, the interval is from the end of the prior event to the
              * end of the current event.
              */
-            long interval = gcEventTimestampMicros + gcEvent.getDuration() - priorEventTimestampMicros
+            long interval = eventTimestampMicros + event.getDuration() - priorEventTimestampMicros
                     - priorEvent.getDuration();
             // Determine the maximum duration for the given interval that meets the throughput goal.
             BigDecimal durationThreshold = new BigDecimal(100 - throughputThreshold);
             durationThreshold = durationThreshold.movePointLeft(2);
             durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
             durationThreshold.setScale(0, RoundingMode.DOWN);
-            return gcEvent.getDuration() > durationThreshold.longValue();
+            return event.getDuration() > durationThreshold.longValue();
         }
     }
 
