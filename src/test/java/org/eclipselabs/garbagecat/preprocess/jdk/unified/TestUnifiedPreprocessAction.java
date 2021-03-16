@@ -1270,8 +1270,8 @@ class TestUnifiedPreprocessAction {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_FULL_GC),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_PARALLEL),
+                JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + " collector not identified.");
     }
 
     @Test
@@ -1284,7 +1284,7 @@ class TestUnifiedPreprocessAction {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_FULL_GC),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_PARALLEL),
+                JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + " collector not identified.");
     }
 }

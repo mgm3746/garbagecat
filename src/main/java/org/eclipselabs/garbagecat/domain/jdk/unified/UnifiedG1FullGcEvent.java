@@ -208,7 +208,7 @@ public class UnifiedG1FullGcEvent extends G1Collector
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_G1_FULL_GC.toString();
+        return JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString();
     }
 
     public String getLogEntry() {

@@ -270,7 +270,7 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.G1_FULL_GC.toString();
+        return JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString();
     }
 
     public String getTrigger() {

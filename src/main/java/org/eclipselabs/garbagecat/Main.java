@@ -319,7 +319,8 @@ public class Main {
                 }
                 // GC throughput
                 bufferedWriter.write("GC Throughput: ");
-                if (jvmRun.getGcThroughput() == 100 && jvmRun.getBlockingEventCount() > 0) {
+                if ((jvmRun.getGcThroughput() == 100 || jvmRun.getGcThroughput() == 0)
+                        && jvmRun.getBlockingEventCount() > 0) {
                     // Provide clue it's rounded to 100
                     bufferedWriter.write("~");
                 }
