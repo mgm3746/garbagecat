@@ -830,7 +830,7 @@ public final class JdkUtil {
         if (gcEventTimestampMicros < priorEventTimestampMicros) {
             throw new TimeWarpException("Bad order: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
                     + Constants.LINE_SEPARATOR + gcEvent.getLogEntry());
-        } else if (gcEventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 1000) {
+        } else if (gcEventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 1000000) {
             // Only report if overlap > 1 sec to account for small overlaps due to JDK threading issues
             throw new TimeWarpException("Event overlap: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
                     + Constants.LINE_SEPARATOR + gcEvent.getLogEntry());
