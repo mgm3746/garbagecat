@@ -38,7 +38,7 @@ import org.eclipselabs.garbagecat.domain.jdk.FooterHeapEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FooterStatsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1CleanupEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1ConcurrentEvent;
-import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1FullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1MixedPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
@@ -80,6 +80,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1InfoEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1MixedPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEvent;
@@ -118,11 +119,11 @@ public final class JdkUtil {
         // unified
         FOOTER_STATS, GC_INFO, HEAP_REGION_SIZE, HEAP_ADDRESS, UNIFIED_APPLICATION_STOPPED_TIME, UNIFIED_BLANK_LINE,
         //
-        UNIFIED_CONCURRENT, UNIFIED_CMS_INITIAL_MARK, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE,
+        UNIFIED_CONCURRENT, UNIFIED_CMS_INITIAL_MARK, UNIFIED_G1_CLEANUP, UNIFIED_G1_FULL_GC, UNIFIED_G1_INFO,
         //
-        UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_OLD,
+        UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
         //
-        UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
+        UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
         //
         UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL,
         //
@@ -213,6 +214,8 @@ public final class JdkUtil {
             return LogEventType.UNIFIED_CONCURRENT;
         if (UnifiedG1CleanupEvent.match(logLine))
             return LogEventType.UNIFIED_G1_CLEANUP;
+        if (UnifiedG1FullGcEvent.match(logLine))
+            return LogEventType.UNIFIED_G1_FULL_GC;
         if (UnifiedG1InfoEvent.match(logLine))
             return LogEventType.UNIFIED_G1_INFO;
         if (UnifiedG1MixedPauseEvent.match(logLine))
@@ -271,7 +274,7 @@ public final class JdkUtil {
             return LogEventType.G1_YOUNG_INITIAL_MARK;
         if (G1RemarkEvent.match(logLine))
             return LogEventType.G1_REMARK;
-        if (G1FullGCEvent.match(logLine))
+        if (G1FullGcEvent.match(logLine))
             return LogEventType.G1_FULL_GC;
         if (G1CleanupEvent.match(logLine))
             return LogEventType.G1_CLEANUP;
@@ -401,6 +404,8 @@ public final class JdkUtil {
             return new UnifiedCmsInitialMarkEvent(logLine);
         case UNIFIED_G1_CLEANUP:
             return new UnifiedG1CleanupEvent(logLine);
+        case UNIFIED_G1_FULL_GC:
+            return new UnifiedG1FullGcEvent(logLine);
         case UNIFIED_G1_INFO:
             return new UnifiedG1InfoEvent(logLine);
         case UNIFIED_G1_MIXED_PAUSE:
@@ -448,7 +453,7 @@ public final class JdkUtil {
         case G1_CONCURRENT:
             return new G1ConcurrentEvent(logLine);
         case G1_FULL_GC:
-            return new G1FullGCEvent(logLine);
+            return new G1FullGcEvent(logLine);
         case G1_MIXED_PAUSE:
             return new G1MixedPauseEvent(logLine);
         case G1_REMARK:
@@ -578,6 +583,8 @@ public final class JdkUtil {
             return new UnifiedCmsInitialMarkEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_CLEANUP:
             return new UnifiedG1CleanupEvent(logEntry, timestamp, duration);
+        case UNIFIED_G1_FULL_GC:
+            return new UnifiedG1FullGcEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_YOUNG_INITIAL_MARK:
             return new UnifiedG1YoungInitialMarkEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_MIXED_PAUSE:
@@ -615,7 +622,7 @@ public final class JdkUtil {
         case G1_CLEANUP:
             return new G1CleanupEvent(logEntry, timestamp, duration);
         case G1_FULL_GC:
-            return new G1FullGCEvent(logEntry, timestamp, duration);
+            return new G1FullGcEvent(logEntry, timestamp, duration);
         // Shenandoah
         case SHENANDOAH_DEGENERATED_GC_MARK:
             return new ShenandoahDegeneratedGcMarkEvent(logEntry, timestamp, duration);

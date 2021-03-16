@@ -19,16 +19,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.OldCollection;
-import org.eclipselabs.garbagecat.domain.OldData;
+import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.PermMetaspaceCollection;
 import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
-import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
-import org.eclipselabs.garbagecat.domain.YoungData;
-import org.eclipselabs.garbagecat.domain.jdk.SerialCollector;
+import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -38,32 +37,47 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * UNIFIED_SERIAL_OLD
+ * UNIFIED_G1_FULL_GC
  * </p>
  * 
  * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent} with unified logging (JDK9+).
+ * {@link org.eclipselabs.garbagecat.domain.jdk.G1FullGcEvent} with unified logging (JDK9+).
  * </p>
+ * 
+ * <p>
+ * The {@link org.eclipselabs.garbagecat.domain.jdk.G1FullGcEvent} is parallel in JDK10+. See
+ * <a href="https://openjdk.java.net/jeps/307">JEP 307: Parallel Full GC for G1</a>.
  * 
  * <h3>Example Logging</h3>
  * 
  * <p>
- * Preprocessed with {@link org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction}:
+ * Preprocessed:
  * </p>
  * 
  * <pre>
- * [0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: 1152K-&gt;0K(1152K) Tenured: 458K-&gt;929K(960K) Metaspace: 697K-&gt;697K(1056768K) 1M-&gt;0M(2M) 3.061ms User=0.00s Sys=0.00s Real=0.00s
- * </pre>
- * 
- * <pre>
- * [0.091s][info][gc,start     ] GC(3) Pause Full (Ergonomics) PSYoungGen: 502K-&gt;436K(1536K) PSOldGen: 460K-&gt;511K(2048K) Metaspace: 701K-&gt;701K(1056768K) 0M-&gt;0M(3M) 1.849ms User=0.01s Sys=0.00s Real=0.00s
+ * [2021-03-13T03:37:40.051+0530][79853119ms] GC(8646) Pause Full (G1 Evacuation Pause) Metaspace: 214096K-&gt;214096K(739328K) 8186M-&gt;8178M(8192M) 2127.343ms User=16.40s Sys=0.09s Real=2.13s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedSerialOldEvent extends SerialCollector implements UnifiedLogging, BlockingEvent, YoungCollection,
-        OldCollection, PermMetaspaceCollection, SerialCollection, YoungData, OldData, PermMetaspaceData, TriggerData {
+public class UnifiedG1FullGcEvent extends G1Collector
+        implements UnifiedLogging, BlockingEvent, ParallelEvent, YoungCollection, OldCollection,
+        PermMetaspaceCollection, CombinedData, PermMetaspaceData, TriggerData, TimesData {
+
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
+
+    /**
+     * Regular expression defining preprocessed logging.
+     */
+    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + TRIGGER
+            + "\\) Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9
+            + "[ ]*$";
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -81,34 +95,19 @@ public class UnifiedSerialOldEvent extends SerialCollector implements UnifiedLog
     private long timestamp;
 
     /**
-     * Young generation size at beginning of GC event.
+     * Combined young + old generation size at beginning of GC event.
      */
-    private Memory young;
+    private Memory combinedBegin;
 
     /**
-     * Young generation size at end of GC event.
+     * Combined young + old generation size at end of GC event.
      */
-    private Memory youngEnd;
+    private Memory combinedEnd;
 
     /**
-     * Available space in young generation. Equals young generation allocation minus one survivor space.
+     * Combined young + old generation allocation.
      */
-    private Memory youngAvailable;
-
-    /**
-     * Old generation size at beginning of GC event.
-     */
-    private Memory old;
-
-    /**
-     * Old generation size at end of GC event.
-     */
-    private Memory oldEnd;
-
-    /**
-     * Space allocated to old generation.
-     */
-    private Memory oldAllocation;
+    private Memory combinedAllocation;
 
     /**
      * Permanent generation size at beginning of GC event.
@@ -131,30 +130,30 @@ public class UnifiedSerialOldEvent extends SerialCollector implements UnifiedLog
     private String trigger;
 
     /**
-     * Trigger(s) regular expression(s).
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_ERGONOMICS
-            + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")";
+    private int timeUser;
 
     /**
-     * Regular expression defining the logging.
+     * The time of all system (kernel) threads added together in centiseconds.
      */
-    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + TRIGGER
-            + "\\) (DefNew|PSYoungGen): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) (Tenured|PSOldGen): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE
-            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9
-            + "[ ]*$";
-
-    private static final Pattern pattern = Pattern.compile(UnifiedSerialOldEvent.REGEX_PREPROCESSED);
+    private int timeSys;
 
     /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
+
+    /**
+     * Create event from log entry.
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public UnifiedSerialOldEvent(String logEntry) {
+    public UnifiedG1FullGcEvent(String logEntry) {
         this.logEntry = logEntry;
+
+        Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
@@ -174,21 +173,26 @@ public class UnifiedSerialOldEvent extends SerialCollector implements UnifiedLog
                 }
             }
             trigger = matcher.group(24);
-            young = memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
-            youngEnd = memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
-            youngAvailable = memory(matcher.group(32), matcher.group(34).charAt(0)).convertTo(KILOBYTES);
-            old = memory(matcher.group(36), matcher.group(38).charAt(0)).convertTo(KILOBYTES);
-            oldEnd = memory(matcher.group(39), matcher.group(41).charAt(0)).convertTo(KILOBYTES);
-            oldAllocation = memory(matcher.group(42), matcher.group(44).charAt(0)).convertTo(KILOBYTES);
-            permGen = memory(matcher.group(45), matcher.group(47).charAt(0)).convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(48), matcher.group(50).charAt(0)).convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(51), matcher.group(53).charAt(0)).convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(63)).intValue();
+            permGen = memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
+            permGenEnd = memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
+            permGenAllocation = memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
+            combinedBegin = memory(matcher.group(34), matcher.group(36).charAt(0)).convertTo(KILOBYTES);
+            combinedEnd = memory(matcher.group(37), matcher.group(39).charAt(0)).convertTo(KILOBYTES);
+            combinedAllocation = memory(matcher.group(40), matcher.group(42).charAt(0)).convertTo(KILOBYTES);
+            duration = JdkMath.convertMillisToMicros(matcher.group(43)).intValue();
+            if (matcher.group(44) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(45)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(46)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(47)).intValue();
+            } else {
+                timeUser = TimesData.NO_DATA;
+                timeReal = TimesData.NO_DATA;
+            }
         }
     }
 
     /**
-     * Alternate constructor. Create serial logging event from values.
+     * Alternate constructor. Create detail logging event from values.
      * 
      * @param logEntry
      *            The log entry for the event.
@@ -197,10 +201,14 @@ public class UnifiedSerialOldEvent extends SerialCollector implements UnifiedLog
      * @param duration
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public UnifiedSerialOldEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedG1FullGcEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
+    }
+
+    public String getName() {
+        return JdkUtil.LogEventType.UNIFIED_G1_FULL_GC.toString();
     }
 
     public String getLogEntry() {
@@ -215,28 +223,16 @@ public class UnifiedSerialOldEvent extends SerialCollector implements UnifiedLog
         return timestamp;
     }
 
-    public Memory getYoungOccupancyInit() {
-        return young;
+    public Memory getCombinedOccupancyInit() {
+        return combinedBegin;
     }
 
-    public Memory getYoungOccupancyEnd() {
-        return youngEnd;
+    public Memory getCombinedOccupancyEnd() {
+        return combinedEnd;
     }
 
-    public Memory getYoungSpace() {
-        return youngAvailable;
-    }
-
-    public Memory getOldOccupancyInit() {
-        return old;
-    }
-
-    public Memory getOldOccupancyEnd() {
-        return oldEnd;
-    }
-
-    public Memory getOldSpace() {
-        return oldAllocation;
+    public Memory getCombinedSpace() {
+        return combinedAllocation;
     }
 
     public Memory getPermOccupancyInit() {
@@ -263,16 +259,24 @@ public class UnifiedSerialOldEvent extends SerialCollector implements UnifiedLog
         this.permGenAllocation = permGenAllocation;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString();
-    }
-
     public String getTrigger() {
         return trigger;
     }
 
-    protected void setTrigger(String trigger) {
-        this.trigger = trigger;
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public int getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     /**
@@ -283,6 +287,6 @@ public class UnifiedSerialOldEvent extends SerialCollector implements UnifiedLog
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return logLine.matches(REGEX_PREPROCESSED);
     }
 }

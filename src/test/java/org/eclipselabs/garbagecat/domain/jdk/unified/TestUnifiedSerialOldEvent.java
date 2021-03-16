@@ -148,5 +148,4 @@ class TestUnifiedSerialOldEvent {
         assertEquals(kilobytes(1056768), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
         assertEquals(1849, event.getDuration(), "Duration not parsed correctly.");
     }
-
 }

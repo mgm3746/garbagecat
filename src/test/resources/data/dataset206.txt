@@ -1,0 +1,18 @@
+[2021-03-13T03:45:44.424+0530][80337492ms] GC(9216) Using 8 workers of 8 for full compaction
+[2021-03-13T03:45:44.425+0530][80337493ms] GC(9216) Pause Full (GCLocker Initiated GC)
+[2021-03-13T03:45:44.426+0530][80337494ms] GC(9216) Phase 1: Mark live objects
+[2021-03-13T03:45:45.622+0530][80338690ms] GC(9216) Cleaned string and symbol table, strings: 126874 processed, 3 removed, symbols: 467973 processed, 0 removed
+[2021-03-13T03:45:45.623+0530][80338691ms] GC(9216) Phase 1: Mark live objects 1196.402ms
+[2021-03-13T03:45:45.623+0530][80338691ms] GC(9216) Phase 2: Prepare for compaction
+[2021-03-13T03:45:45.838+0530][80338906ms] GC(9216) Phase 2: Prepare for compaction 215.152ms
+[2021-03-13T03:45:45.838+0530][80338906ms] GC(9216) Phase 3: Adjust pointers
+[2021-03-13T03:45:46.290+0530][80339358ms] GC(9216) Phase 3: Adjust pointers 451.724ms
+[2021-03-13T03:45:46.290+0530][80339358ms] GC(9216) Phase 4: Compact heap
+[2021-03-13T03:45:46.476+0530][80339544ms] GC(9216) Phase 4: Compact heap 186.709ms
+[2021-03-13T03:45:46.526+0530][80339594ms] GC(9216) Eden regions: 0->0(102)
+[2021-03-13T03:45:46.526+0530][80339594ms] GC(9216) Survivor regions: 0->0(13)
+[2021-03-13T03:45:46.526+0530][80339594ms] GC(9216) Old regions: 2030->2029
+[2021-03-13T03:45:46.526+0530][80339594ms] GC(9216) Humongous regions: 18->18
+[2021-03-13T03:45:46.526+0530][80339594ms] GC(9216) Metaspace: 214103K->214103K(739328K)
+[2021-03-13T03:45:46.526+0530][80339594ms] GC(9216) Pause Full (GCLocker Initiated GC) 8184M->8180M(8192M) 2101.341ms
+[2021-03-13T03:45:46.527+0530][80339595ms] GC(9216) User=16.34s Sys=0.05s Real=2.10s

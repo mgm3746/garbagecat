@@ -26,6 +26,8 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -111,6 +113,24 @@ class TestJdkUtil {
         int throughputThreshold = 90;
         assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
                 "Event should have been flagged as a bottleneck.");
+    }
+
+    @Test
+    void testBottleneckDetectionUnified() {
+        String previousLogLine = "[2021-03-13T03:57:31.060+0530][81044128ms] GC(10043) Pause Full "
+                + "(G1 Evacuation Pause) Metaspace: 214120K->214120K(739328K) 8185M->8181M(8192M) 2431.688ms "
+                + "User=16.31s Sys=0.07s Real=2.44s";
+        BlockingEvent priorEvent = new UnifiedG1FullGcEvent(previousLogLine);
+        String logLine = "[2021-03-13T03:57:33.494+0530][81046562ms] GC(10044) Pause Young (Concurrent Start) "
+                + "(G1 Evacuation Pause) Metaspace: 214120K->214120K(739328K) 8185M->8185M(8192M) 2.859ms "
+                + "User=0.01s Sys=0.00s Real=0.00s";
+        BlockingEvent gcEvent = new UnifiedG1YoungPauseEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), gcEvent.getName(),
+                "Event name incorrect.");
+        // Test boundary
+        int throughputThreshold = 20;
+        assertFalse(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
+                "Event should not have been flagged as a bottleneck.");
     }
 
     @Test

@@ -194,6 +194,15 @@ class TestUnifiedG1YoungPauseEvent {
     }
 
     @Test
+    void testLogLinePreprocessedTriggerG1EvacuationPause() {
+        String logLine = "[2021-03-13T03:57:33.494+0530][81046562ms] GC(10044) Pause Young (Concurrent Start) "
+                + "(G1 Evacuation Pause) Metaspace: 214120K->214120K(739328K) 8185M->8185M(8192M) 2.859ms "
+                + "User=0.01s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+    }
+
+    @Test
     void testUnifiedG1YoungPauseJdk9() {
         File testFile = TestUtil.getFile("dataset158.txt");
         GcManager gcManager = new GcManager();
@@ -274,6 +283,23 @@ class TestUnifiedG1YoungPauseEvent {
     @Test
     void testSingleLineTimeUptime() {
         File testFile = TestUtil.getFile("dataset202.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.");
+    }
+
+    /**
+     * Test single line with time, uptime decorator.
+     */
+    @Test
+    void testToSpaceExhausted() {
+        File testFile = TestUtil.getFile("dataset204.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

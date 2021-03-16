@@ -1,18 +1,18 @@
 [0.053s][info][gc,start     ] GC(1) Pause Initial Mark
 [0.053s][info][gc           ] GC(1) Pause Initial Mark 0M->0M(2M) 0.278ms
-[0.053s][info][gc,cpu       ] GC(1) User=0.00s Sys=0.00s Real=0.00s
+[0.053s][info][gc,cpu       ] GC(1) User=0.01s Sys=0.00s Real=0.00s
 [0.053s][info][gc           ] GC(1) Concurrent Mark 
 [0.054s][info][gc           ] GC(1) Concurrent Mark 1.260ms
-[0.054s][info][gc,cpu       ] GC(1) User=0.00s Sys=0.00s Real=0.00s
+[0.054s][info][gc,cpu       ] GC(1) User=0.02s Sys=0.00s Real=0.00s
 [0.054s][info][gc           ] GC(1) Concurrent Preclean
 [0.054s][info][gc           ] GC(1) Concurrent Preclean 0.033ms
-[0.055s][info][gc,cpu       ] GC(1) User=0.00s Sys=0.00s Real=0.00s
+[0.055s][info][gc,cpu       ] GC(1) User=0.03s Sys=0.00s Real=0.00s
 [0.055s][info][gc,start     ] GC(1) Pause Remark
 [0.055s][info][gc           ] GC(1) Pause Remark 0M->0M(2M) 0.332ms
-[0.055s][info][gc,cpu       ] GC(1) User=0.00s Sys=0.00s Real=0.00s
+[0.055s][info][gc,cpu       ] GC(1) User=0.04s Sys=0.00s Real=0.00s
 [0.055s][info][gc           ] GC(1) Concurrent Sweep
 [0.055s][info][gc           ] GC(1) Concurrent Sweep 0.298ms
-[0.055s][info][gc,cpu       ] GC(1) User=0.00s Sys=0.00s Real=0.00s
+[0.055s][info][gc,cpu       ] GC(1) User=0.05s Sys=0.00s Real=0.00s
 [0.055s][info][gc           ] GC(1) Concurrent Reset
 [0.056s][info][gc           ] GC(1) Concurrent Reset 0.693ms
 [0.056s][info][gc,cpu       ] GC(1) User=0.01s Sys=0.00s Real=0.00s
