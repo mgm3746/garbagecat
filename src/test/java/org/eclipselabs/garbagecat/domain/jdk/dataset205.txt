@@ -1,0 +1,29 @@
+[2021-03-13T03:37:44.312+0530][79857380ms] GC(8651) Using 8 workers of 8 for full compaction
+[2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Cycle
+[2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Clear Claimed Marks
+[2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Clear Claimed Marks 0.080ms
+[2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Scan Root Regions
+[2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Scan Root Regions 0.006ms
+[2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Mark (79857.381s)
+[2021-03-13T03:37:44.312+0530][79857380ms] GC(8651) Pause Full (G1 Evacuation Pause)
+[2021-03-13T03:37:44.312+0530][79857381ms] GC(8652) Concurrent Mark From Roots
+[2021-03-13T03:37:44.313+0530][79857381ms] GC(8652) Using 2 workers of 2 for marking
+[2021-03-13T03:37:44.318+0530][79857386ms] GC(8651) Phase 1: Mark live objects
+[2021-03-13T03:37:45.515+0530][79858583ms] GC(8651) Cleaned string and symbol table, strings: 126869 processed, 0 removed, symbols: 467973 processed, 0 removed
+[2021-03-13T03:37:45.515+0530][79858583ms] GC(8651) Phase 1: Mark live objects 1197.338ms
+[2021-03-13T03:37:45.515+0530][79858583ms] GC(8651) Phase 2: Prepare for compaction
+[2021-03-13T03:37:45.737+0530][79858805ms] GC(8651) Phase 2: Prepare for compaction 221.422ms
+[2021-03-13T03:37:45.737+0530][79858805ms] GC(8651) Phase 3: Adjust pointers
+[2021-03-13T03:37:46.190+0530][79859258ms] GC(8651) Phase 3: Adjust pointers 453.121ms
+[2021-03-13T03:37:46.190+0530][79859258ms] GC(8651) Phase 4: Compact heap
+[2021-03-13T03:37:46.387+0530][79859455ms] GC(8651) Phase 4: Compact heap 196.740ms
+[2021-03-13T03:37:46.438+0530][79859506ms] GC(8651) Eden regions: 0->0(102)
+[2021-03-13T03:37:46.438+0530][79859506ms] GC(8651) Survivor regions: 0->0(13)
+[2021-03-13T03:37:46.438+0530][79859506ms] GC(8651) Old regions: 2030->2028
+[2021-03-13T03:37:46.438+0530][79859506ms] GC(8651) Humongous regions: 18->18
+[2021-03-13T03:37:46.438+0530][79859506ms] GC(8651) Metaspace: 214096K->214096K(739328K)
+[2021-03-13T03:37:46.438+0530][79859506ms] GC(8651) Pause Full (G1 Evacuation Pause) 8186M->8178M(8192M) 2125.275ms
+[2021-03-13T03:37:46.439+0530][79859507ms] GC(8651) User=16.39s Sys=0.08s Real=2.13s
+[2021-03-13T03:37:46.439+0530][79859507ms] GC(8652) Concurrent Mark From Roots 2126.315ms
+[2021-03-13T03:37:46.439+0530][79859507ms] GC(8652) Concurrent Mark Abort
+[2021-03-13T03:37:46.439+0530][79859507ms] GC(8652) Concurrent Cycle 2126.521ms

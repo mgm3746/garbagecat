@@ -135,6 +135,13 @@ class TestShenandoahTriggerEvent {
     }
 
     @Test
+    void testLineUnifiedTriggerFreeNoDecorator() {
+        String logLine = "Trigger: Free (168M) is below minimum threshold (168M)";
+        assertTrue(ShenandoahTriggerEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
+    }
+
+    @Test
     void testLineUnifiedTriggerFreeSpacesAfterGc() {
         String logLine = "[49.186s][info][gc           ] Trigger: Free (6M) is below minimum threshold (6M)";
         assertTrue(ShenandoahTriggerEvent.match(logLine),

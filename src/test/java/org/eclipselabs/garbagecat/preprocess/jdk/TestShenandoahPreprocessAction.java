@@ -280,6 +280,14 @@ class TestShenandoahPreprocessAction {
     }
 
     @Test
+    void testLogLineFinalMarkPacer2DigitRate() {
+        String logLine = "    Pacer for Evacuation. Used CSet: 1030M, Free: 146M, Non-Taxable: 15012K, "
+                + "Alloc Tax Rate: 17.2x";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
     void testLogLineUnifiedFinalMarkPacer() {
         String logLine = "[41.911s][info][gc,ergo      ] GC(1500) Pacer for Evacuation. Used CSet: 5M, Free: 18M, "
                 + "Non-Taxable: 1M, Alloc Tax Rate: 1.1x";
@@ -334,6 +342,14 @@ class TestShenandoahPreprocessAction {
     void testLogLineInitUpdatePacer() {
         String logLine = "    Pacer for Update Refs. Used: 15015K, Free: 48702K, Non-Taxable: 4870K, "
                 + "Alloc Tax Rate: 1.1x";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testLogLineInitUpdatePacer2DigitRate() {
+        String logLine = "    Pacer for Update Refs. Used: 1544M, Free: 129M, Non-Taxable: 13303K, "
+                + "Alloc Tax Rate: 14.5x";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
     }
