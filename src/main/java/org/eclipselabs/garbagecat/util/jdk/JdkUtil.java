@@ -846,7 +846,7 @@ public final class JdkUtil {
             durationThreshold = durationThreshold.movePointLeft(2);
             durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
             durationThreshold.setScale(0, RoundingMode.DOWN);
-            return gcEvent.getDuration() > durationThreshold.intValue();
+            return gcEvent.getDuration() > durationThreshold.longValue();
         }
     }
 

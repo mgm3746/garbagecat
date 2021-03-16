@@ -147,6 +147,21 @@ class TestJdkUtil {
     }
 
     @Test
+    void testBottleneckDetectionParallelScavenge() {
+        String previousLogLine = "2021-03-15T20:47:39.491+0200: 26491.468: [GC [PSYoungGen: "
+                + "4056912K->42974K(4101632K)] 10691830K->6697946K(12490240K), 0.0789840 secs] "
+                + "[Times: user=0.16 sys=0.02, real=0.08 secs]";
+        ParallelScavengeEvent priorEvent = (ParallelScavengeEvent) JdkUtil.parseLogLine(previousLogLine);
+        String logLine = "2021-03-15T21:35:04.772+0200: 29336.749: [GC [PSYoungGen: 4053982K->44476K(4109824K)] "
+                + "10708954K->6711614K(12498432K), 0.2223020 secs] [Times: user=0.16 sys=0.01, real=0.22 secs]";
+        ParallelScavengeEvent gcEvent = (ParallelScavengeEvent) JdkUtil.parseLogLine(logLine);
+        // Test boundary
+        int throughputThreshold = 20;
+        assertFalse(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
+                "Event should not have been flagged as a bottleneck.");
+    }
+
+    @Test
     void testTimeWarp() {
         String logLine1 = "test1";
         long timestamp1 = 10000L;
