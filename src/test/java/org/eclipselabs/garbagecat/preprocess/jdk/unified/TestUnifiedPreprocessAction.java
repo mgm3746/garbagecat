@@ -106,7 +106,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLineDefNewData() {
         String logLine = "[0.112s][info][gc,heap        ] GC(3) DefNew: 1016K->128K(1152K)";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -119,7 +119,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLineTenuredData() {
         String logLine = "[32.636s][info][gc,heap        ] GC(9239) Tenured: 24193K->24195K(25240K)";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -132,7 +132,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLinePsYoungGenData() {
         String logLine = "[0.032s][info][gc,heap      ] GC(0) PSYoungGen: 512K->464K(1024K)";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -145,7 +145,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLineParNewData() {
         String logLine = "[0.053s][info][gc,heap      ] GC(0) ParNew: 974K->128K(1152K)";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -158,7 +158,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLineCmsData() {
         String logLine = "[0.053s][info][gc,heap      ] GC(0) CMS: 0K->518K(960K)";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -171,7 +171,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLinePsOldGenData() {
         String logLine = "[0.032s][info][gc,heap      ] GC(0) PSOldGen: 0K->8K(512K)";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -184,7 +184,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLineMetaspaceData() {
         String logLine = "[0.032s][info][gc,metaspace ] GC(0) Metaspace: 120K->120K(1056768K)";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -204,7 +204,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLineParOldGenData() {
         String logLine = "[0.030s][info][gc,heap      ] GC(0) ParOldGen: 0K->8K(512K)";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -224,7 +224,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLinePauseYoungInfo() {
         String logLine = "[0.112s][info][gc             ] GC(3) Pause Young (Allocation Failure) 1M->1M(2M) 0.700ms";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         context.add(UnifiedPreprocessAction.TOKEN);
@@ -239,7 +239,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLinePauseYoungInfoStandAlone() {
         String logLine = "[1.507s][info][gc] GC(77) Pause Young (Allocation Failure) 24M->4M(25M) 0.509ms";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -343,7 +343,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLineTimesData() {
         String logLine = "[0.112s][info][gc,cpu         ] GC(3) User=0.00s Sys=0.00s Real=0.00s";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -461,6 +461,13 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLineG1UsingWorkersForMarking() {
         String logLine = "[16.121s][info][gc,task       ] GC(974) Using 1 workers of 1 for marking";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testUsingWorkersForFullCompaction() {
+        String logLine = "[2020-06-24T18:13:47.695-0700][173690ms] GC(74) Using 2 workers of 2 for full compaction";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -913,7 +920,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLineYoungSingleLine() {
         String logLine = "[1.507s][info][gc] GC(77) Pause Young (Allocation Failure) 24M->4M(25M) 0.509ms";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -933,7 +940,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLineCmsInitialMark() {
         String logLine = "[0.053s][info][gc,start     ] GC(1) Pause Initial Mark";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -953,7 +960,7 @@ class TestUnifiedPreprocessAction {
     @Test
     void testLogLineCmsOld() {
         String logLine = "[0.056s][info][gc,heap      ] GC(1) Old: 518K->518K(960K)";
-        String nextLogLine = "";
+        String nextLogLine = null;
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -1267,11 +1274,13 @@ class TestUnifiedPreprocessAction {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_PARALLEL),
                 JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
+                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
     }
 
     @Test

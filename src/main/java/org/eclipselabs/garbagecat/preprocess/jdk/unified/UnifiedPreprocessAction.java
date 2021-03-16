@@ -18,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -236,10 +237,16 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * <pre>
      * [0.054s][info][gc           ] GC(1) Concurrent Mark 1.260ms
+     * 
+     * [0.054s][info][gc           ] GC(1) Concurrent Preclean 0.033ms
+     * 
+     * [0.055s][info][gc           ] GC(1) Concurrent Sweep 0.298ms
+     * 
+     * [0.056s][info][gc           ] GC(1) Concurrent Reset 0.693ms
      * </pre>
      */
     private static final String REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT = "^(" + UnifiedRegEx.DECORATOR
-            + " Concurrent Mark " + UnifiedRegEx.DURATION + ")$";
+            + " Concurrent (Mark|Preclean|Reset|Sweep) " + UnifiedRegEx.DURATION + ")$";
 
     /**
      * Regular expression for retained beginning @link
@@ -519,8 +526,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " MMU target violated:.+",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Concurrent (Clear Claimed Marks|Cycle|Mark \\(" + JdkRegEx.TIMESTAMP
-                    + "s\\)|Mark Abort|Mark From Roots|Scan Root Regions).*$",
+            // "^" + UnifiedRegEx.DECORATOR + " Concurrent (Clear Claimed Marks|Cycle|Mark \\(" + JdkRegEx.TIMESTAMP
+            // + "s\\)|Mark Abort|Mark From Roots|Scan Root Regions).*$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Attempting maximally compacting collection$",
             // Parallel
@@ -700,9 +707,20 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(24);
             }
             clearEntangledLines(entangledLogLines);
+            // Don't add blank line to end
+            if (nextLogEntry != null) {
+                this.logEntry = this.logEntry + Constants.LINE_SEPARATOR;
+            }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN);
+        } else if (JdkUtil.parseLogLine(logEntry) instanceof UnifiedConcurrentEvent) {
+            if (!context.contains(TOKEN)) {
+                this.logEntry = logEntry + Constants.LINE_SEPARATOR;
+            } else {
+                entangledLogLines.add(logEntry);
+            }
         }
+
     }
 
     public String getLogEntry() {
@@ -730,9 +748,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || logLine.matches(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_SPACE_DATA) || logLine.matches(REGEX_RETAIN_END_TIMES_DATA)) {
+                || logLine.matches(REGEX_RETAIN_MIDDLE_SPACE_DATA) || logLine.matches(REGEX_RETAIN_END_TIMES_DATA)
+                || JdkUtil.parseLogLine(logLine) instanceof UnifiedConcurrentEvent) {
             match = true;
-        } else {
+        }
+        if (!match) {
             // TODO: Get rid of this and make them throwaway events?
             for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
                 if (logLine.matches(REGEX_THROWAWAY[i])) {
