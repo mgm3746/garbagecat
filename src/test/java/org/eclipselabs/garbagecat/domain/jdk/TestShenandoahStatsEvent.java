@@ -548,10 +548,24 @@ class TestShenandoahStatsEvent {
         assertTrue(ShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
     }
-    
+
     @Test
     void testLineC2CompilerThread2() {
         String logLine = "[2.160s][info][gc,stats     ]       3 of    41 ms (  6.7%): C2 CompilerThread0";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testLineDefaultAccept() {
+        String logLine = "     11 of 76651 ms (  0.0%): default Accept";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testLineDefaultIO() {
+        String logLine = "     74 of 76651 ms (  0.1%): default I/O-6";
         assertTrue(ShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
     }

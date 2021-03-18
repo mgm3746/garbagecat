@@ -277,6 +277,13 @@ class TestShenandoahConcurrentEvent {
     }
 
     @Test
+    void testUnifiedUncommitStart() {
+        String logLine = "2021-03-12T06:36:18.692+0000: 58175.759: [Concurrent uncommit, start]";
+        assertTrue(ShenandoahConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testUnifiedUncommitUptimeMillisNoGcEventNumber() {
         String logLine = "[2019-02-05T14:52:31.132-0200][300044ms] Concurrent uncommit";
         assertTrue(ShenandoahConcurrentEvent.match(logLine),

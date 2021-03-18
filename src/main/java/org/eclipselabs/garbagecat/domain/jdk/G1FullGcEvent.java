@@ -74,7 +74,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  * 
  */
-public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCollection, OldCollection,
+public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCollection, OldCollection,
         PermMetaspaceCollection, CombinedData, PermMetaspaceData, TriggerData, SerialCollection {
 
     /**
@@ -154,7 +154,7 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
      * @param logEntry
      *            The log entry for the event.
      */
-    public G1FullGCEvent(String logEntry) {
+    public G1FullGcEvent(String logEntry) {
         this.logEntry = logEntry;
         if (logEntry.matches(REGEX)) {
             Pattern pattern = Pattern.compile(REGEX);
@@ -203,7 +203,7 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
      * @param duration
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public G1FullGCEvent(String logEntry, long timestamp, int duration) {
+    public G1FullGcEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
@@ -270,7 +270,7 @@ public class G1FullGCEvent extends G1Collector implements BlockingEvent, YoungCo
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.G1_FULL_GC.toString();
+        return JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString();
     }
 
     public String getTrigger() {

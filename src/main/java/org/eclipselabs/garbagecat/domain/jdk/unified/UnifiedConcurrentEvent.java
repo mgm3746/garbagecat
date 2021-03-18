@@ -166,7 +166,7 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
                     + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + UnifiedRegEx.DURATION + ")?"
                     + TimesData.REGEX_JDK9 + "?[ ]*$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for (full compaction|marking)$"
+            "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$"
             //
     };
 

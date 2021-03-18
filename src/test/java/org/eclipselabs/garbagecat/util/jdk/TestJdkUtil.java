@@ -26,6 +26,10 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitUpdateEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -52,22 +56,25 @@ class TestJdkUtil {
 
         String logLine1 = "test1";
         long timestamp1 = 10000L;
-        int duration1 = 500000;
+        int duration1 = 400000;
         BlockingEvent priorEvent = new ParallelScavengeEvent(logLine1, timestamp1, duration1);
 
         // 1 second between GCs with duration of .5 seconds
         String logLine2 = "test2";
         long timestamp2 = 11000L;
-        int duration2 = 500000;
+        int duration2 = 600000;
         BlockingEvent gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
+
+        // Interval = 11.6 (end of gc2) - 10.4 (end of gc1) = 1.2 secs = 1200000 microsecs
+        // throughput = gc time / total time = 600000/120000 = 50%
 
         // Test boundary
         int throughputThreshold = 50;
         assertFalse(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
                 "Event incorrectly flagged as a bottleneck.");
 
-        // Test bottleneck
-        duration2 = 501000;
+        // Add 1 microsecond to make it a bottleneck
+        duration2 = 600001;
         gcEvent = new ParallelScavengeEvent(logLine2, timestamp2, duration2);
         assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
                 "Event should have been flagged as a bottleneck.");
@@ -103,14 +110,58 @@ class TestJdkUtil {
     void testBottleneckDetectionParNew() {
         String previousLogLine = "56.462: [GC 56.462: [ParNew: 64768K->7168K(64768K), 0.0823950 secs] "
                 + "142030K->88353K(567808K), 0.0826320 secs] [Times: user=0.10 sys=0.00, real=0.08 secs]";
-        BlockingEvent priorEvent = new ParNewEvent(previousLogLine);
+        ParNewEvent priorEvent = (ParNewEvent) JdkUtil.parseLogLine(previousLogLine);
         String logLine = "57.026: [GC 57.026: [ParNew: 64768K->7168K(64768K), 0.1763320 secs] "
                 + "145953K->98916K(567808K), 0.1765710 secs] [Times: user=0.30 sys=0.00, real=0.17 secs]";
-        BlockingEvent gcEvent = new ParNewEvent(logLine);
+        ParNewEvent gcEvent = (ParNewEvent) JdkUtil.parseLogLine(logLine);
         // Test boundary
         int throughputThreshold = 90;
         assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
                 "Event should have been flagged as a bottleneck.");
+    }
+
+    @Test
+    void testBottleneckDetectionUnified() {
+        String previousLogLine = "[2021-03-13T03:57:31.060+0530][81044128ms] GC(10043) Pause Full "
+                + "(G1 Evacuation Pause) Metaspace: 214120K->214120K(739328K) 8185M->8181M(8192M) 2431.688ms "
+                + "User=16.31s Sys=0.07s Real=2.44s";
+        UnifiedG1FullGcEvent priorEvent = (UnifiedG1FullGcEvent) JdkUtil.parseLogLine(previousLogLine);
+        String logLine = "[2021-03-13T03:57:33.494+0530][81046562ms] GC(10044) Pause Young (Concurrent Start) "
+                + "(G1 Evacuation Pause) Metaspace: 214120K->214120K(739328K) 8185M->8185M(8192M) 2.859ms "
+                + "User=0.01s Sys=0.00s Real=0.00s";
+        UnifiedG1YoungPauseEvent gcEvent = (UnifiedG1YoungPauseEvent) JdkUtil.parseLogLine(logLine);
+        // Test boundary
+        int throughputThreshold = 20;
+        assertFalse(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
+                "Event should not have been flagged as a bottleneck.");
+    }
+
+    @Test
+    void testBottleneckDetectionShenandoah() {
+        String previousLogLine = "2021-03-12T07:37:21.730+0000: 61838.797: [Pause Final Mark (process weakrefs), "
+                + "231.628 ms]";
+        ShenandoahFinalMarkEvent priorEvent = (ShenandoahFinalMarkEvent) JdkUtil.parseLogLine(previousLogLine);
+        String logLine = "2021-03-12T07:37:21.959+0000: 61839.027: [Pause Init Update Refs, 0.104 ms]";
+        ShenandoahInitUpdateEvent gcEvent = (ShenandoahInitUpdateEvent) JdkUtil.parseLogLine(logLine);
+        // Test boundary
+        int throughputThreshold = 20;
+        assertTrue(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
+                "Event should have been flagged as a bottleneck.");
+    }
+
+    @Test
+    void testBottleneckDetectionParallelScavenge() {
+        String previousLogLine = "2021-03-15T20:47:39.491+0200: 26491.468: [GC [PSYoungGen: "
+                + "4056912K->42974K(4101632K)] 10691830K->6697946K(12490240K), 0.0789840 secs] "
+                + "[Times: user=0.16 sys=0.02, real=0.08 secs]";
+        ParallelScavengeEvent priorEvent = (ParallelScavengeEvent) JdkUtil.parseLogLine(previousLogLine);
+        String logLine = "2021-03-15T21:35:04.772+0200: 29336.749: [GC [PSYoungGen: 4053982K->44476K(4109824K)] "
+                + "10708954K->6711614K(12498432K), 0.2223020 secs] [Times: user=0.16 sys=0.01, real=0.22 secs]";
+        ParallelScavengeEvent gcEvent = (ParallelScavengeEvent) JdkUtil.parseLogLine(logLine);
+        // Test boundary
+        int throughputThreshold = 20;
+        assertFalse(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
+                "Event should not have been flagged as a bottleneck.");
     }
 
     @Test

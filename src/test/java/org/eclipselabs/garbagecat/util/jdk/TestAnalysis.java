@@ -473,7 +473,7 @@ class TestAnalysis {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.G1_FULL_GC);
+        eventTypes.add(LogEventType.G1_FULL_GC_SERIAL);
         jvmRun.setEventTypes(eventTypes);
         List<CollectorFamily> collectorFamilies = new ArrayList<CollectorFamily>();
         collectorFamilies.add(CollectorFamily.G1);

@@ -144,7 +144,7 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Concurrent (reset|uncommit|marking( \\((unload classes|update refs)\\))?"
+            + ") [\\[]{0,1}Concurrent (reset|uncommit|uncommit, start|marking( \\((unload classes|update refs)\\))?"
             + "( \\(process weakrefs\\))?|" + "precleaning|evacuation|update references|cleanup)(( " + JdkRegEx.SIZE
             + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[,]{0,1} " + UnifiedRegEx.DURATION
             + ")?[\\]]{0,1}([,]{0,1} [\\[]{0,1}Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("

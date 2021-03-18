@@ -38,7 +38,7 @@ import org.eclipselabs.garbagecat.domain.jdk.FooterHeapEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FooterStatsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1CleanupEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1ConcurrentEvent;
-import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1FullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1MixedPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
@@ -80,6 +80,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1InfoEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1MixedPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEvent;
@@ -118,11 +119,11 @@ public final class JdkUtil {
         // unified
         FOOTER_STATS, GC_INFO, HEAP_REGION_SIZE, HEAP_ADDRESS, UNIFIED_APPLICATION_STOPPED_TIME, UNIFIED_BLANK_LINE,
         //
-        UNIFIED_CONCURRENT, UNIFIED_CMS_INITIAL_MARK, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE,
+        UNIFIED_CONCURRENT, UNIFIED_CMS_INITIAL_MARK, UNIFIED_G1_CLEANUP, G1_FULL_GC_PARALLEL, UNIFIED_G1_INFO,
         //
-        UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_OLD,
+        UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
         //
-        UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
+        UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
         //
         UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL,
         //
@@ -134,7 +135,7 @@ public final class JdkUtil {
         // cms
         CMS_SERIAL_OLD, CMS_REMARK, CMS_INITIAL_MARK, CMS_CONCURRENT,
         // g1
-        G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC,
+        G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC_SERIAL,
         // shenandoah
         SHENANDOAH_CANCELLING_GC, SHENANDOAH_CONCURRENT, SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK,
         //
@@ -213,6 +214,8 @@ public final class JdkUtil {
             return LogEventType.UNIFIED_CONCURRENT;
         if (UnifiedG1CleanupEvent.match(logLine))
             return LogEventType.UNIFIED_G1_CLEANUP;
+        if (UnifiedG1FullGcEvent.match(logLine))
+            return LogEventType.G1_FULL_GC_PARALLEL;
         if (UnifiedG1InfoEvent.match(logLine))
             return LogEventType.UNIFIED_G1_INFO;
         if (UnifiedG1MixedPauseEvent.match(logLine))
@@ -271,8 +274,8 @@ public final class JdkUtil {
             return LogEventType.G1_YOUNG_INITIAL_MARK;
         if (G1RemarkEvent.match(logLine))
             return LogEventType.G1_REMARK;
-        if (G1FullGCEvent.match(logLine))
-            return LogEventType.G1_FULL_GC;
+        if (G1FullGcEvent.match(logLine))
+            return LogEventType.G1_FULL_GC_SERIAL;
         if (G1CleanupEvent.match(logLine))
             return LogEventType.G1_CLEANUP;
 
@@ -401,6 +404,8 @@ public final class JdkUtil {
             return new UnifiedCmsInitialMarkEvent(logLine);
         case UNIFIED_G1_CLEANUP:
             return new UnifiedG1CleanupEvent(logLine);
+        case G1_FULL_GC_PARALLEL:
+            return new UnifiedG1FullGcEvent(logLine);
         case UNIFIED_G1_INFO:
             return new UnifiedG1InfoEvent(logLine);
         case UNIFIED_G1_MIXED_PAUSE:
@@ -447,8 +452,8 @@ public final class JdkUtil {
             return new G1CleanupEvent(logLine);
         case G1_CONCURRENT:
             return new G1ConcurrentEvent(logLine);
-        case G1_FULL_GC:
-            return new G1FullGCEvent(logLine);
+        case G1_FULL_GC_SERIAL:
+            return new G1FullGcEvent(logLine);
         case G1_MIXED_PAUSE:
             return new G1MixedPauseEvent(logLine);
         case G1_REMARK:
@@ -578,6 +583,8 @@ public final class JdkUtil {
             return new UnifiedCmsInitialMarkEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_CLEANUP:
             return new UnifiedG1CleanupEvent(logEntry, timestamp, duration);
+        case G1_FULL_GC_PARALLEL:
+            return new UnifiedG1FullGcEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_YOUNG_INITIAL_MARK:
             return new UnifiedG1YoungInitialMarkEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_MIXED_PAUSE:
@@ -614,8 +621,8 @@ public final class JdkUtil {
             return new G1RemarkEvent(logEntry, timestamp, duration);
         case G1_CLEANUP:
             return new G1CleanupEvent(logEntry, timestamp, duration);
-        case G1_FULL_GC:
-            return new G1FullGCEvent(logEntry, timestamp, duration);
+        case G1_FULL_GC_SERIAL:
+            return new G1FullGcEvent(logEntry, timestamp, duration);
         // Shenandoah
         case SHENANDOAH_DEGENERATED_GC_MARK:
             return new ShenandoahDegeneratedGcMarkEvent(logEntry, timestamp, duration);
@@ -801,7 +808,7 @@ public final class JdkUtil {
     /**
      * Determine if the <code>BlockingEvent</code> should be classified as a bottleneck.
      * 
-     * @param gcEvent
+     * @param event
      *            Current <code>BlockingEvent</code>.
      * @param priorEvent
      *            Previous <code>BlockingEvent</code>.
@@ -810,38 +817,36 @@ public final class JdkUtil {
      *            be considered a bottleneck. Whole number 0-100.
      * @return True if the <code>BlockingEvent</code> pause time meets the bottleneck definition.
      */
-    public static final boolean isBottleneck(BlockingEvent gcEvent, BlockingEvent priorEvent, int throughputThreshold)
+    public static final boolean isBottleneck(BlockingEvent event, BlockingEvent priorEvent, int throughputThreshold)
             throws TimeWarpException {
         /*
          * Check for logging time warps, which could be an indication of mixed logging from multiple JVM runs. JDK8
          * seems to have threading issues where sometimes logging gets mixed up under heavy load, and an event appears
          * to start before the previous event finished. They are mainly very small overlaps or a few milliseconds.
          */
-        if (gcEvent.getTimestamp() < priorEvent.getTimestamp()) {
+        long eventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(event.getTimestamp())).longValue();
+        long priorEventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(priorEvent.getTimestamp()))
+                .longValue();
+        if (eventTimestampMicros < priorEventTimestampMicros) {
             throw new TimeWarpException("Bad order: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
-                    + Constants.LINE_SEPARATOR + gcEvent.getLogEntry());
-        } else if (gcEvent.getTimestamp() < (priorEvent.getTimestamp()
-                + JdkMath.convertMicrosToMillis(priorEvent.getDuration()).longValue() - 1000)) {
+                    + Constants.LINE_SEPARATOR + event.getLogEntry());
+        } else if (eventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 1000000) {
             // Only report if overlap > 1 sec to account for small overlaps due to JDK threading issues
             throw new TimeWarpException("Event overlap: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
-                    + Constants.LINE_SEPARATOR + gcEvent.getLogEntry());
-        } else if (gcEvent.getTimestamp() <= (priorEvent.getTimestamp()
-                + JdkMath.convertMicrosToMillis(priorEvent.getDuration()).longValue())) {
-            // Small (<1 sec) event overlap
-            return true;
+                    + Constants.LINE_SEPARATOR + event.getLogEntry());
         } else {
             /*
              * Timestamp is the start of a vm event; therefore, the interval is from the end of the prior event to the
              * end of the current event.
              */
-            long interval = gcEvent.getTimestamp() + JdkMath.convertMicrosToMillis(gcEvent.getDuration()).longValue()
-                    - priorEvent.getTimestamp() - JdkMath.convertMicrosToMillis(priorEvent.getDuration()).longValue();
+            long interval = eventTimestampMicros + event.getDuration() - priorEventTimestampMicros
+                    - priorEvent.getDuration();
             // Determine the maximum duration for the given interval that meets the throughput goal.
             BigDecimal durationThreshold = new BigDecimal(100 - throughputThreshold);
             durationThreshold = durationThreshold.movePointLeft(2);
             durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
             durationThreshold.setScale(0, RoundingMode.DOWN);
-            return JdkMath.convertMicrosToMillis(gcEvent.getDuration()).longValue() > durationThreshold.intValue();
+            return event.getDuration() > durationThreshold.longValue();
         }
     }
 

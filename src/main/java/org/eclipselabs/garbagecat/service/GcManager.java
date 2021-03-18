@@ -53,7 +53,7 @@ import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
-import org.eclipselabs.garbagecat.domain.jdk.G1FullGCEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1FullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcLockerEvent;
@@ -482,7 +482,7 @@ public class GcManager {
                             switch (collectorFamily) {
                             case G1:
                                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1)
-                                        && event instanceof G1FullGCEvent) {
+                                        && event instanceof G1FullGcEvent) {
                                     jvmDao.addAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1);
                                 } else if (!jvmDao.getAnalysis()
                                         .contains(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK)
@@ -660,7 +660,7 @@ public class GcManager {
                     }
 
                     // 12) -XX:+PrintGCCause is essential for troubleshooting G1 full GCs
-                    if (event instanceof G1FullGCEvent) {
+                    if (event instanceof G1FullGcEvent) {
                         String trigger = ((TriggerData) event).getTrigger();
                         if (trigger == null) {
                             if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED)) {

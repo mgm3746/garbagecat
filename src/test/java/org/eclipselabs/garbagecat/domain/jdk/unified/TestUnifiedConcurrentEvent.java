@@ -243,13 +243,6 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
-    void testUsingWorkersForFullCompaction() {
-        String logLine = "[2020-06-24T18:13:47.695-0700][173690ms] GC(74) Using 2 workers of 2 for full compaction";
-        assertTrue(UnifiedConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
-    }
-
-    @Test
     void testMarkFromRoots() {
         String logLine = "[16.601s][info][gc,task      ] GC(1033) Using 1 workers of 1 for marking";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
