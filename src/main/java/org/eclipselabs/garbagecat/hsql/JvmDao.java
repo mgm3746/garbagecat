@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.hsql;
 
+import static java.util.Collections.binarySearch;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.summingLong;
 import static java.util.stream.Collectors.toList;
@@ -20,6 +21,7 @@ import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 import static org.eclipselabs.garbagecat.util.jdk.JdkMath.convertMicrosToMillis;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -46,6 +48,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
  * 
  */
 public class JvmDao {
+
+    private static final Comparator<BlockingEvent> COMPARE_BY_TIMESTAMP = comparing(BlockingEvent::getTimestamp);
 
     /**
      * List of all event types associate with JVM run.
@@ -181,7 +185,8 @@ public class JvmDao {
     }
 
     public void addBlockingEvent(BlockingEvent event) {
-        blockingEvents.add(event);
+        int index = binarySearch(blockingEvents, event, COMPARE_BY_TIMESTAMP);
+        blockingEvents.add(index >= 0 ? index + 1 : -index - 1, event);
     }
 
     public void addStoppedTimeEvent(ApplicationStoppedTimeEvent event) {
@@ -455,8 +460,7 @@ public class JvmDao {
      * @return <code>List</code> of events.
      */
     public synchronized List<BlockingEvent> getBlockingEvents() {
-        return this.blockingEvents.stream().sorted(comparing(BlockingEvent::getTimestamp)).map(JvmDao::toBlockingEvent)
-                .collect(toList());
+        return this.blockingEvents.stream().map(JvmDao::toBlockingEvent).collect(toList());
     }
 
     /**
@@ -467,7 +471,7 @@ public class JvmDao {
      */
     public synchronized List<BlockingEvent> getBlockingEvents(LogEventType eventType) {
         return this.blockingEvents.stream().filter(e -> e.getName().equals(eventType.toString()))
-                .sorted(comparing(BlockingEvent::getTimestamp)).map(JvmDao::toBlockingEvent).collect(toList());
+                .map(JvmDao::toBlockingEvent).collect(toList());
     }
 
     private static BlockingEvent toBlockingEvent(BlockingEvent e) {
