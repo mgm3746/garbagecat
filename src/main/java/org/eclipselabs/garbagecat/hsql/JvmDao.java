@@ -12,19 +12,21 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.hsql;
 
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.summingLong;
+import static java.util.stream.Collectors.toList;
+import static org.eclipselabs.garbagecat.util.Memory.ZERO;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+import static org.eclipselabs.garbagecat.util.jdk.JdkMath.convertMicrosToMillis;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
@@ -32,8 +34,6 @@ import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
-import org.eclipselabs.garbagecat.util.jdk.JdkMath;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
@@ -48,69 +48,34 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 public class JvmDao {
 
     /**
-     * SQL statement(s) to create table(s).
-     * 
-     * Notes:
-     * 
-     * 1) combined_space is given its own column, even though in most cases it can be computed from young_space +
-     * old_space, because some logging events log combined new + old sizes.
-     * 
-     */
-    private static final String[] TABLES_CREATE_SQL = {
-            "create table blocking_event (id integer identity, "
-                    + "time_stamp bigint, event_name varchar(64), duration integer, young_space integer, "
-                    + "old_space integer, combined_space integer, perm_space integer, young_occupancy_init integer, "
-                    + "old_occupancy_init integer, combined_occupancy_init integer, perm_occupancy_init integer, "
-                    + "young_occupancy_end integer, old_occupancy_end integer, combined_occupancy_end integer, "
-                    + "perm_occupancy_end integer, log_entry varchar(500))",
-            "create table application_stopped_time (id integer identity, "
-                    + "time_stamp bigint, event_name varchar(64), duration bigint, log_entry varchar(500))" };
-
-    /**
-     * SQL statement(s) to delete table(s).
-     */
-    private static final String[] TABLES_DELETE_SQL = { "delete from blocking_event ",
-            "delete from application_stopped_time " };
-
-    /**
-     * The database connection.
-     */
-    private static Connection connection;
-
-    /**
      * List of all event types associate with JVM run.
      */
-    List<LogEventType> eventTypes;
+    List<LogEventType> eventTypes = new ArrayList<>();
 
     /**
      * Analysis property keys.
      */
-    private List<Analysis> analysis;
+    private List<Analysis> analysis = new ArrayList<>();
 
     /**
      * Collector families for JVM run.
      */
-    List<CollectorFamily> collectorFamilies;
+    List<CollectorFamily> collectorFamilies = new ArrayList<>();
 
     /**
      * Logging lines that do not match any known GC events.
      */
-    private List<String> unidentifiedLogLines;
-
-    /**
-     * The number of inserts to batch before persisting to database.
-     */
-    private static int batchSize = 100;
+    private List<String> unidentifiedLogLines = new ArrayList<>();
 
     /**
      * Batch blocking database inserts for improved performance.
      */
-    private List<BlockingEvent> blockingBatch;
+    private List<BlockingEvent> blockingEvents = new ArrayList<>();
 
     /**
      * Batch stopped time database inserts for improved performance.
      */
-    private List<ApplicationStoppedTimeEvent> stoppedTimeBatch;
+    private List<ApplicationStoppedTimeEvent> stoppedTimeEvents = new ArrayList<>();
 
     /**
      * The JVM options for the JVM run.
@@ -140,7 +105,8 @@ public class JvmDao {
     /**
      * Swap size (bytes).
      */
-    private long swap;
+    // prevent false positives of Analysis.INFO_SWAP_DISABLED
+    private long swap = -1;
 
     /**
      * Swap free (bytes).
@@ -182,60 +148,14 @@ public class JvmDao {
      */
     private int maxPermOccupancyNonBlocking;
 
+    private static boolean created;
+
     public JvmDao() {
-        try {
-            // Load database driver.
-            Class.forName("org.hsqldb.jdbcDriver");
-        } catch (ClassNotFoundException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Failed to load HSQLDB JDBC driver.");
+        if (created) {
+            cleanup();
+        } else {
+            created = true;
         }
-
-        try {
-            // Connect to database.
-
-            // Database server for development
-            // connection = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost/xdb", "sa",
-            // "");
-
-            // In-process standalone mode for deployment.
-            connection = DriverManager.getConnection("jdbc:hsqldb:mem:gcdb", "sa", "");
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error accessing database.");
-        }
-
-        // Create tables
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            for (int i = 0; i < TABLES_CREATE_SQL.length; i++) {
-                statement.executeUpdate(TABLES_CREATE_SQL[i]);
-            }
-        } catch (SQLException e) {
-            if (e.getMessage().startsWith("Table already exists")) {
-                cleanup();
-            } else {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error creating tables.");
-            }
-        } finally {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-
-        eventTypes = new ArrayList<LogEventType>();
-        collectorFamilies = new ArrayList<CollectorFamily>();
-        analysis = new ArrayList<Analysis>();
-        unidentifiedLogLines = new ArrayList<String>();
-        blockingBatch = new ArrayList<BlockingEvent>();
-        stoppedTimeBatch = new ArrayList<ApplicationStoppedTimeEvent>();
-        // prevent false positives of Analysis.INFO_SWAP_DISABLED
-        swap = -1;
     }
 
     public List<String> getUnidentifiedLogLines() {
@@ -261,17 +181,11 @@ public class JvmDao {
     }
 
     public void addBlockingEvent(BlockingEvent event) {
-        if (blockingBatch.size() == batchSize) {
-            processBlockingBatch();
-        }
-        blockingBatch.add(event);
+        blockingEvents.add(event);
     }
 
     public void addStoppedTimeEvent(ApplicationStoppedTimeEvent event) {
-        if (stoppedTimeBatch.size() == batchSize) {
-            processStoppedTimeBatch();
-        }
-        stoppedTimeBatch.add(event);
+        stoppedTimeEvents.add(event);
     }
 
     /**
@@ -282,8 +196,7 @@ public class JvmDao {
     }
 
     /**
-     * @param options
-     *            The JVM options to set.
+     * @param options The JVM options to set.
      */
     public void setOptions(String options) {
         this.options = options;
@@ -297,8 +210,7 @@ public class JvmDao {
     }
 
     /**
-     * @param version
-     *            The JVM version information to set.
+     * @param version The JVM version information to set.
      */
     public void setVersion(String version) {
         this.version = version;
@@ -312,8 +224,7 @@ public class JvmDao {
     }
 
     /**
-     * @param memory
-     *            The JVM memory information to set.
+     * @param memory The JVM memory information to set.
      */
     public void setMemory(String memory) {
         this.memory = memory;
@@ -327,8 +238,7 @@ public class JvmDao {
     }
 
     /**
-     * @param physicalMemory
-     *            The JVM physical memory to set.
+     * @param physicalMemory The JVM physical memory to set.
      */
     public void setPhysicalMemory(long physicalMemory) {
         this.physicalMemory = physicalMemory;
@@ -342,8 +252,7 @@ public class JvmDao {
     }
 
     /**
-     * @param physicalMemoryFree
-     *            The JVM physical free memory to set.
+     * @param physicalMemoryFree The JVM physical free memory to set.
      */
     public void setPhysicalMemoryFree(long physicalMemoryFree) {
         this.physicalMemoryFree = physicalMemoryFree;
@@ -357,8 +266,7 @@ public class JvmDao {
     }
 
     /**
-     * @param swap
-     *            The JVM swap to set.
+     * @param swap The JVM swap to set.
      */
     public void setSwap(long swap) {
         this.swap = swap;
@@ -372,8 +280,7 @@ public class JvmDao {
     }
 
     /**
-     * @param swapFree
-     *            The JVM swap free to set.
+     * @param swapFree The JVM swap free to set.
      */
     public void setSwapFree(long swapFree) {
         this.swapFree = swapFree;
@@ -387,8 +294,7 @@ public class JvmDao {
     }
 
     /**
-     * @param parallelCount
-     *            The number of <code>ParallelCollection</code> events.
+     * @param parallelCount The number of <code>ParallelCollection</code> events.
      */
     public void setParallelCount(long parallelCount) {
         this.parallelCount = parallelCount;
@@ -402,23 +308,24 @@ public class JvmDao {
     }
 
     /**
-     * @param invertedParallelismCount
-     *            The number of "low" parallelism events.
+     * @param invertedParallelismCount The number of "low" parallelism events.
      */
     public void setInvertedParallelismCount(long invertedParallelismCount) {
         this.invertedParallelismCount = invertedParallelismCount;
     }
 
     /**
-     * @return The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
+     * @return The <code>ParallelCollection</code> event with the lowest "inverted"
+     *         parallelism.
      */
     public LogEvent getWorstInvertedParallelismEvent() {
         return worstInvertedParallelismEvent;
     }
 
     /**
-     * @param worstInvertedParallelismEvent
-     *            The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
+     * @param worstInvertedParallelismEvent The <code>ParallelCollection</code>
+     *                                      event with the lowest "inverted"
+     *                                      parallelism.
      */
     public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {
         this.worstInvertedParallelismEvent = worstInvertedParallelismEvent;
@@ -432,8 +339,8 @@ public class JvmDao {
     }
 
     /**
-     * @param maxHeapSpaceNonBlocking
-     *            The maximum heap space in non <code>BlockingEvent</code>s.
+     * @param maxHeapSpaceNonBlocking The maximum heap space in non
+     *                                <code>BlockingEvent</code>s.
      */
     public void setMaxHeapSpaceNonBlocking(int maxHeapSpaceNonBlocking) {
         this.maxHeapSpaceNonBlocking = maxHeapSpaceNonBlocking;
@@ -447,8 +354,8 @@ public class JvmDao {
     }
 
     /**
-     * @param maxHeapOccupancyNonBlocking
-     *            The maximum heap occupancy in non <code>BlockingEvent</code>s.
+     * @param maxHeapOccupancyNonBlocking The maximum heap occupancy in non
+     *                                    <code>BlockingEvent</code>s.
      */
     public void setMaxHeapOccupancyNonBlocking(int maxHeapOccupancyNonBlocking) {
         this.maxHeapOccupancyNonBlocking = maxHeapOccupancyNonBlocking;
@@ -462,8 +369,8 @@ public class JvmDao {
     }
 
     /**
-     * @param maxPermSpaceNonBlocking
-     *            The maximum perm space in non <code>BlockingEvent</code>s.
+     * @param maxPermSpaceNonBlocking The maximum perm space in non
+     *                                <code>BlockingEvent</code>s.
      */
     public void setMaxPermSpaceNonBlocking(int maxPermSpaceNonBlocking) {
         this.maxPermSpaceNonBlocking = maxPermSpaceNonBlocking;
@@ -477,149 +384,11 @@ public class JvmDao {
     }
 
     /**
-     * @param maxPermOccupancyNonBlocking
-     *            The maximum perm occupancy in non <code>BlockingEvent</code>s.
+     * @param maxPermOccupancyNonBlocking The maximum perm occupancy in non
+     *                                    <code>BlockingEvent</code>s.
      */
     public void setMaxPermOccupancyNonBlocking(int maxPermOccupancyNonBlocking) {
         this.maxPermOccupancyNonBlocking = maxPermOccupancyNonBlocking;
-    }
-
-    /**
-     * Add blocking events to database.
-     */
-    public synchronized void processBlockingBatch() {
-
-        PreparedStatement pst = null;
-        try {
-            String sqlInsertBlockingEvent = "insert into blocking_event (time_stamp, event_name, "
-                    + "duration, young_space, old_space, combined_space, perm_space, young_occupancy_init, "
-                    + "old_occupancy_init, combined_occupancy_init, perm_occupancy_init, young_occupancy_end, "
-                    + "old_occupancy_end, combined_occupancy_end, perm_occupancy_end,log_entry) "
-                    + "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?)";
-
-            final int TIME_STAMP_INDEX = 1;
-            final int EVENT_NAME_INDEX = 2;
-            final int DURATION_INDEX = 3;
-            final int YOUNG_SPACE_INDEX = 4;
-            final int OLD_SPACE_INDEX = 5;
-            final int COMBINED_SPACE_INDEX = 6;
-            final int PERM_SPACE_INDEX = 7;
-            final int YOUNG_OCCUPANCY_INIT_INDEX = 8;
-            final int OLD_OCCUPANCY_INIT_INDEX = 9;
-            final int COMBINED_OCCUPANCY_INIT_INDEX = 10;
-            final int PERM_OCCUPANCY_INIT_INDEX = 11;
-            final int YOUNG_OCCUPANCY_END_INDEX = 12;
-            final int OLD_OCCUPANCY_END_INDEX = 13;
-            final int COMBINED_OCCUPANCY_END_INDEX = 14;
-            final int PERM_OCCUPANCY_END_INDEX = 15;
-            final int LOG_ENTRY_INDEX = 16;
-
-            pst = connection.prepareStatement(sqlInsertBlockingEvent);
-
-            for (int i = 0; i < blockingBatch.size(); i++) {
-                BlockingEvent event = blockingBatch.get(i);
-                pst.setLong(TIME_STAMP_INDEX, event.getTimestamp());
-                pst.setString(EVENT_NAME_INDEX, event.getName());
-                pst.setLong(DURATION_INDEX, event.getDuration());
-                if (event instanceof YoungData) {
-                    pst.setInt(YOUNG_SPACE_INDEX, kilobytes(((YoungData) event).getYoungSpace()));
-                    pst.setInt(YOUNG_OCCUPANCY_INIT_INDEX, kilobytes(((YoungData) event).getYoungOccupancyInit()));
-                    pst.setInt(YOUNG_OCCUPANCY_END_INDEX, kilobytes(((YoungData) event).getYoungOccupancyEnd()));
-                } else {
-                    pst.setInt(YOUNG_SPACE_INDEX, 0);
-                    pst.setInt(YOUNG_OCCUPANCY_INIT_INDEX, 0);
-                    pst.setInt(YOUNG_OCCUPANCY_END_INDEX, 0);
-                }
-                if (event instanceof OldData) {
-                    pst.setInt(OLD_SPACE_INDEX, kilobytes(((OldData) event).getOldSpace()));
-                    pst.setInt(OLD_OCCUPANCY_INIT_INDEX, kilobytes(((OldData) event).getOldOccupancyInit()));
-                    pst.setInt(OLD_OCCUPANCY_END_INDEX, kilobytes(((OldData) event).getOldOccupancyEnd()));
-                } else {
-                    pst.setInt(OLD_SPACE_INDEX, 0);
-                    pst.setInt(OLD_OCCUPANCY_INIT_INDEX, 0);
-                    pst.setInt(OLD_OCCUPANCY_END_INDEX, 0);
-                }
-                if (event instanceof CombinedData) {
-                    pst.setInt(COMBINED_SPACE_INDEX, kilobytes(((CombinedData) event).getCombinedSpace()));
-                    pst.setInt(COMBINED_OCCUPANCY_INIT_INDEX,
-                            kilobytes(((CombinedData) event).getCombinedOccupancyInit()));
-                    pst.setInt(COMBINED_OCCUPANCY_END_INDEX,
-                            kilobytes(((CombinedData) event).getCombinedOccupancyEnd()));
-                } else {
-                    pst.setInt(COMBINED_SPACE_INDEX, 0);
-                    pst.setInt(COMBINED_OCCUPANCY_INIT_INDEX, 0);
-                    pst.setInt(COMBINED_OCCUPANCY_END_INDEX, 0);
-                }
-                if (event instanceof PermMetaspaceData) {
-                    pst.setInt(PERM_SPACE_INDEX, kilobytes(((PermMetaspaceData) event).getPermSpace()));
-                    pst.setInt(PERM_OCCUPANCY_INIT_INDEX,
-                            kilobytes(((PermMetaspaceData) event).getPermOccupancyInit()));
-                    pst.setInt(PERM_OCCUPANCY_END_INDEX, kilobytes(((PermMetaspaceData) event).getPermOccupancyEnd()));
-                } else {
-                    pst.setInt(PERM_SPACE_INDEX, 0);
-                    pst.setInt(PERM_OCCUPANCY_INIT_INDEX, 0);
-                    pst.setInt(PERM_OCCUPANCY_END_INDEX, 0);
-                }
-                pst.setString(LOG_ENTRY_INDEX, event.getLogEntry());
-                pst.addBatch();
-            }
-            pst.executeBatch();
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error inserting blocking event.");
-        } finally {
-            blockingBatch.clear();
-            try {
-                pst.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closingPreparedStatement.");
-            }
-        }
-    }
-
-    private static int kilobytes(Memory memory) {
-        return (int) (memory == null ? 0 : memory.getValue(KILOBYTES));
-    }
-
-    /**
-     * Add stopped time events to database.
-     */
-    public synchronized void processStoppedTimeBatch() {
-
-        PreparedStatement pst = null;
-        try {
-            String sqlInsertStoppedEvent = "insert into application_stopped_time (time_stamp, event_name, "
-                    + "duration, log_entry) " + "values(?, ?, ?, ?)";
-
-            final int TIME_STAMP_INDEX = 1;
-            final int EVENT_NAME_INDEX = 2;
-            final int DURATION_INDEX = 3;
-            final int LOG_ENTRY_INDEX = 4;
-
-            pst = connection.prepareStatement(sqlInsertStoppedEvent);
-
-            for (int i = 0; i < stoppedTimeBatch.size(); i++) {
-                ApplicationStoppedTimeEvent event = stoppedTimeBatch.get(i);
-                pst.setLong(TIME_STAMP_INDEX, event.getTimestamp());
-                pst.setString(EVENT_NAME_INDEX, event.getName());
-                pst.setInt(DURATION_INDEX, event.getDuration());
-                pst.setString(LOG_ENTRY_INDEX, event.getLogEntry());
-                pst.addBatch();
-            }
-            pst.executeBatch();
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error inserting stopped time event.");
-        } finally {
-            stoppedTimeBatch.clear();
-            try {
-                pst.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closingPreparedStatement.");
-            }
-        }
     }
 
     /**
@@ -628,33 +397,9 @@ public class JvmDao {
      * @return maximum pause duration (milliseconds).
      */
     public synchronized int getMaxGcPause() {
-        int maxPause = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select max(duration) from blocking_event");
-            if (rs.next()) {
-                maxPause = JdkMath.convertMicrosToMillis(rs.getInt(1)).intValue();
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determine maximum pause time.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return maxPause;
+        return convertMicrosToMillis(
+                ints(this.blockingEvents, BlockingEvent::getDuration).mapToInt(Integer::valueOf).max().orElse(0))
+                        .intValue();
     }
 
     /**
@@ -663,33 +408,12 @@ public class JvmDao {
      * @return total pause duration (milliseconds).
      */
     public synchronized long getTotalGcPause() {
-        long totalPause = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select sum(duration) from blocking_event");
-            if (rs.next()) {
-                totalPause = JdkMath.convertMicrosToMillis(rs.getLong(1)).longValue();
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining total pause time.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return totalPause;
+        return convertMicrosToMillis(
+                ints(this.blockingEvents, BlockingEvent::getDuration).collect(summingLong(Long::valueOf))).longValue();
+    }
+
+    private static <T> Stream<Integer> ints(List<T> list, Function<T, Integer> function) {
+        return list.stream().map(function).filter(Objects::nonNull);
     }
 
     /**
@@ -700,34 +424,8 @@ public class JvmDao {
      * @return The first blocking event.
      */
     public synchronized BlockingEvent getFirstGcEvent() {
-        BlockingEvent event = null;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery(
-                    "select log_entry from blocking_event where id = " + "(select min(id) from blocking_event)");
-            if (rs.next()) {
-                event = (BlockingEvent) JdkUtil.parseLogLine(rs.getString(1));
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining first blocking event.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return event;
+        // TODO JdkUtil#parseLogLine no longer needed?
+        return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(0);
     }
 
     /**
@@ -738,76 +436,17 @@ public class JvmDao {
      * @return The last blocking event.
      */
     public synchronized BlockingEvent getLastGcEvent() {
-        BlockingEvent event = null;
         // Retrieve last event from batch or database.
-        if (!blockingBatch.isEmpty()) {
-            event = blockingBatch.get(blockingBatch.size() - 1);
-        } else {
-            event = queryGcLastEvent();
-        }
-        return event;
-    }
-
-    /**
-     * Retrieve the last blocking event.
-     * 
-     * TODO: Should this consider non-blocking events?
-     * 
-     * @return The last blocking event in database.
-     */
-
-    private synchronized BlockingEvent queryGcLastEvent() {
-        BlockingEvent event = null;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery(
-                    "select log_entry from blocking_event where id = " + "(select max(id) from blocking_event)");
-            if (rs.next()) {
-                event = (BlockingEvent) JdkUtil.parseLogLine(rs.getString(1));
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining last blocking event.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return event;
+        // TODO JdkUtil#parseLogLine no longer needed?
+        return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(blockingEvents.size() - 1);
     }
 
     /**
      * Delete table(s). Useful when running in server mode during development.
      */
     public synchronized void cleanup() {
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            for (int i = 0; i < TABLES_DELETE_SQL.length; i++) {
-                statement.executeUpdate(TABLES_DELETE_SQL[i]);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error deleting rows from tables.");
-        } finally {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
+        this.blockingEvents.clear();
+        JvmDao.created = false;
     }
 
     /**
@@ -816,82 +455,26 @@ public class JvmDao {
      * @return <code>List</code> of events.
      */
     public synchronized List<BlockingEvent> getBlockingEvents() {
-        List<BlockingEvent> events = new ArrayList<BlockingEvent>();
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            StringBuffer sql = new StringBuffer();
-            sql.append("select time_stamp, event_name, duration, log_entry from blocking_event"
-                    + " order by time_stamp asc, id asc");
-            rs = statement.executeQuery(sql.toString());
-            while (rs.next()) {
-                LogEventType eventType = JdkUtil.determineEventType(rs.getString(2));
-                BlockingEvent event = JdkUtil.hydrateBlockingEvent(eventType, rs.getString(4), rs.getLong(1),
-                        rs.getInt(3));
-                events.add(event);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error retrieving blocking events.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return events;
+        return this.blockingEvents.stream().sorted(comparing(BlockingEvent::getTimestamp)).map(JvmDao::toBlockingEvent)
+                .collect(toList());
     }
 
     /**
      * Retrieve all <code>BlockingEvent</code>s of the specified type.
      * 
-     * @param eventType
-     *            The event type to retrieve.
+     * @param eventType The event type to retrieve.
      * @return <code>List</code> of events.
      */
     public synchronized List<BlockingEvent> getBlockingEvents(LogEventType eventType) {
-        List<BlockingEvent> events = new ArrayList<BlockingEvent>();
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            StringBuffer sql = new StringBuffer();
-            sql.append("select time_stamp, duration, log_entry from blocking_event where event_name='");
-            sql.append(eventType);
-            sql.append("' order by time_stamp asc");
-            rs = statement.executeQuery(sql.toString());
-            while (rs.next()) {
-                BlockingEvent event = JdkUtil.hydrateBlockingEvent(eventType, rs.getString(3), rs.getLong(1),
-                        rs.getInt(2));
-                events.add(event);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error retrieving blocking events.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return events;
+        return this.blockingEvents.stream().filter(e -> e.getName().equals(eventType.toString()))
+                .sorted(comparing(BlockingEvent::getTimestamp)).map(JvmDao::toBlockingEvent).collect(toList());
+    }
+
+    private static BlockingEvent toBlockingEvent(BlockingEvent e) {
+        return e;
+        // TODO JdkUtil#hydrateBlockingEvent no longer needed
+        // return hydrateBlockingEvent(determineEventType(e.getName()), e.getLogEntry(),
+        // e.getTimestamp(), e.getDuration());
     }
 
     /**
@@ -900,33 +483,7 @@ public class JvmDao {
      * @return total number of blocking events.
      */
     public synchronized int getBlockingEventCount() {
-        int count = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select count(id) from blocking_event");
-            if (rs.next()) {
-                count = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining blocking event count.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return count;
+        return this.blockingEvents.size();
     }
 
     /**
@@ -935,33 +492,7 @@ public class JvmDao {
      * @return maximum young space size (kilobytes).
      */
     public synchronized int getMaxYoungSpace() {
-        int space = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select max(young_space) from blocking_event");
-            if (rs.next()) {
-                space = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining max young space.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return space;
+        return (int) kilobytes(YoungData.class, YoungData::getYoungSpace).max().orElse(0);
     }
 
     /**
@@ -970,33 +501,7 @@ public class JvmDao {
      * @return maximum old space size (kilobytes).
      */
     public synchronized int getMaxOldSpace() {
-        int space = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select max(old_space) from blocking_event");
-            if (rs.next()) {
-                space = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining max old space.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return space;
+        return (int) kilobytes(OldData.class, OldData::getOldSpace).max().orElse(0);
     }
 
     /**
@@ -1005,34 +510,7 @@ public class JvmDao {
      * @return maximum heap size (kilobytes).
      */
     public synchronized int getMaxHeapSpace() {
-        int space = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement
-                    .executeQuery("select max(young_space + old_space " + "+ combined_space) from blocking_event");
-            if (rs.next()) {
-                space = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining max heap space.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return space;
+        return (int) kilobytes(OldData.class, t -> add(t.getYoungSpace(), t.getOldSpace())).max().orElse(0);
     }
 
     /**
@@ -1041,34 +519,8 @@ public class JvmDao {
      * @return maximum heap occupancy (kilobytes).
      */
     public synchronized int getMaxHeapOccupancy() {
-        int occupancy = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select max(young_occupancy_init + old_occupancy_init "
-                    + "+ combined_occupancy_init) from blocking_event");
-            if (rs.next()) {
-                occupancy = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining max heap occupancy.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return occupancy;
+        return (int) kilobytes(OldData.class, t -> add(t.getYoungOccupancyInit(), t.getOldOccupancyInit())).max()
+                .orElse(0);
     }
 
     /**
@@ -1077,34 +529,8 @@ public class JvmDao {
      * @return maximum heap after GC (kilobytes).
      */
     public synchronized int getMaxHeapAfterGc() {
-        int occupancy = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select max(young_occupancy_end + old_occupancy_end "
-                    + "+ combined_occupancy_end) from blocking_event");
-            if (rs.next()) {
-                occupancy = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining max heap after GC.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return occupancy;
+        return (int) kilobytes(OldData.class, t -> add(t.getYoungOccupancyEnd(), t.getOldOccupancyEnd())).max()
+                .orElse(0);
     }
 
     /**
@@ -1113,33 +539,7 @@ public class JvmDao {
      * @return maximum perm/metaspace footprint (kilobytes).
      */
     public synchronized int getMaxPermSpace() {
-        int space = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select max(perm_space) from blocking_event");
-            if (rs.next()) {
-                space = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining max perm space.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return space;
+        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermSpace).max().orElse(0);
     }
 
     /**
@@ -1148,33 +548,7 @@ public class JvmDao {
      * @return maximum perm/metaspac occupancy (kilobytes).
      */
     public synchronized int getMaxPermOccupancy() {
-        int occupancy = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select max(perm_occupancy_init) from blocking_event");
-            if (rs.next()) {
-                occupancy = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining max perm gen occupancy.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return occupancy;
+        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermOccupancyInit).max().orElse(0);
     }
 
     /**
@@ -1183,33 +557,23 @@ public class JvmDao {
      * @return maximum perm/metaspac after GC (kilobytes).
      */
     public synchronized int getMaxPermAfterGc() {
-        int occupancy = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select max(perm_occupancy_end) from blocking_event");
-            if (rs.next()) {
-                occupancy = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining max perm gen after GC.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return occupancy;
+        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermOccupancyEnd).max().orElse(0);
+    }
+
+    private <T> LongStream kilobytes(Class<T> clazz, Function<T, Memory> func) {
+        return this.blockingEvents.stream() //
+                .filter(clazz::isInstance) //
+                .map(clazz::cast).map(func) //
+                .filter(Objects::nonNull) //
+                .mapToLong(m -> m.getValue(KILOBYTES));
+    }
+
+    private static Memory add(Memory m1, Memory m2) {
+        return m1 == null ? nullSafe(m2) : m1.plus(nullSafe(m2));
+    }
+
+    private static Memory nullSafe(Memory memory) {
+        return memory == null ? ZERO : memory;
     }
 
     /**
@@ -1218,34 +582,7 @@ public class JvmDao {
      * @return The time first stopped event.
      */
     public synchronized ApplicationStoppedTimeEvent getFirstStoppedEvent() {
-        ApplicationStoppedTimeEvent event = null;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select log_entry from application_stopped_time where id = "
-                    + "(select min(id) from application_stopped_time)");
-            if (rs.next()) {
-                event = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(rs.getString(1));
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining first stopped event.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return event;
+        return stoppedTimeEvents.isEmpty() ? null : stoppedTimeEvents.get(0);
     }
 
     /**
@@ -1254,14 +591,8 @@ public class JvmDao {
      * @return The last stopped event.
      */
     public synchronized ApplicationStoppedTimeEvent getLastStoppedEvent() {
-        ApplicationStoppedTimeEvent event;
         // Retrieve last event from batch or database.
-        if (!stoppedTimeBatch.isEmpty()) {
-            event = stoppedTimeBatch.get(stoppedTimeBatch.size() - 1);
-        } else {
-            event = queryStoppedLastEvent();
-        }
-        return event;
+        return stoppedTimeEvents.isEmpty() ? null : stoppedTimeEvents.get(stoppedTimeEvents.size() - 1);
     }
 
     /**
@@ -1270,71 +601,14 @@ public class JvmDao {
      * @return The last stopped event in database.
      */
 
-    private synchronized ApplicationStoppedTimeEvent queryStoppedLastEvent() {
-        ApplicationStoppedTimeEvent event = null;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select log_entry from application_stopped_time where id = "
-                    + "(select max(id) from application_stopped_time)");
-            if (rs.next()) {
-                event = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(rs.getString(1));
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining last stopped event.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return event;
-    }
-
     /**
      * The maximum stopped time event pause time.
      * 
      * @return maximum pause duration (milliseconds).
      */
     public synchronized int getMaxStoppedTime() {
-        int maxStoppedTime = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select max(duration) from application_stopped_time");
-            if (rs.next()) {
-                long micros = rs.getInt(1);
-                maxStoppedTime = JdkMath.convertMicrosToMillis(micros).intValue();
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determine maximum stopped time.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return maxStoppedTime;
+        return convertMicrosToMillis(ints(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
+                .collect(summingLong(Long::valueOf))).intValue();
     }
 
     /**
@@ -1343,34 +617,8 @@ public class JvmDao {
      * @return total pause duration (milliseconds).
      */
     public synchronized int getTotalStoppedTime() {
-        int totalStoppedTime = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select sum(duration) from application_stopped_time");
-            if (rs.next()) {
-                long micros = rs.getLong(1);
-                totalStoppedTime = JdkMath.convertMicrosToMillis(micros).intValue();
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining total stopped time.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return totalStoppedTime;
+        return convertMicrosToMillis(ints(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
+                .collect(summingLong(Long::valueOf))).intValue();
     }
 
     /**
@@ -1379,32 +627,7 @@ public class JvmDao {
      * @return total number of stopped time events.
      */
     public synchronized int getStoppedTimeEventCount() {
-        int count = 0;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select count(id) from application_stopped_time");
-            if (rs.next()) {
-                count = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error determining stopped time event count.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return count;
+        return this.stoppedTimeEvents.size();
     }
+
 }

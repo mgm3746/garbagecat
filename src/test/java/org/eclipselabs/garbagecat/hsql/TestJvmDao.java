@@ -41,7 +41,6 @@ class TestJvmDao {
                 + " [Tenured: 468292K->482213K(819200K), 1.9920590 secs] 824995K->482213K(1187840K),"
                 + " [Perm : 123092K->122684K(262144K)], 1.9924510 secs]");
         jvmDao.addBlockingEvent(event3);
-        jvmDao.processBlockingBatch();
 
         // check they are the correct way around
         List<BlockingEvent> events = jvmDao.getBlockingEvents();
