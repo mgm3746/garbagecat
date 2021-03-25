@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain;
 
 import static org.eclipselabs.garbagecat.TestUtil.parseDate;
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.megabytes;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.BYTES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -252,6 +253,28 @@ class TestJvmRun {
                 JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.");
         assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
+    }
+
+    @Test
+    void testSummaryStatsShenandoah() {
+        /*
+        File testFile = TestUtil.getFile("dataset207.txt");
+        GcManager gcManager = new GcManager();
+        gcManager.store(testFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(megabytes(1589), jvmRun.getMaxHeapOccupancy(), "Max heap occupancy not calculated correctly.");
+        assertEquals(megabytes(1002), jvmRun.getMaxHeapAfterGc(), "Max heap after GC not calculated correctly.");
+        assertEquals(megabytes(1690), jvmRun.getMaxHeapSpace(), "Max heap space not calculated correctly.");
+        assertEquals(kilobytes(60155), jvmRun.getMaxPermOccupancy(),
+                "Max metaspace occupancy not calculated correctly.");
+        assertEquals(kilobytes(60155), jvmRun.getMaxPermOccupancy(),
+                "Max metaspace after GC not calculated correctly.");
+        assertEquals(kilobytes(99804), jvmRun.getMaxPermSpace(), "Max metaspace space not calculated correctly.");
+        assertEquals(4077274, jvmRun.getMaxGcPause(), "Max pause not calculated correctly.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "GC Event count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_FULL_GC),
+                JdkUtil.LogEventType.SHENANDOAH_FULL_GC.toString() + " collector not identified.");
+                */
     }
 
     /**

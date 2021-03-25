@@ -1,0 +1,80 @@
+2021-03-23T20:57:42.349+0000: 120835.633: [Pause Full, start]
+    Using 3 of 3 workers for full gc
+    Good progress for free space: 600M, need 17305K
+    Good progress for used space: 587M, need 512K
+2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms]
+Free: 600M, Max: 512K regular, 557M humongous, Frag: 7% external, 56% internal; Reserve: 86528K, Max: 512K
+
+All times are wall-clock times, except per-root-class counters, that are sum over
+all workers. Dividing the <total> over the root stage time estimates parallelism.
+
+Pause Full GC (G)               4085272 us
+Pause Full GC (N)               4077354 us
+  Pre Heap Dump                       0 us
+  Prepare                         35841 us
+  Scan Roots                      22254 us, parallelism: 1.50x
+    FS: <total>                   33402 us
+    FS: Thread Roots              14587 us, workers (us): 7245, 120, 7222, 
+    FS: Universe Roots                4 us, workers (us):   4, ---, ---, 
+    FS: JNI Handles Roots            22 us, workers (us): ---,  22, ---, 
+    FS: Synchronizer Roots          859 us, workers (us): 267, 282, 309, 
+    FS: Flat Profiler Roots         115 us, workers (us): ---, 115, ---, 
+    FS: Management Roots              3 us, workers (us):   3, ---, ---, 
+    FS: System Dict Roots         13199 us, workers (us): ---, 13199, ---, 
+    FS: CLDG Roots                 4432 us, workers (us): 899, 1260, 2273, 
+    FS: JVMTI Roots                 181 us, workers (us): 181, ---, ---, 
+  Mark                          1559756 us
+    Finish Queues               1295435 us
+    Weak References               26451 us
+      Process                     24118 us
+      Enqueue                      2325 us
+    System Purge                 215366 us
+      Unload Classes              15960 us
+    Parallel Cleanup             171343 us
+    Deallocate Metadata            1389 us
+    CLDG                           1039 us
+  Calculate Addresses            698136 us
+    Regular Objects              697921 us
+    Humongous Objects                86 us
+  Adjust Pointers                994706 us
+    FA: <total>                   93431 us
+    FA: Thread Roots              14090 us, workers (us): 6396, 5528, 2166, 
+    FA: Code Cache Roots          63193 us, workers (us): 20857, 20880, 21457, 
+    FA: Universe Roots                4 us, workers (us):   4, ---, ---, 
+    FA: JNI Handles Roots            44 us, workers (us):  44, ---, ---, 
+    FA: JFR Weak Roots                1 us, workers (us):   1, ---, ---, 
+    FA: JNI Weak Roots              120 us, workers (us): 120, ---, ---, 
+    FA: String Table Roots        12136 us, workers (us): 4001, 4075, 4060, 
+    FA: Synchronizer Roots          647 us, workers (us): 646,   0,   0, 
+    FA: Flat Profiler Roots          22 us, workers (us):  22, ---, ---, 
+    FA: Management Roots              3 us, workers (us):   3, ---, ---, 
+    FA: System Dict Roots            56 us, workers (us):  56, ---, ---, 
+    FA: CLDG Roots                 2969 us, workers (us): 332, 381, 2256, 
+    FA: JVMTI Roots                 147 us, workers (us): 147, ---, ---, 
+  Copy Objects                   545833 us
+    Regular Objects              541591 us
+    Humongous Objects               117 us
+    Reset Complete Bitmap          3901 us
+    Rebuild Region Sets             221 us
+  Resize TLABs                      316 us
+  Post Heap Dump                      1 us
+Pacing                           140644 us
+
+Allocation pacing accrued:
+     12 of  4087 ms (  0.3%): thread-7227,ejb,-internal-uat-207-2sgzb
+     13 of  4087 ms (  0.3%): thread-7159,ejb,-internal-uat-207-2sgzb
+     11 of  4087 ms (  0.3%): default task-2568
+     11 of  4087 ms (  0.3%): default task-2565
+     10 of  4087 ms (  0.2%): default task-2561
+     11 of  4087 ms (  0.3%): default task-2540
+     11 of  4087 ms (  0.3%): default task-2534
+     17 of  4087 ms (  0.4%): default task-2530
+     10 of  4087 ms (  0.2%): default task-2526
+     11 of  4087 ms (  0.3%): default task-2525
+     11 of  4087 ms (  0.3%): Brute Force Protector
+     13 of  4087 ms (  0.3%): default I/O-6
+    141 of  4087 ms (  3.4%): <total>
+      0 of  4087 ms (  0.0%): <average total>
+     12 of  4087 ms (  0.3%): <average non-zero>
+
+, [Metaspace: 282195K->281648K(1314816K)]
