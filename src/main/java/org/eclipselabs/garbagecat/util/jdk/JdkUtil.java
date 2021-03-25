@@ -65,6 +65,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahDegeneratedGcMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalEvacEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalUpdateEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitUpdateEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahStatsEvent;
@@ -139,9 +140,9 @@ public final class JdkUtil {
         // shenandoah
         SHENANDOAH_CANCELLING_GC, SHENANDOAH_CONCURRENT, SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK,
         //
-        SHENANDOAH_DEGENERATED_GC_MARK, SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_UPDATE,
+        SHENANDOAH_FULL_GC, SHENANDOAH_DEGENERATED_GC_MARK, SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK,
         //
-        SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_STATS, SHENANDOAH_TRIGGER,
+        SHENANDOAH_FINAL_UPDATE, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_STATS, SHENANDOAH_TRIGGER,
         // other
         APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, BLANK_LINE, CLASS_HISTOGRAM,
         //
@@ -326,6 +327,8 @@ public final class JdkUtil {
             return LogEventType.SHENANDOAH_FINAL_MARK;
         if (ShenandoahFinalUpdateEvent.match(logLine))
             return LogEventType.SHENANDOAH_FINAL_UPDATE;
+        if (ShenandoahFullGcEvent.match(logLine))
+            return LogEventType.SHENANDOAH_FULL_GC;
         if (ShenandoahInitMarkEvent.match(logLine))
             return LogEventType.SHENANDOAH_INIT_MARK;
         if (ShenandoahInitUpdateEvent.match(logLine))
@@ -478,6 +481,8 @@ public final class JdkUtil {
             return new ShenandoahFinalMarkEvent(logLine);
         case SHENANDOAH_FINAL_UPDATE:
             return new ShenandoahFinalUpdateEvent(logLine);
+        case SHENANDOAH_FULL_GC:
+            return new ShenandoahFullGcEvent(logLine);
         case SHENANDOAH_INIT_MARK:
             return new ShenandoahInitMarkEvent(logLine);
         case SHENANDOAH_INIT_UPDATE:
@@ -632,6 +637,8 @@ public final class JdkUtil {
             return new ShenandoahFinalMarkEvent(logEntry, timestamp, duration);
         case SHENANDOAH_FINAL_UPDATE:
             return new ShenandoahFinalUpdateEvent(logEntry, timestamp, duration);
+        case SHENANDOAH_FULL_GC:
+            return new ShenandoahFullGcEvent(logEntry, timestamp, duration);
         case SHENANDOAH_INIT_MARK:
             return new ShenandoahInitMarkEvent(logEntry, timestamp, duration);
         case SHENANDOAH_INIT_UPDATE:
@@ -830,8 +837,8 @@ public final class JdkUtil {
         if (eventTimestampMicros < priorEventTimestampMicros) {
             throw new TimeWarpException("Bad order: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
                     + Constants.LINE_SEPARATOR + event.getLogEntry());
-        } else if (eventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 1000000) {
-            // Only report if overlap > 1 sec to account for small overlaps due to JDK threading issues
+        } else if (eventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 5000000) {
+            // Only report if overlap > 5 sec to account for overlaps due to JDK threading issues
             throw new TimeWarpException("Event overlap: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
                     + Constants.LINE_SEPARATOR + event.getLogEntry());
         } else {

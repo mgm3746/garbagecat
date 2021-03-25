@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-class TestShenandoahDegeneratedGcEvent {
+class TestShenandoahDegeneratedGcMarkEvent {
 
     @Test
     void testLogLine() {
@@ -148,5 +148,30 @@ class TestShenandoahDegeneratedGcEvent {
         assertEquals(kilobytes(3847), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(3847), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(1056768), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+    }
+
+    @Test
+    void testLogLinePreprocessedMarkMetaspace() {
+        String logLine = "2021-03-23T20:57:24.270+0000: 120817.553: [Pause Degenerated GC (Mark) 1578M->1127M(1690M), "
+                + "1346.267 ms], [Metaspace: 282194K->282194K(1314816K)]";
+        assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
+                "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
+        ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
+        assertEquals((long) 120817553, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(megabytes(1578), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
+        assertEquals(megabytes(1127), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(megabytes(1690), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(1346267, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(kilobytes(282194), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(282194), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(1314816), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+    }
+
+    @Test
+    void testLogLinePreprocessedUpdateRefsMetaspace() {
+        String logLine = "2021-03-23T20:57:30.279+0000: 120823.562: [Pause Degenerated GC (Update Refs) "
+                + "1584M->1466M(1690M), 138.146 ms], [Metaspace: 282194K->282194K(1314816K)]";
+        assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
+                "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
     }
 }

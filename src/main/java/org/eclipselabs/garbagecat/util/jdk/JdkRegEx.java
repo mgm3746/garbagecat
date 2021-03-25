@@ -156,7 +156,7 @@ public final class JdkRegEx {
      * 
      * For example: 328.75 MB/s
      */
-    public static final String ALLOCATION_RATE = "\\d{1,6}(\\.\\d{2})? [KM]B\\/s";
+    public static final String ALLOCATION_RATE = "\\d{1,6}(\\.\\d{2})? [BKM]B\\/s";
 
     /**
      * System.gc() trigger. Explicit garbage collection invoked.

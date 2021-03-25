@@ -74,16 +74,14 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Init|Final) Mark \\((G|N)\\).+$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?  (Accumulate Stats|Finish Queues|Make Parsable|System Purge|Update Region States|"
-                    + "Weak References).*$",
+                    + " )?[ ]{2,4}(Accumulate Stats|Finish (Queues|Work)|Make Parsable|System Purge|"
+                    + "Update Region States|Weak References).*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  (Scan|Update) Roots.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{4,5}(DU|E|S|UR|WR): <total>.+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{2,4}(Scan|Update) Roots.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{4,5}(DU|E|S): JNI Handles Roots.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?    (DU|E|S|WR): JFR Weak Roots.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{4,6}(DU|E|FA|FU|S|WR): JFR Weak Roots.+$",
             //
             "^(" + UnifiedRegEx.DECORATOR + ")?    (DU|S|WR): JNI Weak Roots.+$",
             //
@@ -95,12 +93,12 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?  Finish Work.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Pause Degenerated GC \\((G|N)\\).+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Degenerated|Full) GC \\((G|N)\\).+$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?  Degen Update Roots.+$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{2,4}(Cleanup|CLDG|Deallocate Metadata|Enqueue|Parallel Cleanup|Process|Unload Classes|"
+                    + " )?[ ]{2,6}(Cleanup|CLDG|Deallocate Metadata|Enqueue|Parallel Cleanup|Process|Unload Classes|"
                     + "Weak Roots).*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?  (Initial|Prepare)( Evacuation)?.*$",
@@ -108,8 +106,14 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             "^(" + UnifiedRegEx.DECORATOR + " )?  (Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs).*$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?    (DU|E|S|U|UR): (CLDG|Code Cache|FlatProfiler|JNI|JNI Weak|Management|String Table|"
-                    + "Synchronizer|System Dict|Thread|Universe|JVMTI) Roots.*$",
+                    + " )?  (Adjust Pointers|Calculate Addresses|Copy Objects|(Post|Pre) Heap Dump|Mark).*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?    ((Humongous|Regular) Objects|Rebuild Region Sets|Reset Complete Bitmap).*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?[ ]{4,6}(DU|E|FA|FS|FU|S|U|UR): (CLDG|Code Cache|Flat Profiler|JNI|JNI Handles|JNI Weak|"
+                    + "Management|String Table|Synchronizer|System Dict|Thread|Universe|JVMTI) Roots.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Init[ ]{0,1}|Final) (Mark|Update Refs|Evac) \\([G|N]\\).*$",
             //
@@ -122,10 +126,10 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             "^(" + UnifiedRegEx.DECORATOR + " )?Pacing.*$",
             // ,
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{0,7}\\d{1,8} of[ ]{0,5}\\d{1,7} ms \\([ ]{0,2}\\d{1,3}\\.\\d%\\):.+$",
+                    + " )?[ ]{0,7}\\d{1,8} of[ ]{0,5}\\d{1,7} ms \\([ ]{0,2}\\d{1,}\\.\\d%\\):.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )?      CU: (<total>|(Code Cache|(String|Resolved) Table|CLDG) (Roots|Cleaning)) .*$"
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{4,6}(CU|DU|E|FA|FS|FU|S|UR|WR): "
+                    + "(<total>|(Code Cache|(String|Resolved) Table|CLDG) (Roots|Cleaning)) .*$"
             //
     };
 

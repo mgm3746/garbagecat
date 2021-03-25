@@ -193,7 +193,7 @@ public class JvmDao {
         if (size > 0 && COMPARE_BY_TIMESTAMP.compare(blockingEvents.get(size - 1), event) <= 0) {
             return size;
         }
-        // here we could raise an Exception: Add param boolean reorderingAllowed to method 
+        // here we could raise an Exception: Add param boolean reorderingAllowed to method
         // if (!reorderingAllowed) throw new TimeWarpException("bad order")
         return -binarySearch(blockingEvents, event, COMPARE_BY_TIMESTAMP) - 1;
     }
@@ -210,7 +210,8 @@ public class JvmDao {
     }
 
     /**
-     * @param options The JVM options to set.
+     * @param options
+     *            The JVM options to set.
      */
     public void setOptions(String options) {
         this.options = options;
@@ -224,7 +225,8 @@ public class JvmDao {
     }
 
     /**
-     * @param version The JVM version information to set.
+     * @param version
+     *            The JVM version information to set.
      */
     public void setVersion(String version) {
         this.version = version;
@@ -238,7 +240,8 @@ public class JvmDao {
     }
 
     /**
-     * @param memory The JVM memory information to set.
+     * @param memory
+     *            The JVM memory information to set.
      */
     public void setMemory(String memory) {
         this.memory = memory;
@@ -252,7 +255,8 @@ public class JvmDao {
     }
 
     /**
-     * @param physicalMemory The JVM physical memory to set.
+     * @param physicalMemory
+     *            The JVM physical memory to set.
      */
     public void setPhysicalMemory(long physicalMemory) {
         this.physicalMemory = physicalMemory;
@@ -266,7 +270,8 @@ public class JvmDao {
     }
 
     /**
-     * @param physicalMemoryFree The JVM physical free memory to set.
+     * @param physicalMemoryFree
+     *            The JVM physical free memory to set.
      */
     public void setPhysicalMemoryFree(long physicalMemoryFree) {
         this.physicalMemoryFree = physicalMemoryFree;
@@ -280,7 +285,8 @@ public class JvmDao {
     }
 
     /**
-     * @param swap The JVM swap to set.
+     * @param swap
+     *            The JVM swap to set.
      */
     public void setSwap(long swap) {
         this.swap = swap;
@@ -294,7 +300,8 @@ public class JvmDao {
     }
 
     /**
-     * @param swapFree The JVM swap free to set.
+     * @param swapFree
+     *            The JVM swap free to set.
      */
     public void setSwapFree(long swapFree) {
         this.swapFree = swapFree;
@@ -308,7 +315,8 @@ public class JvmDao {
     }
 
     /**
-     * @param parallelCount The number of <code>ParallelCollection</code> events.
+     * @param parallelCount
+     *            The number of <code>ParallelCollection</code> events.
      */
     public void setParallelCount(long parallelCount) {
         this.parallelCount = parallelCount;
@@ -322,24 +330,23 @@ public class JvmDao {
     }
 
     /**
-     * @param invertedParallelismCount The number of "low" parallelism events.
+     * @param invertedParallelismCount
+     *            The number of "low" parallelism events.
      */
     public void setInvertedParallelismCount(long invertedParallelismCount) {
         this.invertedParallelismCount = invertedParallelismCount;
     }
 
     /**
-     * @return The <code>ParallelCollection</code> event with the lowest "inverted"
-     *         parallelism.
+     * @return The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
      */
     public LogEvent getWorstInvertedParallelismEvent() {
         return worstInvertedParallelismEvent;
     }
 
     /**
-     * @param worstInvertedParallelismEvent The <code>ParallelCollection</code>
-     *                                      event with the lowest "inverted"
-     *                                      parallelism.
+     * @param worstInvertedParallelismEvent
+     *            The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
      */
     public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {
         this.worstInvertedParallelismEvent = worstInvertedParallelismEvent;
@@ -353,8 +360,8 @@ public class JvmDao {
     }
 
     /**
-     * @param maxHeapSpaceNonBlocking The maximum heap space in non
-     *                                <code>BlockingEvent</code>s.
+     * @param maxHeapSpaceNonBlocking
+     *            The maximum heap space in non <code>BlockingEvent</code>s.
      */
     public void setMaxHeapSpaceNonBlocking(int maxHeapSpaceNonBlocking) {
         this.maxHeapSpaceNonBlocking = maxHeapSpaceNonBlocking;
@@ -368,8 +375,8 @@ public class JvmDao {
     }
 
     /**
-     * @param maxHeapOccupancyNonBlocking The maximum heap occupancy in non
-     *                                    <code>BlockingEvent</code>s.
+     * @param maxHeapOccupancyNonBlocking
+     *            The maximum heap occupancy in non <code>BlockingEvent</code>s.
      */
     public void setMaxHeapOccupancyNonBlocking(int maxHeapOccupancyNonBlocking) {
         this.maxHeapOccupancyNonBlocking = maxHeapOccupancyNonBlocking;
@@ -383,8 +390,8 @@ public class JvmDao {
     }
 
     /**
-     * @param maxPermSpaceNonBlocking The maximum perm space in non
-     *                                <code>BlockingEvent</code>s.
+     * @param maxPermSpaceNonBlocking
+     *            The maximum perm space in non <code>BlockingEvent</code>s.
      */
     public void setMaxPermSpaceNonBlocking(int maxPermSpaceNonBlocking) {
         this.maxPermSpaceNonBlocking = maxPermSpaceNonBlocking;
@@ -398,8 +405,8 @@ public class JvmDao {
     }
 
     /**
-     * @param maxPermOccupancyNonBlocking The maximum perm occupancy in non
-     *                                    <code>BlockingEvent</code>s.
+     * @param maxPermOccupancyNonBlocking
+     *            The maximum perm occupancy in non <code>BlockingEvent</code>s.
      */
     public void setMaxPermOccupancyNonBlocking(int maxPermOccupancyNonBlocking) {
         this.maxPermOccupancyNonBlocking = maxPermOccupancyNonBlocking;
@@ -475,7 +482,8 @@ public class JvmDao {
     /**
      * Retrieve all <code>BlockingEvent</code>s of the specified type.
      * 
-     * @param eventType The event type to retrieve.
+     * @param eventType
+     *            The event type to retrieve.
      * @return <code>List</code> of events.
      */
     public synchronized List<BlockingEvent> getBlockingEvents(LogEventType eventType) {

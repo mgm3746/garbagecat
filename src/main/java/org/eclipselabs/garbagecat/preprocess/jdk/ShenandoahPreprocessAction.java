@@ -196,15 +196,18 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             "^(" + UnifiedRegEx.DECORATOR
                     + ")?[ ]{1,4}Using \\d of \\d workers for (init|final) (marking|reference update)$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcMarkEvent}
-            "^" + UnifiedRegEx.DECORATOR + " Using \\d of \\d workers for stw degenerated gc$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Using \\d of \\d workers for (full|stw degenerated) gc$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcMarkEvent}
-            "^" + UnifiedRegEx.DECORATOR + " Good progress for (free|used) space: " + JdkRegEx.SIZE + ", need "
-                    + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}(Bad|Good) progress for (free|used) space: " + JdkRegEx.SIZE
+                    + ", need " + JdkRegEx.SIZE + "$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitMarkEvent}
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for Mark. Expected Live: " + JdkRegEx.SIZE + ", Free: "
-                    + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: (inf|\\d{1,2}\\.\\d)x$",
+                    + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: (inf|\\d{1,}\\.\\d)x$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcEvent}
-            "^" + UnifiedRegEx.DECORATOR + " Pause Degenerated GC \\((Mark|Outside of Cycle)\\)$",
+            "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+                    + ") (\\[)?Pause Degenerated GC \\((Mark|Outside of Cycle|Update Refs)\\)(, start\\])?$",
+            // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFullGcEvent}
+            "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR + ") \\[Pause Full, start\\]$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Adaptive CSet Selection. Target Free: " + JdkRegEx.SIZE
                     + ", Actual Free: " + JdkRegEx.SIZE + ", Max CSet: " + JdkRegEx.SIZE + ", Min Garbage: "
@@ -248,9 +251,10 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Uncommitted " + JdkRegEx.SIZE + ". Heap: " + JdkRegEx.SIZE + " reserved, "
                     + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Failed to allocate (TLAB, )?" + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Failed to allocate ((Shared|TLAB), )?" + JdkRegEx.SIZE + "$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Cancelling GC: (Allocation Failure|Stopping VM)$",
+            "^(" + UnifiedRegEx.DECORATOR
+                    + ")?[ ]{1,4}Cancelling GC: (Allocation Failure|Stopping VM|Upgrade To Full GC)$",
             //
             "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
                     + ") (\\[)?Concurrent (cleanup|evacuation|marking|precleaning|reset|update references)"

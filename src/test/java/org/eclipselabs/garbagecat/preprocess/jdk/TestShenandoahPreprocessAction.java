@@ -85,6 +85,27 @@ class TestShenandoahPreprocessAction {
     }
 
     @Test
+    void testLogLineDegeneratedGcMarkStart() {
+        String logLine = "2021-03-23T20:57:22.923+0000: 120816.207: [Pause Degenerated GC (Mark), start]";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testLogLineDegeneratedGcUpdateRefsStart() {
+        String logLine = "2021-03-23T20:57:30.141+0000: 120823.424: [Pause Degenerated GC (Update Refs), start]";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testLogLineFullGcStart() {
+        String logLine = "2021-03-23T20:57:42.349+0000: 120835.633: [Pause Full, start]";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
     void testLogLineUnifiedDegeneratedGcOutsideOfCycle() {
         String logLine = "[8.061s] GC(136) Pause Degenerated GC (Outside of Cycle)";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
@@ -94,6 +115,13 @@ class TestShenandoahPreprocessAction {
     @Test
     void testLogLineUsingWorkersInitMark() {
         String logLine = "    Using 2 of 2 workers for init marking";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testLogLineUsingWorkersFullGc() {
+        String logLine = "    Using 3 of 3 workers for full gc";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
     }
@@ -127,8 +155,29 @@ class TestShenandoahPreprocessAction {
     }
 
     @Test
+    void testLogLineGoodProgressFreeSpaceDegeneratedGc() {
+        String logLine = "    Good progress for free space: 495M, need 17305K";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testLogLineBadProgressFreeSpaceDegeneratedGc() {
+        String logLine = "    Bad progress for free space: 11750K, need 17305K";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
     void testLogLineUnifiedGoodProgressUsedSpaceDegeneratedGc() {
         String logLine = "[52.937s][info][gc,ergo      ] GC(1632) Good progress for used space: 31488K, need 256K";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testLogLineGoodProgressUsedSpaceDegeneratedGc() {
+        String logLine = "   Good progress for used space: 486M, need 512K";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
     }
@@ -137,6 +186,14 @@ class TestShenandoahPreprocessAction {
     void testLogLinePacerForMark() {
         String logLine = "    Pacer for Mark. Expected Live: 6553K, Free: 44512K, Non-Taxable: 4451K, "
                 + "Alloc Tax Rate: 0.5x";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testLogLinePacerForMark3DigitRate() {
+        String logLine = "    Pacer for Mark. Expected Live: 1115M, Free: 12463K, Non-Taxable: 1246K, "
+                + "Alloc Tax Rate: 112.0x";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
     }
@@ -442,6 +499,13 @@ class TestShenandoahPreprocessAction {
     }
 
     @Test
+    void testLogLineUsingWorkersStwDegeneratedGc() {
+        String logLine = "    Using 3 of 3 workers for stw degenerated gc";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
     void testLogLineFree() {
         String logLine = "Free: 48924K (192 regions), Max regular: 256K, Max humongous: 42496K, External frag: 14%, "
                 + "Internal frag: 0%";
@@ -544,6 +608,13 @@ class TestShenandoahPreprocessAction {
     @Test
     void testLogLineUnifiedFailedToAllocate() {
         String logLine = "[52.872s][info][gc           ] Failed to allocate 256K";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testLogLineUnifiedFailedToAllocateShared() {
+        String logLine = "    Failed to allocate Shared, 45072B";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
     }
@@ -671,6 +742,13 @@ class TestShenandoahPreprocessAction {
     @Test
     void testLogLineCancellingGcStoppingVmNoDecorator() {
         String logLine = "    Cancelling GC: Stopping VM";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testLogLineCancellingGcUpgradeToFullGc() {
+        String logLine = "    Cancelling GC: Upgrade To Full GC";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
     }
