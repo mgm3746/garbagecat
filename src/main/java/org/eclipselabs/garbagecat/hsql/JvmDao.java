@@ -190,11 +190,12 @@ public class JvmDao {
 
     private int insertPosition(BlockingEvent event) {
         int size = blockingEvents.size();
-        if (size > 0 && COMPARE_BY_TIMESTAMP.compare(blockingEvents.get(size - 1), event) > 0) {
+        if (size > 0 && COMPARE_BY_TIMESTAMP.compare(blockingEvents.get(size - 1), event) <= 0) {
             return size;
         }
-        int index = binarySearch(blockingEvents, event, COMPARE_BY_TIMESTAMP);
-        return index >= 0 ? index + 1 : -index - 1;
+        // here we could raise an Exception: Add param boolean reorderingAllowed to method 
+        // if (!reorderingAllowed) throw new TimeWarpException("bad order")
+        return -binarySearch(blockingEvents, event, COMPARE_BY_TIMESTAMP) - 1;
     }
 
     public void addStoppedTimeEvent(ApplicationStoppedTimeEvent event) {
