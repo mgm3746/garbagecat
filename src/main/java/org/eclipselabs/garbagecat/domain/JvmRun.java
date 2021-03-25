@@ -254,7 +254,6 @@ public class JvmRun {
      * Total number of {@link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent}.
      */
     private int stoppedTimeEventCount;
-
     /**
      * <code>BlockingEvent</code>s where throughput does not meet the throughput goal.
      */

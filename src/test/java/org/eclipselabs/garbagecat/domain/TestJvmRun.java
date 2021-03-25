@@ -275,6 +275,8 @@ class TestJvmRun {
         assertEquals(kilobytes(281648), jvmRun.getMaxPermAfterGc(), "Max metaspace after GC not calculated correctly.");
         assertEquals(kilobytes(1314816), jvmRun.getMaxPermSpace(), "Max metaspace space not calculated correctly.");
         assertEquals(4077, jvmRun.getMaxGcPause(), "Max pause not calculated correctly.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SHENANDOAH_FULL_GC),
+                Analysis.ERROR_SHENANDOAH_FULL_GC + " analysis not identified.");
     }
 
     /**

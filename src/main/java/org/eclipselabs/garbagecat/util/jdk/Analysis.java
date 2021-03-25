@@ -160,6 +160,11 @@ public enum Analysis {
     ERROR_SERIAL_GC_PARALLEL("error.serial.gc.parallel"),
 
     /**
+     * Property key for the SHENANDOAH_FULL_GC collector being invoked.
+     */
+    ERROR_SHENANDOAH_FULL_GC("error.shenandoah.full.gc"),
+
+    /**
      * Property key for unidentified log lines w/o preparsing.
      */
     ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE("error.unidentified.log.lines.preparse"),
@@ -251,11 +256,6 @@ public enum Analysis {
     INFO_NEW_RATIO_INVERTED("info.new.ratio.inverted"),
 
     /**
-     * Property key for otherwise unaccounted JVM options disabled.
-     */
-    INFO_UNACCOUNTED_OPTIONS_DISABLED("info.unaccounted.options.disabled"),
-
-    /**
      * Property key for a very old JDK with a permanent generation.
      */
     INFO_PERM_GEN("info.perm.gen"),
@@ -294,14 +294,19 @@ public enum Analysis {
     INFO_SURVIVOR_RATIO_TARGET("info.survivor.ratio.target"),
 
     /**
+     * Property key for swapping disabled.
+     */
+    INFO_SWAP_DISABLED("info.swap.disabled"),
+
+    /**
      * Property key for swapping.
      */
     INFO_SWAPPING("info.swapping"),
 
     /**
-     * Property key for swapping disabled.
+     * Property key for otherwise unaccounted JVM options disabled.
      */
-    INFO_SWAP_DISABLED("info.swap.disabled"),
+    INFO_UNACCOUNTED_OPTIONS_DISABLED("info.unaccounted.options.disabled"),
 
     /**
      * Property key for unidentified last log line w/ preparsing.

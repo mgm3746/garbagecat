@@ -66,6 +66,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.hsql.JvmDao;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
@@ -514,6 +515,8 @@ public class GcManager {
                                     jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_SERIAL);
                                 }
                                 break;
+                            case SHENANDOAH:
+                                break;
                             case UNKNOWN:
                                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN)) {
                                     jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN);
@@ -729,6 +732,13 @@ public class GcManager {
                             && event.getLogEntry().matches("^.*Perm.*$")) {
                         if (!jvmDao.getAnalysis().contains(Analysis.INFO_PERM_GEN)) {
                             jvmDao.addAnalysis(Analysis.INFO_PERM_GEN);
+                        }
+                    }
+
+                    // 19) Shenandoah Full GC
+                    if (event instanceof ShenandoahFullGcEvent) {
+                        if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SHENANDOAH_FULL_GC)) {
+                            jvmDao.addAnalysis(Analysis.ERROR_SHENANDOAH_FULL_GC);
                         }
                     }
 
