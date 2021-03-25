@@ -29,6 +29,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
@@ -531,7 +532,10 @@ public class JvmDao {
      * @return maximum heap size (kilobytes).
      */
     public synchronized int getMaxHeapSpace() {
-        return (int) kilobytes(OldData.class, t -> add(t.getYoungSpace(), t.getOldSpace())).max().orElse(0);
+        int oldMaxHeapSpace = (int) kilobytes(OldData.class, t -> add(t.getYoungSpace(), t.getOldSpace())).max()
+                .orElse(0);
+        int combinedMaxHeapSpace = (int) kilobytes(CombinedData.class, CombinedData::getCombinedSpace).max().orElse(0);
+        return Math.max(oldMaxHeapSpace, combinedMaxHeapSpace);
     }
 
     /**
@@ -540,8 +544,11 @@ public class JvmDao {
      * @return maximum heap occupancy (kilobytes).
      */
     public synchronized int getMaxHeapOccupancy() {
-        return (int) kilobytes(OldData.class, t -> add(t.getYoungOccupancyInit(), t.getOldOccupancyInit())).max()
+        int oldMaxHeapOccupancy = (int) kilobytes(OldData.class,
+                t -> add(t.getYoungOccupancyInit(), t.getOldOccupancyInit())).max().orElse(0);
+        int combinedMaxHeapOccupancy = (int) kilobytes(CombinedData.class, CombinedData::getCombinedOccupancyInit).max()
                 .orElse(0);
+        return Math.max(oldMaxHeapOccupancy, combinedMaxHeapOccupancy);
     }
 
     /**
@@ -550,8 +557,11 @@ public class JvmDao {
      * @return maximum heap after GC (kilobytes).
      */
     public synchronized int getMaxHeapAfterGc() {
-        return (int) kilobytes(OldData.class, t -> add(t.getYoungOccupancyEnd(), t.getOldOccupancyEnd())).max()
+        int oldMaxHeapAfterGc = (int) kilobytes(OldData.class,
+                t -> add(t.getYoungOccupancyEnd(), t.getOldOccupancyEnd())).max().orElse(0);
+        int combinedMaxHeapAfterGc = (int) kilobytes(CombinedData.class, CombinedData::getCombinedOccupancyEnd).max()
                 .orElse(0);
+        return Math.max(oldMaxHeapAfterGc, combinedMaxHeapAfterGc);
     }
 
     /**

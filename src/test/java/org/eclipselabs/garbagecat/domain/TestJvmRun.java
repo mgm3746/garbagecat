@@ -211,6 +211,7 @@ class TestJvmRun {
         assertEquals(kilobytes(786432), jvmRun.getMaxOldSpace(), "Max old space not calculated correctly.");
         assertEquals((long) 3, jvmRun.getNewRatio(), "NewRatio not calculated correctly.");
         assertEquals(kilobytes(1034624), jvmRun.getMaxHeapSpace(), "Max heap space not calculated correctly.");
+        assertEquals(kilobytes(792466), jvmRun.getMaxHeapAfterGc(), "Max heap after GC not calculated correctly.");
         assertEquals(kilobytes(1013058), jvmRun.getMaxHeapOccupancy(), "Max heap occupancy not calculated correctly.");
         assertEquals(2782, jvmRun.getMaxGcPause(), "Max pause not calculated correctly.");
         assertEquals(kilobytes(159936), jvmRun.getMaxPermSpace(), "Max perm gen space not calculated correctly.");
@@ -239,12 +240,13 @@ class TestJvmRun {
         assertEquals(kilobytes(699392), jvmRun.getMaxOldSpace(), "Max old space not calculated correctly.");
         assertEquals((long) 2, jvmRun.getNewRatio(), "NewRatio not calculated correctly.");
         assertEquals(kilobytes(1048256), jvmRun.getMaxHeapSpace(), "Max heap space not calculated correctly.");
+        assertEquals(kilobytes(106395), jvmRun.getMaxHeapAfterGc(), "Max heap after GC not calculated correctly.");
         assertEquals(kilobytes(424192), jvmRun.getMaxHeapOccupancy(), "Max heap occupancy not calculated correctly.");
         assertEquals(1070, jvmRun.getMaxGcPause(), "Max pause not calculated correctly.");
         assertEquals(kilobytes(99804), jvmRun.getMaxPermSpace(), "Max perm gen space not calculated correctly.");
         assertEquals(kilobytes(60155), jvmRun.getMaxPermOccupancy(),
                 "Max perm gen occupancy not calculated correctly.");
-        assertEquals(kilobytes(60155), jvmRun.getMaxPermOccupancy(), "Max perm gen after GC not calculated correctly.");
+        assertEquals(kilobytes(60151), jvmRun.getMaxPermAfterGc(), "Max perm gen after GC not calculated correctly.");
         assertEquals((long) 1283, jvmRun.getTotalGcPause(), "Total GC duration not calculated correctly.");
         assertEquals(2, jvmRun.getEventTypes().size(), "GC Event count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PAR_NEW),
@@ -257,24 +259,22 @@ class TestJvmRun {
 
     @Test
     void testSummaryStatsShenandoah() {
-        /*
         File testFile = TestUtil.getFile("dataset207.txt");
         GcManager gcManager = new GcManager();
-        gcManager.store(testFile, false);
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(megabytes(1589), jvmRun.getMaxHeapOccupancy(), "Max heap occupancy not calculated correctly.");
-        assertEquals(megabytes(1002), jvmRun.getMaxHeapAfterGc(), "Max heap after GC not calculated correctly.");
-        assertEquals(megabytes(1690), jvmRun.getMaxHeapSpace(), "Max heap space not calculated correctly.");
-        assertEquals(kilobytes(60155), jvmRun.getMaxPermOccupancy(),
-                "Max metaspace occupancy not calculated correctly.");
-        assertEquals(kilobytes(60155), jvmRun.getMaxPermOccupancy(),
-                "Max metaspace after GC not calculated correctly.");
-        assertEquals(kilobytes(99804), jvmRun.getMaxPermSpace(), "Max metaspace space not calculated correctly.");
-        assertEquals(4077274, jvmRun.getMaxGcPause(), "Max pause not calculated correctly.");
         assertEquals(1, jvmRun.getEventTypes().size(), "GC Event count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_FULL_GC),
                 JdkUtil.LogEventType.SHENANDOAH_FULL_GC.toString() + " collector not identified.");
-                */
+        assertEquals(megabytes(1589), jvmRun.getMaxHeapOccupancy(), "Max heap occupancy not calculated correctly.");
+        assertEquals(megabytes(1002), jvmRun.getMaxHeapAfterGc(), "Max heap after GC not calculated correctly.");
+        assertEquals(megabytes(1690), jvmRun.getMaxHeapSpace(), "Max heap space not calculated correctly.");
+        assertEquals(kilobytes(282195), jvmRun.getMaxPermOccupancy(),
+                "Max metaspace occupancy not calculated correctly.");
+        assertEquals(kilobytes(281648), jvmRun.getMaxPermAfterGc(), "Max metaspace after GC not calculated correctly.");
+        assertEquals(kilobytes(1314816), jvmRun.getMaxPermSpace(), "Max metaspace space not calculated correctly.");
+        assertEquals(4077, jvmRun.getMaxGcPause(), "Max pause not calculated correctly.");
     }
 
     /**
