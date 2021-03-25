@@ -532,10 +532,19 @@ public class JvmDao {
      * @return maximum heap size (kilobytes).
      */
     public synchronized int getMaxHeapSpace() {
-        int oldMaxHeapSpace = (int) kilobytes(OldData.class, t -> add(t.getYoungSpace(), t.getOldSpace())).max()
-                .orElse(0);
-        int combinedMaxHeapSpace = (int) kilobytes(CombinedData.class, CombinedData::getCombinedSpace).max().orElse(0);
-        return Math.max(oldMaxHeapSpace, combinedMaxHeapSpace);
+        return (int) this.blockingEvents.stream() //
+                .map(e -> {
+                    if (e instanceof OldData) {
+                        OldData old = (OldData) e;
+                        return add(old.getYoungSpace(), old.getOldSpace());
+                    } else if (e instanceof CombinedData) {
+                        return ((CombinedData) e).getCombinedSpace();
+                    } else {
+                        return ZERO;
+                    }
+                }) //
+                .filter(Objects::nonNull) //
+                .mapToLong(m -> m.getValue(KILOBYTES)).max().orElse(0);
     }
 
     /**
@@ -544,11 +553,19 @@ public class JvmDao {
      * @return maximum heap occupancy (kilobytes).
      */
     public synchronized int getMaxHeapOccupancy() {
-        int oldMaxHeapOccupancy = (int) kilobytes(OldData.class,
-                t -> add(t.getYoungOccupancyInit(), t.getOldOccupancyInit())).max().orElse(0);
-        int combinedMaxHeapOccupancy = (int) kilobytes(CombinedData.class, CombinedData::getCombinedOccupancyInit).max()
-                .orElse(0);
-        return Math.max(oldMaxHeapOccupancy, combinedMaxHeapOccupancy);
+        return (int) this.blockingEvents.stream() //
+                .map(e -> {
+                    if (e instanceof OldData) {
+                        OldData old = (OldData) e;
+                        return add(old.getYoungOccupancyInit(), old.getOldOccupancyInit());
+                    } else if (e instanceof CombinedData) {
+                        return ((CombinedData) e).getCombinedOccupancyInit();
+                    } else {
+                        return ZERO;
+                    }
+                }) //
+                .filter(Objects::nonNull) //
+                .mapToLong(m -> m.getValue(KILOBYTES)).max().orElse(0);
     }
 
     /**

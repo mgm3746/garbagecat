@@ -28,7 +28,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
  */
 public final class UnifiedUtil {
 
-    private static final Date jvmStartDate = GcUtil.parseStartDateTime("2000-01-01 00:00:00.000");
+    private static final Date jvmStartDate = GcUtil.parseDateStamp("2000-01-01T00:00:00.000-0500");
 
     private UnifiedUtil() {
         super();
