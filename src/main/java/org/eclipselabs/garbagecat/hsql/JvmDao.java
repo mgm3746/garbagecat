@@ -185,8 +185,16 @@ public class JvmDao {
     }
 
     public void addBlockingEvent(BlockingEvent event) {
+        blockingEvents.add(insertPosition(event), event);
+    }
+
+    private int insertPosition(BlockingEvent event) {
+        int size = blockingEvents.size();
+        if (size > 0 && COMPARE_BY_TIMESTAMP.compare(blockingEvents.get(size - 1), event) > 0) {
+            return size;
+        }
         int index = binarySearch(blockingEvents, event, COMPARE_BY_TIMESTAMP);
-        blockingEvents.add(index >= 0 ? index + 1 : -index - 1, event);
+        return index >= 0 ? index + 1 : -index - 1;
     }
 
     public void addStoppedTimeEvent(ApplicationStoppedTimeEvent event) {
