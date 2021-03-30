@@ -174,4 +174,12 @@ class TestShenandoahDegeneratedGcMarkEvent {
         assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
                 "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
     }
+
+    @Test
+    void testLogLinePreprocessedEvacuationMetaspace() {
+        String logLine = "2021-03-23T20:19:44.992+0000: 2871.667: [Pause Degenerated GC (Evacuation) "
+                + "1605M->1053M(1690M), 496.640 ms], [Metaspace: 256569K->256569K(1292288K)]";
+        assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
+                "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
+    }
 }

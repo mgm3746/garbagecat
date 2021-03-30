@@ -258,4 +258,11 @@ class TestGcInfoEvent {
         assertTrue(GcInfoEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".");
     }
+
+    @Test
+    void testRegions4Digits() {
+        String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Regions: 2606 x 512K";
+        assertTrue(GcInfoEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".");
+    }
 }

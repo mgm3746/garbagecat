@@ -121,8 +121,8 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Pause Degenerated GC \\((Mark|Outside of Cycle|Update Refs)\\) " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[,]{0,1} " + UnifiedRegEx.DURATION
+            + ") [\\[]{0,1}Pause Degenerated GC \\((Evacuation|Mark|Outside of Cycle|Update Refs)\\) " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[,]{0,1} " + UnifiedRegEx.DURATION
             + "[]]{0,1}([,]{0,1} [\\[]{0,1}" + "Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)[]]{0,1})?[ ]*$";
 

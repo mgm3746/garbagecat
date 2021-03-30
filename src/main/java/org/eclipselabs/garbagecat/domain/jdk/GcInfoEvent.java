@@ -130,7 +130,7 @@ public class GcInfoEvent implements ThrowAwayEvent {
             "^(" + UnifiedRegEx.DECORATOR + " )?Evacuation Reserve: " + JdkRegEx.SIZE
                     + " \\(\\d{1,3} regions\\), Max regular: " + JdkRegEx.SIZE + "$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Regions: \\d{1,3} x " + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Regions: \\d{1,} x " + JdkRegEx.SIZE + "$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Humongous object threshold: " + JdkRegEx.SIZE + "$",
             //

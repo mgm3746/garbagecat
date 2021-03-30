@@ -205,7 +205,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                     + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: (inf|\\d{1,}\\.\\d)x$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcEvent}
             "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-                    + ") (\\[)?Pause Degenerated GC \\((Mark|Outside of Cycle|Update Refs)\\)(, start\\])?$",
+                    + ") (\\[)?Pause Degenerated GC \\((Evacuation|Mark|Outside of Cycle|Update Refs)\\)"
+                    + "(, start\\])?$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFullGcEvent}
             "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR + ") \\[Pause Full, start\\]$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
@@ -221,7 +222,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                     + " \\(\\d{1,3}% of total\\), \\d{1,4} regions",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalEvacEvent}
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for Evacuation. Used CSet: " + JdkRegEx.SIZE + ", Free: "
-                    + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: \\d{1,3}\\.\\dx$",
+                    + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: \\d{1,}\\.\\dx$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalEvacEvent}
             "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR + ") (\\[)?Pause Final Evac(, start\\])?$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitUpdateEvent}
@@ -230,7 +231,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                     + ") (\\[)?Pause (Init|Final) Update Refs(, start\\])?",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitUpdateEvent}
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for Update Refs. Used: " + JdkRegEx.SIZE + ", Free: "
-                    + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: \\d{1,3}\\.\\dx",
+                    + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: (inf|\\d{1,}\\.\\d)x",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahConcurrentEvent}
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Using \\d{1,2} of \\d{1,2} workers for concurrent "
                     + "(reset|marking|preclean|evacuation|reference update)$",
@@ -251,10 +252,10 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Uncommitted " + JdkRegEx.SIZE + ". Heap: " + JdkRegEx.SIZE + " reserved, "
                     + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Failed to allocate ((Shared|TLAB), )?" + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{0,4}Failed to allocate ((Shared|TLAB), )?" + JdkRegEx.SIZE + "$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + ")?[ ]{1,4}Cancelling GC: (Allocation Failure|Stopping VM|Upgrade To Full GC)$",
+                    + ")?[ ]{0,4}Cancelling GC: (Allocation Failure|Stopping VM|Upgrade To Full GC)$",
             //
             "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
                     + ") (\\[)?Concurrent (cleanup|evacuation|marking|precleaning|reset|update references)"

@@ -92,6 +92,13 @@ class TestShenandoahPreprocessAction {
     }
 
     @Test
+    void testLogLineDegeneratedGcEvacuationStart() {
+        String logLine = "2021-03-23T20:19:44.496+0000: 2871.170: [Pause Degenerated GC (Evacuation), start]";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
     void testLogLineDegeneratedGcUpdateRefsStart() {
         String logLine = "2021-03-23T20:57:30.141+0000: 120823.424: [Pause Degenerated GC (Update Refs), start]";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
@@ -345,6 +352,14 @@ class TestShenandoahPreprocessAction {
     }
 
     @Test
+    void testLogLineFinalMarkPacer4DigitRate() {
+        String logLine = "    Pacer for Evacuation. Used CSet: 656M, Free: 853K, Non-Taxable: 87437B, "
+                + "Alloc Tax Rate: 1923.2x";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
     void testLogLineUnifiedFinalMarkPacer() {
         String logLine = "[41.911s][info][gc,ergo      ] GC(1500) Pacer for Evacuation. Used CSet: 5M, Free: 18M, "
                 + "Non-Taxable: 1M, Alloc Tax Rate: 1.1x";
@@ -407,6 +422,13 @@ class TestShenandoahPreprocessAction {
     void testLogLineInitUpdatePacer2DigitRate() {
         String logLine = "    Pacer for Update Refs. Used: 1544M, Free: 129M, Non-Taxable: 13303K, "
                 + "Alloc Tax Rate: 14.5x";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testLogLineInitUpdatePacerInfiniteRate() {
+        String logLine = "    Pacer for Update Refs. Used: 1615M, Free: 0B, Non-Taxable: 0B, Alloc Tax Rate: infx";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
     }
@@ -613,8 +635,15 @@ class TestShenandoahPreprocessAction {
     }
 
     @Test
-    void testLogLineUnifiedFailedToAllocateShared() {
+    void testLogLineFailedToAllocateShared() {
         String logLine = "    Failed to allocate Shared, 45072B";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testLogLineFailedToAllocateSharedNoLeadingSpaces() {
+        String logLine = "Failed to allocate Shared, 48280B";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
     }
@@ -622,6 +651,13 @@ class TestShenandoahPreprocessAction {
     @Test
     void testLogLineUnifiedCancellingGcAllocationFailure() {
         String logLine = "[52.872s][info][gc           ] Cancelling GC: Allocation Failure";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testLogLineCancellingGcAllocationFailureNoLeadingSpaces() {
+        String logLine = "Cancelling GC: Allocation Failure";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
     }

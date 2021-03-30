@@ -838,7 +838,9 @@ public final class JdkUtil {
             throw new TimeWarpException("Bad order: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
                     + Constants.LINE_SEPARATOR + event.getLogEntry());
         } else if (eventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 5000000) {
-            // Only report if overlap > 5 sec to account for overlaps due to JDK threading issues
+            // Only report if overlap > 5 sec to account for overlaps due to JDK threading issues and use of
+            // -XX:+UseFastUnorderedTimeStamps
+            // TODO: Make this configurable w/ a command line option?           
             throw new TimeWarpException("Event overlap: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
                     + Constants.LINE_SEPARATOR + event.getLogEntry());
         } else {
