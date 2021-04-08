@@ -135,7 +135,7 @@ public class UnifiedG1CleanupEvent extends G1Collector
             if (matcher.find()) {
                 long endTimestamp;
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(13));
+                    endTimestamp = Long.parseLong(matcher.group(12));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
                     endTimestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {
@@ -163,7 +163,7 @@ public class UnifiedG1CleanupEvent extends G1Collector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    timestamp = Long.parseLong(matcher.group(13));
+                    timestamp = Long.parseLong(matcher.group(12));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {

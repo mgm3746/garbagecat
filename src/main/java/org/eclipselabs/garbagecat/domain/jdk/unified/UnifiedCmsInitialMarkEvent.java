@@ -115,7 +115,7 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
             if (matcher.find()) {
                 long endTimestamp;
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(13));
+                    endTimestamp = Long.parseLong(matcher.group(12));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
                     endTimestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {

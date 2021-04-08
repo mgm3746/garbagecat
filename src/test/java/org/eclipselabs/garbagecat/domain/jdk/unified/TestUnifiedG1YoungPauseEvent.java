@@ -118,7 +118,40 @@ class TestUnifiedG1YoungPauseEvent {
     }
 
     @Test
-    void testLogLinePreprocessedDatestampMillis() {
+    void testLogLinePreprocessedJdk11UptimeMillis() {
+        String logLine = "[325ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) Metaspace: "
+                + "4300K->4300K(1056768K) 24M->3M(504M) 7.691ms User=0.05s Sys=0.03s Real=0.00s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        assertEquals((long) 325, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(7691, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLinePreprocessedJdk11Time() {
+        String logLine = "[2019-05-09T01:39:00.763+0000] GC(0) Pause Young (Normal) (G1 Evacuation Pause) "
+                + "Metaspace: 26116K->26116K(278528K) 65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        assertEquals((long) 610663140763L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(57263, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLinePreprocessedJdk11TimeUptime() {
+        String logLine = "[2019-05-09T01:39:00.763+0000][5.355s] GC(0) Pause Young (Normal) (G1 Evacuation Pause) "
+                + "Metaspace: 26116K->26116K(278528K) 65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        assertEquals((long) 5355, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(57263, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLinePreprocessedJdk11TimeUptimeMillis() {
         String logLine = "[2019-05-09T01:39:00.763+0000][5355ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) "
                 + "Metaspace: 26116K->26116K(278528K) 65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
