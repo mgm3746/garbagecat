@@ -61,7 +61,6 @@ import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
-import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
@@ -294,7 +293,8 @@ public class GcManager {
                 }
             }
             if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC)) {
-                if (HeapAtGcEvent.match(currentLogLine)) {
+                // Only match initial line, as FooterHeapEvent and HeatAtGcEvent share patterns
+                if (currentLogLine.matches("^.+Heap (after|before) (gc|GC) invocations.+$")) {
                     jvmDao.getAnalysis().add(Analysis.WARN_PRINT_HEAP_AT_GC);
                 }
             }
@@ -367,6 +367,12 @@ public class GcManager {
                 && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ShenandoahPreprocessAction.TOKEN)
                 && !context.contains(UnifiedPreprocessAction.TOKEN)
                 && CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
+            if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC)) {
+                // Only match initial line, as FooterHeapEvent and HeatAtGcEvent share patterns
+                if (currentLogLine.matches("^.+Heap (after|before) (gc|GC) invocations.+$")) {
+                    jvmDao.getAnalysis().add(Analysis.WARN_PRINT_HEAP_AT_GC);
+                }
+            }
             CmsPreprocessAction action = new CmsPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                     entangledLogLines, context);
             if (action.getLogEntry() != null) {

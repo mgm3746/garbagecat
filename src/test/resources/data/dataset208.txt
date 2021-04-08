@@ -1,0 +1,20 @@
+OpenJDK 64-Bit Server VM (25.282-b08) for linux-amd64 JRE (1.8.0_282-b08), built on Jan 17 2021 16:21:17 by "mockbuild" with gcc 8.3.1 20191121 (Red Hat 8.3.1-5)
+Memory: 4k page, physical 32675552k(1135372k free), swap 16412668k(15320992k free)
+CommandLine flags: -XX:+FlightRecorder -XX:InitialHeapSize=522808832 -XX:MaxHeapSize=8364941312 -XX:+PrintGC -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:StartFlightRecording=filename=flight2.jfr -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseParallelGC
+311.238: [GC (Allocation Failure) [PSYoungGen: 198976K->288K(193536K)] 293234K->94666K(535040K), 0.0010589 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+311.239: Total time for which application threads were stopped: 0.0011504 seconds, Stopping threads took: 0.0000093 seconds
+311.311: Total time for which application threads were stopped: 0.0006374 seconds, Stopping threads took: 0.0004794 seconds
+311.311: Total time for which application threads were stopped: 0.0000907 seconds, Stopping threads took: 0.0000032 seconds
+311.311: Total time for which application threads were stopped: 0.0000106 seconds, Stopping threads took: 0.0000023 seconds
+311.311: Total time for which application threads were stopped: 0.0000072 seconds, Stopping threads took: 0.0000019 seconds
+311.315: Total time for which application threads were stopped: 0.0003563 seconds, Stopping threads took: 0.0000042 seconds
+311.317: Total time for which application threads were stopped: 0.0001414 seconds, Stopping threads took: 0.0000672 seconds
+Heap
+ PSYoungGen      total 193536K, used 54452K [0x0000000719d00000, 0x0000000755900000, 0x00000007c0000000)
+  eden space 193024K, 28% used [0x0000000719d00000,0x000000071d1e5300,0x0000000725980000)
+  from space 512K, 56% used [0x0000000755880000,0x00000007558c8000,0x0000000755900000)
+  to   space 512K, 0% used [0x0000000755800000,0x0000000755800000,0x0000000755880000)
+ ParOldGen       total 341504K, used 94378K [0x00000005cd600000, 0x00000005e2380000, 0x0000000719d00000)
+  object space 341504K, 27% used [0x00000005cd600000,0x00000005d322aa70,0x00000005e2380000)
+ Metaspace       used 11523K, capacity 12020K, committed 12160K, reserved 1060864K
+  class space    used 1163K, capacity 1296K, committed 1408K, reserved 1048576K
