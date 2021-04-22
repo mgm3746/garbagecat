@@ -1,0 +1,8 @@
+2021-04-09T00:00:27.785-0400: 48509.406: [GC (Allocation Failure) AdaptiveSizePolicy::update_averages:  survived: 51216232  promoted: 106256  overflow: false
+AdaptiveSizeStart: 48509.477 collection: 817
+  avg_survived_padded_avg: 99027432.000000  avg_promoted_padded_avg: 6855161.000000  avg_pretenured_padded_avg: 0.000000  tenuring_thresh: 15  target_size: 99090432
+Desired survivor size 99090432 bytes, new threshold 15 (max 15)
+PSAdaptiveSizePolicy::compute_eden_space_size: costs minor_time: 0.000881 major_cost: 0.020394 mutator_cost: 0.978725 throughput_goal: 0.990000 live_space: 542122880 free_space: 11428429824 old_eden_size: 5561122816 desired_eden_size: 5561122816
+AdaptiveSizePolicy::survivor space sizes: collection: 817 (101187584, 102236160) -> (101187584, 99090432)
+AdaptiveSizeStop: collection: 817
+[PSYoungGen: 5615519K->50015K(5670400K)] 9450263K->3884863K(11437568K), 0.0712495 secs] [Times: user=0.27 sys=0.00, real=0.07 secs]

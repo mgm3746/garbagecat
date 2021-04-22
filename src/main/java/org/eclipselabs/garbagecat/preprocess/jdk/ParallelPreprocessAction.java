@@ -100,6 +100,27 @@ public class ParallelPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC)$";
 
     /**
+     * Regular expression beginning PARALLEL_SCAVENGE with -XX:+PrintAdaptiveSizePolicy logging.
+     * 
+     * 2021-04-09T00:00:27.785-0400: 48509.406: [GC (Allocation Failure) AdaptiveSizePolicy::update_averages: survived:
+     * 51216232 promoted: 106256 overflow: false
+     */
+    private static final String REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY = "^(" + JdkRegEx.DECORATOR
+            + " \\[GC \\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC
+            + ")\\) )AdaptiveSizePolicy::update_averages:  survived: \\d{1,}  promoted: "
+            + "\\d{1,}  overflow: (false|true)$";
+
+    /**
+     * Regular expression beginning PARALLEL_COMPACTING_OLD or PARALLEL_SERIAL_OLD with -XX:+PrintAdaptiveSizePolicy
+     * logging.
+     * 
+     * 2021-04-09T07:19:43.692-0400: 74865.313: [Full GC (Ergonomics) AdaptiveSizeStart: 74869.165 collection: 1223
+     * 
+     */
+    private static final String REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY = "^(" + JdkRegEx.DECORATOR
+            + " \\[Full GC \\(Ergonomics\\) )AdaptiveSizeStart: " + JdkRegEx.TIMESTAMP + " collection: \\d{1,}[ ]{0,}$";
+
+    /**
      * Regular expression for retained end of collection.
      * 
      * [PSYoungGen: 32064K->0K(819840K)] [PSOldGen: 355405K->387085K(699072K)] 387470K->387085K(1518912K) [PSPermGen:
@@ -109,12 +130,32 @@ public class ParallelPreprocessAction implements PreprocessAction {
      * real=0.20 secs]
      * 
      * , 33.6887649 secs] [Times: user=33.68 sys=0.02, real=33.69 secs]
+     * 
+     * [PSYoungGen: 115174K->0K(5651968K)] [ParOldGen: 5758620K->1232841K(5767168K)] 5873794K->1232841K(11419136K),
+     * [Metaspace: 214025K->213385K(1257472K)], 3.8546414 secs] [Times: user=10.71 sys=0.72, real=3.86 secs]
      */
     private static final String REGEX_RETAIN_END = "^(  | )?((\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\]( \\[PSOldGen: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\]( \\[(ParOldGen|PSOldGen): " + JdkRegEx.SIZE_K + "->"
             + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\])? " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)( \\[PSPermGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)\\])?)?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+            + JdkRegEx.SIZE_K + "\\)[,]{0,1}( \\[(PSPermGen|Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K
+            + "\\(" + JdkRegEx.SIZE_K + "\\)\\])?)?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+
+    /**
+     * Regular expressions for lines thrown away.
+     */
+    private static final String[] REGEX_THROWAWAY = {
+            // -XX:+PrintAdaptiveSizePolicy
+            "^AdaptiveSize(Start|Stop).+$",
+            //
+            "^  avg_survived_padded_avg.+$",
+            //
+            "^Desired (eden|survivor) size.+$",
+            //
+            "^(PS)?AdaptiveSizePolicy.+$",
+            //
+            "^\\d{1,} desired_eden_size: \\d{1,}$"
+            //
+    };
 
     /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
@@ -166,6 +207,24 @@ public class ParallelPreprocessAction implements PreprocessAction {
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE)) {
             // Remove beginning PARALLEL_SCAVENGE output
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY)) {
+            // Remove ending AdaptiveResizePolicy output
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY)) {
+            // Remove ending AdaptiveResizePolicy output
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
@@ -225,8 +284,23 @@ public class ParallelPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX_BEGINNING_UNLOADING_CLASS)
+        boolean match = false;
+        if (logLine.matches(REGEX_BEGINNING_UNLOADING_CLASS)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE) || logLine.matches(REGEX_RETAIN_END);
+                || logLine.matches(REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY)
+                || logLine.matches(REGEX_RETAIN_END)) {
+            match = true;
+        } else {
+            // TODO: Get rid of this and make them throwaway events?
+            for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
+                if (logLine.matches(REGEX_THROWAWAY[i])) {
+                    match = true;
+                    break;
+                }
+            }
+        }
+        return match;
     }
 }
