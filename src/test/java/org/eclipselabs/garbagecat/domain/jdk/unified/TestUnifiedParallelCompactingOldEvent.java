@@ -130,4 +130,13 @@ class TestUnifiedParallelCompactingOldEvent {
         assertTrue(UnifiedParallelCompactingOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + ".");
     }
+
+    @Test
+    void testPreprocessedTriggerMetadataGcThreshold() {
+        String logLine = "[2021-05-06T21:03:33.227+0000][22115ms] GC(11) Pause Full (Metadata GC Threshold) "
+                + "PSYoungGen: 2160K->0K(66560K) ParOldGen: 57994K->54950K(175104K) "
+                + "Metaspace: 88760K->88684K(337920K) 58M->53M(236M) 521.443ms User=0.86s Sys=0.00s Real=0.52s";
+        assertTrue(UnifiedParallelCompactingOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + ".");
+    }
 }

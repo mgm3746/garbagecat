@@ -157,4 +157,13 @@ class TestUnifiedParallelScavengeEvent {
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
     }
+
+    @Test
+    void testPreprocessedTriggerMetadataGcThreshold() {
+        String logLine = "[2021-05-06T21:03:33.183+0000][22071ms] GC(10) Pause Young (Metadata GC Threshold) "
+                + "PSYoungGen: 30682K->2160K(66560K) ParOldGen: 46817K->57994K(175104K) "
+                + "Metaspace: 88760K->88760K(337920K) 75M->58M(236M) 44.313ms User=0.07s Sys=0.02s Real=0.04s";
+        assertTrue(UnifiedParallelScavengeEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+    }
 }

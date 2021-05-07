@@ -778,6 +778,14 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testLogLineSerialOldStartTriggerMetadataGcThreshold() {
+        String logLine = "[2021-05-06T21:03:33.749+0000][22637ms] GC(11) Pause Full (Metadata GC Threshold) "
+                + "58M->53M(236M) 521.443ms";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testLogLineSerialOldInfo() {
         String logLine = "[0.076s][info][gc             ] GC(2) Pause Full (Allocation Failure) 0M->0M(2M) 1.699ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -1142,6 +1150,7 @@ class TestUnifiedPreprocessAction {
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SERIAL_NEW),
+
                 JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " collector not identified.");
     }
 
@@ -1295,5 +1304,19 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_PARALLEL),
                 JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testG1FullTriggerMetadataGcThreshold() {
+        File testFile = TestUtil.getFile("dataset210.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD),
+                JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " collector not identified.");
     }
 }
