@@ -105,4 +105,23 @@ class TestUnifiedG1CleanupEvent {
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
     }
+
+    @Test
+    void testLogLinePreprocessedUptimeMillis() {
+        String logLine = "[2021-05-25T08:46:20.294-0400][1191010697ms] GC(14942) Pause Cleanup 233M->233M(512M) "
+                + "0.496ms User=0.00s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1CleanupEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + ".");
+        UnifiedG1CleanupEvent event = new UnifiedG1CleanupEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString(), event.getName(), "Event name incorrect.");
+        assertEquals((long) (1191010697 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(233 * 1024), event.getCombinedOccupancyInit(),
+                "Combined begin size not parsed correctly.");
+        assertEquals(kilobytes(233 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(512 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(0, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
 }

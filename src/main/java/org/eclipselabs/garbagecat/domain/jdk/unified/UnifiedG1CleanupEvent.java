@@ -167,11 +167,11 @@ public class UnifiedG1CleanupEvent extends G1Collector
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {
-                    if (matcher.group(15) != null) {
-                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            timestamp = Long.parseLong(matcher.group(17));
+                    if (matcher.group(14) != null) {
+                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            timestamp = Long.parseLong(matcher.group(16));
                         } else {
-                            timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
                         }
                     } else {
                         // Datestamp only.
