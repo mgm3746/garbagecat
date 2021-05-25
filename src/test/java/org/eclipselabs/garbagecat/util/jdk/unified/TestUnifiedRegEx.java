@@ -65,8 +65,8 @@ class TestUnifiedRegEx {
     }
 
     @Test
-    void testDecoratorUptimeMillis9Digits() {
-        String decorator = "[100159717ms]";
+    void testDecoratorUptimeMillis15Digits() {
+        String decorator = "[115443156312345ms]";
         assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Time decorator " + decorator + " not recognized.");
     }
 
