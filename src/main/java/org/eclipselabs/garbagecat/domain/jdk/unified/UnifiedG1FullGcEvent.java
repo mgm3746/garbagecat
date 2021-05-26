@@ -69,7 +69,7 @@ public class UnifiedG1FullGcEvent extends G1Collector
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + ")";
 
     /**
      * Regular expression defining preprocessed logging.

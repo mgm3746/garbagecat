@@ -711,14 +711,14 @@ class TestUnifiedPreprocessAction {
 
     @Test
     void testLogLineG1StringTableLargeNumbers() {
-        String logLine = "[2020-06-24T18:15:29.817-0700][275812ms] GC(93) Cleaned string and symbol table, strings: "
-                + "94127 processed, 27 removed, symbols: 437573 processed, 2702 removed";
+        String logLine = "[2021-05-25T08:46:20.163-0400][1191010566ms] GC(14942) Cleaned string and symbol table, "
+                + "strings: 756258 processed, 688568 removed, symbols: 349887 processed, 34 removed";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
 
     @Test
-    void testLogLineG1StringTableRemoved5Digits() {
+    void testLogLineG1StringTableRemoved6Digits() {
         String logLine = "[2020-09-11T08:23:37.353+0000][11925659ms] GC(194) Cleaned string and symbol table, "
                 + "strings: 368294 processed, 9531 removed, symbols: 1054532 processed, 18545 removed";
         assertTrue(UnifiedPreprocessAction.match(logLine),

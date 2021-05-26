@@ -166,4 +166,18 @@ class TestUnifiedG1FullGcEvent {
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
     }
+
+    @Test
+    void testPreprocessingTriggerHeapDumpInitiatedGc() {
+        File testFile = TestUtil.getFile("dataset211.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+    }
 }

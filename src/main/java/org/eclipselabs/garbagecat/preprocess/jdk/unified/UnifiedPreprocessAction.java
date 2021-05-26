@@ -377,13 +377,16 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      *
      * [2021-03-13T03:45:46.526+0530][80339594ms] GC(9216) Pause Full (GCLocker Initiated GC) 8184M->8180M(8192M) 
      * 2101.341ms
+     * 
+     * [2021-05-25T16:02:21.733-0400][1217172136ms] GC(15111) Pause Full (Heap Dump Initiated GC)
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
             + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_ERGONOMICS + "|"
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\)( " + JdkRegEx.SIZE
-            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + ")$";
+            + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) " + UnifiedRegEx.DURATION + ")$";
 
     /**
      * Regular expression for retained Pause Young data.
@@ -516,7 +519,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Pause Remark$",
             //
             "^" + UnifiedRegEx.DECORATOR
-                    + " Cleaned string and symbol table, strings: \\d{1,7} processed, \\d{1,5} removed, "
+                    + " Cleaned string and symbol table, strings: \\d{1,7} processed, \\d{1,6} removed, "
                     + "symbols: \\d{1,7} processed, \\d{1,5} removed$",
 
             //
@@ -525,9 +528,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Pause Cleanup$",
             //
             "^" + UnifiedRegEx.DECORATOR + " MMU target violated:.+",
-            //
-            // "^" + UnifiedRegEx.DECORATOR + " Concurrent (Clear Claimed Marks|Cycle|Mark \\(" + JdkRegEx.TIMESTAMP
-            // + "s\\)|Mark Abort|Mark From Roots|Scan Root Regions).*$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Attempting maximally compacting collection$",
             // Parallel
