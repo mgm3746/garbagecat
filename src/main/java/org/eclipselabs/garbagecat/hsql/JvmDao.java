@@ -656,7 +656,7 @@ public class JvmDao {
      */
     public synchronized int getMaxStoppedTime() {
         return convertMicrosToMillis(ints(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
-                .collect(summingLong(Long::valueOf))).intValue();
+                .mapToInt(Integer::valueOf).max().orElse(0)).intValue();
     }
 
     /**

@@ -545,7 +545,14 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " Application time:.+$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " To-space exhausted$"
+            "^" + UnifiedRegEx.DECORATOR + " To-space exhausted$",
+            // AdaptiveSizePolicy
+            "^" + UnifiedRegEx.DECORATOR + " (PS)?AdaptiveSize.*$",
+            //
+            "^" + UnifiedRegEx.DECORATOR
+                    + " (Base_footprint:|    capacities|Desired survivor size|    eden:|    from:|Live_space:"
+                    + "|  minor pause:|Minor_pause:|Old eden_size:|old_gen_capacity:|PSYoungGen::resize_spaces"
+                    + "|      to:|Young generation size:).*$"
             //
     };
 

@@ -1084,6 +1084,127 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testLogLineAdaptiveSizePolicy() {
+        String logLine = "[2021-06-15T16:03:03.722-0400][237.884s] GC(0) AdaptiveSizePolicy::minor_collection_end: "
+                + "minor gc cost: 0.000106  average: 0.000106";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyMinorPause() {
+        String logLine = "[2021-06-15T16:03:03.722-0400][237.884s] GC(0)   minor pause: 25.024410 minor period "
+                + "237035.231990";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyOldGenCapacity() {
+        String logLine = "[2021-06-15T16:03:03.722-0400][237.884s] GC(0) old_gen_capacity: 14241759232 "
+                + "young_gen_capacity: 1879048192";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyDesiredSurvivorSize() {
+        String logLine = "[2021-06-15T16:03:03.723-0400][237.884s] GC(0) Desired survivor size 268435456 bytes, new "
+                + "threshold 7 (max threshold 15)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyMinorpause() {
+        String logLine = "[2021-06-15T16:03:03.723-0400][237.884s] GC(0) Minor_pause: 0.025024 major_pause: 0.000000 "
+                + "minor_interval: 237.060257 major_interval: 0.000000pause_goal: 18446744073709552.000000";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyLivespace() {
+        String logLine = "[2021-06-15T16:03:03.723-0400][237.884s] GC(0) Live_space: 316776736 free_space: 3221225472";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyBasefootprint() {
+        String logLine = "[2021-06-15T16:03:03.723-0400][237.884s] GC(0) Base_footprint: 268435456 avg_young_live: "
+                + "48341272 avg_old_live: 0";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyOldEdensize() {
+        String logLine = "[2021-06-15T16:03:03.723-0400][237.884s] GC(0) Old eden_size: 1610612736 desired_eden_size: "
+                + "1610612736";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyPsYoungGenResizespaces() {
+        String logLine = "[2021-06-15T19:07:24.707-0400][11298.869s] GC(716) PSYoungGen::resize_spaces("
+                + "requested_eden_size: 2011168768, requested_survivor_size: 68157440)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyEden() {
+        String logLine = "[2021-06-15T19:07:24.707-0400][11298.869s] GC(716)     eden: "
+                + "[0x0000000780000000..0x00000007f7e00000) 2011168768";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyFrom() {
+        String logLine = "[2021-06-15T16:03:03.723-0400][237.884s] GC(0)     from: "
+                + "[0x00000007e0000000..0x00000007f0000000) 268435456";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyTo() {
+        String logLine = "[2021-06-15T16:03:03.723-0400][237.884s] GC(0)       to: "
+                + "[0x00000007f0000000..0x0000000800000000) 268435456";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyCapacities() {
+        String logLine = "[2021-06-15T16:03:03.723-0400][237.884s] GC(0)     capacities are the right sizes, "
+                + "returning";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyYoungGenerationSize() {
+        String logLine = "[2021-06-15T16:03:03.723-0400][237.884s] GC(0) Young generation size: desired eden: "
+                + "1610612736 survivor: 268435456 used: 48341272 capacity: 1879048192 gen limits: "
+                + "2147483648 / 2147483648";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLinePsAdaptiveSizePolicy() {
+        String logLine = "[2021-06-15T16:03:03.723-0400][237.884s] GC(0) PSAdaptiveSizePolicy::check_gc_overhead_limit:"
+                + " promo_limit: 14241759232 max_eden_size: 1610612736 total_free_limit: 15852371968 max_old_gen_size: "
+                + "14241759232 max_eden_size: 1610612736 mem_free_limit: 317047439";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testPreprocessingG1YoungPauseNormalCollection() {
         File testFile = TestUtil.getFile("dataset155.txt");
         GcManager gcManager = new GcManager();
@@ -1318,5 +1439,19 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD),
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testParallelPrintAdaptiveSizePolicy() {
+        File testFile = TestUtil.getFile("dataset212.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE),
+                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " collector not identified.");
     }
 }
