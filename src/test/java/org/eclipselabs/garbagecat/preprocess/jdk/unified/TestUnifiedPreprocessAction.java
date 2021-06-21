@@ -1179,6 +1179,13 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testLogLineAdaptiveSizePolicyEdenFromTo() {
+        String logLine = "[2021-06-15T16:04:45.320-0400][339.481s] GC(4)   Eden, from, to:";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testLogLineAdaptiveSizePolicyCapacities() {
         String logLine = "[2021-06-15T16:03:03.723-0400][237.884s] GC(0)     capacities are the right sizes, "
                 + "returning";
@@ -1191,6 +1198,100 @@ class TestUnifiedPreprocessAction {
         String logLine = "[2021-06-15T16:03:03.723-0400][237.884s] GC(0) Young generation size: desired eden: "
                 + "1610612736 survivor: 268435456 used: 48341272 capacity: 1879048192 gen limits: "
                 + "2147483648 / 2147483648";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyDoScavenge() {
+        String logLine = "[2021-06-15T16:04:45.069-0400][339.230s] Do scavenge: average_promoted 60835652 "
+                + "padded_average_promoted 183311856 free in old gen 13997838280";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyAvgSurvived() {
+        String logLine = "[2021-06-15T16:04:45.320-0400][339.481s] GC(4) avg_survived: 313898944.000000  avg_deviation:"
+                + " 127148224.000000";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyAvgSurvivedPadded() {
+        String logLine = "[2021-06-15T16:04:45.320-0400][339.481s] GC(4) avg_survived_padded_avg: 695343616.000000";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyAvgPromoted() {
+        String logLine = "[2021-06-15T16:04:45.320-0400][339.481s] GC(4) avg_promoted_avg: 103380024.000000  "
+                + "avg_promoted_dev: 66695816.000000";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyAvgPromotedPadded() {
+        String logLine = "[2021-06-15T16:04:45.320-0400][339.481s] GC(4) avg_promoted_padded_avg: 303467488.000000  "
+                + "avg_pretenured_padded_avg: 0.000000  tenuring_thresh: 6  target_size: 268435456";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyEdenToFrom() {
+        String logLine = "[2021-06-15T17:26:44.495-0400][5258.656s] GC(197)   Eden, to, from:";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyEdenStart() {
+        String logLine = "[2021-06-15T16:04:45.320-0400][339.481s] GC(4)     [eden_start .. eden_end): "
+                + "[0x0000000780000000 .. 0x00000007e0000000) 1610612736";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyFromStart() {
+        String logLine = "[2021-06-15T16:04:45.320-0400][339.481s] GC(4)     [from_start .. from_end): "
+                + "[0x00000007e0000000 .. 0x00000007f0000000) 268435456";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyToStart() {
+        String logLine = "[2021-06-15T16:04:45.320-0400][339.481s] GC(4)     [  to_start ..   to_end): "
+                + "[0x00000007f0000000 .. 0x0000000800000000) 268435456";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyScaledEdenIncrement() {
+        String logLine = "[2021-06-15T16:04:57.139-0400][351.300s] GC(5) Scaled eden increment: 1610612736 by "
+                + "1.000000 down to 1610612736";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizePolicyAdjustingEden() {
+        String logLine = "[2021-06-15T17:26:44.495-0400][5258.656s] GC(197) Adjusting eden for throughput (avg "
+                + "0.989786 goal 0.990000). desired_eden_size 2474639360 eden delta 412614656";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testLogLineAdaptiveSizeNoFullAfterScavenge() {
+        String logLine = "[2021-06-15T16:04:45.320-0400][339.481s] No full after scavenge average_promoted "
+                + "103380024 padded_average_promoted 303467488 free in old gen 13724280784";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -1444,6 +1545,20 @@ class TestUnifiedPreprocessAction {
     @Test
     void testParallelPrintAdaptiveSizePolicy() {
         File testFile = TestUtil.getFile("dataset212.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE),
+                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testParallelPrintAdaptiveSizePolicyDoScavenge() {
+        File testFile = TestUtil.getFile("dataset213.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);

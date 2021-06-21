@@ -550,9 +550,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " (PS)?AdaptiveSize.*$",
             //
             "^" + UnifiedRegEx.DECORATOR
-                    + " (Base_footprint:|    capacities|Desired survivor size|    eden:|    from:|Live_space:"
-                    + "|  minor pause:|Minor_pause:|Old eden_size:|old_gen_capacity:|PSYoungGen::resize_spaces"
-                    + "|      to:|Young generation size:).*$"
+                    + " ((Adjusting|Scaled) eden|avg_promoted|avg_survived|Base_footprint:|    capacities|"
+                    + "Desired survivor size|Do scavenge:|    eden:|[ ]{4}\\[[ ]{0,2}(eden|from|to)_start|"
+                    + "  Eden, (from|to), (to|from):|    from:|Live_space:|  minor pause:|Minor_pause:|"
+                    + "No full after scavenge|Old eden_size:|old_gen_capacity:|PSYoungGen::resize_spaces|      to:|"
+                    + "Young generation size:).*$"
             //
     };
 

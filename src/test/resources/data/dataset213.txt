@@ -1,0 +1,36 @@
+[2021-06-15T16:04:45.069-0400][339.230s] Do scavenge: average_promoted 60835652 padded_average_promoted 183311856 free in old gen 13997838280
+[2021-06-15T16:04:45.069-0400][339.230s] GC(4) Pause Young (Allocation Failure)
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) AdaptiveSizePolicy::minor_collection_end: minor gc cost: 0.014582  average: 0.007773
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4)   minor pause: 250.758537 minor period 16945.671423
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) AdaptiveSizePolicy::update_averages:  survived: 268411296  promoted: 273557496  overflow: true
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) AdaptiveSizeStart:  collection: 5
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) old_gen_capacity: 14241759232 young_gen_capacity: 1879048192
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) avg_survived: 313898944.000000  avg_deviation: 127148224.000000
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) avg_survived_padded_avg: 695343616.000000
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) avg_promoted_avg: 103380024.000000  avg_promoted_dev: 66695816.000000
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) avg_promoted_padded_avg: 303467488.000000  avg_pretenured_padded_avg: 0.000000  tenuring_thresh: 6  target_size: 268435456
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) Desired survivor size 268435456 bytes, new threshold 6 (max threshold 15)
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) AdaptiveSizePolicy::adjust_eden_for_footprint adjusting eden for footprint.  starting eden size 1610612736 reduced eden size 1570347419 eden delta 40265317
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) PSAdaptiveSizePolicy::compute_eden_space_size: costs minor_time: 0.007773 major_cost: 0.000000 mutator_cost: 0.992227 throughput_goal: 0.990000
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) Minor_pause: 0.185868 major_pause: 0.000000 minor_interval: 64.826538 major_interval: 0.000000pause_goal: 18446744073709552.000000
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) Live_space: 479012000 free_space: 3221225472
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) Base_footprint: 268435456 avg_young_live: 210576544 avg_old_live: 0
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) Old eden_size: 1610612736 desired_eden_size: 1570766848
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) PSAdaptiveSizePolicy::check_gc_overhead_limit: promo_limit: 14241759232 max_eden_size: 1610612736 total_free_limit: 15852371968 max_old_gen_size: 14241759232 max_eden_size: 1610612736 mem_free_limit: 317047439
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) PSYoungGen::resize_spaces(requested_eden_size: 1570766848, requested_survivor_size: 268435456)
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4)     eden: [0x0000000780000000..0x00000007e0000000) 1610612736
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4)     from: [0x00000007e0000000..0x00000007f0000000) 268435456
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4)       to: [0x00000007f0000000..0x0000000800000000) 268435456
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4)   Eden, from, to:
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4)     [eden_start .. eden_end): [0x0000000780000000 .. 0x00000007e0000000) 1610612736
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4)     [from_start .. from_end): [0x00000007e0000000 .. 0x00000007f0000000) 268435456
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4)     [  to_start ..   to_end): [0x00000007f0000000 .. 0x0000000800000000) 268435456
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) AdaptiveSizePolicy::survivor space sizes: collection: 5 (268435456, 268435456) -> (268435456, 268435456)
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) Young generation size: desired eden: 1570766848 survivor: 268435456 used: 268411296 capacity: 1879048192 gen limits: 2147483648 / 2147483648
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) AdaptiveSizeStop: collection: 5
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) PSYoungGen: 1834996K->262120K(1835008K)
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) ParOldGen: 238204K->505350K(13907968K)
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) Metaspace: 134834K->134834K(1171456K)
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) Pause Young (Allocation Failure) 2024M->749M(15374M) 251.170ms
+[2021-06-15T16:04:45.320-0400][339.481s] GC(4) User=2.54s Sys=0.63s Real=0.25s
+[2021-06-15T16:04:45.320-0400][339.481s] No full after scavenge average_promoted 103380024 padded_average_promoted 303467488 free in old gen 13724280784
