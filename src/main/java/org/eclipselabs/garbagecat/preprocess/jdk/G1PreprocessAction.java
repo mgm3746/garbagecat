@@ -389,6 +389,9 @@ public class G1PreprocessAction implements PreprocessAction {
      * 2017-06-22T13:55:45.753+0530: 71574.499: [GC pause (G1 Humongous Allocation) (young)2017-06-22T13:55:45.771+0530:
      * 71574.517: [GC concurrent-root-region-scan-end, 0.0181265 secs]
      * 
+     * 2021-06-15T13:51:22.274-0600: 39666.928: [GC pause (G1 Evacuation Pause) (young)2021-06-15T13:51:22.274-0600:
+     * 39666.928: [GC concurrent-root-region-scan-end, 0.0005374 secs]
+     * 
      * 537.122: [GC pause (G1 Evacuation Pause) (young)537.123: [GC concurrent-root-region-scan-start]
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT = "^((" + JdkRegEx.DATESTAMP + ": )?"
@@ -413,21 +416,23 @@ public class G1PreprocessAction implements PreprocessAction {
      * 2017-06-22T16:35:58.032+0530: 81186.777: 2017-06-22T16:35:58.032+0530: [Full GC (Metadata GC Threshold)
      * 81186.777: [GC concurrent-root-region-scan-start]
      * 
+     * 35081.727: 2021-06-15T12:34:57.324-0600[Full GC (Allocation Failure) : 35081.727: [GC concurrent-mark-start]
+     * 
      * 35420.674: [Full GC (Allocation Failure) 35420.734: [GC concurrent-mark-start]3035M->3030M(3072M), 21.7552521
      * secs][Eden: 0.0B(153.0M)->0.0B(153.0M) Survivors: 0.0B->0.0B Heap: 3035.5M(3072.0M)->3030.4M(3072.0M)],
      * [Metaspace: 93308K->93308K(352256K)] [Times: user=16.39 sys=0.04, real=21.75 secs]
-     * 
      */
     private static final String REGEX_RETAIN_BEGINNING_FULL_CONCURRENT = "^(" + JdkRegEx.DATESTAMP + ": )?("
             + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + "?(: )?" + JdkRegEx.TIMESTAMP + "?(:)?( )?(: )?("
-            + JdkRegEx.DATESTAMP + ": )?(\\[Full GC \\((" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\)[ ]{0,1})((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + "?(:)?( )?(\\[GC concurrent-(root-region-scan|mark)-(start|end)(, " + JdkRegEx.DURATION + ")?\\]))("
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
-            + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], \\[Metaspace: " + JdkRegEx.SIZE
-            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + ")?[ ]*$";
+            + JdkRegEx.DATESTAMP + ")?(: )?(\\[Full GC \\((" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\)[ ]{0,1})(: )?((" + JdkRegEx.DATESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP + "?(:)?( )?(\\[GC concurrent-(root-region-scan|mark)-(start|end)(, "
+            + JdkRegEx.DURATION + ")?\\]))(" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: "
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\], \\[Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]"
+            + TimesData.REGEX + ")?[ ]*$";
 
     /**
      * Regular expression for retained middle G1_YOUNG_PAUSE collection.
@@ -745,12 +750,12 @@ public class G1PreprocessAction implements PreprocessAction {
             Matcher matcher = pattern.matcher(logEntry);
             int indexG1FullDatestamp = 11;
             int indexG1FullTimestamp = 21;
-            int indexFullBlock = 37;
-            int indexConcurrentLine = 39;
-            int indexConcurrentDatestamp = 40;
-            int indexConcurrentTimestamp = 50;
-            int indexConcurrentBlock = 53;
-            int indexG1DetailsBlock = 60;
+            int indexFullBlock = 38;
+            int indexConcurrentLine = 41;
+            int indexConcurrentDatestamp = 42;
+            int indexConcurrentTimestamp = 52;
+            int indexConcurrentBlock = 55;
+            int indexG1DetailsBlock = 62;
             if (matcher.matches()) {
                 if (matcher.group(indexConcurrentTimestamp) != null) {
                     entangledLogLines.add(matcher.group(indexConcurrentLine));

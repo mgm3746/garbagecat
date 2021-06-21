@@ -827,6 +827,14 @@ class TestG1PreprocessAction {
     }
 
     @Test
+    void testLogLineFullCombinedConcurrentMarkStart() {
+        String logLine = "35081.727: 2021-06-15T12:34:57.324-0600[Full GC (Allocation Failure) : 35081.727: "
+                + "[GC concurrent-mark-start]";
+        assertTrue(G1PreprocessAction.match(logLine, null, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+    }
+
+    @Test
     void testLogLineEndOfFullCollection() {
         String logLine = " 1831M->1213M(5120M), 5.1353878 secs]";
         assertTrue(G1PreprocessAction.match(logLine, null, null),
@@ -979,6 +987,21 @@ class TestG1PreprocessAction {
         G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
         assertEquals("188935.313: [GC pause (G1 Evacuation Pause) (young)", event.getLogEntry(),
                 "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineYoungPauseMixedConcurrentRootRegiaonScanEnd() {
+        String priorLogLine = "";
+        String logLine = "2021-06-15T13:51:22.274-0600: 39666.928: [GC pause (G1 Evacuation Pause) (young)"
+                + "2021-06-15T13:51:22.274-0600: 39666.928: [GC concurrent-root-region-scan-end, 0.0005374 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        assertEquals("2021-06-15T13:51:22.274-0600: 39666.928: [GC pause (G1 Evacuation Pause) (young)",
+                event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
