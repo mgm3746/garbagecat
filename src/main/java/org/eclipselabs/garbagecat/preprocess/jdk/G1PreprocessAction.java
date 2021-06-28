@@ -522,8 +522,8 @@ public class G1PreprocessAction implements PreprocessAction {
             //
             "^   \\[Parallel Time:.+$",
             // Use complete pattern to identify mixed logging (e.g. stopped time at end)
-            "^      \\[GC Worker Start \\(ms\\): Min: \\d{1,10}[\\.,]\\d, Avg: \\d{1,10}[\\.,]\\d, "
-                    + "Max: \\d{1,10}[\\.,]\\d, Diff: \\d{1,10}[\\.,]\\d\\]$",
+            "^      \\[GC Worker Start \\(ms\\): Min: \\d{1,}[\\.,]\\d, Avg: \\d{1,}[\\.,]\\d, Max: \\d{1,}[\\.,]\\d, "
+                    + "Diff: \\d{1,}[\\.,]\\d\\]$",
             // JDK8 does not have "Time"
             "^      \\[GC Worker Start( Time)? \\(ms\\):(  \\d{1,10}(\\.|,)\\d)+(\\])?$",
             //
