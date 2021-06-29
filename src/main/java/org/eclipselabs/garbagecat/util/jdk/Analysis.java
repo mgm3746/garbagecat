@@ -456,7 +456,7 @@ public enum Analysis {
 
     /**
      * Property key for fast unordered timestamps (experimental) enabled with
-     * <code>-XX:+UseFastUnorderedTimeStamps</code>.
+     * <code>-XX:+UnlockExperimentalVMOptions -XX:+UseFastUnorderedTimeStamps</code>.
      */
     WARN_FAST_UNORDERED_TIMESTAMPS("warn.fast.unordered.timestamps"),
 

@@ -1052,7 +1052,9 @@ public class JvmRun {
         if (jvm.getUnlockExperimentalVmOptionsEnabled() != null) {
             analysis.add(INFO_EXPERIMENTAL_VM_OPTIONS);
         }
-        if (jvm.getUseFastUnorderedTimeStampsEnabled() != null) {
+        // Only report fast unordered timestamps if explicity set. If the JVM sets it via ergonomics,
+        // -XX:+UnlockExperimentalVMOptions will not be in the gc log header.
+        if (jvm.getUseFastUnorderedTimeStampsEnabled() != null && jvm.getUnlockExperimentalVmOptionsEnabled() != null) {
             analysis.add(WARN_FAST_UNORDERED_TIMESTAMPS);
             // Don't double report
             if (analysis.contains(INFO_EXPERIMENTAL_VM_OPTIONS)) {

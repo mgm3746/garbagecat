@@ -1455,8 +1455,8 @@ class TestAnalysis {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS),
-                Analysis.WARN_FAST_UNORDERED_TIMESTAMPS + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS),
+                Analysis.WARN_FAST_UNORDERED_TIMESTAMPS + " analysis incorrectly identified.");
     }
 
     /**
