@@ -95,8 +95,9 @@ public class UnifiedYoungEvent extends UnknownCollector
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_SYSTEM_GC
-            + ")";
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
 
     /**
      * Regular expression defining the logging.

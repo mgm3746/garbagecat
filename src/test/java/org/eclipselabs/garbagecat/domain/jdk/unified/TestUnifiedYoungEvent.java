@@ -121,6 +121,20 @@ class TestUnifiedYoungEvent {
     }
 
     @Test
+    void testTriggerMetadataGcThreshold() {
+        String logLine = "[1.705s][info][gc] GC(0) Pause Young (Metadata GC Threshold) 337M->7M(5888M) 7.886ms";
+        assertTrue(UnifiedYoungEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
+    }
+
+    @Test
+    void testTriggerGcLockerInitiatedGc() {
+        String logLine = "[18.084s][info][gc] GC(9) Pause Young (GCLocker Initiated GC) 1668M->411M(5727M) 86.334ms";
+        assertTrue(UnifiedYoungEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
+    }
+
+    @Test
     void testUnifiedYoungStandardLogging() {
         File testFile = TestUtil.getFile("dataset149.txt");
         GcManager gcManager = new GcManager();
