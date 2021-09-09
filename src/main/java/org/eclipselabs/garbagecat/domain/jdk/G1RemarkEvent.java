@@ -49,6 +49,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2010-02-26T08:31:51.990-0600: [GC remark, 0.0178990 secs]
  * </pre>
  * 
+ * <p>
+ * 3) With -XX:+PrintReferenceGC:
+ * </p>
+ * 
+ * <pre>
+ * 2021-08-20T11:53:44.348+0100: 2377830.399: [GC remark 2021-08-20T11:53:44.348+0100: 2377830.399: [Finalize Marking, 0.0012914 secs] 2021-08-20T11:53:44.350+0100: 2377830.400: [GC ref-proc2021-08-20T11:53:44.350+0100: 2377830.400: [SoftReference, 18076174 refs, 2.6283514 secs]2021-08-20T11:53:46.978+0100: 2377833.028: [WeakReference, 18636 refs, 0.0029750 secs]2021-08-20T11:53:46.981+0100: 2377833.031: [FinalReference, 17387271 refs, 2.5263032 secs]2021-08-20T11:53:49.507+0100: 2377835.558: [PhantomReference, 0 refs, 2136 refs, 0.0012040 secs]2021-08-20T11:53:49.509+0100: 2377835.559: [JNI Weak Reference, 0.0001679 secs], 14.8775199 secs] 2021-08-20T11:53:59.227+0100: 2377845.278: [Unloading, 0.0178265 secs], 14.9383332 secs]
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
  * 
@@ -57,8 +65,18 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC remark, "
-            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC remark( ("
+            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Finalize Marking, 0.0012914 secs\\] ("
+            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC ref-proc(" + JdkRegEx.DATESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP + ": \\[SoftReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]("
+            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[WeakReference, \\d{1,} refs, "
+            + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[FinalReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP + ": \\[PhantomReference, \\d{1,} refs, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]("
+            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[JNI Weak Reference, " + JdkRegEx.DURATION
+            + "\\], " + JdkRegEx.DURATION + "\\] (" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
+            + ": \\[Unloading, " + JdkRegEx.DURATION + "\\])?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
+            + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -103,11 +121,11 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-            duration = JdkMath.convertSecsToMicros(matcher.group(12)).intValue();
-            if (matcher.group(15) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(16)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(17)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(18)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(122)).intValue();
+            if (matcher.group(125) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(126)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(127)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(128)).intValue();
             }
         }
     }

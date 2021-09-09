@@ -2393,4 +2393,18 @@ class TestG1PreprocessAction {
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
                 JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
     }
+
+    @Test
+    void testRemarkPrintReferenceGc() {
+        File testFile = TestUtil.getFile("dataset214.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_REMARK),
+                JdkUtil.LogEventType.G1_REMARK.toString() + " collector not identified.");
+    }
 }
