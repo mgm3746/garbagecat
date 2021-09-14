@@ -104,8 +104,10 @@ import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_PRINT_GC_DETAILS
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_PRINT_REFERENCE_GC_ENABLED;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT;
+import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_LARGE;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT;
+import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_LARGE;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_TENURING_DISABLED;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_THREAD_STACK_SIZE_LARGE;
@@ -290,7 +292,7 @@ public class JvmRun {
     private String lastLogLineUnprocessed;
 
     /**
-     * Number of <code>ParallelCollection</code> events.
+     * SMALL Number of <code>ParallelCollection</code> events.
      */
     private long parallelCount;
 
@@ -743,12 +745,16 @@ public class JvmRun {
             long rmiDgcClientGcInterval = Long.parseLong(jvm.getRmiDgcClientGcIntervalValue());
             if (rmiDgcClientGcInterval < 3_600_000) {
                 analysis.add(WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL);
+            } else if (rmiDgcClientGcInterval > 86_400_000) {
+                analysis.add(WARN_RMI_DGC_CLIENT_GCINTERVAL_LARGE);
             }
         }
         if (jvm.getRmiDgcServerGcIntervalOption() != null) {
             long rmiDgcServerGcInterval = Long.parseLong(jvm.getRmiDgcServerGcIntervalValue());
             if (rmiDgcServerGcInterval < 3_600_000) {
                 analysis.add(WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL);
+            } else if (rmiDgcServerGcInterval > 86_400_000) {
+                analysis.add(WARN_RMI_DGC_SERVER_GCINTERVAL_LARGE);
             }
         }
 

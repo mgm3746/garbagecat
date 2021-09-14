@@ -331,8 +331,9 @@ class TestAnalysis {
      * Test analysis not small DGC intervals.
      */
     @Test
-    void testDgcNotSmallIntervals() {
-        String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000";
+    void testDgcLargeIntervals() {
+        String jvmOptions = "-Dsun.rmi.dgc.client.gcInterval=9223372036854775807 "
+                + "-Dsun.rmi.dgc.server.gcInterval=9223372036854775807";
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
@@ -340,6 +341,10 @@ class TestAnalysis {
                 Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL + " analysis identified.");
         assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL),
                 Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL + " analysis identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_LARGE),
+                Analysis.WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_LARGE),
+                Analysis.WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL + " analysis not identified.");
     }
 
     /**
