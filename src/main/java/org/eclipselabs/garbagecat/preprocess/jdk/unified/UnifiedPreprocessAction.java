@@ -351,7 +351,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [2021-09-14T11:40:53.379-0500][144.035s][info][safepoint ] Entering safepoint region:
      * CollectForMetadataAllocation
      */
-    private static final String REGEX_RETAIN_BEGINNING_SAFEPOINT = "^" + Safepoint.triggerRegEx() + "$";
+    private static final String REGEX_RETAIN_BEGINNING_SAFEPOINT = "^(" + UnifiedRegEx.DECORATOR
+            + " Entering safepoint region: " + Safepoint.triggerRegEx() + ")$";
 
     /**
      * Regular expression for retained space data.
