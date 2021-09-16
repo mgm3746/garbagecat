@@ -465,12 +465,12 @@ public class GcManager {
             String logLine = bufferedReader.readLine();
             BlockingEvent priorEvent = null;
             while (logLine != null) {
-                // If event has no timestamp, use most recent blocking timestamp in database.
+                // If event has no timestamp, use most recent blocking timestamp.
                 LogEvent event = JdkUtil.parseLogLine(logLine);
                 if (event instanceof BlockingEvent) {
 
-                    // Verify logging in correct order. If overridden, logging will be stored in database and reordered
-                    // by timestamp for analysis.
+                    // Verify logging in correct order. If overridden, logging will be stored and reordered by timestamp
+                    // for analysis.
                     if (!reorder && priorEvent != null && event.getTimestamp() < priorEvent.getTimestamp()) {
                         throw new TimeWarpException("Logging reversed: " + Constants.LINE_SEPARATOR
                                 + priorEvent.getLogEntry() + Constants.LINE_SEPARATOR + event.getLogEntry());

@@ -73,12 +73,12 @@ public class JvmDao {
     private List<String> unidentifiedLogLines = new ArrayList<>();
 
     /**
-     * Batch blocking database inserts for improved performance.
+     * Batch blocking inserts for improved performance.
      */
     private List<BlockingEvent> blockingEvents = new ArrayList<>();
 
     /**
-     * Batch stopped time database inserts for improved performance.
+     * Batch stopped time inserts for improved performance.
      */
     private List<ApplicationStoppedTimeEvent> stoppedTimeEvents = new ArrayList<>();
 
@@ -458,8 +458,6 @@ public class JvmDao {
      * @return The last blocking event.
      */
     public synchronized BlockingEvent getLastGcEvent() {
-        // Retrieve last event from batch or database.
-        // TODO JdkUtil#parseLogLine no longer needed?
         return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(blockingEvents.size() - 1);
     }
 
@@ -639,14 +637,13 @@ public class JvmDao {
      * @return The last stopped event.
      */
     public synchronized ApplicationStoppedTimeEvent getLastStoppedEvent() {
-        // Retrieve last event from batch or database.
         return stoppedTimeEvents.isEmpty() ? null : stoppedTimeEvents.get(stoppedTimeEvents.size() - 1);
     }
 
     /**
-     * Retrieve the last stopped event from the database.
+     * Retrieve the last stopped event.
      * 
-     * @return The last stopped event in database.
+     * @return The last stopped event.
      */
 
     /**

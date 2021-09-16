@@ -399,7 +399,7 @@ public class Safepoint {
      * Identify the safepoint trigger.
      * 
      * @param trigger
-     *            The Trigger String stored in the database.
+     *            The Trigger String.
      * @return The <code>Trigger</code>.
      */
     public static final Trigger identifyTrigger(String trigger) {
