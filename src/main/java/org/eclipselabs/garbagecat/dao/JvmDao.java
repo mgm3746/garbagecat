@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.hsql;
+package org.eclipselabs.garbagecat.dao;
 
 import static java.util.Collections.binarySearch;
 import static java.util.Comparator.comparing;
@@ -42,7 +42,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 /**
  * <p>
- * Manage storing and retrieving JVM data in an HSQL database.
+ * Manage storing and retrieving JVM data from streams.
  * </p>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
