@@ -236,6 +236,15 @@ class TestUnifiedG1YoungPauseEvent {
     }
 
     @Test
+    void testLogLinePreprocessedTriggerMetadataGcThreshold() {
+        String logLine = "[2021-09-14T11:38:33.217-0500][3.874s][info][gc,start     ] GC(0) Pause Young "
+                + "(Concurrent Start) (Metadata GC Threshold) Metaspace: 20058K->20058K(1069056K) 56M->7M(8192M) "
+                + "10.037ms User=0.04s Sys=0.00s Real=0.01s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+    }
+
+    @Test
     void testUnifiedG1YoungPauseJdk9() {
         File testFile = TestUtil.getFile("dataset158.txt");
         GcManager gcManager = new GcManager();

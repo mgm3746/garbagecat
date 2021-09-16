@@ -1,0 +1,25 @@
+[2021-09-14T06:51:15.470-0500][3.522s][info][safepoint    ] Entering safepoint region: CollectForMetadataAllocation
+[2021-09-14T06:51:15.471-0500][3.523s][info][gc,start     ] GC(0) Pause Young (Metadata GC Threshold)
+[2021-09-14T06:51:15.478-0500][3.530s][info][gc,heap      ] GC(0) PSYoungGen: 377581K->8026K(2446848K)
+[2021-09-14T06:51:15.478-0500][3.530s][info][gc,heap      ] GC(0) ParOldGen: 0K->152K(5592576K)
+[2021-09-14T06:51:15.478-0500][3.530s][info][gc,metaspace ] GC(0) Metaspace: 20065K->20065K(1069056K)
+[2021-09-14T06:51:15.478-0500][3.530s][info][gc           ] GC(0) Pause Young (Metadata GC Threshold) 368M->7M(7851M) 7.370ms
+[2021-09-14T06:51:15.478-0500][3.530s][info][gc,cpu       ] GC(0) User=0.03s Sys=0.01s Real=0.01s
+[2021-09-14T06:51:15.478-0500][3.530s][info][gc,start     ] GC(1) Pause Full (Metadata GC Threshold)
+[2021-09-14T06:51:15.478-0500][3.530s][info][gc,phases,start] GC(1) Marking Phase
+[2021-09-14T06:51:15.486-0500][3.538s][info][gc,phases      ] GC(1) Marking Phase 8.071ms
+[2021-09-14T06:51:15.486-0500][3.538s][info][gc,phases,start] GC(1) Summary Phase
+[2021-09-14T06:51:15.486-0500][3.538s][info][gc,phases      ] GC(1) Summary Phase 0.010ms
+[2021-09-14T06:51:15.486-0500][3.538s][info][gc,phases,start] GC(1) Adjust Roots
+[2021-09-14T06:51:15.492-0500][3.543s][info][gc,phases      ] GC(1) Adjust Roots 5.295ms
+[2021-09-14T06:51:15.492-0500][3.543s][info][gc,phases,start] GC(1) Compaction Phase
+[2021-09-14T06:51:15.500-0500][3.552s][info][gc,phases      ] GC(1) Compaction Phase 8.539ms
+[2021-09-14T06:51:15.500-0500][3.552s][info][gc,phases,start] GC(1) Post Compact
+[2021-09-14T06:51:15.501-0500][3.553s][info][gc,phases      ] GC(1) Post Compact 1.299ms
+[2021-09-14T06:51:15.501-0500][3.553s][info][gc,heap        ] GC(1) PSYoungGen: 8026K->0K(2446848K)
+[2021-09-14T06:51:15.501-0500][3.553s][info][gc,heap        ] GC(1) ParOldGen: 152K->7911K(5592576K)
+[2021-09-14T06:51:15.501-0500][3.553s][info][gc,metaspace   ] GC(1) Metaspace: 20065K->20065K(1069056K)
+[2021-09-14T06:51:15.502-0500][3.553s][info][gc             ] GC(1) Pause Full (Metadata GC Threshold) 7M->7M(7851M) 23.427ms
+[2021-09-14T06:51:15.502-0500][3.553s][info][gc,cpu         ] GC(1) User=0.09s Sys=0.02s Real=0.02s
+[2021-09-14T06:51:15.502-0500][3.554s][info][safepoint      ] Leaving safepoint region
+[2021-09-14T06:51:15.502-0500][3.554s][info][safepoint      ] Total time for which application threads were stopped: 0.0312299 seconds, Stopping threads took: 0.0000108 seconds

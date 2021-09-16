@@ -1,0 +1,6 @@
+[2021-09-14T11:38:33.230-0500][3.887s][info][gc,marking   ] GC(1) Concurrent Mark (3.887s)
+[2021-09-14T11:38:33.230-0500][3.887s][info][gc,marking   ] GC(1) Concurrent Mark From Roots
+[2021-09-14T11:38:33.230-0500][3.887s][info][safepoint    ] Entering safepoint region: RevokeBias
+[2021-09-14T11:38:33.230-0500][3.887s][info][gc,task      ] GC(1) Using 2 workers of 2 for marking
+[2021-09-14T11:38:33.230-0500][3.887s][info][safepoint    ] Leaving safepoint region
+[2021-09-14T11:38:33.230-0500][3.887s][info][safepoint    ] Total time for which application threads were stopped: 0.0000899 seconds, Stopping threads took: 0.0000409 seconds

@@ -166,4 +166,13 @@ class TestUnifiedParallelScavengeEvent {
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
     }
+
+    @Test
+    void testPreprocessedTriggerGcLockerInitiatedGc() {
+        String logLine = "[2021-09-14T06:53:30.699-0500][138.751s][info][gc,start       ] GC(6) Pause Young (GCLocker "
+                + "Initiated GC) PSYoungGen: 2097664K->213686K(2446848K) ParOldGen: 31515K->31523K(5592576K) "
+                + "Metaspace: 70500K->70500K(1116160K) 2079M->239M(7851M) 119.933ms User=0.61s Sys=0.21s Real=0.12s";
+        assertTrue(UnifiedParallelScavengeEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+    }
 }

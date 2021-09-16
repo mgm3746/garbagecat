@@ -23,6 +23,7 @@ import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.Safepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
@@ -288,10 +289,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * <pre>
      * [0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure)
+     * 
+     * [2021-09-14T06:51:15.478-0500][3.530s][info][gc,start     ] GC(1) Pause Full (Metadata GC Threshold)
      * </pre>
      */
-    private static final String REGEX_RETAIN_BEGINNING_SERIAL_OLD = "^(" + UnifiedRegEx.DECORATOR + " Pause Full \\("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))$";
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL_OLD = "^(" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))$";
 
     /**
      * Regular expression for retained beginning @link
@@ -306,7 +309,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
 
     /**
      * Regular expression for retained beginning @link
-     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent}.
+     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent} and @link
+     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelScavengeEvent}.
      * 
      * <pre>
      * [16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause)
@@ -318,11 +322,49 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [2019-05-09T01:39:07.136+0000][11728ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC)
      * 
      * [16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause)
+     * 
+     * [2021-09-14T11:38:33.217-0500][3.874s][info][gc,start     ] GC(0) Pause Young (Concurrent Start) 
+     * (Metadata GC Threshold)
+     * 
+     * [2021-09-14T06:51:15.471-0500][3.523s][info][gc,start     ] GC(0) Pause Young (Metadata GC Threshold)
      * </pre>
      */
-    private static final String REGEX_RETAIN_BEGINNING_G1_YOUNG = "^(" + UnifiedRegEx.DECORATOR
+    private static final String REGEX_RETAIN_BEGINNING_YOUNG = "^(" + UnifiedRegEx.DECORATOR
             + " Pause Young( \\((Normal|Prepare Mixed|Mixed|Concurrent Start)\\))? \\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\))$";
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))$";
+
+    /**
+     * Regular expression for retained beginning @link
+     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent}.
+     * 
+     * <pre>
+     * [0.117s][info][gc            ] GC(2) Pause Cleanup 1M->1M(5M) 0.024ms
+     * </pre>
+     */
+    private static final String REGEX_RETAIN_BEGINNING_G1_CLEANUP = "^(" + UnifiedRegEx.DECORATOR + " Pause Cleanup "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + ")$";
+
+    /**
+     * Regular expression for retained 1st line of safepoint logging.
+     * 
+     * [2021-09-14T11:40:53.379-0500][144.035s][info][safepoint ] Entering safepoint region:
+     * CollectForMetadataAllocation
+     */
+    private static final String REGEX_RETAIN_BEGINNING_SAFEPOINT = "^(" + UnifiedRegEx.DECORATOR
+            + " Entering safepoint region: (" + Safepoint.BULK_REVOKE_BIAS + "|" + Safepoint.CGC_OPERATION + "|"
+            + Safepoint.CLEANUP + "|" + Safepoint.CMS_FINAL_REMARK + "|" + Safepoint.CMS_INITIAL_MARK + "|"
+            + Safepoint.COLLECT_FOR_METADATA_ALLOCATION + "|" + Safepoint.DEOPTIMIZE + "|"
+            + Safepoint.ENABLE_BIASED_LOCKING + "|" + Safepoint.EXIT + "|" + Safepoint.FIND_DEADLOCKS + "|"
+            + Safepoint.FORCE_SAFEPOINT + "|" + Safepoint.FORCE_SAFEPOINT + "|" + Safepoint.G1_COLLECT_FOR_ALLOCATION
+            + "|" + Safepoint.G1_INC_COLLECTION_PAUSE + "|" + Safepoint.GEN_COLLECT_FOR_ALLOCATION + "|"
+            + Safepoint.GEN_COLLECT_FULL_CONCURRENT + "|" + Safepoint.GET_ALL_STACK_TRACES + "|"
+            + Safepoint.GET_THREAD_LIST_STACK_TRACES + "|" + Safepoint.IC_BUFFER_FULL + "|" + Safepoint.NO_VM_OPERATION
+            + "|" + Safepoint.PARALLEL_GC_FAILED_ALLOCATION + "|" + Safepoint.PARALLEL_GC_SYSTEM_GC + "|"
+            + Safepoint.PRINT_JNI + "|" + Safepoint.PRINT_THREADS + "|" + Safepoint.REVOKE_BIAS + "|"
+            + Safepoint.SHENANDOAH_DEGENERATED_GC + "|" + Safepoint.SHENANDOAH_FINAL_MARK_START_EVAC + "|"
+            + Safepoint.SHENANDOAH_FINAL_UPDATE_REFS + "|" + Safepoint.SHENANDOAH_INIT_MARK + "|"
+            + Safepoint.SHENANDOAH_INIT_UPDATE_REFS + "|" + Safepoint.THREAD_DUMP + "))$";
 
     /**
      * Regular expression for retained space data.
@@ -415,6 +457,26 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + ")$";
 
     /**
+     * Regular expression for retained 2nd line of safepoint logging.
+     * 
+     * [2021-09-14T11:40:53.379-0500][144.036s][info][safepoint ] Leaving safepoint region
+     */
+    private static final String REGEX_RETAIN_MIDDLE_SAFEPOINT = "^(" + UnifiedRegEx.DECORATOR
+            + " Leaving safepoint region$)";
+
+    /**
+     * Regular expression for retained 3rd line of safepoint logging.
+     * 
+     * <pre>
+     * [2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time for which application threads were 
+     * stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 seconds
+     * </pre>
+     */
+    private static final String REGEX_RETAIN_END_SAFEPOINT = "^(" + UnifiedRegEx.DECORATOR
+            + " Total time for which application threads were stopped: (\\d{1,4}[\\.\\,]\\d{7}) seconds, "
+            + "Stopping threads took: (\\d{1,4}[\\.\\,]\\d{7}) seconds)[ ]*$";
+
+    /**
      * Regular expression for retained end times data.
      * 
      * <pre>
@@ -452,8 +514,15 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.004s][info][gc,cds       ] Mark open archive regions in map: [0x00000000ffe00000, 0x00000000ffe46ff8]
      * 
      * [2021-03-13T03:37:44.312+0530][79857380ms] GC(8651) Using 8 workers of 8 for full compaction
+     * 
+     * [2021-09-14T11:38:33.230-0500][3.887s][info][gc,task      ] GC(1) Using 2 workers of 2 for marking
      *
      * [2021-03-13T03:45:44.424+0530][80337492ms] Attempting maximally compacting collection
+     *
+     * [2021-03-13T03:37:44.312+0530][79857381ms] GC(8652) Concurrent Mark From Roots
+     * 
+     * [2021-09-14T11:41:18.173-0500][168.830s][info][gc,mmu        ] GC(26) MMU target violated: 201.0ms 
+     * (200.0ms/201.0ms)
      * 
      * PARALLEL_COMPACTING_OLD:
      * 
@@ -493,12 +562,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [0.055s][info][gc           ] GC(1) Concurrent Reset
      * 
-     * Safepoint:
-     * 
-     * [0.029s][info][safepoint    ] Entering safepoint region: EnableBiasedLocking
-     * 
-     * [0.029s][info][safepoint    ] Leaving safepoint region
-     * 
      * [0.030s][info][safepoint    ] Application time: 0.0012757 seconds
      * 
      * [2021-03-13T03:37:40.051+0530][79853119ms] GC(8645) To-space exhausted
@@ -527,7 +590,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " Pause Cleanup$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " MMU target violated:.+",
+            "^" + UnifiedRegEx.DECORATOR + " MMU target violated:.+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Attempting maximally compacting collection$",
             // Parallel
@@ -540,8 +603,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + "\\)$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Concurrent (Mark|Preclean|Reset|Sweep)[ ]{0,}$",
-            // Safepoint
-            "^" + UnifiedRegEx.DECORATOR + " (Entering|Leaving) safepoint region.*$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Application time:.+$",
             //
@@ -640,14 +701,36 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_G1_YOUNG)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_G1_YOUNG);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_G1_CLEANUP)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_G1_CLEANUP);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SAFEPOINT)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SAFEPOINT);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                if (nextLogEntry.matches(REGEX_RETAIN_MIDDLE_SAFEPOINT)) {
+                    // Non GC safepoint
+                    this.logEntry = matcher.group(1);
+                    context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                } else {
+                    // GC safepoint, output after GC event
+                    entangledLogLines.add(matcher.group(1));
+                }
+                context.add(TOKEN);
+            }
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_SPACE_DATA)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_SPACE_DATA);
             Matcher matcher = pattern.matcher(logEntry);
@@ -708,6 +791,37 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 }
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_SAFEPOINT)) {
+            if (priorLogEntry.matches(REGEX_RETAIN_BEGINNING_SAFEPOINT)) {
+                this.logEntry = logEntry;
+                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            } else {
+                // Get beginning safepoint logging from entangledLogLines
+                if (entangledLogLines.size() == 1
+                        && entangledLogLines.get(0).matches(REGEX_RETAIN_BEGINNING_SAFEPOINT)) {
+                    this.logEntry = entangledLogLines.get(0);
+                    entangledLogLines.clear();
+                }
+                Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_SAFEPOINT);
+                Matcher matcher = pattern.matcher(logEntry);
+                if (matcher.matches()) {
+                    if (this.logEntry == null) {
+                        this.logEntry = matcher.group(1);
+                        context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                    } else {
+                        this.logEntry = this.logEntry + matcher.group(1);
+                    }
+                }
+            }
+        } else if (logEntry.matches(REGEX_RETAIN_END_SAFEPOINT)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_END_SAFEPOINT);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(TOKEN);
+            clearEntangledLines(entangledLogLines);
         } else if (logEntry.matches(REGEX_RETAIN_END_TIMES_DATA)) {
             // End logging
             Pattern pattern = Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);
@@ -715,21 +829,28 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(24);
             }
-            clearEntangledLines(entangledLogLines);
-            // Don't add blank line to end
-            if (nextLogEntry != null) {
-                this.logEntry = this.logEntry + Constants.LINE_SEPARATOR;
+            // Only output beginning safepoint logging if middle safepoint line is next
+            if (!(entangledLogLines.size() == 1 && entangledLogLines.get(0).matches(REGEX_RETAIN_BEGINNING_SAFEPOINT)
+                    && !nextLogEntry.matches(REGEX_RETAIN_MIDDLE_SAFEPOINT))) {
+                clearEntangledLines(entangledLogLines);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-            context.remove(TOKEN);
-        } else if (JdkUtil.parseLogLine(logEntry) instanceof UnifiedConcurrentEvent) {
+        } else if (JdkUtil.parseLogLine(logEntry) instanceof UnifiedConcurrentEvent && !isThrowaway(logEntry)) {
             if (!context.contains(TOKEN)) {
-                this.logEntry = logEntry + Constants.LINE_SEPARATOR;
+                // Stand alone event
+                this.logEntry = logEntry;
+                context.add(TOKEN_BEGINNING_OF_EVENT);
             } else {
+                // Get beginning safepoint logging from entangledLogLines
+                if (entangledLogLines.size() == 1
+                        && entangledLogLines.get(0).matches(REGEX_RETAIN_BEGINNING_SAFEPOINT)) {
+                    this.logEntry = entangledLogLines.get(0);
+                    entangledLogLines.clear();
+                    context.add(TOKEN_BEGINNING_OF_EVENT);
+                }
                 entangledLogLines.add(logEntry);
             }
         }
-
     }
 
     public String getLogEntry() {
@@ -752,23 +873,18 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || logLine.matches(REGEX_RETAIN_BEGINNING_UNIFIED_REMARK)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_OLD)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_G1_FULL_GC)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_G1_YOUNG)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_G1_FULL_GC) || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_G1_CLEANUP)
+                || logLine.matches(REGEX_RETAIN_BEGINNING_SAFEPOINT)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA)
                 || logLine.matches(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_SPACE_DATA) || logLine.matches(REGEX_RETAIN_END_TIMES_DATA)
+                || logLine.matches(REGEX_RETAIN_MIDDLE_SPACE_DATA) || logLine.matches(REGEX_RETAIN_MIDDLE_SAFEPOINT)
+                || logLine.matches(REGEX_RETAIN_END_SAFEPOINT) || logLine.matches(REGEX_RETAIN_END_TIMES_DATA)
                 || JdkUtil.parseLogLine(logLine) instanceof UnifiedConcurrentEvent) {
             match = true;
-        }
-        if (!match) {
-            // TODO: Get rid of this and make them throwaway events?
-            for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
-                if (logLine.matches(REGEX_THROWAWAY[i])) {
-                    match = true;
-                    break;
-                }
-            }
+        } else if (isThrowaway(logLine)) {
+            match = true;
         }
         return match;
     }
@@ -789,5 +905,21 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // Reset entangled log lines
             entangledLogLines.clear();
         }
+    }
+
+    /**
+     * Determine if the log line is can be thrown away
+     * 
+     * @return true if the log line matches a throwaway pattern, false otherwise.
+     */
+    private static final boolean isThrowaway(String logLine) {
+        boolean throwaway = false;
+        for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
+            if (logLine.matches(REGEX_THROWAWAY[i])) {
+                throwaway = true;
+                break;
+            }
+        }
+        return throwaway;
     }
 }

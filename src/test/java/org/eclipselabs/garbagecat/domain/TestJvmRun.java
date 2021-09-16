@@ -426,6 +426,8 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector incorrectly identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
@@ -445,7 +447,7 @@ class TestJvmRun {
         assertEquals(25, jvmRun.getTotalStoppedTime(), "Stopped time total not correct.");
         assertEquals((long) 29, jvmRun.getFirstStoppedEvent().getTimestamp(), "Stopped first timestamp not correct.");
         assertEquals((long) 167, jvmRun.getLastStoppedEvent().getTimestamp(), "Stopped last timestamp not correct.");
-        assertEquals(418, jvmRun.getLastStoppedEvent().getDuration(), "Stopped last duration not correct.");
+        assertEquals(439, jvmRun.getLastStoppedEvent().getDuration(), "Stopped last duration not correct.");
         assertEquals((long) 29, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
         assertEquals((long) 167, jvmRun.getLastEvent().getTimestamp(), "JVM last event timestamp not correct.");
         assertEquals((long) 167, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");

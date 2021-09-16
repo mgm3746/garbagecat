@@ -1,0 +1,20 @@
+[2021-09-14T11:38:33.217-0500][3.874s][info][safepoint    ] Entering safepoint region: CollectForMetadataAllocation
+[2021-09-14T11:38:33.217-0500][3.874s][info][gc,start     ] GC(0) Pause Young (Concurrent Start) (Metadata GC Threshold)
+[2021-09-14T11:38:33.218-0500][3.875s][info][gc,task      ] GC(0) Using 8 workers of 8 for evacuation
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc,phases    ] GC(0)   Pre Evacuate Collection Set: 0.0ms
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc,phases    ] GC(0)   Evacuate Collection Set: 7.6ms
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc,phases    ] GC(0)   Post Evacuate Collection Set: 1.4ms
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc,phases    ] GC(0)   Other: 0.9ms
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc,heap      ] GC(0) Eden regions: 14->0(100)
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc,heap      ] GC(0) Survivor regions: 0->2(13)
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc,heap      ] GC(0) Old regions: 0->0
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc,heap      ] GC(0) Humongous regions: 0->0
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc,metaspace ] GC(0) Metaspace: 20058K->20058K(1069056K)
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc           ] GC(0) Pause Young (Concurrent Start) (Metadata GC Threshold) 56M->7M(8192M) 10.037ms
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc,cpu       ] GC(0) User=0.04s Sys=0.00s Real=0.01s
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc           ] GC(1) Concurrent Cycle
+[2021-09-14T11:38:33.227-0500][3.884s][info][gc,marking   ] GC(1) Concurrent Clear Claimed Marks
+[2021-09-14T11:38:33.228-0500][3.884s][info][gc,marking   ] GC(1) Concurrent Clear Claimed Marks 0.020ms
+[2021-09-14T11:38:33.228-0500][3.884s][info][gc,marking   ] GC(1) Concurrent Scan Root Regions
+[2021-09-14T11:38:33.228-0500][3.884s][info][safepoint    ] Leaving safepoint region
+[2021-09-14T11:38:33.228-0500][3.884s][info][safepoint    ] Total time for which application threads were stopped: 0.0104763 seconds, Stopping threads took: 0.0000101 seconds

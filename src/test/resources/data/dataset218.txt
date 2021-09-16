@@ -1,0 +1,11 @@
+[2021-09-14T11:38:35.637-0500][6.293s][info][safepoint     ] Entering safepoint region: RevokeBias
+[2021-09-14T11:38:35.637-0500][6.293s][info][safepoint     ] Leaving safepoint region
+[2021-09-14T11:38:35.637-0500][6.293s][info][safepoint     ] Total time for which application threads were stopped: 0.0002922 seconds, Stopping threads took: 0.0002064 seconds
+[2021-09-14T11:38:35.637-0500][6.293s][info][safepoint     ] Application time: 0.0000603 seconds
+[2021-09-14T11:38:35.637-0500][6.293s][info][safepoint     ] Entering safepoint region: BulkRevokeBias
+[2021-09-14T11:38:35.637-0500][6.294s][info][gc,marking    ] GC(3) Concurrent Scan Root Regions 4.135ms
+[2021-09-14T11:38:35.637-0500][6.294s][info][gc,marking    ] GC(3) Concurrent Mark (6.294s)
+[2021-09-14T11:38:35.637-0500][6.294s][info][gc,marking    ] GC(3) Concurrent Mark From Roots
+[2021-09-14T11:38:35.637-0500][6.294s][info][gc,task       ] GC(3) Using 2 workers of 2 for marking
+[2021-09-14T11:38:35.637-0500][6.294s][info][safepoint     ] Leaving safepoint region
+[2021-09-14T11:38:35.637-0500][6.294s][info][safepoint     ] Total time for which application threads were stopped: 0.0003211 seconds, Stopping threads took: 0.0000213 seconds

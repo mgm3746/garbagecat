@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.Safepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
@@ -58,8 +59,22 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * Three lines:
+ * </p>
+ * 
  * <pre>
- * [0.031s][info][safepoint    ] Total time for which application threads were stopped: 0.0000643 seconds, Stopping threads took: 0.0000148 seconds
+ * [2021-09-14T11:40:53.379-0500][144.035s][info][safepoint     ] Entering safepoint region: CollectForMetadataAllocation
+ * [2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Leaving safepoint region
+ * [2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 seconds
+ * </pre>
+ * 
+ * <p>
+ * Preprocessed into a single line:
+ * </p>
+ * 
+ * <pre>
+ * [2021-09-14T11:40:53.379-0500][144.035s][info][safepoint     ] Entering safepoint region: CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 seconds
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -73,19 +88,33 @@ public class UnifiedApplicationStoppedTimeEvent extends ApplicationStoppedTimeEv
     private String logEntry;
 
     /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
+     * The elapsed clock time for the safepoint event in microseconds (rounded).
      */
     private int duration;
 
     /**
-     * The time when the GC event started in milliseconds after JVM startup.
+     * The time when the safepoint event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR
+    public static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Entering safepoint region: ("
+            + Safepoint.BULK_REVOKE_BIAS + "|" + Safepoint.CGC_OPERATION + "|" + Safepoint.CLEANUP + "|"
+            + Safepoint.CMS_FINAL_REMARK + "|" + Safepoint.CMS_INITIAL_MARK + "|"
+            + Safepoint.COLLECT_FOR_METADATA_ALLOCATION + "|" + Safepoint.DEOPTIMIZE + "|"
+            + Safepoint.ENABLE_BIASED_LOCKING + "|" + Safepoint.EXIT + "|" + Safepoint.FIND_DEADLOCKS + "|"
+            + Safepoint.FORCE_SAFEPOINT + "|" + Safepoint.FORCE_SAFEPOINT + "|" + Safepoint.G1_COLLECT_FOR_ALLOCATION
+            + "|" + Safepoint.G1_INC_COLLECTION_PAUSE + "|" + Safepoint.GEN_COLLECT_FOR_ALLOCATION + "|"
+            + Safepoint.GEN_COLLECT_FULL_CONCURRENT + "|" + Safepoint.GET_ALL_STACK_TRACES + "|"
+            + Safepoint.GET_THREAD_LIST_STACK_TRACES + "|" + Safepoint.IC_BUFFER_FULL + "|" + Safepoint.NO_VM_OPERATION
+            + "|" + Safepoint.PARALLEL_GC_FAILED_ALLOCATION + "|" + Safepoint.PARALLEL_GC_SYSTEM_GC + "|"
+            + Safepoint.PRINT_JNI + "|" + Safepoint.PRINT_THREADS + "|" + Safepoint.REVOKE_BIAS + "|"
+            + Safepoint.SHENANDOAH_DEGENERATED_GC + "|" + Safepoint.SHENANDOAH_FINAL_MARK_START_EVAC + "|"
+            + Safepoint.SHENANDOAH_FINAL_UPDATE_REFS + "|" + Safepoint.SHENANDOAH_INIT_MARK + "|"
+            + Safepoint.SHENANDOAH_INIT_UPDATE_REFS + "|" + Safepoint.THREAD_DUMP + ")" + UnifiedRegEx.DECORATOR
+            + " Leaving safepoint region" + UnifiedRegEx.DECORATOR
             + " Total time for which application threads were stopped: (\\d{1,4}[\\.\\,]\\d{7}) seconds, "
             + "Stopping threads took: (\\d{1,4}[\\.\\,]\\d{7}) seconds[ ]*$";
     /**
@@ -104,23 +133,24 @@ public class UnifiedApplicationStoppedTimeEvent extends ApplicationStoppedTimeEv
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                timestamp = Long.parseLong(matcher.group(12));
+            if (matcher.group(48).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                timestamp = Long.parseLong(matcher.group(59));
             } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(58)).longValue();
             } else {
-                if (matcher.group(14) != null) {
-                    if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        timestamp = Long.parseLong(matcher.group(16));
+                if (matcher.group(61) != null) {
+                    if (matcher.group(61).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        timestamp = Long.parseLong(matcher.group(63));
                     } else {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                        timestamp = JdkMath.convertSecsToMillis(matcher.group(62)).longValue();
                     }
                 } else {
                     // Datestamp only.
-                    timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(48));
                 }
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(24)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(71)).intValue()
+                    + JdkMath.convertSecsToMicros(matcher.group(72)).intValue();
         }
     }
 
@@ -130,9 +160,9 @@ public class UnifiedApplicationStoppedTimeEvent extends ApplicationStoppedTimeEv
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event started in milliseconds after JVM startup.
+     *            The time when the safepoint event started in milliseconds after JVM startup.
      * @param duration
-     *            The elapsed clock time for the GC event in microseconds (rounded).
+     *            The elapsed clock time for the safepoint event in microseconds (rounded).
      */
     public UnifiedApplicationStoppedTimeEvent(String logEntry, long timestamp, int duration) {
         super(logEntry, timestamp, duration);

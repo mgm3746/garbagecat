@@ -1,0 +1,3 @@
+[2021-09-14T11:40:53.379-0500][144.035s][info][safepoint     ] Entering safepoint region: CollectForMetadataAllocation
+[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Leaving safepoint region
+[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 seconds
