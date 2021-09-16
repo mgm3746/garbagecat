@@ -25,10 +25,10 @@ public class TestSafepoint {
 
     @Test
     public void testTriggerIdentity() {
-        Safepoint.TriggerType[] triggers = Safepoint.TriggerType.values();
+        Safepoint.Trigger[] triggers = Safepoint.Trigger.values();
         for (int i = 0; i < triggers.length; i++) {
-            if (!triggers[i].equals(Safepoint.TriggerType.UNKNOWN)) {
-                assertFalse(Safepoint.identifyTriggerType(triggers[i].name()).equals(Safepoint.TriggerType.UNKNOWN),
+            if (!triggers[i].equals(Safepoint.Trigger.UNKNOWN)) {
+                assertFalse(Safepoint.identifyTrigger(triggers[i].name()).equals(Safepoint.Trigger.UNKNOWN),
                         triggers[i].name() + " not identified.");
             }
         }
@@ -36,9 +36,9 @@ public class TestSafepoint {
 
     @Test
     public void testTriggerLiteral() {
-        Safepoint.TriggerType[] triggers = Safepoint.TriggerType.values();
+        Safepoint.Trigger[] triggers = Safepoint.Trigger.values();
         for (int i = 0; i < triggers.length; i++) {
-            if (!triggers[i].equals(Safepoint.TriggerType.UNKNOWN)) {
+            if (!triggers[i].equals(Safepoint.Trigger.UNKNOWN)) {
                 try {
                     Safepoint.getTriggerLiteral(triggers[i]);
                 } catch (AssertionError e) {

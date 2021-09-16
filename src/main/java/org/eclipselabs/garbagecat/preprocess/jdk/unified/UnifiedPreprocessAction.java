@@ -351,20 +351,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [2021-09-14T11:40:53.379-0500][144.035s][info][safepoint ] Entering safepoint region:
      * CollectForMetadataAllocation
      */
-    private static final String REGEX_RETAIN_BEGINNING_SAFEPOINT = "^(" + UnifiedRegEx.DECORATOR
-            + " Entering safepoint region: (" + Safepoint.BULK_REVOKE_BIAS + "|" + Safepoint.CGC_OPERATION + "|"
-            + Safepoint.CLEANUP + "|" + Safepoint.CMS_FINAL_REMARK + "|" + Safepoint.CMS_INITIAL_MARK + "|"
-            + Safepoint.COLLECT_FOR_METADATA_ALLOCATION + "|" + Safepoint.DEOPTIMIZE + "|"
-            + Safepoint.ENABLE_BIASED_LOCKING + "|" + Safepoint.EXIT + "|" + Safepoint.FIND_DEADLOCKS + "|"
-            + Safepoint.FORCE_SAFEPOINT + "|" + Safepoint.FORCE_SAFEPOINT + "|" + Safepoint.G1_COLLECT_FOR_ALLOCATION
-            + "|" + Safepoint.G1_INC_COLLECTION_PAUSE + "|" + Safepoint.GEN_COLLECT_FOR_ALLOCATION + "|"
-            + Safepoint.GEN_COLLECT_FULL_CONCURRENT + "|" + Safepoint.GET_ALL_STACK_TRACES + "|"
-            + Safepoint.GET_THREAD_LIST_STACK_TRACES + "|" + Safepoint.IC_BUFFER_FULL + "|" + Safepoint.NO_VM_OPERATION
-            + "|" + Safepoint.PARALLEL_GC_FAILED_ALLOCATION + "|" + Safepoint.PARALLEL_GC_SYSTEM_GC + "|"
-            + Safepoint.PRINT_JNI + "|" + Safepoint.PRINT_THREADS + "|" + Safepoint.REVOKE_BIAS + "|"
-            + Safepoint.SHENANDOAH_DEGENERATED_GC + "|" + Safepoint.SHENANDOAH_FINAL_MARK_START_EVAC + "|"
-            + Safepoint.SHENANDOAH_FINAL_UPDATE_REFS + "|" + Safepoint.SHENANDOAH_INIT_MARK + "|"
-            + Safepoint.SHENANDOAH_INIT_UPDATE_REFS + "|" + Safepoint.THREAD_DUMP + "))$";
+    private static final String REGEX_RETAIN_BEGINNING_SAFEPOINT = "^" + Safepoint.triggerRegEx() + "$";
 
     /**
      * Regular expression for retained space data.
