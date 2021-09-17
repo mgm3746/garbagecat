@@ -878,9 +878,15 @@ public class JvmRun {
         // Check if log file rotation disabled or missing
         if (jvm.getUseGcLogFileRotationDisabled() != null) {
             analysis.add(INFO_GC_LOG_FILE_ROTATION_DISABLED);
+            if (jvm.getGcLogFileName() != null && !jvm.getGcLogFileName().contains("%")) {
+                analysis.add(WARN_GC_LOG_FILE_OVERWRITE);
+            }
         } else {
             if (jvm.getUseGcLogFileRotationEnabled() == null) {
                 analysis.add(INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED);
+                if (jvm.getGcLogFileName() != null && !jvm.getGcLogFileName().contains("%")) {
+                    analysis.add(WARN_GC_LOG_FILE_OVERWRITE);
+                }
             }
         }
 
@@ -1053,7 +1059,7 @@ public class JvmRun {
 
         // Check to see if application stopped time enabled
         if (!(eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
-                || eventTypes.contains(LogEventType.UNIFIED_APPLICATION_STOPPED_TIME))) {
+                || eventTypes.contains(LogEventType.SAFEPOINT))) {
             analysis.add(WARN_APPLICATION_STOPPED_TIME_MISSING);
         }
 

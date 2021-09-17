@@ -24,7 +24,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * UNIFIED_APPLICATION_STOPPED_TIME
+ * SAFEPOINT
  * </p>
  * 
  * <p>
@@ -43,7 +43,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * </p>
  * 
  * <p>
- * Other JVM operations besides gc that require a safepoint:
+ * Examples of other JVM operations besides gc that require a safepoint:
  * </p>
  * <ul>
  * <li>ThreadDump</li>
@@ -80,7 +80,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedApplicationStoppedTimeEvent extends ApplicationStoppedTimeEvent implements UnifiedLogging {
+public class SafepointEvent extends ApplicationStoppedTimeEvent implements UnifiedLogging {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -96,6 +96,11 @@ public class UnifiedApplicationStoppedTimeEvent extends ApplicationStoppedTimeEv
      * The time when the safepoint event started in milliseconds after JVM startup.
      */
     private long timestamp;
+
+    /**
+     * The trigger for the safepoint event.
+     */
+    private String trigger;
 
     /**
      * Regular expressions defining the logging.
@@ -115,11 +120,12 @@ public class UnifiedApplicationStoppedTimeEvent extends ApplicationStoppedTimeEv
      * @param logEntry
      *            The log entry for the event.
      */
-    public UnifiedApplicationStoppedTimeEvent(String logEntry) {
+    public SafepointEvent(String logEntry) {
         super(logEntry);
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
+            trigger = matcher.group(24);
             if (matcher.group(48).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                 timestamp = Long.parseLong(matcher.group(59));
             } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
@@ -142,7 +148,7 @@ public class UnifiedApplicationStoppedTimeEvent extends ApplicationStoppedTimeEv
     }
 
     /**
-     * Alternate constructor. Create application stopped time event from values.
+     * Alternate constructor. Create safepoint event from values.
      * 
      * @param logEntry
      *            The log entry for the event.
@@ -151,7 +157,7 @@ public class UnifiedApplicationStoppedTimeEvent extends ApplicationStoppedTimeEv
      * @param duration
      *            The elapsed clock time for the safepoint event in microseconds (rounded).
      */
-    public UnifiedApplicationStoppedTimeEvent(String logEntry, long timestamp, int duration) {
+    public SafepointEvent(String logEntry, long timestamp, int duration) {
         super(logEntry, timestamp, duration);
         this.logEntry = logEntry;
         this.timestamp = timestamp;
@@ -167,11 +173,15 @@ public class UnifiedApplicationStoppedTimeEvent extends ApplicationStoppedTimeEv
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString();
+        return JdkUtil.LogEventType.SAFEPOINT.toString();
     }
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public String getTrigger() {
+        return trigger;
     }
 
     /**

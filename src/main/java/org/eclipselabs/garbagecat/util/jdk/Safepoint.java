@@ -36,7 +36,7 @@ public class Safepoint {
         //
         GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, IC_BUFFER_FULL, NO_VM_OPERATION,
         //
-        PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS, REVOKE_BIAS,
+        PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS,
         //
         SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS,
         //
@@ -228,6 +228,13 @@ public class Safepoint {
 
     /**
      * <p>
+     * Redefining classes
+     * </p>
+     */
+    public static final String REDEFINE_CLASSES = "RedefineClasses";
+
+    /**
+     * <p>
      * Biased locking is an optimization to reduce the overhead of uncontested locking. It assumes a thread owns a
      * monitor until another thread tries to acquire it.
      * </p>
@@ -367,6 +374,9 @@ public class Safepoint {
         case PRINT_THREADS:
             triggerLiteral = PRINT_THREADS;
             break;
+        case REDEFINE_CLASSES:
+            triggerLiteral = REDEFINE_CLASSES;
+            break;
         case REVOKE_BIAS:
             triggerLiteral = REVOKE_BIAS;
             break;
@@ -399,7 +409,7 @@ public class Safepoint {
      * Identify the safepoint trigger.
      * 
      * @param trigger
-     *            The Trigger String.
+     *            The Trigger String stored in the database.
      * @return The <code>Trigger</code>.
      */
     public static final Trigger identifyTrigger(String trigger) {
@@ -449,6 +459,8 @@ public class Safepoint {
             return Trigger.PRINT_JNI;
         if (Trigger.PRINT_THREADS.name().matches(trigger))
             return Trigger.PRINT_THREADS;
+        if (Trigger.REDEFINE_CLASSES.name().matches(trigger))
+            return Trigger.REDEFINE_CLASSES;
         if (Trigger.REVOKE_BIAS.name().matches(trigger))
             return Trigger.REVOKE_BIAS;
         if (Trigger.SHENANDOAH_DEGENERATED_GC.name().matches(trigger))

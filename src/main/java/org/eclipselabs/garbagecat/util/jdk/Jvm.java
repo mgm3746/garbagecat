@@ -1636,4 +1636,35 @@ public class Jvm {
     public String getUseAdaptiveSizePolicyDisabledOption() {
         return getJvmOption("(-XX:-UseAdaptiveSizePolicy)");
     }
+
+    /**
+     * The JDK8 option to specify GC log file name. For example:
+     * 
+     * <pre>
+     * -Xloggc:gc.log
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getXlogGcOption() {
+        return getJvmOption("(-Xloggc:\\S+)");
+    }
+
+    /**
+     * GC log file name.
+     * 
+     * @return the GC log file name, null otherwise.
+     */
+    public String getGcLogFileName() {
+        String gcLogFileName = null;
+        String regex = "-Xloggc:(.+)";
+        Pattern pattern = Pattern.compile(regex);
+        if (getXlogGcOption() != null) {
+            Matcher matcher = pattern.matcher(getXlogGcOption());
+            if (matcher.find()) {
+                gcLogFileName = matcher.group(1);
+            }
+        }
+        return gcLogFileName;
+    }
 }

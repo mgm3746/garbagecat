@@ -992,4 +992,14 @@ class TestJvm {
         assertEquals("-XX:-TraceClassUnloading", jvm.getUnaccountedDisabledOptions(),
                 "Unaccounted disabled options incorrect.");
     }
+
+    @Test
+    void testGcLogFileName() {
+        String jvmOptions = "-XX:+PrintGC -Xloggc:my.gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps "
+                + "-XX:+PrintGCApplicationStoppedTime";
+        Jvm jvm = new Jvm(jvmOptions, null);
+        assertNotNull("-Xloggc not found.", jvm.getXlogGcOption());
+        assertEquals("-Xloggc:my.gc.log", jvm.getXlogGcOption(), "-Xloggc option not incorrect.");
+        assertEquals("my.gc.log", jvm.getGcLogFileName(), "GC log file name incorrect.");
+    }
 }

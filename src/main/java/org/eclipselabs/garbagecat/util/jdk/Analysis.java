@@ -483,6 +483,11 @@ public enum Analysis {
     WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED("warn.gc.log.file.num.rotation.disabled"),
 
     /**
+     * Property key for JDK8 gc log file with static name that will be overwritten on JVM startup.
+     */
+    WARN_GC_LOG_FILE_OVERWRITE("warn.gc.log.file.overwrite"),
+
+    /**
      * Property key for specifying the gc log file size that triggers rotation (-XX:GCLogFileSize=N) is small (&lt; 5M).
      */
     WARN_GC_LOG_FILE_SIZE_SMALL("warn.gc.log.file.size.small"),

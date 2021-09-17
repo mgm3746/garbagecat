@@ -202,6 +202,29 @@ class TestJvmRun {
     }
 
     @Test
+    void testJdk8GcLogNoRotationFileOverwrite() {
+        String jvmOptions = "-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps ";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_OVERWRITE),
+                Analysis.WARN_GC_LOG_FILE_OVERWRITE + " analysis not identified.");
+    }
+
+    @Test
+    void testJdk8GcLogRotationDisabledFileOverwrite() {
+        String jvmOptions = "-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps "
+                + "-XX:-UseGCLogFileRotation";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_OVERWRITE),
+                Analysis.WARN_GC_LOG_FILE_OVERWRITE + " analysis not identified.");
+    }
+
+    @Test
     void testSummaryStatsParallel() {
         File testFile = TestUtil.getFile("dataset1.txt");
         GcManager gcManager = new GcManager();
@@ -436,8 +459,8 @@ class TestJvmRun {
                 JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_CLEANUP),
                 JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_APPLICATION_STOPPED_TIME),
-                JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SAFEPOINT),
+                JdkUtil.LogEventType.SAFEPOINT.toString() + " not identified.");
         assertEquals(5, jvmRun.getEventTypes().size(), "GC Event count not correct.");
         assertEquals((long) 24, jvmRun.getTotalGcPause(), "GC pause total not correct.");
         assertEquals((long) 53, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.Safepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-class TestUnifiedApplicationStoppedTimeEvent {
+class TestSafepointEvent {
 
     @Test
     void testLogLine() {
@@ -37,9 +38,10 @@ class TestUnifiedApplicationStoppedTimeEvent {
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
                 + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
                 + "seconds";
-        assertTrue(UnifiedApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + ".");
-        UnifiedApplicationStoppedTimeEvent event = new UnifiedApplicationStoppedTimeEvent(logLine);
+        assertTrue(SafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SAFEPOINT.toString() + ".");
+        SafepointEvent event = new SafepointEvent(logLine);
+        assertEquals(Safepoint.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 144036, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(658, event.getDuration(), "Duration not parsed correctly.");
     }
@@ -51,8 +53,8 @@ class TestUnifiedApplicationStoppedTimeEvent {
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
                 + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
                 + "seconds";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME + "not identified.");
+        assertEquals(JdkUtil.LogEventType.SAFEPOINT, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.SAFEPOINT + "not identified.");
     }
 
     @Test
@@ -62,8 +64,8 @@ class TestUnifiedApplicationStoppedTimeEvent {
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
                 + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
                 + "seconds";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedApplicationStoppedTimeEvent,
-                JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not parsed.");
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof SafepointEvent,
+                JdkUtil.LogEventType.SAFEPOINT.toString() + " not parsed.");
     }
 
     @Test
@@ -74,22 +76,21 @@ class TestUnifiedApplicationStoppedTimeEvent {
                 + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
                 + "seconds";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString()
-                        + " incorrectly indentified as blocking.");
+                JdkUtil.LogEventType.SAFEPOINT.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME),
-                JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.SAFEPOINT),
+                JdkUtil.LogEventType.SAFEPOINT.toString() + " not indentified as reportable.");
     }
 
     @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_APPLICATION_STOPPED_TIME);
+        eventTypes.add(LogEventType.SAFEPOINT);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + " not indentified as unified.");
+                JdkUtil.LogEventType.SAFEPOINT.toString() + " not indentified as unified.");
     }
 
     @Test
@@ -99,8 +100,8 @@ class TestUnifiedApplicationStoppedTimeEvent {
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
                 + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
                 + "seconds   ";
-        assertTrue(UnifiedApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + ".");
+        assertTrue(SafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SAFEPOINT.toString() + ".");
     }
 
     @Test
@@ -109,9 +110,10 @@ class TestUnifiedApplicationStoppedTimeEvent {
                 + "[144.036s][info][safepoint     ] Leaving safepoint region[144.036s][info][safepoint     ] Total "
                 + "time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: "
                 + "0.0002048 seconds";
-        assertTrue(UnifiedApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + ".");
-        UnifiedApplicationStoppedTimeEvent event = new UnifiedApplicationStoppedTimeEvent(logLine);
+        assertTrue(SafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SAFEPOINT.toString() + ".");
+        SafepointEvent event = new SafepointEvent(logLine);
+        assertEquals(Safepoint.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 144036, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(658, event.getDuration(), "Duration not parsed correctly.");
     }
@@ -122,9 +124,10 @@ class TestUnifiedApplicationStoppedTimeEvent {
                 + "[144036ms][info][safepoint     ] Leaving safepoint region[144036ms][info][safepoint     ] Total "
                 + "time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: "
                 + "0.0002048 seconds";
-        assertTrue(UnifiedApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + ".");
-        UnifiedApplicationStoppedTimeEvent event = new UnifiedApplicationStoppedTimeEvent(logLine);
+        assertTrue(SafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SAFEPOINT.toString() + ".");
+        SafepointEvent event = new SafepointEvent(logLine);
+        assertEquals(Safepoint.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 144036, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(658, event.getDuration(), "Duration not parsed correctly.");
 
@@ -136,9 +139,10 @@ class TestUnifiedApplicationStoppedTimeEvent {
                 + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][info][safepoint     ] "
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][info][safepoint     ] Total time for which "
                 + "application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 seconds";
-        assertTrue(UnifiedApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + ".");
-        UnifiedApplicationStoppedTimeEvent event = new UnifiedApplicationStoppedTimeEvent(logLine);
+        assertTrue(SafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SAFEPOINT.toString() + ".");
+        SafepointEvent event = new SafepointEvent(logLine);
+        assertEquals(Safepoint.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 684934853379L, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(658, event.getDuration(), "Duration not parsed correctly.");
     }
@@ -150,9 +154,10 @@ class TestUnifiedApplicationStoppedTimeEvent {
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
                 + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
                 + "seconds";
-        assertTrue(UnifiedApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + ".");
-        UnifiedApplicationStoppedTimeEvent event = new UnifiedApplicationStoppedTimeEvent(logLine);
+        assertTrue(SafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SAFEPOINT.toString() + ".");
+        SafepointEvent event = new SafepointEvent(logLine);
+        assertEquals(Safepoint.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 144036, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(658, event.getDuration(), "Duration not parsed correctly.");
     }
@@ -164,9 +169,10 @@ class TestUnifiedApplicationStoppedTimeEvent {
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144036ms][info][safepoint     ] Total time "
                 + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
                 + "seconds";
-        assertTrue(UnifiedApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_APPLICATION_STOPPED_TIME.toString() + ".");
-        UnifiedApplicationStoppedTimeEvent event = new UnifiedApplicationStoppedTimeEvent(logLine);
+        assertTrue(SafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SAFEPOINT.toString() + ".");
+        SafepointEvent event = new SafepointEvent(logLine);
+        assertEquals(Safepoint.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 144036, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(658, event.getDuration(), "Duration not parsed correctly.");
     }
