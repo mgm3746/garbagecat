@@ -124,7 +124,7 @@ public class GcInfoEvent implements ThrowAwayEvent {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Free: " + JdkRegEx.SIZE + "( \\(\\d{1,4} regions\\))?, "
                     + "Max( regular)?: " + JdkRegEx.SIZE + "( regular)?, (Max humongous: )?" + JdkRegEx.SIZE
-                    + "( humongous)?, (External )?[fF]rag: \\d{1,2}%( external)?, (Internal frag: )?\\d{1,2}%"
+                    + "( humongous)?, (External )?[fF]rag: \\d{1,3}%( external)?, (Internal frag: )?\\d{1,3}%"
                     + "( internal; Reserve: " + JdkRegEx.SIZE + ", Max: " + JdkRegEx.SIZE + ")?$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Evacuation Reserve: " + JdkRegEx.SIZE

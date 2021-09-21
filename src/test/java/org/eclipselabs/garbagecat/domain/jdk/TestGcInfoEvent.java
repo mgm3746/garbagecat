@@ -166,9 +166,17 @@ class TestGcInfoEvent {
     }
 
     @Test
-    void testNonUnifiedFree() {
+    void testNotUnifiedFree() {
         String logLine = "Free: 12838K, Max: 256K regular, 10752K humongous, Frag: 7% external, 12% internal; "
                 + "Reserve: 6656K, Max: 256K";
+        assertTrue(GcInfoEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".");
+    }
+
+    @Test
+    void testNotUnifiedFrag100() {
+        String logLine = "Free: 88400K, Max: 256K regular, 768K humongous, Frag: 100% external, 5% internal; "
+                + "Reserve: 6624K, Max: 256K";
         assertTrue(GcInfoEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".");
     }
