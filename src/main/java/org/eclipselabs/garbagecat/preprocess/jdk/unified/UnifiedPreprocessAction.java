@@ -294,7 +294,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * </pre>
      */
     private static final String REGEX_RETAIN_BEGINNING_SERIAL_OLD = "^(" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))$";
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\))$";
 
     /**
      * Regular expression for retained beginning @link

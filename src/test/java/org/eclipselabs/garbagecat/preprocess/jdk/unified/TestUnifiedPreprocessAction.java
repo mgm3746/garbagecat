@@ -786,6 +786,13 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testSerialOldStartTriggerSystemGc() {
+        String logLine = "[2021-09-22T10:57:20.259-0500][5258404ms] GC(5172) Pause Full (System.gc())";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testSerialOldInfo() {
         String logLine = "[0.076s][info][gc             ] GC(2) Pause Full (Allocation Failure) 0M->0M(2M) 1.699ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -1737,6 +1744,22 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD),
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SAFEPOINT),
+                JdkUtil.LogEventType.SAFEPOINT.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testSafepointG1CollectFull() {
+        File testFile = TestUtil.getFile("dataset220.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_OLD),
+                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SAFEPOINT),
                 JdkUtil.LogEventType.SAFEPOINT.toString() + " collector not identified.");
     }
