@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.eclipselabs.garbagecat.util.jdk.Safepoint;
+import org.eclipselabs.garbagecat.util.jdk.unified.Safepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -81,8 +81,8 @@ class TestSafepointEvent {
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.SAFEPOINT),
-                JdkUtil.LogEventType.SAFEPOINT.toString() + " not indentified as reportable.");
+        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.SAFEPOINT),
+                JdkUtil.LogEventType.SAFEPOINT.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test

@@ -906,6 +906,7 @@ public final class JdkUtil {
         case HEAP_REGION_SIZE:
         case LOG_FILE:
         case REFERENCE_GC:
+        case SAFEPOINT:
         case SHENANDOAH_CANCELLING_GC:
         case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
         case SHENANDOAH_STATS:

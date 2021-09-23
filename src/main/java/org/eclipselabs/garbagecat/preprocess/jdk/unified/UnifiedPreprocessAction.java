@@ -23,7 +23,7 @@ import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.Safepoint;
+import org.eclipselabs.garbagecat.util.jdk.unified.Safepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**

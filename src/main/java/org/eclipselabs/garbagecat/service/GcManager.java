@@ -68,6 +68,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
@@ -752,6 +753,8 @@ public class GcManager {
 
                 } else if (event instanceof ApplicationStoppedTimeEvent) {
                     jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
+                } else if (event instanceof SafepointEvent) {
+                    jvmDao.addSafepointEvent((SafepointEvent) event);
                 } else if (event instanceof HeaderCommandLineFlagsEvent) {
                     jvmDao.setOptions(((HeaderCommandLineFlagsEvent) event).getJvmOptions());
                 } else if (event instanceof HeaderMemoryEvent) {
@@ -954,6 +957,11 @@ public class GcManager {
         jvmRun.setMaxStoppedTime(jvmDao.getMaxStoppedTime());
         jvmRun.setTotalStoppedTime(jvmDao.getTotalStoppedTime());
         jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
+        jvmRun.setFirstSafepointEvent(jvmDao.getFirstSafepointEvent());
+        jvmRun.setLastSafepointEvent(jvmDao.getLastSafepointEvent());
+        jvmRun.setMaxSafepointTime(jvmDao.getMaxSafepointTime());
+        jvmRun.setTotalSafepointTime(jvmDao.getTotalSafepointTime());
+        jvmRun.setSafepointEventCount(jvmDao.getSafepointEventCount());
         jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
         jvmRun.setEventTypes(jvmDao.getEventTypes());
         jvmRun.setCollectorFamilies(jvmDao.getCollectorFamilies());

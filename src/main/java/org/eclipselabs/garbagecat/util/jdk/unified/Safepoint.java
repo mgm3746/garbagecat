@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.util.jdk;
+package org.eclipselabs.garbagecat.util.jdk.unified;
 
 /**
  * <p>

@@ -493,6 +493,12 @@ public enum Analysis {
     WARN_GC_LOG_FILE_SIZE_SMALL("warn.gc.log.file.size.small"),
 
     /**
+     * Property key for the ratio of gc time vs. safepoint time showing a significant amount of safepoint time (&gt;20%)
+     * is not GC related.
+     */
+    WARN_GC_SAFEPOINT_RATIO("warn.gc.safepoint.ratio"),
+
+    /**
      * Property key for the ratio of gc time vs. stopped time showing a significant amount of stopped time (&gt;20%) is
      * not GC related.
      */
@@ -614,14 +620,14 @@ public enum Analysis {
     WARN_PRINT_TENURING_DISTRIBUTION("warn.print.tenuring.distribution"),
 
     /**
-     * Property key for -Dsun.rmi.dgc.client.gcInterval.redundant in combination with -XX:+DisableExplicitGC.
-     */
-    WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT("warn.rmi.dgc.client.gcInterval.redundant"),
-
-    /**
      * Property key for large (&gt;24 hours) sun.rmi.dgc.client.gcInterval.
      */
     WARN_RMI_DGC_CLIENT_GCINTERVAL_LARGE("warn.rmi.dgc.client.gcInterval.large"),
+
+    /**
+     * Property key for -Dsun.rmi.dgc.client.gcInterval.redundant in combination with -XX:+DisableExplicitGC.
+     */
+    WARN_RMI_DGC_CLIENT_GCINTERVAL_REDUNDANT("warn.rmi.dgc.client.gcInterval.redundant"),
 
     /**
      * Property key for small (&lt;1 hour) sun.rmi.dgc.client.gcInterval.
@@ -629,13 +635,13 @@ public enum Analysis {
     WARN_RMI_DGC_CLIENT_GCINTERVAL_SMALL("warn.rmi.dgc.client.gcInterval.small"),
 
     /**
-     * Property key for -Dsun.rmi.dgc.server.gcInterval.redundant in combination with -XX:+DisableExplicitGC.
-     */
-    WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT("warn.rmi.dgc.server.gcInterval.redundant"),
-    /**
      * Property key for large (&gt;24 hours) sun.rmi.dgc.server.gcInterval.
      */
     WARN_RMI_DGC_SERVER_GCINTERVAL_LARGE("warn.rmi.dgc.server.gcInterval.large"),
+    /**
+     * Property key for -Dsun.rmi.dgc.server.gcInterval.redundant in combination with -XX:+DisableExplicitGC.
+     */
+    WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT("warn.rmi.dgc.server.gcInterval.redundant"),
 
     /**
      * Property key for small (&lt;1 hour)sun.rmi.dgc.server.gcInterval.

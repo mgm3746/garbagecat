@@ -15,10 +15,9 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.Safepoint;
+import org.eclipselabs.garbagecat.util.jdk.unified.Safepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
@@ -80,7 +79,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class SafepointEvent extends ApplicationStoppedTimeEvent implements UnifiedLogging {
+public class SafepointEvent implements UnifiedLogging {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -121,7 +120,6 @@ public class SafepointEvent extends ApplicationStoppedTimeEvent implements Unifi
      *            The log entry for the event.
      */
     public SafepointEvent(String logEntry) {
-        super(logEntry);
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
@@ -158,7 +156,6 @@ public class SafepointEvent extends ApplicationStoppedTimeEvent implements Unifi
      *            The elapsed clock time for the safepoint event in microseconds (rounded).
      */
     public SafepointEvent(String logEntry, long timestamp, int duration) {
-        super(logEntry, timestamp, duration);
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;

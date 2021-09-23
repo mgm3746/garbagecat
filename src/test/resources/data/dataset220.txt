@@ -1,0 +1,25 @@
+[2021-09-22T10:57:20.259-0500][5258404ms] Entering safepoint region: G1CollectFull
+[2021-09-22T10:57:20.259-0500][5258404ms] GC(5172) Using 4 workers of 4 for full compaction
+[2021-09-22T10:57:20.259-0500][5258404ms] GC(5172) Pause Full (System.gc())
+[2021-09-22T10:57:20.260-0500][5258405ms] GC(5172) Phase 1: Mark live objects
+[2021-09-22T10:57:20.718-0500][5258863ms] GC(5172) Cleaned string and symbol table, strings: 35967 processed, 25 removed, symbols: 225161 processed, 0 removed
+[2021-09-22T10:57:20.718-0500][5258863ms] GC(5172) Phase 1: Mark live objects 457.912ms
+[2021-09-22T10:57:20.718-0500][5258863ms] GC(5172) Phase 2: Prepare for compaction
+[2021-09-22T10:57:20.829-0500][5258974ms] GC(5172) Phase 2: Prepare for compaction 111.231ms
+[2021-09-22T10:57:20.829-0500][5258974ms] GC(5172) Phase 3: Adjust pointers
+[2021-09-22T10:57:21.049-0500][5259194ms] GC(5172) Phase 3: Adjust pointers 220.277ms
+[2021-09-22T10:57:21.050-0500][5259195ms] GC(5172) Phase 4: Compact heap
+[2021-09-22T10:57:21.275-0500][5259420ms] GC(5172) Phase 4: Compact heap 225.709ms
+[2021-09-22T10:57:21.297-0500][5259442ms] GC(5172) Eden regions: 5->0(159)
+[2021-09-22T10:57:21.297-0500][5259442ms] GC(5172) Survivor regions: 3->0(7)
+[2021-09-22T10:57:21.297-0500][5259442ms] GC(5172) Old regions: 808->735
+[2021-09-22T10:57:21.297-0500][5259442ms] GC(5172) Humongous regions: 13->13
+[2021-09-22T10:57:21.297-0500][5259442ms] GC(5172) Metaspace: 82409K->82409K(1126400K)
+[2021-09-22T10:57:21.297-0500][5259442ms] GC(5172) Pause Full (System.gc()) 827M->743M(1024M) 1037.637ms
+[2021-09-22T10:57:21.297-0500][5259442ms] GC(5172) User=2.03s Sys=0.03s Real=1.04s
+[2021-09-22T10:57:21.297-0500][5259442ms] Leaving safepoint region
+[2021-09-22T10:57:21.297-0500][5259442ms] Total time for which application threads were stopped: 1.0381015 seconds, Stopping threads took: 0.0000359 seconds
+[2021-09-22T10:57:21.308-0500][5259453ms] Application time: 0.0106896 seconds
+[2021-09-22T10:57:21.308-0500][5259453ms] Entering safepoint region: RevokeBias
+[2021-09-22T10:57:21.308-0500][5259453ms] Leaving safepoint region
+[2021-09-22T10:57:21.308-0500][5259453ms] Total time for which application threads were stopped: 0.0004460 seconds, Stopping threads took: 0.0000798 seconds

@@ -10,7 +10,7 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.util.jdk;
+package org.eclipselabs.garbagecat.util.jdk.unified;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -47,5 +47,4 @@ public class TestSafepoint {
             }
         }
     }
-
 }

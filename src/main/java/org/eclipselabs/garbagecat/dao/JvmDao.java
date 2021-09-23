@@ -35,6 +35,7 @@ import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
@@ -52,10 +53,23 @@ public class JvmDao {
 
     private static final Comparator<BlockingEvent> COMPARE_BY_TIMESTAMP = comparing(BlockingEvent::getTimestamp);
 
-    /**
-     * List of all event types associate with JVM run.
-     */
-    List<LogEventType> eventTypes = new ArrayList<>();
+    private static boolean created;
+
+    private static Memory add(Memory m1, Memory m2) {
+        return m1 == null ? nullSafe(m2) : m1.plus(nullSafe(m2));
+    }
+
+    private static <T> Stream<Integer> ints(List<T> list, Function<T, Integer> function) {
+        return list.stream().map(function).filter(Objects::nonNull);
+    }
+
+    private static Memory nullSafe(Memory memory) {
+        return memory == null ? ZERO : memory;
+    }
+
+    private static BlockingEvent toBlockingEvent(BlockingEvent e) {
+        return e;
+    }
 
     /**
      * Analysis property keys.
@@ -63,24 +77,49 @@ public class JvmDao {
     private List<Analysis> analysis = new ArrayList<>();
 
     /**
+     * GC events that are blocking.
+     */
+    private List<BlockingEvent> blockingEvents = new ArrayList<>();
+
+    /**
      * Collector families for JVM run.
      */
     List<CollectorFamily> collectorFamilies = new ArrayList<>();
 
     /**
-     * Logging lines that do not match any known GC events.
+     * List of all event types associate with JVM run.
      */
-    private List<String> unidentifiedLogLines = new ArrayList<>();
+    List<LogEventType> eventTypes = new ArrayList<>();
 
     /**
-     * Batch blocking inserts for improved performance.
+     * Number of <code>ParallelCollection</code> with "inverted" parallelism.
      */
-    private List<BlockingEvent> blockingEvents = new ArrayList<>();
+    private long invertedParallelismCount;
 
     /**
-     * Batch stopped time inserts for improved performance.
+     * Used for tracking max heap occupancy outside of <code>BlockingEvent</code>s.
      */
-    private List<ApplicationStoppedTimeEvent> stoppedTimeEvents = new ArrayList<>();
+    private int maxHeapOccupancyNonBlocking;
+
+    /**
+     * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
+     */
+    private int maxHeapSpaceNonBlocking;
+
+    /**
+     * Used for tracking max perm occupancy outside of <code>BlockingEvent</code>s.
+     */
+    private int maxPermOccupancyNonBlocking;
+
+    /**
+     * Used for tracking max perm space outside of <code>BlockingEvent</code>s.
+     */
+    private int maxPermSpaceNonBlocking;
+
+    /**
+     * JVM memory information.
+     */
+    private String memory;
 
     /**
      * The JVM options for the JVM run.
@@ -88,14 +127,9 @@ public class JvmDao {
     private String options;
 
     /**
-     * JVM version.
+     * Number of <code>ParallelCollection</code> events.
      */
-    private String version;
-
-    /**
-     * JVM memory information.
-     */
-    private String memory;
+    private long parallelCount;
 
     /**
      * Physical memory (bytes).
@@ -106,6 +140,16 @@ public class JvmDao {
      * Physical memory free (bytes).
      */
     private long physicalMemoryFree;
+
+    /**
+     * Safepoint events.
+     */
+    private List<SafepointEvent> safepointEvents = new ArrayList<>();
+
+    /**
+     * Stopped time events.
+     */
+    private List<ApplicationStoppedTimeEvent> stoppedTimeEvents = new ArrayList<>();
 
     /**
      * Swap size (bytes).
@@ -119,41 +163,19 @@ public class JvmDao {
     private long swapFree;
 
     /**
-     * Number of <code>ParallelCollection</code> events.
+     * Logging lines that do not match any known GC events.
      */
-    private long parallelCount;
+    private List<String> unidentifiedLogLines = new ArrayList<>();
 
     /**
-     * Number of <code>ParallelCollection</code> with "inverted" parallelism.
+     * JVM version.
      */
-    private long invertedParallelismCount;
+    private String version;
 
     /**
      * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
      */
     private LogEvent worstInvertedParallelismEvent;
-
-    /**
-     * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
-     */
-    private int maxHeapSpaceNonBlocking;
-
-    /**
-     * Used for tracking max heap occupancy outside of <code>BlockingEvent</code>s.
-     */
-    private int maxHeapOccupancyNonBlocking;
-
-    /**
-     * Used for tracking max perm space outside of <code>BlockingEvent</code>s.
-     */
-    private int maxPermSpaceNonBlocking;
-
-    /**
-     * Used for tracking max perm occupancy outside of <code>BlockingEvent</code>s.
-     */
-    private int maxPermOccupancyNonBlocking;
-
-    private static boolean created;
 
     public JvmDao() {
         if (created) {
@@ -163,40 +185,18 @@ public class JvmDao {
         }
     }
 
-    public List<String> getUnidentifiedLogLines() {
-        return unidentifiedLogLines;
-    }
-
-    public List<LogEventType> getEventTypes() {
-        return eventTypes;
-    }
-
-    public List<Analysis> getAnalysis() {
-        return analysis;
-    }
-
     public void addAnalysis(Analysis analysis) {
         if (!this.analysis.contains(analysis)) {
             this.analysis.add(analysis);
         }
     }
 
-    public List<CollectorFamily> getCollectorFamilies() {
-        return collectorFamilies;
-    }
-
     public void addBlockingEvent(BlockingEvent event) {
         blockingEvents.add(insertPosition(event), event);
     }
 
-    private int insertPosition(BlockingEvent event) {
-        int size = blockingEvents.size();
-        if (size > 0 && COMPARE_BY_TIMESTAMP.compare(blockingEvents.get(size - 1), event) <= 0) {
-            return size;
-        }
-        // here we could raise an Exception: Add param boolean reorderingAllowed to method
-        // if (!reorderingAllowed) throw new TimeWarpException("bad order")
-        return -binarySearch(blockingEvents, event, COMPARE_BY_TIMESTAMP) - 1;
+    public void addSafepointEvent(SafepointEvent event) {
+        safepointEvents.add(event);
     }
 
     public void addStoppedTimeEvent(ApplicationStoppedTimeEvent event) {
@@ -204,269 +204,24 @@ public class JvmDao {
     }
 
     /**
-     * @return The JVM options.
-     */
-    public String getOptions() {
-        return options;
-    }
-
-    /**
-     * @param options
-     *            The JVM options to set.
-     */
-    public void setOptions(String options) {
-        this.options = options;
-    }
-
-    /**
-     * @return The JVM version information.
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
-     * @param version
-     *            The JVM version information to set.
-     */
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    /**
-     * @return The JVM memory information.
-     */
-    public String getMemory() {
-        return memory;
-    }
-
-    /**
-     * @param memory
-     *            The JVM memory information to set.
-     */
-    public void setMemory(String memory) {
-        this.memory = memory;
-    }
-
-    /**
-     * @return The JVM environment physical memory (bytes).
-     */
-    public long getPhysicalMemory() {
-        return physicalMemory;
-    }
-
-    /**
-     * @param physicalMemory
-     *            The JVM physical memory to set.
-     */
-    public void setPhysicalMemory(long physicalMemory) {
-        this.physicalMemory = physicalMemory;
-    }
-
-    /**
-     * @return The JVM environment physical free memory (bytes).
-     */
-    public long getPhysicalMemoryFree() {
-        return physicalMemoryFree;
-    }
-
-    /**
-     * @param physicalMemoryFree
-     *            The JVM physical free memory to set.
-     */
-    public void setPhysicalMemoryFree(long physicalMemoryFree) {
-        this.physicalMemoryFree = physicalMemoryFree;
-    }
-
-    /**
-     * @return The JVM environment swap size (bytes).
-     */
-    public long getSwap() {
-        return swap;
-    }
-
-    /**
-     * @param swap
-     *            The JVM swap to set.
-     */
-    public void setSwap(long swap) {
-        this.swap = swap;
-    }
-
-    /**
-     * @return The JVM environment swap free (bytes).
-     */
-    public long getSwapFree() {
-        return swapFree;
-    }
-
-    /**
-     * @param swapFree
-     *            The JVM swap free to set.
-     */
-    public void setSwapFree(long swapFree) {
-        this.swapFree = swapFree;
-    }
-
-    /**
-     * @return The number of <code>ParallelCollection</code> events.
-     */
-    public long getParallelCount() {
-        return parallelCount;
-    }
-
-    /**
-     * @param parallelCount
-     *            The number of <code>ParallelCollection</code> events.
-     */
-    public void setParallelCount(long parallelCount) {
-        this.parallelCount = parallelCount;
-    }
-
-    /**
-     * @return The number of "inverted" parallelism events.
-     */
-    public long getInvertedParallelismCount() {
-        return invertedParallelismCount;
-    }
-
-    /**
-     * @param invertedParallelismCount
-     *            The number of "low" parallelism events.
-     */
-    public void setInvertedParallelismCount(long invertedParallelismCount) {
-        this.invertedParallelismCount = invertedParallelismCount;
-    }
-
-    /**
-     * @return The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
-     */
-    public LogEvent getWorstInvertedParallelismEvent() {
-        return worstInvertedParallelismEvent;
-    }
-
-    /**
-     * @param worstInvertedParallelismEvent
-     *            The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
-     */
-    public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {
-        this.worstInvertedParallelismEvent = worstInvertedParallelismEvent;
-    }
-
-    /**
-     * @return The maximum heap space in non <code>BlockingEvent</code>s.
-     */
-    public int getMaxHeapSpaceNonBlocking() {
-        return maxHeapSpaceNonBlocking;
-    }
-
-    /**
-     * @param maxHeapSpaceNonBlocking
-     *            The maximum heap space in non <code>BlockingEvent</code>s.
-     */
-    public void setMaxHeapSpaceNonBlocking(int maxHeapSpaceNonBlocking) {
-        this.maxHeapSpaceNonBlocking = maxHeapSpaceNonBlocking;
-    }
-
-    /**
-     * @return The maximum heap occupancy in non <code>BlockingEvent</code>s.
-     */
-    public int getMaxHeapOccupancyNonBlocking() {
-        return maxHeapOccupancyNonBlocking;
-    }
-
-    /**
-     * @param maxHeapOccupancyNonBlocking
-     *            The maximum heap occupancy in non <code>BlockingEvent</code>s.
-     */
-    public void setMaxHeapOccupancyNonBlocking(int maxHeapOccupancyNonBlocking) {
-        this.maxHeapOccupancyNonBlocking = maxHeapOccupancyNonBlocking;
-    }
-
-    /**
-     * @return The maximum perm space in non <code>BlockingEvent</code>s.
-     */
-    public int getMaxPermSpaceNonBlocking() {
-        return maxPermSpaceNonBlocking;
-    }
-
-    /**
-     * @param maxPermSpaceNonBlocking
-     *            The maximum perm space in non <code>BlockingEvent</code>s.
-     */
-    public void setMaxPermSpaceNonBlocking(int maxPermSpaceNonBlocking) {
-        this.maxPermSpaceNonBlocking = maxPermSpaceNonBlocking;
-    }
-
-    /**
-     * @return The maximum perm occupancy in non <code>BlockingEvent</code>s.
-     */
-    public int getMaxPermOccupancyNonBlocking() {
-        return maxPermOccupancyNonBlocking;
-    }
-
-    /**
-     * @param maxPermOccupancyNonBlocking
-     *            The maximum perm occupancy in non <code>BlockingEvent</code>s.
-     */
-    public void setMaxPermOccupancyNonBlocking(int maxPermOccupancyNonBlocking) {
-        this.maxPermOccupancyNonBlocking = maxPermOccupancyNonBlocking;
-    }
-
-    /**
-     * The maximum GC blocking event pause time.
-     * 
-     * @return maximum pause duration (milliseconds).
-     */
-    public synchronized int getMaxGcPause() {
-        return convertMicrosToMillis(
-                ints(this.blockingEvents, BlockingEvent::getDuration).mapToInt(Integer::valueOf).max().orElse(0))
-                        .intValue();
-    }
-
-    /**
-     * The total blocking event pause time.
-     * 
-     * @return total pause duration (milliseconds).
-     */
-    public synchronized long getTotalGcPause() {
-        return convertMicrosToMillis(
-                ints(this.blockingEvents, BlockingEvent::getDuration).collect(summingLong(Long::valueOf))).longValue();
-    }
-
-    private static <T> Stream<Integer> ints(List<T> list, Function<T, Integer> function) {
-        return list.stream().map(function).filter(Objects::nonNull);
-    }
-
-    /**
-     * The first blocking event.
-     * 
-     * TODO: Should this consider non-blocking events?
-     * 
-     * @return The first blocking event.
-     */
-    public synchronized BlockingEvent getFirstGcEvent() {
-        // TODO JdkUtil#parseLogLine no longer needed?
-        return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(0);
-    }
-
-    /**
-     * Retrieve the last blocking event.
-     * 
-     * TODO: Should this consider non-blocking events?
-     * 
-     * @return The last blocking event.
-     */
-    public synchronized BlockingEvent getLastGcEvent() {
-        return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(blockingEvents.size() - 1);
-    }
-
-    /**
-     * Delete table(s). Useful when running in server mode during development.
+     * Cleanup operations.
      */
     public synchronized void cleanup() {
         this.blockingEvents.clear();
         JvmDao.created = false;
+    }
+
+    public List<Analysis> getAnalysis() {
+        return analysis;
+    }
+
+    /**
+     * The total number of blocking events.
+     * 
+     * @return total number of blocking events.
+     */
+    public synchronized int getBlockingEventCount() {
+        return this.blockingEvents.size();
     }
 
     /**
@@ -490,59 +245,102 @@ public class JvmDao {
                 .map(JvmDao::toBlockingEvent).collect(toList());
     }
 
-    private static BlockingEvent toBlockingEvent(BlockingEvent e) {
-        return e;
-        // TODO JdkUtil#hydrateBlockingEvent no longer needed
-        // return hydrateBlockingEvent(determineEventType(e.getName()), e.getLogEntry(),
-        // e.getTimestamp(), e.getDuration());
+    public List<CollectorFamily> getCollectorFamilies() {
+        return collectorFamilies;
+    }
+
+    public List<LogEventType> getEventTypes() {
+        return eventTypes;
     }
 
     /**
-     * The total number of blocking events.
+     * The first blocking event.
      * 
-     * @return total number of blocking events.
+     * TODO: Should this consider non-blocking events?
+     * 
+     * @return The first blocking event.
      */
-    public synchronized int getBlockingEventCount() {
-        return this.blockingEvents.size();
+    public synchronized BlockingEvent getFirstGcEvent() {
+        // TODO JdkUtil#parseLogLine no longer needed?
+        return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(0);
     }
 
     /**
-     * The maximum young space size during the JVM run.
+     * The first safepoint event.
      * 
-     * @return maximum young space size (kilobytes).
+     * @return The first safepoint event.
      */
-    public synchronized int getMaxYoungSpace() {
-        return (int) kilobytes(YoungData.class, YoungData::getYoungSpace).max().orElse(0);
+    public synchronized SafepointEvent getFirstSafepointEvent() {
+        return safepointEvents.isEmpty() ? null : safepointEvents.get(0);
     }
 
     /**
-     * The maximum old space size during the JVM run.
+     * The first stopped event.
      * 
-     * @return maximum old space size (kilobytes).
+     * @return The first stopped event.
      */
-    public synchronized int getMaxOldSpace() {
-        return (int) kilobytes(OldData.class, OldData::getOldSpace).max().orElse(0);
+    public synchronized ApplicationStoppedTimeEvent getFirstStoppedEvent() {
+        return stoppedTimeEvents.isEmpty() ? null : stoppedTimeEvents.get(0);
     }
 
     /**
-     * The maximum heap space size during the JVM run.
-     * 
-     * @return maximum heap size (kilobytes).
+     * @return The number of "inverted" parallelism events.
      */
-    public synchronized int getMaxHeapSpace() {
-        return (int) this.blockingEvents.stream() //
-                .map(e -> {
-                    if (e instanceof OldData) {
-                        OldData old = (OldData) e;
-                        return add(old.getYoungSpace(), old.getOldSpace());
-                    } else if (e instanceof CombinedData) {
-                        return ((CombinedData) e).getCombinedSpace();
-                    } else {
-                        return ZERO;
-                    }
-                }) //
-                .filter(Objects::nonNull) //
-                .mapToLong(m -> m.getValue(KILOBYTES)).max().orElse(0);
+    public long getInvertedParallelismCount() {
+        return invertedParallelismCount;
+    }
+
+    /**
+     * Retrieve the last blocking event.
+     * 
+     * TODO: Should this consider non-blocking events?
+     * 
+     * @return The last blocking event.
+     */
+    public synchronized BlockingEvent getLastGcEvent() {
+        return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(blockingEvents.size() - 1);
+    }
+
+    /**
+     * Retrieve the last safepoint event.
+     * 
+     * @return The last safepoint event.
+     */
+    public synchronized SafepointEvent getLastSafepointEvent() {
+        return safepointEvents.isEmpty() ? null : safepointEvents.get(safepointEvents.size() - 1);
+    }
+
+    /**
+     * Retrieve the last stopped event.
+     * 
+     * @return The last stopped event.
+     */
+    public synchronized ApplicationStoppedTimeEvent getLastStoppedEvent() {
+        return stoppedTimeEvents.isEmpty() ? null : stoppedTimeEvents.get(stoppedTimeEvents.size() - 1);
+    }
+
+    /**
+     * The maximum GC blocking event pause time.
+     * 
+     * @return maximum pause duration (milliseconds).
+     */
+    public synchronized int getMaxGcPause() {
+        return convertMicrosToMillis(
+                ints(this.blockingEvents, BlockingEvent::getDuration).mapToInt(Integer::valueOf).max().orElse(0))
+                        .intValue();
+    }
+
+    /**
+     * The maximum heap after GC during the JVM run.
+     * 
+     * @return maximum heap after GC (kilobytes).
+     */
+    public synchronized int getMaxHeapAfterGc() {
+        int oldMaxHeapAfterGc = (int) kilobytes(OldData.class,
+                t -> add(t.getYoungOccupancyEnd(), t.getOldOccupancyEnd())).max().orElse(0);
+        int combinedMaxHeapAfterGc = (int) kilobytes(CombinedData.class, CombinedData::getCombinedOccupancyEnd).max()
+                .orElse(0);
+        return Math.max(oldMaxHeapAfterGc, combinedMaxHeapAfterGc);
     }
 
     /**
@@ -567,25 +365,56 @@ public class JvmDao {
     }
 
     /**
-     * The maximum heap after GC during the JVM run.
-     * 
-     * @return maximum heap after GC (kilobytes).
+     * @return The maximum heap occupancy in non <code>BlockingEvent</code>s.
      */
-    public synchronized int getMaxHeapAfterGc() {
-        int oldMaxHeapAfterGc = (int) kilobytes(OldData.class,
-                t -> add(t.getYoungOccupancyEnd(), t.getOldOccupancyEnd())).max().orElse(0);
-        int combinedMaxHeapAfterGc = (int) kilobytes(CombinedData.class, CombinedData::getCombinedOccupancyEnd).max()
-                .orElse(0);
-        return Math.max(oldMaxHeapAfterGc, combinedMaxHeapAfterGc);
+    public int getMaxHeapOccupancyNonBlocking() {
+        return maxHeapOccupancyNonBlocking;
     }
 
     /**
-     * The maximum perm/metaspace size during the JVM run.
+     * The maximum heap space size during the JVM run.
      * 
-     * @return maximum perm/metaspace footprint (kilobytes).
+     * @return maximum heap size (kilobytes).
      */
-    public synchronized int getMaxPermSpace() {
-        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermSpace).max().orElse(0);
+    public synchronized int getMaxHeapSpace() {
+        return (int) this.blockingEvents.stream() //
+                .map(e -> {
+                    if (e instanceof OldData) {
+                        OldData old = (OldData) e;
+                        return add(old.getYoungSpace(), old.getOldSpace());
+                    } else if (e instanceof CombinedData) {
+                        return ((CombinedData) e).getCombinedSpace();
+                    } else {
+                        return ZERO;
+                    }
+                }) //
+                .filter(Objects::nonNull) //
+                .mapToLong(m -> m.getValue(KILOBYTES)).max().orElse(0);
+    }
+
+    /**
+     * @return The maximum heap space in non <code>BlockingEvent</code>s.
+     */
+    public int getMaxHeapSpaceNonBlocking() {
+        return maxHeapSpaceNonBlocking;
+    }
+
+    /**
+     * The maximum old space size during the JVM run.
+     * 
+     * @return maximum old space size (kilobytes).
+     */
+    public synchronized int getMaxOldSpace() {
+        return (int) kilobytes(OldData.class, OldData::getOldSpace).max().orElse(0);
+    }
+
+    /**
+     * The maximum perm/metaspace after GC during the JVM run.
+     * 
+     * @return maximum perm/metaspac after GC (kilobytes).
+     */
+    public synchronized int getMaxPermAfterGc() {
+        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermOccupancyEnd).max().orElse(0);
     }
 
     /**
@@ -598,53 +427,38 @@ public class JvmDao {
     }
 
     /**
-     * The maximum perm/metaspace after GC during the JVM run.
-     * 
-     * @return maximum perm/metaspac after GC (kilobytes).
+     * @return The maximum perm occupancy in non <code>BlockingEvent</code>s.
      */
-    public synchronized int getMaxPermAfterGc() {
-        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermOccupancyEnd).max().orElse(0);
-    }
-
-    private <T> LongStream kilobytes(Class<T> clazz, Function<T, Memory> func) {
-        return this.blockingEvents.stream() //
-                .filter(clazz::isInstance) //
-                .map(clazz::cast).map(func) //
-                .filter(Objects::nonNull) //
-                .mapToLong(m -> m.getValue(KILOBYTES));
-    }
-
-    private static Memory add(Memory m1, Memory m2) {
-        return m1 == null ? nullSafe(m2) : m1.plus(nullSafe(m2));
-    }
-
-    private static Memory nullSafe(Memory memory) {
-        return memory == null ? ZERO : memory;
+    public int getMaxPermOccupancyNonBlocking() {
+        return maxPermOccupancyNonBlocking;
     }
 
     /**
-     * The first stopped event.
+     * The maximum perm/metaspace size during the JVM run.
      * 
-     * @return The time first stopped event.
+     * @return maximum perm/metaspace footprint (kilobytes).
      */
-    public synchronized ApplicationStoppedTimeEvent getFirstStoppedEvent() {
-        return stoppedTimeEvents.isEmpty() ? null : stoppedTimeEvents.get(0);
+    public synchronized int getMaxPermSpace() {
+        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermSpace).max().orElse(0);
     }
 
     /**
-     * Retrieve the last stopped event.
-     * 
-     * @return The last stopped event.
+     * @return The maximum perm space in non <code>BlockingEvent</code>s.
      */
-    public synchronized ApplicationStoppedTimeEvent getLastStoppedEvent() {
-        return stoppedTimeEvents.isEmpty() ? null : stoppedTimeEvents.get(stoppedTimeEvents.size() - 1);
+    public int getMaxPermSpaceNonBlocking() {
+        return maxPermSpaceNonBlocking;
     }
 
     /**
-     * Retrieve the last stopped event.
+     * The maximum safepoint event pause time.
      * 
-     * @return The last stopped event.
+     * @return maximum pause duration (milliseconds).
      */
+    public synchronized int getMaxSafepointTime() {
+        return convertMicrosToMillis(
+                ints(this.safepointEvents, SafepointEvent::getDuration).mapToInt(Integer::valueOf).max().orElse(0))
+                        .intValue();
+    }
 
     /**
      * The maximum stopped time event pause time.
@@ -657,13 +471,56 @@ public class JvmDao {
     }
 
     /**
-     * The total stopped time event pause time.
+     * The maximum young space size during the JVM run.
      * 
-     * @return total pause duration (milliseconds).
+     * @return maximum young space size (kilobytes).
      */
-    public synchronized int getTotalStoppedTime() {
-        return convertMicrosToMillis(ints(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
-                .collect(summingLong(Long::valueOf))).intValue();
+    public synchronized int getMaxYoungSpace() {
+        return (int) kilobytes(YoungData.class, YoungData::getYoungSpace).max().orElse(0);
+    }
+
+    /**
+     * @return The JVM memory information.
+     */
+    public String getMemory() {
+        return memory;
+    }
+
+    /**
+     * @return The JVM options.
+     */
+    public String getOptions() {
+        return options;
+    }
+
+    /**
+     * @return The number of <code>ParallelCollection</code> events.
+     */
+    public long getParallelCount() {
+        return parallelCount;
+    }
+
+    /**
+     * @return The JVM environment physical memory (bytes).
+     */
+    public long getPhysicalMemory() {
+        return physicalMemory;
+    }
+
+    /**
+     * @return The JVM environment physical free memory (bytes).
+     */
+    public long getPhysicalMemoryFree() {
+        return physicalMemoryFree;
+    }
+
+    /**
+     * The total number of safepoint events.
+     * 
+     * @return total number of safepoint time events.
+     */
+    public synchronized int getSafepointEventCount() {
+        return this.safepointEvents.size();
     }
 
     /**
@@ -673,6 +530,198 @@ public class JvmDao {
      */
     public synchronized int getStoppedTimeEventCount() {
         return this.stoppedTimeEvents.size();
+    }
+
+    /**
+     * @return The JVM environment swap size (bytes).
+     */
+    public long getSwap() {
+        return swap;
+    }
+
+    /**
+     * @return The JVM environment swap free (bytes).
+     */
+    public long getSwapFree() {
+        return swapFree;
+    }
+
+    /**
+     * The total blocking event pause time.
+     * 
+     * @return total pause duration (milliseconds).
+     */
+    public synchronized long getTotalGcPause() {
+        return convertMicrosToMillis(
+                ints(this.blockingEvents, BlockingEvent::getDuration).collect(summingLong(Long::valueOf))).longValue();
+    }
+
+    /**
+     * The total safepoint event pause time.
+     * 
+     * @return total pause duration (milliseconds).
+     */
+    public synchronized int getTotalSafepointTime() {
+        return convertMicrosToMillis(
+                ints(this.safepointEvents, SafepointEvent::getDuration).collect(summingLong(Long::valueOf))).intValue();
+    }
+
+    /**
+     * The total stopped time event pause time.
+     * 
+     * @return total pause duration (milliseconds).
+     */
+    public synchronized int getTotalStoppedTime() {
+        return convertMicrosToMillis(ints(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
+                .collect(summingLong(Long::valueOf))).intValue();
+    }
+
+    public List<String> getUnidentifiedLogLines() {
+        return unidentifiedLogLines;
+    }
+
+    /**
+     * @return The JVM version information.
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * @return The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
+     */
+    public LogEvent getWorstInvertedParallelismEvent() {
+        return worstInvertedParallelismEvent;
+    }
+
+    private int insertPosition(BlockingEvent event) {
+        int size = blockingEvents.size();
+        if (size > 0 && COMPARE_BY_TIMESTAMP.compare(blockingEvents.get(size - 1), event) <= 0) {
+            return size;
+        }
+        // here we could raise an Exception: Add param boolean reorderingAllowed to method
+        // if (!reorderingAllowed) throw new TimeWarpException("bad order")
+        return -binarySearch(blockingEvents, event, COMPARE_BY_TIMESTAMP) - 1;
+    }
+
+    private <T> LongStream kilobytes(Class<T> clazz, Function<T, Memory> func) {
+        return this.blockingEvents.stream() //
+                .filter(clazz::isInstance) //
+                .map(clazz::cast).map(func) //
+                .filter(Objects::nonNull) //
+                .mapToLong(m -> m.getValue(KILOBYTES));
+    }
+
+    /**
+     * @param invertedParallelismCount
+     *            The number of "low" parallelism events.
+     */
+    public void setInvertedParallelismCount(long invertedParallelismCount) {
+        this.invertedParallelismCount = invertedParallelismCount;
+    }
+
+    /**
+     * @param maxHeapOccupancyNonBlocking
+     *            The maximum heap occupancy in non <code>BlockingEvent</code>s.
+     */
+    public void setMaxHeapOccupancyNonBlocking(int maxHeapOccupancyNonBlocking) {
+        this.maxHeapOccupancyNonBlocking = maxHeapOccupancyNonBlocking;
+    }
+
+    /**
+     * @param maxHeapSpaceNonBlocking
+     *            The maximum heap space in non <code>BlockingEvent</code>s.
+     */
+    public void setMaxHeapSpaceNonBlocking(int maxHeapSpaceNonBlocking) {
+        this.maxHeapSpaceNonBlocking = maxHeapSpaceNonBlocking;
+    }
+
+    /**
+     * @param maxPermOccupancyNonBlocking
+     *            The maximum perm occupancy in non <code>BlockingEvent</code>s.
+     */
+    public void setMaxPermOccupancyNonBlocking(int maxPermOccupancyNonBlocking) {
+        this.maxPermOccupancyNonBlocking = maxPermOccupancyNonBlocking;
+    }
+
+    /**
+     * @param maxPermSpaceNonBlocking
+     *            The maximum perm space in non <code>BlockingEvent</code>s.
+     */
+    public void setMaxPermSpaceNonBlocking(int maxPermSpaceNonBlocking) {
+        this.maxPermSpaceNonBlocking = maxPermSpaceNonBlocking;
+    }
+
+    /**
+     * @param memory
+     *            The JVM memory information to set.
+     */
+    public void setMemory(String memory) {
+        this.memory = memory;
+    }
+
+    /**
+     * @param options
+     *            The JVM options to set.
+     */
+    public void setOptions(String options) {
+        this.options = options;
+    }
+
+    /**
+     * @param parallelCount
+     *            The number of <code>ParallelCollection</code> events.
+     */
+    public void setParallelCount(long parallelCount) {
+        this.parallelCount = parallelCount;
+    }
+
+    /**
+     * @param physicalMemory
+     *            The JVM physical memory to set.
+     */
+    public void setPhysicalMemory(long physicalMemory) {
+        this.physicalMemory = physicalMemory;
+    }
+
+    /**
+     * @param physicalMemoryFree
+     *            The JVM physical free memory to set.
+     */
+    public void setPhysicalMemoryFree(long physicalMemoryFree) {
+        this.physicalMemoryFree = physicalMemoryFree;
+    }
+
+    /**
+     * @param swap
+     *            The JVM swap to set.
+     */
+    public void setSwap(long swap) {
+        this.swap = swap;
+    }
+
+    /**
+     * @param swapFree
+     *            The JVM swap free to set.
+     */
+    public void setSwapFree(long swapFree) {
+        this.swapFree = swapFree;
+    }
+
+    /**
+     * @param version
+     *            The JVM version information to set.
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    /**
+     * @param worstInvertedParallelismEvent
+     *            The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
+     */
+    public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {
+        this.worstInvertedParallelismEvent = worstInvertedParallelismEvent;
     }
 
 }

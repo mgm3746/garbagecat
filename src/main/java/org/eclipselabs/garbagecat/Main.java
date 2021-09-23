@@ -352,6 +352,26 @@ public class Main {
                     bufferedWriter.write("GC/Stopped Ratio: " + jvmRun.getGcStoppedRatio() + "%" + LINE_SEPARATOR);
                 }
             }
+            if (jvmRun.getSafepointEventCount() > 0) {
+                // Stopped time throughput
+                bufferedWriter.write("Safepoint Throughput: ");
+                if (jvmRun.getStoppedTimeThroughput() == 100 && jvmRun.getStoppedTimeEventCount() > 0) {
+                    // Provide clue it's rounded to 100
+                    bufferedWriter.write("~");
+                }
+                bufferedWriter.write(jvmRun.getSafepointThroughput() + "%" + LINE_SEPARATOR);
+                // Max safepoint time
+                BigDecimal maxSafepointPause = JdkMath.convertMillisToSecs(jvmRun.getMaxSafepointTime());
+                bufferedWriter.write("Safepoint Max Pause: " + maxSafepointPause.toString() + " secs" + LINE_SEPARATOR);
+                // Total safepoint time
+                BigDecimal totalSafepointTime = JdkMath.convertMillisToSecs(jvmRun.getTotalSafepointTime());
+                bufferedWriter
+                        .write("Safepoint Time Total: " + totalSafepointTime.toString() + " secs" + LINE_SEPARATOR);
+                // Ratio of GC vs. safepoint time. 100 means all stopped time due to GC.
+                if (jvmRun.getBlockingEventCount() > 0) {
+                    bufferedWriter.write("GC/Safepoint Ratio: " + jvmRun.getGcSafepointRatio() + "%" + LINE_SEPARATOR);
+                }
+            }
             // First/last timestamps
             if (jvmRun.getBlockingEventCount() > 0 || jvmRun.getStoppedTimeEventCount() > 0) {
                 // First event

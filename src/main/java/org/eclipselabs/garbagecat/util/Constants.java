@@ -39,9 +39,9 @@ public class Constants {
     public static final int FIRST_TIMESTAMP_THRESHOLD = 60;
 
     /**
-     * The ratio of GC time vs. Stopped time for reporting excessive Stopped time.
+     * The ratio of GC time vs. safepoint time for reporting excessive safepoint time.
      */
-    public static final int GC_STOPPED_RATIO_THRESHOLD = 80;
+    public static final int GC_SAFEPOINT_RATIO_THRESHOLD = 80;
 
     /**
      * Line separator used for report and preparsing.
