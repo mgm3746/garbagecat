@@ -670,7 +670,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG)) {
             // Only report young collections that do not trigger an old collection
-            if (!nextLogEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_OLD)) {
+            if (nextLogEntry == null || !nextLogEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_OLD)) {
                 Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG);
                 Matcher matcher = pattern.matcher(logEntry);
                 if (matcher.matches()) {
@@ -715,7 +715,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SAFEPOINT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                if (nextLogEntry.matches(REGEX_RETAIN_MIDDLE_SAFEPOINT)) {
+                if (nextLogEntry == null || nextLogEntry.matches(REGEX_RETAIN_MIDDLE_SAFEPOINT)) {
                     // Non GC safepoint
                     this.logEntry = matcher.group(1);
                     context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
@@ -786,7 +786,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_SAFEPOINT)) {
-            if (priorLogEntry.matches(REGEX_RETAIN_BEGINNING_SAFEPOINT)) {
+            if (priorLogEntry != null && priorLogEntry.matches(REGEX_RETAIN_BEGINNING_SAFEPOINT)) {
                 this.logEntry = logEntry;
                 context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             } else {
@@ -823,9 +823,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(24);
             }
-            // Only output beginning safepoint logging if middle safepoint line is next
+            // Only output beginning safepoint logging if middle safepoint line is next, or it's the last log line
             if (!(entangledLogLines.size() == 1 && entangledLogLines.get(0).matches(REGEX_RETAIN_BEGINNING_SAFEPOINT)
-                    && !nextLogEntry.matches(REGEX_RETAIN_MIDDLE_SAFEPOINT))) {
+                    && (nextLogEntry == null || !nextLogEntry.matches(REGEX_RETAIN_MIDDLE_SAFEPOINT)))) {
                 clearEntangledLines(entangledLogLines);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);

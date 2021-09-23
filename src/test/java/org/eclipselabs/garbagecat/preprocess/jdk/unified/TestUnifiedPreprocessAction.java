@@ -1311,6 +1311,11 @@ class TestUnifiedPreprocessAction {
                 + "CollectForMetadataAllocation";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        Set<String> context = new HashSet<String>();
+        UnifiedPreprocessAction preprocessAction = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines,
+                context);
+        assertEquals(logLine, preprocessAction.getLogEntry());
     }
 
     @Test
