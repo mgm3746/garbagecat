@@ -553,6 +553,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.030s][info][safepoint    ] Application time: 0.0012757 seconds
      * 
      * [2021-03-13T03:37:40.051+0530][79853119ms] GC(8645) To-space exhausted
+     * 
+     * [2021-09-22T10:59:49.112-0500][5455002ms] Entering safepoint region: Exit
+     * 
+     * [0.031s] Entering safepoint region: Halt
      * </pre>
      */
     private static final String[] REGEX_THROWAWAY = {
@@ -603,7 +607,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + "Desired survivor size|Do scavenge:|    eden:|[ ]{4}\\[[ ]{0,2}(eden|from|to)_start|"
                     + "  Eden, (from|to), (to|from):|    from:|Live_space:|  minor pause:|Minor_pause:|"
                     + "No full after scavenge|Old eden_size:|old_gen_capacity:|PSYoungGen::resize_spaces|      to:|"
-                    + "Young generation size:).*$"
+                    + "Young generation size:).*$",
+            // Safepoint
+            "^" + UnifiedRegEx.DECORATOR + " Entering safepoint region: (Exit|Halt)$"
             //
     };
 

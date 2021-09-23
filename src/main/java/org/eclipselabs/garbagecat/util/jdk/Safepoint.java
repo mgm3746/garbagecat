@@ -34,7 +34,7 @@ public class Safepoint {
         //
         G1_COLLECT_FOR_ALLOCATION, G1_INC_COLLECTION_PAUSE, GEN_COLLECT_FOR_ALLOCATION, GEN_COLLECT_FULL_CONCURRENT,
         //
-        GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, IC_BUFFER_FULL, NO_VM_OPERATION,
+        GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, HALT, IC_BUFFER_FULL, NO_VM_OPERATION,
         //
         PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS,
         //
@@ -181,6 +181,13 @@ public class Safepoint {
      * </p>
      */
     public static final String GET_THREAD_LIST_STACK_TRACES = "GetThreadListStackTraces";
+
+    /**
+     * <p>
+     * JVM halt (exit).
+     * </p>
+     */
+    public static final String HALT = "Halt";
 
     /**
      * <p>
@@ -356,6 +363,9 @@ public class Safepoint {
         case GET_THREAD_LIST_STACK_TRACES:
             triggerLiteral = GET_THREAD_LIST_STACK_TRACES;
             break;
+        case HALT:
+            triggerLiteral = HALT;
+            break;
         case IC_BUFFER_FULL:
             triggerLiteral = IC_BUFFER_FULL;
             break;
@@ -447,6 +457,8 @@ public class Safepoint {
             return Trigger.GET_ALL_STACK_TRACES;
         if (Trigger.GET_THREAD_LIST_STACK_TRACES.name().matches(trigger))
             return Trigger.GET_THREAD_LIST_STACK_TRACES;
+        if (Trigger.HALT.name().matches(trigger))
+            return Trigger.HALT;
         if (Trigger.IC_BUFFER_FULL.name().matches(trigger))
             return Trigger.IC_BUFFER_FULL;
         if (Trigger.NO_VM_OPERATION.name().matches(trigger))
@@ -493,7 +505,7 @@ public class Safepoint {
         Safepoint.Trigger[] triggers = Safepoint.Trigger.values();
         boolean firstTrigger = true;
         for (int i = 0; i < triggers.length; i++) {
-            if (triggers[i] != Trigger.UNKNOWN) {
+            if (triggers[i] != Trigger.EXIT && triggers[i] != Trigger.HALT && triggers[i] != Trigger.UNKNOWN) {
                 if (!firstTrigger) {
                     regex.append("|");
                 } else {
