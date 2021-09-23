@@ -32,15 +32,15 @@ public class Safepoint {
         //
         DEOPTIMIZE, ENABLE_BIASED_LOCKING, EXIT, FIND_DEADLOCKS, FORCE_SAFEPOINT,
         //
-        G1_COLLECT_FOR_ALLOCATION, G1_INC_COLLECTION_PAUSE, GEN_COLLECT_FOR_ALLOCATION, GEN_COLLECT_FULL_CONCURRENT,
+        G1_COLLECT_FOR_ALLOCATION, G1_COLLECT_FULL, G1_INC_COLLECTION_PAUSE, GEN_COLLECT_FOR_ALLOCATION,
         //
-        GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, HALT, IC_BUFFER_FULL, NO_VM_OPERATION,
+        GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, HALT, IC_BUFFER_FULL,
         //
-        PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS,
+        NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS,
         //
-        SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS,
+        REDEFINE_CLASSES, REVOKE_BIAS, SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_MARK_START_EVAC,
         //
-        SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN
+        SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN
     };
 
     /**
@@ -146,6 +146,13 @@ public class Safepoint {
      * </p>
      */
     public static final String G1_COLLECT_FOR_ALLOCATION = "G1CollectForAllocation";
+
+    /**
+     * <p>
+     * TODO:
+     * </p>
+     */
+    public static final String G1_COLLECT_FULL = "G1CollectFull";
 
     /**
      * <p>
@@ -348,6 +355,9 @@ public class Safepoint {
         case G1_COLLECT_FOR_ALLOCATION:
             triggerLiteral = G1_COLLECT_FOR_ALLOCATION;
             break;
+        case G1_COLLECT_FULL:
+            triggerLiteral = G1_COLLECT_FULL;
+            break;
         case G1_INC_COLLECTION_PAUSE:
             triggerLiteral = G1_INC_COLLECTION_PAUSE;
             break;
@@ -447,6 +457,8 @@ public class Safepoint {
             return Trigger.FORCE_SAFEPOINT;
         if (Trigger.G1_COLLECT_FOR_ALLOCATION.name().matches(trigger))
             return Trigger.G1_COLLECT_FOR_ALLOCATION;
+        if (Trigger.G1_COLLECT_FULL.name().matches(trigger))
+            return Trigger.G1_COLLECT_FULL;
         if (Trigger.G1_INC_COLLECTION_PAUSE.name().matches(trigger))
             return Trigger.G1_INC_COLLECTION_PAUSE;
         if (Trigger.GEN_COLLECT_FOR_ALLOCATION.name().matches(trigger))

@@ -979,8 +979,15 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
-    void testSafepointEnteringl() {
+    void testSafepointEntering() {
         String logLine = "[0.029s][info][safepoint    ] Entering safepoint region: EnableBiasedLocking";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testSafepointEnteringG1CollectFull() {
+        String logLine = "[2021-09-22T10:31:58.206-0500][3736351ms] Entering safepoint region: G1CollectFull";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
