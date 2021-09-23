@@ -68,7 +68,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
@@ -753,8 +753,8 @@ public class GcManager {
 
                 } else if (event instanceof ApplicationStoppedTimeEvent) {
                     jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
-                } else if (event instanceof SafepointEvent) {
-                    jvmDao.addSafepointEvent((SafepointEvent) event);
+                } else if (event instanceof UnifiedSafepointEvent) {
+                    jvmDao.addSafepointEvent((UnifiedSafepointEvent) event);
                 } else if (event instanceof HeaderCommandLineFlagsEvent) {
                     jvmDao.setOptions(((HeaderCommandLineFlagsEvent) event).getJvmOptions());
                 } else if (event instanceof HeaderMemoryEvent) {
@@ -949,19 +949,18 @@ public class GcManager {
         jvmRun.setMaxPermSpace(kilobytes(jvmDao.getMaxPermSpace()));
         jvmRun.setMaxPermOccupancy(kilobytes(jvmDao.getMaxPermOccupancy()));
         jvmRun.setMaxPermAfterGc(kilobytes(jvmDao.getMaxPermAfterGc()));
-        jvmRun.setMaxGcPause(jvmDao.getMaxGcPause());
-        jvmRun.setTotalGcPause(jvmDao.getTotalGcPause());
+        jvmRun.setGcPauseMax(jvmDao.getMaxGcPause());
+        jvmRun.setGcPauseTotal(jvmDao.getGcPauseTotal());
         jvmRun.setBlockingEventCount(jvmDao.getBlockingEventCount());
-        jvmRun.setFirstStoppedEvent(jvmDao.getFirstStoppedEvent());
-        jvmRun.setLastStoppedEvent(jvmDao.getLastStoppedEvent());
-        jvmRun.setMaxStoppedTime(jvmDao.getMaxStoppedTime());
-        jvmRun.setTotalStoppedTime(jvmDao.getTotalStoppedTime());
-        jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
         jvmRun.setFirstSafepointEvent(jvmDao.getFirstSafepointEvent());
         jvmRun.setLastSafepointEvent(jvmDao.getLastSafepointEvent());
-        jvmRun.setMaxSafepointTime(jvmDao.getMaxSafepointTime());
-        jvmRun.setTotalSafepointTime(jvmDao.getTotalSafepointTime());
-        jvmRun.setSafepointEventCount(jvmDao.getSafepointEventCount());
+        jvmRun.setStoppedTimeMax(jvmDao.getStoppedTimeMax());
+        jvmRun.setStoppedTimeTotal(jvmDao.getStoppedTimeTotal());
+        jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
+        jvmRun.setUnifiedSafepointTimeMax(jvmDao.getUnifiedSafepointTimeMax());
+        jvmRun.setUnifiedSafepointTimeTotal(jvmDao.getUnifiedSafepointTimeTotal());
+        jvmRun.setUnifiedSafepointEventCount(jvmDao.getUnifiedSafepointEventCount());
+        jvmRun.setSafepointEventSummaries(jvmDao.getSafepointEventSummaries());
         jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
         jvmRun.setEventTypes(jvmDao.getEventTypes());
         jvmRun.setCollectorFamilies(jvmDao.getCollectorFamilies());

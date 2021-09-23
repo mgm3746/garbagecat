@@ -20,6 +20,12 @@ import static org.eclipselabs.garbagecat.util.Memory.ZERO;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 import static org.eclipselabs.garbagecat.util.jdk.JdkMath.convertMicrosToMillis;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -33,13 +39,18 @@ import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
+import org.eclipselabs.garbagecat.domain.SafepointEvent;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEventSummary;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
+import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
 
 /**
  * <p>
@@ -53,7 +64,19 @@ public class JvmDao {
 
     private static final Comparator<BlockingEvent> COMPARE_BY_TIMESTAMP = comparing(BlockingEvent::getTimestamp);
 
+    /**
+     * The database connection.
+     */
+    private static Connection connection;
+
     private static boolean created;
+
+    /**
+     * SQL statement(s) to create table.
+     */
+    private static final String[] TABLES_CREATE_SQL = {
+            "create table safepoint_event (id integer identity, time_stamp bigint, trigger_type varchar(64), "
+                    + "duration integer, log_entry varchar(500))" };
 
     private static Memory add(Memory m1, Memory m2) {
         return m1 == null ? nullSafe(m2) : m1.plus(nullSafe(m2));
@@ -142,11 +165,6 @@ public class JvmDao {
     private long physicalMemoryFree;
 
     /**
-     * Safepoint events.
-     */
-    private List<SafepointEvent> safepointEvents = new ArrayList<>();
-
-    /**
      * Stopped time events.
      */
     private List<ApplicationStoppedTimeEvent> stoppedTimeEvents = new ArrayList<>();
@@ -168,6 +186,11 @@ public class JvmDao {
     private List<String> unidentifiedLogLines = new ArrayList<>();
 
     /**
+     * Safepoint events.
+     */
+    private List<UnifiedSafepointEvent> unifiedSafepointEvents = new ArrayList<>();
+
+    /**
      * JVM version.
      */
     private String version;
@@ -183,6 +206,44 @@ public class JvmDao {
         } else {
             created = true;
         }
+        try {
+            // Load database driver.
+            Class.forName("org.hsqldb.jdbcDriver");
+        } catch (ClassNotFoundException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Failed to load HSQLDB JDBC driver.");
+        }
+
+        try {
+            // Connect to database.
+            connection = DriverManager.getConnection("jdbc:hsqldb:mem:vmdb", "sa", "");
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Error accessing database.");
+        }
+
+        // Create tables
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+            for (int i = 0; i < TABLES_CREATE_SQL.length; i++) {
+                statement.executeUpdate(TABLES_CREATE_SQL[i]);
+            }
+        } catch (SQLException e) {
+            if (e.getMessage().startsWith("Table already exists")) {
+                cleanup();
+            } else {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error creating tables.");
+            }
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing Statement.");
+            }
+        }
     }
 
     public void addAnalysis(Analysis analysis) {
@@ -195,8 +256,8 @@ public class JvmDao {
         blockingEvents.add(insertPosition(event), event);
     }
 
-    public void addSafepointEvent(SafepointEvent event) {
-        safepointEvents.add(event);
+    public void addSafepointEvent(UnifiedSafepointEvent event) {
+        unifiedSafepointEvents.add(event);
     }
 
     public void addStoppedTimeEvent(ApplicationStoppedTimeEvent event) {
@@ -266,21 +327,46 @@ public class JvmDao {
     }
 
     /**
-     * The first safepoint event.
+     * The first @link org.eclipselabs.garbagecat.domain.jdk.SafepointEvent}.
      * 
      * @return The first safepoint event.
      */
     public synchronized SafepointEvent getFirstSafepointEvent() {
-        return safepointEvents.isEmpty() ? null : safepointEvents.get(0);
+        SafepointEvent firstSafepointEvent = null;
+        if (!unifiedSafepointEvents.isEmpty()) {
+            firstSafepointEvent = getFirstUnifiedSafepointEvent();
+        } else if (!stoppedTimeEvents.isEmpty()) {
+            firstSafepointEvent = getFirstStoppedEvent();
+        }
+        return firstSafepointEvent;
     }
 
     /**
-     * The first stopped event.
+     * The first The first @link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent}.
      * 
      * @return The first stopped event.
      */
-    public synchronized ApplicationStoppedTimeEvent getFirstStoppedEvent() {
+    private synchronized ApplicationStoppedTimeEvent getFirstStoppedEvent() {
         return stoppedTimeEvents.isEmpty() ? null : stoppedTimeEvents.get(0);
+    }
+
+    /**
+     * The first @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent}.
+     * 
+     * @return The first unified safepoint event.
+     */
+    private synchronized UnifiedSafepointEvent getFirstUnifiedSafepointEvent() {
+        return unifiedSafepointEvents.isEmpty() ? null : unifiedSafepointEvents.get(0);
+    }
+
+    /**
+     * The total blocking event pause time.
+     * 
+     * @return total pause duration (milliseconds).
+     */
+    public synchronized long getGcPauseTotal() {
+        return convertMicrosToMillis(
+                ints(this.blockingEvents, BlockingEvent::getDuration).collect(summingLong(Long::valueOf))).longValue();
     }
 
     /**
@@ -302,12 +388,18 @@ public class JvmDao {
     }
 
     /**
-     * Retrieve the last safepoint event.
+     * The first @link org.eclipselabs.garbagecat.domain.jdk.SafepointEvent}.
      * 
      * @return The last safepoint event.
      */
     public synchronized SafepointEvent getLastSafepointEvent() {
-        return safepointEvents.isEmpty() ? null : safepointEvents.get(safepointEvents.size() - 1);
+        SafepointEvent lastSafepointEvent = null;
+        if (!unifiedSafepointEvents.isEmpty()) {
+            lastSafepointEvent = getLastUnifiedSafepointEvent();
+        } else if (!stoppedTimeEvents.isEmpty()) {
+            lastSafepointEvent = getLastStoppedEvent();
+        }
+        return lastSafepointEvent;
     }
 
     /**
@@ -315,8 +407,17 @@ public class JvmDao {
      * 
      * @return The last stopped event.
      */
-    public synchronized ApplicationStoppedTimeEvent getLastStoppedEvent() {
+    private synchronized ApplicationStoppedTimeEvent getLastStoppedEvent() {
         return stoppedTimeEvents.isEmpty() ? null : stoppedTimeEvents.get(stoppedTimeEvents.size() - 1);
+    }
+
+    /**
+     * Retrieve the last safepoint event.
+     * 
+     * @return The last safepoint event.
+     */
+    private synchronized UnifiedSafepointEvent getLastUnifiedSafepointEvent() {
+        return unifiedSafepointEvents.isEmpty() ? null : unifiedSafepointEvents.get(unifiedSafepointEvents.size() - 1);
     }
 
     /**
@@ -450,14 +551,13 @@ public class JvmDao {
     }
 
     /**
-     * The maximum safepoint event pause time.
+     * The maximum unified safepoint event pause time.
      * 
      * @return maximum pause duration (milliseconds).
      */
-    public synchronized int getMaxSafepointTime() {
-        return convertMicrosToMillis(
-                ints(this.safepointEvents, SafepointEvent::getDuration).mapToInt(Integer::valueOf).max().orElse(0))
-                        .intValue();
+    public synchronized int getUnifiedSafepointTimeMax() {
+        return convertMicrosToMillis(ints(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration)
+                .mapToInt(Integer::valueOf).max().orElse(0)).intValue();
     }
 
     /**
@@ -465,7 +565,7 @@ public class JvmDao {
      * 
      * @return maximum pause duration (milliseconds).
      */
-    public synchronized int getMaxStoppedTime() {
+    public synchronized int getStoppedTimeMax() {
         return convertMicrosToMillis(ints(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
                 .mapToInt(Integer::valueOf).max().orElse(0)).intValue();
     }
@@ -515,12 +615,99 @@ public class JvmDao {
     }
 
     /**
-     * The total number of safepoint events.
+     * The total number of unifed safepoint events.
      * 
-     * @return total number of safepoint time events.
+     * @return total number of unified safepoint time events.
      */
-    public synchronized int getSafepointEventCount() {
-        return this.safepointEvents.size();
+    public synchronized int getUnifiedSafepointEventCount() {
+        return this.unifiedSafepointEvents.size();
+    }
+
+    /**
+     * Generate <code>SafepointEventSummary</code>s.
+     * 
+     * @return <code>List</code> of <code>SafepointEventSummary</code>s.
+     */
+    public synchronized List<SafepointEventSummary> getSafepointEventSummaries() {
+        List<SafepointEventSummary> safepointEventSummaries = new ArrayList<SafepointEventSummary>();
+
+        PreparedStatement pst = null;
+        try {
+            String sqlInsertSafepointEvent = "insert into safepoint_event (time_stamp, trigger_type, duration, "
+                    + "log_entry) values (?, ?, ?, ?)";
+
+            final int TIME_STAMP_INDEX = 1;
+            final int TRIGGER_TYPE_INDEX = 2;
+            final int DURATION_INDEX = 3;
+            final int LOG_ENTRY_INDEX = 4;
+
+            pst = connection.prepareStatement(sqlInsertSafepointEvent);
+
+            for (int i = 0; i < unifiedSafepointEvents.size(); i++) {
+                UnifiedSafepointEvent event = unifiedSafepointEvents.get(i);
+                pst.setLong(TIME_STAMP_INDEX, event.getTimestamp());
+                // Use trigger for event name
+                pst.setString(TRIGGER_TYPE_INDEX, event.getTrigger().toString());
+                pst.setInt(DURATION_INDEX, event.getDuration());
+                pst.setString(LOG_ENTRY_INDEX, event.getLogEntry());
+                pst.addBatch();
+            }
+            pst.executeBatch();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Error inserting safepoint event.");
+        } finally {
+            try {
+                pst.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closingPreparedStatement.");
+            }
+        }
+
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            statement = connection.createStatement();
+            StringBuffer sql = new StringBuffer();
+            sql.append("select trigger_type, count(id), sum(duration), max(duration) from safepoint_event group by "
+                    + "trigger_type order by sum(duration) desc");
+            rs = statement.executeQuery(sql.toString());
+            while (rs.next()) {
+                Trigger trigger = UnifiedSafepoint.identifyTrigger(rs.getString(1));
+                SafepointEventSummary summary = new SafepointEventSummary(trigger, rs.getLong(2),
+                        JdkMath.convertMicrosToMillis(rs.getLong(3)).longValue(),
+                        JdkMath.convertMicrosToMillis(rs.getInt(4)).intValue());
+                safepointEventSummaries.add(summary);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Error retrieving safepoint event summaries.");
+        } finally {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing ResultSet.");
+            }
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing Statement.");
+            }
+        }
+        return safepointEventSummaries;
+    }
+
+    /**
+     * The total unified safepoint event pause time.
+     * 
+     * @return total pause duration (milliseconds).
+     */
+    public synchronized int getUnifiedSafepointTimeTotal() {
+        return convertMicrosToMillis(ints(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration)
+                .collect(summingLong(Long::valueOf))).intValue();
     }
 
     /**
@@ -530,6 +717,16 @@ public class JvmDao {
      */
     public synchronized int getStoppedTimeEventCount() {
         return this.stoppedTimeEvents.size();
+    }
+
+    /**
+     * The total stopped time event pause time.
+     * 
+     * @return total pause duration (milliseconds).
+     */
+    public synchronized int getStoppedTimeTotal() {
+        return convertMicrosToMillis(ints(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
+                .collect(summingLong(Long::valueOf))).intValue();
     }
 
     /**
@@ -544,36 +741,6 @@ public class JvmDao {
      */
     public long getSwapFree() {
         return swapFree;
-    }
-
-    /**
-     * The total blocking event pause time.
-     * 
-     * @return total pause duration (milliseconds).
-     */
-    public synchronized long getTotalGcPause() {
-        return convertMicrosToMillis(
-                ints(this.blockingEvents, BlockingEvent::getDuration).collect(summingLong(Long::valueOf))).longValue();
-    }
-
-    /**
-     * The total safepoint event pause time.
-     * 
-     * @return total pause duration (milliseconds).
-     */
-    public synchronized int getTotalSafepointTime() {
-        return convertMicrosToMillis(
-                ints(this.safepointEvents, SafepointEvent::getDuration).collect(summingLong(Long::valueOf))).intValue();
-    }
-
-    /**
-     * The total stopped time event pause time.
-     * 
-     * @return total pause duration (milliseconds).
-     */
-    public synchronized int getTotalStoppedTime() {
-        return convertMicrosToMillis(ints(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
-                .collect(summingLong(Long::valueOf))).intValue();
     }
 
     public List<String> getUnidentifiedLogLines() {
@@ -723,5 +890,4 @@ public class JvmDao {
     public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {
         this.worstInvertedParallelismEvent = worstInvertedParallelismEvent;
     }
-
 }

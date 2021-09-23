@@ -10,41 +10,70 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.util.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import org.junit.jupiter.api.Test;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
 
 /**
+ * <code>SafepointEvent</code> summary used for reporting
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class TestSafepoint {
+public class SafepointEventSummary {
 
-    @Test
-    public void testTriggerIdentity() {
-        Safepoint.Trigger[] triggers = Safepoint.Trigger.values();
-        for (int i = 0; i < triggers.length; i++) {
-            if (!triggers[i].equals(Safepoint.Trigger.UNKNOWN)) {
-                assertFalse(Safepoint.identifyTrigger(triggers[i].name()).equals(Safepoint.Trigger.UNKNOWN),
-                        triggers[i].name() + " not identified.");
-            }
-        }
+    /**
+     * The <code>Trigger</code>
+     */
+    private Trigger trigger;
+
+    /**
+     * Total number of events.
+     */
+    private long count;
+
+    /**
+     * Total pause time (milliseconds).
+     */
+    private long pauseTotal;
+
+    /**
+     * Max pause time (milliseconds).
+     */
+    private int pauseMax;
+
+    /**
+     * Default constructor.
+     * 
+     * @param trigger
+     *            The <code>Trigger</code>.
+     * @param count
+     *            Number of events.
+     * @param pauseTotal
+     *            Total pause time of events
+     * @param pauseMax
+     *            Max pause time of events
+     */
+    public SafepointEventSummary(Trigger trigger, long count, long pauseTotal, int pauseMax) {
+        this.trigger = trigger;
+        this.count = count;
+        this.pauseTotal = pauseTotal;
+        this.pauseMax = pauseMax;
     }
 
-    @Test
-    public void testTriggerLiteral() {
-        Safepoint.Trigger[] triggers = Safepoint.Trigger.values();
-        for (int i = 0; i < triggers.length; i++) {
-            if (!triggers[i].equals(Safepoint.Trigger.UNKNOWN)) {
-                try {
-                    Safepoint.getTriggerLiteral(triggers[i]);
-                } catch (AssertionError e) {
-                    fail(triggers[i].name() + " literal not found.");
-                }
-            }
-        }
+    public Trigger getTrigger() {
+        return trigger;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public long getPauseTotal() {
+        return pauseTotal;
+    }
+
+    public long getPauseMax() {
+        return pauseMax;
     }
 }

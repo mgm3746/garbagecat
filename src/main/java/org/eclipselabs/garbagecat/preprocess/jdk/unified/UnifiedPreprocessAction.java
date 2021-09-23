@@ -23,8 +23,8 @@ import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.unified.Safepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 
 /**
  * <p>
@@ -353,7 +353,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * CollectForMetadataAllocation
      */
     private static final String REGEX_RETAIN_BEGINNING_SAFEPOINT = "^(" + UnifiedRegEx.DECORATOR
-            + " Entering safepoint region: " + Safepoint.triggerRegEx() + ")$";
+            + " Entering safepoint region: " + UnifiedSafepoint.triggerRegEx() + ")$";
 
     /**
      * Regular expression for retained space data.

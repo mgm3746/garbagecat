@@ -44,7 +44,7 @@ public final class UnifiedUtil {
             switch (eventType) {
             case HEAP_ADDRESS:
             case HEAP_REGION_SIZE:
-            case SAFEPOINT:
+            case UNIFIED_SAFEPOINT:
             case UNIFIED_BLANK_LINE:
             case UNIFIED_CONCURRENT:
             case UNIFIED_CMS_INITIAL_MARK:

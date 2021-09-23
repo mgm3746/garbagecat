@@ -1676,8 +1676,8 @@ class TestUnifiedPreprocessAction {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SAFEPOINT),
-                JdkUtil.LogEventType.SAFEPOINT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
     }
 
     @Test
@@ -1694,8 +1694,8 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
                 JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SAFEPOINT),
-                JdkUtil.LogEventType.SAFEPOINT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
     }
 
     @Test
@@ -1710,8 +1710,8 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
                 JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SAFEPOINT),
-                JdkUtil.LogEventType.SAFEPOINT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
     }
 
     @Test
@@ -1726,8 +1726,8 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
                 JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SAFEPOINT),
-                JdkUtil.LogEventType.SAFEPOINT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
     }
 
     @Test
@@ -1744,8 +1744,8 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD),
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SAFEPOINT),
-                JdkUtil.LogEventType.SAFEPOINT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
     }
 
     @Test
@@ -1760,7 +1760,7 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_OLD),
                 JdkUtil.LogEventType.UNIFIED_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SAFEPOINT),
-                JdkUtil.LogEventType.SAFEPOINT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
     }
 }

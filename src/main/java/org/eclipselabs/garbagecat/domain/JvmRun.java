@@ -22,8 +22,7 @@ import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx.DATESTAMP
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEventSummary;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.Memory;
@@ -78,9 +77,14 @@ public class JvmRun {
     private SafepointEvent firstSafepointEvent;
 
     /**
-     * The first stopped event.
+     * Maximum GC pause duration (milliseconds).
      */
-    private ApplicationStoppedTimeEvent firstStoppedEvent;
+    private int gcPauseMax;
+
+    /**
+     * Total GC pause duration (microseconds).
+     */
+    private long gcPauseTotal;
 
     /**
      * Number of <code>ParallelCollection</code> with "inverted" parallelism.
@@ -106,16 +110,6 @@ public class JvmRun {
      * The last safepoint event.
      */
     private SafepointEvent lastSafepointEvent;
-
-    /**
-     * The last stopped event.
-     */
-    private ApplicationStoppedTimeEvent lastStoppedEvent;
-
-    /**
-     * Maximum GC pause duration (milliseconds).
-     */
-    private int maxGcPause;
 
     /**
      * Maximum heap after gc.
@@ -173,16 +167,6 @@ public class JvmRun {
     private Memory maxPermSpaceNonBlocking;
 
     /**
-     * Maximum safepoint time duration (milliseconds).
-     */
-    private int maxSafepointTime;
-
-    /**
-     * Maximum stopped time duration (milliseconds).
-     */
-    private int maxStoppedTime;
-
-    /**
      * Maximum young space size.
      */
     private Memory maxYoungSpace;
@@ -198,14 +182,24 @@ public class JvmRun {
     private boolean preprocessed;
 
     /**
-     * Total number of {@link org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEvent}.
+     * <code>SafepointEventSummary</code> used for reporting.
      */
-    private int safepointEventCount;
+    private List<SafepointEventSummary> safepointEventSummaries;
 
     /**
      * Total number of {@link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent}.
      */
     private int stoppedTimeEventCount;
+
+    /**
+     * Maximum stopped time duration (milliseconds).
+     */
+    private int stoppedTimeMax;
+
+    /**
+     * Total stopped time duration (milliseconds).
+     */
+    private int stoppedTimeTotal;
 
     /**
      * Minimum throughput (percent of time spent not doing garbage collection for a given time interval) to not be
@@ -214,24 +208,24 @@ public class JvmRun {
     private int throughputThreshold;
 
     /**
-     * Total GC pause duration (microseconds).
-     */
-    private long totalGcPause;
-
-    /**
-     * Total safepoint time duration (milliseconds).
-     */
-    private int totalSafepointTime;
-
-    /**
-     * Total stopped time duration (milliseconds).
-     */
-    private int totalStoppedTime;
-
-    /**
      * Log lines that do not match any existing logging patterns.
      */
     private List<String> unidentifiedLogLines;
+
+    /**
+     * Total number of {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent}.
+     */
+    private int unifiedSafepointEventCount;
+
+    /**
+     * Maximum safepoint time duration (milliseconds).
+     */
+    private int unifiedSafepointTimeMax;
+
+    /**
+     * Total unified safepoint time duration (milliseconds).
+     */
+    private int unifiedSafepointTimeTotal;
 
     /**
      * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
@@ -301,7 +295,7 @@ public class JvmRun {
 
         // Check to see if application stopped time enabled
         if (!(eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
-                || eventTypes.contains(LogEventType.SAFEPOINT))) {
+                || eventTypes.contains(LogEventType.UNIFIED_SAFEPOINT))) {
             analysis.add(WARN_APPLICATION_STOPPED_TIME_MISSING);
         }
 
@@ -313,9 +307,9 @@ public class JvmRun {
         }
 
         // Check for significant safepoint time unrelated to GC
-        if (eventTypes.contains(LogEventType.SAFEPOINT)
-                && getGcSafepointRatio() < Constants.GC_SAFEPOINT_RATIO_THRESHOLD
-                && getSafepointThroughput() != getGcThroughput()) {
+        if (eventTypes.contains(LogEventType.UNIFIED_SAFEPOINT)
+                && getGcUnifiedSafepointRatio() < Constants.GC_SAFEPOINT_RATIO_THRESHOLD
+                && getUnifiedSafepointThroughput() != getGcThroughput()) {
             analysis.add(WARN_GC_SAFEPOINT_RATIO);
         }
 
@@ -891,22 +885,22 @@ public class JvmRun {
         if (firstGcEvent != null) {
             firstGcEventTimeStamp = firstGcEvent.getTimestamp();
         }
-        long firstStoppedEventTimestamp = 0;
-        if (firstStoppedEvent != null) {
-            firstStoppedEventTimestamp = firstStoppedEvent.getTimestamp();
+        long firstSafepointEventTimestamp = 0;
+        if (firstSafepointEvent != null) {
+            firstSafepointEventTimestamp = firstSafepointEvent.getTimestamp();
         }
 
-        if (Math.min(firstGcEventTimeStamp, firstStoppedEventTimestamp) == 0) {
-            if (firstGcEvent != null && firstGcEventTimeStamp >= firstStoppedEventTimestamp) {
+        if (Math.min(firstGcEventTimeStamp, firstSafepointEventTimestamp) == 0) {
+            if (firstGcEvent != null && firstGcEventTimeStamp >= firstSafepointEventTimestamp) {
                 event = firstGcEvent;
             } else {
-                event = firstStoppedEvent;
+                event = firstSafepointEvent;
             }
         } else {
-            if (firstGcEventTimeStamp <= firstStoppedEventTimestamp) {
+            if (firstGcEventTimeStamp <= firstSafepointEventTimestamp) {
                 event = firstGcEvent;
             } else {
-                event = firstStoppedEvent;
+                event = firstSafepointEvent;
             }
         }
 
@@ -921,21 +915,21 @@ public class JvmRun {
         return firstSafepointEvent;
     }
 
-    public ApplicationStoppedTimeEvent getFirstStoppedEvent() {
-        return firstStoppedEvent;
+    public long getGcPauseTotal() {
+        return gcPauseTotal;
     }
 
     /**
      * 
-     * @return Ratio of GC to Safepoint Time as a percent rounded to the nearest integer. 100 means all safepoint time
-     *         spent doing GC. 0 means none of the safepoint time was due to GC.
+     * @return Ratio of GC to unified safepoint time as a percent rounded to the nearest integer. 100 means all
+     *         safepoint time spent doing GC. 0 means none of the safepoint time was due to GC.
      */
-    public long getGcSafepointRatio() {
-        if (totalGcPause <= 0 || totalSafepointTime <= 0) {
+    public long getGcUnifiedSafepointRatio() {
+        if (gcPauseTotal <= 0 || unifiedSafepointTimeTotal <= 0) {
             return 100L;
         }
-        BigDecimal ratio = new BigDecimal(totalGcPause);
-        ratio = ratio.divide(new BigDecimal(totalSafepointTime), 2, HALF_EVEN);
+        BigDecimal ratio = new BigDecimal(gcPauseTotal);
+        ratio = ratio.divide(new BigDecimal(unifiedSafepointTimeTotal), 2, HALF_EVEN);
         return ratio.movePointRight(2).longValue();
     }
 
@@ -945,11 +939,11 @@ public class JvmRun {
      *         doing GC. 0 means none of the stopped time was due to GC.
      */
     public long getGcStoppedRatio() {
-        if (totalGcPause <= 0 || totalStoppedTime <= 0) {
+        if (gcPauseTotal <= 0 || stoppedTimeTotal <= 0) {
             return 100L;
         }
-        BigDecimal ratio = new BigDecimal(totalGcPause);
-        ratio = ratio.divide(new BigDecimal(totalStoppedTime), 2, HALF_EVEN);
+        BigDecimal ratio = new BigDecimal(gcPauseTotal);
+        ratio = ratio.divide(new BigDecimal(stoppedTimeTotal), 2, HALF_EVEN);
         return ratio.movePointRight(2).longValue();
     }
 
@@ -962,7 +956,7 @@ public class JvmRun {
         if (blockingEventCount <= 0) {
             return 100L;
         }
-        long timeNotGc = getJvmRunDuration() - totalGcPause;
+        long timeNotGc = getJvmRunDuration() - gcPauseTotal;
         BigDecimal throughput = new BigDecimal(timeNotGc);
         throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
         return throughput.movePointRight(2).longValue();
@@ -994,9 +988,9 @@ public class JvmRun {
         }
         long lastStoppedEventTimestamp = 0;
         long lastStoppedEventDuration = 0;
-        if (lastStoppedEvent != null) {
-            lastStoppedEventTimestamp = lastStoppedEvent.getTimestamp();
-            lastStoppedEventDuration = lastStoppedEvent.getDuration();
+        if (lastSafepointEvent != null) {
+            lastStoppedEventTimestamp = lastSafepointEvent.getTimestamp();
+            lastStoppedEventDuration = lastSafepointEvent.getDuration();
         }
 
         long end = lastStoppedEventTimestamp > lastGcEventTimeStamp
@@ -1010,9 +1004,9 @@ public class JvmRun {
      */
     public LogEvent getLastEvent() {
         long lastGcEventTimeStamp = lastGcEvent == null ? 0 : lastGcEvent.getTimestamp();
-        long lastStoppedEventTimestamp = lastStoppedEvent == null ? 0 : lastStoppedEvent.getTimestamp();
+        long lastStoppedEventTimestamp = lastSafepointEvent == null ? 0 : lastSafepointEvent.getTimestamp();
         return lastGcEvent != null && lastGcEventTimeStamp >= lastStoppedEventTimestamp ? lastGcEvent
-                : lastStoppedEvent;
+                : lastSafepointEvent;
     }
 
     public BlockingEvent getLastGcEvent() {
@@ -1027,12 +1021,8 @@ public class JvmRun {
         return lastSafepointEvent;
     }
 
-    public ApplicationStoppedTimeEvent getLastStoppedEvent() {
-        return lastStoppedEvent;
-    }
-
     public int getMaxGcPause() {
-        return maxGcPause;
+        return gcPauseMax;
     }
 
     public Memory getMaxHeapAfterGc() {
@@ -1079,14 +1069,6 @@ public class JvmRun {
         return maxPermSpaceNonBlocking;
     }
 
-    public int getMaxSafepointTime() {
-        return maxSafepointTime;
-    }
-
-    public int getMaxStoppedTime() {
-        return maxStoppedTime;
-    }
-
     public Memory getMaxYoungSpace() {
         return maxYoungSpace;
     }
@@ -1107,30 +1089,20 @@ public class JvmRun {
         return parallelCount;
     }
 
-    public int getSafepointEventCount() {
-        return safepointEventCount;
+    public List<SafepointEventSummary> getSafepointEventSummaries() {
+        return safepointEventSummaries;
     }
 
-    /**
-     * @return Throughput based on safepoint time as a percent rounded to the nearest integer. Safepoint time throughput
-     *         is the percent of total time the JVM threads were running (not in a safepoint). 0 means all safepoint
-     *         time. 100 means no safepoint time.
-     */
-    public long getSafepointThroughput() {
-        if (safepointEventCount <= 0) {
-            return 100L;
-        }
-        if (getJvmRunDuration() <= 0) {
-            return 0L;
-        }
-        long timeNotSafepoint = getJvmRunDuration() - totalSafepointTime;
-        BigDecimal throughput = new BigDecimal(timeNotSafepoint);
-        throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
-        return throughput.movePointRight(2).longValue();
+    public int getUnifiedSafepointTimeMax() {
+        return unifiedSafepointTimeMax;
     }
 
     public int getStoppedTimeEventCount() {
         return stoppedTimeEventCount;
+    }
+
+    public int getStoppedTimeMax() {
+        return stoppedTimeMax;
     }
 
     /**
@@ -1145,30 +1117,48 @@ public class JvmRun {
         if (getJvmRunDuration() <= 0) {
             return 0L;
         }
-        long timeNotStopped = getJvmRunDuration() - totalStoppedTime;
+        long timeNotStopped = getJvmRunDuration() - stoppedTimeTotal;
         BigDecimal throughput = new BigDecimal(timeNotStopped);
         throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
         return throughput.movePointRight(2).longValue();
+    }
+
+    public int getStoppedTimeTotal() {
+        return stoppedTimeTotal;
     }
 
     public int getThroughputThreshold() {
         return throughputThreshold;
     }
 
-    public long getTotalGcPause() {
-        return totalGcPause;
-    }
-
-    public int getTotalSafepointTime() {
-        return totalSafepointTime;
-    }
-
-    public int getTotalStoppedTime() {
-        return totalStoppedTime;
-    }
-
     public List<String> getUnidentifiedLogLines() {
         return unidentifiedLogLines;
+    }
+
+    public int getUnifiedSafepointEventCount() {
+        return unifiedSafepointEventCount;
+    }
+
+    /**
+     * @return Throughput based on safepoint time as a percent rounded to the nearest integer. Safepoint time throughput
+     *         is the percent of total time the JVM threads were running (not in a safepoint). 0 means all safepoint
+     *         time. 100 means no safepoint time.
+     */
+    public long getUnifiedSafepointThroughput() {
+        if (unifiedSafepointEventCount <= 0) {
+            return 100L;
+        }
+        if (getJvmRunDuration() <= 0) {
+            return 0L;
+        }
+        long timeNotSafepoint = getJvmRunDuration() - unifiedSafepointTimeTotal;
+        BigDecimal throughput = new BigDecimal(timeNotSafepoint);
+        throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
+        return throughput.movePointRight(2).longValue();
+    }
+
+    public int getUnifiedSafepointTimeTotal() {
+        return unifiedSafepointTimeTotal;
     }
 
     public LogEvent getWorstInvertedParallelismEvent() {
@@ -1214,8 +1204,12 @@ public class JvmRun {
         this.firstSafepointEvent = firstSafepointEvent;
     }
 
-    public void setFirstStoppedEvent(ApplicationStoppedTimeEvent firstStoppedEvent) {
-        this.firstStoppedEvent = firstStoppedEvent;
+    public void setGcPauseMax(int gcPauseMax) {
+        this.gcPauseMax = gcPauseMax;
+    }
+
+    public void setGcPauseTotal(long gcPauseTotal) {
+        this.gcPauseTotal = gcPauseTotal;
     }
 
     public void setInvertedParallelismCount(long invertedParallelismCount) {
@@ -1236,14 +1230,6 @@ public class JvmRun {
 
     public void setLastSafepointEvent(SafepointEvent lastSafepointEvent) {
         this.lastSafepointEvent = lastSafepointEvent;
-    }
-
-    public void setLastStoppedEvent(ApplicationStoppedTimeEvent lastStoppedEvent) {
-        this.lastStoppedEvent = lastStoppedEvent;
-    }
-
-    public void setMaxGcPause(int maxPause) {
-        this.maxGcPause = maxPause;
     }
 
     public void setMaxHeapAfterGc(Memory maxHeapAfterGc) {
@@ -1290,14 +1276,6 @@ public class JvmRun {
         this.maxPermSpaceNonBlocking = maxPermSpaceNonBlocking;
     }
 
-    public void setMaxSafepointTime(int maxSafepointTime) {
-        this.maxSafepointTime = maxSafepointTime;
-    }
-
-    public void setMaxStoppedTime(int maxStoppedTime) {
-        this.maxStoppedTime = maxStoppedTime;
-    }
-
     public void setMaxYoungSpace(Memory maxYoungSpace) {
         this.maxYoungSpace = maxYoungSpace;
     }
@@ -1310,32 +1288,40 @@ public class JvmRun {
         this.preprocessed = preprocessed;
     }
 
-    public void setSafepointEventCount(int safepointEventCount) {
-        this.safepointEventCount = safepointEventCount;
+    public void setSafepointEventSummaries(List<SafepointEventSummary> safepointEventSummaries) {
+        this.safepointEventSummaries = safepointEventSummaries;
     }
 
     public void setStoppedTimeEventCount(int stoppedTimeEventCount) {
         this.stoppedTimeEventCount = stoppedTimeEventCount;
     }
 
+    public void setStoppedTimeMax(int stoppedTimeMax) {
+        this.stoppedTimeMax = stoppedTimeMax;
+    }
+
+    public void setStoppedTimeTotal(int stoppedTimeTotal) {
+        this.stoppedTimeTotal = stoppedTimeTotal;
+    }
+
     public void setThroughputThreshold(int throughputThreshold) {
         this.throughputThreshold = throughputThreshold;
     }
 
-    public void setTotalGcPause(long totalGcPause) {
-        this.totalGcPause = totalGcPause;
-    }
-
-    public void setTotalSafepointTime(int totalSafepointTime) {
-        this.totalSafepointTime = totalSafepointTime;
-    }
-
-    public void setTotalStoppedTime(int totalStoppedTime) {
-        this.totalStoppedTime = totalStoppedTime;
-    }
-
     public void setUnidentifiedLogLines(List<String> unidentifiedLogLines) {
         this.unidentifiedLogLines = unidentifiedLogLines;
+    }
+
+    public void setUnifiedSafepointEventCount(int unifiedSafepointEventCount) {
+        this.unifiedSafepointEventCount = unifiedSafepointEventCount;
+    }
+
+    public void setUnifiedSafepointTimeMax(int unifiedSafepointTimeMax) {
+        this.unifiedSafepointTimeMax = unifiedSafepointTimeMax;
+    }
+
+    public void setUnifiedSafepointTimeTotal(int unifiedSafepointTimeTotal) {
+        this.unifiedSafepointTimeTotal = unifiedSafepointTimeTotal;
     }
 
     public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {

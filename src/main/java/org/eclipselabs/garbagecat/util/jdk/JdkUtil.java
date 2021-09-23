@@ -76,7 +76,6 @@ import org.eclipselabs.garbagecat.domain.jdk.VerboseGcOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcYoungEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.HeapAddressEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.HeapRegionSizeEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
@@ -92,6 +91,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelCompactingOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelScavengeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedRemarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent;
@@ -118,13 +118,13 @@ public final class JdkUtil {
      */
     public enum LogEventType {
         // unified
-        FOOTER_STATS, G1_FULL_GC_PARALLEL, GC_INFO, HEAP_REGION_SIZE, HEAP_ADDRESS, SAFEPOINT, UNIFIED_BLANK_LINE,
+        FOOTER_STATS, G1_FULL_GC_PARALLEL, GC_INFO, HEAP_REGION_SIZE, HEAP_ADDRESS, UNIFIED_SAFEPOINT,
         //
-        UNIFIED_CONCURRENT, UNIFIED_CMS_INITIAL_MARK, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE,
+        UNIFIED_BLANK_LINE, UNIFIED_CONCURRENT, UNIFIED_CMS_INITIAL_MARK, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO,
         //
-        UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_OLD,
+        UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
         //
-        UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
+        UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
         //
         UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL,
         //
@@ -205,8 +205,8 @@ public final class JdkUtil {
             return LogEventType.HEAP_ADDRESS;
         if (HeapRegionSizeEvent.match(logLine))
             return LogEventType.HEAP_REGION_SIZE;
-        if (SafepointEvent.match(logLine))
-            return LogEventType.SAFEPOINT;
+        if (UnifiedSafepointEvent.match(logLine))
+            return LogEventType.UNIFIED_SAFEPOINT;
         if (UnifiedBlankLineEvent.match(logLine) && !BlankLineEvent.match(logLine))
             return LogEventType.UNIFIED_BLANK_LINE;
         if (UnifiedCmsInitialMarkEvent.match(logLine))
@@ -397,8 +397,8 @@ public final class JdkUtil {
             return new HeapAddressEvent(logLine);
         case HEAP_REGION_SIZE:
             return new HeapRegionSizeEvent(logLine);
-        case SAFEPOINT:
-            return new SafepointEvent(logLine);
+        case UNIFIED_SAFEPOINT:
+            return new UnifiedSafepointEvent(logLine);
         case UNIFIED_BLANK_LINE:
             return new UnifiedBlankLineEvent(logLine);
         case UNIFIED_CONCURRENT:
@@ -708,7 +708,7 @@ public final class JdkUtil {
         case SHENANDOAH_TRIGGER:
         case THREAD_DUMP:
         case TENURING_DISTRIBUTION:
-        case SAFEPOINT:
+        case UNIFIED_SAFEPOINT:
         case UNIFIED_CONCURRENT:
         case UNIFIED_G1_INFO:
         case UNKNOWN:
@@ -906,7 +906,7 @@ public final class JdkUtil {
         case HEAP_REGION_SIZE:
         case LOG_FILE:
         case REFERENCE_GC:
-        case SAFEPOINT:
+        case UNIFIED_SAFEPOINT:
         case SHENANDOAH_CANCELLING_GC:
         case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
         case SHENANDOAH_STATS:

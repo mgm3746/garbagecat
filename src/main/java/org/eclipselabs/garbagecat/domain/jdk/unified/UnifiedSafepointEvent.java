@@ -15,19 +15,17 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.SafepointEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.unified.Safepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
  * SAFEPOINT
- * </p>
- * 
- * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent} with unified logging (JDK9+).
  * </p>
  * 
  * <p>
@@ -79,12 +77,32 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class SafepointEvent implements UnifiedLogging {
+public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
 
     /**
-     * The log entry for the event. Can be used for debugging purposes.
+     * Regular expressions defining the logging.
      */
-    private String logEntry;
+    public static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Entering safepoint region: "
+            + UnifiedSafepoint.triggerRegEx() + UnifiedRegEx.DECORATOR + " Leaving safepoint region"
+            + UnifiedRegEx.DECORATOR
+            + " Total time for which application threads were stopped: (\\d{1,4}[\\.\\,]\\d{7}) seconds, "
+            + "Stopping threads took: (\\d{1,4}[\\.\\,]\\d{7}) seconds[ ]*$";
+
+    /**
+     * RegEx pattern.
+     */
+    private static Pattern pattern = Pattern.compile(REGEX);
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * The elapsed clock time for the safepoint event in microseconds (rounded).
@@ -92,26 +110,18 @@ public class SafepointEvent implements UnifiedLogging {
     private int duration;
 
     /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+    /**
      * The time when the safepoint event started in milliseconds after JVM startup.
      */
     private long timestamp;
 
     /**
-     * The trigger for the safepoint event.
+     * The <code>Trigger</code> for the safepoint event.
      */
-    private String trigger;
-
-    /**
-     * Regular expressions defining the logging.
-     */
-    public static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Entering safepoint region: "
-            + Safepoint.triggerRegEx() + UnifiedRegEx.DECORATOR + " Leaving safepoint region" + UnifiedRegEx.DECORATOR
-            + " Total time for which application threads were stopped: (\\d{1,4}[\\.\\,]\\d{7}) seconds, "
-            + "Stopping threads took: (\\d{1,4}[\\.\\,]\\d{7}) seconds[ ]*$";
-    /**
-     * RegEx pattern.
-     */
-    private static Pattern pattern = Pattern.compile(REGEX);
+    private Trigger trigger;
 
     /**
      * Create event from log entry.
@@ -119,11 +129,11 @@ public class SafepointEvent implements UnifiedLogging {
      * @param logEntry
      *            The log entry for the event.
      */
-    public SafepointEvent(String logEntry) {
+    public UnifiedSafepointEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            trigger = matcher.group(24);
+            trigger = UnifiedSafepoint.getTrigger(matcher.group(24));
             if (matcher.group(48).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                 timestamp = Long.parseLong(matcher.group(59));
             } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
@@ -155,41 +165,30 @@ public class SafepointEvent implements UnifiedLogging {
      * @param duration
      *            The elapsed clock time for the safepoint event in microseconds (rounded).
      */
-    public SafepointEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedSafepointEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
-    }
-
-    public String getLogEntry() {
-        return logEntry;
     }
 
     public int getDuration() {
         return duration;
     }
 
+    public String getLogEntry() {
+        return logEntry;
+    }
+
     public String getName() {
-        return JdkUtil.LogEventType.SAFEPOINT.toString();
+        return JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString();
     }
 
     public long getTimestamp() {
         return timestamp;
     }
 
-    public String getTrigger() {
+    public Trigger getTrigger() {
         return trigger;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
     }
 
 }

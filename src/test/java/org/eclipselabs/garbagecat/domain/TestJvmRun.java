@@ -241,7 +241,7 @@ class TestJvmRun {
         assertEquals(kilobytes(76972), jvmRun.getMaxPermOccupancy(),
                 "Max perm gen occupancy not calculated correctly.");
         assertEquals(kilobytes(76972), jvmRun.getMaxPermOccupancy(), "Max perm gen after GC not calculated correctly.");
-        assertEquals((long) 5615, jvmRun.getTotalGcPause(), "Total GC duration not calculated correctly.");
+        assertEquals((long) 5615, jvmRun.getGcPauseTotal(), "Total GC duration not calculated correctly.");
         assertEquals(2, jvmRun.getEventTypes().size(), "GC Event count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE),
                 JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.");
@@ -270,7 +270,7 @@ class TestJvmRun {
         assertEquals(kilobytes(60155), jvmRun.getMaxPermOccupancy(),
                 "Max perm gen occupancy not calculated correctly.");
         assertEquals(kilobytes(60151), jvmRun.getMaxPermAfterGc(), "Max perm gen after GC not calculated correctly.");
-        assertEquals((long) 1283, jvmRun.getTotalGcPause(), "Total GC duration not calculated correctly.");
+        assertEquals((long) 1283, jvmRun.getGcPauseTotal(), "Total GC duration not calculated correctly.");
         assertEquals(2, jvmRun.getEventTypes().size(), "GC Event count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PAR_NEW),
                 JdkUtil.LogEventType.PAR_NEW.toString() + " collector not identified.");
@@ -424,15 +424,16 @@ class TestJvmRun {
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME),
                 JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " not identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "GC Event count not correct.");
-        assertEquals((long) 62, jvmRun.getTotalGcPause(), "GC pause total not correct.");
+        assertEquals((long) 62, jvmRun.getGcPauseTotal(), "GC pause total not correct.");
         assertEquals((long) 2192, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
         assertEquals((long) 2847, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
         assertEquals(41453, jvmRun.getLastGcEvent().getDuration(), "GC last duration not correct.");
         assertEquals(6, jvmRun.getStoppedTimeEventCount(), "Stopped Time event count not correct.");
-        assertEquals(1064, jvmRun.getTotalStoppedTime(), "Stopped time total not correct.");
-        assertEquals((long) 964, jvmRun.getFirstStoppedEvent().getTimestamp(), "Stopped first timestamp not correct.");
-        assertEquals((long) 3884, jvmRun.getLastStoppedEvent().getTimestamp(), "Stopped last timestamp not correct.");
-        assertEquals(1000688, jvmRun.getLastStoppedEvent().getDuration(), "Stopped last duration not correct.");
+        assertEquals(1064, jvmRun.getStoppedTimeTotal(), "Stopped time total not correct.");
+        assertEquals((long) 964, jvmRun.getFirstSafepointEvent().getTimestamp(),
+                "Stopped first timestamp not correct.");
+        assertEquals((long) 3884, jvmRun.getLastSafepointEvent().getTimestamp(), "Stopped last timestamp not correct.");
+        assertEquals(1000688, jvmRun.getLastSafepointEvent().getDuration(), "Stopped last duration not correct.");
         assertEquals((long) 964, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
         assertEquals((long) 3884, jvmRun.getLastEvent().getTimestamp(), "JVM last event timestamp not correct.");
         assertEquals((long) 4884, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
@@ -457,25 +458,25 @@ class TestJvmRun {
                 JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_CLEANUP),
                 JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SAFEPOINT),
-                JdkUtil.LogEventType.SAFEPOINT.toString() + " not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " not identified.");
         assertEquals(5, jvmRun.getEventTypes().size(), "GC Event count not correct.");
-        assertEquals((long) 24, jvmRun.getTotalGcPause(), "GC pause total not correct.");
+        assertEquals((long) 24, jvmRun.getGcPauseTotal(), "GC pause total not correct.");
         assertEquals((long) 53, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
         assertEquals((long) 167, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
         assertEquals(362, jvmRun.getLastGcEvent().getDuration(), "GC last duration not correct.");
-        assertEquals(12, jvmRun.getSafepointEventCount(), "Safepoint event count not correct.");
-        assertEquals(25, jvmRun.getTotalSafepointTime(), "Safepoint time total not correct.");
+        assertEquals(12, jvmRun.getUnifiedSafepointEventCount(), "Safepoint event count not correct.");
+        assertEquals(25, jvmRun.getUnifiedSafepointTimeTotal(), "Safepoint time total not correct.");
         assertEquals((long) 29, jvmRun.getFirstSafepointEvent().getTimestamp(),
                 "Safepoint first timestamp not correct.");
         assertEquals((long) 167, jvmRun.getLastSafepointEvent().getTimestamp(),
                 "Safepoint last timestamp not correct.");
         assertEquals(439, jvmRun.getLastSafepointEvent().getDuration(), "Safepoint last duration not correct.");
-        assertEquals((long) 53, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
+        assertEquals((long) 29, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
         assertEquals((long) 167, jvmRun.getLastEvent().getTimestamp(), "JVM last event timestamp not correct.");
         assertEquals((long) 167, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
         assertEquals((long) 86, jvmRun.getGcThroughput(), "GC throughput not correct.");
-        assertEquals((long) 85, jvmRun.getSafepointThroughput(), "Safepoint throughput not correct.");
+        assertEquals((long) 85, jvmRun.getUnifiedSafepointThroughput(), "Safepoint throughput not correct.");
         assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
     }
@@ -552,14 +553,14 @@ class TestJvmRun {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals((long) 2097, jvmRun.getTotalGcPause(), "GC pause total not correct.");
+        assertEquals((long) 2097, jvmRun.getGcPauseTotal(), "GC pause total not correct.");
         assertEquals((long) 16517, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
         assertEquals((long) 31432, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
         assertEquals(271019, jvmRun.getLastGcEvent().getDuration(), "GC last duration not correct.");
-        assertEquals(1830, jvmRun.getTotalStoppedTime(), "Stopped time total not correct.");
-        assertEquals((long) 0, jvmRun.getFirstStoppedEvent().getTimestamp(), "Stopped first timestamp not correct.");
-        assertEquals((long) 0, jvmRun.getLastStoppedEvent().getTimestamp(), "Stopped last timestamp not correct.");
-        assertEquals(50, jvmRun.getLastStoppedEvent().getDuration(), "Stopped last duration not correct.");
+        assertEquals(1830, jvmRun.getStoppedTimeTotal(), "Stopped time total not correct.");
+        assertEquals((long) 0, jvmRun.getFirstSafepointEvent().getTimestamp(), "Stopped first timestamp not correct.");
+        assertEquals((long) 0, jvmRun.getLastSafepointEvent().getTimestamp(), "Stopped last timestamp not correct.");
+        assertEquals(50, jvmRun.getLastSafepointEvent().getDuration(), "Stopped last duration not correct.");
         assertEquals((long) 16517, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
         assertEquals((long) 31432, jvmRun.getLastEvent().getTimestamp(), "JVM last event timestamp not correct.");
         assertEquals((long) 31703, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
@@ -581,17 +582,17 @@ class TestJvmRun {
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "GC event type count not correct.");
         assertEquals(2, jvmRun.getBlockingEventCount(), "GC blocking event count not correct.");
-        assertEquals((long) 62, jvmRun.getTotalGcPause(), "GC pause total not correct.");
+        assertEquals((long) 62, jvmRun.getGcPauseTotal(), "GC pause total not correct.");
         assertEquals((long) 1002192, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
         assertEquals((long) 1002847, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
         assertEquals(41453, jvmRun.getLastGcEvent().getDuration(), "GC last duration not correct.");
         assertEquals(6, jvmRun.getStoppedTimeEventCount(), "Stopped Time event count not correct.");
-        assertEquals(1064, jvmRun.getTotalStoppedTime(), "Stopped time total not correct.");
-        assertEquals((long) 1000964, jvmRun.getFirstStoppedEvent().getTimestamp(),
+        assertEquals(1064, jvmRun.getStoppedTimeTotal(), "Stopped time total not correct.");
+        assertEquals((long) 1000964, jvmRun.getFirstSafepointEvent().getTimestamp(),
                 "Stopped first timestamp not correct.");
-        assertEquals((long) 1003884, jvmRun.getLastStoppedEvent().getTimestamp(),
+        assertEquals((long) 1003884, jvmRun.getLastSafepointEvent().getTimestamp(),
                 "Stopped last timestamp not correct.");
-        assertEquals(1000688, jvmRun.getLastStoppedEvent().getDuration(), "Stopped last duration not correct.");
+        assertEquals(1000688, jvmRun.getLastSafepointEvent().getDuration(), "Stopped last duration not correct.");
         assertEquals((long) 1000964, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
         assertEquals((long) 1003884, jvmRun.getLastEvent().getTimestamp(), "JVM last event timestamp not correct.");
         assertEquals((long) 3920, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
@@ -613,15 +614,15 @@ class TestJvmRun {
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(3, jvmRun.getEventTypes().size(), "GC event type count not correct.");
         assertEquals(160, jvmRun.getBlockingEventCount(), "GC blocking event count not correct.");
-        assertEquals((long) 2568199, jvmRun.getTotalGcPause(), "GC pause total not correct.");
+        assertEquals((long) 2568199, jvmRun.getGcPauseTotal(), "GC pause total not correct.");
         assertEquals((long) 4364, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
         assertEquals((long) 2801954, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
         assertEquals(25963804, jvmRun.getLastGcEvent().getDuration(), "GC last duration not correct.");
         assertEquals(151, jvmRun.getStoppedTimeEventCount(), "Stopped Time event count not correct.");
-        assertEquals(2721420, jvmRun.getTotalStoppedTime(), "Stopped time total not correct.");
-        assertEquals((long) 0, jvmRun.getFirstStoppedEvent().getTimestamp(), "Stopped first timestamp not correct.");
-        assertEquals((long) 0, jvmRun.getLastStoppedEvent().getTimestamp(), "Stopped last timestamp not correct.");
-        assertEquals(36651675, jvmRun.getLastStoppedEvent().getDuration(), "Stopped last duration not correct.");
+        assertEquals(2721420, jvmRun.getStoppedTimeTotal(), "Stopped time total not correct.");
+        assertEquals((long) 0, jvmRun.getFirstSafepointEvent().getTimestamp(), "Stopped first timestamp not correct.");
+        assertEquals((long) 0, jvmRun.getLastSafepointEvent().getTimestamp(), "Stopped last timestamp not correct.");
+        assertEquals(36651675, jvmRun.getLastSafepointEvent().getDuration(), "Stopped last duration not correct.");
         assertEquals((long) 4364, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
         assertEquals((long) 2801954, jvmRun.getLastEvent().getTimestamp(), "JVM last timestamp not correct.");
         assertEquals((long) 2827917, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
