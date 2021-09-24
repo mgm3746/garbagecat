@@ -56,7 +56,6 @@ import org.apache.commons.cli.ParseException;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEventSummary;
 import org.eclipselabs.garbagecat.service.GcManager;
-import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -80,6 +79,18 @@ public class Main {
      * The maximum number of rejected log lines to track. A throttle to limit memory consumption.
      */
     public static final int REJECT_LIMIT = 1000;
+
+    /**
+     * Report single line break
+     */
+    private static final String LINEBREAK_SINGLE = "-------------------------------------------------------------------"
+            + "----" + LINE_SEPARATOR;
+
+    /**
+     * Report double line break
+     */
+    private static final String LINEBREAK_DOUBLE = "==================================================================="
+            + "====" + LINE_SEPARATOR;
 
     /**
      * @param args
@@ -184,7 +195,7 @@ public class Main {
             printWriter.write(LINE_SEPARATOR);
 
             if (version || latestVersion) {
-                printWriter.write("========================================" + LINE_SEPARATOR);
+                printWriter.write(LINEBREAK_DOUBLE);
                 if (version) {
                     printWriter.write(
                             "Running garbagecat version: " + getVersion() + System.getProperty("line.separator"));
@@ -198,9 +209,9 @@ public class Main {
             // Bottlenecks
             List<String> bottlenecks = jvmRun.getBottlenecks();
             if (!bottlenecks.isEmpty()) {
-                printWriter.write("========================================" + LINE_SEPARATOR);
+                printWriter.write(LINEBREAK_DOUBLE);
                 printWriter.write("Throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
-                printWriter.write("----------------------------------------" + LINE_SEPARATOR);
+                printWriter.write(LINEBREAK_SINGLE);
                 for (String bottleneck : bottlenecks) {
                     printWriter.write(bottleneck + LINE_SEPARATOR);
                 }
@@ -209,9 +220,9 @@ public class Main {
             // JVM information
             if (jvmRun.getJvm().getVersion() != null || jvmRun.getJvm().getOptions() != null
                     || jvmRun.getJvm().getMemory() != null) {
-                printWriter.write("========================================" + LINE_SEPARATOR);
+                printWriter.write(LINEBREAK_DOUBLE);
                 printWriter.write("JVM:" + LINE_SEPARATOR);
-                printWriter.write("----------------------------------------" + LINE_SEPARATOR);
+                printWriter.write(LINEBREAK_SINGLE);
                 if (jvmRun.getJvm().getVersion() != null) {
                     printWriter.write("Version: " + jvmRun.getJvm().getVersion() + LINE_SEPARATOR);
                 }
@@ -224,9 +235,39 @@ public class Main {
             }
 
             // Summary
-            printWriter.write("========================================" + LINE_SEPARATOR);
+            printWriter.write(LINEBREAK_DOUBLE);
             printWriter.write("SUMMARY:" + LINE_SEPARATOR);
-            printWriter.write("----------------------------------------" + LINE_SEPARATOR);
+            printWriter.write(LINEBREAK_SINGLE);
+
+            // First/last timestamps
+            if (jvmRun.getBlockingEventCount() > 0 || jvmRun.getStoppedTimeEventCount() > 0) {
+                // First event
+                String firstEventDatestamp = JdkUtil.getDateStamp(jvmRun.getFirstEvent().getLogEntry());
+                if (firstEventDatestamp != null) {
+                    printWriter.write("Datestamp First: ");
+                    printWriter.write(firstEventDatestamp);
+                    printWriter.write(LINE_SEPARATOR);
+                }
+                if (!jvmRun.getFirstEvent().getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
+                    printWriter.write("Timestamp First: ");
+                    BigDecimal firstEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getFirstEvent().getTimestamp());
+                    printWriter.write(firstEventTimestamp.toString());
+                    printWriter.write(" secs" + LINE_SEPARATOR);
+                }
+                // Last event
+                String lastEventDatestamp = JdkUtil.getDateStamp(jvmRun.getLastEvent().getLogEntry());
+                if (lastEventDatestamp != null) {
+                    printWriter.write("Datestamp Last: ");
+                    printWriter.write(lastEventDatestamp);
+                    printWriter.write(LINE_SEPARATOR);
+                }
+                if (!jvmRun.getLastEvent().getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
+                    printWriter.write("Timestamp Last: ");
+                    BigDecimal lastEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getLastEvent().getTimestamp());
+                    printWriter.write(lastEventTimestamp.toString());
+                    printWriter.write(" secs" + LINE_SEPARATOR);
+                }
+            }
 
             // GC stats
             printWriter.write("# GC Events: " + jvmRun.getBlockingEventCount() + LINE_SEPARATOR);
@@ -252,7 +293,7 @@ public class Main {
                     printWriter
                             .write("# Inverted Parallelism: " + jvmRun.getInvertedParallelismCount() + LINE_SEPARATOR);
                     if (jvmRun.getInvertedParallelismCount() > 0) {
-                        printWriter.write("Max Inverted Parallelism: "
+                        printWriter.write("Inverted Parallelism Max: "
                                 + jvmRun.getWorstInvertedParallelismEvent().getLogEntry() + LINE_SEPARATOR);
                     }
                 }
@@ -263,62 +304,62 @@ public class Main {
                 }
                 // Max heap occupancy.
                 if (jvmRun.getMaxHeapOccupancy() != null) {
-                    printWriter.write("Max Heap Occupancy: " + jvmRun.getMaxHeapOccupancy().convertTo(KILOBYTES)
+                    printWriter.write("Heap Occupancy Max: " + jvmRun.getMaxHeapOccupancy().convertTo(KILOBYTES)
                             + LINE_SEPARATOR);
                 } else if (jvmRun.getMaxHeapOccupancyNonBlocking() != null) {
-                    printWriter.write("Max Heap Occupancy: "
+                    printWriter.write("Heap Occupancy Max: "
                             + jvmRun.getMaxHeapOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                 }
                 // Max heap after GC.
                 if (jvmRun.getMaxHeapAfterGc() != null) {
                     printWriter.write(
-                            "Max Heap After GC: " + jvmRun.getMaxHeapAfterGc().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                            "Heap After GC Max: " + jvmRun.getMaxHeapAfterGc().convertTo(KILOBYTES) + LINE_SEPARATOR);
                 }
                 // Max heap space.
                 if (jvmRun.getMaxHeapSpace() != null) {
                     printWriter
-                            .write("Max Heap Space: " + jvmRun.getMaxHeapSpace().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                            .write("Heap Space Max: " + jvmRun.getMaxHeapSpace().convertTo(KILOBYTES) + LINE_SEPARATOR);
                 } else if (jvmRun.getMaxHeapSpaceNonBlocking() != null) {
-                    printWriter.write("Max Heap Space: " + jvmRun.getMaxHeapSpaceNonBlocking().convertTo(KILOBYTES)
+                    printWriter.write("Heap Space Max: " + jvmRun.getMaxHeapSpaceNonBlocking().convertTo(KILOBYTES)
                             + LINE_SEPARATOR);
                 }
 
                 if (jvmRun.getMaxPermSpace().greaterThan(ZERO)) {
                     if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(INFO_PERM_GEN)) {
                         // Max perm occupancy.
-                        printWriter.write("Max Perm Gen Occupancy: " + jvmRun.getMaxPermOccupancy().convertTo(KILOBYTES)
+                        printWriter.write("Perm Gen Occupancy Max: " + jvmRun.getMaxPermOccupancy().convertTo(KILOBYTES)
                                 + LINE_SEPARATOR);
                         // Max perm after GC.
-                        printWriter.write("Max Perm Gen After GC: " + jvmRun.getMaxPermAfterGc().convertTo(KILOBYTES)
+                        printWriter.write("Perm Gen After GC Max: " + jvmRun.getMaxPermAfterGc().convertTo(KILOBYTES)
                                 + LINE_SEPARATOR);
                         // Max perm space.
-                        printWriter.write("Max Perm Gen Space: " + jvmRun.getMaxPermSpace().convertTo(KILOBYTES)
+                        printWriter.write("Perm Gen Space Max: " + jvmRun.getMaxPermSpace().convertTo(KILOBYTES)
                                 + LINE_SEPARATOR);
                     } else {
                         // Max metaspace occupancy.
-                        printWriter.write("Max Metaspace Occupancy: "
+                        printWriter.write("Metaspace Occupancy Max: "
                                 + jvmRun.getMaxPermOccupancy().convertTo(KILOBYTES) + LINE_SEPARATOR);
                         // Max metaspace after GC.
-                        printWriter.write("Max Metaspace After GC: " + jvmRun.getMaxPermAfterGc().convertTo(KILOBYTES)
+                        printWriter.write("Metaspace After GC Max: " + jvmRun.getMaxPermAfterGc().convertTo(KILOBYTES)
                                 + LINE_SEPARATOR);
                         // Max metaspace space.
-                        printWriter.write("Max Metaspace Space: " + jvmRun.getMaxPermSpace().convertTo(KILOBYTES)
+                        printWriter.write("Metaspace Space Max: " + jvmRun.getMaxPermSpace().convertTo(KILOBYTES)
                                 + LINE_SEPARATOR);
                     }
                 } else if (jvmRun.getMaxPermSpaceNonBlocking().greaterThan(ZERO)) {
                     if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(INFO_PERM_GEN)) {
                         // Max perm occupancy.
-                        printWriter.write("Max Perm Gen Occupancy: "
+                        printWriter.write("Perm Gen Occupancy Max: "
                                 + jvmRun.getMaxPermOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                         // Max perm space.
-                        printWriter.write("Max Perm Gen Space: "
+                        printWriter.write("Perm Gen Space Max: "
                                 + jvmRun.getMaxPermSpaceNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                     } else {
                         // Max metaspace occupancy.
-                        printWriter.write("Max Metaspace Occupancy: "
+                        printWriter.write("Metaspace Occupancy Max: "
                                 + jvmRun.getMaxPermOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                         // Max metaspace space.
-                        printWriter.write("Max Metaspace Space: "
+                        printWriter.write("Metaspace Space Max: "
                                 + jvmRun.getMaxPermSpaceNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                     }
                 }
@@ -366,54 +407,24 @@ public class Main {
                 printWriter.write(jvmRun.getUnifiedSafepointThroughput() + "%" + LINE_SEPARATOR);
                 // Max safepoint time
                 BigDecimal maxSafepointPause = JdkMath.convertMillisToSecs(jvmRun.getUnifiedSafepointTimeMax());
-                printWriter.write("Safepoint Time Max: " + maxSafepointPause.toString() + " secs" + LINE_SEPARATOR);
+                printWriter.write("Safepoint Pause Max: " + maxSafepointPause.toString() + " secs" + LINE_SEPARATOR);
                 // Total safepoint time
                 BigDecimal totalSafepointTime = JdkMath.convertMillisToSecs(jvmRun.getUnifiedSafepointTimeTotal());
-                printWriter.write("Safepoint Time Total: " + totalSafepointTime.toString() + " secs" + LINE_SEPARATOR);
+                printWriter.write("Safepoint Pause Total: " + totalSafepointTime.toString() + " secs" + LINE_SEPARATOR);
                 // Ratio of GC vs. safepoint time. 100 means all stopped time due to GC.
                 if (jvmRun.getBlockingEventCount() > 0) {
                     printWriter
                             .write("GC/Safepoint Ratio: " + jvmRun.getGcUnifiedSafepointRatio() + "%" + LINE_SEPARATOR);
                 }
             }
-            // First/last timestamps
-            if (jvmRun.getBlockingEventCount() > 0 || jvmRun.getStoppedTimeEventCount() > 0) {
-                // First event
-                String firstEventDatestamp = JdkUtil.getDateStamp(jvmRun.getFirstEvent().getLogEntry());
-                if (firstEventDatestamp != null) {
-                    printWriter.write("First Datestamp: ");
-                    printWriter.write(firstEventDatestamp);
-                    printWriter.write(LINE_SEPARATOR);
-                }
-                if (!jvmRun.getFirstEvent().getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
-                    printWriter.write("First Timestamp: ");
-                    BigDecimal firstEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getFirstEvent().getTimestamp());
-                    printWriter.write(firstEventTimestamp.toString());
-                    printWriter.write(" secs" + LINE_SEPARATOR);
-                }
-                // Last event
-                String lastEventDatestamp = JdkUtil.getDateStamp(jvmRun.getLastEvent().getLogEntry());
-                if (lastEventDatestamp != null) {
-                    printWriter.write("Last Datestamp: ");
-                    printWriter.write(lastEventDatestamp);
-                    printWriter.write(LINE_SEPARATOR);
-                }
-                if (!jvmRun.getLastEvent().getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
-                    printWriter.write("Last Timestamp: ");
-                    BigDecimal lastEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getLastEvent().getTimestamp());
-                    printWriter.write(lastEventTimestamp.toString());
-                    printWriter.write(" secs" + LINE_SEPARATOR);
-                }
-            }
 
             // Safepoint summary
             if (jvmRun.getUnifiedSafepointEventCount() > 0) {
-                printWriter.write("========================================" + Constants.LINE_SEPARATOR);
-                printWriter.write("SAFEPOINTS:" + Constants.LINE_SEPARATOR);
-                printWriter.write("----------------------------------------" + Constants.LINE_SEPARATOR);
+                printWriter.write(LINEBREAK_DOUBLE);
 
                 if (jvmRun.getUnifiedSafepointEventCount() > 0) {
-                    printWriter.printf("%30s%10s%12s%7s%12s%n", "", "#", "Time (s)", "", "Max (s)");
+                    printWriter.printf("%-30s%10s%12s%7s%12s%n", "SAFEPOINT:", "#", "Time (s)", "", "Max (s)");
+                    printWriter.write(LINEBREAK_SINGLE);
                     List<SafepointEventSummary> summaries = jvmRun.getSafepointEventSummaries();
                     Iterator<SafepointEventSummary> iterator = summaries.iterator();
                     while (iterator.hasNext()) {
@@ -452,7 +463,7 @@ public class Main {
                 }
             }
 
-            printWriter.write("========================================" + LINE_SEPARATOR);
+            printWriter.write(LINEBREAK_DOUBLE);
 
             // Analysis
             List<Analysis> analysis = jvmRun.getAnalysis();
@@ -482,9 +493,9 @@ public class Main {
                 // ERROR
                 for (Analysis a : error) {
                     if (printHeader) {
-                        printWriter.write("----------------------------------------" + LINE_SEPARATOR);
+                        printWriter.write(LINEBREAK_SINGLE);
                         printWriter.write("error" + LINE_SEPARATOR);
-                        printWriter.write("----------------------------------------" + LINE_SEPARATOR);
+                        printWriter.write(LINEBREAK_SINGLE);
                     }
                     printHeader = false;
                     printWriter.write("*");
@@ -495,9 +506,9 @@ public class Main {
                 printHeader = true;
                 for (Analysis a : warn) {
                     if (printHeader) {
-                        printWriter.write("----------------------------------------" + LINE_SEPARATOR);
+                        printWriter.write(LINEBREAK_SINGLE);
                         printWriter.write("warn" + LINE_SEPARATOR);
-                        printWriter.write("----------------------------------------" + LINE_SEPARATOR);
+                        printWriter.write(LINEBREAK_SINGLE);
                     }
                     printHeader = false;
                     printWriter.write("*");
@@ -508,9 +519,9 @@ public class Main {
                 printHeader = true;
                 for (Analysis a : info) {
                     if (printHeader) {
-                        printWriter.write("----------------------------------------" + LINE_SEPARATOR);
+                        printWriter.write(LINEBREAK_SINGLE);
                         printWriter.write("info" + LINE_SEPARATOR);
-                        printWriter.write("----------------------------------------" + LINE_SEPARATOR);
+                        printWriter.write(LINEBREAK_SINGLE);
                     }
                     printHeader = false;
                     printWriter.write("*");
@@ -521,20 +532,20 @@ public class Main {
                     }
                     printWriter.write(LINE_SEPARATOR);
                 }
-                printWriter.write("========================================" + LINE_SEPARATOR);
+                printWriter.write(LINEBREAK_DOUBLE);
             }
 
             // Unidentified log lines
             List<String> unidentifiedLogLines = jvmRun.getUnidentifiedLogLines();
             if (!unidentifiedLogLines.isEmpty()) {
                 printWriter.write(unidentifiedLogLines.size() + " UNIDENTIFIED LOG LINE(S):" + LINE_SEPARATOR);
-                printWriter.write("----------------------------------------" + LINE_SEPARATOR);
+                printWriter.write(LINEBREAK_SINGLE);
 
                 for (String unidentifiedLogLine : unidentifiedLogLines) {
                     printWriter.write(unidentifiedLogLine);
                     printWriter.write(LINE_SEPARATOR);
                 }
-                printWriter.write("========================================" + LINE_SEPARATOR);
+                printWriter.write(LINEBREAK_DOUBLE);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
