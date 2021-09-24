@@ -7,6 +7,7 @@ A command line tool that parses Java garbage collection logging and does analysi
 OpenJDK derivatives:
 * AdoptOpenJDK
 * Azul
+* Microsoft Build of OpenJDK
 * Oracle JDK
 * Red Hat build of OpenJDK
 * etc.
