@@ -53,9 +53,10 @@ public class UnifiedSafepoint {
     public static final String BULK_REVOKE_BIAS = "BulkRevokeBias";
 
     /**
-     * <p>
-     * G1 Mark and Remark phases.
-     * </p>
+     * <ul>
+     * <li>{@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent}</li>
+     * <li>{@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedRemarkEvent}</li>
+     * </ul>
      */
     public static final String CGC_OPERATION = "CGC_Operation";
 
@@ -141,15 +142,17 @@ public class UnifiedSafepoint {
     public static final String FORCE_SAFEPOINT = "ForceSafepoint";
 
     /**
-     * <p>
-     * TODO:
-     * </p>
+     * <ul>
+     * <li>{@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1MixedPauseEvent}</li>
+     * <li>{@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent}</li>
+     * <li>{@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPrepareMixedEvent}</li>
+     * </ul>
      */
     public static final String G1_COLLECT_FOR_ALLOCATION = "G1CollectForAllocation";
 
     /**
      * <p>
-     * TODO:
+     * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent}
      * </p>
      */
     public static final String G1_COLLECT_FULL = "G1CollectFull";
@@ -242,7 +245,7 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * Redefining classes
+     * Redefine classes.
      * </p>
      */
     public static final String REDEFINE_CLASSES = "RedefineClasses";
