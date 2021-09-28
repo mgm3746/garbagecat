@@ -79,6 +79,8 @@ public class UnifiedG1FullGcEvent extends G1Collector
             + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9
             + "[ ]*$";
 
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
+
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -153,8 +155,7 @@ public class UnifiedG1FullGcEvent extends G1Collector
     public UnifiedG1FullGcEvent(String logEntry) {
         this.logEntry = logEntry;
 
-        Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry);
         if (matcher.find()) {
             if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                 timestamp = Long.parseLong(matcher.group(12));
@@ -287,6 +288,6 @@ public class UnifiedG1FullGcEvent extends G1Collector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX_PREPROCESSED);
+        return REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
     }
 }
