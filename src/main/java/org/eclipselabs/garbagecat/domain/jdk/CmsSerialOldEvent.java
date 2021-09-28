@@ -251,6 +251,8 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
             + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, "
             + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
+    private static final Pattern REGEX_FULL_GC_PATTERN = Pattern.compile(REGEX_FULL_GC);
+
     /**
      * Regular expression defining the logging beginning with "GC".
      */
@@ -266,6 +268,8 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
             + JdkRegEx.SIZE_K + "\\)(, \\[(CMS Perm |Perm |Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K
             + "\\(" + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\])?"
             + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern REGEX_GC_PATTERN = Pattern.compile(REGEX_GC);
 
     /**
      * Create event from log entry.
@@ -495,6 +499,6 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static boolean match(String logLine) {
-        return logLine.matches(REGEX_FULL_GC) || logLine.matches(REGEX_GC);
+        return REGEX_FULL_GC_PATTERN.matcher(logLine).matches() || REGEX_GC_PATTERN.matcher(logLine).matches();
     }
 }

@@ -87,6 +87,11 @@ public class JvmRun {
     private long gcPauseTotal;
 
     /**
+     * Memory being allocated per second (kilobytes).
+     */
+    private BigDecimal allocationRate;
+
+    /**
      * Number of <code>ParallelCollection</code> with "inverted" parallelism.
      */
     private long invertedParallelismCount;
@@ -945,6 +950,18 @@ public class JvmRun {
         BigDecimal ratio = new BigDecimal(gcPauseTotal);
         ratio = ratio.divide(new BigDecimal(stoppedTimeTotal), 2, HALF_EVEN);
         return ratio.movePointRight(2).longValue();
+    }
+
+    /**
+     *
+     * @return The amount of memory allocated per time unit expressed in MB/sec
+     */
+    public BigDecimal getAllocationRate() {
+        return allocationRate;
+    }
+
+    public void setAllocationRate(BigDecimal mbPerSecond) {
+        allocationRate = mbPerSecond;
     }
 
     /**

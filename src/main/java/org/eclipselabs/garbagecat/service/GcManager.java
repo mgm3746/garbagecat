@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -56,6 +57,7 @@ import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.domain.jdk.G1FullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcLockerEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
@@ -858,6 +860,44 @@ public class GcManager {
     }
 
     /**
+     * Allocation rate in KB per second.
+     * @param jvm
+     */
+    private BigDecimal getAllocationRate(Jvm jvm) {
+        List<BlockingEvent> blockingEvents = jvmDao.getBlockingEvents(LogEventType.G1_YOUNG_PAUSE);
+        
+        if (blockingEvents.isEmpty())
+            return BigDecimal.ZERO;
+
+        long allocatedKb = 0;
+        G1YoungPauseEvent prior = null;
+        long firstEventTs = 0;
+        for (BlockingEvent event : blockingEvents) {
+            G1YoungPauseEvent young = (G1YoungPauseEvent) event;
+            if (prior == null) {
+                // skip the first event since we don't know if this is a complete JVM run
+                // and therefore can't accurately calculate allocation rate prior to the first log
+                // youngGc pause event
+                prior = young;
+                firstEventTs = prior.getTimestamp();
+                continue;
+            }
+            allocatedKb += young.getEdenOccupancyInit().minus(prior.getEdenOccupancyEnd()).getValue(KILOBYTES);
+            prior = young;
+        }
+
+        BigDecimal durationMs = BigDecimal.valueOf(prior.getTimestamp() - firstEventTs);
+        if (durationMs.longValue() <= 0)
+            return BigDecimal.ZERO;
+
+        Memory allocated = Memory.kilobytes(allocatedKb);
+
+        BigDecimal kilobytesPerSec = BigDecimal.valueOf(allocated.getValue(KILOBYTES) / durationMs.longValue());
+
+        return kilobytesPerSec.multiply(BigDecimal.valueOf(1000));
+    }
+
+    /**
      * Determine <code>BlockingEvent</code>s where throughput since last event does not meet the throughput goal.
      * 
      * @param jvm
@@ -966,6 +1006,7 @@ public class GcManager {
         jvmRun.setCollectorFamilies(jvmDao.getCollectorFamilies());
         jvmRun.setAnalysis(jvmDao.getAnalysis());
         jvmRun.setBottlenecks(getBottlenecks(jvm, throughputThreshold));
+        jvmRun.setAllocationRate(getAllocationRate(jvm));
         jvmRun.setParallelCount(jvmDao.getParallelCount());
         jvmRun.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount());
         jvmRun.setWorstInvertedParallelismEvent(jvmDao.getWorstInvertedParallelismEvent());
