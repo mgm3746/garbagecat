@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -155,6 +156,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING = "^(" + JdkRegEx.DECORATOR
             + " \\[Concurrent marking)$";
+    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING);
 
     /**
      * Regular expression for retained beginning SHENANDOAH_CONCURRENT cleanup event
@@ -164,6 +167,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP = "^(" + JdkRegEx.DECORATOR
             + " \\[Concurrent cleanup " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
             + UnifiedRegEx.DURATION + "\\])$";
+    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP);
 
     /**
      * Regular expression for retained Metaspace block.
@@ -172,6 +177,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_METASPACE = "(, \\[Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\)\\])[ ]*";
+    private static final Pattern REGEX_RETAIN_METASPACE_PATTERN =
+            Pattern.compile(REGEX_RETAIN_METASPACE);
 
     /**
      * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
@@ -180,6 +187,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      * , 27.5589374 secs]
      */
     private static final String REGEX_RETAIN_DURATION = "(, " + UnifiedRegEx.DURATION + "\\])[ ]*";
+    private static final Pattern REGEX_RETAIN_DURATION_PATTERN =
+            Pattern.compile(REGEX_RETAIN_DURATION);
 
     /**
      * Regular expressions for lines thrown away.
@@ -266,6 +275,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             //
     };
 
+    private static final List<Pattern> REGEX_THROWAWAY_LIST = new ArrayList<>(REGEX_THROWAWAY.length);
+
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -280,6 +291,12 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      * non-concurrent event.
      */
     public static final String TOKEN = "SHENANDOAH_PREPROCESS_ACTION_TOKEN";
+
+    static {
+        for (String regex : REGEX_THROWAWAY) {
+            REGEX_THROWAWAY_LIST.add(Pattern.compile(regex));
+        }
+    }
 
     /**
      * Create event from log entry.
@@ -350,14 +367,16 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        if (logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP) || logLine.matches(REGEX_RETAIN_METASPACE)
-                || logLine.matches(REGEX_RETAIN_DURATION)) {
+        if (REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_METASPACE_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_DURATION_PATTERN.matcher(logLine).matches()) {
             match = true;
         } else {
             // TODO: Get rid of this and make them throwaway events?
-            for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
-                if (logLine.matches(REGEX_THROWAWAY[i])) {
+            for (int i = 0; i < REGEX_THROWAWAY_LIST.size(); i++) {
+                Pattern pattern = REGEX_THROWAWAY_LIST.get(i);
+                if (pattern.matcher(logLine).matches()) {
                     match = true;
                     break;
                 }

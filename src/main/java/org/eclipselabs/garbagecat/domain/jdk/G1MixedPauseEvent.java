@@ -87,12 +87,17 @@ public class G1MixedPauseEvent extends G1Collector
             + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
             + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")";
 
+    private static final Pattern TRIGGER_PATTERN = Pattern.compile(TRIGGER);
+
     /**
      * Regular expression standard format.
      */
     private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\("
             + TRIGGER + "\\))? \\(mixed\\)(--)? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+
+
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
     /**
      * Regular expression preprocessed.
@@ -102,6 +107,8 @@ public class G1MixedPauseEvent extends G1Collector
             + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -161,10 +168,10 @@ public class G1MixedPauseEvent extends G1Collector
      */
     public G1MixedPauseEvent(String logEntry) {
         this.logEntry = logEntry;
-        if (logEntry.matches(REGEX)) {
+        Matcher matcher;
+        if ((matcher = REGEX_PATTERN.matcher(logEntry)).matches()) {
             // standard format
-            Pattern pattern = Pattern.compile(REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 trigger = matcher.group(13);
@@ -178,10 +185,9 @@ public class G1MixedPauseEvent extends G1Collector
                     timeReal = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
                 }
             }
-        } else if (logEntry.matches(REGEX_PREPROCESSED)) {
+        } else if ((matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry)).matches()) {
             // preprocessed format
-            Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 // use last trigger
@@ -275,6 +281,6 @@ public class G1MixedPauseEvent extends G1Collector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX) || logLine.matches(REGEX_PREPROCESSED);
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
     }
 }

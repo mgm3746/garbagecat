@@ -69,12 +69,16 @@ public class UnifiedG1CleanupEvent extends G1Collector
     private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Cleanup " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + "[ ]*$";
 
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+
     /**
      * Regular expression defining preprocessed logging.
      */
     private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Cleanup " + JdkRegEx.SIZE
             + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9
             + "[ ]*$";
+
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -129,9 +133,11 @@ public class UnifiedG1CleanupEvent extends G1Collector
      */
     public UnifiedG1CleanupEvent(String logEntry) {
         this.logEntry = logEntry;
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
+
+        Matcher matcher;
+
+        if ((matcher = REGEX_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.find()) {
                 long endTimestamp;
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
@@ -158,9 +164,8 @@ public class UnifiedG1CleanupEvent extends G1Collector
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
             }
-        } else if (logEntry.matches(REGEX_PREPROCESSED)) {
-            Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.find()) {
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                     timestamp = Long.parseLong(matcher.group(12));
@@ -262,6 +267,6 @@ public class UnifiedG1CleanupEvent extends G1Collector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX) || logLine.matches(REGEX_PREPROCESSED);
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
     }
 }

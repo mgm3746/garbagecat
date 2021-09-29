@@ -17,6 +17,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
 /**
  * <p>
  * GC_INFO
@@ -139,6 +143,14 @@ public class GcInfoEvent implements ThrowAwayEvent {
             //
     };
 
+    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);
+
+    static {
+        for (String regex : REGEX) {
+            REGEX_PATTERN_LIST.add(Pattern.compile(regex));
+        }
+    }
+
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -181,8 +193,9 @@ public class GcInfoEvent implements ThrowAwayEvent {
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        for (int i = 0; i < REGEX.length; i++) {
-            if (logLine.matches(REGEX[i])) {
+        for (int i = 0; i < REGEX_PATTERN_LIST.size(); i++) {
+            Pattern pattern = REGEX_PATTERN_LIST.get(i);
+            if (pattern.matcher(logLine).matches()) {
                 match = true;
                 break;
             }

@@ -16,6 +16,8 @@ import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
+import java.util.regex.Pattern;
+
 /**
  * <p>
  * UNIFIED_BLANK_LINE
@@ -30,6 +32,8 @@ public class UnifiedBlankLineEvent implements ThrowAwayEvent {
      * Regular expression defining the logging.
      */
     private static final String REGEX = UnifiedRegEx.BLANK_LINE;
+
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -72,6 +76,6 @@ public class UnifiedBlankLineEvent implements ThrowAwayEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return REGEX_PATTERN.matcher(logLine).matches();
     }
 }

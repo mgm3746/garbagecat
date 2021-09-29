@@ -195,6 +195,9 @@ public class CmsPreprocessAction implements PreprocessAction {
             + ": \\[CMS-concurrent-(abortable-preclean|mark|sweep|preclean|reset): " + JdkRegEx.DURATION_FRACTION
             + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
+    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT);
+
     /**
      * Regular expression for retained beginning PAR_NEW mixed with FLS_STATISTICS.
      * 
@@ -205,6 +208,9 @@ public class CmsPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))? )(Before GC:)$";
 
+    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS);
+
     /**
      * Regular expression for beginning CMS_SERIAL_OLD collection.
      * 
@@ -212,6 +218,9 @@ public class CmsPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_SERIAL = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[Full GC (" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram:)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL);
 
     /**
      * Regular expression for beginning PAR_NEW collection.
@@ -232,6 +241,9 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]("
             + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram:)?)[ ]*$";
 
+    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW);
+
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD mixed with CMS_CONCURRENT collection.
      * 
@@ -247,11 +259,17 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): "
             + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
+
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD bailing out collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_SERIAL_BAILING = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC "
             + JdkRegEx.TIMESTAMP + ": \\[CMSbailing out to foreground collection)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_BAILING_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_BAILING);
 
     /**
      * Regular expression for retained CMS_SERIAL_OLD with -XX:+UseGCOverheadLimit at end.
@@ -266,6 +284,9 @@ public class CmsPreprocessAction implements PreprocessAction {
             + "\\)\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\) \\[PSPermGen: "
             + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
             + "\\)\\])(      |\t)GC time (would exceed|is exceeding) GCTimeLimit of 98%$";
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED);
 
     /**
      * Regular expression for retained beginning PrintHeapAtGC collection.
@@ -282,6 +303,9 @@ public class CmsPreprocessAction implements PreprocessAction {
             + "\\) )?(\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K
             + "\\)\\])?)\\{Heap before (gc|GC) invocations=\\d{1,10}( \\(full \\d{1,10}\\))?:[ ]*$";
 
+    private static final Pattern REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC);
+
     /**
      * Regular expression for retained beginning PAR_NEW bailing out collection.
      */
@@ -290,6 +314,9 @@ public class CmsPreprocessAction implements PreprocessAction {
             + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]"
             + JdkRegEx.TIMESTAMP
             + ": \\[CMS(Java HotSpot\\(TM\\) Server VM warning: )?bailing out to foreground collection)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_BAILING_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_BAILING);
 
     /**
      * Regular expression for retained beginning CMS_CONCURRENT mixed with APPLICATION_CONCURRENT_TIME collection.
@@ -302,6 +329,9 @@ public class CmsPreprocessAction implements PreprocessAction {
             + ": )?(\\[CMS-concurrent-preclean: " + JdkRegEx.DURATION_FRACTION + "\\])(" + JdkRegEx.TIMESTAMP
             + ": Application time: \\d{1,4}\\.\\d{7} seconds)[ ]*$";
 
+    private static final Pattern REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME);
+
     /**
      * Regular expression for retained beginning concurrent mode failure.
      * 
@@ -312,6 +342,9 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]("
             + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?)[ ]*$";
 
+    private static final Pattern REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE_PATTERN =
+            Pattern.compile(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE);
+
     /**
      * Middle line when logging is split over 3 lines (e.g. bailing).
      * 
@@ -319,6 +352,9 @@ public class CmsPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_MIDDLE_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
             + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_CONCURRENT_PATTERN =
+            Pattern.compile(REGEX_RETAIN_MIDDLE_CONCURRENT);
 
     /**
      * Middle line when mixed serial and concurrent logging.
@@ -340,6 +376,9 @@ public class CmsPreprocessAction implements PreprocessAction {
             + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark|sweep): "
             + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
+    private static final Pattern REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED_PATTERN =
+            Pattern.compile(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED);
+
     /**
      * Middle line when mixed PAR_NEW and concurrent logging.
      * 
@@ -356,6 +395,9 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS)?)((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark): "
             + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED_PATTERN =
+            Pattern.compile(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED);
 
     /**
      * Middle line PAR_NEW with FLS_STATISTICS
@@ -387,6 +429,10 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_K + "\\)(, " + JdkRegEx.DURATION + "\\])?( " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K
             + "\\(" + JdkRegEx.SIZE_K + "\\))?((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[CMS)?)(After GC:|CMS: Large block " + JdkRegEx.ADDRESS + ")$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS_PATTERN =
+            Pattern.compile(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS);
+
     /**
      * Middle serial line with FLS_STATISTICS
      * 
@@ -398,6 +444,9 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), \\[Metaspace: " + JdkRegEx.SIZE_K + "->"
             + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\])After GC:$";
 
+    private static final Pattern REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS_PATTERN =
+            Pattern.compile(REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS);
+
     /**
      * Middle line with PrintHeapAtGC.
      */
@@ -407,12 +456,18 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_K + "\\)(, \\[CMS Perm : " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
             + JdkRegEx.SIZE_K + "\\)])?)Heap after gc invocations=\\d{1,10}:[ ]*$";
 
+    private static final Pattern REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC_PATTERN =
+            Pattern.compile(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC);
+
     /**
      * Middle line with PrintClassHistogram
      */
     private static final String REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM = "^((" + JdkRegEx.TIMESTAMP + ": \\[CMS)?: "
             + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]"
             + JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN =
+            Pattern.compile(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM);
 
     /**
      * Regular expression for CMS_REMARK without <code>-XX:+PrintGCDetails</code>.
@@ -425,6 +480,9 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.TIMESTAMP + ": \\[GC (\\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\))?(  " + JdkRegEx.SIZE_K
             + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?( ("
             + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew)?)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_CMS_REMARK_PATTERN =
+            Pattern.compile(REGEX_RETAIN_MIDDLE_CMS_REMARK);
 
     /**
      * Regular expression for retained end.
@@ -466,6 +524,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, "
             + JdkRegEx.DURATION + "\\])?" + TimesData.REGEX + "?)[ ]*$";
 
+    private static final Pattern REGEX_RETAIN_END_PATTERN = Pattern.compile(REGEX_RETAIN_END);
+
     /**
      * Regular expression for retained PAR_NEW end.
      * 
@@ -477,6 +537,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
             + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + ")[ ]*$";
 
+    private static final Pattern REGEX_RETAIN_END_PAR_NEW_PATTERN = Pattern.compile(REGEX_RETAIN_END_PAR_NEW);
+
     /**
      * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
      * multiple lines. Check the TOKEN to see if in the middle of preprocessing an event that spans multiple lines.
@@ -484,6 +546,8 @@ public class CmsPreprocessAction implements PreprocessAction {
      * , 27.5589374 secs]
      */
     private static final String REGEX_RETAIN_DURATION = "(, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*";
+
+    private static final Pattern REGEX_RETAIN_DURATION_PATTERN = Pattern.compile(REGEX_RETAIN_DURATION);
 
     /**
      * Regular expression for PAR_NEW with extraneous prefix.
@@ -494,6 +558,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K
             + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
             + "?)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_PAR_NEW_PATTERN = Pattern.compile(REGEX_RETAIN_PAR_NEW);
 
     /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
@@ -523,11 +589,11 @@ public class CmsPreprocessAction implements PreprocessAction {
     public CmsPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
             List<String> entangledLogLines, Set<String> context) {
 
+        Matcher matcher;
         // Beginning logging
-        if (logEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT)) {
+        if ((matcher = REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
             // Par_NEW mixed with CMS_CONCURRENT
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 entangledLogLines.add(matcher.group(46));
             }
@@ -535,20 +601,18 @@ public class CmsPreprocessAction implements PreprocessAction {
             this.logEntry = matcher.group(1);
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS)) {
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS_PATTERN.matcher(logEntry)).matches()) {
             // Par_NEW mixed with FLS_STATISTICS
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 // Output beginning of PAR_NEW line
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)) {
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
             // CMS_SERIAL_OLD mixed with CMS_CONCURRENT
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 entangledLogLines.add(matcher.group(28));
             }
@@ -557,58 +621,53 @@ public class CmsPreprocessAction implements PreprocessAction {
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
 
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_SERIAL_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_PARNEW_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC)) {
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC_PATTERN.matcher(logEntry)).matches()) {
             // Remove PrintHeapAtGC output
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_BAILING);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_SERIAL_BAILING_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED_PATTERN.matcher(logEntry))
+                .matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW_BAILING)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_BAILING);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_PARNEW_BAILING_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN
+                .matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1) + matcher.group(23);
                 if (matcher.group(13) != null) {
@@ -619,9 +678,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_CONCURRENT)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_CONCURRENT);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 if (!context.contains(TOKEN)) {
                     // Output now
@@ -632,72 +690,63 @@ public class CmsPreprocessAction implements PreprocessAction {
                 }
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED)) {
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED_PATTERN.matcher(logEntry)).matches()) {
             // Output serial part, save concurrent to output later
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
                 entangledLogLines.add(matcher.group(20));
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED)) {
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED_PATTERN.matcher(logEntry)).matches()) {
             // Output ParNew part, save concurrent to output later
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
                 entangledLogLines.add(matcher.group(33));
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS)) {
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS_PATTERN.matcher(logEntry)).matches()) {
             // Output ParNew part minus FL stats
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS)) {
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS_PATTERN.matcher(logEntry)).matches()) {
             // Output serial part minus FL stats
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC)) {
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC_PATTERN.matcher(logEntry)).matches()) {
             // Remove PrintHeapAtGC output
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_CMS_REMARK)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_CMS_REMARK);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_CMS_REMARK_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if (logEntry.matches(REGEX_RETAIN_DURATION)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_DURATION);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_DURATION_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
@@ -706,35 +755,33 @@ public class CmsPreprocessAction implements PreprocessAction {
                 clearEntangledLines(entangledLogLines);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if (logEntry.matches(REGEX_RETAIN_END)
-                && !priorLogEntry.matches(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM)) {
+        } else if ((matcher = REGEX_RETAIN_END_PATTERN.matcher(logEntry)).matches()
+                && !REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN.matcher(priorLogEntry).matches()) {
             // End of logging event
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_END);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_END_PAR_NEW)) {
+        } else if ((matcher = REGEX_RETAIN_END_PAR_NEW_PATTERN.matcher(logEntry)).matches()) {
             // End of logging event
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_END_PAR_NEW);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             clearEntangledLines(entangledLogLines);
-            if (context.contains(TOKEN) && !priorLogEntry.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT)) {
+            if (context.contains(TOKEN)
+                    && !REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(priorLogEntry).matches()) {
                 // End of multi-line event or PAR_NEW truncated
                 context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             } else {
                 context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             }
             context.remove(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_PAR_NEW)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_PAR_NEW);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_PAR_NEW_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(4);
             }
@@ -763,26 +810,29 @@ public class CmsPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
-        return logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL) || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_BAILING)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_CONCURRENT)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_CMS_REMARK) || logLine.matches(REGEX_RETAIN_END)
-                || logLine.matches(REGEX_RETAIN_END_PAR_NEW) || logLine.matches(REGEX_RETAIN_DURATION)
-                || logLine.matches(REGEX_RETAIN_PAR_NEW);
+        return REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_SERIAL_BAILING_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_SERIAL_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_PARNEW_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_PARNEW_BAILING_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_CONCURRENT_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_CMS_REMARK_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_END_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_END_PAR_NEW_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_DURATION_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_PAR_NEW_PATTERN.matcher(logLine).matches();
     }
 
     /**

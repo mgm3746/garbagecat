@@ -77,17 +77,24 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
             + ")(: \\[CMS-concurrent-(abortable-preclean|mark|preclean): " + JdkRegEx.DURATION_FRACTION
             + "\\])?(Total time for which application threads were stopped: \\d{1,4}\\.\\d{7} seconds)$";
 
+    private static final Pattern REGEX_LINE1_PATTERN = Pattern.compile(REGEX_LINE1);
+
     /**
      * Regular expressions defining the 2nd logging line.
      */
     private static final String REGEX_LINE2 = "^(: \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION
             + "\\])?" + TimesData.REGEX + "[ ]*$";
+
+    private static final Pattern REGEX_LINE2_PATTERN = Pattern.compile(REGEX_LINE2);
+
     /**
      * Regular expression for retained end.
      * 
      * [Times: user=0.15 sys=0.02, real=0.05 secs]
      */
     private static final String REGEX_RETAIN_END = "^" + TimesData.REGEX + "[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_END_PATTERN = Pattern.compile(REGEX_RETAIN_END);
 
     /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
@@ -109,9 +116,9 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
      *            Information to make preprocessing decisions.
      */
     public ApplicationStoppedTimePreprocessAction(String logEntry, Set<String> context) {
-        if (logEntry.matches(REGEX_LINE1)) {
-            Pattern pattern = Pattern.compile(REGEX_LINE1);
-            Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher;
+        if ((matcher = REGEX_LINE1_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 // Split line1 logging apart
                 if (matcher.group(6) != null) {
@@ -126,9 +133,8 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_END)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_END);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_END_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
@@ -159,6 +165,8 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine) {
-        return logLine.matches(REGEX_LINE1) || logLine.matches(REGEX_LINE2) || logLine.matches(REGEX_RETAIN_END);
+        return REGEX_LINE1_PATTERN.matcher(logLine).matches()
+                || REGEX_LINE2_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_END_PATTERN.matcher(logLine).matches();
     }
 }

@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -82,6 +83,9 @@ public class ParallelPreprocessAction implements PreprocessAction {
     private static final String REGEX_BEGINNING_UNLOADING_CLASS = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC)"
             + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
 
+    private static final Pattern REGEX_BEGINNING_UNLOADING_CLASS_PATTERN =
+            Pattern.compile(REGEX_BEGINNING_UNLOADING_CLASS);
+
     /**
      * Regular expression GCTimeLimit exceeded logging.
      */
@@ -92,12 +96,18 @@ public class ParallelPreprocessAction implements PreprocessAction {
             + "\\) \\[PSPermGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
             + "\\)\\])(      |\t)(GC time (would exceed|is exceeding) GCTimeLimit of 98%)$";
 
+    private static final Pattern REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED);
+
     /**
      * Regular expression beginning PARALLEL_SCAVENGE.
      * 
      * 10.392: [GC
      */
     private static final String REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC)$";
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE);
 
     /**
      * Regular expression beginning PARALLEL_SCAVENGE with -XX:+PrintAdaptiveSizePolicy logging.
@@ -110,6 +120,9 @@ public class ParallelPreprocessAction implements PreprocessAction {
             + ")\\) )AdaptiveSizePolicy::update_averages:  survived: \\d{1,}  promoted: "
             + "\\d{1,}  overflow: (false|true)$";
 
+    private static final Pattern REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY);
+
     /**
      * Regular expression beginning PARALLEL_COMPACTING_OLD or PARALLEL_SERIAL_OLD with -XX:+PrintAdaptiveSizePolicy
      * logging.
@@ -119,6 +132,9 @@ public class ParallelPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY = "^(" + JdkRegEx.DECORATOR
             + " \\[Full GC \\(Ergonomics\\) )AdaptiveSizeStart: " + JdkRegEx.TIMESTAMP + " collection: \\d{1,}[ ]{0,}$";
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY_PATTERN =
+            Pattern.compile(REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY);
 
     /**
      * Regular expression for retained end of collection.
@@ -140,6 +156,8 @@ public class ParallelPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_K + "\\)[,]{0,1}( \\[(PSPermGen|Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K
             + "\\(" + JdkRegEx.SIZE_K + "\\)\\])?)?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
+    private static final Pattern REGEX_RETAIN_END_PATTERN = Pattern.compile(REGEX_RETAIN_END);
+
     /**
      * Regular expressions for lines thrown away.
      */
@@ -157,6 +175,8 @@ public class ParallelPreprocessAction implements PreprocessAction {
             //
     };
 
+    private static final List<Pattern> REGEX_THROWAWAY_LIST = new ArrayList<>(REGEX_THROWAWAY.length);
+
     /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
      * context is necessary to detangle multi-line events where logging patterns are shared among preprocessors.
@@ -167,6 +187,12 @@ public class ParallelPreprocessAction implements PreprocessAction {
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
+
+    static {
+        for (String regex : REGEX_THROWAWAY) {
+            REGEX_THROWAWAY_LIST.add(Pattern.compile(regex));
+        }
+    }
 
     /**
      * Create event from log entry.
@@ -185,56 +211,53 @@ public class ParallelPreprocessAction implements PreprocessAction {
     public ParallelPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
             List<String> entangledLogLines, Set<String> context) {
 
+        Matcher matcher;
         // Beginning logging
-        if (logEntry.matches(REGEX_BEGINNING_UNLOADING_CLASS)) {
-            Pattern pattern = Pattern.compile(REGEX_BEGINNING_UNLOADING_CLASS);
-            Matcher matcher = pattern.matcher(logEntry);
+        //(matcher = _PATTERN.matcher(logEntry)).matches()
+        if ((matcher = REGEX_BEGINNING_UNLOADING_CLASS_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED)) {
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED_PATTERN.matcher(logEntry)).matches()) {
             // Remove GCTimeLimit output
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
                 entangledLogLines.add(matcher.group(27));
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE)) {
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE_PATTERN.matcher(logEntry)).matches()) {
             // Remove beginning PARALLEL_SCAVENGE output
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY)) {
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY_PATTERN.matcher(logEntry))
+                .matches()) {
             // Remove ending AdaptiveResizePolicy output
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY)) {
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY_PATTERN.matcher(logEntry)).matches()) {
             // Remove ending AdaptiveResizePolicy output
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_END)) {
+        } else if ((matcher = REGEX_RETAIN_END_PATTERN.matcher(logEntry)).matches()) {
             // End of logging event
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_END);
-            Matcher matcher = pattern.matcher(logEntry);
+            matcher.reset();
             if (matcher.matches()) {
                 if (matcher.group(1) != null) {
                     this.logEntry = " " + matcher.group(2);
@@ -285,17 +308,18 @@ public class ParallelPreprocessAction implements PreprocessAction {
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        if (logLine.matches(REGEX_BEGINNING_UNLOADING_CLASS)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY)
-                || logLine.matches(REGEX_RETAIN_END)) {
+        if (REGEX_BEGINNING_UNLOADING_CLASS_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_END_PATTERN.matcher(logLine).matches()) {
             match = true;
         } else {
             // TODO: Get rid of this and make them throwaway events?
-            for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
-                if (logLine.matches(REGEX_THROWAWAY[i])) {
+            for (int i = 0; i < REGEX_THROWAWAY_LIST.size(); i++) {
+                Pattern pattern = REGEX_THROWAWAY_LIST.get(i);
+                if (pattern.matcher(logLine).matches()) {
                     match = true;
                     break;
                 }

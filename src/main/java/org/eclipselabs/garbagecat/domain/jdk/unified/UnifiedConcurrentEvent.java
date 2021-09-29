@@ -19,6 +19,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
 /**
  * <p>
  * UNIFIED_CONCURRENT
@@ -169,6 +173,12 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
             "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$"
             //
     };
+    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);
+    static {
+        for (String regex : REGEX) {
+            REGEX_PATTERN_LIST.add(Pattern.compile(regex));
+        }
+    }
 
     public String getLogEntry() {
         throw new UnsupportedOperationException("Event does not include log entry information");
@@ -191,8 +201,9 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        for (int i = 0; i < REGEX.length; i++) {
-            if (logLine.matches(REGEX[i])) {
+        for (int i = 0; i < REGEX_PATTERN_LIST.size(); i++) {
+            Pattern pattern = REGEX_PATTERN_LIST.get(i);
+            if (pattern.matcher(logLine).matches()) {
                 match = true;
                 break;
             }

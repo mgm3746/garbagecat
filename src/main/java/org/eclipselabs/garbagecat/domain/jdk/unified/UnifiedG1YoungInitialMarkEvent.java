@@ -70,6 +70,8 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION
             + TimesData.REGEX_JDK9 + "[ ]*$";
 
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -127,9 +129,9 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
      */
     public UnifiedG1YoungInitialMarkEvent(String logEntry) {
         this.logEntry = logEntry;
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher;
+        if ((matcher = REGEX_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.find()) {
                 long endTimestamp;
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
@@ -233,6 +235,6 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX);
+        return REGEX_PATTERN.matcher(logLine).matches();
     }
 }

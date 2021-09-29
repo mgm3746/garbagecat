@@ -16,6 +16,10 @@ import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
 /**
  * <p>
  * FLS_STATISTICS
@@ -194,6 +198,8 @@ public class FlsStatisticsEvent implements ThrowAwayEvent {
             //
     };
 
+    private static final List<Pattern> REGEX_LIST = new ArrayList<>(REGEX.length);
+
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -203,6 +209,12 @@ public class FlsStatisticsEvent implements ThrowAwayEvent {
      * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
+
+    static {
+        for (String regex : REGEX) {
+            REGEX_LIST.add(Pattern.compile(regex));
+        }
+    }
 
     /**
      * Create event from log entry.
@@ -236,8 +248,9 @@ public class FlsStatisticsEvent implements ThrowAwayEvent {
      */
     public static final boolean match(String logLine) {
         boolean isMatch = false;
-        for (int i = 0; i < REGEX.length; i++) {
-            if (logLine.matches(REGEX[i])) {
+        for (int i = 0; i < REGEX_LIST.size(); i++) {
+            Pattern pattern = REGEX_LIST.get(i);
+            if (pattern.matcher(logLine).matches()) {
                 isMatch = true;
                 break;
             }

@@ -173,6 +173,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             + "\\])?[ ]{0,1}\\[1 CMS-remark: " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K
             + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+
     /**
      * Regular expression for class unloading enabled with <code>-XX:+CMSClassUnloadingEnabled</code>.
      * 
@@ -192,12 +194,16 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K
             + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
+    private static final Pattern REGEX_CLASS_UNLOADING_PATTERN = Pattern.compile(REGEX_CLASS_UNLOADING);
+
     /**
      * Regular expression defining truncated logging due to -XX:+CMSScavengeBeforeRemark -XX:+PrintHeapAtGC:
      */
     private static final String REGEX_TRUNCATED = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K
             + " \\(" + JdkRegEx.SIZE_K + "\\)\\]$";
+
+    private static final Pattern REGEX_TRUNCATED_PATTERN = Pattern.compile(REGEX_TRUNCATED);
 
     /**
      * Create event from log entry.
@@ -325,6 +331,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX) || logLine.matches(REGEX_CLASS_UNLOADING) || logLine.matches(REGEX_TRUNCATED);
+        return REGEX_PATTERN.matcher(logLine).matches() ||
+                REGEX_CLASS_UNLOADING_PATTERN.matcher(logLine).matches() ||
+                REGEX_TRUNCATED_PATTERN.matcher(logLine).matches();
     }
 }

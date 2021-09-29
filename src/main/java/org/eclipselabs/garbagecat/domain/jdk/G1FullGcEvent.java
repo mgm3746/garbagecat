@@ -84,6 +84,9 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
             + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\))?[ ]{0,2}" + JdkRegEx.SIZE
             + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
             + "?[ ]*$";
+
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+
     /**
      * Regular expression preprocessed with G1 details.
      */
@@ -97,6 +100,8 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
             + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\](, \\[(Perm|Metaspace): "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?" + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -156,9 +161,9 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
      */
     public G1FullGcEvent(String logEntry) {
         this.logEntry = logEntry;
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher;
+        if ((matcher = REGEX_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 if (matcher.group(13) != null) {
@@ -169,9 +174,8 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
                 combinedAvailable = memory(matcher.group(21), matcher.group(23).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.convertSecsToMicros(matcher.group(24)).intValue();
             }
-        } else if (logEntry.matches(REGEX_PREPROCESSED)) {
-            Pattern pattern = Pattern.compile(REGEX_PREPROCESSED);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 if (matcher.group(12) != null) {
@@ -285,6 +289,6 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX) || logLine.matches(REGEX_PREPROCESSED);
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
     }
 }
