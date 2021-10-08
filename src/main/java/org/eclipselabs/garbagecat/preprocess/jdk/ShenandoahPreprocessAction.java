@@ -156,8 +156,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING = "^(" + JdkRegEx.DECORATOR
             + " \\[Concurrent marking)$";
-    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING);
+    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING);
 
     /**
      * Regular expression for retained beginning SHENANDOAH_CONCURRENT cleanup event
@@ -167,8 +167,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP = "^(" + JdkRegEx.DECORATOR
             + " \\[Concurrent cleanup " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
             + UnifiedRegEx.DURATION + "\\])$";
-    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP);
+    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP);
 
     /**
      * Regular expression for retained Metaspace block.
@@ -177,8 +177,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_METASPACE = "(, \\[Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\)\\])[ ]*";
-    private static final Pattern REGEX_RETAIN_METASPACE_PATTERN =
-            Pattern.compile(REGEX_RETAIN_METASPACE);
+    private static final Pattern REGEX_RETAIN_METASPACE_PATTERN = Pattern.compile(REGEX_RETAIN_METASPACE);
 
     /**
      * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
@@ -187,8 +186,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      * , 27.5589374 secs]
      */
     private static final String REGEX_RETAIN_DURATION = "(, " + UnifiedRegEx.DURATION + "\\])[ ]*";
-    private static final Pattern REGEX_RETAIN_DURATION_PATTERN =
-            Pattern.compile(REGEX_RETAIN_DURATION);
+    private static final Pattern REGEX_RETAIN_DURATION_PATTERN = Pattern.compile(REGEX_RETAIN_DURATION);
 
     /**
      * Regular expressions for lines thrown away.

@@ -154,4 +154,19 @@ class TestClassHistogramEvent {
         assertTrue(ClassHistogramEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
     }
+
+    @Test
+    void testPreprocessedBeforeFullGc() {
+        String logLine = "2021-10-07T10:05:34.135+0100: 69302.241: [Class Histogram (before full gc):, 4.7148918 "
+                + "secs]";
+        assertTrue(ClassHistogramEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
+    }
+
+    @Test
+    void testPreprocessedAfterFullGc() {
+        String logLine = "2021-10-07T10:05:58.708+0100: 69326.814: [Class Histogram (after full gc):, 4.5682980 secs]";
+        assertTrue(ClassHistogramEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
+    }
 }

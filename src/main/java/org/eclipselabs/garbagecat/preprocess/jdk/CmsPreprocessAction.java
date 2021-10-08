@@ -195,8 +195,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + ": \\[CMS-concurrent-(abortable-preclean|mark|sweep|preclean|reset): " + JdkRegEx.DURATION_FRACTION
             + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT);
+    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT);
 
     /**
      * Regular expression for retained beginning PAR_NEW mixed with FLS_STATISTICS.
@@ -208,8 +208,8 @@ public class CmsPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS = "^((" + JdkRegEx.DATESTAMP + ": )?"
             + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))? )(Before GC:)$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS);
+    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS);
 
     /**
      * Regular expression for beginning CMS_SERIAL_OLD collection.
@@ -219,8 +219,7 @@ public class CmsPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_SERIAL = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[Full GC (" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram:)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL);
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL);
 
     /**
      * Regular expression for beginning PAR_NEW collection.
@@ -241,8 +240,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]("
             + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram:)?)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW);
+    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW);
 
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD mixed with CMS_CONCURRENT collection.
@@ -259,8 +257,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): "
             + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
 
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD bailing out collection.
@@ -268,8 +266,8 @@ public class CmsPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_SERIAL_BAILING = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC "
             + JdkRegEx.TIMESTAMP + ": \\[CMSbailing out to foreground collection)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_BAILING_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_BAILING);
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_BAILING_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_SERIAL_BAILING);
 
     /**
      * Regular expression for retained CMS_SERIAL_OLD with -XX:+UseGCOverheadLimit at end.
@@ -285,8 +283,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
             + "\\)\\])(      |\t)GC time (would exceed|is exceeding) GCTimeLimit of 98%$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED);
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED);
 
     /**
      * Regular expression for retained beginning PrintHeapAtGC collection.
@@ -303,8 +301,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + "\\) )?(\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K
             + "\\)\\])?)\\{Heap before (gc|GC) invocations=\\d{1,10}( \\(full \\d{1,10}\\))?:[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC);
+    private static final Pattern REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC);
 
     /**
      * Regular expression for retained beginning PAR_NEW bailing out collection.
@@ -315,8 +313,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.TIMESTAMP
             + ": \\[CMS(Java HotSpot\\(TM\\) Server VM warning: )?bailing out to foreground collection)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_BAILING_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW_BAILING);
+    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_BAILING_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_PARNEW_BAILING);
 
     /**
      * Regular expression for retained beginning CMS_CONCURRENT mixed with APPLICATION_CONCURRENT_TIME collection.
@@ -329,8 +327,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + ": )?(\\[CMS-concurrent-preclean: " + JdkRegEx.DURATION_FRACTION + "\\])(" + JdkRegEx.TIMESTAMP
             + ": Application time: \\d{1,4}\\.\\d{7} seconds)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME);
+    private static final Pattern REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME);
 
     /**
      * Regular expression for retained beginning concurrent mode failure.
@@ -342,8 +340,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]("
             + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE);
+    private static final Pattern REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE);
 
     /**
      * Middle line when logging is split over 3 lines (e.g. bailing).
@@ -353,8 +351,8 @@ public class CmsPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_MIDDLE_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
             + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_CONCURRENT_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_CONCURRENT);
+    private static final Pattern REGEX_RETAIN_MIDDLE_CONCURRENT_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_CONCURRENT);
 
     /**
      * Middle line when mixed serial and concurrent logging.
@@ -376,8 +374,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark|sweep): "
             + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED);
+    private static final Pattern REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED);
 
     /**
      * Middle line when mixed PAR_NEW and concurrent logging.
@@ -396,8 +394,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark): "
             + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED);
+    private static final Pattern REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED);
 
     /**
      * Middle line PAR_NEW with FLS_STATISTICS
@@ -430,8 +428,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + "\\(" + JdkRegEx.SIZE_K + "\\))?((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[CMS)?)(After GC:|CMS: Large block " + JdkRegEx.ADDRESS + ")$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS);
+    private static final Pattern REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS);
 
     /**
      * Middle serial line with FLS_STATISTICS
@@ -444,8 +442,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), \\[Metaspace: " + JdkRegEx.SIZE_K + "->"
             + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\])After GC:$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS);
+    private static final Pattern REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS);
 
     /**
      * Middle line with PrintHeapAtGC.
@@ -456,8 +454,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_K + "\\)(, \\[CMS Perm : " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
             + JdkRegEx.SIZE_K + "\\)])?)Heap after gc invocations=\\d{1,10}:[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC);
+    private static final Pattern REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC);
 
     /**
      * Middle line with PrintClassHistogram
@@ -466,8 +464,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]"
             + JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM);
+    private static final Pattern REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM);
 
     /**
      * Regular expression for CMS_REMARK without <code>-XX:+PrintGCDetails</code>.
@@ -481,8 +479,8 @@ public class CmsPreprocessAction implements PreprocessAction {
             + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?( ("
             + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew)?)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_CMS_REMARK_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_CMS_REMARK);
+    private static final Pattern REGEX_RETAIN_MIDDLE_CMS_REMARK_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_CMS_REMARK);
 
     /**
      * Regular expression for retained end.

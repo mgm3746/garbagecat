@@ -250,8 +250,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT = "^(" + UnifiedRegEx.DECORATOR
             + " Concurrent (Mark|Preclean|Reset|Sweep) " + UnifiedRegEx.DURATION + ")$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT);
+    private static final Pattern REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT);
 
     /**
      * Regular expression for retained beginning @link
@@ -265,8 +265,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + " Pause Initial Mark " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
             + UnifiedRegEx.DURATION + ")[ ]{0,}$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK);
+    private static final Pattern REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK);
 
     /**
      * Regular expression for retained beginning @link
@@ -280,8 +280,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION
             + ")[ ]{0,}$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_UNIFIED_REMARK_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_UNIFIED_REMARK);
+    private static final Pattern REGEX_RETAIN_BEGINNING_UNIFIED_REMARK_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_UNIFIED_REMARK);
 
     /**
      * Regular expression for retained beginning @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent}.
@@ -293,8 +293,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_PAUSE_YOUNG = "^(" + UnifiedRegEx.DECORATOR + " Pause Young \\("
             + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_PAUSE_YOUNG_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG);
+    private static final Pattern REGEX_RETAIN_BEGINNING_PAUSE_YOUNG_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG);
 
     /**
      * Regular expression for retained beginning @link
@@ -310,8 +310,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
             + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\))$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_OLD_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL_OLD);
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_OLD_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_SERIAL_OLD);
 
     /**
      * Regular expression for retained beginning @link
@@ -324,8 +324,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_G1_FULL_GC = "^(" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\))$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_G1_FULL_GC_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_G1_FULL_GC);
+    private static final Pattern REGEX_RETAIN_BEGINNING_G1_FULL_GC_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_G1_FULL_GC);
 
     /**
      * Regular expression for retained beginning @link
@@ -354,8 +354,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
             + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG);
+    private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG);
 
     /**
      * Regular expression for retained beginning @link
@@ -368,8 +367,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_G1_CLEANUP = "^(" + UnifiedRegEx.DECORATOR + " Pause Cleanup "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + ")$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_G1_CLEANUP_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_G1_CLEANUP);
+    private static final Pattern REGEX_RETAIN_BEGINNING_G1_CLEANUP_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_G1_CLEANUP);
 
     /**
      * Regular expression for retained 1st line of safepoint logging.
@@ -380,8 +379,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_SAFEPOINT = "^(" + UnifiedRegEx.DECORATOR
             + " Entering safepoint region: " + UnifiedSafepoint.triggerRegEx() + ")$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_SAFEPOINT);
+    private static final Pattern REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_SAFEPOINT);
 
     /**
      * Regular expression for retained space data.
@@ -410,8 +409,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + "( (CMS|DefNew|Metaspace|ParNew|PSYoungGen|PSOldGen|ParOldGen|Tenured): " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_SPACE_DATA_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_SPACE_DATA);
+    private static final Pattern REGEX_RETAIN_MIDDLE_SPACE_DATA_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_SPACE_DATA);
 
     /**
      * Regular expression for retained Pause Young data.
@@ -424,8 +423,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + ")$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA);
+    private static final Pattern REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA);
 
     /**
      * Regular expression for retained Pause Full data.
@@ -453,8 +452,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\) " + UnifiedRegEx.DURATION + ")$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA);
+    private static final Pattern REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA);
 
     /**
      * Regular expression for retained Pause Young data.
@@ -482,8 +481,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\)( "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + ")$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
+    private static final Pattern REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
 
     /**
      * Regular expression for retained 2nd line of safepoint logging.
@@ -493,8 +492,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_MIDDLE_SAFEPOINT = "^(" + UnifiedRegEx.DECORATOR
             + " Leaving safepoint region$)";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_SAFEPOINT);
+    private static final Pattern REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN = Pattern.compile(REGEX_RETAIN_MIDDLE_SAFEPOINT);
 
     /**
      * Regular expression for retained 3rd line of safepoint logging.
@@ -508,8 +506,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + " Total time for which application threads were stopped: (\\d{1,4}[\\.\\,]\\d{7}) seconds, "
             + "Stopping threads took: (\\d{1,4}[\\.\\,]\\d{7}) seconds)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_END_SAFEPOINT_PATTERN =
-            Pattern.compile(REGEX_RETAIN_END_SAFEPOINT);
+    private static final Pattern REGEX_RETAIN_END_SAFEPOINT_PATTERN = Pattern.compile(REGEX_RETAIN_END_SAFEPOINT);
 
     /**
      * Regular expression for retained end times data.
@@ -522,8 +519,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_END_TIMES_DATA = "^" + UnifiedRegEx.DECORATOR + TimesData.REGEX_JDK9 + "$";
 
-    private static final Pattern REGEX_RETAIN_END_TIMES_DATA_PATTERN =
-            Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);
+    private static final Pattern REGEX_RETAIN_END_TIMES_DATA_PATTERN = Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);
 
     /**
      * Regular expressions for lines thrown away.
@@ -874,7 +870,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             if (!(entangledLogLines.size() == 1
                     && REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN.matcher(entangledLogLines.get(0)).matches()
                     && (nextLogEntry == null
-                    || !REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(nextLogEntry).matches()))) {
+                            || !REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(nextLogEntry).matches()))) {
                 clearEntangledLines(entangledLogLines);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);

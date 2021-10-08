@@ -12,14 +12,14 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * <p>
@@ -73,6 +73,8 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
 
     /**
      * Regular expression for cruft left after class histogram preprocessing.
+     * 
+     * 2021-10-07T10:05:34.135+0100: 69302.241: [Class Histogram (before full gc):, 4.7148918 secs]
      */
     public static final String REGEX_PREPROCESSED = "(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP
             + ": )?\\[Class Histogram( \\((before|after) full gc\\))?(:)?[ ]{0,1}?, " + JdkRegEx.DURATION + "\\]";

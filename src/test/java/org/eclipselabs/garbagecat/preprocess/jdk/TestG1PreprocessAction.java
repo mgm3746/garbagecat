@@ -962,6 +962,21 @@ class TestG1PreprocessAction {
     }
 
     @Test
+    void testLogLinePrintClassHistogramDatestamp() {
+        String priorLogLine = "   [Eden: 448.0M(7936.0M)->0.0B(7936.0M) Survivors: 0.0B->0.0B Heap: "
+                + "8185.5M(31.0G)->7616.3M(31.0G)], [Metaspace: 668658K->668658K(1169408K)]";
+        String logLine = "2021-10-07T10:05:58.708+0100: 69326.814: [Class Histogram (after full gc): ";
+        String nextLogLine = " num     #instances         #bytes  class name";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        assertEquals("2021-10-07T10:05:58.708+0100: 69326.814: [Class Histogram (after full gc):", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
     void testLogLineYoungPause() {
         String priorLogLine = "";
         String logLine = "785,047: [GC pause (young), 0,73936800 secs]";
@@ -1595,6 +1610,14 @@ class TestG1PreprocessAction {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
     }
 
+    @Test
+    void testLogLineFullGcClassHistogram() {
+        String logLine = "2021-10-07T10:05:34.135+0100: 69302.241: [Full GC (Heap Dump Initiated GC) "
+                + "2021-10-07T10:05:34.135+0100: 69302.241: [Class Histogram (before full gc):";
+        assertTrue(G1PreprocessAction.match(logLine, null, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+    }
+
     /**
      * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE.
      * 
@@ -2216,13 +2239,11 @@ class TestG1PreprocessAction {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_SERIAL),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CLASS_HISTOGRAM),
-                "Log line not recognized as " + JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + ".");
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CLASS_HISTOGRAM),
                 Analysis.WARN_CLASS_HISTOGRAM + " analysis not identified.");
         // G1_FULL is caused by CLASS_HISTOGRAM
@@ -2406,5 +2427,21 @@ class TestG1PreprocessAction {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_REMARK),
                 JdkUtil.LogEventType.G1_REMARK.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testTriggerHeapDumpInitiatedGcClassHistogram() {
+        File testFile = TestUtil.getFile("dataset221.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        // assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+        // JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_SERIAL),
+                JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + " collector not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_G1),
+                Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.");
     }
 }

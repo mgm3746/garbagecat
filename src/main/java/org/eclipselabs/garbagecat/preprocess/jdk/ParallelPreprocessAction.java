@@ -83,8 +83,8 @@ public class ParallelPreprocessAction implements PreprocessAction {
     private static final String REGEX_BEGINNING_UNLOADING_CLASS = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC)"
             + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
 
-    private static final Pattern REGEX_BEGINNING_UNLOADING_CLASS_PATTERN =
-            Pattern.compile(REGEX_BEGINNING_UNLOADING_CLASS);
+    private static final Pattern REGEX_BEGINNING_UNLOADING_CLASS_PATTERN = Pattern
+            .compile(REGEX_BEGINNING_UNLOADING_CLASS);
 
     /**
      * Regular expression GCTimeLimit exceeded logging.
@@ -96,8 +96,8 @@ public class ParallelPreprocessAction implements PreprocessAction {
             + "\\) \\[PSPermGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
             + "\\)\\])(      |\t)(GC time (would exceed|is exceeding) GCTimeLimit of 98%)$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED);
+    private static final Pattern REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED);
 
     /**
      * Regular expression beginning PARALLEL_SCAVENGE.
@@ -106,8 +106,8 @@ public class ParallelPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC)$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE);
+    private static final Pattern REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE);
 
     /**
      * Regular expression beginning PARALLEL_SCAVENGE with -XX:+PrintAdaptiveSizePolicy logging.
@@ -120,8 +120,8 @@ public class ParallelPreprocessAction implements PreprocessAction {
             + ")\\) )AdaptiveSizePolicy::update_averages:  survived: \\d{1,}  promoted: "
             + "\\d{1,}  overflow: (false|true)$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY);
+    private static final Pattern REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY);
 
     /**
      * Regular expression beginning PARALLEL_COMPACTING_OLD or PARALLEL_SERIAL_OLD with -XX:+PrintAdaptiveSizePolicy
@@ -133,8 +133,8 @@ public class ParallelPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY = "^(" + JdkRegEx.DECORATOR
             + " \\[Full GC \\(Ergonomics\\) )AdaptiveSizeStart: " + JdkRegEx.TIMESTAMP + " collection: \\d{1,}[ ]{0,}$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY);
+    private static final Pattern REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY);
 
     /**
      * Regular expression for retained end of collection.
@@ -213,7 +213,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
 
         Matcher matcher;
         // Beginning logging
-        //(matcher = _PATTERN.matcher(logEntry)).matches()
+        // (matcher = _PATTERN.matcher(logEntry)).matches()
         if ((matcher = REGEX_BEGINNING_UNLOADING_CLASS_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {

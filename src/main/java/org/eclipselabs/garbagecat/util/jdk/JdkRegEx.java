@@ -242,7 +242,7 @@ public final class JdkRegEx {
     public static final String TRIGGER_CMS_FINAL_REMARK = "CMS Final Remark";
 
     /**
-     * CMS Final Remark trigger
+     * Ctrl-Break with -XX:+PrintClassHistogram trigger causes a full GC.
      */
     public static final String TRIGGER_CLASS_HISTOGRAM = "Class Histogram";
 

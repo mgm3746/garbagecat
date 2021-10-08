@@ -306,6 +306,26 @@ class TestG1FullGcEvent {
     }
 
     @Test
+    void testLogLinePreprocessedTriggerHeapDumpInitiatedGcClassHistogram() {
+        String logLine = "2021-10-07T10:05:34.135+0100: 69302.241: [Full GC (Heap Dump Initiated GC) "
+                + "2021-10-07T10:05:34.135+0100: 69302.241: [Class Histogram (before full gc):, 4.7148918 secs]"
+                + "8185M->7616M(31G), 24.5727654 secs][Eden: 448.0M(7936.0M)->0.0B(7936.0M) Survivors: 0.0B->0.0B "
+                + "Heap: 8185.5M(31.0G)->7616.3M(31.0G)], [Metaspace: 668658K->668658K(1169408K)]"
+                + "2021-10-07T10:05:58.708+0100: 69326.814: [Class Histogram (after full gc):, 4.5682980 secs] "
+                + "[Times: user=33.60 sys=0.00, real=29.14 secs]";
+        assertTrue(G1FullGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+        G1FullGcEvent event = new G1FullGcEvent(logLine);
+        assertEquals(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals((long) 69302241, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(8381952), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
+        assertEquals(kilobytes(7799091), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(31 * 1024 * 1024), event.getCombinedSpace(),
+                "Combined available size not parsed correctly.");
+        assertEquals(24572765, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
     void testHeapInspectionInitiatedGc() {
         File testFile = TestUtil.getFile("dataset188.txt");
         GcManager gcManager = new GcManager();

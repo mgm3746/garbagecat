@@ -349,7 +349,13 @@ public enum Analysis {
     WARN_CGROUP_MEMORY_LIMIT("warn.cgroup.memory.limit"),
 
     /**
-     * Property key for class histogram output.
+     * Property key for class histogram output due to one of the following options:
+     * 
+     * <pre>
+     * -XX:+PrintClassHistogram
+     * -XX:+PrintClassHistogramBeforeFullGC
+     * -XX:+PrintClassHistogramAfterFullGC
+     * </pre>
      */
     WARN_CLASS_HISTOGRAM("warn.class.histogram"),
 

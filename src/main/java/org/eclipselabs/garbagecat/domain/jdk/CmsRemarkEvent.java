@@ -331,8 +331,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return REGEX_PATTERN.matcher(logLine).matches() ||
-                REGEX_CLASS_UNLOADING_PATTERN.matcher(logLine).matches() ||
-                REGEX_TRUNCATED_PATTERN.matcher(logLine).matches();
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_CLASS_UNLOADING_PATTERN.matcher(logLine).matches()
+                || REGEX_TRUNCATED_PATTERN.matcher(logLine).matches();
     }
 }

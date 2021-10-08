@@ -69,6 +69,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <pre>
  * 2.847: [GC pause (G1 Evacuation Pause) (young), 0.0414530 secs] [Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 136.9M(30.0G)-&gt;70.9M(30.0G)]
  * </pre>
+ *
+ * <p>
+ * 4) After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction} with
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent} output.
+ * </p>
+ *
+ * <pre>
+ * 2016-10-31T14:09:15.030-0700: 49689.217: [Full GC2016-10-31T14:09:15.030-0700: 49689.217: [Class Histogram (before full gc):, 8.8690440 secs]11G-&gt;2270M(12G), 19.8185620 secs][Eden: 0.0B(612.0M)-&gt;0.0B(7372.0M) Survivors: 0.0B-&gt;0.0B Heap: 11.1G(12.0G)-&gt;2270.1M(12.0G)], [Perm: 730823K-&gt;730823K(2097152K)]2016-10-31T14:09:34.848-0700: 49709.036: [Class Histogram (after full gc):, 2.4232900 secs] [Times: user=29.91 sys=0.08, real=22.24 secs]
+ * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
@@ -94,12 +103,13 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
             + ": \\[Full GC[ ]{0,1}(\\((" + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD
             + "|" + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION
             + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + ")\\)[ ]{0,2}|" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?"
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
+            + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + ")\\)[ ]{0,2})?(" + ClassHistogramEvent.REGEX_PREPROCESSED
+            + ")?" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
             + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\](, \\[(Perm|Metaspace): "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?" + TimesData.REGEX + "?[ ]*$";
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?("
+            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
@@ -178,21 +188,21 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
             matcher.reset();
             if (matcher.find()) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-                if (matcher.group(12) != null) {
-                    if (matcher.group(12).matches(ClassHistogramEvent.REGEX_PREPROCESSED)) {
-                        trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
-                    } else
-                        trigger = matcher.group(13);
+                if (matcher.group(13) != null) {
+                    trigger = matcher.group(13);
+                } else if (matcher.group(15) != null
+                        && matcher.group(15).matches(ClassHistogramEvent.REGEX_PREPROCESSED)) {
+                    trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
                 }
-                combined = JdkMath.convertSizeToKilobytes(matcher.group(63), matcher.group(65).charAt(0));
-                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(69), matcher.group(71).charAt(0));
-                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(72), matcher.group(74).charAt(0));
-                duration = JdkMath.convertSecsToMicros(matcher.group(42)).intValue();
-                if (matcher.group(75) != null) {
-                    permGen = memory(matcher.group(77), matcher.group(79).charAt(0)).convertTo(KILOBYTES);
-                    permGenEnd = memory(matcher.group(80), matcher.group(82).charAt(0)).convertTo(KILOBYTES);
-                    permGenAllocation = memory(matcher.group(83), matcher.group(85).charAt(0)).convertTo(KILOBYTES);
-                }
+            }
+            combined = JdkMath.convertSizeToKilobytes(matcher.group(64), matcher.group(66).charAt(0));
+            combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(70), matcher.group(72).charAt(0));
+            combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(73), matcher.group(75).charAt(0));
+            duration = JdkMath.convertSecsToMicros(matcher.group(43)).intValue();
+            if (matcher.group(76) != null) {
+                permGen = memory(matcher.group(78), matcher.group(80).charAt(0)).convertTo(KILOBYTES);
+                permGenEnd = memory(matcher.group(81), matcher.group(83).charAt(0)).convertTo(KILOBYTES);
+                permGenAllocation = memory(matcher.group(84), matcher.group(86).charAt(0)).convertTo(KILOBYTES);
             }
         }
     }

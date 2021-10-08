@@ -861,11 +861,12 @@ public class GcManager {
 
     /**
      * Allocation rate in KB per second.
+     * 
      * @param jvm
      */
     private BigDecimal getAllocationRate(Jvm jvm) {
         List<BlockingEvent> blockingEvents = jvmDao.getBlockingEvents(LogEventType.G1_YOUNG_PAUSE);
-        
+
         if (blockingEvents.isEmpty())
             return BigDecimal.ZERO;
 

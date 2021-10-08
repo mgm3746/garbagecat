@@ -96,7 +96,6 @@ public class G1MixedPauseEvent extends G1Collector
             + TRIGGER + "\\))? \\(mixed\\)(--)? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
-
     private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
     /**

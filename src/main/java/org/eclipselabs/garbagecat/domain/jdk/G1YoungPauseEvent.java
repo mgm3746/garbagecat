@@ -154,7 +154,8 @@ public class G1YoungPauseEvent extends G1Collector
             + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "[ ]*$";
 
-    private static final Pattern REGEX_PREPROCESSED_NO_DURATION_PATTERN=Pattern.compile(REGEX_PREPROCESSED_NO_DURATION);
+    private static final Pattern REGEX_PREPROCESSED_NO_DURATION_PATTERN = Pattern
+            .compile(REGEX_PREPROCESSED_NO_DURATION);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -379,9 +380,8 @@ public class G1YoungPauseEvent extends G1Collector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return REGEX_PATTERN.matcher(logLine).matches() ||
-                REGEX_PREPROCESSED_DETAILS_PATTERN.matcher(logLine).matches() ||
-                REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches() ||
-                REGEX_PREPROCESSED_NO_DURATION_PATTERN.matcher(logLine).matches();
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_DETAILS_PATTERN.matcher(logLine).matches()
+                || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches()
+                || REGEX_PREPROCESSED_NO_DURATION_PATTERN.matcher(logLine).matches();
     }
 }

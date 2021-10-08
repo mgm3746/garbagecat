@@ -309,8 +309,8 @@ public class G1PreprocessAction implements PreprocessAction {
             + JdkRegEx.DURATION + "\\])?)((" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": )?( )?"
             + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_PAUSE_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE);
+    private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_PAUSE_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE);
     /**
      * Regular expression for retained beginning G1_YOUNG_INITIAL_MARK collection.
      * 
@@ -323,8 +323,8 @@ public class G1PreprocessAction implements PreprocessAction {
             + ")\\))? \\(young\\) \\(initial-mark\\)(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.TIMESTAMP
             + ": \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK);
+    private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK);
     /**
      * Regular expression for retained beginning G1_FULL_GC collection.
      */
@@ -334,26 +334,18 @@ public class G1PreprocessAction implements PreprocessAction {
             + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))?[ ]{0,2}(" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?)( Before GC RS summary)?[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_FULL_GC_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_FULL_GC);
+    private static final Pattern REGEX_RETAIN_BEGINNING_FULL_GC_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_FULL_GC);
 
     /**
-     * Regular expression for retained beginning G1_FULL_GC with PRINT_CLASS_HISTOGRAM collection.
+     * Regular expression for retained beginning G1_FULL_GC collection with PRINT_CLASS_HISTOGRAM.
      */
     private static final String REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[Full GC(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[Class Histogram \\(before full gc\\):)[ ]*$";
+            + JdkRegEx.TIMESTAMP + ": \\[Full GC( \\(" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "\\) )?("
+            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram \\(before full gc\\):)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM);
-    /**
-     * Regular expression for retained beginning PRINT_CLASS_HISTOGRAM collection.
-     */
-    private static final String REGEX_RETAIN_BEGINNING_CLASS_HISTOGRAM = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[Class Histogram \\(after full gc\\):)[ ]*$";
-
-    private static final Pattern REGEX_RETAIN_BEGINNING_CLASS_HISTOGRAM_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_CLASS_HISTOGRAM);
+    private static final Pattern REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM);
 
     /**
      * Regular expression for retained beginning G1_CONCURRENT collection.
@@ -366,8 +358,8 @@ public class G1PreprocessAction implements PreprocessAction {
             + ")?(\\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, " + JdkRegEx.DURATION
             + ")?\\])[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT);
+    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_CONCURRENT);
 
     /**
      * Regular expression for retained beginning G1_REMARK collection.
@@ -378,8 +370,7 @@ public class G1PreprocessAction implements PreprocessAction {
             + JdkRegEx.DURATION + "\\]( (" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Unloading, "
             + JdkRegEx.DURATION + "\\])?(, " + JdkRegEx.DURATION + "\\])[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_REMARK_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_REMARK);
+    private static final Pattern REGEX_RETAIN_BEGINNING_REMARK_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_REMARK);
 
     /**
      * Regular expression for retained beginning G1_MIXED collection.
@@ -393,8 +384,7 @@ public class G1PreprocessAction implements PreprocessAction {
             + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.TIMESTAMP
             + ": \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_MIXED_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_MIXED);
+    private static final Pattern REGEX_RETAIN_BEGINNING_MIXED_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_MIXED);
 
     /**
      * Regular expression for retained beginning G1_CLEANUP collection.
@@ -402,8 +392,8 @@ public class G1PreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_CLEANUP = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_CLEANUP_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_CLEANUP);
+    private static final Pattern REGEX_RETAIN_BEGINNING_CLEANUP_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_CLEANUP);
 
     /**
      * Regular expression for retained beginning G1_YOUNG_PAUSE mixed with G1_CONCURRENT collection.
@@ -425,8 +415,8 @@ public class G1PreprocessAction implements PreprocessAction {
             + ")\\))? \\(young\\))((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
             + ": \\[GC concurrent-(root-region-scan|cleanup|mark)-(start|end)(, " + JdkRegEx.DURATION + ")?\\])[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
+    private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
 
     /**
      * Regular expression for retained beginning G1_FULL_GC mixed with G1_CONCURRENT collection.
@@ -462,8 +452,8 @@ public class G1PreprocessAction implements PreprocessAction {
             + "\\)\\], \\[Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]"
             + TimesData.REGEX + ")?[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_FULL_CONCURRENT_PATTERN =
-            Pattern.compile(REGEX_RETAIN_BEGINNING_FULL_CONCURRENT);
+    private static final Pattern REGEX_RETAIN_BEGINNING_FULL_CONCURRENT_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_FULL_CONCURRENT);
 
     /**
      * Regular expression for retained middle G1_YOUNG_PAUSE collection.
@@ -473,8 +463,8 @@ public class G1PreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_MIDDLE_YOUNG_PAUSE = "^   (\\[ " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\)\\])[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_YOUNG_PAUSE_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE);
+    private static final Pattern REGEX_RETAIN_MIDDLE_YOUNG_PAUSE_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE);
 
     /**
      * Regular expression for retained middle G1_YOUNG_INTIAL_MARK collection.
@@ -484,8 +474,8 @@ public class G1PreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK = "^( \\(initial-mark\\), " + JdkRegEx.DURATION
             + "\\])[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK_PATTERN =
-            Pattern.compile(REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK);
+    private static final Pattern REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK);
 
     /**
      * Regular expression for retained middle G1_FULL_GC collection.
@@ -502,6 +492,7 @@ public class G1PreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE + "\\)(, " + JdkRegEx.DURATION + "\\])?)(After GC RS summary)?[ ]*$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_FULL_PATTERN = Pattern.compile(REGEX_RETAIN_MIDDLE_FULL);
+
     /**
      * Regular expression for retained middle.
      * 
@@ -511,6 +502,8 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * [Eden: 306,0M(306,0M)->0,0B(266,0M) Survivors: 0,0B->40,0M Heap: 306,0M(6144,0M)->57,7M(6144,0M)]
      * 
+     * [Eden: 448.0M(7936.0M)->0.0B(7936.0M) Survivors: 0.0B->0.0B Heap: 8185.5M(31.0G)->7616.3M(31.0G)], [Metaspace:
+     * 668658K->668658K(1169408K)]
      */
     private static final String REGEX_RETAIN_MIDDLE = "^   (\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
@@ -519,6 +512,17 @@ public class G1PreprocessAction implements PreprocessAction {
             + "\\)\\])?)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_PATTERN = Pattern.compile(REGEX_RETAIN_MIDDLE);
+
+    /**
+     * Regular expression for retained middle PRINT_CLASS_HISTOGRAM.
+     * 
+     * 2021-10-07T10:05:58.708+0100: 69326.814: [Class Histogram (after full gc):
+     */
+    private static final String REGEX_RETAIN_MIDDLE_CLASS_HISTOGRAM = "^((" + JdkRegEx.DATESTAMP + ": )?"
+            + JdkRegEx.TIMESTAMP + ": \\[Class Histogram \\(after full gc\\):)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_CLASS_HISTOGRAM_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_CLASS_HISTOGRAM);
 
     /**
      * Regular expression for retained middle duration.
@@ -557,8 +561,8 @@ public class G1PreprocessAction implements PreprocessAction {
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + ")( )?[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_END_CONCURRENT_YOUNG_PATTERN =
-            Pattern.compile(REGEX_RETAIN_END_CONCURRENT_YOUNG);
+    private static final Pattern REGEX_RETAIN_END_CONCURRENT_YOUNG_PATTERN = Pattern
+            .compile(REGEX_RETAIN_END_CONCURRENT_YOUNG);
 
     /**
      * Regular expressions for lines thrown away.
@@ -772,13 +776,6 @@ public class G1PreprocessAction implements PreprocessAction {
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if ((matcher = REGEX_RETAIN_BEGINNING_CLASS_HISTOGRAM_PATTERN.matcher(logEntry)).matches()) {
-            matcher.reset();
-            if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
-            }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-            context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_CLEANUP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
@@ -943,6 +940,11 @@ public class G1PreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_CLASS_HISTOGRAM_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_DURATION_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
@@ -991,15 +993,15 @@ public class G1PreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
-        if ( REGEX_RETAIN_BEGINNING_YOUNG_PAUSE_PATTERN.matcher(logLine).matches()
+        if (REGEX_RETAIN_BEGINNING_YOUNG_PAUSE_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_FULL_GC_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_CLASS_HISTOGRAM_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_CLASS_HISTOGRAM_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_REMARK_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_MIXED_PATTERN.matcher(logLine).matches()
-                || (REGEX_RETAIN_BEGINNING_CLEANUP_PATTERN.matcher(logLine).matches() &&
-                        REGEX_RETAIN_END_PATTERN.matcher(nextLogLine).matches())
+                || (REGEX_RETAIN_BEGINNING_CLEANUP_PATTERN.matcher(logLine).matches()
+                        && REGEX_RETAIN_END_PATTERN.matcher(nextLogLine).matches())
                 || REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_FULL_CONCURRENT_PATTERN.matcher(logLine).matches()

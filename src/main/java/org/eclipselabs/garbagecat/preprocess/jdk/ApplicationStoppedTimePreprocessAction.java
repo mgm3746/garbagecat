@@ -165,8 +165,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine) {
-        return REGEX_LINE1_PATTERN.matcher(logLine).matches()
-                || REGEX_LINE2_PATTERN.matcher(logLine).matches()
+        return REGEX_LINE1_PATTERN.matcher(logLine).matches() || REGEX_LINE2_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_PATTERN.matcher(logLine).matches();
     }
 }

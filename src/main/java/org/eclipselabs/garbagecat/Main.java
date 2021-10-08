@@ -33,8 +33,9 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OUTPUT_FILE_NAME;
 import static org.eclipselabs.garbagecat.util.GcUtil.parseStartDateTime;
-import static org.eclipselabs.garbagecat.util.Memory.Unit.*;
 import static org.eclipselabs.garbagecat.util.Memory.ZERO;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.MEGABYTES;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_PERM_GEN;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED;
 
@@ -374,13 +375,13 @@ public class Main {
                 printWriter.write(jvmRun.getGcThroughput() + "%" + LINE_SEPARATOR);
 
                 // As of now the allocation rate is only implemented for G1GC collector.
-                if (jvmRun.getJvm().getUseG1Gc() != null ||
-                        jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE)) {
+                if (jvmRun.getJvm().getUseG1Gc() != null
+                        || jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE)) {
                     BigDecimal allocationRate = jvmRun.getAllocationRate();
                     if (allocationRate.longValue() > 0) {
                         Memory gbPerSec = Memory.memory(allocationRate.longValue(), KILOBYTES);
-                        printWriter.write("Allocation Rate: " + Long.toString(gbPerSec.getValue(MEGABYTES))
-                                + " MB/sec" + LINE_SEPARATOR);
+                        printWriter.write("Allocation Rate: " + Long.toString(gbPerSec.getValue(MEGABYTES)) + " MB/sec"
+                                + LINE_SEPARATOR);
                     }
                 }
 

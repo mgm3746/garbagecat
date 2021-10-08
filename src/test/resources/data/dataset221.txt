@@ -1,0 +1,21 @@
+2021-10-07T10:05:34.135+0100: 69302.241: [Full GC (Heap Dump Initiated GC) 2021-10-07T10:05:34.135+0100: 69302.241: [Class Histogram (before full gc):
+ num     #instances         #bytes  class name
+----------------------------------------------
+   1:      13269691     2158610984  [C
+   2:       6252568      579973944  [Ljava.lang.Object;
+34128:             1             16  sun.util.resources.LocaleData
+34129:             1             16  sun.util.resources.LocaleData$LocaleDataResourceBundleControl
+Total     170072935     8583124392
+, 4.7148918 secs]
+ 8185M->7616M(31G), 24.5727654 secs]
+   [Eden: 448.0M(7936.0M)->0.0B(7936.0M) Survivors: 0.0B->0.0B Heap: 8185.5M(31.0G)->7616.3M(31.0G)], [Metaspace: 668658K->668658K(1169408K)]
+2021-10-07T10:05:58.708+0100: 69326.814: [Class Histogram (after full gc):
+ num     #instances         #bytes  class name
+----------------------------------------------
+   1:      12937410     2015033608  [C
+   2:       6154889      564408224  [Ljava.lang.Object;
+   32842:             1             16  sun.util.resources.LocaleData
+32843:             1             16  sun.util.resources.LocaleData$LocaleDataResourceBundleControl
+Total     167906324     7986275072
+, 4.5682980 secs]
+ [Times: user=33.60 sys=0.00, real=29.14 secs]
