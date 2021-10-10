@@ -208,14 +208,26 @@ public class Main {
                 }
             }
 
-            // Bottlenecks
-            List<String> bottlenecks = jvmRun.getBottlenecks();
-            if (!bottlenecks.isEmpty()) {
+            // GC Bottlenecks
+            List<String> gcBottlenecks = jvmRun.getGcBottlenecks();
+            if (!gcBottlenecks.isEmpty()) {
                 printWriter.write(LINEBREAK_DOUBLE);
-                printWriter.write("Throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
+                printWriter.write("GC throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
                 printWriter.write(LINEBREAK_SINGLE);
-                for (String bottleneck : bottlenecks) {
-                    printWriter.write(bottleneck + LINE_SEPARATOR);
+                for (String gcBottleneck : gcBottlenecks) {
+                    printWriter.write(gcBottleneck + LINE_SEPARATOR);
+                }
+            }
+
+            // Safepoint Bottlenecks
+            List<String> safepointBottlenecks = jvmRun.getSafepointBottlenecks();
+            if (!safepointBottlenecks.isEmpty()) {
+                printWriter.write(LINEBREAK_DOUBLE);
+                printWriter.write(
+                        "Safepoint throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
+                printWriter.write(LINEBREAK_SINGLE);
+                for (String safepointBottleneck : safepointBottlenecks) {
+                    printWriter.write(safepointBottleneck + LINE_SEPARATOR);
                 }
             }
 

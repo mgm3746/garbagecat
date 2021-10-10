@@ -39,6 +39,7 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
+import org.eclipselabs.garbagecat.domain.SafepointEvent;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
@@ -908,11 +909,70 @@ public class GcManager {
      * @return A <code>List</code> of <code>BlockingEvent</code>s where the throughput between events is less than the
      *         throughput threshold goal.
      */
-    private List<String> getBottlenecks(Jvm jvm, int throughputThreshold) {
+    private List<String> getGcBottlenecks(Jvm jvm, int throughputThreshold) {
         List<String> bottlenecks = new ArrayList<String>();
         List<BlockingEvent> blockingEvents = jvmDao.getBlockingEvents();
         BlockingEvent priorEvent = null;
         for (BlockingEvent event : blockingEvents) {
+            if (priorEvent != null && JdkUtil.isBottleneck(event, priorEvent, throughputThreshold)) {
+                if (bottlenecks.isEmpty()) {
+                    // Add current and prior event
+                    if (jvm.getStartDate() != null) {
+                        // Convert timestamps to date/time
+                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
+                                jvm.getStartDate()));
+                        bottlenecks.add(
+                                JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm.getStartDate()));
+                    } else {
+                        bottlenecks.add(priorEvent.getLogEntry());
+                        bottlenecks.add(event.getLogEntry());
+                    }
+                } else {
+                    if (jvm.getStartDate() != null) {
+                        // Compare datetime, since bottleneck has datetime
+                        if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm.getStartDate())
+                                .equals(bottlenecks.get(bottlenecks.size() - 1))) {
+                            bottlenecks.add("...");
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
+                                    jvm.getStartDate()));
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(),
+                                    jvm.getStartDate()));
+                        } else {
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(),
+                                    jvm.getStartDate()));
+                        }
+                    } else {
+                        // Compare timestamps, since bottleneck has timestamp
+                        if (!priorEvent.getLogEntry().equals(bottlenecks.get(bottlenecks.size() - 1))) {
+                            bottlenecks.add("...");
+                            bottlenecks.add(priorEvent.getLogEntry());
+                            bottlenecks.add(event.getLogEntry());
+                        } else {
+                            bottlenecks.add(event.getLogEntry());
+                        }
+                    }
+                }
+            }
+            priorEvent = event;
+        }
+        return bottlenecks;
+    }
+
+    /**
+     * Determine <code>SafepointEvent</code>s where throughput since last event does not meet the throughput goal.
+     * 
+     * @param jvm
+     *            The JVM environment information.
+     * @param throughputThreshold
+     *            The bottleneck reporting throughput threshold.
+     * @return A <code>List</code> of <code>SafepointEvent</code>s where the throughput between events is less than the
+     *         throughput threshold goal.
+     */
+    private List<String> getSafepointBottlenecks(Jvm jvm, int throughputThreshold) {
+        List<String> bottlenecks = new ArrayList<String>();
+        List<SafepointEvent> safepointEvents = jvmDao.getSafepointEvents();
+        SafepointEvent priorEvent = null;
+        for (SafepointEvent event : safepointEvents) {
             if (priorEvent != null && JdkUtil.isBottleneck(event, priorEvent, throughputThreshold)) {
                 if (bottlenecks.isEmpty()) {
                     // Add current and prior event
@@ -1006,7 +1066,8 @@ public class GcManager {
         jvmRun.setEventTypes(jvmDao.getEventTypes());
         jvmRun.setCollectorFamilies(jvmDao.getCollectorFamilies());
         jvmRun.setAnalysis(jvmDao.getAnalysis());
-        jvmRun.setBottlenecks(getBottlenecks(jvm, throughputThreshold));
+        jvmRun.setGcBottlenecks(getGcBottlenecks(jvm, throughputThreshold));
+        jvmRun.setSafepointBottlenecks(getSafepointBottlenecks(jvm, throughputThreshold));
         jvmRun.setAllocationRate(getAllocationRate(jvm));
         jvmRun.setParallelCount(jvmDao.getParallelCount());
         jvmRun.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount());

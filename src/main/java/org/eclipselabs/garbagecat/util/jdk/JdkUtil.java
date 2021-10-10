@@ -23,6 +23,7 @@ import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
 import org.eclipselabs.garbagecat.domain.BlankLineEvent;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.SafepointEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationConcurrentTimeEvent;
@@ -813,50 +814,56 @@ public final class JdkUtil {
     }
 
     /**
-     * Determine if the <code>BlockingEvent</code> should be classified as a bottleneck.
+     * Determine if the <code>SafepointEvent</code> should be classified as a bottleneck.
      * 
      * @param event
-     *            Current <code>BlockingEvent</code>.
+     *            Current <code>SafepointEvent</code>.
      * @param priorEvent
-     *            Previous <code>BlockingEvent</code>.
+     *            Previous <code>SafepointEvent</code>.
      * @param throughputThreshold
      *            Throughput threshold (percent of time spent not doing garbage collection for a given time interval) to
      *            be considered a bottleneck. Whole number 0-100.
-     * @return True if the <code>BlockingEvent</code> pause time meets the bottleneck definition.
+     * @return True if the <code>SafepointEvent</code> pause time meets the bottleneck definition.
      */
-    public static final boolean isBottleneck(BlockingEvent event, BlockingEvent priorEvent, int throughputThreshold)
+    public static final boolean isBottleneck(SafepointEvent event, SafepointEvent priorEvent, int throughputThreshold)
             throws TimeWarpException {
+        boolean isBottleneck = false;
         /*
          * Check for logging time warps, which could be an indication of mixed logging from multiple JVM runs. JDK8
          * seems to have threading issues where sometimes logging gets mixed up under heavy load, and an event appears
          * to start before the previous event finished. They are mainly very small overlaps or a few milliseconds.
          */
         long eventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(event.getTimestamp())).longValue();
-        long priorEventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(priorEvent.getTimestamp()))
-                .longValue();
-        if (eventTimestampMicros < priorEventTimestampMicros) {
-            throw new TimeWarpException("Bad order: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
-                    + Constants.LINE_SEPARATOR + event.getLogEntry());
-        } else if (eventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 5000000) {
-            // Only report if overlap > 5 sec to account for overlaps due to JDK threading issues and use of
-            // -XX:+UseFastUnorderedTimeStamps
-            // TODO: Make this configurable w/ a command line option?
-            throw new TimeWarpException("Event overlap: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
-                    + Constants.LINE_SEPARATOR + event.getLogEntry());
-        } else {
-            /*
-             * Timestamp is the start of a vm event; therefore, the interval is from the end of the prior event to the
-             * end of the current event.
-             */
-            long interval = eventTimestampMicros + event.getDuration() - priorEventTimestampMicros
-                    - priorEvent.getDuration();
-            // Determine the maximum duration for the given interval that meets the throughput goal.
-            BigDecimal durationThreshold = new BigDecimal(100 - throughputThreshold);
-            durationThreshold = durationThreshold.movePointLeft(2);
-            durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
-            durationThreshold.setScale(0, RoundingMode.DOWN);
-            return event.getDuration() > durationThreshold.longValue();
+        // Exclude <code>ApplicationStoppedTime</code> w/o datestamp/timestamp
+        // Exclude microevents where timestamps are equal (for report readability)
+        if (eventTimestampMicros > 0 && event.getTimestamp() != priorEvent.getTimestamp()) {
+            long priorEventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(priorEvent.getTimestamp()))
+                    .longValue();
+            if (eventTimestampMicros < priorEventTimestampMicros) {
+                throw new TimeWarpException("Bad order: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
+                        + Constants.LINE_SEPARATOR + event.getLogEntry());
+            } else if (eventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 5000000) {
+                // Only report if overlap > 5 sec to account for overlaps due to JDK threading issues and use of
+                // -XX:+UseFastUnorderedTimeStamps
+                // TODO: Make this configurable w/ a command line option?
+                throw new TimeWarpException("Event overlap: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
+                        + Constants.LINE_SEPARATOR + event.getLogEntry());
+            } else {
+                /*
+                 * Timestamp is the start of a vm event; therefore, the interval is from the end of the prior event to
+                 * the end of the current event.
+                 */
+                long interval = eventTimestampMicros + event.getDuration() - priorEventTimestampMicros
+                        - priorEvent.getDuration();
+                // Determine the maximum duration for the given interval that meets the throughput goal.
+                BigDecimal durationThreshold = new BigDecimal(100 - throughputThreshold);
+                durationThreshold = durationThreshold.movePointLeft(2);
+                durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
+                durationThreshold.setScale(0, RoundingMode.DOWN);
+                isBottleneck = event.getDuration() > durationThreshold.longValue();
+            }
         }
+        return isBottleneck;
     }
 
     /**

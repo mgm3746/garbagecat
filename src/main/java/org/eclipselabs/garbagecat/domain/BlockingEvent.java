@@ -20,10 +20,6 @@ package org.eclipselabs.garbagecat.domain;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public interface BlockingEvent extends LogEvent {
+public interface BlockingEvent extends SafepointEvent {
 
-    /**
-     * @return The elapsed clock time for the event in microseconds (rounded).
-     */
-    int getDuration();
 }

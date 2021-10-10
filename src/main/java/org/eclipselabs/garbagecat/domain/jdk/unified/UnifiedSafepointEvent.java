@@ -93,6 +93,22 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      */
     private static Pattern pattern = Pattern.compile(REGEX);
 
+    public static Pattern getPattern() {
+        return pattern;
+    }
+
+    public static void setPattern(Pattern pattern) {
+        UnifiedSafepointEvent.pattern = pattern;
+    }
+
+    public int getTimeThreadsStopped() {
+        return timeThreadsStopped;
+    }
+
+    public int getTimeToStopThreads() {
+        return timeToStopThreads;
+    }
+
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
      * 
@@ -105,18 +121,23 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
     }
 
     /**
-     * The elapsed clock time for the safepoint event in microseconds (rounded).
-     */
-    private int duration;
-
-    /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
+
     /**
      * The time when the safepoint event started in milliseconds after JVM startup.
      */
     private long timestamp;
+
+    /**
+     * The elapsed clock time the application threads were stopped (at safepont) in microseconds (rounded).
+     */
+    private int timeThreadsStopped;
+    /**
+     * The elapsed clock time to stop all threads (bring the JVM to safepoint) in microseconds (rounded).
+     */
+    private int timeToStopThreads;
 
     /**
      * The <code>Trigger</code> for the safepoint event.
@@ -134,24 +155,24 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             trigger = UnifiedSafepoint.getTrigger(matcher.group(24));
-            if (matcher.group(48).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                timestamp = Long.parseLong(matcher.group(59));
+            if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                timestamp = Long.parseLong(matcher.group(12));
             } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(58)).longValue();
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
             } else {
-                if (matcher.group(61) != null) {
-                    if (matcher.group(61).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        timestamp = Long.parseLong(matcher.group(63));
+                if (matcher.group(14) != null) {
+                    if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        timestamp = Long.parseLong(matcher.group(16));
                     } else {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(62)).longValue();
+                        timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
                     }
                 } else {
                     // Datestamp only.
-                    timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(48));
+                    timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(71)).intValue()
-                    + JdkMath.convertSecsToMicros(matcher.group(72)).intValue();
+            timeThreadsStopped = JdkMath.convertSecsToMicros(matcher.group(71)).intValue();
+            timeToStopThreads = JdkMath.convertSecsToMicros(matcher.group(72)).intValue();
         }
     }
 
@@ -162,17 +183,23 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      *            The log entry for the event.
      * @param timestamp
      *            The time when the safepoint event started in milliseconds after JVM startup.
-     * @param duration
-     *            The elapsed clock time for the safepoint event in microseconds (rounded).
+     * @param timeToStopThreads
+     *            The elapsed clock time to stop all threads (bring the JVM to safepoint) in microseconds (rounded).
+     * @param timeToStopThreads
+     *            The elapsed clock time the application threads were stopped (at safepont) in microseconds (rounded).
      */
-    public UnifiedSafepointEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedSafepointEvent(String logEntry, long timestamp, int timeToStopThreads, int timeThreadsStopped) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
-        this.duration = duration;
+        this.timeToStopThreads = timeToStopThreads;
+        this.timeThreadsStopped = timeThreadsStopped;
     }
 
+    /**
+     * The elapsed clock time for the safepoint event in microseconds (rounded).
+     */
     public int getDuration() {
-        return duration;
+        return timeThreadsStopped + timeToStopThreads;
     }
 
     public String getLogEntry() {

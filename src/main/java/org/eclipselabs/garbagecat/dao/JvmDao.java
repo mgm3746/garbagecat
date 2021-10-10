@@ -94,6 +94,10 @@ public class JvmDao {
         return e;
     }
 
+    private static SafepointEvent toSafepointEvent(SafepointEvent e) {
+        return e;
+    }
+
     /**
      * Analysis property keys.
      */
@@ -171,8 +175,9 @@ public class JvmDao {
 
     /**
      * Swap size (bytes).
+     * 
+     * Initial value is negative to prevent false positives of Analysis.INFO_SWAP_DISABLED.
      */
-    // prevent false positives of Analysis.INFO_SWAP_DISABLED
     private long swap = -1;
 
     /**
@@ -295,6 +300,19 @@ public class JvmDao {
     }
 
     /**
+     * Retrieve all <code>SafepointEvent</code>s.
+     * 
+     * @return <code>List</code> of events.
+     */
+    public synchronized List<SafepointEvent> getSafepointEvents() {
+        if (!this.stoppedTimeEvents.isEmpty()) {
+            return this.stoppedTimeEvents.stream().map(JvmDao::toSafepointEvent).collect(toList());
+        } else {
+            return this.unifiedSafepointEvents.stream().map(JvmDao::toSafepointEvent).collect(toList());
+        }
+    }
+
+    /**
      * Retrieve all <code>BlockingEvent</code>s of the specified type.
      * 
      * @param eventType
@@ -329,7 +347,7 @@ public class JvmDao {
     /**
      * The first @link org.eclipselabs.garbagecat.domain.jdk.SafepointEvent}.
      * 
-     * @return The first safepoint event.
+     * @return The first <code>SafepointEvent</cod>.
      */
     public synchronized SafepointEvent getFirstSafepointEvent() {
         SafepointEvent firstSafepointEvent = null;
@@ -342,7 +360,7 @@ public class JvmDao {
     }
 
     /**
-     * The first The first @link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent}.
+     * The first @link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent}.
      * 
      * @return The first stopped event.
      */
@@ -551,26 +569,6 @@ public class JvmDao {
     }
 
     /**
-     * The maximum unified safepoint event pause time.
-     * 
-     * @return maximum pause duration (milliseconds).
-     */
-    public synchronized int getUnifiedSafepointTimeMax() {
-        return convertMicrosToMillis(ints(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration)
-                .mapToInt(Integer::valueOf).max().orElse(0)).intValue();
-    }
-
-    /**
-     * The maximum stopped time event pause time.
-     * 
-     * @return maximum pause duration (milliseconds).
-     */
-    public synchronized int getStoppedTimeMax() {
-        return convertMicrosToMillis(ints(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
-                .mapToInt(Integer::valueOf).max().orElse(0)).intValue();
-    }
-
-    /**
      * The maximum young space size during the JVM run.
      * 
      * @return maximum young space size (kilobytes).
@@ -612,15 +610,6 @@ public class JvmDao {
      */
     public long getPhysicalMemoryFree() {
         return physicalMemoryFree;
-    }
-
-    /**
-     * The total number of unifed safepoint events.
-     * 
-     * @return total number of unified safepoint time events.
-     */
-    public synchronized int getUnifiedSafepointEventCount() {
-        return this.unifiedSafepointEvents.size();
     }
 
     /**
@@ -701,22 +690,22 @@ public class JvmDao {
     }
 
     /**
-     * The total unified safepoint event pause time.
-     * 
-     * @return total pause duration (milliseconds).
-     */
-    public synchronized int getUnifiedSafepointTimeTotal() {
-        return convertMicrosToMillis(ints(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration)
-                .collect(summingLong(Long::valueOf))).intValue();
-    }
-
-    /**
      * The total number of stopped time events.
      * 
      * @return total number of stopped time events.
      */
     public synchronized int getStoppedTimeEventCount() {
         return this.stoppedTimeEvents.size();
+    }
+
+    /**
+     * The maximum stopped time event pause time.
+     * 
+     * @return maximum pause duration (milliseconds).
+     */
+    public synchronized int getStoppedTimeMax() {
+        return convertMicrosToMillis(ints(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
+                .mapToInt(Integer::valueOf).max().orElse(0)).intValue();
     }
 
     /**
@@ -745,6 +734,35 @@ public class JvmDao {
 
     public List<String> getUnidentifiedLogLines() {
         return unidentifiedLogLines;
+    }
+
+    /**
+     * The total number of unifed safepoint events.
+     * 
+     * @return total number of unified safepoint time events.
+     */
+    public synchronized int getUnifiedSafepointEventCount() {
+        return this.unifiedSafepointEvents.size();
+    }
+
+    /**
+     * The maximum unified safepoint event pause time.
+     * 
+     * @return maximum pause duration (milliseconds).
+     */
+    public synchronized int getUnifiedSafepointTimeMax() {
+        return convertMicrosToMillis(ints(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration)
+                .mapToInt(Integer::valueOf).max().orElse(0)).intValue();
+    }
+
+    /**
+     * The total unified safepoint event pause time.
+     * 
+     * @return total pause duration (milliseconds).
+     */
+    public synchronized int getUnifiedSafepointTimeTotal() {
+        return convertMicrosToMillis(ints(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration)
+                .collect(summingLong(Long::valueOf))).intValue();
     }
 
     /**

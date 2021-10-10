@@ -42,6 +42,11 @@ import org.eclipselabs.garbagecat.util.jdk.Jvm;
 public class JvmRun {
 
     /**
+     * Memory being allocated per second (kilobytes).
+     */
+    private BigDecimal allocationRate;
+
+    /**
      * Analysis.
      */
     private List<Analysis> analysis;
@@ -50,11 +55,6 @@ public class JvmRun {
      * Total number of blocking events.
      */
     private int blockingEventCount;
-
-    /**
-     * <code>BlockingEvent</code>s where throughput does not meet the throughput goal.
-     */
-    private List<String> bottlenecks;
 
     /**
      * Collector families.
@@ -77,6 +77,11 @@ public class JvmRun {
     private SafepointEvent firstSafepointEvent;
 
     /**
+     * <code>BlockingEvent</code>s where throughput does not meet the throughput goal.
+     */
+    private List<String> gcBottlenecks;
+
+    /**
      * Maximum GC pause duration (milliseconds).
      */
     private int gcPauseMax;
@@ -85,11 +90,6 @@ public class JvmRun {
      * Total GC pause duration (microseconds).
      */
     private long gcPauseTotal;
-
-    /**
-     * Memory being allocated per second (kilobytes).
-     */
-    private BigDecimal allocationRate;
 
     /**
      * Number of <code>ParallelCollection</code> with "inverted" parallelism.
@@ -185,6 +185,11 @@ public class JvmRun {
      * Whether or not the JVM events are from a preprocessed file.
      */
     private boolean preprocessed;
+
+    /**
+     * <code>SafepointEvent</code>s where throughput does not meet the throughput goal.
+     */
+    private List<String> safepointBottlenecks;
 
     /**
      * <code>SafepointEventSummary</code> used for reporting.
@@ -860,16 +865,20 @@ public class JvmRun {
         }
     }
 
+    /**
+     *
+     * @return The amount of memory allocated per time unit expressed in MB/sec
+     */
+    public BigDecimal getAllocationRate() {
+        return allocationRate;
+    }
+
     public List<Analysis> getAnalysis() {
         return analysis;
     }
 
     public int getBlockingEventCount() {
         return blockingEventCount;
-    }
-
-    public List<String> getBottlenecks() {
-        return bottlenecks;
     }
 
     public List<CollectorFamily> getCollectorFamilies() {
@@ -920,22 +929,12 @@ public class JvmRun {
         return firstSafepointEvent;
     }
 
-    public long getGcPauseTotal() {
-        return gcPauseTotal;
+    public List<String> getGcBottlenecks() {
+        return gcBottlenecks;
     }
 
-    /**
-     * 
-     * @return Ratio of GC to unified safepoint time as a percent rounded to the nearest integer. 100 means all
-     *         safepoint time spent doing GC. 0 means none of the safepoint time was due to GC.
-     */
-    public long getGcUnifiedSafepointRatio() {
-        if (gcPauseTotal <= 0 || unifiedSafepointTimeTotal <= 0) {
-            return 100L;
-        }
-        BigDecimal ratio = new BigDecimal(gcPauseTotal);
-        ratio = ratio.divide(new BigDecimal(unifiedSafepointTimeTotal), 2, HALF_EVEN);
-        return ratio.movePointRight(2).longValue();
+    public long getGcPauseTotal() {
+        return gcPauseTotal;
     }
 
     /**
@@ -953,18 +952,6 @@ public class JvmRun {
     }
 
     /**
-     *
-     * @return The amount of memory allocated per time unit expressed in MB/sec
-     */
-    public BigDecimal getAllocationRate() {
-        return allocationRate;
-    }
-
-    public void setAllocationRate(BigDecimal mbPerSecond) {
-        allocationRate = mbPerSecond;
-    }
-
-    /**
      * @return Throughput based only on garbage collection as a percent rounded to the nearest integer. CG throughput is
      *         the percent of time not spent doing GC. 0 means all time was spent doing GC. 100 means no time was spent
      *         doing GC.
@@ -977,6 +964,20 @@ public class JvmRun {
         BigDecimal throughput = new BigDecimal(timeNotGc);
         throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
         return throughput.movePointRight(2).longValue();
+    }
+
+    /**
+     * 
+     * @return Ratio of GC to unified safepoint time as a percent rounded to the nearest integer. 100 means all
+     *         safepoint time spent doing GC. 0 means none of the safepoint time was due to GC.
+     */
+    public long getGcUnifiedSafepointRatio() {
+        if (gcPauseTotal <= 0 || unifiedSafepointTimeTotal <= 0) {
+            return 100L;
+        }
+        BigDecimal ratio = new BigDecimal(gcPauseTotal);
+        ratio = ratio.divide(new BigDecimal(unifiedSafepointTimeTotal), 2, HALF_EVEN);
+        return ratio.movePointRight(2).longValue();
     }
 
     public long getInvertedParallelismCount() {
@@ -1106,12 +1107,12 @@ public class JvmRun {
         return parallelCount;
     }
 
-    public List<SafepointEventSummary> getSafepointEventSummaries() {
-        return safepointEventSummaries;
+    public List<String> getSafepointBottlenecks() {
+        return safepointBottlenecks;
     }
 
-    public int getUnifiedSafepointTimeMax() {
-        return unifiedSafepointTimeMax;
+    public List<SafepointEventSummary> getSafepointEventSummaries() {
+        return safepointEventSummaries;
     }
 
     public int getStoppedTimeEventCount() {
@@ -1174,6 +1175,10 @@ public class JvmRun {
         return throughput.movePointRight(2).longValue();
     }
 
+    public int getUnifiedSafepointTimeMax() {
+        return unifiedSafepointTimeMax;
+    }
+
     public int getUnifiedSafepointTimeTotal() {
         return unifiedSafepointTimeTotal;
     }
@@ -1193,16 +1198,16 @@ public class JvmRun {
         return preprocessed;
     }
 
+    public void setAllocationRate(BigDecimal mbPerSecond) {
+        allocationRate = mbPerSecond;
+    }
+
     public void setAnalysis(List<Analysis> analysis) {
         this.analysis = analysis;
     }
 
     public void setBlockingEventCount(int blockingEventCount) {
         this.blockingEventCount = blockingEventCount;
-    }
-
-    public void setBottlenecks(List<String> bottlenecks) {
-        this.bottlenecks = bottlenecks;
     }
 
     public void setCollectorFamilies(List<CollectorFamily> collectorFamilies) {
@@ -1219,6 +1224,10 @@ public class JvmRun {
 
     public void setFirstSafepointEvent(SafepointEvent firstSafepointEvent) {
         this.firstSafepointEvent = firstSafepointEvent;
+    }
+
+    public void setGcBottlenecks(List<String> gcBottlenecks) {
+        this.gcBottlenecks = gcBottlenecks;
     }
 
     public void setGcPauseMax(int gcPauseMax) {
@@ -1303,6 +1312,10 @@ public class JvmRun {
 
     public void setPreprocessed(boolean preprocessed) {
         this.preprocessed = preprocessed;
+    }
+
+    public void setSafepointBottlenecks(List<String> safepointBottlenecks) {
+        this.safepointBottlenecks = safepointBottlenecks;
     }
 
     public void setSafepointEventSummaries(List<SafepointEventSummary> safepointEventSummaries) {

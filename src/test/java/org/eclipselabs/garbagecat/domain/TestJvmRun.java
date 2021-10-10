@@ -469,7 +469,7 @@ class TestJvmRun {
         assertEquals(25, jvmRun.getUnifiedSafepointTimeTotal(), "Safepoint time total not correct.");
         assertEquals((long) 29, jvmRun.getFirstSafepointEvent().getTimestamp(),
                 "Safepoint first timestamp not correct.");
-        assertEquals((long) 167, jvmRun.getLastSafepointEvent().getTimestamp(),
+        assertEquals((long) 166, jvmRun.getLastSafepointEvent().getTimestamp(),
                 "Safepoint last timestamp not correct.");
         assertEquals(439, jvmRun.getLastSafepointEvent().getDuration(), "Safepoint last duration not correct.");
         assertEquals((long) 29, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");

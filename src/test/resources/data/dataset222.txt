@@ -1,0 +1,7 @@
+[2021-10-05T21:57:58.002+0200][993.432s] Entering safepoint region: RedefineClasses
+[2021-10-05T21:58:22.188+0200][1017.618s] Leaving safepoint region
+[2021-10-05T21:58:22.188+0200][1017.618s] Total time for which application threads were stopped: 24.1957920 seconds, Stopping threads took: 0.0094382 seconds
+[2021-10-05T21:58:22.198+0200][1017.628s] Application time: 0.0093294 seconds
+[2021-10-05T21:58:22.198+0200][1017.628s] Entering safepoint region: RevokeBias
+[2021-10-05T21:58:22.198+0200][1017.629s] Leaving safepoint region
+[2021-10-05T21:58:22.198+0200][1017.629s] Total time for which application threads were stopped: 0.0007626 seconds, Stopping threads took: 0.0000545 seconds

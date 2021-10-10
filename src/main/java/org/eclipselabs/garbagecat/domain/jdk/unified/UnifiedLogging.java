@@ -17,6 +17,9 @@ import org.eclipselabs.garbagecat.domain.LogEvent;
 /**
  * <p>
  * Unified logging (JDK9+).
+ * 
+ * The datestamp/uptime has changed from the time when the <code>LogEvent</code> begins (prior to JDK9) to the time when
+ * the <code>LogEvent</code> ends.
  * </p>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

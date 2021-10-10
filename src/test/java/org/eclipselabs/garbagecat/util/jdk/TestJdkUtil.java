@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.util.jdk;
 
 import static org.eclipselabs.garbagecat.TestUtil.parseDate;
 import static org.eclipselabs.garbagecat.util.Memory.bytes;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -30,6 +31,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitUpdateEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -162,6 +164,50 @@ class TestJdkUtil {
         int throughputThreshold = 20;
         assertFalse(JdkUtil.isBottleneck(gcEvent, priorEvent, throughputThreshold),
                 "Event should not have been flagged as a bottleneck.");
+    }
+
+    @Test
+    void testBottleneckDetectionSafepointEventOverlap() {
+        String previousLogLine = "[2021-10-05T21:57:58.002+0200][993.432s] Entering safepoint region: RedefineClasses"
+                + "[2021-10-05T21:58:22.188+0200][1017.618s] Leaving safepoint region[2021-10-05T21:58:22.188+0200]"
+                + "[1017.618s] Total time for which application threads were stopped: 24.1957920 seconds, Stopping "
+                + "threads took: 0.0094382 seconds";
+        UnifiedSafepointEvent priorEvent = (UnifiedSafepointEvent) JdkUtil.parseLogLine(previousLogLine);
+        String logLine = "[2021-10-05T21:58:22.198+0200][1017.628s] Entering safepoint region: RevokeBias"
+                + "[2021-10-05T21:58:22.198+0200][1017.629s] Leaving safepoint region[2021-10-05T21:58:22.198+0200]"
+                + "[1017.629s] Total time for which application threads were stopped: 0.0007626 seconds, Stopping "
+                + "threads took: 0.0000545 seconds";
+        UnifiedSafepointEvent currrentEvent = (UnifiedSafepointEvent) JdkUtil.parseLogLine(logLine);
+        // Test boundary
+        int throughputThreshold = 20;
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                JdkUtil.isBottleneck(currrentEvent, priorEvent, throughputThreshold);
+            }
+        });
+    }
+
+    @Test
+    void testBottleneckDetectionSafepointEventBadOrder() {
+        String previousLogLine = "[2021-10-05T21:41:48.773+0200][24.203s] Entering safepoint region: RevokeBias"
+                + "[2021-10-05T21:41:48.774+0200][24.204s] Leaving safepoint region[2021-10-05T21:41:48.774+0200]"
+                + "[24.204s] Total time for which application threads were stopped: 0.0004500 seconds, Stopping "
+                + "threads took: 0.0000510 seconds";
+        UnifiedSafepointEvent priorEvent = (UnifiedSafepointEvent) JdkUtil.parseLogLine(previousLogLine);
+        String logLine = "[2021-10-05T21:41:48.936+0200][24.366s] Entering safepoint region: RevokeBias"
+                + "[2021-10-05T21:41:48.937+0200][24.367s] Leaving safepoint region[2021-10-05T21:41:48.937+0200]"
+                + "[24.367s] Total time for which application threads were stopped: 0.1140265 seconds, Stopping "
+                + "threads took: 0.1135560 seconds";
+        UnifiedSafepointEvent currrentEvent = (UnifiedSafepointEvent) JdkUtil.parseLogLine(logLine);
+        // Test boundary
+        int throughputThreshold = 20;
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                JdkUtil.isBottleneck(currrentEvent, priorEvent, throughputThreshold);
+            }
+        });
     }
 
     @Test
