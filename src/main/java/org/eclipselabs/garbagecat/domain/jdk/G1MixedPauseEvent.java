@@ -87,8 +87,6 @@ public class G1MixedPauseEvent extends G1Collector
             + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
             + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")";
 
-    private static final Pattern TRIGGER_PATTERN = Pattern.compile(TRIGGER);
-
     /**
      * Regular expression standard format.
      */
