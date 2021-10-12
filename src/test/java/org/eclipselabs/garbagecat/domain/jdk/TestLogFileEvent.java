@@ -62,6 +62,14 @@ class TestLogFileEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.LOG_FILE.toString() + ".");
     }
 
+    @Test
+    void testLogLineRotationRequest() {
+        String logLine = "2021-10-09 00:01:02 GC log rotation request has been received. Saved as "
+                + "/path/to/gc.log.2021-10-08_21-57-44.0";
+        assertTrue(LogFileEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.LOG_FILE.toString() + ".");
+    }
+
     /**
      * Test preparsing throws event away.
      */

@@ -18,17 +18,21 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * GC_LOG_FILE
+ * LOG_FILE
  * </p>
  * 
  * <p>
- * Logging that indicates where a gc log file is created.
+ * GC log file information.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
  * <pre>
  * 2016-09-29 07:13:12 GC log file created /path/to/gc.log
+ * 
+ * 2016-03-24 10:28:33 GC log file has reached the maximum size. Saved as /path/to/gc.log.0
+ * 
+ * 2021-10-09 00:01:02 GC log rotation request has been received. Saved as /path/to/gc.log.2021-10-08_21-57-44.0
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -47,7 +51,9 @@ public class LogFileEvent implements ThrowAwayEvent {
             /*
              * Log file rotation
              */
-            "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} GC log file has reached the maximum " + "size.+$" };
+            "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} GC log file has reached the maximum size\\..+$",
+            //
+            "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} GC log rotation request has been received\\..+$" };
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
