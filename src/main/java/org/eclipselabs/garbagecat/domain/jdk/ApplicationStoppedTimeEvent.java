@@ -96,31 +96,48 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class ApplicationStoppedTimeEvent implements SafepointEvent {
 
     /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
-
-    /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
-     */
-    private int duration;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
-
-    /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(: )?(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.DATESTAMP + "(: )?)?("
             + JdkRegEx.TIMESTAMP + "(: )?)?(" + JdkRegEx.DATESTAMP + "(: )?)?(: )?" + JdkRegEx.TIMESTAMP + "?(: )?("
             + JdkRegEx.TIMESTAMP + ")?(: )?Total time for which application threads "
-            + "were stopped: ((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds.*$";
+            + "were stopped: ((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds(, Stopping threads took: "
+            + "((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds)?[ ]{0,}$";
+
     /**
      * RegEx pattern.
      */
     private static Pattern pattern = Pattern.compile(REGEX);
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
+    /**
+     * The elapsed clock time the application threads were stopped (at safepont) in microseconds (rounded).
+     */
+    private int timeThreadsStopped;
+
+    /**
+     * The elapsed clock time to stop all threads (bring the JVM to safepoint) in microseconds (rounded).
+     */
+    private int timeToStopThreads;
 
     /**
      * Create event from log entry.
@@ -132,37 +149,51 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
+            long endTimestamp = 0;
             if (matcher.group(24) != null) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(24)).longValue();
+                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(24)).longValue();
             } else if (matcher.group(38) != null) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(38)).longValue();
+                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(38)).longValue();
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(43)).intValue();
+            timeThreadsStopped = JdkMath.convertSecsToMicros(matcher.group(43)).intValue();
+            if (matcher.group(45) != null) {
+                timeToStopThreads = JdkMath.convertSecsToMicros(matcher.group(46)).intValue();
+            }
+            if (endTimestamp > 0) {
+                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(getDuration()).longValue();
+            }
         }
     }
 
     /**
-     * Alternate constructor. Create application stopped time event from values.
+     * Alternate constructor. Create safepoint event from values.
      * 
      * @param logEntry
      *            The log entry for the event.
      * @param timestamp
-     *            The time when the GC event started in milliseconds after JVM startup.
-     * @param duration
-     *            The elapsed clock time for the GC event in microseconds (rounded).
+     *            The time when the safepoint event started in milliseconds after JVM startup.
+     * @param timeToStopThreads
+     *            The elapsed clock time to stop all threads (bring the JVM to safepoint) in microseconds (rounded).
+     * @param timeToStopThreads
+     *            The elapsed clock time the application threads were stopped (at safepont) in microseconds (rounded).
      */
-    public ApplicationStoppedTimeEvent(String logEntry, long timestamp, int duration) {
+    public ApplicationStoppedTimeEvent(String logEntry, long timestamp, int timeToStopThreads, int timeThreadsStopped) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
-        this.duration = duration;
+        this.timeToStopThreads = timeToStopThreads;
+        this.timeThreadsStopped = timeThreadsStopped;
+    }
+
+    /**
+     * The elapsed clock time for the safepoint event in microseconds (rounded). timeToStopThreads seems to be a subset
+     * of timeThreadsStopped.
+     */
+    public int getDuration() {
+        return timeThreadsStopped;
     }
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public int getDuration() {
-        return duration;
     }
 
     public String getName() {
@@ -173,15 +204,12 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
         return timestamp;
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public int getTimeThreadsStopped() {
+        return timeThreadsStopped;
+    }
+
+    public int getTimeToStopThreads() {
+        return timeToStopThreads;
     }
 
 }

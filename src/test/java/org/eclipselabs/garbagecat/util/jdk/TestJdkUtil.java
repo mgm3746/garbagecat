@@ -25,6 +25,7 @@ import java.util.Date;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
+import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalMarkEvent;
@@ -200,6 +201,60 @@ class TestJdkUtil {
                 + "[24.367s] Total time for which application threads were stopped: 0.1140265 seconds, Stopping "
                 + "threads took: 0.1135560 seconds";
         UnifiedSafepointEvent currrentEvent = (UnifiedSafepointEvent) JdkUtil.parseLogLine(logLine);
+        // Test boundary
+        int throughputThreshold = 20;
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                JdkUtil.isBottleneck(currrentEvent, priorEvent, throughputThreshold);
+            }
+        });
+    }
+
+    @Test
+    void testBottleneckDetectionApplicationStoppedTimeEventOverlap() {
+        String previousLogLine = "2021-10-06T00:01:22.356+0300: 352925.961: Total time for which application threads "
+                + "were stopped: 5.2328160 seconds, Stopping threads took: 0.0001901 seconds";
+        ApplicationStoppedTimeEvent priorEvent = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(previousLogLine);
+        String logLine = "2021-10-06T00:01:22.359+0300: 352925.965: Total time for which application threads were "
+                + "stopped: 0.0030469 seconds, Stopping threads took: 0.0002072 seconds";
+        ApplicationStoppedTimeEvent currrentEvent = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(logLine);
+        // Test boundary
+        int throughputThreshold = 20;
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                JdkUtil.isBottleneck(currrentEvent, priorEvent, throughputThreshold);
+            }
+        });
+    }
+
+    @Test
+    void testBottleneckDetectionApplicationStoppedTimeEventBadOrder() {
+        String previousLogLine = "2021-10-06T13:35:28.529+0300: 401772.135: Total time for which application threads "
+                + "were stopped: 0.0035199 seconds, Stopping threads took: 0.0002200 seconds";
+        ApplicationStoppedTimeEvent priorEvent = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(previousLogLine);
+        String logLine = "2021-10-06T13:35:28.537+0300: 401772.143: Total time for which application threads were "
+                + "stopped: 0.0076385 seconds, Stopping threads took: 0.0047232 seconds";
+        ApplicationStoppedTimeEvent currrentEvent = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(logLine);
+        // Test boundary
+        int throughputThreshold = 20;
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                JdkUtil.isBottleneck(currrentEvent, priorEvent, throughputThreshold);
+            }
+        });
+    }
+
+    @Test
+    void testBottleneckDetectionApplicationStoppedTimeEventBadOrder2() {
+        String previousLogLine = "2021-10-08T21:58:51.878+0300: 66.915: Total time for which application threads were "
+                + "stopped: 0.0003143 seconds, Stopping threads took: 0.0000509 seconds";
+        ApplicationStoppedTimeEvent priorEvent = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(previousLogLine);
+        String logLine = "2021-10-08T21:58:51.882+0300: 66.918: Total time for which application threads were stopped: "
+                + "0.0033266 seconds, Stopping threads took: 0.0031114 seconds";
+        ApplicationStoppedTimeEvent currrentEvent = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(logLine);
         // Test boundary
         int throughputThreshold = 20;
         assertDoesNotThrow(new Executable() {

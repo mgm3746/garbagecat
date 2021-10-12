@@ -97,18 +97,6 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
         return pattern;
     }
 
-    public static void setPattern(Pattern pattern) {
-        UnifiedSafepointEvent.pattern = pattern;
-    }
-
-    public int getTimeThreadsStopped() {
-        return timeThreadsStopped;
-    }
-
-    public int getTimeToStopThreads() {
-        return timeToStopThreads;
-    }
-
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
      * 
@@ -118,6 +106,10 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      */
     public static final boolean match(String logLine) {
         return pattern.matcher(logLine).matches();
+    }
+
+    public static void setPattern(Pattern pattern) {
+        UnifiedSafepointEvent.pattern = pattern;
     }
 
     /**
@@ -134,6 +126,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      * The elapsed clock time the application threads were stopped (at safepont) in microseconds (rounded).
      */
     private int timeThreadsStopped;
+
     /**
      * The elapsed clock time to stop all threads (bring the JVM to safepoint) in microseconds (rounded).
      */
@@ -196,7 +189,8 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
     }
 
     /**
-     * The elapsed clock time for the safepoint event in microseconds (rounded).
+     * The elapsed clock time for the safepoint event in microseconds (rounded). timeToStopThreads seems to be time in
+     * addition to timeThreadsStopped.
      */
     public int getDuration() {
         return timeThreadsStopped + timeToStopThreads;
@@ -212,6 +206,14 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public int getTimeThreadsStopped() {
+        return timeThreadsStopped;
+    }
+
+    public int getTimeToStopThreads() {
+        return timeToStopThreads;
     }
 
     public Trigger getTrigger() {
