@@ -178,7 +178,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      *            The time when the safepoint event started in milliseconds after JVM startup.
      * @param timeToStopThreads
      *            The elapsed clock time to stop all threads (bring the JVM to safepoint) in microseconds (rounded).
-     * @param timeToStopThreads
+     * @param timeThreadsStopped
      *            The elapsed clock time the application threads were stopped (at safepont) in microseconds (rounded).
      */
     public UnifiedSafepointEvent(String logEntry, long timestamp, int timeToStopThreads, int timeThreadsStopped) {

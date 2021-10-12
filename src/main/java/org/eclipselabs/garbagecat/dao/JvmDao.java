@@ -345,9 +345,9 @@ public class JvmDao {
     }
 
     /**
-     * The first @link org.eclipselabs.garbagecat.domain.jdk.SafepointEvent}.
+     * The first {@link org.eclipselabs.garbagecat.domain.SafepointEvent}.
      * 
-     * @return The first <code>SafepointEvent</cod>.
+     * @return The first <code>SafepointEvent</code>.
      */
     public synchronized SafepointEvent getFirstSafepointEvent() {
         SafepointEvent firstSafepointEvent = null;
@@ -360,7 +360,7 @@ public class JvmDao {
     }
 
     /**
-     * The first @link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent}.
+     * The first {@link org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent}.
      * 
      * @return The first stopped event.
      */
@@ -369,7 +369,7 @@ public class JvmDao {
     }
 
     /**
-     * The first @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent}.
+     * The first {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent}.
      * 
      * @return The first unified safepoint event.
      */
@@ -406,7 +406,7 @@ public class JvmDao {
     }
 
     /**
-     * The first @link org.eclipselabs.garbagecat.domain.jdk.SafepointEvent}.
+     * The first {@link org.eclipselabs.garbagecat.domain.SafepointEvent}.
      * 
      * @return The last safepoint event.
      */
