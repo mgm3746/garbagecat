@@ -304,4 +304,19 @@ class TestUnifiedConcurrentEvent {
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
     }
+
+    @Test
+    void testConcurrentStringDeduplication() {
+        String logLine = "[2021-10-08T16:04:26.204-0400][8.937s] Concurrent String Deduplication (8.937s)";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testConcurrentStringDeduplicationDetails() {
+        String logLine = "[2021-10-08T16:04:26.249-0400][8.983s] Concurrent String Deduplication "
+                + "3428.0K->2498.6K(929.4K) avg 27.1% (8.937s, 8.983s) 45.667ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
 }
