@@ -99,4 +99,10 @@ class TestUnifiedRegEx {
         String decorator = "[0.004s][info][gc,cds       ]";
         assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
     }
+
+    @Test
+    void testDecoratorGcStringdedup() {
+        String decorator = "[2021-10-13T13:31:38.618+0400][info][gc,stringdedup]";
+        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
+    }
 }

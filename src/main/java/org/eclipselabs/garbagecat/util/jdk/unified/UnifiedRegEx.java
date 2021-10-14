@@ -104,7 +104,7 @@ public class UnifiedRegEx {
      */
     public static final String DECORATOR = "\\[(" + JdkRegEx.DATESTAMP + "|" + UPTIME + "|" + UPTIMEMILLIS + ")\\](\\[("
             + UPTIME + "|" + UPTIMEMILLIS + ")\\])?(\\[info\\]\\[(gc|safepoint)"
-            + "(,(cds|cpu|ergo|heap|init|marking|metaspace|mmu|phases|stats|start|stringtable|task))?"
+            + "(,(cds|cpu|ergo|heap|init|marking|metaspace|mmu|phases|stats|start|stringtable|stringdedup|task))?"
             + "(,(coops|exit|start))?[ ]{0,13}\\])?( " + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
 
     /**
