@@ -67,7 +67,8 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")";
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
 
     /**
      * Regular expression defining preprocessed logging.

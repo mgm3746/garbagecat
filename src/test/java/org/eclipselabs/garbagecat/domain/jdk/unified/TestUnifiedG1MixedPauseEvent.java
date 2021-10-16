@@ -135,6 +135,15 @@ class TestUnifiedG1MixedPauseEvent {
     }
 
     @Test
+    void testLogLinePreprocessedTriggerGcLockerInitiatedGc() {
+        String logLine = "[2021-10-14T17:52:08.374+0400][info][gc,start      ] GC(2131) Pause Young (Mixed) (GCLocker "
+                + "Initiated GC) Metaspace: 365476K->365476K(1384448K) 3827M->3109M(12288M) 23.481ms "
+                + "User=0.20s Sys=0.02s Real=0.02s";
+        assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+    }
+
+    @Test
     void testPreprocessing() {
         File testFile = TestUtil.getFile("dataset169.txt");
         GcManager gcManager = new GcManager();
