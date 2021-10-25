@@ -301,13 +301,12 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * 0.449: [GC pause (G1 Evacuation Pause) (young)Before GC RS summary
      */
-    private static final String REGEX_RETAIN_BEGINNING_YOUNG_PAUSE = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION
-            + ")\\))? \\(young\\)( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, "
-            + JdkRegEx.DURATION + "\\])?)((" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": )?( )?"
-            + JdkRegEx.TIMESTAMP + ": \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_YOUNG_PAUSE = "^(" + JdkRegEx.DECORATOR + " \\[GC pause( \\(("
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\))? \\(young\\)( \\(("
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?)((" + JdkRegEx.DECORATOR
+            + " )?( )?" + JdkRegEx.DECORATOR + " \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_PAUSE_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE);
@@ -316,23 +315,22 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * 2017-01-20T23:18:29.561-0500: 1513296.434: [GC pause (young) (initial-mark), 0.0225230 secs]
      */
-    private static final String REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|"
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION
-            + ")\\))? \\(young\\) \\(initial-mark\\)(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.TIMESTAMP
-            + ": \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK = "^(" + JdkRegEx.DECORATOR
+            + " \\[GC pause( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE
+            + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\))? \\(young\\) \\(initial-mark\\)(, " + JdkRegEx.DURATION
+            + "\\])?)( " + JdkRegEx.DECORATOR + " \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK);
     /**
      * Regular expression for retained beginning G1_FULL_GC collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_FULL_GC = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\((" + JdkRegEx.TRIGGER_SYSTEM_GC + "|"
-            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))?[ ]{0,2}(" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])?)( Before GC RS summary)?[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_FULL_GC = "^(" + JdkRegEx.DECORATOR + " \\[Full GC (\\(("
+            + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|"
+            + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD
+            + ")\\))?[ ]{0,2}(" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\])?)( Before GC RS summary)?[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_FULL_GC_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_FULL_GC);
@@ -340,9 +338,9 @@ public class G1PreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained beginning G1_FULL_GC collection with PRINT_CLASS_HISTOGRAM.
      */
-    private static final String REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[Full GC( \\(" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "\\) )?("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram \\(before full gc\\):)[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM = "^(" + JdkRegEx.DECORATOR
+            + " \\[Full GC( \\(" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "\\) )?" + JdkRegEx.DECORATOR
+            + " \\[Class Histogram \\(before full gc\\):)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM);
@@ -350,12 +348,10 @@ public class G1PreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained beginning G1_CONCURRENT collection.
      * 
-     * 2018-12-06T21:56:32.691-0500: 18.9732018-12-06T21:56:32.691-0500: : 18.973[GC concurrent-root-region-scan-start]
+     * 2018-12-06T21:56:32.691-0500: 18.973 [GC concurrent-root-region-scan-start]
      */
-    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(: )?(" + JdkRegEx.DATESTAMP + ": )?(("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + "(" + JdkRegEx.DATESTAMP + ": )?: )("
-            + JdkRegEx.TIMESTAMP + "[:]{0,1}[ ]{0,1})?(" + JdkRegEx.DATESTAMP
-            + ")?(\\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, " + JdkRegEx.DURATION
+    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(" + JdkRegEx.DECORATOR
+            + ")( \\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, " + JdkRegEx.DURATION
             + ")?\\])[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN = Pattern
@@ -364,10 +360,9 @@ public class G1PreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained beginning G1_REMARK collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_REMARK = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC remark) (" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": (\\[Finalize Marking, "
-            + JdkRegEx.DURATION + "\\] (" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": )?\\[GC ref-proc, "
-            + JdkRegEx.DURATION + "\\]( (" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Unloading, "
+    private static final String REGEX_RETAIN_BEGINNING_REMARK = "^(" + JdkRegEx.DECORATOR + " \\[GC remark) "
+            + JdkRegEx.DECORATOR + " (\\[Finalize Marking, " + JdkRegEx.DURATION + "\\] " + JdkRegEx.DECORATOR
+            + " )?\\[GC ref-proc, " + JdkRegEx.DURATION + "\\]( " + JdkRegEx.DECORATOR + " \\[Unloading, "
             + JdkRegEx.DURATION + "\\])?(, " + JdkRegEx.DURATION + "\\])[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_REMARK_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_REMARK);
@@ -378,18 +373,17 @@ public class G1PreprocessAction implements PreprocessAction {
      * 2017-06-22T12:25:26.515+0530: 66155.261: [GC pause (G1 Humongous Allocation) (mixed) (to-space exhausted),
      * 0.2466797 secs]
      */
-    private static final String REGEX_RETAIN_BEGINNING_MIXED = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\))? \\(mixed\\)( \\(("
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.TIMESTAMP
-            + ": \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_MIXED = "^(" + JdkRegEx.DECORATOR + " \\[GC pause( \\(("
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION
+            + ")\\))? \\(mixed\\)( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION
+            + "\\])?)( " + JdkRegEx.DECORATOR + " \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_MIXED_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_MIXED);
 
     /**
      * Regular expression for retained beginning G1_CLEANUP collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_CLEANUP = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup "
+    private static final String REGEX_RETAIN_BEGINNING_CLEANUP = "^(" + JdkRegEx.DECORATOR + " \\[GC cleanup "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_CLEANUP_PATTERN = Pattern
@@ -409,11 +403,10 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * 537.122: [GC pause (G1 Evacuation Pause) (young)537.123: [GC concurrent-root-region-scan-start]
      */
-    private static final String REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION
-            + ")\\))? \\(young\\))((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC concurrent-(root-region-scan|cleanup|mark)-(start|end)(, " + JdkRegEx.DURATION + ")?\\])[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT = "^(" + JdkRegEx.DECORATOR
+            + " \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC
+            + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\))? \\(young\\))(" + JdkRegEx.DECORATOR
+            + " \\[GC concurrent-(root-region-scan|cleanup|mark)-(start|end)(, " + JdkRegEx.DURATION + ")?\\])[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
@@ -427,30 +420,16 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * 2017-02-27T02:55:32.523+`0300: 35911.404: [Full GC (Allocation Failure)2017-02-27T02:55:32.524+0300: 35911.405:
      * [GC concurrent-root-region-scan-end, 0.0127300 secs]
-     * 
-     * 2017-06-22T16:03:36.126+0530: 2017-06-22T16:03:36.126+0530: 79244.87279244.872: : [Full GC (Metadata GC
-     * Threshold) [GC concurrent-root-region-scan-start]
-     * 
-     * 2017-06-22T16:35:58.032+0530: 81186.777: 2017-06-22T16:35:58.032+0530: [Full GC (Metadata GC Threshold)
-     * 81186.777: [GC concurrent-root-region-scan-start]
-     * 
-     * 35081.727: 2021-06-15T12:34:57.324-0600[Full GC (Allocation Failure) : 35081.727: [GC concurrent-mark-start]
-     * 
-     * 35420.674: [Full GC (Allocation Failure) 35420.734: [GC concurrent-mark-start]3035M->3030M(3072M), 21.7552521
-     * secs][Eden: 0.0B(153.0M)->0.0B(153.0M) Survivors: 0.0B->0.0B Heap: 3035.5M(3072.0M)->3030.4M(3072.0M)],
-     * [Metaspace: 93308K->93308K(352256K)] [Times: user=16.39 sys=0.04, real=21.75 secs]
      */
-    private static final String REGEX_RETAIN_BEGINNING_FULL_CONCURRENT = "^(" + JdkRegEx.DATESTAMP + ": )?("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + "?(: )?" + JdkRegEx.TIMESTAMP + "?(:)?( )?(: )?("
-            + JdkRegEx.DATESTAMP + ")?(: )?(\\[Full GC \\((" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\)[ ]{0,1})(: )?((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + "?(:)?( )?(\\[GC concurrent-(root-region-scan|mark)-(start|end)(, "
-            + JdkRegEx.DURATION + ")?\\]))(" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: "
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)\\], \\[Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]"
-            + TimesData.REGEX + ")?[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_FULL_CONCURRENT = "^(" + JdkRegEx.DECORATOR
+            + ")?( \\[Full GC \\((" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE
+            + ")\\)[ ]{0,1})(: )?((" + JdkRegEx.DECORATOR
+            + ")?( \\[GC concurrent-(root-region-scan|mark)-(start|end)(, " + JdkRegEx.DURATION + ")?\\]))("
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
+            + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], \\[Metaspace: " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + ")?[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_FULL_CONCURRENT_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_FULL_CONCURRENT);
@@ -518,8 +497,8 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * 2021-10-07T10:05:58.708+0100: 69326.814: [Class Histogram (after full gc):
      */
-    private static final String REGEX_RETAIN_MIDDLE_CLASS_HISTOGRAM = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[Class Histogram \\(after full gc\\):)[ ]*$";
+    private static final String REGEX_RETAIN_MIDDLE_CLASS_HISTOGRAM = "^(" + JdkRegEx.DECORATOR
+            + " \\[Class Histogram \\(after full gc\\):)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_CLASS_HISTOGRAM_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_CLASS_HISTOGRAM);
@@ -554,8 +533,8 @@ public class G1PreprocessAction implements PreprocessAction {
      * 0.0B(151.0M)->0.0B(153.0M) Survivors: 2048.0K->0.0B Heap: 3038.7M(3072.0M)->3038.7M(3072.0M)] [Times: user=0.20
      * sys=0.00, real=0.33 secs]
      */
-    private static final String REGEX_RETAIN_END_CONCURRENT_YOUNG = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[GC concurrent-root-region-scan-end, " + JdkRegEx.DURATION + "\\])(( \\("
+    private static final String REGEX_RETAIN_END_CONCURRENT_YOUNG = "^(" + JdkRegEx.DECORATOR
+            + " \\[GC concurrent-root-region-scan-end, " + JdkRegEx.DURATION + "\\])(( \\("
             + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
@@ -637,8 +616,7 @@ public class G1PreprocessAction implements PreprocessAction {
             //
             "^       Avg:.+$",
             // Ergonomics.
-            "^(" + JdkRegEx.DATESTAMP + "(:)?[ ]{1,2})?(" + JdkRegEx.TIMESTAMP + ":  )?( )?" + JdkRegEx.TIMESTAMP
-                    + ": \\[G1Ergonomics.+$",
+            "^[ ]{0,1}" + JdkRegEx.DECORATOR + " \\[G1Ergonomics.+$",
             // -XX:+PrintStringDeduplicationStatistics
             "^   \\[String Dedup Fixup:.+$",
             //
@@ -787,7 +765,7 @@ public class G1PreprocessAction implements PreprocessAction {
             // Handle concurrent mixed with young collections. See datasets 47-48 and 51-52, 54.
             matcher.reset();
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(15));
+                entangledLogLines.add(matcher.group(17));
             }
             // Output beginning of young line
             this.logEntry = matcher.group(1);
@@ -796,59 +774,31 @@ public class G1PreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_BEGINNING_FULL_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
             // Handle concurrent mixed with full collections. See dataset 74.
             matcher.reset();
-            int indexG1FullDatestamp = 11;
-            int indexG1FullTimestamp = 21;
-            int indexFullBlock = 38;
-            int indexConcurrentLine = 41;
-            int indexConcurrentDatestamp = 42;
-            int indexConcurrentTimestamp = 52;
-            int indexConcurrentBlock = 55;
-            int indexG1DetailsBlock = 62;
+            int indexG1FullDecorator = 1;
+            int indexFullBlock = 15;
+            int indexConcurrentLine = 16;
+            int indexConcurrentDecorator = 17;
+            int indexConcurrentBlock = 33;
+            int indexG1DetailsBlock = 40;
             if (matcher.matches()) {
-                if (matcher.group(indexConcurrentTimestamp) != null) {
+                if (matcher.group(indexConcurrentDecorator) != null) {
                     entangledLogLines.add(matcher.group(indexConcurrentLine));
                 } else {
                     // G1_CONCURRENT timestamp missing. Use G1_FULL timestamp.
-                    if (matcher.group(indexG1FullDatestamp) != null) {
-                        entangledLogLines.add(matcher.group(indexG1FullDatestamp) + matcher.group(indexG1FullTimestamp)
-                                + ": " + matcher.group(indexConcurrentBlock));
-                    } else {
-                        if (matcher.group(1) != null) {
-                            entangledLogLines.add(matcher.group(1) + matcher.group(indexG1FullTimestamp) + ": "
-                                    + matcher.group(indexConcurrentBlock));
-                        } else {
-                            entangledLogLines.add(
-                                    matcher.group(indexG1FullTimestamp) + ": " + matcher.group(indexConcurrentBlock));
-                        }
-                    }
+                    entangledLogLines.add(matcher.group(indexG1FullDecorator) + matcher.group(indexConcurrentBlock));
                 }
             }
             // Output beginning of G1_FULL line
-            if (matcher.group(indexG1FullTimestamp) != null) {
-                if (matcher.group(indexG1FullDatestamp) != null) {
-                    this.logEntry = matcher.group(indexG1FullDatestamp) + matcher.group(indexG1FullTimestamp) + ": "
-                            + matcher.group(indexFullBlock);
+            if (matcher.group(indexG1FullDecorator) != null) {
+                if (matcher.group(indexG1DetailsBlock) != null) {
+                    this.logEntry = matcher.group(indexG1FullDecorator) + matcher.group(indexFullBlock)
+                            + matcher.group(indexG1DetailsBlock);
                 } else {
-                    if (matcher.group(1) != null) {
-                        this.logEntry = matcher.group(1) + matcher.group(indexG1FullTimestamp) + ": "
-                                + matcher.group(indexFullBlock);
-                    } else {
-                        if (matcher.group(indexG1DetailsBlock) != null) {
-                            this.logEntry = matcher.group(indexG1FullTimestamp) + ": " + matcher.group(indexFullBlock)
-                                    + matcher.group(indexG1DetailsBlock);
-                        } else {
-                            this.logEntry = matcher.group(indexG1FullTimestamp) + ": " + matcher.group(indexFullBlock);
-                        }
-                    }
+                    this.logEntry = matcher.group(indexG1FullDecorator) + matcher.group(indexFullBlock);
                 }
             } else {
                 // G1_FULL timestamp missing. Use G1_CONCURRENT timestamp.
-                if (matcher.group(indexConcurrentDatestamp) != null) {
-                    this.logEntry = matcher.group(indexConcurrentDatestamp) + matcher.group(indexConcurrentTimestamp)
-                            + ": " + matcher.group(indexFullBlock);
-                } else {
-                    this.logEntry = matcher.group(indexConcurrentTimestamp) + ": " + matcher.group(indexFullBlock);
-                }
+                this.logEntry = matcher.group(indexConcurrentDecorator) + " " + matcher.group(indexFullBlock);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
@@ -859,26 +809,10 @@ public class G1PreprocessAction implements PreprocessAction {
                 // Handle concurrent mixed with young collections. See datasets 47-48 and 51-52, 54.
                 if (!context.contains(TOKEN)) {
                     // Output now
-                    if (matcher.group(2) != null && matcher.group(12) != null) {
-                        this.logEntry = matcher.group(2) + matcher.group(23) + ": " + matcher.group(46);
-                    } else {
-                        if (matcher.group(12) != null) {
-                            this.logEntry = matcher.group(23) + ": " + matcher.group(46);
-                        } else if (matcher.group(2) != null) {
-                            this.logEntry = matcher.group(23) + ": " + matcher.group(46);
-                        }
-                    }
+                    this.logEntry = matcher.group(1) + matcher.group(15);
                 } else {
                     // Output later
-                    if (matcher.group(2) != null && matcher.group(12) != null) {
-                        entangledLogLines.add(matcher.group(2) + matcher.group(23) + ": " + matcher.group(46));
-                    } else {
-                        if (matcher.group(12) != null) {
-                            entangledLogLines.add(matcher.group(23) + ": " + matcher.group(46));
-                        } else if (matcher.group(2) != null) {
-                            entangledLogLines.add(matcher.group(23) + ": " + matcher.group(46));
-                        }
-                    }
+                    entangledLogLines.add(matcher.group(1) + matcher.group(15));
                 }
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
@@ -894,7 +828,7 @@ public class G1PreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_BEGINNING_REMARK_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1) + matcher.group(57);
+                this.logEntry = matcher.group(1) + matcher.group(65);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
@@ -965,7 +899,7 @@ public class G1PreprocessAction implements PreprocessAction {
             matcher.reset();
             if (matcher.matches()) {
                 entangledLogLines.add(matcher.group(1));
-                this.logEntry = matcher.group(6);
+                this.logEntry = matcher.group(18);
             }
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);

@@ -111,7 +111,7 @@ class TestSerialOldEvent {
     }
 
     @Test
-    void testLogLineWithDateStamps() {
+    void testLogLineDatestampTimestamp() {
         String logLine = "2017-03-26T13:16:18.668+0200: 24.296: [GC2017-03-26T13:16:18.668+0200: 24.296: [DefNew: "
                 + "4928K->511K(4928K), 0.0035715 secs]2017-03-26T13:16:18.684+0200: 24.300: [Tenured: "
                 + "11239K->9441K(11328K), 0.1110369 secs] 15728K->9441K(16256K), [Perm : 15599K->15599K(65536K)], "
@@ -130,6 +130,29 @@ class TestSerialOldEvent {
         assertEquals(kilobytes(15599), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(65536), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
         assertEquals(114868, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineDatestamp() {
+        String logLine = "2017-03-26T13:16:18.668+0200: [GC2017-03-26T13:16:18.668+0200: [DefNew: "
+                + "4928K->511K(4928K), 0.0035715 secs]2017-03-26T13:16:18.684+0200: [Tenured: "
+                + "11239K->9441K(11328K), 0.1110369 secs] 15728K->9441K(16256K), [Perm : 15599K->15599K(65536K)], "
+                + "0.1148688 secs] [Times: user=0.11 sys=0.02, real=0.13 secs]";
+        assertTrue(SerialOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+        SerialOldEvent event = new SerialOldEvent(logLine);
+        assertEquals(543824178668L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineTimestamp() {
+        String logLine = "24.296: [GC24.296: [DefNew: 4928K->511K(4928K), 0.0035715 secs]24.300: [Tenured: "
+                + "11239K->9441K(11328K), 0.1110369 secs] 15728K->9441K(16256K), [Perm : 15599K->15599K(65536K)], "
+                + "0.1148688 secs] [Times: user=0.11 sys=0.02, real=0.13 secs]";
+        assertTrue(SerialOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+        SerialOldEvent event = new SerialOldEvent(logLine);
+        assertEquals((long) 24296, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

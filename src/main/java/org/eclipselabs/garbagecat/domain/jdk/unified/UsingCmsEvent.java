@@ -19,7 +19,6 @@ import org.eclipselabs.garbagecat.domain.jdk.CmsCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -84,7 +83,7 @@ public class UsingCmsEvent extends CmsCollector implements UnifiedLogging {
                         }
                     } else {
                         // Datestamp only.
-                        timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
             }

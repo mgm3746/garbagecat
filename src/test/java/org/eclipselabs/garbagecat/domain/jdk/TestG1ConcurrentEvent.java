@@ -87,12 +87,21 @@ class TestG1ConcurrentEvent {
     }
 
     @Test
-    void testDateStamp() {
+    void testDatestampTimestamp() {
         String logLine = "2016-02-09T06:22:10.399-0500: 28039.161: [GC concurrent-root-region-scan-start]";
         assertTrue(G1ConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
         G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
         assertEquals((long) 28039161, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testDatestamp() {
+        String logLine = "2016-02-09T06:22:10.399-0500: [GC concurrent-root-region-scan-start]";
+        assertTrue(G1ConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
+        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
+        assertEquals(508314130399L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -167,72 +176,5 @@ class TestG1ConcurrentEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
         G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
         assertEquals((long) 27744139, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineWithDoubleDatestamp() {
-        String logLine = "2017-01-20T23:18:29.584-0500: 1513296.456: 2017-01-20T23:18:29.584-0500: "
-                + "[GC concurrent-root-region-scan-start]";
-        assertTrue(G1ConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
-        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
-        assertEquals((long) 1513296456, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineDatestampTimestampDatestampMisplacedColon() {
-        String logLine = "2017-01-20T23:20:52.028-0500: 1513438.9002017-01-20T23:20:52.028-0500: : "
-                + "[GC concurrent-mark-start]";
-        assertTrue(G1ConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
-        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
-        assertEquals((long) 1513438900, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineDatestampDatestampTimestampMisplacedColon() {
-        String logLine = "2017-01-20T23:49:17.968-0500: 2017-01-20T23:49:17.968-05001515144.840: :"
-                + " [GC concurrent-mark-start]";
-        assertTrue(G1ConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
-        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
-        assertEquals((long) 1515144840, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineDatestampDatestampMisplacedColonTimestamp() {
-        String logLine = "2017-01-21T00:58:45.921-05002017-01-21T00:58:45.921-0500: : 1519312.793: "
-                + "[GC concurrent-mark-start]";
-        assertTrue(G1ConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
-        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
-        assertEquals((long) 1519312793, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineTimestampDatestampMisplacedColonTimestamp() {
-        String logLine = "1516186.5322017-01-21T00:06:39.660-0500: : 1516186.532: [GC concurrent-mark-start]";
-        assertTrue(G1ConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
-        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
-        assertEquals((long) 1516186532, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineMisplacedColonDatestampTimestampTimestampMisplacedColon() {
-        String logLine = ": 2017-01-21T09:59:17.908-0500: 1551744.7801551744.780: : [GC concurrent-mark-start]";
-        assertTrue(G1ConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
-        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
-        assertEquals((long) 1551744780, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineNoTimestamp() {
-        String logLine = ": [GC concurrent-root-region-scan-start]";
-        assertTrue(G1ConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
-        G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
-        assertEquals((long) 0, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 }

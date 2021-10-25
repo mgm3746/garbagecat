@@ -160,7 +160,7 @@ class TestVerboseGcYoungEvent {
     }
 
     @Test
-    void testLogLineWithDatestamp() {
+    void testLogLineDatestampTimestamp() {
         String logLine = "2016-07-22T11:49:00.678+0100: 4.970: [GC (Allocation Failure)  136320K->18558K(3128704K), "
                 + "0.1028162 secs]";
         assertTrue(VerboseGcYoungEvent.match(logLine),
@@ -172,6 +172,27 @@ class TestVerboseGcYoungEvent {
         assertEquals(kilobytes(18558), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(3128704), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
         assertEquals(102816, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineTimestamp() {
+        String logLine = "4.970: [GC (Allocation Failure)  136320K->18558K(3128704K), 0.1028162 secs]";
+        assertTrue(VerboseGcYoungEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
+        VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName(), "Event name incorrect.");
+        assertEquals((long) 4970, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineDatestamp() {
+        String logLine = "2016-07-22T11:49:00.678+0100: [GC (Allocation Failure)  136320K->18558K(3128704K), "
+                + "0.1028162 secs]";
+        assertTrue(VerboseGcYoungEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + ".");
+        VerboseGcYoungEvent event = new VerboseGcYoungEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(522481740678L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

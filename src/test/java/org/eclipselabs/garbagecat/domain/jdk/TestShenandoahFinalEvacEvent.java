@@ -41,6 +41,25 @@ class TestShenandoahFinalEvacEvent {
     }
 
     @Test
+    void testLogLineJdk8Timestamp() {
+        String logLine = "17.313: [Pause Final Evac, 0.009 ms]";
+        assertTrue(ShenandoahFinalEvacEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
+        ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
+        assertEquals((long) 17313, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Datestamp() {
+        String logLine = "2020-03-10T08:03:46.251-0400: [Pause Final Evac, 0.009 ms]";
+        assertTrue(ShenandoahFinalEvacEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
+        ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
+        assertEquals(637139026251L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(9, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
     void testLogLineUnified() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
         assertTrue(ShenandoahFinalEvacEvent.match(logLine),

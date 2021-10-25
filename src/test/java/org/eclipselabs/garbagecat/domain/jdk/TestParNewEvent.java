@@ -129,7 +129,7 @@ class TestParNewEvent {
     @Test
     void testLogLineAfterPreprocessing() {
         String logLine = "13.086: [GC13.086: [ParNew: 272640K->33532K(306688K), 0.0381419 secs] "
-                + "272640K->33532K(1014528K), 0.0383306 secs] " + "[Times: user=0.11 sys=0.02, real=0.04 secs]";
+                + "272640K->33532K(1014528K), 0.0383306 secs] [Times: user=0.11 sys=0.02, real=0.04 secs]";
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals(13086L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -278,9 +278,9 @@ class TestParNewEvent {
     }
 
     @Test
-    void testLogLineWithDatestamp() {
-        String logLine = "2010-04-16T12:11:18.979+0200: 84.335: [GC 84.336: [ParNew: 273152K->858K(341376K), "
-                + "0.0030008 secs] 273152K->858K(980352K), 0.0031183 secs] "
+    void testLogLineDatestampTimestamp() {
+        String logLine = "2010-04-16T12:11:18.979+0200: 84.335: [GC 2010-04-16T12:11:18.979+0200: 84.336: "
+                + "[ParNew: 273152K->858K(341376K), 0.0030008 secs] 273152K->858K(980352K), 0.0031183 secs] "
                 + "[Times: user=0.00 sys=0.00, real=0.00 secs]";
         assertTrue(ParNewEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
@@ -298,38 +298,6 @@ class TestParNewEvent {
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testLogLineWithDatestampNoTimestamp() {
-        String logLine = "2017-02-27T07:23:39.571+0100: [GC [ParNew: 2304000K->35161K(2688000K), 0.0759285 secs] "
-                + "2304000K->35161K(9856000K), 0.0760907 secs] [Times: user=0.21 sys=0.05, real=0.08 secs]";
-        // Datestamp only is handled by preparsing.
-        assertFalse(ParNewEvent.match(logLine),
-                "Log line incorrectly recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
-    }
-
-    @Test
-    void testLogLineWithDoubleDatestamp() {
-        String logLine = "2013-12-09T16:18:17.813+0000: 13.086: [GC2013-12-09T16:18:17.813+0000: 13.086: [ParNew: "
-                + "272640K->33532K(306688K), 0.0381419 secs] 272640K->33532K(1014528K), 0.0383306 secs] "
-                + "[Times: user=0.11 sys=0.02, real=0.04 secs]";
-        assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
-        ParNewEvent event = new ParNewEvent(logLine);
-        assertEquals((long) 13086, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(272640), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(33532), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(306688), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes((272640 - 272640)), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes((33532 - 33532)), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes((1014528 - 306688)), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(38330, event.getDuration(), "Duration not parsed correctly.");
-        assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
-        assertEquals(11, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(2, event.getTimeSys(), "Sys time not parsed correctly.");
-        assertEquals(4, event.getTimeReal(), "Real time not parsed correctly.");
-        assertEquals(325, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
     @Test
@@ -501,8 +469,6 @@ class TestParNewEvent {
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_DATESTAMP_NO_TIMESTAMP),
-                Analysis.ERROR_DATESTAMP_NO_TIMESTAMP + " analysis not identified.");
         // Don't report datestamp only lines unidentified
         assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE),
                 Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE + " analysis incorrectly identified.");

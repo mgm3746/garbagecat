@@ -163,19 +163,19 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
     /**
      * Regular expression for SERIAL_NEW block in some events.
      */
-    public static final String SERIAL_NEW_BLOCK = "(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[DefNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\) )?: " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]";
+    public static final String SERIAL_NEW_BLOCK = JdkRegEx.DECORATOR + " \\[DefNew( \\(("
+            + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\) )?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( \\("
-            + TRIGGER + "\\))?([ ]{0,1}" + SERIAL_NEW_BLOCK + ")?( )?(" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[Tenured: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\), \\[(Perm |Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\)\\], " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[(Full )?GC( \\(" + TRIGGER + "\\))?([ ]{0,1}"
+            + SERIAL_NEW_BLOCK + ")?( )?" + JdkRegEx.DECORATOR + " \\[Tenured: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), \\[(Perm |Metaspace): " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\], " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
+            + "?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(SerialOldEvent.REGEX);
 
@@ -194,24 +194,31 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-            // Use last trigger
-            if (matcher.group(29) != null) {
-                trigger = matcher.group(29);
-            } else if (matcher.group(14) != null) {
-                trigger = matcher.group(14);
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            } else {
+                // Datestamp only.
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
             }
-            old = kilobytes(matcher.group(48));
-            oldEnd = kilobytes(matcher.group(49));
-            oldAllocation = kilobytes(matcher.group(50));
-            young = kilobytes(matcher.group(54)).minus(getOldOccupancyInit());
-            youngEnd = kilobytes(matcher.group(55)).minus(getOldOccupancyEnd());
-            youngAvailable = kilobytes(matcher.group(56)).minus(getOldSpace());
+            // Use last trigger
+            if (matcher.group(33) != null) {
+                trigger = matcher.group(33);
+            } else if (matcher.group(16) != null) {
+                trigger = matcher.group(16);
+            }
+            old = kilobytes(matcher.group(54));
+            oldEnd = kilobytes(matcher.group(55));
+            oldAllocation = kilobytes(matcher.group(56));
+            young = kilobytes(matcher.group(60)).minus(getOldOccupancyInit());
+            youngEnd = kilobytes(matcher.group(61)).minus(getOldOccupancyEnd());
+            youngAvailable = kilobytes(matcher.group(62)).minus(getOldSpace());
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = kilobytes(matcher.group(58));
-            permGenEnd = kilobytes(matcher.group(59));
-            permGenAllocation = kilobytes(matcher.group(60));
-            duration = JdkMath.convertSecsToMicros(matcher.group(61)).intValue();
+            permGen = kilobytes(matcher.group(64));
+            permGenEnd = kilobytes(matcher.group(65));
+            permGenAllocation = kilobytes(matcher.group(66));
+            duration = JdkMath.convertSecsToMicros(matcher.group(67)).intValue();
         }
     }
 

@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 class TestShenandoahConsiderClUnloadConcMarkEvent {
 
     @Test
-    void testLineUnifie() {
+    void testLineUnified() {
         String logLine = "[0.001s][info][gc] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are "
                 + "observed on class-unloading sensitive workloads";
         assertTrue(ShenandoahConsiderClassUnloadingConcMarkEvent.match(logLine), "Log line not recognized as "

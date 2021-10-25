@@ -279,4 +279,26 @@ class TestParallelScavengeEvent {
         assertEquals(17, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(142, event.getParallelism(), "Parallelism not calculated correctly.");
     }
+
+    @Test
+    void testDatestamp() {
+        String logLine = "2017-02-01T17:09:50.155+0000: [GC (Heap Dump Initiated GC) "
+                + "[PSYoungGen: 335699K->33192K(397312K)] 1220565K->918194K(1287680K), 0.0243428 secs] "
+                + "[Times: user=0.07 sys=0.01, real=0.03 secs]";
+        assertTrue(ParallelScavengeEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
+        ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
+        assertEquals(539266190155L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testTimestamp() {
+        String logLine = "1029482.045: [GC (Heap Dump Initiated GC) "
+                + "[PSYoungGen: 335699K->33192K(397312K)] 1220565K->918194K(1287680K), 0.0243428 secs] "
+                + "[Times: user=0.07 sys=0.01, real=0.03 secs]";
+        assertTrue(ParallelScavengeEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
+        ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
+        assertEquals((long) 1029482045, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
 }

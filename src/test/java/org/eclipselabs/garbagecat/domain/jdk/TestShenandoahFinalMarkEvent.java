@@ -41,6 +41,24 @@ class TestShenandoahFinalMarkEvent {
     }
 
     @Test
+    void testLogLineJdk8Timestamp() {
+        String logLine = "0.489: [Pause Final Mark, 0.313 ms]";
+        assertTrue(ShenandoahFinalMarkEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
+        ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
+        assertEquals((long) 489, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Datestamp() {
+        String logLine = "2020-03-10T08:03:29.427-0400: [Pause Final Mark, 0.313 ms]";
+        assertTrue(ShenandoahFinalMarkEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
+        ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
+        assertEquals(637139009427L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
     void testLogLineUnifiedUnified() {
         String logLine = "[0.531s][info][gc] GC(1) Pause Final Mark 1.004ms";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine),

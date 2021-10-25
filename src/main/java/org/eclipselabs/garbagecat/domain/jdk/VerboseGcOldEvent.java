@@ -109,10 +109,9 @@ public class VerboseGcOldEvent extends UnknownCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC( \\("
-            + TRIGGER + "\\) )? (" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")->(" + JdkRegEx.SIZE_K + "|"
-            + JdkRegEx.SIZE + ")\\((" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")\\), " + JdkRegEx.DURATION
-            + "\\]?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC( \\(" + TRIGGER + "\\) )? ("
+            + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")->(" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")\\(("
+            + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(VerboseGcOldEvent.REGEX);
 
@@ -126,24 +125,31 @@ public class VerboseGcOldEvent extends UnknownCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-            trigger = matcher.group(13);
-            if (matcher.group(15).matches(JdkRegEx.SIZE_K)) {
-                combinedBegin = kilobytes(matcher.group(16));
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             } else {
-                combinedBegin = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
+                // Datestamp only.
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
             }
-            if (matcher.group(20).matches(JdkRegEx.SIZE_K)) {
-                combinedEnd = kilobytes(matcher.group(21));
+            trigger = matcher.group(15);
+            if (matcher.group(17).matches(JdkRegEx.SIZE_K)) {
+                combinedBegin = kilobytes(matcher.group(18));
             } else {
-                combinedEnd = memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
+                combinedBegin = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
             }
-            if (matcher.group(25).matches(JdkRegEx.SIZE_K)) {
-                combinedAllocation = kilobytes(matcher.group(26));
+            if (matcher.group(22).matches(JdkRegEx.SIZE_K)) {
+                combinedEnd = kilobytes(matcher.group(23));
             } else {
-                combinedAllocation = memory(matcher.group(27), matcher.group(29).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(24), matcher.group(26).charAt(0)).convertTo(KILOBYTES);
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(30)).intValue();
+            if (matcher.group(27).matches(JdkRegEx.SIZE_K)) {
+                combinedAllocation = kilobytes(matcher.group(28));
+            } else {
+                combinedAllocation = memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
+            }
+            duration = JdkMath.convertSecsToMicros(matcher.group(32)).intValue();
         }
     }
 

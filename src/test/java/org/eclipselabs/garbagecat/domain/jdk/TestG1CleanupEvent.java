@@ -127,4 +127,16 @@ class TestG1CleanupEvent {
         assertEquals(1, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(1300, event.getParallelism(), "Parallelism not calculated correctly.");
     }
+
+    @Test
+    void testLogLineDatestamp() {
+        String logLine = "2020-04-29T22:05:39.708+0200: [GC cleanup 1745.419: [G1Ergonomics "
+                + "(Concurrent Cycles) finish cleanup, occupancy: 22498457048 bytes, capacity: 32212254720 bytes, "
+                + "known garbage: 9291782792 bytes (28.85 %)]21456M->20543M(30720M), 0.0155840 secs] "
+                + "[Times: user=0.07 sys=0.06, real=0.01 secs]";
+        assertTrue(G1CleanupEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".");
+        G1CleanupEvent event = new G1CleanupEvent(logLine);
+        assertEquals(641487939708L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
 }

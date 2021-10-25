@@ -124,14 +124,13 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": \\[GC( \\("
-            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\)[ ]{0,1})?(\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
-            + JdkRegEx.SIZE_K + "\\)\\])?)?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[(Full)?[ ]{0,1}GC( )?(\\(" + TRIGGER + "\\))?( )?((" + JdkRegEx.DATESTAMP + ": )?("
-            + JdkRegEx.TIMESTAMP + ": )?\\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?:)? "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] ("
-            + JdkRegEx.SIZE_K + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)" + JdkRegEx.ICMS_DC_BLOCK
-            + "?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
+            + "\\)[ ]{0,1})?(\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K + "\\)\\])?)?"
+            + JdkRegEx.DECORATOR + " \\[(Full)?[ ]{0,1}GC( )?(\\(" + TRIGGER + "\\))?( )?((" + JdkRegEx.DECORATOR
+            + " )?\\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?:)? " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] (" + JdkRegEx.SIZE_K
+            + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(ParNewEvent.REGEX);
     /**
@@ -209,33 +208,47 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            if (matcher.group(13) != null) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-            } else {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(27)).longValue();
+            if (matcher.group(14) != null && matcher.group(14).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+            } else if (matcher.group(2) != null) {
+                if (matcher.group(2).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(2)).longValue();
+                } else {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
+                }
+            } else if (matcher.group(31) != null && matcher.group(31).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(31)).longValue();
+            } else if (matcher.group(19) != null) {
+                if (matcher.group(19).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(19)).longValue();
+                } else {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(19));
+                }
             }
-            if (matcher.group(48) != null) {
-                trigger = matcher.group(48);
-            } else {
-                trigger = matcher.group(31);
-            }
-            young = kilobytes(matcher.group(49));
-            youngEnd = kilobytes(matcher.group(50));
-            youngAvailable = kilobytes(matcher.group(51));
-            oldEnd = kilobytes(matcher.group(57)).minus(youngEnd);
-            old = matcher.group(55) == null ? oldEnd : kilobytes(matcher.group(56)).minus(young);
-            oldAllocation = kilobytes(matcher.group(58)).minus(youngAvailable);
-            duration = JdkMath.convertSecsToMicros(matcher.group(60)).intValue();
-            if (matcher.group(59) != null) {
-                super.setIncrementalMode(true);
-            } else {
-                super.setIncrementalMode(false);
-            }
-            if (matcher.group(63) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(64)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(65)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(66)).intValue();
-            }
+        }
+        if (matcher.group(54) != null) {
+            trigger = matcher.group(54);
+        } else {
+            trigger = matcher.group(35);
+        }
+        young = kilobytes(matcher.group(55));
+        youngEnd = kilobytes(matcher.group(56));
+        youngAvailable = kilobytes(matcher.group(57));
+        oldEnd = kilobytes(matcher.group(63)).minus(youngEnd);
+        old = matcher.group(61) == null ? oldEnd : kilobytes(matcher.group(62)).minus(young);
+        oldAllocation = kilobytes(matcher.group(64)).minus(youngAvailable);
+        duration = JdkMath.convertSecsToMicros(matcher.group(66)).intValue();
+        if (matcher.group(65) != null) {
+            super.setIncrementalMode(true);
+        } else {
+            super.setIncrementalMode(false);
+        }
+        if (matcher.group(69) != null) {
+            timeUser = JdkMath.convertSecsToCentis(matcher.group(70)).intValue();
+            timeSys = JdkMath.convertSecsToCentis(matcher.group(71)).intValue();
+            timeReal = JdkMath.convertSecsToCentis(matcher.group(72)).intValue();
         }
     }
 

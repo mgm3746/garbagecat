@@ -73,12 +73,38 @@ class TestReferenceGcEvent {
     }
 
     @Test
-    void testLogLineDatestamps() {
+    void testLogLineDatestampTimestamp() {
         String logLine = "2017-04-05T09:07:18.552-0500: 201524.276: [SoftReference, 0 refs, 0.0002257 secs]"
                 + "2017-04-05T09:07:18.552-0500: 201524.277: [WeakReference, 48 refs, 0.0001397 secs]"
                 + "2017-04-05T09:07:18.552-0500: 201524.277: [FinalReference, 2813 refs, 0.0026465 secs]"
                 + "2017-04-05T09:07:18.555-0500: 201524.279: [PhantomReference, 13 refs, 18 refs, 0.0002374 secs]"
                 + "2017-04-05T09:07:18.555-0500: 201524.280: [JNI Weak Reference, 0.0000167 secs], 0.0319874 secs]";
+        assertTrue(ReferenceGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.REFERENCE_GC.toString() + ".");
+        ReferenceGcEvent event = new ReferenceGcEvent(logLine);
+        assertEquals((long) 201524276, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineDatestamp() {
+        String logLine = "2017-04-05T09:07:18.552-0500: [SoftReference, 0 refs, 0.0002257 secs]"
+                + "2017-04-05T09:07:18.552-0500: [WeakReference, 48 refs, 0.0001397 secs]"
+                + "2017-04-05T09:07:18.552-0500: [FinalReference, 2813 refs, 0.0026465 secs]"
+                + "2017-04-05T09:07:18.555-0500: [PhantomReference, 13 refs, 18 refs, 0.0002374 secs]"
+                + "2017-04-05T09:07:18.555-0500: [JNI Weak Reference, 0.0000167 secs], 0.0319874 secs]";
+        assertTrue(ReferenceGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.REFERENCE_GC.toString() + ".");
+        ReferenceGcEvent event = new ReferenceGcEvent(logLine);
+        assertEquals(544698438552L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineTimestamp() {
+        String logLine = "201524.276: [SoftReference, 0 refs, 0.0002257 secs]"
+                + "201524.277: [WeakReference, 48 refs, 0.0001397 secs]"
+                + "201524.277: [FinalReference, 2813 refs, 0.0026465 secs]"
+                + "201524.279: [PhantomReference, 13 refs, 18 refs, 0.0002374 secs]"
+                + "201524.280: [JNI Weak Reference, 0.0000167 secs], 0.0319874 secs]";
         assertTrue(ReferenceGcEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.REFERENCE_GC.toString() + ".");
         ReferenceGcEvent event = new ReferenceGcEvent(logLine);

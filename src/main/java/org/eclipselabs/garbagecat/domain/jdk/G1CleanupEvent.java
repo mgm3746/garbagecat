@@ -72,8 +72,8 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC cleanup( )?(1745.419: \\[G1Ergonomics \\(Concurrent Cycles\\) finish cleanup, occupancy: "
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR
+            + " \\[GC cleanup( )?(1745.419: \\[G1Ergonomics \\(Concurrent Cycles\\) finish cleanup, occupancy: "
             + JdkRegEx.SIZE_BYTES + " bytes, capacity: " + JdkRegEx.SIZE_BYTES + " bytes, known garbage: "
             + JdkRegEx.SIZE_BYTES + " bytes \\(\\d{1,2}\\.\\d{2} %\\)\\])?(" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\))?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
@@ -134,17 +134,24 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-            if (matcher.group(18) != null) {
-                combined = memory(matcher.group(18), matcher.group(20).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(21), matcher.group(23).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = memory(matcher.group(24), matcher.group(26).charAt(0)).convertTo(KILOBYTES);
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            } else {
+                // Datestamp only.
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(27)).intValue();
-            if (matcher.group(30) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(31)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(32)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(33)).intValue();
+            if (matcher.group(20) != null) {
+                combined = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
+            }
+            duration = JdkMath.convertSecsToMicros(matcher.group(29)).intValue();
+            if (matcher.group(32) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(33)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
             }
         }
     }

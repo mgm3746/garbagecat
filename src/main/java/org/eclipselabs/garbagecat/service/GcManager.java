@@ -76,14 +76,12 @@ import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.DateStampPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ParallelPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.SerialPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ShenandoahPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
-import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -133,8 +131,6 @@ public class GcManager {
     public String getLastLogLineUnprocessed() {
         return lastLogLineUnprocessed;
     }
-
-    private static final Date jvmStartDate = GcUtil.parseStartDateTime("2000-01-01 00:00:00.000");
 
     /**
      * Preprocess log file. Remove extraneous information and format the log file for parsing.
@@ -273,177 +269,176 @@ public class GcManager {
 
         if (currentLogLine != null)
 
-            // Convert datestamp to timestamp.
-            if (jvmStartDate != null && DateStampPreprocessAction.match(currentLogLine)) {
-                DateStampPreprocessAction action = new DateStampPreprocessAction(currentLogLine, jvmStartDate);
-                currentLogLine = action.getLogEntry();
-            }
+            /*
+             * Other preprocessing.
+             * 
+             * Check context collector type to account for common logging patterns across collector families. For
+             * example the following logging output is common to CMS and G1:
+             * 
+             * , 0.0209631 secs]
+             */
 
-        /*
-         * Other preprocessing.
-         * 
-         * Check context collector type to account for common logging patterns across collector families. For example
-         * the following logging output is common to CMS and G1:
-         * 
-         * , 0.0209631 secs]
-         */
-
-        if (isThrowawayEvent(currentLogLine)) {
-            // Analysis
-            if (!jvmDao.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING)) {
-                if (ClassUnloadingEvent.match(currentLogLine)
-                        && !jvmDao.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING)) {
-                    jvmDao.getAnalysis().add(Analysis.WARN_TRACE_CLASS_UNLOADING);
-                }
-            }
-            if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC)) {
-                // Only match initial line, as FooterHeapEvent and HeatAtGcEvent share patterns
-                if (currentLogLine.matches("^.+Heap (after|before) (gc|GC) invocations.+$")) {
-                    jvmDao.getAnalysis().add(Analysis.WARN_PRINT_HEAP_AT_GC);
-                }
-            }
-            if (!jvmDao.getAnalysis().contains(Analysis.WARN_CLASS_HISTOGRAM)) {
-                if (ClassHistogramEvent.match(currentLogLine)) {
-                    jvmDao.getAnalysis().add(Analysis.WARN_CLASS_HISTOGRAM);
-                }
-            }
-            if (!jvmDao.getAnalysis().contains(Analysis.INFO_PRINT_FLS_STATISTICS)) {
-                if (FlsStatisticsEvent.match(currentLogLine)) {
-                    jvmDao.getAnalysis().add(Analysis.INFO_PRINT_FLS_STATISTICS);
-                }
-            }
-            if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_TENURING_DISTRIBUTION)) {
-                if (TenuringDistributionEvent.match(currentLogLine)) {
-                    jvmDao.getAnalysis().add(Analysis.WARN_PRINT_TENURING_DISTRIBUTION);
-                }
-            }
-            if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
-                if (ApplicationConcurrentTimeEvent.match(currentLogLine)) {
-                    jvmDao.getAnalysis().add(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME);
-                }
-            }
-            if (!jvmDao.getAnalysis().contains(Analysis.WARN_APPLICATION_LOGGING)) {
-                if (ApplicationLoggingEvent.match(currentLogLine)) {
-                    jvmDao.getAnalysis().add(Analysis.WARN_APPLICATION_LOGGING);
-                }
-            }
-            if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED)) {
-                if (ReferenceGcEvent.match(currentLogLine)) {
-                    jvmDao.getAnalysis().add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
-                }
-            }
-            currentLogLine = null;
-        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                && !context.contains(UnifiedPreprocessAction.TOKEN)
-                && ShenandoahPreprocessAction.match(currentLogLine)) {
-            ShenandoahPreprocessAction action = new ShenandoahPreprocessAction(priorLogLine, currentLogLine,
-                    nextLogLine, entangledLogLines, context);
-            if (action.getLogEntry() != null) {
-                preprocessedLogLine = action.getLogEntry();
-            }
-        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                && !context.contains(ShenandoahPreprocessAction.TOKEN)
-                && UnifiedPreprocessAction.match(currentLogLine)) {
-            UnifiedPreprocessAction action = new UnifiedPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
-                    entangledLogLines, context);
-            if (action.getLogEntry() != null) {
-                preprocessedLogLine = action.getLogEntry();
-            }
-        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(UnifiedPreprocessAction.TOKEN)
-                && ParallelPreprocessAction.match(currentLogLine)) {
-            ParallelPreprocessAction action = new ParallelPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
-                    entangledLogLines, context);
-            if (action.getLogEntry() != null) {
-                preprocessedLogLine = action.getLogEntry();
-            }
-        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ShenandoahPreprocessAction.TOKEN)
-                && !context.contains(UnifiedPreprocessAction.TOKEN)
-                && CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
-            if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC)) {
-                // Only match initial line, as FooterHeapEvent and HeatAtGcEvent share patterns
-                if (currentLogLine.matches("^.+Heap (after|before) (gc|GC) invocations.+$")) {
-                    jvmDao.getAnalysis().add(Analysis.WARN_PRINT_HEAP_AT_GC);
-                }
-            }
-            CmsPreprocessAction action = new CmsPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
-                    entangledLogLines, context);
-            if (action.getLogEntry() != null) {
-                preprocessedLogLine = action.getLogEntry();
-            }
-        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(SerialPreprocessAction.TOKEN)
-                && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
-                && !context.contains(ShenandoahPreprocessAction.TOKEN)
-                && !context.contains(UnifiedPreprocessAction.TOKEN)
-                && ApplicationConcurrentTimePreprocessAction.match(currentLogLine, priorLogLine)) {
-            ApplicationConcurrentTimePreprocessAction action = new ApplicationConcurrentTimePreprocessAction(
-                    currentLogLine, context);
-            if (action.getLogEntry() != null) {
-                preprocessedLogLine = action.getLogEntry();
-            }
-        } else if (!context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                && !context.contains(CmsPreprocessAction.TOKEN) && !context.contains(ShenandoahPreprocessAction.TOKEN)
-                && !context.contains(UnifiedPreprocessAction.TOKEN)
-                && ApplicationStoppedTimePreprocessAction.match(currentLogLine, priorLogLine)) {
-            ApplicationStoppedTimePreprocessAction action = new ApplicationStoppedTimePreprocessAction(currentLogLine,
-                    context);
-            if (action.getLogEntry() != null) {
-                preprocessedLogLine = action.getLogEntry();
-            }
-        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                && !context.contains(CmsPreprocessAction.TOKEN) && !context.contains(ShenandoahPreprocessAction.TOKEN)
-                && !context.contains(UnifiedPreprocessAction.TOKEN)
-                && G1PreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
-            G1PreprocessAction action = new G1PreprocessAction(priorLogLine, currentLogLine, nextLogLine,
-                    entangledLogLines, context);
-            if (action.getLogEntry() != null) {
-                preprocessedLogLine = action.getLogEntry();
-            }
-        } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
-                && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ShenandoahPreprocessAction.TOKEN)
-                && !context.contains(UnifiedPreprocessAction.TOKEN) && SerialPreprocessAction.match(currentLogLine)) {
-            SerialPreprocessAction action = new SerialPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
-                    entangledLogLines, context);
-            if (action.getLogEntry() != null) {
-                preprocessedLogLine = action.getLogEntry();
-            }
-        } else {
-            // Output any entangled log lines
-            if (entangledLogLines != null && !entangledLogLines.isEmpty()) {
-                for (String logLine : entangledLogLines) {
-                    if (preprocessedLogLine == null) {
-                        preprocessedLogLine = logLine;
-                    } else {
-                        preprocessedLogLine = preprocessedLogLine + Constants.LINE_SEPARATOR + logLine;
+            if (isThrowawayEvent(currentLogLine)) {
+                // Analysis
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING)) {
+                    if (ClassUnloadingEvent.match(currentLogLine)
+                            && !jvmDao.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING)) {
+                        jvmDao.getAnalysis().add(Analysis.WARN_TRACE_CLASS_UNLOADING);
                     }
                 }
-                // Reset entangled log lines
-                entangledLogLines.clear();
-            }
-            if (preprocessedLogLine == null) {
-                preprocessedLogLine = currentLogLine;
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC)) {
+                    // Only match initial line, as FooterHeapEvent and HeatAtGcEvent share patterns
+                    if (currentLogLine.matches("^.+Heap (after|before) (gc|GC) invocations.+$")) {
+                        jvmDao.getAnalysis().add(Analysis.WARN_PRINT_HEAP_AT_GC);
+                    }
+                }
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_CLASS_HISTOGRAM)) {
+                    if (ClassHistogramEvent.match(currentLogLine)) {
+                        jvmDao.getAnalysis().add(Analysis.WARN_CLASS_HISTOGRAM);
+                    }
+                }
+                if (!jvmDao.getAnalysis().contains(Analysis.INFO_PRINT_FLS_STATISTICS)) {
+                    if (FlsStatisticsEvent.match(currentLogLine)) {
+                        jvmDao.getAnalysis().add(Analysis.INFO_PRINT_FLS_STATISTICS);
+                    }
+                }
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_TENURING_DISTRIBUTION)) {
+                    if (TenuringDistributionEvent.match(currentLogLine)) {
+                        jvmDao.getAnalysis().add(Analysis.WARN_PRINT_TENURING_DISTRIBUTION);
+                    }
+                }
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
+                    if (ApplicationConcurrentTimeEvent.match(currentLogLine)) {
+                        jvmDao.getAnalysis().add(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME);
+                    }
+                }
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_APPLICATION_LOGGING)) {
+                    if (ApplicationLoggingEvent.match(currentLogLine)) {
+                        jvmDao.getAnalysis().add(Analysis.WARN_APPLICATION_LOGGING);
+                    }
+                }
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED)) {
+                    if (ReferenceGcEvent.match(currentLogLine)) {
+                        jvmDao.getAnalysis().add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
+                    }
+                }
+                currentLogLine = null;
+            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
+                    && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
+                    && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+                    && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
+                    && !context.contains(UnifiedPreprocessAction.TOKEN)
+                    && ShenandoahPreprocessAction.match(currentLogLine)) {
+                ShenandoahPreprocessAction action = new ShenandoahPreprocessAction(priorLogLine, currentLogLine,
+                        nextLogLine, entangledLogLines, context);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
+            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
+                    && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
+                    && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+                    && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
+                    && !context.contains(ShenandoahPreprocessAction.TOKEN)
+                    && UnifiedPreprocessAction.match(currentLogLine)) {
+                UnifiedPreprocessAction action = new UnifiedPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
+                        entangledLogLines, context);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
+            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
+                    && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
+                    && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+                    && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(UnifiedPreprocessAction.TOKEN)
+                    && ParallelPreprocessAction.match(currentLogLine)) {
+                ParallelPreprocessAction action = new ParallelPreprocessAction(priorLogLine, currentLogLine,
+                        nextLogLine, entangledLogLines, context);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
+            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
+                    && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
+                    && !context.contains(SerialPreprocessAction.TOKEN)
+                    && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(G1PreprocessAction.TOKEN)
+                    && !context.contains(ShenandoahPreprocessAction.TOKEN)
+                    && !context.contains(UnifiedPreprocessAction.TOKEN)
+                    && CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC)) {
+                    // Only match initial line, as FooterHeapEvent and HeatAtGcEvent share patterns
+                    if (currentLogLine.matches("^.+Heap (after|before) (gc|GC) invocations.+$")) {
+                        jvmDao.getAnalysis().add(Analysis.WARN_PRINT_HEAP_AT_GC);
+                    }
+                }
+                CmsPreprocessAction action = new CmsPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
+                        entangledLogLines, context);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
+            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
+                    && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(SerialPreprocessAction.TOKEN)
+                    && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+                    && !context.contains(ShenandoahPreprocessAction.TOKEN)
+                    && !context.contains(UnifiedPreprocessAction.TOKEN)
+                    && ApplicationConcurrentTimePreprocessAction.match(currentLogLine, priorLogLine)) {
+                ApplicationConcurrentTimePreprocessAction action = new ApplicationConcurrentTimePreprocessAction(
+                        currentLogLine, context);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
+            } else if (!context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
+                    && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
+                    && !context.contains(CmsPreprocessAction.TOKEN)
+                    && !context.contains(ShenandoahPreprocessAction.TOKEN)
+                    && !context.contains(UnifiedPreprocessAction.TOKEN)
+                    && ApplicationStoppedTimePreprocessAction.match(currentLogLine, priorLogLine)) {
+                ApplicationStoppedTimePreprocessAction action = new ApplicationStoppedTimePreprocessAction(
+                        currentLogLine, context);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
+            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
+                    && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
+                    && !context.contains(SerialPreprocessAction.TOKEN)
+                    && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+                    && !context.contains(ShenandoahPreprocessAction.TOKEN)
+                    && !context.contains(UnifiedPreprocessAction.TOKEN)
+                    && G1PreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
+                G1PreprocessAction action = new G1PreprocessAction(priorLogLine, currentLogLine, nextLogLine,
+                        entangledLogLines, context);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
+            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
+                    && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
+                    && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+                    && !context.contains(G1PreprocessAction.TOKEN)
+                    && !context.contains(ShenandoahPreprocessAction.TOKEN)
+                    && !context.contains(UnifiedPreprocessAction.TOKEN)
+                    && SerialPreprocessAction.match(currentLogLine)) {
+                SerialPreprocessAction action = new SerialPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
+                        entangledLogLines, context);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
             } else {
-                preprocessedLogLine = preprocessedLogLine + Constants.LINE_SEPARATOR + currentLogLine;
+                // Output any entangled log lines
+                if (entangledLogLines != null && !entangledLogLines.isEmpty()) {
+                    for (String logLine : entangledLogLines) {
+                        if (preprocessedLogLine == null) {
+                            preprocessedLogLine = logLine;
+                        } else {
+                            preprocessedLogLine = preprocessedLogLine + Constants.LINE_SEPARATOR + logLine;
+                        }
+                    }
+                    // Reset entangled log lines
+                    entangledLogLines.clear();
+                }
+                if (preprocessedLogLine == null) {
+                    preprocessedLogLine = currentLogLine;
+                } else {
+                    preprocessedLogLine = preprocessedLogLine + Constants.LINE_SEPARATOR + currentLogLine;
+                }
+                context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        }
 
         return preprocessedLogLine;
     }
@@ -797,21 +792,8 @@ public class GcManager {
                                 (int) ((PermMetaspaceData) event).getPermSpace().getValue(KILOBYTES));
                     }
                 } else if (event instanceof UnknownEvent) {
-                    // Don't count reportable events with datestamp only as unidentified
-                    DateStampPreprocessAction preprocessAction = new DateStampPreprocessAction(logLine, jvmStartDate);
-                    LogEvent preprocessedEvent = null;
-                    if (preprocessAction.getLogEntry() != null) {
-                        preprocessedEvent = JdkUtil.parseLogLine(preprocessAction.getLogEntry());
-                    } //
-                    if (preprocessedEvent != null
-                            && JdkUtil.isReportable(LogEventType.valueOf(preprocessedEvent.getName()))) {
-                        if (!jvmDao.getAnalysis().contains(Analysis.ERROR_DATESTAMP_NO_TIMESTAMP)) {
-                            jvmDao.getAnalysis().add(Analysis.ERROR_DATESTAMP_NO_TIMESTAMP);
-                        }
-                    } else {
-                        if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
-                            jvmDao.getUnidentifiedLogLines().add(logLine);
-                        }
+                    if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
+                        jvmDao.getUnidentifiedLogLines().add(logLine);
                     }
                 }
 

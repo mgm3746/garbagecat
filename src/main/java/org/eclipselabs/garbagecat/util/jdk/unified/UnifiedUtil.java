@@ -28,11 +28,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
  */
 public final class UnifiedUtil {
 
-    private static final Date jvmStartDate = GcUtil.parseDateStamp("2000-01-01T00:00:00.000-0500");
-
-    private UnifiedUtil() {
-        super();
-    }
+    public static final Date jvmStartDate = GcUtil.parseDateStamp("2000-01-01T00:00:00.000-0500");
 
     /**
      * @param eventTypes
@@ -75,16 +71,7 @@ public final class UnifiedUtil {
         return false;
     }
 
-    /**
-     * Convert datestamp to milliseconds. For example: Convert 2019-02-05T14:47:34.229-0200 to 23.
-     * 
-     * @param datestamp
-     *            Absolute date/time.
-     * @return Milliseconds from a point in time.
-     */
-    public static long convertDatestampToMillis(String datestamp) {
-        // Calculate uptimemillis from random date/time
-        Date eventDate = GcUtil.parseDateStamp(datestamp);
-        return GcUtil.dateDiff(jvmStartDate, eventDate);
+    private UnifiedUtil() {
+        super();
     }
 }

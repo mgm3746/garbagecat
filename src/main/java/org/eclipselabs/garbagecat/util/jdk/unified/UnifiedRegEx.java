@@ -23,32 +23,16 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 public class UnifiedRegEx {
 
     /**
-     * Seconds since JVM started.
-     * 
-     * For example: 25.016s
+     * Blank line.
      */
-    public static final String UPTIME = "(\\d{0,12}[\\.\\,]\\d{3})s";
+    public static final String BLANK_LINE = "^" + UnifiedRegEx.DECORATOR + "\\s*$";
 
     /**
-     * Milliseconds since JVM started.
-     * 
-     * For example: 3ms
+     * Logging event with only the time decorator (datestamp).
      */
-    public static final String UPTIMEMILLIS = "(\\d{1,15})ms";
-
-    /**
-     * The duration of the event in milliseconds with 3 decimal places, introduced JDK9.
-     * 
-     * For example: 2.969ms, 0.2ms, 15.91 ms
-     */
-    public static final String DURATION = "(\\d{1,7}[\\.\\,]\\d{1,3})[ ]{0,1}ms";
-
-    /**
-     * The garbage collection event number in JDK9+ unified logging.
-     * 
-     * For example: GC(6)
-     */
-    public static final String GC_EVENT_NUMBER = "GC\\(\\d{1,7}\\)";
+    public static final String DATESTAMP_EVENT = "^\\[" + JdkRegEx.DATESTAMP
+            + "\\](\\[info\\]\\[(gc|safepoint)(,(cds|cpu|ergo|heap|init|marking|metaspace|mmu|phases|stats|start|"
+            + "stringtable|stringdedup|task))?(,(coops|exit|start))?[ ]{0,13}\\])?.*";
 
     /**
      * Regular expression for recognized decorations prepending logging.
@@ -102,22 +86,39 @@ public class UnifiedRegEx {
      * [2020-02-14T15:21:55.207-0500][52ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
      * </pre>
      */
-    public static final String DECORATOR = "\\[(" + JdkRegEx.DATESTAMP + "|" + UPTIME + "|" + UPTIMEMILLIS + ")\\](\\[("
-            + UPTIME + "|" + UPTIMEMILLIS + ")\\])?(\\[info\\]\\[(gc|safepoint)"
-            + "(,(cds|cpu|ergo|heap|init|marking|metaspace|mmu|phases|stats|start|stringtable|stringdedup|task))?"
-            + "(,(coops|exit|start))?[ ]{0,13}\\])?( " + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
+    public static final String DECORATOR = "\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
+            + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
+            + ")\\])?(\\[info\\]\\[(gc|safepoint)(,(cds|cpu|ergo|heap|init|marking|metaspace|mmu|phases|stats|start|"
+            + "stringtable|stringdedup|task))?(,(coops|exit|start))?[ ]{0,13}\\])?( " + UnifiedRegEx.GC_EVENT_NUMBER
+            + ")?";
 
     /**
-     * Blank line.
+     * The duration of the event in milliseconds with 3 decimal places, introduced JDK9.
+     * 
+     * For example: 2.969ms, 0.2ms, 15.91 ms
      */
-    public static final String BLANK_LINE = "^" + DECORATOR + "\\s*$";
+    public static final String DURATION = "(\\d{1,7}[\\.\\,]\\d{1,3})[ ]{0,1}ms";
 
     /**
-     * Logging event with only the time decorator (datestamp).
+     * The garbage collection event number in JDK9+ unified logging.
+     * 
+     * For example: GC(6)
      */
-    public static final String DATESTAMP_EVENT = "\\[" + JdkRegEx.DATESTAMP + "\\](\\[info\\]\\[gc"
-            + "(,(cpu|ergo|heap|init|marking|metaspace|phases|stats|start|stringtable|task))?"
-            + "(,(coops|exit|start))?[ ]{0,13}\\])?.*";
+    public static final String GC_EVENT_NUMBER = "GC\\(\\d{1,7}\\)";
+
+    /**
+     * Seconds since JVM started.
+     * 
+     * For example: 25.016s
+     */
+    public static final String UPTIME = "(\\d{0,12}[\\.\\,]\\d{3})s";
+
+    /**
+     * Milliseconds since JVM started.
+     * 
+     * For example: 3ms
+     */
+    public static final String UPTIMEMILLIS = "(\\d{1,15})ms";
 
     /**
      * Make default constructor private so the class cannot be instantiated.

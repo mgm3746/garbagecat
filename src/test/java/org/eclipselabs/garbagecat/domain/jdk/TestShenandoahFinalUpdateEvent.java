@@ -41,6 +41,25 @@ class TestShenandoahFinalUpdateEvent {
     }
 
     @Test
+    void testLogLineJdk8Timestamp() {
+        String logLine = "18.504: [Pause Final Update Refs, 0.206 ms]";
+        assertTrue(ShenandoahFinalUpdateEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + ".");
+        ShenandoahFinalUpdateEvent event = new ShenandoahFinalUpdateEvent(logLine);
+        assertEquals((long) 18504, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Datestamp() {
+        String logLine = "2020-03-10T08:03:47.442-0400: [Pause Final Update Refs, 0.206 ms]";
+        assertTrue(ShenandoahFinalUpdateEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + ".");
+        ShenandoahFinalUpdateEvent event = new ShenandoahFinalUpdateEvent(logLine);
+        assertEquals(637139027442L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(206, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
     void testLogLineUnified() {
         String logLine = "[1.030s][info][gc] GC(10) Pause Final Update Refs 0.097ms";
         assertTrue(ShenandoahFinalUpdateEvent.match(logLine),

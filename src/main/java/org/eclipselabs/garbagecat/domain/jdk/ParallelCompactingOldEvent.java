@@ -178,8 +178,8 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\("
-            + TRIGGER + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC (\\(" + TRIGGER
+            + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
             + "\\)\\] \\[ParOldGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] "
             + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)(,)? \\[(PSPermGen|Metaspace): "
             + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\], " + JdkRegEx.DURATION
@@ -197,23 +197,32 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-            trigger = matcher.group(13);
-            young = kilobytes(matcher.group(15));
-            youngEnd = kilobytes(matcher.group(16));
-            youngAvailable = kilobytes(matcher.group(17));
-            old = kilobytes(matcher.group(18));
-            oldEnd = kilobytes(matcher.group(19));
-            oldAllocation = kilobytes(matcher.group(20));
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1) != null) {
+                if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                } else {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                }
+            }
+            trigger = matcher.group(15);
+            young = kilobytes(matcher.group(17));
+            youngEnd = kilobytes(matcher.group(18));
+            youngAvailable = kilobytes(matcher.group(19));
+            old = kilobytes(matcher.group(20));
+            oldEnd = kilobytes(matcher.group(21));
+            oldAllocation = kilobytes(matcher.group(22));
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = kilobytes(matcher.group(26));
-            permGenEnd = kilobytes(matcher.group(27));
-            permGenAllocation = kilobytes(matcher.group(28));
-            duration = JdkMath.convertSecsToMicros(matcher.group(29)).intValue();
-            if (matcher.group(32) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(33)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
+            permGen = kilobytes(matcher.group(28));
+            permGenEnd = kilobytes(matcher.group(29));
+            permGenAllocation = kilobytes(matcher.group(30));
+            duration = JdkMath.convertSecsToMicros(matcher.group(31)).intValue();
+            if (matcher.group(34) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
             }
         }
     }

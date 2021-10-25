@@ -407,13 +407,6 @@ class TestG1PreprocessAction {
     }
 
     @Test
-    void testLogLineConcurrentWithBeginningColon() {
-        String logLine = ": 16705.217: [GC concurrent-mark-start]";
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-    }
-
-    @Test
     void testLogLineYoungPauseWithToSpaceExhaustedTrigger() {
         String logLine = "27997.968: [GC pause (young) (to-space exhausted), 0.1208740 secs]";
         assertTrue(G1PreprocessAction.match(logLine, null, null),
@@ -458,17 +451,8 @@ class TestG1PreprocessAction {
 
     @Test
     void testLogLineG1ErgonomicsWithDatestamp() {
-        String logLine = "2016-02-11T17:26:43.599-0500:  12042.669: [G1Ergonomics (CSet Construction) start choosing "
+        String logLine = "2016-02-11T17:26:43.599-0500: 12042.669: [G1Ergonomics (CSet Construction) start choosing "
                 + "CSet, _pending_cards: 250438, predicted base time: 229.38 ms, remaining time: 270.62 ms, target "
-                + "pause time: 500.00 ms]";
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-    }
-
-    @Test
-    void testLogLineG1ErgonomicsWithDatestampNoSemiColon() {
-        String logLine = "2016-02-11T18:50:24.070-0500 16705.217: [G1Ergonomics (CSet Construction) start choosing "
-                + "CSet, _pending_cards: 273946, predicted base time: 242.44 ms, remaining time: 257.56 ms, target "
                 + "pause time: 500.00 ms]";
         assertTrue(G1PreprocessAction.match(logLine, null, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
@@ -827,14 +811,6 @@ class TestG1PreprocessAction {
     }
 
     @Test
-    void testLogLineFullCombinedConcurrentMarkStart() {
-        String logLine = "35081.727: 2021-06-15T12:34:57.324-0600[Full GC (Allocation Failure) : 35081.727: "
-                + "[GC concurrent-mark-start]";
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-    }
-
-    @Test
     void testLogLineEndOfFullCollection() {
         String logLine = " 1831M->1213M(5120M), 5.1353878 secs]";
         assertTrue(G1PreprocessAction.match(logLine, null, null),
@@ -885,14 +861,6 @@ class TestG1PreprocessAction {
     void testLogLineG1FullTriggerMetaDataGcThresholdMixedConcurrentRootRegionScanEnd() {
         String logLine = "290.944: [Full GC (Metadata GC Threshold) 290.944: "
                 + "[GC concurrent-root-region-scan-end, 0.0003793 secs]";
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-    }
-
-    @Test
-    void testLogLineG1FullTriggerMetaDataGcThresholdMixedConcurrentRootRegionScanEndPrependedColon() {
-        String logLine = ": 7688.541: [Full GC (Metadata GC Threshold) 2016-10-12T11:56:49.416+0200: "
-                + "7688.541: [GC concurrent-root-region-scan-end, 0.0003847 secs]";
         assertTrue(G1PreprocessAction.match(logLine, null, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
     }
@@ -1074,59 +1042,10 @@ class TestG1PreprocessAction {
     }
 
     @Test
-    void testLogLineErgonomicsDatestampDoubleTimestamp() {
-        String logLine = "2016-02-12T00:05:06.348-0500: 35945.418:  35945.418: [G1Ergonomics (CSet Construction) "
-                + "start choosing CSet, _pending_cards: 279876, predicted base time: 236.99 ms, remaining time: "
-                + "263.01 ms, target pause time: 500.00 ms]";
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-    }
-
-    @Test
-    void testLogLineErgonomicsDoubleTimestamp() {
-        String logLine = "16023.683:  16023.683: [G1Ergonomics (CSet Construction) add young regions to CSet, "
-                + "eden: 76 regions, survivors: 7 regions, predicted young region time: 123.54 ms]";
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-    }
-
-    @Test
     void testLogLineG1RemarkDatestamps() {
         String logLine = "2016-03-14T16:06:13.991-0700: 5.745: [GC remark 2016-03-14T16:06:13.991-0700: 5.746: "
                 + "[Finalize Marking, 0.0068506 secs] 2016-03-14T16:06:13.998-0700: 5.752: [GC ref-proc, "
                 + "0.0014064 secs] 2016-03-14T16:06:14.000-0700: 5.754: [Unloading, 0.0057674 secs], 0.0157938 secs]";
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-    }
-
-    @Test
-    void testLogLineG1FullDoubleDatestamps() {
-        String logLine = "2016-10-12T09:53:38.901+0200: 2016-10-12T09:53:38.901+0200: 298.027: 298.027: "
-                + "[Full GC (Metadata GC Threshold) [GC concurrent-root-region-scan-start]";
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-    }
-
-    @Test
-    void testLogLineConsurrentDatestampTimestampDatestamp() {
-        String logLine = "2016-10-12T11:56:49.415+0200: 7688.541: 2016-10-12T11:56:49.415+0200"
-                + "[GC concurrent-root-region-scan-start]";
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-    }
-
-    @Test
-    void testLogLineConsurrentDatestampDatestampTimestampTimestamp() {
-        String logLine = "2016-10-12T11:37:28.396+0200: 2016-10-12T11:37:28.396+0200: 6527.522: "
-                + "6527.522: [GC concurrent-root-region-scan-start]";
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-    }
-
-    @Test
-    void testLogLineConsurrentDatestampDatestampTimestampTimestampNoColonNoSpace() {
-        String logLine = "2016-10-12T11:39:07.893+0200: 2016-10-12T11:39:07.893+0200: "
-                + "6627.019: 6627.019[GC concurrent-root-region-scan-start]";
         assertTrue(G1PreprocessAction.match(logLine, null, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
     }
@@ -1150,36 +1069,6 @@ class TestG1PreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
         assertEquals("2017-02-27T02:55:32.523+0300: 35911.404: [Full GC (Allocation Failure)", event.getLogEntry(),
-                "Log line not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineFullMixedConcurrentDatestampDatestampTimestampTimestamp() {
-        String logLine = "2017-06-22T16:03:36.126+0530: 2017-06-22T16:03:36.126+0530: 79244.87279244.872: : "
-                + "[Full GC (Metadata GC Threshold) [GC concurrent-root-region-scan-start]";
-        String nextLogLine = "2017-06-22T16:03:36.126+0530: 79244.872: [GC concurrent-root-region-scan-end, "
-                + "0.0002076 secs]";
-        Set<String> context = new HashSet<String>();
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-        List<String> entangledLogLines = new ArrayList<String>();
-        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
-        assertEquals("2017-06-22T16:03:36.126+0530: 79244.872: [Full GC (Metadata GC Threshold) ", event.getLogEntry(),
-                "Log line not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineFullMixedConcurrentScrambledDateTimeStamps() {
-        String logLine = "2017-06-22T16:35:58.032+0530: 81186.777: 2017-06-22T16:35:58.032+0530: "
-                + "[Full GC (Metadata GC Threshold) 81186.777: [GC concurrent-root-region-scan-start]";
-        String nextLogLine = "2017-06-22T16:35:58.033+0530: 81186.778: [GC concurrent-root-region-scan-end, "
-                + "0.0008790 secs]";
-        Set<String> context = new HashSet<String>();
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-        List<String> entangledLogLines = new ArrayList<String>();
-        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
-        assertEquals("2017-06-22T16:35:58.032+0530: 81186.777: [Full GC (Metadata GC Threshold) ", event.getLogEntry(),
                 "Log line not parsed correctly.");
     }
 
@@ -1215,20 +1104,6 @@ class TestG1PreprocessAction {
         G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
         assertEquals("2017-02-27T02:55:32.524+0300: 35911.405: [GC concurrent-mark-start]", event.getLogEntry(),
                 "Log line not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineConcurrentDoubleDatestamp() {
-        String logLine = "2018-12-06T21:56:32.691-0500: 18.973"
-                + "2018-12-06T21:56:32.691-0500: : 18.973[GC concurrent-root-region-scan-start]";
-        String nextLogLine = "";
-        Set<String> context = new HashSet<String>();
-        assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-        List<String> entangledLogLines = new ArrayList<String>();
-        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
-        assertEquals("2018-12-06T21:56:32.691-0500: 18.973: [GC concurrent-root-region-scan-start]",
-                event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -2123,7 +1998,7 @@ class TestG1PreprocessAction {
      * 
      */
     @Test
-    void testG1ConcurrentMissingTimestamp() {
+    void testG1Concurrent() {
         File testFile = TestUtil.getFile("dataset76.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
@@ -2141,78 +2016,12 @@ class TestG1PreprocessAction {
     }
 
     /**
-     * Test preprocessing G1 concurrent missing timestamp but has colon.
+     * Test preprocessing G1_FULL.
      * 
      */
     @Test
-    void testG1ConcurrentMissingTimestampExceptColon() {
-        File testFile = TestUtil.getFile("dataset77.txt");
-        GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_SERIAL),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
-    }
-
-    /**
-     * Test preprocessing G1_FULL missing timestamp.
-     * 
-     */
-    @Test
-    void testG1FullMissingTimestamp() {
-        File testFile = TestUtil.getFile("dataset78.txt");
-        GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_SERIAL),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
-    }
-
-    /**
-     * Test preprocessing G1_FULL missing timestamp but has colon.
-     * 
-     */
-    @Test
-    void testG1FullMissingTimestampExceptColon() {
+    void testG1Full() {
         File testFile = TestUtil.getFile("dataset79.txt");
-        GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_SERIAL),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
-    }
-
-    /**
-     * Test preprocessing G1_FULL missing timestamp but has colon.
-     * 
-     */
-    @Test
-    void testG1FullPrependedColon() {
-        File testFile = TestUtil.getFile("dataset80.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);
         gcManager.store(preprocessedFile, false);
@@ -2322,7 +2131,7 @@ class TestG1PreprocessAction {
     }
 
     @Test
-    void testFullMixedConcurrentScrambledDateTimestamps() {
+    void testFullMixedConcurrent() {
         File testFile = TestUtil.getFile("dataset134.txt");
         GcManager gcManager = new GcManager();
         File preprocessedFile = gcManager.preprocess(testFile, null);

@@ -75,7 +75,7 @@ public class G1YoungInitialMarkEvent extends G1Collector
      * 
      * 1244.357: [GC pause (young) (initial-mark) 847M->599M(970M), 0.0566840 secs]
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC pause (\\(("
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
             + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
             + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE
             + ")\\) )?\\(young\\) \\(initial-mark\\)(--)? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
@@ -92,15 +92,14 @@ public class G1YoungInitialMarkEvent extends G1Collector
      * 2017-02-20T20:17:04.874-0500: 40442.077: [GC pause (G1 Humongous Allocation) (young) (initial-mark), 0.0142482
      * secs]
      */
-    private static final String REGEX_PREPROCESSED = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC pause (\\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_SYSTEM_GC
-            + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, "
-            + JdkRegEx.DURATION + "\\])?(\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: "
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]"
-            + TimesData.REGEX + "?)?[ ]*$";
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|"
+            + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\(("
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?(\\[Eden: " + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?)?[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
@@ -169,45 +168,59 @@ public class G1YoungInitialMarkEvent extends G1Collector
             // standard format
             matcher.reset();
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-                trigger = matcher.group(13);
-                combined = memory(matcher.group(15), matcher.group(17).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(18), matcher.group(20).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = memory(matcher.group(21), matcher.group(23).charAt(0)).convertTo(KILOBYTES);
-                duration = JdkMath.convertSecsToMicros(matcher.group(24)).intValue();
-                if (matcher.group(27) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
+                if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                } else {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                }
+                trigger = matcher.group(15);
+                combined = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
+                combinedAvailable = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
+                duration = JdkMath.convertSecsToMicros(matcher.group(26)).intValue();
+                if (matcher.group(29) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(31)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(32)).intValue();
                 }
             }
         } else if ((matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry)).matches()) {
             // preprocessed format
             matcher.reset();
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-                if (matcher.group(13) != null) {
-                    trigger = matcher.group(13);
-                } else if (matcher.group(17) != null) {
-                    trigger = matcher.group(17);
-                }
-                if (matcher.group(18) != null) {
-                    duration = JdkMath.convertSecsToMicros(matcher.group(19)).intValue();
+                if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
-                    if (matcher.group(53) != null) {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                }
+                if (matcher.group(15) != null) {
+                    trigger = matcher.group(15);
+                } else if (matcher.group(19) != null) {
+                    trigger = matcher.group(19);
+                }
+                if (matcher.group(20) != null) {
+                    duration = JdkMath.convertSecsToMicros(matcher.group(21)).intValue();
+                } else {
+                    if (matcher.group(55) != null) {
                         // Use Times block duration
-                        duration = JdkMath.convertSecsToMicros(matcher.group(55)).intValue();
+                        duration = JdkMath.convertSecsToMicros(matcher.group(57)).intValue();
                     }
                 }
-                if (matcher.group(22) != null) {
-                    combined = JdkMath.convertSizeToKilobytes(matcher.group(41), matcher.group(43).charAt(0));
-                    combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(47), matcher.group(49).charAt(0));
-                    combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(50), matcher.group(52).charAt(0));
+                if (matcher.group(24) != null) {
+                    combined = JdkMath.convertSizeToKilobytes(matcher.group(43), matcher.group(45).charAt(0));
+                    combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(49), matcher.group(51).charAt(0));
+                    combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(52), matcher.group(54).charAt(0));
                 }
-                if (matcher.group(53) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(54)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(55)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
+                if (matcher.group(55) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(57)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(58)).intValue();
                 }
             }
         }

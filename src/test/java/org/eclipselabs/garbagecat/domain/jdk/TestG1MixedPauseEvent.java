@@ -194,7 +194,7 @@ class TestG1MixedPauseEvent {
     }
 
     @Test
-    void testLogLineWithDatestamp() {
+    void testLogLineDatestampTimestamp() {
         String logLine = "2018-03-02T07:08:35.683+0000: 47788.145: [GC pause (G1 Evacuation Pause) (mixed) "
                 + "1239M->949M(4096M), 0.0245500 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
@@ -213,7 +213,17 @@ class TestG1MixedPauseEvent {
     }
 
     @Test
-    void testLogLinePreprocessedWithDatestamp() {
+    void testLogLineDatestamp() {
+        String logLine = "2018-03-02T07:08:35.683+0000: [GC pause (G1 Evacuation Pause) (mixed) "
+                + "1239M->949M(4096M), 0.0245500 secs]";
+        assertTrue(G1MixedPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+        G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
+        assertEquals(573271715683L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLinePreprocessedhDatestampTimestamp() {
         String logLine = "2016-02-09T23:27:04.149-0500: 3082.652: [GC pause (mixed), 0.0762060 secs]"
                 + "[Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: 40.0M->40.0M Heap: 11.8G(26.0G)->9058.4M(26.0G)] "
                 + "[Times: user=0.30 sys=0.00, real=0.08 secs]";
@@ -231,6 +241,17 @@ class TestG1MixedPauseEvent {
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(8, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(375, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
+    void testLogLinePreprocessedhDatestamp() {
+        String logLine = "2016-02-09T23:27:04.149-0500: [GC pause (mixed), 0.0762060 secs]"
+                + "[Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: 40.0M->40.0M Heap: 11.8G(26.0G)->9058.4M(26.0G)] "
+                + "[Times: user=0.30 sys=0.00, real=0.08 secs]";
+        assertTrue(G1MixedPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+        G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
+        assertEquals(508375624149L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

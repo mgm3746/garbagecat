@@ -50,6 +50,26 @@ class TestShenandoahConcurrentEvent {
     }
 
     @Test
+    void testLogLineJdk8Timestamp() {
+        String logLine = "0.426: [Concurrent reset 16434K->16466K(21248K), 0.091 ms]";
+        assertTrue(ShenandoahConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".");
+        ShenandoahConcurrentEvent event = new ShenandoahConcurrentEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(), event.getName(), "Event name incorrect.");
+        assertEquals((long) 426, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Datestamp() {
+        String logLine = "2020-03-10T08:03:29.364-0400: [Concurrent reset 16434K->16466K(21248K), 0.091 ms]";
+        assertTrue(ShenandoahConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".");
+        ShenandoahConcurrentEvent event = new ShenandoahConcurrentEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(637139009364L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
     void testLogLineUnified() {
         String logLine = "[0.437s][info][gc] GC(0) Concurrent reset 15M->16M(64M) 4.701ms";
         assertTrue(ShenandoahConcurrentEvent.match(logLine),

@@ -41,6 +41,25 @@ class TestShenandoahInitUpdateEvent {
     }
 
     @Test
+    void testLogLineJdk8Timestamp() {
+        String logLine = "17.346: [Pause Init Update Refs, 0.017 ms]";
+        assertTrue(ShenandoahInitUpdateEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
+        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
+        assertEquals((long) 17346, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Datestamp() {
+        String logLine = "2020-03-10T08:03:46.284-0400: [Pause Init Update Refs, 0.017 ms]";
+        assertTrue(ShenandoahInitUpdateEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
+        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
+        assertEquals(637139026284L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(17, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
     void testLogLineUnified() {
         String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms";
         assertTrue(ShenandoahInitUpdateEvent.match(logLine),
@@ -140,7 +159,7 @@ class TestShenandoahInitUpdateEvent {
         assertTrue(ShenandoahInitUpdateEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
         ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
-        assertEquals(UnifiedUtil.convertDatestampToMillis("2019-02-05T14:47:34.229-0200") - 0, event.getTimestamp(),
+        assertEquals(JdkUtil.convertDatestampToMillis("2019-02-05T14:47:34.229-0200") - 0, event.getTimestamp(),
                 "Time stamp not parsed correctly.");
         assertEquals(92, event.getDuration(), "Duration not parsed correctly.");
     }

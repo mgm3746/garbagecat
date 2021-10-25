@@ -137,11 +137,10 @@ public class SerialNewEvent extends SerialCollector
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC( \\("
-            + TRIGGER + "\\))?( )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[DefNew: "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]"
-            + TimesData.REGEX + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[(Full )?GC( \\(" + TRIGGER + "\\))?( )?"
+            + JdkRegEx.DECORATOR + " \\[DefNew: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(SerialNewEvent.REGEX);
 
@@ -154,17 +153,24 @@ public class SerialNewEvent extends SerialCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-            if (matcher.group(14) != null) {
-                trigger = matcher.group(14);
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            } else {
+                // Datestamp only.
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
             }
-            young = kilobytes(matcher.group(27));
-            youngEnd = kilobytes(matcher.group(28));
-            youngAvailable = kilobytes(matcher.group(29));
-            old = kilobytes(matcher.group(33)).minus(young);
-            oldEnd = kilobytes(matcher.group(34)).minus(youngEnd);
-            oldAllocation = kilobytes(matcher.group(35)).minus(youngAvailable);
-            duration = JdkMath.convertSecsToMicros(matcher.group(36)).intValue();
+            if (matcher.group(18) != null) {
+                trigger = matcher.group(18);
+            }
+            young = kilobytes(matcher.group(31));
+            youngEnd = kilobytes(matcher.group(32));
+            youngAvailable = kilobytes(matcher.group(33));
+            old = kilobytes(matcher.group(37)).minus(young);
+            oldEnd = kilobytes(matcher.group(38)).minus(youngEnd);
+            oldAllocation = kilobytes(matcher.group(39)).minus(youngAvailable);
+            duration = JdkMath.convertSecsToMicros(matcher.group(40)).intValue();
         }
     }
 

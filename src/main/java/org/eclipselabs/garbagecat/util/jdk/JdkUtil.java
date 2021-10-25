@@ -103,6 +103,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UsingSerialEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingShenandoahEvent;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -113,6 +114,13 @@ import org.eclipselabs.garbagecat.util.GcUtil;
  * 
  */
 public final class JdkUtil {
+
+    /**
+     * Defined collector families.
+     */
+    public enum CollectorFamily {
+        CMS, G1, PARALLEL, SERIAL, SHENANDOAH, UNKNOWN
+    };
 
     /**
      * Defined logging events.
@@ -158,7 +166,7 @@ public final class JdkUtil {
      * Defined preprocessing actions.
      */
     public enum PreprocessActionType {
-        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, DATE_STAMP, G1, CMS, PARALLEL, SERIAL, SHENANDOAH,
+        APPLICATION_CONCURRENT_TIME, APPLICATION_STOPPED_TIME, CMS, DATE_STAMP, G1, PARALLEL, SERIAL, SHENANDOAH,
         //
         UNIFIED, UNIFIED_G1
     };
@@ -177,17 +185,193 @@ public final class JdkUtil {
     };
 
     /**
-     * Defined collector families.
+     * Convert datestamp to milliseconds. For example: Convert 2019-02-05T14:47:34.229-0200 to 23.
+     * 
+     * @param datestamp
+     *            Absolute date/time.
+     * @return Milliseconds from a point in time.
      */
-    public enum CollectorFamily {
-        SERIAL, PARALLEL, CMS, G1, SHENANDOAH, UNKNOWN
+    public static long convertDatestampToMillis(String datestamp) {
+        // Calculate uptimemillis from random date/time
+        Date eventDate = GcUtil.parseDateStamp(datestamp);
+        return GcUtil.dateDiff(UnifiedUtil.jvmStartDate, eventDate);
     }
 
     /**
-     * Make default constructor private so the class cannot be instantiated.
+     * Convert all log entry timestamps to a datestamp.
+     * 
+     * @param logEntry
+     *            The log entry.
+     * @param jvmStartDate
+     *            The date/time the JVM started.
+     * @return the log entry with the timestamp converted to a datestamp.
      */
-    private JdkUtil() {
-        super();
+    public static final String convertLogEntryTimestampsToDateStamp(String logEntry, Date jvmStartDate) {
+        // Add the colon or space after the timestamp format so durations will
+        // not get picked up.
+        Pattern pattern = Pattern.compile(JdkRegEx.TIMESTAMP + "(: )");
+        Matcher matcher = pattern.matcher(logEntry);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            Date date = GcUtil.getDatePlusTimestamp(jvmStartDate,
+                    JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            matcher.appendReplacement(sb, formatter.format(date) + matcher.group(2));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    public static final LogEventType determineEventType(String eventTypeString) {
+        LogEventType[] logEventTypes = LogEventType.values();
+        for (LogEventType logEventType : logEventTypes) {
+            if (logEventType.toString().equals(eventTypeString)) {
+                return logEventType;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Check to see if a log line includes any datestamps.
+     * 
+     * @param logLine
+     *            The log line.
+     * @return The log line with a datestamp, null otherwise.
+     */
+    public static final String getDateStamp(String logLine) {
+        String regex = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(logLine);
+        return matcher.find() ? matcher.group(2) : null;
+    }
+
+    /**
+     * Parse out the JVM option scalar value. For example, the value for <code>-Xss128k</code> is 128k. The value for
+     * <code>-XX:PermSize=128M</code> is 128M.
+     * 
+     * @param option
+     *            The JVM option.
+     * @return The JVM option value.
+     */
+    public static final String getOptionValue(String option) {
+        if (option != null) {
+            String regex = "^-[a-zA-Z:.]+(=)?(\\d{1,12}(" + JdkRegEx.OPTION_SIZE + ")?)$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(option);
+            if (matcher.find()) {
+                return matcher.group(2);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Create <code>BlockingEvent</code> from values.
+     * 
+     * @param eventType
+     *            Log entry <code>LogEventType</code>.
+     * @param logEntry
+     *            Log entry.
+     * @param timestamp
+     *            Log entry timestamp.
+     * @param duration
+     *            The duration of the log event.
+     * @return The <code>BlockingEvent</code> for the given event values.
+     */
+    public static final BlockingEvent hydrateBlockingEvent(LogEventType eventType, String logEntry, long timestamp,
+            int duration) {
+        switch (eventType) {
+
+        // Unified (alphabetical)
+        case UNIFIED_CMS_INITIAL_MARK:
+            return new UnifiedCmsInitialMarkEvent(logEntry, timestamp, duration);
+        case UNIFIED_G1_CLEANUP:
+            return new UnifiedG1CleanupEvent(logEntry, timestamp, duration);
+        case G1_FULL_GC_PARALLEL:
+            return new UnifiedG1FullGcEvent(logEntry, timestamp, duration);
+        case UNIFIED_G1_YOUNG_INITIAL_MARK:
+            return new UnifiedG1YoungInitialMarkEvent(logEntry, timestamp, duration);
+        case UNIFIED_G1_MIXED_PAUSE:
+            return new UnifiedG1MixedPauseEvent(logEntry, timestamp, duration);
+        case UNIFIED_G1_YOUNG_PAUSE:
+            return new UnifiedG1YoungPauseEvent(logEntry, timestamp, duration);
+        case UNIFIED_G1_YOUNG_PREPARE_MIXED:
+            return new UnifiedG1YoungPrepareMixedEvent(logEntry, timestamp, duration);
+        case UNIFIED_OLD:
+            return new UnifiedOldEvent(logEntry, timestamp, duration);
+        case UNIFIED_PARALLEL_COMPACTING_OLD:
+            return new UnifiedParallelCompactingOldEvent(logEntry, timestamp, duration);
+        case UNIFIED_PARALLEL_SCAVENGE:
+            return new UnifiedParallelScavengeEvent(logEntry, timestamp, duration);
+        case UNIFIED_PAR_NEW:
+            return new UnifiedParNewEvent(logEntry, timestamp, duration);
+        case UNIFIED_REMARK:
+            return new UnifiedRemarkEvent(logEntry, timestamp, duration);
+        case UNIFIED_SERIAL_NEW:
+            return new UnifiedSerialNewEvent(logEntry, timestamp, duration);
+        case UNIFIED_SERIAL_OLD:
+            return new UnifiedSerialOldEvent(logEntry, timestamp, duration);
+        case UNIFIED_YOUNG:
+            return new UnifiedYoungEvent(logEntry, timestamp, duration);
+
+        // G1
+        case G1_YOUNG_PAUSE:
+            return new G1YoungPauseEvent(logEntry, timestamp, duration);
+        case G1_MIXED_PAUSE:
+            return new G1MixedPauseEvent(logEntry, timestamp, duration);
+        case G1_YOUNG_INITIAL_MARK:
+            return new G1YoungInitialMarkEvent(logEntry, timestamp, duration);
+        case G1_REMARK:
+            return new G1RemarkEvent(logEntry, timestamp, duration);
+        case G1_CLEANUP:
+            return new G1CleanupEvent(logEntry, timestamp, duration);
+        case G1_FULL_GC_SERIAL:
+            return new G1FullGcEvent(logEntry, timestamp, duration);
+        // Shenandoah
+        case SHENANDOAH_DEGENERATED_GC_MARK:
+            return new ShenandoahDegeneratedGcMarkEvent(logEntry, timestamp, duration);
+        case SHENANDOAH_FINAL_EVAC:
+            return new ShenandoahFinalEvacEvent(logEntry, timestamp, duration);
+        case SHENANDOAH_FINAL_MARK:
+            return new ShenandoahFinalMarkEvent(logEntry, timestamp, duration);
+        case SHENANDOAH_FINAL_UPDATE:
+            return new ShenandoahFinalUpdateEvent(logEntry, timestamp, duration);
+        case SHENANDOAH_FULL_GC:
+            return new ShenandoahFullGcEvent(logEntry, timestamp, duration);
+        case SHENANDOAH_INIT_MARK:
+            return new ShenandoahInitMarkEvent(logEntry, timestamp, duration);
+        case SHENANDOAH_INIT_UPDATE:
+            return new ShenandoahInitUpdateEvent(logEntry, timestamp, duration);
+        // CMS
+        case PAR_NEW:
+            return new ParNewEvent(logEntry, timestamp, duration);
+        case CMS_SERIAL_OLD:
+            return new CmsSerialOldEvent(logEntry, timestamp, duration);
+        case CMS_INITIAL_MARK:
+            return new CmsInitialMarkEvent(logEntry, timestamp, duration);
+        case CMS_REMARK:
+            return new CmsRemarkEvent(logEntry, timestamp, duration);
+        // Parallel
+        case PARALLEL_SCAVENGE:
+            return new ParallelScavengeEvent(logEntry, timestamp, duration);
+        case PARALLEL_SERIAL_OLD:
+            return new ParallelSerialOldEvent(logEntry, timestamp, duration);
+        case PARALLEL_COMPACTING_OLD:
+            return new ParallelCompactingOldEvent(logEntry, timestamp, duration);
+        // Serial
+        case SERIAL_OLD:
+            return new SerialOldEvent(logEntry, timestamp, duration);
+        case SERIAL_NEW:
+            return new SerialNewEvent(logEntry, timestamp, duration);
+        // Other
+        case VERBOSE_GC_YOUNG:
+            return new VerboseGcYoungEvent(logEntry, timestamp, duration);
+        case VERBOSE_GC_OLD:
+            return new VerboseGcOldEvent(logEntry, timestamp, duration);
+        default:
+            throw new AssertionError("Unexpected event type value: " + eventType + ": " + logEntry);
+        }
     }
 
     /**
@@ -384,6 +568,164 @@ public final class JdkUtil {
     }
 
     /**
+     * @param eventType
+     *            The event type to test.
+     * @return true if the log event is blocking, false if it is concurrent or informational.
+     */
+    public static final boolean isBlocking(LogEventType eventType) {
+        switch (eventType) {
+        case APPLICATION_CONCURRENT_TIME:
+        case APPLICATION_STOPPED_TIME:
+        case CLASS_HISTOGRAM:
+        case CLASS_UNLOADING:
+        case CMS_CONCURRENT:
+        case FLS_STATISTICS:
+        case FOOTER_HEAP:
+        case FOOTER_STATS:
+        case GC_INFO:
+        case GC_LOCKER:
+        case GC_OVERHEAD_LIMIT:
+        case G1_CONCURRENT:
+        case HEADER_COMMAND_LINE_FLAGS:
+        case HEADER_MEMORY:
+        case HEADER_VERSION:
+        case HEAP_ADDRESS:
+        case HEAP_AT_GC:
+        case HEAP_REGION_SIZE:
+        case LOG_FILE:
+        case REFERENCE_GC:
+        case SHENANDOAH_CANCELLING_GC:
+        case SHENANDOAH_CONCURRENT:
+        case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
+        case SHENANDOAH_STATS:
+        case SHENANDOAH_TRIGGER:
+        case THREAD_DUMP:
+        case TENURING_DISTRIBUTION:
+        case UNIFIED_SAFEPOINT:
+        case UNIFIED_CONCURRENT:
+        case UNIFIED_G1_INFO:
+        case UNKNOWN:
+        case USING_SERIAL:
+        case USING_PARALLEL:
+        case USING_CMS:
+        case USING_G1:
+        case USING_SHENANDOAH:
+            return false;
+        default:
+            return true;
+        }
+
+    }
+
+    /**
+     * Determine if the <code>SafepointEvent</code> should be classified as a bottleneck.
+     * 
+     * @param event
+     *            Current <code>SafepointEvent</code>.
+     * @param priorEvent
+     *            Previous <code>SafepointEvent</code>.
+     * @param throughputThreshold
+     *            Throughput threshold (percent of time spent not doing garbage collection for a given time interval) to
+     *            be considered a bottleneck. Whole number 0-100.
+     * @return True if the <code>SafepointEvent</code> pause time meets the bottleneck definition.
+     */
+    public static final boolean isBottleneck(SafepointEvent event, SafepointEvent priorEvent, int throughputThreshold)
+            throws TimeWarpException {
+        boolean isBottleneck = false;
+        /*
+         * Check for logging time warps, which could be an indication of mixed logging from multiple JVM runs. JDK8
+         * seems to have threading issues where sometimes logging gets mixed up under heavy load, and an event appears
+         * to start before the previous event finished. They are mainly very small overlaps or a few milliseconds.
+         */
+        long eventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(event.getTimestamp())).longValue();
+        // Exclude <code>ApplicationStoppedTime</code> w/o datestamp/timestamp
+        // Exclude microevents where timestamps are equal (for report readability)
+        if (eventTimestampMicros > 0 && event.getTimestamp() != priorEvent.getTimestamp()) {
+            long priorEventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(priorEvent.getTimestamp()))
+                    .longValue();
+            if (eventTimestampMicros < priorEventTimestampMicros) {
+                throw new TimeWarpException("Bad order: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
+                        + Constants.LINE_SEPARATOR + event.getLogEntry());
+            } else if (eventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 5000000) {
+                // Only report if overlap > 5 sec to account for overlaps due to JDK threading issues and use of
+                // -XX:+UseFastUnorderedTimeStamps
+                // TODO: Make this configurable w/ a command line option?
+                throw new TimeWarpException("Event overlap: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
+                        + Constants.LINE_SEPARATOR + event.getLogEntry());
+            } else {
+                /*
+                 * Timestamp is the start of a vm event; therefore, the interval is from the end of the prior event to
+                 * the end of the current event.
+                 */
+                long interval = eventTimestampMicros + event.getDuration() - priorEventTimestampMicros
+                        - priorEvent.getDuration();
+                // Determine the maximum duration for the given interval that meets the throughput goal.
+                BigDecimal durationThreshold = new BigDecimal(100 - throughputThreshold);
+                durationThreshold = durationThreshold.movePointLeft(2);
+                durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
+                durationThreshold.setScale(0, RoundingMode.DOWN);
+                isBottleneck = event.getDuration() > durationThreshold.longValue();
+            }
+        }
+        return isBottleneck;
+    }
+
+    /**
+     * Check to see if a log line includes any datestamps.
+     * 
+     * @param logLine
+     *            The log line.
+     * @return True if the log line includes a datestamp, false otherwise..
+     */
+    public static final boolean isLogLineWithDateStamp(String logLine) {
+        String regex = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
+        Pattern pattern = Pattern.compile(regex);
+        return pattern.matcher(logLine).matches();
+    }
+
+    /**
+     * @param eventType
+     *            The event type to test.
+     * @return true if the log event is should be included in the report event list, false otherwise.
+     */
+    public static final boolean isReportable(LogEventType eventType) {
+        switch (eventType) {
+        case APPLICATION_CONCURRENT_TIME:
+        case APPLICATION_LOGGING:
+        case APPLICATION_STOPPED_TIME:
+        case BLANK_LINE:
+        case CLASS_HISTOGRAM:
+        case CLASS_UNLOADING:
+        case FLS_STATISTICS:
+        case FOOTER_HEAP:
+        case FOOTER_STATS:
+        case GC_INFO:
+        case GC_LOCKER:
+        case GC_OVERHEAD_LIMIT:
+        case HEADER_COMMAND_LINE_FLAGS:
+        case HEADER_MEMORY:
+        case HEADER_VERSION:
+        case HEAP_ADDRESS:
+        case HEAP_AT_GC:
+        case HEAP_REGION_SIZE:
+        case LOG_FILE:
+        case REFERENCE_GC:
+        case UNIFIED_SAFEPOINT:
+        case SHENANDOAH_CANCELLING_GC:
+        case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
+        case SHENANDOAH_STATS:
+        case SHENANDOAH_TRIGGER:
+        case UNIFIED_BLANK_LINE:
+        case UNIFIED_G1_INFO:
+        case UNKNOWN:
+            return false;
+        default:
+            return true;
+        }
+
+    }
+
+    /**
      * Create <code>LogEvent</code> from GC log line.
      * 
      * @param logLine
@@ -568,363 +910,9 @@ public final class JdkUtil {
     }
 
     /**
-     * Create <code>BlockingEvent</code> from values.
-     * 
-     * @param eventType
-     *            Log entry <code>LogEventType</code>.
-     * @param logEntry
-     *            Log entry.
-     * @param timestamp
-     *            Log entry timestamp.
-     * @param duration
-     *            The duration of the log event.
-     * @return The <code>BlockingEvent</code> for the given event values.
+     * Make default constructor private so the class cannot be instantiated.
      */
-    public static final BlockingEvent hydrateBlockingEvent(LogEventType eventType, String logEntry, long timestamp,
-            int duration) {
-        switch (eventType) {
-
-        // Unified (alphabetical)
-        case UNIFIED_CMS_INITIAL_MARK:
-            return new UnifiedCmsInitialMarkEvent(logEntry, timestamp, duration);
-        case UNIFIED_G1_CLEANUP:
-            return new UnifiedG1CleanupEvent(logEntry, timestamp, duration);
-        case G1_FULL_GC_PARALLEL:
-            return new UnifiedG1FullGcEvent(logEntry, timestamp, duration);
-        case UNIFIED_G1_YOUNG_INITIAL_MARK:
-            return new UnifiedG1YoungInitialMarkEvent(logEntry, timestamp, duration);
-        case UNIFIED_G1_MIXED_PAUSE:
-            return new UnifiedG1MixedPauseEvent(logEntry, timestamp, duration);
-        case UNIFIED_G1_YOUNG_PAUSE:
-            return new UnifiedG1YoungPauseEvent(logEntry, timestamp, duration);
-        case UNIFIED_G1_YOUNG_PREPARE_MIXED:
-            return new UnifiedG1YoungPrepareMixedEvent(logEntry, timestamp, duration);
-        case UNIFIED_OLD:
-            return new UnifiedOldEvent(logEntry, timestamp, duration);
-        case UNIFIED_PARALLEL_COMPACTING_OLD:
-            return new UnifiedParallelCompactingOldEvent(logEntry, timestamp, duration);
-        case UNIFIED_PARALLEL_SCAVENGE:
-            return new UnifiedParallelScavengeEvent(logEntry, timestamp, duration);
-        case UNIFIED_PAR_NEW:
-            return new UnifiedParNewEvent(logEntry, timestamp, duration);
-        case UNIFIED_REMARK:
-            return new UnifiedRemarkEvent(logEntry, timestamp, duration);
-        case UNIFIED_SERIAL_NEW:
-            return new UnifiedSerialNewEvent(logEntry, timestamp, duration);
-        case UNIFIED_SERIAL_OLD:
-            return new UnifiedSerialOldEvent(logEntry, timestamp, duration);
-        case UNIFIED_YOUNG:
-            return new UnifiedYoungEvent(logEntry, timestamp, duration);
-
-        // G1
-        case G1_YOUNG_PAUSE:
-            return new G1YoungPauseEvent(logEntry, timestamp, duration);
-        case G1_MIXED_PAUSE:
-            return new G1MixedPauseEvent(logEntry, timestamp, duration);
-        case G1_YOUNG_INITIAL_MARK:
-            return new G1YoungInitialMarkEvent(logEntry, timestamp, duration);
-        case G1_REMARK:
-            return new G1RemarkEvent(logEntry, timestamp, duration);
-        case G1_CLEANUP:
-            return new G1CleanupEvent(logEntry, timestamp, duration);
-        case G1_FULL_GC_SERIAL:
-            return new G1FullGcEvent(logEntry, timestamp, duration);
-        // Shenandoah
-        case SHENANDOAH_DEGENERATED_GC_MARK:
-            return new ShenandoahDegeneratedGcMarkEvent(logEntry, timestamp, duration);
-        case SHENANDOAH_FINAL_EVAC:
-            return new ShenandoahFinalEvacEvent(logEntry, timestamp, duration);
-        case SHENANDOAH_FINAL_MARK:
-            return new ShenandoahFinalMarkEvent(logEntry, timestamp, duration);
-        case SHENANDOAH_FINAL_UPDATE:
-            return new ShenandoahFinalUpdateEvent(logEntry, timestamp, duration);
-        case SHENANDOAH_FULL_GC:
-            return new ShenandoahFullGcEvent(logEntry, timestamp, duration);
-        case SHENANDOAH_INIT_MARK:
-            return new ShenandoahInitMarkEvent(logEntry, timestamp, duration);
-        case SHENANDOAH_INIT_UPDATE:
-            return new ShenandoahInitUpdateEvent(logEntry, timestamp, duration);
-        // CMS
-        case PAR_NEW:
-            return new ParNewEvent(logEntry, timestamp, duration);
-        case CMS_SERIAL_OLD:
-            return new CmsSerialOldEvent(logEntry, timestamp, duration);
-        case CMS_INITIAL_MARK:
-            return new CmsInitialMarkEvent(logEntry, timestamp, duration);
-        case CMS_REMARK:
-            return new CmsRemarkEvent(logEntry, timestamp, duration);
-        // Parallel
-        case PARALLEL_SCAVENGE:
-            return new ParallelScavengeEvent(logEntry, timestamp, duration);
-        case PARALLEL_SERIAL_OLD:
-            return new ParallelSerialOldEvent(logEntry, timestamp, duration);
-        case PARALLEL_COMPACTING_OLD:
-            return new ParallelCompactingOldEvent(logEntry, timestamp, duration);
-        // Serial
-        case SERIAL_OLD:
-            return new SerialOldEvent(logEntry, timestamp, duration);
-        case SERIAL_NEW:
-            return new SerialNewEvent(logEntry, timestamp, duration);
-        // Other
-        case VERBOSE_GC_YOUNG:
-            return new VerboseGcYoungEvent(logEntry, timestamp, duration);
-        case VERBOSE_GC_OLD:
-            return new VerboseGcOldEvent(logEntry, timestamp, duration);
-        default:
-            throw new AssertionError("Unexpected event type value: " + eventType + ": " + logEntry);
-        }
-    }
-
-    /**
-     * @param eventType
-     *            The event type to test.
-     * @return true if the log event is blocking, false if it is concurrent or informational.
-     */
-    public static final boolean isBlocking(LogEventType eventType) {
-        switch (eventType) {
-        case APPLICATION_CONCURRENT_TIME:
-        case APPLICATION_STOPPED_TIME:
-        case CLASS_HISTOGRAM:
-        case CLASS_UNLOADING:
-        case CMS_CONCURRENT:
-        case FLS_STATISTICS:
-        case FOOTER_HEAP:
-        case FOOTER_STATS:
-        case GC_INFO:
-        case GC_LOCKER:
-        case GC_OVERHEAD_LIMIT:
-        case G1_CONCURRENT:
-        case HEADER_COMMAND_LINE_FLAGS:
-        case HEADER_MEMORY:
-        case HEADER_VERSION:
-        case HEAP_ADDRESS:
-        case HEAP_AT_GC:
-        case HEAP_REGION_SIZE:
-        case LOG_FILE:
-        case REFERENCE_GC:
-        case SHENANDOAH_CANCELLING_GC:
-        case SHENANDOAH_CONCURRENT:
-        case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
-        case SHENANDOAH_STATS:
-        case SHENANDOAH_TRIGGER:
-        case THREAD_DUMP:
-        case TENURING_DISTRIBUTION:
-        case UNIFIED_SAFEPOINT:
-        case UNIFIED_CONCURRENT:
-        case UNIFIED_G1_INFO:
-        case UNKNOWN:
-        case USING_SERIAL:
-        case USING_PARALLEL:
-        case USING_CMS:
-        case USING_G1:
-        case USING_SHENANDOAH:
-            return false;
-        default:
-            return true;
-        }
-
-    }
-
-    public static final LogEventType determineEventType(String eventTypeString) {
-        LogEventType[] logEventTypes = LogEventType.values();
-        for (LogEventType logEventType : logEventTypes) {
-            if (logEventType.toString().equals(eventTypeString)) {
-                return logEventType;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Check to see if a log line includes any datestamps.
-     * 
-     * @param logLine
-     *            The log line.
-     * @return True if the log line includes a datestamp, false otherwise..
-     */
-    public static final String getDateStamp(String logLine) {
-        String regex = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(logLine);
-        return matcher.find() ? matcher.group(2) : null;
-    }
-
-    /**
-     * Check to see if a log line includes any datestamps.
-     * 
-     * @param logLine
-     *            The log line.
-     * @return True if the log line includes a datestamp, false otherwise..
-     */
-    public static final boolean isLogLineWithDateStamp(String logLine) {
-        String regex = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
-        Pattern pattern = Pattern.compile(regex);
-        return pattern.matcher(logLine).matches();
-    }
-
-    /**
-     * Convert all log entry timestamps to a datestamp.
-     * 
-     * @param logEntry
-     *            The log entry.
-     * @param jvmStartDate
-     *            The date/time the JVM started.
-     * @return the log entry with the timestamp converted to a datestamp.
-     */
-    public static final String convertLogEntryTimestampsToDateStamp(String logEntry, Date jvmStartDate) {
-        // Add the colon or space after the timestamp format so durations will
-        // not get picked up.
-        Pattern pattern = Pattern.compile(JdkRegEx.TIMESTAMP + "(: )");
-        Matcher matcher = pattern.matcher(logEntry);
-        StringBuffer sb = new StringBuffer();
-        while (matcher.find()) {
-            Date date = GcUtil.getDatePlusTimestamp(jvmStartDate,
-                    JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-            matcher.appendReplacement(sb, formatter.format(date) + matcher.group(2));
-        }
-        matcher.appendTail(sb);
-        return sb.toString();
-    }
-
-    /**
-     * Convert all log entry datestamps to a timestamp (number of seconds after JVM startup).
-     * 
-     * @param logEntry
-     *            The log entry.
-     * @param jvmStartDate
-     *            The date/time the JVM started.
-     * @return the log entry with the timestamp converted to a date/time.
-     */
-    public static final String convertLogEntryDateStampToTimeStamp(String logEntry, Date jvmStartDate) {
-        // Add the colon or space after the datestamp format so durations will
-        // not get picked up.
-        Pattern pattern = Pattern.compile(JdkRegEx.DATESTAMP + "(: )");
-        Matcher matcher = pattern.matcher(logEntry);
-        StringBuffer sb = new StringBuffer();
-        while (matcher.find()) {
-
-            Date date = GcUtil.getDatePlusTimestamp(jvmStartDate,
-                    JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-            matcher.appendReplacement(sb, formatter.format(date) + matcher.group(2));
-        }
-        matcher.appendTail(sb);
-        return sb.toString();
-    }
-
-    /**
-     * Determine if the <code>SafepointEvent</code> should be classified as a bottleneck.
-     * 
-     * @param event
-     *            Current <code>SafepointEvent</code>.
-     * @param priorEvent
-     *            Previous <code>SafepointEvent</code>.
-     * @param throughputThreshold
-     *            Throughput threshold (percent of time spent not doing garbage collection for a given time interval) to
-     *            be considered a bottleneck. Whole number 0-100.
-     * @return True if the <code>SafepointEvent</code> pause time meets the bottleneck definition.
-     */
-    public static final boolean isBottleneck(SafepointEvent event, SafepointEvent priorEvent, int throughputThreshold)
-            throws TimeWarpException {
-        boolean isBottleneck = false;
-        /*
-         * Check for logging time warps, which could be an indication of mixed logging from multiple JVM runs. JDK8
-         * seems to have threading issues where sometimes logging gets mixed up under heavy load, and an event appears
-         * to start before the previous event finished. They are mainly very small overlaps or a few milliseconds.
-         */
-        long eventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(event.getTimestamp())).longValue();
-        // Exclude <code>ApplicationStoppedTime</code> w/o datestamp/timestamp
-        // Exclude microevents where timestamps are equal (for report readability)
-        if (eventTimestampMicros > 0 && event.getTimestamp() != priorEvent.getTimestamp()) {
-            long priorEventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(priorEvent.getTimestamp()))
-                    .longValue();
-            if (eventTimestampMicros < priorEventTimestampMicros) {
-                throw new TimeWarpException("Bad order: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
-                        + Constants.LINE_SEPARATOR + event.getLogEntry());
-            } else if (eventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 5000000) {
-                // Only report if overlap > 5 sec to account for overlaps due to JDK threading issues and use of
-                // -XX:+UseFastUnorderedTimeStamps
-                // TODO: Make this configurable w/ a command line option?
-                throw new TimeWarpException("Event overlap: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
-                        + Constants.LINE_SEPARATOR + event.getLogEntry());
-            } else {
-                /*
-                 * Timestamp is the start of a vm event; therefore, the interval is from the end of the prior event to
-                 * the end of the current event.
-                 */
-                long interval = eventTimestampMicros + event.getDuration() - priorEventTimestampMicros
-                        - priorEvent.getDuration();
-                // Determine the maximum duration for the given interval that meets the throughput goal.
-                BigDecimal durationThreshold = new BigDecimal(100 - throughputThreshold);
-                durationThreshold = durationThreshold.movePointLeft(2);
-                durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
-                durationThreshold.setScale(0, RoundingMode.DOWN);
-                isBottleneck = event.getDuration() > durationThreshold.longValue();
-            }
-        }
-        return isBottleneck;
-    }
-
-    /**
-     * Parse out the JVM option scalar value. For example, the value for <code>-Xss128k</code> is 128k. The value for
-     * <code>-XX:PermSize=128M</code> is 128M.
-     * 
-     * @param option
-     *            The JVM option.
-     * @return The JVM option value.
-     */
-    public static final String getOptionValue(String option) {
-        if (option != null) {
-            String regex = "^-[a-zA-Z:.]+(=)?(\\d{1,12}(" + JdkRegEx.OPTION_SIZE + ")?)$";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(option);
-            if (matcher.find()) {
-                return matcher.group(2);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param eventType
-     *            The event type to test.
-     * @return true if the log event is should be included in the report event list, false otherwise.
-     */
-    public static final boolean isReportable(LogEventType eventType) {
-        switch (eventType) {
-        case APPLICATION_CONCURRENT_TIME:
-        case APPLICATION_LOGGING:
-        case APPLICATION_STOPPED_TIME:
-        case BLANK_LINE:
-        case CLASS_HISTOGRAM:
-        case CLASS_UNLOADING:
-        case FLS_STATISTICS:
-        case FOOTER_HEAP:
-        case FOOTER_STATS:
-        case GC_INFO:
-        case GC_LOCKER:
-        case GC_OVERHEAD_LIMIT:
-        case HEADER_COMMAND_LINE_FLAGS:
-        case HEADER_MEMORY:
-        case HEADER_VERSION:
-        case HEAP_ADDRESS:
-        case HEAP_AT_GC:
-        case HEAP_REGION_SIZE:
-        case LOG_FILE:
-        case REFERENCE_GC:
-        case UNIFIED_SAFEPOINT:
-        case SHENANDOAH_CANCELLING_GC:
-        case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
-        case SHENANDOAH_STATS:
-        case SHENANDOAH_TRIGGER:
-        case UNIFIED_BLANK_LINE:
-        case UNIFIED_G1_INFO:
-        case UNKNOWN:
-            return false;
-        default:
-            return true;
-        }
-
+    private JdkUtil() {
+        super();
     }
 }

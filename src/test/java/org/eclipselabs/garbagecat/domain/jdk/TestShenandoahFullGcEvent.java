@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 class TestShenandoahFullGcEvent {
 
     @Test
-    void testLogLine() {
+    void testLogLineJdk8() {
         String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
                 + "[Metaspace: 282195K->281648K(1314816K)]";
         assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
@@ -47,6 +47,24 @@ class TestShenandoahFullGcEvent {
         assertEquals(kilobytes(281648), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(1314816), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
         assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Timestamp() {
+        String logLine = "120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
+                + "[Metaspace: 282195K->281648K(1314816K)]";
+        assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
+        ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
+        assertEquals((long) (120839710), event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Datestamp() {
+        String logLine = "2021-03-23T20:57:46.427+0000: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
+                + "[Metaspace: 282195K->281648K(1314816K)]";
+        assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
+        ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
+        assertEquals(669830266427L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

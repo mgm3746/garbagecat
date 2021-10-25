@@ -116,9 +116,9 @@ public class VerboseGcYoungEvent extends UnknownCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC( \\("
-            + TRIGGER + "\\) )?(--)? (" + JdkRegEx.SIZE_K + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
-            + JdkRegEx.DURATION + "\\]?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC( \\(" + TRIGGER + "\\) )?(--)? ("
+            + JdkRegEx.SIZE_K + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
+            + "\\]?[ ]*$";
 
     private static Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
 
@@ -132,17 +132,24 @@ public class VerboseGcYoungEvent extends UnknownCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-            trigger = matcher.group(13);
-            if (matcher.group(16) != null) {
-                combinedBegin = kilobytes(matcher.group(17));
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            } else {
+                // Datestamp only.
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+            }
+            trigger = matcher.group(15);
+            if (matcher.group(18) != null) {
+                combinedBegin = kilobytes(matcher.group(19));
             } else {
                 // set it to the end
-                combinedBegin = kilobytes(matcher.group(18));
+                combinedBegin = kilobytes(matcher.group(20));
             }
-            combinedEnd = kilobytes(matcher.group(18));
-            combinedAllocation = kilobytes(matcher.group(19));
-            duration = JdkMath.convertSecsToMicros(matcher.group(20)).intValue();
+            combinedEnd = kilobytes(matcher.group(20));
+            combinedAllocation = kilobytes(matcher.group(21));
+            duration = JdkMath.convertSecsToMicros(matcher.group(22)).intValue();
         }
     }
 

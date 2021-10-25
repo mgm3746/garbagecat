@@ -85,7 +85,7 @@ class TestVerboseGcOldEvent {
     }
 
     @Test
-    void testLogLineDatestamp() {
+    void testLogLineDatestampTimestamp() {
         String logLine = "2016-06-22T14:04:51.080+0100: 22561.627: [Full GC (Last ditch collection)  "
                 + "500269K->500224K(3128704K), 4.2311820 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine),
@@ -98,6 +98,17 @@ class TestVerboseGcOldEvent {
         assertEquals(kilobytes(500224), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(3128704), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
         assertEquals(4231182, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineDatestamp() {
+        String logLine = "2016-06-22T14:04:51.080+0100: [Full GC (Last ditch collection)  500269K->500224K(3128704K), "
+                + "4.2311820 secs]";
+        assertTrue(VerboseGcOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
+        VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(519897891080L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

@@ -76,8 +76,8 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
      * 
      * 2021-10-07T10:05:34.135+0100: 69302.241: [Class Histogram (before full gc):, 4.7148918 secs]
      */
-    public static final String REGEX_PREPROCESSED = "(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP
-            + ": )?\\[Class Histogram( \\((before|after) full gc\\))?(:)?[ ]{0,1}?, " + JdkRegEx.DURATION + "\\]";
+    public static final String REGEX_PREPROCESSED = "" + JdkRegEx.DECORATOR
+            + " \\[Class Histogram( \\((before|after) full gc\\))?(:)?[ ]{0,1}?, " + JdkRegEx.DURATION + "\\]";
 
     /**
      * Regular expressions defining the logging.

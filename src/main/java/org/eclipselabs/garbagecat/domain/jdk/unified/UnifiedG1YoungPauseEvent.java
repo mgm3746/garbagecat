@@ -31,7 +31,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -199,7 +198,7 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
                         }
                     } else {
                         // Datestamp only.
-                        endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
                 trigger = matcher.group(25);
@@ -227,7 +226,7 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
                         }
                     } else {
                         // Datestamp only.
-                        timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
                 trigger = matcher.group(26);

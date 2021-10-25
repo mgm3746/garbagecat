@@ -95,7 +95,7 @@ class TestG1YoungPauseEvent {
     }
 
     @Test
-    void testDatestameTriggerG1EvacuationPause() {
+    void testTriggerG1EvacuationPauseDatestampTimestamp() {
         String logLine = "2018-01-22T12:43:33.359-0700: 17.629: [GC pause (G1 Evacuation Pause) (young) "
                 + "511M->103M(10G), 0.1343977 secs]";
         assertTrue(G1YoungPauseEvent.match(logLine),
@@ -113,6 +113,16 @@ class TestG1YoungPauseEvent {
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
+    void testDatestamp() {
+        String logLine = "2018-01-22T12:43:33.359-0700: [GC pause (G1 Evacuation Pause) (young) "
+                + "511M->103M(10G), 0.1343977 secs]";
+        assertTrue(G1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
+        G1YoungPauseEvent event = new G1YoungPauseEvent(logLine);
+        assertEquals(569947413359L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -296,7 +306,7 @@ class TestG1YoungPauseEvent {
     }
 
     @Test
-    void testLogLinePreprocessedDatestamp() {
+    void testLogLinePreprocessedDatestampTimestamp() {
         String logLine = "2016-12-21T14:28:11.672-0500: 0.823: [GC pause (G1 Evacuation Pause) (young), "
                 + "0.0124023 secs][Eden: 75.0M(75.0M)->0.0B(66.0M) Survivors: 0.0B->9216.0K "
                 + "Heap: 75.0M(1500.0M)->8749.6K(1500.0M)] [Times: user=0.03 sys=0.00, real=0.02 secs]";
@@ -314,6 +324,17 @@ class TestG1YoungPauseEvent {
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(2, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(150, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
+    void testLogLinePreprocessedDatestamp() {
+        String logLine = "2016-12-21T14:28:11.672-0500: [GC pause (G1 Evacuation Pause) (young), "
+                + "0.0124023 secs][Eden: 75.0M(75.0M)->0.0B(66.0M) Survivors: 0.0B->9216.0K "
+                + "Heap: 75.0M(1500.0M)->8749.6K(1500.0M)] [Times: user=0.03 sys=0.00, real=0.02 secs]";
+        assertTrue(G1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
+        G1YoungPauseEvent event = new G1YoungPauseEvent(logLine);
+        assertEquals(535645691672L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

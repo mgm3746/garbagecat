@@ -21,7 +21,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -161,7 +160,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
                     }
                 } else {
                     // Datestamp only.
-                    timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
             timeThreadsStopped = JdkMath.convertSecsToMicros(matcher.group(71)).intValue();

@@ -999,7 +999,7 @@ class TestCmsSerialOldEvent {
     }
 
     @Test
-    void testParNewPromotionFailedConcurrentModeFailureWithClassHistogramDatestamps() {
+    void testParNewPromotionFailedConcurrentModeFailureWithClassHistogramDatestampTimeStamp() {
         String logLine = "2017-05-03T14:51:32.659-0400: 2057.323: [Full GC 2017-05-03T14:51:32.680-0400: 2057.341: "
                 + "[Class Histogram:, 13.8859570 secs]2017-05-03T14:51:46.579-0400: "
                 + "2071.240: [CMS (concurrent mode failure): 9216000K->9215999K(9216000K), 62.4046040 secs]"
@@ -1026,6 +1026,19 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(524288), event.getPermSpace(), "Perm allocation size not parsed correctly.");
         assertEquals(88278527, event.getDuration(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
+    }
+
+    @Test
+    void testDatestampTime() {
+        String logLine = "2017-05-03T14:51:32.659-0400: [Full GC 2017-05-03T14:51:32.680-0400: [Class Histogram:, "
+                + "13.8859570 secs]2017-05-03T14:51:46.579-0400: [CMS (concurrent mode failure): "
+                + "9216000K->9215999K(9216000K), 62.4046040 secs]2017-05-03T14:52:48.982-0400: [Class Histogram, "
+                + "11.9525850 secs] 13363199K->9728622K(13363200K), [CMS Perm : 376898K->376894K(524288K)], "
+                + "88.2785270 secs] [Times: user=86.32 sys=0.39, real=88.27 secs]";
+        assertTrue(CmsSerialOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+        CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
+        assertEquals(547134692659L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

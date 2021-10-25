@@ -254,4 +254,28 @@ class TestParallelCompactingOldEvent {
         assertEquals(237, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(344, event.getParallelism(), "Parallelism not calculated correctly.");
     }
+
+    @Test
+    void testDatestamp() {
+        String logLine = "2017-02-01T17:09:50.180+0000: [Full GC (Heap Dump Initiated GC) "
+                + "[PSYoungGen: 33192K->0K(397312K)] [ParOldGen: 885002K->812903K(890368K)] "
+                + "918194K->812903K(1287680K), [Metaspace: 142181K->141753K(1185792K)], 2.3728899 secs] "
+                + "[Times: user=7.55 sys=0.60, real=2.37 secs]";
+        assertTrue(ParallelCompactingOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
+        assertEquals(Long.parseLong("539266190180"), event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testTimestamp() {
+        String logLine = "1029482.070: [Full GC (Heap Dump Initiated GC) "
+                + "[PSYoungGen: 33192K->0K(397312K)] [ParOldGen: 885002K->812903K(890368K)] "
+                + "918194K->812903K(1287680K), [Metaspace: 142181K->141753K(1185792K)], 2.3728899 secs] "
+                + "[Times: user=7.55 sys=0.60, real=2.37 secs]";
+        assertTrue(ParallelCompactingOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
+        assertEquals(Long.parseLong("1029482070"), event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
 }

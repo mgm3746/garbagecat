@@ -91,11 +91,6 @@ public enum Analysis {
     ERROR_COMP_OOPS_ENABLED_HEAP_GT_32G("error.comp.oops.enabled.heap.gt.32g"),
 
     /**
-     * Property key for logging with datestamps only, no timestamps.
-     */
-    ERROR_DATESTAMP_NO_TIMESTAMP("error.datestamp.no.timestamp"),
-
-    /**
      * Property key for explicit garbage collection invoking the CMS_SERIAL_OLD collector.
      */
     ERROR_EXPLICIT_GC_SERIAL_CMS("error.explicit.gc.serial.cms"),

@@ -257,7 +257,15 @@ class TestHeapAtGcEvent {
     }
 
     @Test
-    void testMetaspaceLineWithDatestamp() {
+    void testMetaspaceDatestampTime() {
+        String logLine = "2017-03-21T15:06:10.427+1100: 123.456:  Metaspace       used 625128K, capacity 943957K, "
+                + "committed 951712K, reserved 1943552K";
+        assertTrue(HeapAtGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".");
+    }
+
+    @Test
+    void testMetaspaceDatestamp() {
         String logLine = "2017-03-21T15:06:10.427+1100:  Metaspace       used 625128K, capacity 943957K, "
                 + "committed 951712K, reserved 1943552K";
         assertTrue(HeapAtGcEvent.match(logLine),

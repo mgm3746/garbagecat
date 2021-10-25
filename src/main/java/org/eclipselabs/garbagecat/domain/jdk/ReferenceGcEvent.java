@@ -43,8 +43,7 @@ public class ReferenceGcEvent implements ThrowAwayEvent {
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ":.+(Soft|Weak|Phantom)Reference.+$";
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + ".+(Soft|Weak|Phantom)Reference.+$";
 
     private static final Pattern pattern = Pattern.compile(ReferenceGcEvent.REGEX);
 
@@ -68,7 +67,16 @@ public class ReferenceGcEvent implements ThrowAwayEvent {
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1) != null) {
+                if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                } else {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                }
+            }
         }
     }
 

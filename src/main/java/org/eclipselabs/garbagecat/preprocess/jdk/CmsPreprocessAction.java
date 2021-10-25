@@ -186,14 +186,13 @@ public class CmsPreprocessAction implements PreprocessAction {
      * [ParNew2016-10-10T19:17:37.773-0700: 2030.110: [CMS-concurrent-abortable-preclean: 0.050/0.150 secs] [Times:
      * user=0.11 sys=0.03, real=0.15 secs]
      */
-    private static final String REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))?( )?(("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew)?( \\("
+    private static final String REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\("
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))?( )?(" + JdkRegEx.DECORATOR + " \\[ParNew)?( \\("
             + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?(: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS)?)(( CMS: abort preclean due to time )?(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-(abortable-preclean|mark|sweep|preclean|reset): " + JdkRegEx.DURATION_FRACTION
-            + "\\]" + TimesData.REGEX + "?)[ ]*$";
+            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[CMS)?)(( CMS: abort preclean due to time )?" + JdkRegEx.DECORATOR
+            + " \\[CMS-concurrent-(abortable-preclean|mark|sweep|preclean|reset): " + JdkRegEx.DURATION_FRACTION + "\\]"
+            + TimesData.REGEX + "?)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT);
@@ -205,8 +204,8 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * 2017-02-27T14:29:54.533+0000: 2.730: [GC (Allocation Failure) Before GC:
      */
-    private static final String REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[GC( \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))? )(Before GC:)$";
+    private static final String REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\("
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\))? )(Before GC:)$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS);
@@ -216,8 +215,8 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * 2017-05-03T14:51:32.659-0400: 2057.323: [Full GC 2017-05-03T14:51:32.680-0400: 2057.341: [Class Histogram:
      */
-    private static final String REGEX_RETAIN_BEGINNING_SERIAL = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[Full GC (" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram:)[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL = "^(" + JdkRegEx.DECORATOR + " \\[Full GC "
+            + JdkRegEx.DECORATOR + " \\[Class Histogram:)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL);
 
@@ -234,11 +233,11 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 2017-05-03T14:47:00.002-0400: 1784.661: [GC 2017-05-03T14:47:00.006-0400: 1784.664: [ParNew:
      * 4147200K->4147200K(4147200K), 0.0677200 secs]2017-05-03T14:47:00.075-0400: 1784.735: [Class Histogram:
      */
-    private static final String REGEX_RETAIN_BEGINNING_PARNEW = "^((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[GC( )?( \\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\) )?(" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?(: "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram:)?)[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_PARNEW = "^(" + JdkRegEx.DECORATOR + " \\[GC( )?( \\(("
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\) )?" + JdkRegEx.DECORATOR + " \\[ParNew( \\(("
+            + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?(: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[Class Histogram:)?)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW);
 
@@ -249,13 +248,13 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 2017-06-22T21:22:03.269-0400: 23.859: [CMS-concurrent-abortable-preclean: 0.338/5.115 secs] [Times: user=14.57
      * sys=0.83, real=5.11 secs]
      */
-    private static final String REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT = "^(" + JdkRegEx.DECORATOR
+            + " \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
             + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)[ ]{0,1})?(" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[CMS)( CMS: abort preclean due to time )?((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): "
-            + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)[ ]{0,1})?" + JdkRegEx.DECORATOR
+            + " \\[CMS)( CMS: abort preclean due to time )?(" + JdkRegEx.DECORATOR
+            + " \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]"
+            + TimesData.REGEX + "?)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
@@ -263,7 +262,7 @@ public class CmsPreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained beginning CMS_SERIAL_OLD bailing out collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_SERIAL_BAILING = "^(" + JdkRegEx.TIMESTAMP + ": \\[Full GC "
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL_BAILING = "^(" + JdkRegEx.DECORATOR + " \\[Full GC "
             + JdkRegEx.TIMESTAMP + ": \\[CMSbailing out to foreground collection)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_BAILING_PATTERN = Pattern
@@ -296,9 +295,9 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * 4237.297: [GC[YG occupancy: 905227 K (4194240 K)]{Heap before GC invocations=85 (full 1):
      */
-    private static final String REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[(Full )?GC[ ]{0,1}(\\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
-            + "\\) )?(\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K
+    private static final String REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC = "^(" + JdkRegEx.DECORATOR
+            + " \\[(Full )?GC[ ]{0,1}(\\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\) )?(\\[YG occupancy: "
+            + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K
             + "\\)\\])?)\\{Heap before (gc|GC) invocations=\\d{1,10}( \\(full \\d{1,10}\\))?:[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC_PATTERN = Pattern
@@ -307,11 +306,11 @@ public class CmsPreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained beginning PAR_NEW bailing out collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_PARNEW_BAILING = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC "
+    private static final String REGEX_RETAIN_BEGINNING_PARNEW_BAILING = "^(" + JdkRegEx.DECORATOR + " \\[GC "
             + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: " + JdkRegEx.SIZE_K
             + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP
-            + ": \\[CMS(Java HotSpot\\(TM\\) Server VM warning: )?bailing out to foreground collection)[ ]*$";
+            + JdkRegEx.DECORATOR
+            + " \\[CMS(Java HotSpot\\(TM\\) Server VM warning: )?bailing out to foreground collection)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_BAILING_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_PARNEW_BAILING);
@@ -322,10 +321,10 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 2017-06-18T05:23:03.452-0500: 2.182: 2017-06-18T05:23:03.452-0500: [CMS-concurrent-preclean: 0.016/0.048
      * secs]2.182: Application time: 0.0055079 seconds
      */
-    private static final String REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME = "^(("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": )(" + JdkRegEx.DATESTAMP
-            + ": )?(\\[CMS-concurrent-preclean: " + JdkRegEx.DURATION_FRACTION + "\\])(" + JdkRegEx.TIMESTAMP
-            + ": Application time: \\d{1,4}\\.\\d{7} seconds)[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME = "^("
+            + JdkRegEx.DECORATOR + " )(" + JdkRegEx.DECORATOR + " )?(\\[CMS-concurrent-preclean: "
+            + JdkRegEx.DURATION_FRACTION + "\\])(" + JdkRegEx.DECORATOR
+            + " Application time: \\d{1,4}\\.\\d{7} seconds)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME);
@@ -337,8 +336,8 @@ public class CmsPreprocessAction implements PreprocessAction {
      * [Class Histogram
      */
     private static final String REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE = "^( \\(concurrent mode failure\\): "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?)[ ]*$";
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.DECORATOR + " \\[Class Histogram(:)?)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE);
@@ -369,10 +368,10 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 29.707/71.001 secs] [Times: user=121.03 sys=35.41, real=70.99 secs]
      */
     private static final String REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED = "^((: " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.DATESTAMP
-            + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS)(( CMS: abort preclean due to time )?(" + JdkRegEx.DATESTAMP
-            + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark|sweep): "
-            + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?" + JdkRegEx.DECORATOR
+            + " \\[CMS)(( CMS: abort preclean due to time )?" + JdkRegEx.DECORATOR
+            + " \\[CMS-concurrent-(abortable-preclean|preclean|mark|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]"
+            + TimesData.REGEX + "?)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED);
@@ -387,11 +386,10 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 2017-03-19T11:48:55.207+0000: 356616.193: [ParNew2017-03-19T11:48:55.211+0000: 356616.198:
      * [CMS-concurrent-abortable-preclean: 1.046/3.949 secs] [Times: user=1.16 sys=0.05, real=3.95 secs]
      */
-    private static final String REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED = "^(((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?)?(: "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[CMS)?)((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[CMS-concurrent-(abortable-preclean|preclean|mark): "
+    private static final String REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED = "^((" + JdkRegEx.DECORATOR
+            + " \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?)?(: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[CMS)?)(" + JdkRegEx.DECORATOR + " \\[CMS-concurrent-(abortable-preclean|preclean|mark): "
             + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED_PATTERN = Pattern
@@ -421,12 +419,11 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * : 66097K->7194K(66368K), 0.0440189 secs] 5274098K->5219953K(10478400K)After GC:
      */
-    private static final String REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS = "^((" + JdkRegEx.DATESTAMP + ": )?("
-            + JdkRegEx.TIMESTAMP + ": \\[ParNew(" + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\("
-            + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?)?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)(, " + JdkRegEx.DURATION + "\\])?( " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K
-            + "\\(" + JdkRegEx.SIZE_K + "\\))?((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS)?)(After GC:|CMS: Large block " + JdkRegEx.ADDRESS + ")$";
+    private static final String REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS = "^((" + JdkRegEx.DECORATOR + " \\[ParNew("
+            + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?)?: "
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)(, " + JdkRegEx.DURATION
+            + "\\])?( " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\))?("
+            + JdkRegEx.DECORATOR + " \\[CMS)?)(After GC:|CMS: Large block " + JdkRegEx.ADDRESS + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS);
@@ -474,10 +471,9 @@ public class CmsPreprocessAction implements PreprocessAction {
      * 
      * 2017-06-18T05:23:16.634-0500: 15.364: [GC (CMS Final Remark) 2017-06-18T05:23:16.634-0500: 15.364: [ParNew
      */
-    private static final String REGEX_RETAIN_MIDDLE_CMS_REMARK = "^((" + JdkRegEx.DATESTAMP + ": )?"
-            + JdkRegEx.TIMESTAMP + ": \\[GC (\\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\))?(  " + JdkRegEx.SIZE_K
-            + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?( ("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew)?)[ ]*$";
+    private static final String REGEX_RETAIN_MIDDLE_CMS_REMARK = "^(" + JdkRegEx.DECORATOR + " \\[GC (\\("
+            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\))?(  " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?( " + JdkRegEx.DECORATOR + " \\[ParNew)?)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_CMS_REMARK_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_CMS_REMARK);
@@ -551,11 +547,10 @@ public class CmsPreprocessAction implements PreprocessAction {
      * Regular expression for PAR_NEW with extraneous prefix.
      */
     private static final String REGEX_RETAIN_PAR_NEW = "^(" + JdkRegEx.TIMESTAMP + ": \\[ParNew" + JdkRegEx.TIMESTAMP
-            + ": \\[ParNew)((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC \\("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\) " + JdkRegEx.TIMESTAMP + ": \\[ParNew: " + JdkRegEx.SIZE_K
-            + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K
-            + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
-            + "?)[ ]*$";
+            + ": \\[ParNew)(" + JdkRegEx.DECORATOR + " \\[GC \\(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\) "
+            + JdkRegEx.TIMESTAMP + ": \\[ParNew: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_PAR_NEW_PATTERN = Pattern.compile(REGEX_RETAIN_PAR_NEW);
 
@@ -593,7 +588,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             // Par_NEW mixed with CMS_CONCURRENT
             matcher.reset();
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(46));
+                entangledLogLines.add(matcher.group(52));
             }
             // Output beginning of PAR_NEW line
             this.logEntry = matcher.group(1);
@@ -612,7 +607,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             // CMS_SERIAL_OLD mixed with CMS_CONCURRENT
             matcher.reset();
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(28));
+                entangledLogLines.add(matcher.group(32));
             }
             // Output beginning of CMS_SERIAL_OLD line
             this.logEntry = matcher.group(1);
@@ -667,11 +662,11 @@ public class CmsPreprocessAction implements PreprocessAction {
                 .matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1) + matcher.group(23);
-                if (matcher.group(13) != null) {
-                    entangledLogLines.add(matcher.group(13) + matcher.group(25));
+                this.logEntry = matcher.group(1) + matcher.group(29);
+                if (matcher.group(15) != null) {
+                    entangledLogLines.add(matcher.group(15) + matcher.group(31));
                 } else {
-                    entangledLogLines.add(matcher.group(25));
+                    entangledLogLines.add(matcher.group(31));
                 }
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
@@ -693,7 +688,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
-                entangledLogLines.add(matcher.group(20));
+                entangledLogLines.add(matcher.group(22));
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED_PATTERN.matcher(logEntry)).matches()) {
@@ -701,7 +696,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
-                entangledLogLines.add(matcher.group(33));
+                entangledLogLines.add(matcher.group(37));
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS_PATTERN.matcher(logEntry)).matches()) {

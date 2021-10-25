@@ -94,10 +94,9 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
     /**
      * Regular expressions defining the logging JDK8 and prior.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC (\\(("
-            + JdkRegEx.TRIGGER_CMS_INITIAL_MARK + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
-            + "\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC (\\((" + JdkRegEx.TRIGGER_CMS_INITIAL_MARK
+            + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K
+            + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(REGEX);
 
@@ -112,13 +111,20 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
         if (match(logEntry)) {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-                trigger = matcher.group(13);
-                duration = JdkMath.convertSecsToMicros(matcher.group(18)).intValue();
-                if (matcher.group(21) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(22)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(23)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(24)).intValue();
+                if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                } else {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                }
+                trigger = matcher.group(15);
+                duration = JdkMath.convertSecsToMicros(matcher.group(20)).intValue();
+                if (matcher.group(23) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(24)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(25)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(26)).intValue();
                 }
             }
         }

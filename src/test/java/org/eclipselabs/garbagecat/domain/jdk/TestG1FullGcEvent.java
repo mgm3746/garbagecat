@@ -150,6 +150,18 @@ class TestG1FullGcEvent {
     }
 
     @Test
+    void testLogLineDatestamp() {
+        String logLine = "2017-02-27T02:55:32.523+0300: [Full GC (Allocation Failure)21G->20G(22G), "
+                + "40.6782890 secs][Eden: 0.0B(1040.0M)->0.0B(1120.0M) Survivors: 80.0M->0.0B "
+                + "Heap: 22.0G(22.0G)->20.6G(22.0G)], [Perm: 1252884K->1252884K(2097152K)] "
+                + "[Times: user=56.34 sys=1.78, real=40.67 secs]";
+        assertTrue(G1FullGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+        G1FullGcEvent event = new G1FullGcEvent(logLine);
+        assertEquals(541450532523L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
     void testLogLinePreprocessedDetailsTriggerMetadatGcThresholdMetaspace() {
         String logLine = "188.123: [Full GC (Metadata GC Threshold) 1831M->1213M(5120M), 5.1353878 secs]"
                 + "[Eden: 0.0B(1522.0M)->0.0B(2758.0M) Survivors: 244.0M->0.0B "

@@ -157,9 +157,9 @@ public class ParallelScavengeEvent extends ParallelCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC(--)? (\\("
-            + TRIGGER + "\\) )?(--)?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC(--)? (\\(" + TRIGGER
+            + "\\) )?(--)?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\)\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
             + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(ParallelScavengeEvent.REGEX);
@@ -174,19 +174,28 @@ public class ParallelScavengeEvent extends ParallelCollector
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-            trigger = matcher.group(14);
-            young = kilobytes((matcher.group(17)));
-            youngEnd = kilobytes((matcher.group(18)));
-            youngAvailable = kilobytes((matcher.group(19)));
-            old = kilobytes(matcher.group(20)).minus(young);
-            oldEnd = kilobytes(matcher.group(21)).minus(youngEnd);
-            oldAllocation = kilobytes(matcher.group(22)).minus(youngAvailable);
-            duration = JdkMath.convertSecsToMicros(matcher.group(23)).intValue();
-            if (matcher.group(26) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(27)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(28)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1) != null) {
+                if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                } else {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                }
+            }
+            trigger = matcher.group(16);
+            young = kilobytes((matcher.group(19)));
+            youngEnd = kilobytes((matcher.group(20)));
+            youngAvailable = kilobytes((matcher.group(21)));
+            old = kilobytes(matcher.group(22)).minus(young);
+            oldEnd = kilobytes(matcher.group(23)).minus(youngEnd);
+            oldAllocation = kilobytes(matcher.group(24)).minus(youngAvailable);
+            duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
+            if (matcher.group(28) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(31)).intValue();
             }
         }
     }

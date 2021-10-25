@@ -77,6 +77,14 @@ class TestCmsConcurrentEvent {
     }
 
     @Test
+    void testDatestamp() {
+        String logLine = "2017-06-23T08:12:13.943-0400: [CMS-concurrent-mark: 4.583/35144.874 secs] "
+                + "[Times: user=29858.25 sys=2074.63, real=35140.48 secs]";
+        assertTrue(CmsConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testMarkWithTimesDataWithOtherLoggingAppended() {
         String logLine = "242107.737: [CMS-concurrent-mark: 0.443/10.257 secs] "
                 + "[Times: user=6.00 sys=0.28, real=10.26 secs]x";

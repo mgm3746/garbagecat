@@ -233,17 +233,16 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
      * Regular expression for CMS_REMARK block in some events.
      */
     private static final String REMARK_BLOCK = "\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K
-            + "\\)\\]" + JdkRegEx.TIMESTAMP + ": \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.TIMESTAMP
-            + ": \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\]";
+            + "\\)\\]" + JdkRegEx.DECORATOR + " \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.DECORATOR + " \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\]";
 
     /**
      * Regular expression defining the logging beginning with "Full GC".
      */
-    private static final String REGEX_FULL_GC = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[Full GC( \\(" + TRIGGER_FULL_GC + "\\))?[ ]{0,1}(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?("
-            + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": "
+    private static final String REGEX_FULL_GC = "^" + JdkRegEx.DECORATOR + " \\[Full GC( \\(" + TRIGGER_FULL_GC
+            + "\\))?[ ]{0,1}(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + JdkRegEx.DECORATOR + " "
             + "\\[CMS(bailing out to foreground collection)?( \\(" + TRIGGER_CMS + "\\))?( \\(" + TRIGGER_CMS + "\\))?("
             + REMARK_BLOCK + ")?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
             + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")? " + JdkRegEx.SIZE_K + "->"
@@ -256,12 +255,11 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
     /**
      * Regular expression defining the logging beginning with "GC".
      */
-    private static final String REGEX_GC = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[GC( \\("
-            + TRIGGER_GC + "\\))?[ ]{0,1}(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[ParNew("
-            + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\(" + TRIGGER_PAR_NEW + "\\))?: " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]("
-            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?(((" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP
-            + ": \\[(CMS|Tenured))?(Java HotSpot\\(TM\\) Server VM warning: )?"
+    private static final String REGEX_GC = "^" + JdkRegEx.DECORATOR + " \\[GC( \\(" + TRIGGER_GC + "\\))?[ ]{0,1}"
+            + JdkRegEx.DECORATOR + " \\[ParNew(" + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\(" + TRIGGER_PAR_NEW
+            + "\\))?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
+            + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?((" + JdkRegEx.DECORATOR
+            + " \\[(CMS|Tenured))?(Java HotSpot\\(TM\\) Server VM warning: )?"
             + "(bailing out to foreground collection)?( \\(" + TRIGGER_CMS + "\\))?(: " + JdkRegEx.SIZE_K + "->"
             + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?)?("
             + ClassHistogramEvent.REGEX_PREPROCESSED + ")?( " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
@@ -284,84 +282,98 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
             Pattern pattern = Pattern.compile(REGEX_FULL_GC);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                this.timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-                // If multiple triggers, use last one.
-                if (matcher.group(49) != null) {
-                    this.trigger = matcher.group(49);
-                } else if (matcher.group(47) != null) {
-                    this.trigger = matcher.group(47);
-                } else if (matcher.group(14) != null || matcher.group(86) != null) {
-                    this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
-                } else if (matcher.group(13) != null) {
-                    this.trigger = matcher.group(13);
+                if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                } else {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
-                this.old = kilobytes(matcher.group(69));
-                this.oldEnd = kilobytes(matcher.group(70));
-                this.oldAllocation = kilobytes(matcher.group(71));
-                this.young = kilobytes(matcher.group(94)).minus(this.old);
-                this.youngEnd = kilobytes(matcher.group(95)).minus(this.oldEnd);
-                this.youngAvailable = kilobytes(matcher.group(96)).minus(this.oldAllocation);
-                this.permGen = kilobytes(matcher.group(98));
-                this.permGenEnd = kilobytes(matcher.group(99));
-                this.permGenAllocation = kilobytes(matcher.group(100));
-                if (matcher.group(101) != null) {
+                // If multiple triggers, use last one.
+                if (matcher.group(54) != null) {
+                    this.trigger = matcher.group(54);
+                } else if (matcher.group(52) != null) {
+                    this.trigger = matcher.group(52);
+                } else if (matcher.group(17) != null) {
+                    this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
+                } else if (matcher.group(15) != null) {
+                    this.trigger = matcher.group(15);
+                }
+                this.old = kilobytes(matcher.group(122));
+                this.oldEnd = kilobytes(matcher.group(123));
+                this.oldAllocation = kilobytes(matcher.group(124));
+                this.young = kilobytes(matcher.group(148)).minus(this.old);
+                this.youngEnd = kilobytes(matcher.group(149)).minus(this.oldEnd);
+                this.youngAvailable = kilobytes(matcher.group(150)).minus(this.oldAllocation);
+                this.permGen = kilobytes(matcher.group(152));
+                this.permGenEnd = kilobytes(matcher.group(153));
+                this.permGenAllocation = kilobytes(matcher.group(154));
+                if (matcher.group(155) != null) {
                     super.setIncrementalMode(true);
                 }
-                this.duration = JdkMath.convertSecsToMicros(matcher.group(102)).intValue();
+                this.duration = JdkMath.convertSecsToMicros(matcher.group(156)).intValue();
             }
         } else if (logEntry.matches(REGEX_GC)) {
             Pattern pattern = Pattern.compile(REGEX_GC);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                this.timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                } else {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                }
                 // If multiple triggers, use last one.
-                if (matcher.group(71) != null) {
-                    this.trigger = matcher.group(71);
-                } else if (matcher.group(28) != null) {
-                    this.trigger = matcher.group(28);
-                } else if (matcher.group(13) != null) {
-                    this.trigger = matcher.group(13);
+                if (matcher.group(78) != null) {
+                    this.trigger = matcher.group(78);
+                } else if (matcher.group(32) != null) {
+                    this.trigger = matcher.group(32);
+                } else if (matcher.group(15) != null) {
+                    this.trigger = matcher.group(15);
                 } else {
                     // assume promotion failure
                     this.trigger = JdkRegEx.TRIGGER_PROMOTION_FAILED;
                 }
-                this.young = kilobytes(matcher.group(29));
+                this.young = kilobytes(matcher.group(33));
                 // No data to determine young end size.
                 this.youngEnd = Memory.ZERO;
-                this.youngAvailable = kilobytes(matcher.group(31));
+                this.youngAvailable = kilobytes(matcher.group(35));
 
                 // use young block duration for truncated events
-                if (matcher.group(107) == null) {
-                    this.duration = JdkMath.convertSecsToMicros(matcher.group(32)).intValue();
+                if (matcher.group(116) == null) {
+                    this.duration = JdkMath.convertSecsToMicros(matcher.group(36)).intValue();
                 }
 
                 // old block after young
-                if (matcher.group(72) != null) {
-                    this.old = kilobytes(matcher.group(73));
-                    this.oldEnd = kilobytes(matcher.group(74));
-                    this.oldAllocation = kilobytes(matcher.group(75));
-                    if (matcher.group(101) != null) {
-                        this.youngEnd = kilobytes(matcher.group(100)).minus(this.oldEnd);
+                if (matcher.group(79) != null) {
+                    this.old = kilobytes(matcher.group(80));
+                    this.oldEnd = kilobytes(matcher.group(81));
+                    this.oldAllocation = kilobytes(matcher.group(82));
+                    if (matcher.group(106) != null) {
+                        this.youngEnd = kilobytes(matcher.group(108)).minus(this.oldEnd);
                     }
                 } else {
-                    if (matcher.group(98) != null) {
-                        this.old = kilobytes(matcher.group(99)).minus(this.young);
+                    if (matcher.group(106) != null) {
+                        this.old = kilobytes(matcher.group(107)).minus(this.young);
                         // No data to determine old end size.
                         this.oldEnd = Memory.ZERO;
-                        this.oldAllocation = kilobytes(matcher.group(101)).minus(this.youngAvailable);
+                        this.oldAllocation = kilobytes(matcher.group(109)).minus(this.youngAvailable);
                     }
                 }
                 // perm/metaspace data
-                if (matcher.group(102) != null) {
-                    this.permGen = kilobytes(matcher.group(104));
-                    this.permGenEnd = kilobytes(matcher.group(105));
-                    this.permGenAllocation = kilobytes(matcher.group(106));
+                if (matcher.group(110) != null) {
+                    this.permGen = kilobytes(matcher.group(112));
+                    this.permGenEnd = kilobytes(matcher.group(113));
+                    this.permGenAllocation = kilobytes(matcher.group(114));
                 }
-                if (matcher.group(107) != null) {
+                if (matcher.group(115) != null) {
                     super.setIncrementalMode(true);
                 }
-                if (matcher.group(108) != null) {
-                    this.duration = JdkMath.convertSecsToMicros(matcher.group(108)).intValue();
+                if (matcher.group(116) != null) {
+                    this.duration = JdkMath.convertSecsToMicros(matcher.group(116)).intValue();
                 }
             }
         }

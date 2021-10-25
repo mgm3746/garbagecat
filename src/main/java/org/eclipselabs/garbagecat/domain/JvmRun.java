@@ -17,7 +17,6 @@ import static org.eclipselabs.garbagecat.util.Memory.gigabytes;
 import static org.eclipselabs.garbagecat.util.Memory.megabytes;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.*;
-import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx.DATESTAMP_EVENT;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,10 +27,12 @@ import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * JVM run data.
@@ -298,7 +299,8 @@ public class JvmRun {
      */
     private void doDataAnalysis() {
         // Check for partial log
-        if (firstGcEvent != null && !firstGcEvent.getLogEntry().matches(DATESTAMP_EVENT)
+        if (firstGcEvent != null && !firstGcEvent.getLogEntry().matches(JdkRegEx.DATESTAMP_EVENT)
+                && !firstGcEvent.getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)
                 && GcUtil.isPartialLog(firstGcEvent.getTimestamp())) {
             analysis.add(INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
         }

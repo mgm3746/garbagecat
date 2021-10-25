@@ -98,9 +98,7 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(: )?(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.DATESTAMP + "(: )?)?("
-            + JdkRegEx.TIMESTAMP + "(: )?)?(" + JdkRegEx.DATESTAMP + "(: )?)?(: )?" + JdkRegEx.TIMESTAMP + "?(: )?("
-            + JdkRegEx.TIMESTAMP + ")?(: )?Total time for which application threads "
+    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " )?Total time for which application threads "
             + "were stopped: ((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds(, Stopping threads took: "
             + "((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds)?[ ]{0,}$";
 
@@ -150,14 +148,19 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
             long endTimestamp = 0;
-            if (matcher.group(24) != null) {
-                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(24)).longValue();
-            } else if (matcher.group(38) != null) {
-                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(38)).longValue();
+            if (matcher.group(14) != null && matcher.group(14).matches(JdkRegEx.TIMESTAMP)) {
+                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
+            } else if (matcher.group(2) != null) {
+                if (matcher.group(2).matches(JdkRegEx.TIMESTAMP)) {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(2)).longValue();
+                } else {
+                    // Datestamp only.
+                    endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
+                }
             }
-            timeThreadsStopped = JdkMath.convertSecsToMicros(matcher.group(43)).intValue();
-            if (matcher.group(45) != null) {
-                timeToStopThreads = JdkMath.convertSecsToMicros(matcher.group(46)).intValue();
+            timeThreadsStopped = JdkMath.convertSecsToMicros(matcher.group(15)).intValue();
+            if (matcher.group(18) != null) {
+                timeToStopThreads = JdkMath.convertSecsToMicros(matcher.group(18)).intValue();
             }
             if (endTimestamp > 0) {
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(getDuration()).longValue();

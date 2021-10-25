@@ -307,4 +307,12 @@ class TestJdkRegEx {
         String decorator = "2020-03-10T08:03:29.311-0400: 0.373:";
         assertTrue(decorator.matches(JdkRegEx.DECORATOR), "'" + decorator + "' " + "not a valid decorator.");
     }
+
+    @Test
+    void testDatestampEvent() {
+        String logLine = "2020-03-10T08:03:29.311-0400: MGM";
+        assertTrue(logLine.matches(JdkRegEx.DATESTAMP_EVENT), "'" + logLine + "' " + "is a valid datestamp event.");
+        logLine = "2020-03-10T08:03:29.311-0400: 123.456: MGM";
+        assertFalse(logLine.matches(JdkRegEx.DATESTAMP_EVENT), "'" + logLine + "' " + "not a valid datestamp event.");
+    }
 }

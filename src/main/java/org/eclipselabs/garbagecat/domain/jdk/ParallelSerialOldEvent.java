@@ -154,8 +154,8 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATESTAMP + ": )?" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\("
-            + TRIGGER + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC (\\(" + TRIGGER
+            + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
             + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] "
             + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
             + "\\)[,]{0,1} \\[(PSPermGen|Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
@@ -173,24 +173,29 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
         this.logEntry = logEntry;
         Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            this.timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-
-            if (matcher.group(13) != null) {
-                this.trigger = matcher.group(13);
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1) != null) {
+                if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                } else {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                }
             }
-            this.young = kilobytes(matcher.group(15));
-            this.youngEnd = kilobytes(matcher.group(16));
-            this.youngAvailable = kilobytes(matcher.group(17));
-
-            this.old = kilobytes(matcher.group(18));
-            this.oldEnd = kilobytes(matcher.group(19));
-            this.oldAllocation = kilobytes(matcher.group(20));
-
-            this.permGen = kilobytes(matcher.group(25));
-            this.permGenEnd = kilobytes(matcher.group(26));
-            this.permGenAllocation = kilobytes(matcher.group(27));
-
-            this.duration = JdkMath.convertSecsToMicros(matcher.group(28)).intValue();
+            if (matcher.group(15) != null) {
+                this.trigger = matcher.group(15);
+            }
+            this.young = kilobytes(matcher.group(17));
+            this.youngEnd = kilobytes(matcher.group(18));
+            this.youngAvailable = kilobytes(matcher.group(19));
+            this.old = kilobytes(matcher.group(20));
+            this.oldEnd = kilobytes(matcher.group(21));
+            this.oldAllocation = kilobytes(matcher.group(22));
+            this.permGen = kilobytes(matcher.group(27));
+            this.permGenEnd = kilobytes(matcher.group(28));
+            this.permGenAllocation = kilobytes(matcher.group(29));
+            this.duration = JdkMath.convertSecsToMicros(matcher.group(30)).intValue();
         }
     }
 

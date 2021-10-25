@@ -111,9 +111,8 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent, Parallel
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(: )?(" + JdkRegEx.DATESTAMP + "(: )?)?(" + JdkRegEx.DATESTAMP
-            + "(: )?)?(: )?" + JdkRegEx.TIMESTAMP + "?(: )?(" + JdkRegEx.DATESTAMP + ": )?(: )?(" + JdkRegEx.TIMESTAMP
-            + ": )?(: )?\\[GC concurrent-(((root-region-scan|mark|cleanup)-(start|end|abort|reset-for-overflow))"
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR
+            + " \\[GC concurrent-(((root-region-scan|mark|cleanup)-(start|end|abort|reset-for-overflow))"
             + "|string-deduplication)(\\])?(,)?( " + JdkRegEx.DURATION + ")?(\\])?( " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?(, avg " + JdkRegEx.PERCENT + ", " + JdkRegEx.DURATION
             + "\\])?" + TimesData.REGEX + "?[ ]*$";
@@ -143,8 +142,13 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent, Parallel
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                if (matcher.group(25) != null) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(25)).longValue();
+                if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+                } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+                } else {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
         }

@@ -102,7 +102,7 @@ class TestShenandoahDegeneratedGcMarkEvent {
     }
 
     @Test
-    void testLogLineNotUnified() {
+    void testLogLineJdk8() {
         String logLine = "2020-08-18T14:05:42.515+0000: 854868.165: [Pause Degenerated GC (Mark) "
                 + "93058M->29873M(98304M), 1285.045 ms]";
         assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
@@ -116,13 +116,36 @@ class TestShenandoahDegeneratedGcMarkEvent {
     }
 
     @Test
+    void testLogLineJdk8Timestamp() {
+        String logLine = "854868.165: [Pause Degenerated GC (Mark) 93058M->29873M(98304M), 1285.045 ms]";
+        assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
+                "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
+        ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
+        assertEquals((long) 854868165, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Datestamp() {
+        String logLine = "2020-08-18T14:05:42.515+0000: [Pause Degenerated GC (Mark) "
+                + "93058M->29873M(98304M), 1285.045 ms]";
+        assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
+                "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
+        ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
+        assertEquals(651056742515L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(megabytes(93058), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
+        assertEquals(megabytes(29873), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(megabytes(98304), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(1285045, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
     void testLogLineMetaspace() {
         String logLine = "[2020-10-26T14:51:41.413-0400] GC(413) Pause Degenerated GC (Mark) 90M->12M(96M) 27.501ms "
                 + "Metaspace: 3963K->3963K(1056768K)";
         assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
                 "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
         ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
-        assertEquals(UnifiedUtil.convertDatestampToMillis("2020-10-26T14:51:41.413-0400") - 27, event.getTimestamp(),
+        assertEquals(JdkUtil.convertDatestampToMillis("2020-10-26T14:51:41.413-0400") - 27, event.getTimestamp(),
                 "Time stamp not parsed correctly.");
         assertEquals(megabytes(90), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(megabytes(12), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");

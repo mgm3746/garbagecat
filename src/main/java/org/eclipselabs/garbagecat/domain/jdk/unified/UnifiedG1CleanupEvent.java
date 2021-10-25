@@ -28,7 +28,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -153,7 +152,7 @@ public class UnifiedG1CleanupEvent extends G1Collector
                         }
                     } else {
                         // Datestamp only.
-                        endTimestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
                 combinedBegin = memory(matcher.group(24), matcher.group(26).charAt(0)).convertTo(KILOBYTES);
@@ -180,7 +179,7 @@ public class UnifiedG1CleanupEvent extends G1Collector
                         }
                     } else {
                         // Datestamp only.
-                        timestamp = UnifiedUtil.convertDatestampToMillis(matcher.group(1));
+                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
                 combinedBegin = memory(matcher.group(24), matcher.group(26).charAt(0)).convertTo(KILOBYTES);
