@@ -98,7 +98,7 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " )?Total time for which application threads "
+    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " )?(: )?Total time for which application threads "
             + "were stopped: ((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds(, Stopping threads took: "
             + "((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds)?[ ]{0,}$";
 
@@ -158,9 +158,9 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
                     endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
             }
-            timeThreadsStopped = JdkMath.convertSecsToMicros(matcher.group(15)).intValue();
-            if (matcher.group(18) != null) {
-                timeToStopThreads = JdkMath.convertSecsToMicros(matcher.group(18)).intValue();
+            timeThreadsStopped = JdkMath.convertSecsToMicros(matcher.group(16)).intValue();
+            if (matcher.group(19) != null) {
+                timeToStopThreads = JdkMath.convertSecsToMicros(matcher.group(19)).intValue();
             }
             if (endTimestamp > 0) {
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(getDuration()).longValue();
