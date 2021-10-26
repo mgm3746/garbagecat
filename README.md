@@ -49,7 +49,7 @@ JDK8:
 
 JDK9+:
 
-1) time
+1) \[time\]
 
 ```
 -Xlog:gc*,safepoint=info:file=gc_%p_%t.log:time:filecount=4,filesize=50M
@@ -57,7 +57,7 @@ JDK9+:
 [2020-02-14T15:21:55.207-0500] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
 
-2) uptime
+2) \[uptime\]
 
 ```
 -Xlog:gc*,safepoint=info:file=gc_%p_%t.log:uptime:filecount=4,filesize=50M
@@ -65,7 +65,7 @@ JDK9+:
 [0.052s] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
 
-3) uptimemillis
+3) \[uptimemillis\]
 
 ```
 -Xlog:gc*,safepoint=info:file=gc_%p_%t.log:uptimemillis:filecount=4,filesize=50M
@@ -73,7 +73,7 @@ JDK9+:
 [052ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
 
-4) time,uptime
+4) \[time\]\[uptime\]
 
 ```
 -Xlog:gc*,safepoint=info:file=gc_%p_%t.log:time,uptime:filecount=4,filesize=50M
@@ -81,7 +81,7 @@ JDK9+:
 [2020-02-14T15:21:55.207-0500][0.052s] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
 
-5) time,uptimemillis
+5) \[time\]\[uptimemillis\]
 
 ```
 -Xlog:gc*,safepoint=info:file=gc_%p_%t.log:time,uptimemillis:filecount=4,filesize=50M
