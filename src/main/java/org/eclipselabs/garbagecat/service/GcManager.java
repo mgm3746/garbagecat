@@ -73,8 +73,6 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationConcurrentTimePreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ParallelPreprocessAction;
@@ -323,9 +321,7 @@ public class GcManager {
                     }
                 }
                 currentLogLine = null;
-            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                    && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                    && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+            } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                     && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
                     && !context.contains(UnifiedPreprocessAction.TOKEN)
                     && ShenandoahPreprocessAction.match(currentLogLine)) {
@@ -334,9 +330,7 @@ public class GcManager {
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
-            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                    && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                    && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+            } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                     && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
                     && !context.contains(ShenandoahPreprocessAction.TOKEN)
                     && UnifiedPreprocessAction.match(currentLogLine)) {
@@ -345,9 +339,7 @@ public class GcManager {
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
-            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                    && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                    && !context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+            } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                     && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(UnifiedPreprocessAction.TOKEN)
                     && ParallelPreprocessAction.match(currentLogLine)) {
                 ParallelPreprocessAction action = new ParallelPreprocessAction(priorLogLine, currentLogLine,
@@ -355,9 +347,7 @@ public class GcManager {
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
-            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                    && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                    && !context.contains(SerialPreprocessAction.TOKEN)
+            } else if (!context.contains(SerialPreprocessAction.TOKEN)
                     && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(G1PreprocessAction.TOKEN)
                     && !context.contains(ShenandoahPreprocessAction.TOKEN)
                     && !context.contains(UnifiedPreprocessAction.TOKEN)
@@ -373,31 +363,7 @@ public class GcManager {
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
-            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                    && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(SerialPreprocessAction.TOKEN)
-                    && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
-                    && !context.contains(ShenandoahPreprocessAction.TOKEN)
-                    && !context.contains(UnifiedPreprocessAction.TOKEN)
-                    && ApplicationConcurrentTimePreprocessAction.match(currentLogLine, priorLogLine)) {
-                ApplicationConcurrentTimePreprocessAction action = new ApplicationConcurrentTimePreprocessAction(
-                        currentLogLine, context);
-                if (action.getLogEntry() != null) {
-                    preprocessedLogLine = action.getLogEntry();
-                }
-            } else if (!context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                    && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                    && !context.contains(CmsPreprocessAction.TOKEN)
-                    && !context.contains(ShenandoahPreprocessAction.TOKEN)
-                    && !context.contains(UnifiedPreprocessAction.TOKEN)
-                    && ApplicationStoppedTimePreprocessAction.match(currentLogLine, priorLogLine)) {
-                ApplicationStoppedTimePreprocessAction action = new ApplicationStoppedTimePreprocessAction(
-                        currentLogLine, context);
-                if (action.getLogEntry() != null) {
-                    preprocessedLogLine = action.getLogEntry();
-                }
-            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                    && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                    && !context.contains(SerialPreprocessAction.TOKEN)
+            } else if (!context.contains(SerialPreprocessAction.TOKEN)
                     && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                     && !context.contains(ShenandoahPreprocessAction.TOKEN)
                     && !context.contains(UnifiedPreprocessAction.TOKEN)
@@ -407,9 +373,7 @@ public class GcManager {
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
-            } else if (!context.contains(ApplicationStoppedTimePreprocessAction.TOKEN)
-                    && !context.contains(ApplicationConcurrentTimePreprocessAction.TOKEN)
-                    && !context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
+            } else if (!context.contains(ParallelPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                     && !context.contains(G1PreprocessAction.TOKEN)
                     && !context.contains(ShenandoahPreprocessAction.TOKEN)
                     && !context.contains(UnifiedPreprocessAction.TOKEN)
@@ -866,7 +830,10 @@ public class GcManager {
                 firstEventTs = prior.getTimestamp();
                 continue;
             }
-            allocatedKb += young.getEdenOccupancyInit().minus(prior.getEdenOccupancyEnd()).getValue(KILOBYTES);
+            // will not have eden information if gc details not being logged
+            if (young.getEdenOccupancyInit() != null && prior.getEdenOccupancyEnd() != null) {
+                allocatedKb += young.getEdenOccupancyInit().minus(prior.getEdenOccupancyEnd()).getValue(KILOBYTES);
+            }
             prior = young;
         }
 

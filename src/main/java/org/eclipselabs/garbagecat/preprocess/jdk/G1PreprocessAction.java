@@ -349,10 +349,12 @@ public class G1PreprocessAction implements PreprocessAction {
      * Regular expression for retained beginning G1_CONCURRENT collection.
      * 
      * 2018-12-06T21:56:32.691-0500: 18.973 [GC concurrent-root-region-scan-start]
+     * 
+     * 2021-10-26T09:58:12.120-0400: 2021-10-26T09:58:12.120-0400[GC concurrent-root-region-scan-start]
      */
-    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(" + JdkRegEx.DECORATOR
-            + ")( \\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, " + JdkRegEx.DURATION
-            + ")?\\])[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(" + JdkRegEx.DECORATOR + " )("
+            + JdkRegEx.DATESTAMP + ")?(\\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, "
+            + JdkRegEx.DURATION + ")?\\])[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_CONCURRENT);
@@ -809,10 +811,10 @@ public class G1PreprocessAction implements PreprocessAction {
                 // Handle concurrent mixed with young collections. See datasets 47-48 and 51-52, 54.
                 if (!context.contains(TOKEN)) {
                     // Output now
-                    this.logEntry = matcher.group(1) + matcher.group(15);
+                    this.logEntry = matcher.group(1) + matcher.group(25);
                 } else {
                     // Output later
-                    entangledLogLines.add(matcher.group(1) + matcher.group(15));
+                    entangledLogLines.add(matcher.group(1) + matcher.group(25));
                 }
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);

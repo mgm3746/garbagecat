@@ -316,18 +316,32 @@ public class CmsPreprocessAction implements PreprocessAction {
             .compile(REGEX_RETAIN_BEGINNING_PARNEW_BAILING);
 
     /**
-     * Regular expression for retained beginning CMS_CONCURRENT mixed with APPLICATION_CONCURRENT_TIME collection.
+     * Regular expression for retained beginning CMS_CONCURRENT mixed with APPLICATION_CONCURRENT_TIME event.
      * 
      * 2017-06-18T05:23:03.452-0500: 2.182: 2017-06-18T05:23:03.452-0500: [CMS-concurrent-preclean: 0.016/0.048
      * secs]2.182: Application time: 0.0055079 seconds
      */
     private static final String REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME = "^("
-            + JdkRegEx.DECORATOR + " )(" + JdkRegEx.DECORATOR + " )?(\\[CMS-concurrent-preclean: "
-            + JdkRegEx.DURATION_FRACTION + "\\])(" + JdkRegEx.DECORATOR
-            + " Application time: \\d{1,4}\\.\\d{7} seconds)[ ]*$";
+            + JdkRegEx.DECORATOR + " )(" + JdkRegEx.DECORATOR + " )?(\\[CMS-concurrent-(mark|preclean): "
+            + JdkRegEx.DURATION_FRACTION + "\\])((" + JdkRegEx.DECORATOR
+            + " )?Application time: \\d{1,4}\\.\\d{7} seconds)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME);
+
+    /**
+     * Regular expression for retained beginning CMS_CONCURRENT mixed with APPLICATION_STOPPED_TIME event.
+     * 
+     * 234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for which application threads were
+     * stopped: 0.0123330 seconds
+     */
+    private static final String REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME = "^("
+            + JdkRegEx.DECORATOR + ")?( \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION
+            + "\\])[:]{0,1}[ ]{0,1}(Total time for which application threads were stopped: \\d{1,4}\\.\\d{7} seconds"
+            + "(, Stopping threads took: \\d{1,4}\\.\\d{7} seconds)?)$";
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME);
 
     /**
      * Regular expression for retained beginning concurrent mode failure.
@@ -664,10 +678,19 @@ public class CmsPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1) + matcher.group(29);
                 if (matcher.group(15) != null) {
-                    entangledLogLines.add(matcher.group(15) + matcher.group(31));
+                    entangledLogLines.add(matcher.group(15) + matcher.group(32));
                 } else {
-                    entangledLogLines.add(matcher.group(31));
+                    entangledLogLines.add(matcher.group(32));
                 }
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME_PATTERN.matcher(logEntry))
+                .matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1) + matcher.group(15);
+                entangledLogLines.add(matcher.group(17));
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
@@ -813,6 +836,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_BEGINNING_PARNEW_BAILING_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_CONCURRENT_PATTERN.matcher(logLine).matches()

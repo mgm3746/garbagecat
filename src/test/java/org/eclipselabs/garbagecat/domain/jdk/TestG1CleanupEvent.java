@@ -130,6 +130,19 @@ class TestG1CleanupEvent {
 
     @Test
     void testLogLineDatestamp() {
+        String logLine = "2021-10-26T09:58:12.091-0400: [GC cleanup 3014K->3014K(6144K), 0.0001830 secs]";
+        assertTrue(G1CleanupEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_CLEANUP.toString() + ".");
+        G1CleanupEvent event = new G1CleanupEvent(logLine);
+        assertEquals(688553892091L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(3014), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
+        assertEquals(kilobytes(3014), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(6144), event.getCombinedSpace(), "Combined available size not parsed correctly.");
+        assertEquals(183, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineDetailsDatestamp() {
         String logLine = "2020-04-29T22:05:39.708+0200: [GC cleanup 1745.419: [G1Ergonomics "
                 + "(Concurrent Cycles) finish cleanup, occupancy: 22498457048 bytes, capacity: 32212254720 bytes, "
                 + "known garbage: 9291782792 bytes (28.85 %)]21456M->20543M(30720M), 0.0155840 secs] "

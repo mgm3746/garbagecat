@@ -1155,6 +1155,50 @@ class TestCmsPreprocessAction {
                 "Log line not parsed correctly.");
     }
 
+    @Test
+    void testLineConcurrentMixedApplicationTime() {
+        String priorLogLine = "";
+        String logLine = "408365.532: [CMS-concurrent-mark: 0.476/10.257 secs]Application time: 0.0576080 seconds";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        assertEquals("408365.532: [CMS-concurrent-mark: 0.476/10.257 secs]", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testLineConcurrentDoubleDatestampMixedApplicationTime() {
+        String priorLogLine = "";
+        String logLine = "2017-06-18T05:23:03.452-0500: 2.182: 2017-06-18T05:23:03.452-0500: [CMS-concurrent-preclean: "
+                + "0.016/0.048 secs]2.182: Application time: 0.0055079 seconds";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        assertEquals("2017-06-18T05:23:03.452-0500: 2.182: [CMS-concurrent-preclean: 0.016/0.048 secs]",
+                event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testLineConcurrentMixedStoppedTime() {
+        String priorLogLine = "";
+        String logLine = "234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for"
+                + " which application threads were stopped: 0.0123330 seconds";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(CmsPreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.CMS.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        CmsPreprocessAction event = new CmsPreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        assertEquals("234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
      */

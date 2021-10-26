@@ -439,4 +439,11 @@ class TestJdkUtil {
                 + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
         assertEquals("2012-06-20T12:29:58.094+0200", JdkUtil.getDateStamp(logLine), "Datestamp not parsed correctly.");
     }
+
+    @Test
+    void testGetDecorator() {
+        String logLine = "2021-10-26T09:58:12.090-0400: 123.456: [GC remark, 0.0010683 secs]";
+        assertEquals("2021-10-26T09:58:12.090-0400: 123.456:", JdkUtil.getDecorator(logLine),
+                "Decorator not parsed correctly.");
+    }
 }

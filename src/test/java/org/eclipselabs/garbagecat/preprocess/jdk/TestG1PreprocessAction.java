@@ -1493,6 +1493,21 @@ class TestG1PreprocessAction {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
     }
 
+    @Test
+    void testLogLineDoubleDatestamp() {
+        String priorLogLine = "2021-10-26T09:58:12.119-0400: [GC pause (G1 Evacuation Pause) (young) (initial-mark) "
+                + "4910K->4685K(7168K), 0.0016417 secs]";
+        String logLine = "2021-10-26T09:58:12.120-0400: 2021-10-26T09:58:12.120-0400"
+                + "[GC concurrent-root-region-scan-start]";
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals("2021-10-26T09:58:12.120-0400: [GC concurrent-root-region-scan-start]", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
     /**
      * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE.
      * 

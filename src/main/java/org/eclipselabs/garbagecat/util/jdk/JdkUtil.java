@@ -247,6 +247,24 @@ public final class JdkUtil {
     }
 
     /**
+     * Get log line decorator.
+     * 
+     * @param logLine
+     *            The log line.
+     * @return The log line decorator, null otherwise.
+     */
+    public static final String getDecorator(String logLine) {
+        String decorator = null;
+        if (logLine != null) {
+            String regex = "^(" + JdkRegEx.DECORATOR + ")(.*)$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(logLine);
+            decorator = matcher.find() ? matcher.group(1) : null;
+        }
+        return decorator;
+    }
+
+    /**
      * Parse out the JVM option scalar value. For example, the value for <code>-Xss128k</code> is 128k. The value for
      * <code>-XX:PermSize=128M</code> is 128M.
      * 
