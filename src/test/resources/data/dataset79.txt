@@ -1,5 +1,5 @@
-2016-10-12T11:39:07.893+0200: 2016-10-12T11:39:07.893+0200: 6627.019: 6627.019[GC concurrent-root-region-scan-start]
-: [Full GC (Metadata GC Threshold) 2016-10-12T11:39:07.894+0200: 6627.019: [GC concurrent-root-region-scan-end, 0.0005454 secs]
+2016-10-12T11:39:07.893+0200: 6627.019: [GC concurrent-root-region-scan-start]
+2016-10-12T11:39:07.893+0200: 6627.019: [Full GC (Metadata GC Threshold) 2016-10-12T11:39:07.894+0200: 6627.019: [GC concurrent-root-region-scan-end, 0.0005454 secs]
 2016-10-12T11:39:07.894+0200: 6627.019: [GC concurrent-mark-start]
  813M->812M(5120M), 3.5094907 secs]
    [Eden: 0.0B(3070.0M)->0.0B(3072.0M) Survivors: 2048.0K->0.0B Heap: 813.9M(5120.0M)->812.9M(5120.0M)], [Metaspace: 326882K->326882K(1511424K)]

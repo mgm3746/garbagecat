@@ -1,5 +1,5 @@
 2016-02-12T00:05:06.280-0500: 35945.350: [GC pause (young)2016-02-12T00:05:06.347-0500: 35945.418: [GC concurrent-root-region-scan-end, 0.2394270 secs]
-2016-02-12T00:05:06.348-0500: 35945.418:  35945.418: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: 279876, predicted base time: 236.99 ms, remaining time: 263.01 ms, target pause time: 500.00 ms]
+2016-02-12T00:05:06.348-0500: 35945.418: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: 279876, predicted base time: 236.99 ms, remaining time: 263.01 ms, target pause time: 500.00 ms]
 [GC concurrent-mark-start]
  35945.418: [G1Ergonomics (CSet Construction) add young regions to CSet, eden: 150 regions, survivors: 16 regions, predicted young region time: 162.17 ms]
  35945.418: [G1Ergonomics (CSet Construction) finish choosing CSet, eden: 150 regions, survivors: 16 regions, old: 0 regions, predicted pause time: 399.17 ms, target pause time: 500.00 ms]

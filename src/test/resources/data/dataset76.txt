@@ -1,4 +1,4 @@
-2016-10-12T09:53:38.901+0200: 2016-10-12T09:53:38.901+0200: 298.027: 298.027: [Full GC (Metadata GC Threshold) [GC concurrent-root-region-scan-start]
+2016-10-12T09:53:38.901+0200: 298.027: [Full GC (Metadata GC Threshold) [GC concurrent-root-region-scan-start]
 2016-10-12T09:53:38.902+0200: 298.027: [GC concurrent-root-region-scan-end, 0.0003609 secs]
 2016-10-12T09:53:38.902+0200: 298.027: [GC concurrent-mark-start]
  798M->797M(5120M), 3.4595066 secs]

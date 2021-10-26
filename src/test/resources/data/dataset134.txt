@@ -1,4 +1,4 @@
-2017-06-22T16:03:36.126+0530: 2017-06-22T16:03:36.126+0530: 79244.87279244.872: : [Full GC (Metadata GC Threshold) [GC concurrent-root-region-scan-start]
+2017-06-22T16:03:36.126+0530: 79244.872: [Full GC (Metadata GC Threshold) [GC concurrent-root-region-scan-start]
 2017-06-22T16:03:36.126+0530: 79244.872: [GC concurrent-root-region-scan-end, 0.0002076 secs]
 2017-06-22T16:03:36.126+0530: 79244.872: [GC concurrent-mark-start]
  3227M->3226M(4096M), 1.3813895 secs]
