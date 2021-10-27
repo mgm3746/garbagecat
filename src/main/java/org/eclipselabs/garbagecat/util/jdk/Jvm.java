@@ -1611,7 +1611,7 @@ public class Jvm {
                 + "-XX:-UseGCLogFileRotation -XX:-UseCompressedClassPointers "
                 + "-XX:-ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:-ClassUnloading "
                 + "-XX:-PrintAdaptiveSizePolicy -XX:-CMSParallelInitialMarkEnabled -XX:-CMSParallelRemarkEnabled "
-                + "-XX:-UseAdaptiveSizePolicy -XX:-PrintGCTimeStamps -XX:-PrintGCDateStamps";
+                + "-XX:-UseAdaptiveSizePolicy -XX:-PrintGCTimeStamps -XX:-PrintGCDateStamps -XX:-UseParallelOldGC";
 
         String unaccountedDisabledOptions = null;
         for (String disabledOption : getDisabledOptions()) {

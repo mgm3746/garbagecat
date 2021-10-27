@@ -1494,10 +1494,91 @@ class TestG1PreprocessAction {
     }
 
     @Test
-    void testLogLineDoubleDatestamp() {
-        String priorLogLine = "2021-10-26T09:58:12.119-0400: [GC pause (G1 Evacuation Pause) (young) (initial-mark) "
-                + "4910K->4685K(7168K), 0.0016417 secs]";
-        String logLine = "2021-10-26T09:58:12.120-0400: 2021-10-26T09:58:12.120-0400"
+    void testLogLineConcurrentDatestampDatestampDoubleColonTimestampTimestamp() {
+        String priorLogLine = "";
+        String logLine = "2021-10-27T08:03:11.806-04002021-10-27T08:03:11.806-0400: : 0.2230.223: : "
+                + "[GC concurrent-root-region-scan-start]";
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals("2021-10-27T08:03:11.806-0400: 0.223: [GC concurrent-root-region-scan-start]", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineConcurrentDatestampDatestampTimestampTimestamp() {
+        String priorLogLine = "";
+        String logLine = "2021-10-26T18:15:06.169-0400: 2021-10-26T18:15:06.169-0400: 0.156: 0.156: "
+                + "[GC concurrent-root-region-scan-start]";
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals("2021-10-26T18:15:06.169-0400: 0.156: [GC concurrent-root-region-scan-start]", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineConcurrentDatestampDatestampTimestamp() {
+        String priorLogLine = "";
+        String logLine = "2021-10-27T08:03:11.757-0400: 2021-10-27T08:03:11.757-0400: 0.174: "
+                + "[GC concurrent-root-region-scan-start]";
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals("2021-10-27T08:03:11.757-0400: 0.174: [GC concurrent-root-region-scan-start]", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineConcurrentDatestampDatestampTimestampDoubleColon() {
+        String priorLogLine = "";
+        String logLine = "2021-10-27T12:32:11.621-0400: 2021-10-27T12:32:11.621-04000.210: : "
+                + "[GC concurrent-root-region-scan-start]";
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals("2021-10-27T12:32:11.621-0400: 0.210: [GC concurrent-root-region-scan-start]", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineConcurrentTimestampTimestampDoubleColon() {
+        String priorLogLine = "";
+        String logLine = "0.2270.227: : [GC concurrent-root-region-scan-start]";
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals("0.227: [GC concurrent-root-region-scan-start]", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineConcurrentTimestampTimestamp() {
+        String priorLogLine = "";
+        String logLine = "0.218: 0.218[GC concurrent-root-region-scan-start]";
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals("0.218: [GC concurrent-root-region-scan-start]", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineConcurrentDatestampDatestampNoColon() {
+        String priorLogLine = "";
+        String logLine = "2021-10-26T09:58:12.120-0400: 2021-10-26T09:58:12.120-0400 "
                 + "[GC concurrent-root-region-scan-start]";
         assertTrue(G1PreprocessAction.match(logLine, priorLogLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
@@ -1505,6 +1586,34 @@ class TestG1PreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
         assertEquals("2021-10-26T09:58:12.120-0400: [GC concurrent-root-region-scan-start]", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineConcurrentDatestampDatestamp() {
+        String priorLogLine = "";
+        String logLine = "2021-10-27T10:13:37.450-0400: 2021-10-27T10:13:37.450-0400: "
+                + "[GC concurrent-root-region-scan-start]";
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals("2021-10-27T10:13:37.450-0400: [GC concurrent-root-region-scan-start]", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineConcurrentDatestampDatestampDoubleColon() {
+        String priorLogLine = "";
+        String logLine = "2021-10-27T10:50:59.400-04002021-10-27T10:50:59.400-0400: : "
+                + "[GC concurrent-root-region-scan-start]";
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals("2021-10-27T10:50:59.400-0400: [GC concurrent-root-region-scan-start]", event.getLogEntry(),
                 "Log line not parsed correctly.");
     }
 

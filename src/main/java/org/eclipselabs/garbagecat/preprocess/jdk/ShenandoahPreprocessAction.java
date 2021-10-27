@@ -171,6 +171,16 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             .compile(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP);
 
     /**
+     * Regular expression for retained beginning SHENANDOAH_CONCURRENT update references event
+     * 
+     * 19.373: [Concurrent update references
+     */
+    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT_UPDATE_REFERENCES = "^(" + JdkRegEx.DECORATOR
+            + " \\[Concurrent update references)$";
+    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_UPDATE_REFERENCES_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_CONCURRENT_UPDATE_REFERENCES);
+
+    /**
      * Regular expression for retained Metaspace block.
      * 
      * , [Metaspace: 6477K->6481K(1056768K)]
@@ -329,6 +339,14 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT_UPDATE_REFERENCES)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT_UPDATE_REFERENCES);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+            }
+            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_METASPACE)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_METASPACE);
             Matcher matcher = pattern.matcher(logEntry);
@@ -367,6 +385,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
         boolean match = false;
         if (REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_CONCURRENT_UPDATE_REFERENCES_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_METASPACE_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_DURATION_PATTERN.matcher(logLine).matches()) {
             match = true;

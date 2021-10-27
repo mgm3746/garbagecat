@@ -801,6 +801,17 @@ class TestShenandoahPreprocessAction {
     }
 
     @Test
+    void testLogLineBeginConcurrentUpdateReferences() {
+        String logLine = "19.373: [Concurrent update references";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testLogLineEndDuration() {
         String logLine = ", 2714.003 ms]";
         String nextLogLine = null;

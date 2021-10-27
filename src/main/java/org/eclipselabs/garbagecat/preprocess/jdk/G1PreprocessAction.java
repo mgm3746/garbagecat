@@ -223,7 +223,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2972.698: [GC cleanup 13G-&gt;12G(30G), 0.0358748 secs]
  *  [Times: user=0.19 sys=0.00, real=0.03 secs]
  * </pre>
- *
+ * 
+ * :
  * <p>
  * Preprocessed:
  * </p>
@@ -346,14 +347,48 @@ public class G1PreprocessAction implements PreprocessAction {
             .compile(REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM);
 
     /**
-     * Regular expression for retained beginning G1_CONCURRENT collection.
+     * Regular expressions for retained beginning G1_CONCURRENT collection.
+     *
+     * 1) DECORATOR:
      * 
-     * 2018-12-06T21:56:32.691-0500: 18.973 [GC concurrent-root-region-scan-start]
+     * 2018-12-06T21:56:32.691-0500: 18.973: [GC concurrent-root-region-scan-start]
+     * 
+     * 2018-12-06T21:56:32.691-0500: [GC concurrent-root-region-scan-start]
+     * 
+     * 27744.494: [GC concurrent-mark-start]
+     *
+     * 2) DATESTAMP: DATESTAMP:
      * 
      * 2021-10-26T09:58:12.120-0400: 2021-10-26T09:58:12.120-0400[GC concurrent-root-region-scan-start]
+     * 
+     * 2021-10-27T10:13:37.450-0400: 2021-10-27T10:13:37.450-0400: [GC concurrent-root-region-scan-start]
+     * 
+     * 2021-10-27T10:50:59.400-04002021-10-27T10:50:59.400-0400: : [GC concurrent-root-region-scan-start]
+     *
+     * 3) TIMESTAMP: TIMESTAMP:
+     *
+     * 0.218: 0.218[GC concurrent-root-region-scan-start]
+     * 
+     * 0.2270.227: : [GC concurrent-root-region-scan-start]
+     * 
+     * 4) DATESTAMP: DATESTAMP: TIMESTAMP:
+     *
+     * 2021-10-27T08:03:11.757-0400: 2021-10-27T08:03:11.757-0400: 0.174: [GC concurrent-root-region-scan-start]
+     * 
+     * 2021-10-27T12:32:11.621-0400: 2021-10-27T12:32:11.621-04000.210: : [GC concurrent-root-region-scan-start]
+     *
+     * 5) DATESTAMP: DATESTAMP: TIMESTAMP: TIMESTAMP
+     *
+     * 2021-10-26T18:15:06.169-0400: 2021-10-26T18:15:06.169-0400: 0.156: 0.156: [GC concurrent-root-region-scan-start]
+     *
+     * 2021-10-27T08:03:11.806-04002021-10-27T08:03:11.806-0400: : 0.2230.223: : [GC concurrent-root-region-scan-start]
      */
-    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(" + JdkRegEx.DECORATOR + " )("
-            + JdkRegEx.DATESTAMP + ")?(\\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, "
+    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^((" + JdkRegEx.DECORATOR + ")|("
+            + JdkRegEx.DATESTAMP + "(: )?" + JdkRegEx.DATESTAMP + "(:)?( :)?)|(" + JdkRegEx.TIMESTAMP + "(: )?"
+            + JdkRegEx.TIMESTAMP + ")(: :)?|(" + JdkRegEx.DATESTAMP + ": " + JdkRegEx.DATESTAMP + "(: )?"
+            + JdkRegEx.TIMESTAMP + ":( :)?)|(" + JdkRegEx.DATESTAMP + "(: )?" + JdkRegEx.DATESTAMP + ": (: )?"
+            + JdkRegEx.TIMESTAMP + "(: )?" + JdkRegEx.TIMESTAMP
+            + ":( :)?))[ ]{0,1}(\\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, "
             + JdkRegEx.DURATION + ")?\\])[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN = Pattern
@@ -805,16 +840,27 @@ public class G1PreprocessAction implements PreprocessAction {
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
-            // Strip out any leading colon
             matcher.reset();
             if (matcher.matches()) {
                 // Handle concurrent mixed with young collections. See datasets 47-48 and 51-52, 54.
+                String decorator;
+                if (matcher.group(3) != null) {
+                    decorator = matcher.group(2);
+                } else if (matcher.group(16) != null) {
+                    decorator = matcher.group(17) + ":";
+                } else if (matcher.group(38) != null) {
+                    decorator = matcher.group(39) + ":";
+                } else if (matcher.group(43) != null) {
+                    decorator = matcher.group(44) + ": " + matcher.group(63) + ":";
+                } else {
+                    decorator = matcher.group(66) + ": " + matcher.group(86) + ":";
+                }
                 if (!context.contains(TOKEN)) {
                     // Output now
-                    this.logEntry = matcher.group(1) + matcher.group(25);
+                    this.logEntry = decorator + " " + matcher.group(90);
                 } else {
                     // Output later
-                    entangledLogLines.add(matcher.group(1) + matcher.group(25));
+                    entangledLogLines.add(decorator + " " + matcher.group(90));
                 }
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);

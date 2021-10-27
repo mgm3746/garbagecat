@@ -73,6 +73,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
+import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ParallelPreprocessAction;
@@ -380,6 +381,13 @@ public class GcManager {
                     && SerialPreprocessAction.match(currentLogLine)) {
                 SerialPreprocessAction action = new SerialPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                         entangledLogLines, context);
+                if (action.getLogEntry() != null) {
+                    preprocessedLogLine = action.getLogEntry();
+                }
+            } else if (ApplicationStoppedTimePreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
+                // single line preprocessing
+                ApplicationStoppedTimePreprocessAction action = new ApplicationStoppedTimePreprocessAction(priorLogLine,
+                        currentLogLine, nextLogLine, entangledLogLines, context);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }

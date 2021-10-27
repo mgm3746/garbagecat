@@ -130,7 +130,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 6) JDK 8 {@link org.eclipselabs.garbagecat.domain.jdk.ParNewConcurrentModeFailureEvent} combined with
+ * 6) JDK 8 {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} combined with
  * {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} across 2 lines:
  * </p>
  * 
@@ -168,10 +168,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  *
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
- *
- */
-/**
- * @author mmillson
  *
  */
 public class CmsPreprocessAction implements PreprocessAction {

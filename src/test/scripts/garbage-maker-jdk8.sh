@@ -160,7 +160,7 @@ java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -o $GARBAGECAT_H
 
 java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -o $GARBAGECAT_HOME/jdk8-shenandoah-time.txt $GARBAGECAT_HOME/jdk8-shenandoah-time.log
 
-java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -o $GARBAGECAT_HOME/jdk8-shenandoah-details-time.txt $GARBAGECAT_HOME/jdk8-shenandoah-details-time.logjava -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -o $GARBAGECAT_HOME/jdk8-shenandoah-details.txt $GARBAGECAT_HOME/jdk8-shenandoah-details-datestamp.log
+java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -o $GARBAGECAT_HOME/jdk8-shenandoah-details-time.txt $GARBAGECAT_HOME/jdk8-shenandoah-details-time.logjava -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -o $GARBAGECAT_HOME/jdk8-shenandoah-details.txt $GARBAGECAT_HOME/jdk8-shenandoah-details-time.log
 
 # datestamp: timestamp: #
 
