@@ -1,0 +1,9 @@
+[2021-10-27T13:03:16.629-0400] Entering safepoint region: ShenandoahFinalMarkStartEvac
+[2021-10-27T13:03:16.629-0400] GC(0) Pause Final Mark (process weakrefs)
+[2021-10-27T13:03:16.629-0400] GC(0) Using 4 of 6 workers for final marking
+[2021-10-27T13:03:16.630-0400] GC(0) Adaptive CSet Selection. Target Free: 13926K, Actual Free: 70035K, Max CSet: 4096K, Min Garbage: 0B
+[2021-10-27T13:03:16.630-0400] GC(0) Collectable Garbage: 20806K (99%), Immediate: 147K (0%), CSet: 20659K (98%)
+[2021-10-27T13:03:16.630-0400] GC(0) Pacer for Evacuation. Used CSet: 24064K, Free: 65088K, Non-Taxable: 6508K, Alloc Tax Rate: 1.1x
+[2021-10-27T13:03:16.630-0400] GC(0) Pause Final Mark (process weakrefs) 0.674ms
+[2021-10-27T13:03:16.630-0400] Leaving safepoint region
+[2021-10-27T13:03:16.630-0400] Total time for which application threads were stopped: 0.0007175 seconds, Stopping threads took: 0.0000183 seconds

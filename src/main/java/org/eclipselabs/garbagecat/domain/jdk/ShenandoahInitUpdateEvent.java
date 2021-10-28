@@ -76,10 +76,10 @@ public class ShenandoahInitUpdateEvent extends ShenandoahCollector implements Bl
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+    public static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
             + ") [\\[]{0,1}Pause Init Update Refs[,]{0,1} " + UnifiedRegEx.DURATION + "[\\]]{0,1}[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(REGEX);
+    public static final Pattern pattern = Pattern.compile(REGEX);
 
     /**
      * Create event from log entry.

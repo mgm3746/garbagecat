@@ -1,0 +1,7 @@
+[2021-10-27T13:03:16.626-0400] Entering safepoint region: ShenandoahInitMark
+[2021-10-27T13:03:16.626-0400] GC(0) Pause Init Mark (process weakrefs)
+[2021-10-27T13:03:16.626-0400] GC(0) Using 4 of 6 workers for init marking
+[2021-10-27T13:03:16.627-0400] GC(0) Pacer for Mark. Expected Live: 9830K, Free: 67584K, Non-Taxable: 6758K, Alloc Tax Rate: 0.2x
+[2021-10-27T13:03:16.627-0400] GC(0) Pause Init Mark (process weakrefs) 0.575ms
+[2021-10-27T13:03:16.627-0400] Leaving safepoint region
+[2021-10-27T13:03:16.627-0400] Total time for which application threads were stopped: 0.0006697 seconds, Stopping threads took: 0.0000306 seconds

@@ -68,11 +68,11 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 3) DATESTAMP: DATESTAMP: TIMESTAMP:
+ * 3) DATESTAMP: DATESTAMP:
  * </p>
  *
  * <pre>
- * 2021-10-27T10:52:38.345-0400: 2021-10-27T10:52:38.345-04000.181: : Total time for which application threads were stopped: 0.0013170 seconds, Stopping threads took: 0.0000454 seconds
+ * 2021-10-28T07:39:54.391-0400: 2021-10-28T07:39:54.391-0400: Total time for which application threads were stopped: 0.0014232 seconds, Stopping threads took: 0.0000111 seconds
  * </pre>
  *
  * <p>
@@ -80,8 +80,40 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 2021-10-27T10:52:38.344-0400: 0.180: [GC pause (G1 Evacuation Pause) (young) (initial-mark) 4917K-&gt;4561K(7168K), 0.0012213 secs]
- * Total time for which application threads were stopped: 0.0017109 seconds, Stopping threads took: 0.0000136 seconds
+ * 2021-10-28T07:39:54.391-0400: Total time for which application threads were stopped: 0.0014232 seconds, Stopping threads took: 0.0000111 seconds
+ * </pre>
+ * 
+ * <p>
+ * 4) DATESTAMP: DATESTAMP: TIMESTAMP:
+ * </p>
+ *
+ * <pre>
+ * 2021-10-27T10:52:38.345-0400: 2021-10-27T10:52:38.345-04000.181: : Total time for which application threads were stopped: 0.0013170 seconds, Stopping threads took: 0.0000454 seconds
+ * 2021-10-27T19:39:02.591-0400: 2021-10-27T19:39:02.591-0400: 0.210: Total time for which application threads were stopped: 0.0007018 seconds, Stopping threads took: 0.0000202 seconds
+ * </pre>
+ *
+ * <p>
+ * Preprocessed:
+ * </p>
+ *
+ * <pre>
+ * 2021-10-27T19:39:02.591-0400: 0.210: Total time for which application threads were stopped: 0.0007018 seconds, Stopping threads took: 0.0000202 seconds
+ * </pre>
+ * 
+ * <p>
+ * 5) DATESTAMP: DATESTAMP: TIMESTAMP: TIMESTAMP:
+ * </p>
+ *
+ * <pre>
+ * 2021-10-28T07:41:40.468-0400: 2021-10-28T07:41:40.468-0400: 0.179: 0.179: Total time for which application threads were stopped: 0.0012393 seconds, Stopping threads took: 0.0000233 seconds
+ * </pre>
+ *
+ * <p>
+ * Preprocessed:
+ * </p>
+ *
+ * <pre>
+ * 2021-10-28T07:41:40.468-0400: 0.179: Total time for which application threads were stopped: 0.0012393 seconds, Stopping threads took: 0.0000233 seconds
  * </pre>
  * 
  *
@@ -106,17 +138,44 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
     private static final Pattern REGEX_DECORATOR_MISSING_PATTERN = Pattern.compile(REGEX_DECORATOR_MISSING);
 
     /**
+     * Regular expression DATESTAMP: DATESTAMP:.
+     *
+     * 2021-10-28T07:39:54.391-0400: 2021-10-28T07:39:54.391-0400: Total time for which application threads were
+     * stopped: 0.0014232 seconds, Stopping threads took: 0.0000111 seconds
+     */
+    private static final String REGEX_DATESTAMP_DATESTAMP = "^" + JdkRegEx.DATESTAMP + ": " + JdkRegEx.DATESTAMP
+            + ": (Total time for which application threads were stopped: "
+            + "(-)?\\d{1,4}[\\.\\,]\\d{7} seconds, Stopping threads took: (-)?\\d{1,4}[\\.\\,]\\d{7} seconds)[ ]*$";
+
+    private static final Pattern REGEX_DATESTAMP_DATESTAMP_PATTERN = Pattern.compile(REGEX_DATESTAMP_DATESTAMP);
+
+    /**
      * Regular expression DATESTAMP: DATESTAMP: TIMESTAMP:.
      *
      * 2021-10-27T10:52:38.345-0400: 2021-10-27T10:52:38.345-04000.181: : Total time for which application threads were
      * stopped: 0.0013170 seconds, Stopping threads took: 0.0000454 seconds
      */
     private static final String REGEX_DATESTAMP_DATESTAMP_TIMESTAMP = "^" + JdkRegEx.DATESTAMP + ": "
-            + JdkRegEx.DATESTAMP + JdkRegEx.TIMESTAMP + ": : (Total time for which application threads were stopped: "
+            + JdkRegEx.DATESTAMP + "(: )?" + JdkRegEx.TIMESTAMP
+            + ": (: )?(Total time for which application threads were stopped: "
             + "(-)?\\d{1,4}[\\.\\,]\\d{7} seconds, Stopping threads took: (-)?\\d{1,4}[\\.\\,]\\d{7} seconds)[ ]*$";
 
     private static final Pattern REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_PATTERN = Pattern
             .compile(REGEX_DATESTAMP_DATESTAMP_TIMESTAMP);
+
+    /**
+     * Regular expression DATESTAMP: DATESTAMP: TIMESTAMP: TIMESTAMP:.
+     *
+     * 2021-10-28T07:41:40.468-0400: 2021-10-28T07:41:40.468-0400: 0.179: 0.179: Total time for which application
+     * threads were stopped: 0.0012393 seconds, Stopping threads took: 0.0000233 seconds
+     */
+    private static final String REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP = "^" + JdkRegEx.DATESTAMP + ": "
+            + JdkRegEx.DATESTAMP + ": " + JdkRegEx.TIMESTAMP + ": " + JdkRegEx.TIMESTAMP
+            + ": (Total time for which application threads were stopped: "
+            + "(-)?\\d{1,4}[\\.\\,]\\d{7} seconds, Stopping threads took: (-)?\\d{1,4}[\\.\\,]\\d{7} seconds)[ ]*$";
+
+    private static final Pattern REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP_PATTERN = Pattern
+            .compile(REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP);
 
     /**
      * Regular expression DATESTAMP: TIMESTAMP: DATESTAMP:.
@@ -174,16 +233,28 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
                 this.logEntry = matcher.group(1);
             }
             context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if ((matcher = REGEX_DATESTAMP_DATESTAMP_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1) + ": " + matcher.group(19);
+            }
+            context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(10) + ": " + matcher.group(19) + ": " + matcher.group(20);
+                this.logEntry = matcher.group(10) + ": " + matcher.group(20) + ": " + matcher.group(22);
             }
             context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1) + ": " + matcher.group(10) + ": " + matcher.group(20);
+            }
+            context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if ((matcher = REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1) + ": " + matcher.group(19) + ": " + matcher.group(21);
             }
             context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         }
@@ -211,7 +282,9 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
     public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
         return REGEX_NO_PREPROCESSING_PATTERN.matcher(logLine).matches()
                 || REGEX_DECORATOR_MISSING_PATTERN.matcher(logLine).matches()
+                || REGEX_DATESTAMP_DATESTAMP_PATTERN.matcher(logLine).matches()
                 || REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_PATTERN.matcher(logLine).matches()
-                || REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_PATTERN.matcher(logLine).matches();
+                || REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_PATTERN.matcher(logLine).matches()
+                || REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP_PATTERN.matcher(logLine).matches();
     }
 }

@@ -34,11 +34,11 @@ public class UnifiedSafepoint {
         //
         G1_COLLECT_FOR_ALLOCATION, G1_COLLECT_FULL, G1_INC_COLLECTION_PAUSE, GEN_COLLECT_FOR_ALLOCATION,
         //
-        GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, HALT, IC_BUFFER_FULL,
+        GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK,
         //
-        NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS,
+        IC_BUFFER_FULL, NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI,
         //
-        REDEFINE_CLASSES, REVOKE_BIAS, SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_MARK_START_EVAC,
+        PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS, SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_MARK_START_EVAC,
         //
         SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN
     };
@@ -201,6 +201,13 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
+     * TODO.
+     * </p>
+     */
+    public static final String HANDSHAKE_FALL_BACK = "HandshakeFallback";
+
+    /**
+     * <p>
      * Safepoint for managing inline cache buffer when it is full (clear? resize?).
      * </p>
      */
@@ -311,6 +318,86 @@ public class UnifiedSafepoint {
     public static final String THREAD_DUMP = "ThreadDump";
 
     /**
+     * Get <code>Trigger</code> from vm log literal.
+     * 
+     * @param triggerLiteral
+     *            The trigger literal.
+     * @return The <code>Trigger</code>.
+     */
+    public static final Trigger getTrigger(String triggerLiteral) {
+        if (BULK_REVOKE_BIAS.matches(triggerLiteral))
+            return Trigger.BULK_REVOKE_BIAS;
+        if (CGC_OPERATION.matches(triggerLiteral))
+            return Trigger.CGC_OPERATION;
+        if (CLEANUP.matches(triggerLiteral))
+            return Trigger.CLEANUP;
+        if (COLLECT_FOR_METADATA_ALLOCATION.matches(triggerLiteral))
+            return Trigger.COLLECT_FOR_METADATA_ALLOCATION;
+        if (CMS_FINAL_REMARK.matches(triggerLiteral))
+            return Trigger.CMS_FINAL_REMARK;
+        if (CMS_INITIAL_MARK.matches(triggerLiteral))
+            return Trigger.CMS_INITIAL_MARK;
+        if (DEOPTIMIZE.matches(triggerLiteral))
+            return Trigger.DEOPTIMIZE;
+        if (ENABLE_BIASED_LOCKING.matches(triggerLiteral))
+            return Trigger.ENABLE_BIASED_LOCKING;
+        if (EXIT.matches(triggerLiteral))
+            return Trigger.EXIT;
+        if (FIND_DEADLOCKS.matches(triggerLiteral))
+            return Trigger.FIND_DEADLOCKS;
+        if (FORCE_SAFEPOINT.matches(triggerLiteral))
+            return Trigger.FORCE_SAFEPOINT;
+        if (G1_COLLECT_FOR_ALLOCATION.matches(triggerLiteral))
+            return Trigger.G1_COLLECT_FOR_ALLOCATION;
+        if (G1_COLLECT_FULL.matches(triggerLiteral))
+            return Trigger.G1_COLLECT_FULL;
+        if (G1_INC_COLLECTION_PAUSE.matches(triggerLiteral))
+            return Trigger.G1_INC_COLLECTION_PAUSE;
+        if (GEN_COLLECT_FOR_ALLOCATION.matches(triggerLiteral))
+            return Trigger.GEN_COLLECT_FOR_ALLOCATION;
+        if (GEN_COLLECT_FULL_CONCURRENT.matches(triggerLiteral))
+            return Trigger.GEN_COLLECT_FULL_CONCURRENT;
+        if (GET_ALL_STACK_TRACES.matches(triggerLiteral))
+            return Trigger.GET_ALL_STACK_TRACES;
+        if (GET_THREAD_LIST_STACK_TRACES.matches(triggerLiteral))
+            return Trigger.GET_THREAD_LIST_STACK_TRACES;
+        if (HALT.matches(triggerLiteral))
+            return Trigger.HALT;
+        if (HANDSHAKE_FALL_BACK.matches(triggerLiteral))
+            return Trigger.HANDSHAKE_FALL_BACK;
+        if (IC_BUFFER_FULL.matches(triggerLiteral))
+            return Trigger.IC_BUFFER_FULL;
+        if (NO_VM_OPERATION.matches(triggerLiteral))
+            return Trigger.NO_VM_OPERATION;
+        if (PARALLEL_GC_FAILED_ALLOCATION.matches(triggerLiteral))
+            return Trigger.PARALLEL_GC_FAILED_ALLOCATION;
+        if (PARALLEL_GC_SYSTEM_GC.matches(triggerLiteral))
+            return Trigger.PARALLEL_GC_SYSTEM_GC;
+        if (PRINT_JNI.matches(triggerLiteral))
+            return Trigger.PRINT_JNI;
+        if (PRINT_THREADS.matches(triggerLiteral))
+            return Trigger.PRINT_THREADS;
+        if (REDEFINE_CLASSES.matches(triggerLiteral))
+            return Trigger.REDEFINE_CLASSES;
+        if (REVOKE_BIAS.matches(triggerLiteral))
+            return Trigger.REVOKE_BIAS;
+        if (SHENANDOAH_DEGENERATED_GC.matches(triggerLiteral))
+            return Trigger.SHENANDOAH_DEGENERATED_GC;
+        if (SHENANDOAH_FINAL_MARK_START_EVAC.matches(triggerLiteral))
+            return Trigger.SHENANDOAH_FINAL_MARK_START_EVAC;
+        if (SHENANDOAH_FINAL_UPDATE_REFS.matches(triggerLiteral))
+            return Trigger.SHENANDOAH_FINAL_UPDATE_REFS;
+        if (SHENANDOAH_INIT_MARK.matches(triggerLiteral))
+            return Trigger.SHENANDOAH_INIT_MARK;
+        if (SHENANDOAH_INIT_UPDATE_REFS.matches(triggerLiteral))
+            return Trigger.SHENANDOAH_INIT_UPDATE_REFS;
+        if (THREAD_DUMP.matches(triggerLiteral))
+            return Trigger.THREAD_DUMP;
+
+        return Trigger.UNKNOWN;
+    }
+
+    /**
      * Get <code>Trigger</code> vm log literal.
      * 
      * @param trigger
@@ -379,6 +466,9 @@ public class UnifiedSafepoint {
         case HALT:
             triggerLiteral = HALT;
             break;
+        case HANDSHAKE_FALL_BACK:
+            triggerLiteral = HANDSHAKE_FALL_BACK;
+            break;
         case IC_BUFFER_FULL:
             triggerLiteral = IC_BUFFER_FULL;
             break;
@@ -429,84 +519,6 @@ public class UnifiedSafepoint {
     }
 
     /**
-     * Get <code>Trigger</code> from vm log literal.
-     * 
-     * @param triggerLiteral
-     *            The trigger literal.
-     * @return The <code>Trigger</code>.
-     */
-    public static final Trigger getTrigger(String triggerLiteral) {
-        if (BULK_REVOKE_BIAS.matches(triggerLiteral))
-            return Trigger.BULK_REVOKE_BIAS;
-        if (CGC_OPERATION.matches(triggerLiteral))
-            return Trigger.CGC_OPERATION;
-        if (CLEANUP.matches(triggerLiteral))
-            return Trigger.CLEANUP;
-        if (COLLECT_FOR_METADATA_ALLOCATION.matches(triggerLiteral))
-            return Trigger.COLLECT_FOR_METADATA_ALLOCATION;
-        if (CMS_FINAL_REMARK.matches(triggerLiteral))
-            return Trigger.CMS_FINAL_REMARK;
-        if (CMS_INITIAL_MARK.matches(triggerLiteral))
-            return Trigger.CMS_INITIAL_MARK;
-        if (DEOPTIMIZE.matches(triggerLiteral))
-            return Trigger.DEOPTIMIZE;
-        if (ENABLE_BIASED_LOCKING.matches(triggerLiteral))
-            return Trigger.ENABLE_BIASED_LOCKING;
-        if (EXIT.matches(triggerLiteral))
-            return Trigger.EXIT;
-        if (FIND_DEADLOCKS.matches(triggerLiteral))
-            return Trigger.FIND_DEADLOCKS;
-        if (FORCE_SAFEPOINT.matches(triggerLiteral))
-            return Trigger.FORCE_SAFEPOINT;
-        if (G1_COLLECT_FOR_ALLOCATION.matches(triggerLiteral))
-            return Trigger.G1_COLLECT_FOR_ALLOCATION;
-        if (G1_COLLECT_FULL.matches(triggerLiteral))
-            return Trigger.G1_COLLECT_FULL;
-        if (G1_INC_COLLECTION_PAUSE.matches(triggerLiteral))
-            return Trigger.G1_INC_COLLECTION_PAUSE;
-        if (GEN_COLLECT_FOR_ALLOCATION.matches(triggerLiteral))
-            return Trigger.GEN_COLLECT_FOR_ALLOCATION;
-        if (GEN_COLLECT_FULL_CONCURRENT.matches(triggerLiteral))
-            return Trigger.GEN_COLLECT_FULL_CONCURRENT;
-        if (GET_ALL_STACK_TRACES.matches(triggerLiteral))
-            return Trigger.GET_ALL_STACK_TRACES;
-        if (GET_THREAD_LIST_STACK_TRACES.matches(triggerLiteral))
-            return Trigger.GET_THREAD_LIST_STACK_TRACES;
-        if (HALT.matches(triggerLiteral))
-            return Trigger.HALT;
-        if (IC_BUFFER_FULL.matches(triggerLiteral))
-            return Trigger.IC_BUFFER_FULL;
-        if (NO_VM_OPERATION.matches(triggerLiteral))
-            return Trigger.NO_VM_OPERATION;
-        if (PARALLEL_GC_FAILED_ALLOCATION.matches(triggerLiteral))
-            return Trigger.PARALLEL_GC_FAILED_ALLOCATION;
-        if (PARALLEL_GC_SYSTEM_GC.matches(triggerLiteral))
-            return Trigger.PARALLEL_GC_SYSTEM_GC;
-        if (PRINT_JNI.matches(triggerLiteral))
-            return Trigger.PRINT_JNI;
-        if (PRINT_THREADS.matches(triggerLiteral))
-            return Trigger.PRINT_THREADS;
-        if (REDEFINE_CLASSES.matches(triggerLiteral))
-            return Trigger.REDEFINE_CLASSES;
-        if (REVOKE_BIAS.matches(triggerLiteral))
-            return Trigger.REVOKE_BIAS;
-        if (SHENANDOAH_DEGENERATED_GC.matches(triggerLiteral))
-            return Trigger.SHENANDOAH_DEGENERATED_GC;
-        if (SHENANDOAH_FINAL_MARK_START_EVAC.matches(triggerLiteral))
-            return Trigger.SHENANDOAH_FINAL_MARK_START_EVAC;
-        if (SHENANDOAH_FINAL_UPDATE_REFS.matches(triggerLiteral))
-            return Trigger.SHENANDOAH_FINAL_UPDATE_REFS;
-        if (SHENANDOAH_INIT_MARK.matches(triggerLiteral))
-            return Trigger.SHENANDOAH_INIT_MARK;
-        if (SHENANDOAH_INIT_UPDATE_REFS.matches(triggerLiteral))
-            return Trigger.SHENANDOAH_INIT_UPDATE_REFS;
-        if (THREAD_DUMP.matches(triggerLiteral))
-            return Trigger.THREAD_DUMP;
-
-        return Trigger.UNKNOWN;
-    }
-
-    /**
      * Identify the safepoint trigger.
      * 
      * @param trigger
@@ -552,6 +564,8 @@ public class UnifiedSafepoint {
             return Trigger.GET_THREAD_LIST_STACK_TRACES;
         if (Trigger.HALT.name().matches(trigger))
             return Trigger.HALT;
+        if (Trigger.HANDSHAKE_FALL_BACK.name().matches(trigger))
+            return Trigger.HANDSHAKE_FALL_BACK;
         if (Trigger.IC_BUFFER_FULL.name().matches(trigger))
             return Trigger.IC_BUFFER_FULL;
         if (Trigger.NO_VM_OPERATION.name().matches(trigger))

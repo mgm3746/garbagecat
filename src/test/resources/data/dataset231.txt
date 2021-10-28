@@ -1,0 +1,8 @@
+2021-10-27T19:37:39.135-0400: [Concurrent marking (process weakrefs), 3.234 ms]
+2021-10-27T19:37:39.139-0400: [Concurrent precleaning, 0.087 ms]
+2021-10-27T19:37:39.139-0400: [Pause Final Mark (process weakrefs), 0.436 ms]
+2021-10-27T19:37:39.139-0400: Total time for which application threads were stopped: 0.0004959 seconds, Stopping threads took: 0.0000384 seconds
+2021-10-27T19:37:39.139-0400: [Concurrent cleanup 84078K->26953K(98304K), 0.037 ms]
+2021-10-27T19:37:39.139-0400: [Concurrent evacuation
+    Cancelling GC: Stopping VM
+, 0.039 ms]
