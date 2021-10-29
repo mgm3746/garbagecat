@@ -1087,20 +1087,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             this.logEntry = logEntry;
             context.add(TOKEN_BEGINNING_OF_EVENT);
         } else if (JdkUtil.parseLogLine(logEntry) instanceof UnifiedConcurrentEvent && !isThrowaway(logEntry)) {
-            // if (!context.contains(TOKEN)) {
             // Stand alone event
             this.logEntry = logEntry;
             context.add(TOKEN_BEGINNING_OF_EVENT);
-            // } else {
-            // Get beginning safepoint logging from entangledLogLines
-            // if (entangledLogLines.size() == 1
-            // && REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN.matcher(entangledLogLines.get(0)).matches()) {
-            // this.logEntry = entangledLogLines.get(0);
-            // entangledLogLines.clear();
-            // context.add(TOKEN_BEGINNING_OF_EVENT);
-            // }
-            // entangledLogLines.add(logEntry);
-            // }
         }
     }
 
