@@ -145,6 +145,30 @@ class TestThreadDumpEvent {
     }
 
     @Test
+    void testThreadNameWithCpuAndElapsed() {
+        String logLine = "\"main\" #1 prio=5 os_prio=0 cpu=3680.53ms elapsed=895837.95s tid=0x0000562dbd1f2800 "
+                + "nid=0x95 waiting on condition  [0x00007f21164a3000]";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
+    void testThreadNameWithComma() {
+        String logLine = "\"Timer runner-3,rhdg-cluster-w-prod-8-28051\" #20 prio=5 os_prio=0 cpu=569155.45ms "
+                + "elapsed=895821.32s tid=0x0000562dc0fbc800 nid=0xb5 waiting on condition  [0x00007f20ce4e5000]";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
+    void testThreadNameNoPrio() {
+        String logLine = "\"VM Thread\" os_prio=0 cpu=92316.68ms elapsed=895823.84s tid=0x0000562dbe5d1800 nid=0x9b "
+                + "runnable";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
     void testThreadStateRunnable() {
         String logLine = "   java.lang.Thread.State: RUNNABLE";
         assertTrue(ThreadDumpEvent.match(logLine),
@@ -180,6 +204,20 @@ class TestThreadDumpEvent {
     }
 
     @Test
+    void testWaitingParking() {
+        String logLine = "   java.lang.Thread.State: WAITING (parking)";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
+    void testTimedWaitingParking() {
+        String logLine = "   java.lang.Thread.State: TIMED_WAITING (parking)";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
     void testStackTraceLocation() {
         String logLine = "\tat java.lang.Object.wait(Native Method)";
         assertTrue(ThreadDumpEvent.match(logLine),
@@ -201,8 +239,23 @@ class TestThreadDumpEvent {
     }
 
     @Test
+    void testStackTraceEventWaitingToReLock() {
+        String logLine = "\t- waiting to re-lock in wait() <0x0000000419cd45b0> (a java.lang.ref.ReferenceQueue$Lock)";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
     void testStackTraceEventWaitingOn() {
         String logLine = "\t- waiting on <0x889d3168> (a java.lang.Object)";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
+    void testStackTraceEventParkingToWaitFor() {
+        String logLine = "\t- parking to wait for  <0x000000041d61b760> "
+                + "(a java.util.concurrent.CompletableFuture$Signaller)";
         assertTrue(ThreadDumpEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
     }
@@ -283,6 +336,42 @@ class TestThreadDumpEvent {
     @Test
     void testInfinispanAt() {
         String logLine = "    at jdk.internal.misc.Unsafe.park(Unsafe.java:-2)";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
+    void testThreadsClassSmrInfo() {
+        // thread name pattern picks this up
+        String logLine = "Threads class SMR info:";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
+    void testJavaThreadList() {
+        String logLine = "_java_thread_list=0x0000562dca51dbd0, length=361, elements={";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
+    void testJavaThreadListAddresses() {
+        String logLine = "0x0000562dbd1f2800, 0x0000562dbe5d5000, 0x0000562dbe5d7800, 0x0000562dbe5e5800,";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
+    void testNoCompileTask() {
+        String logLine = "   No compile task";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
+    void testJniGlobalRefs() {
+        String logLine = "JNI global refs: 121703, weak refs: 0";
         assertTrue(ThreadDumpEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
     }

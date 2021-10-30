@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -114,23 +115,35 @@ public class ThreadDumpEvent implements ThrowAwayEvent {
             // title
             "^Full thread dump(.*):$",
             // thread data
-            "^\"[a-zA-z0-9\\-\\.\\@ \\:\\#\\(\\)\\[\\]/]+\" (daemon )?prio=\\d{1,2} tid=0x[a-z0-9]{8,16} "
-                    + "nid=0x[a-z0-9]{3,4} (runnable|in Object.wait\\(\\)|waiting for monitor entry|"
-                    + "waiting on condition|sleeping)( )?(\\[0x[a-z0-9]{8,16}\\.\\.0x[a-z0-9]{8,16}\\])?[ ]*$",
+            "^\"[a-zA-z0-9\\-\\.\\@ \\:\\#\\(\\)\\[\\]/,]+\" (\\#\\d{1,} )?(daemon )?(os_)?prio=\\d{1,2} "
+                    + "(os_prio=\\d{1,2} )?(cpu=\\d{1,}\\.\\d{2}ms elapsed=\\d{1,}\\.\\d{2}s )?"
+                    + "tid=0x[a-z0-9]{8,16} nid=0x[a-z0-9]{2,4} "
+                    + "(runnable|in Object.wait\\(\\)|waiting for monitor entry|waiting on condition|sleeping)"
+                    + "[ ]{0,2}(\\[0x[a-z0-9]{8,16}(\\.\\.0x[a-z0-9]{8,16})?\\])?[ ]*$",
             // thread state
             "^   java.lang.Thread.State: (RUNNABLE|WAITING \\(on object monitor\\)|"
                     + "BLOCKED \\(on object monitor\\)|TIMED_WAITING \\(on object monitor\\)|TERMINATED|"
-                    + "TIMED_WAITING \\(sleeping\\))$",
+                    + "TIMED_WAITING \\(sleeping\\)|(TIMED_)?WAITING \\(parking\\))$",
             // stack trace location line
             "^(\\t|[ ]{4})at (.*)$",
+            // No compile task
+            "^   No compile task$",
             // stack trace event line
-            "^\\t- (locked|waiting to lock|waiting on) (.*)$",
+            "^\\t- (locked|parking to wait for|waiting to (re-)?lock|waiting on) (.*)$",
             // Heap summary lines
             "^JNI global references: \\d{1,6}$", "^Heap$", "^ par new generation   total.*$", "^  eden space.*$",
             "^  from space.*$", "^  to   space.*$", "^ concurrent mark-sweep generation total.*$",
             "^ concurrent-mark-sweep perm gen total.*$",
             // thread names as they appear in infinispan logging
-            "^[a-zA-Z].+:$"
+            "^[a-zA-Z].+:$",
+            // Threads class SMR info
+            "^_java_thread_list=.+$",
+            // Threads class SMR info address line
+            "^(" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS
+                    + "(,)?|" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "|"
+                    + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "|" + JdkRegEx.ADDRESS + ")$",
+            // JNA Global Refs
+            "JNI global refs: \\d{1,}, weak refs: \\d{1,}"
             //
     };
     private static final Pattern PATTERN[] = new Pattern[REGEX.length];
