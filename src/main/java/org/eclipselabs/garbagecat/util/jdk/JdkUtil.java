@@ -101,6 +101,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UsingG1Event;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingParallelEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingSerialEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingShenandoahEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
@@ -159,7 +160,7 @@ public final class JdkUtil {
         //
         HEADER_MEMORY, HEADER_VERSION, HEAP_AT_GC, LOG_FILE, REFERENCE_GC, TENURING_DISTRIBUTION, THREAD_DUMP,
         //
-        UNKNOWN, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD
+        UNKNOWN, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, VM_WARNING
     };
 
     /**
@@ -578,6 +579,8 @@ public final class JdkUtil {
             return LogEventType.HEADER_VERSION;
         if (ReferenceGcEvent.match(logLine))
             return LogEventType.REFERENCE_GC;
+        if (VmWarningEvent.match(logLine))
+            return LogEventType.VM_WARNING;
 
         // no idea what event is
         return LogEventType.UNKNOWN;
@@ -626,6 +629,7 @@ public final class JdkUtil {
         case USING_CMS:
         case USING_G1:
         case USING_SHENANDOAH:
+        case VM_WARNING:
             return false;
         default:
             return true;
@@ -734,6 +738,7 @@ public final class JdkUtil {
         case UNIFIED_BLANK_LINE:
         case UNIFIED_G1_INFO:
         case UNKNOWN:
+        case VM_WARNING:
             return false;
         default:
             return true;
@@ -896,10 +901,16 @@ public final class JdkUtil {
             return new GcInfoEvent(logLine);
         case GC_LOCKER:
             return new GcLockerEvent(logLine);
-        case HEAP_AT_GC:
-            return new HeapAtGcEvent(logLine);
         case GC_OVERHEAD_LIMIT:
             return new GcOverheadLimitEvent(logLine);
+        case HEADER_COMMAND_LINE_FLAGS:
+            return new HeaderCommandLineFlagsEvent(logLine);
+        case HEADER_MEMORY:
+            return new HeaderMemoryEvent(logLine);
+        case HEADER_VERSION:
+            return new HeaderVersionEvent(logLine);
+        case HEAP_AT_GC:
+            return new HeapAtGcEvent(logLine);
         case LOG_FILE:
             return new LogFileEvent(logLine);
         case REFERENCE_GC:
@@ -914,12 +925,8 @@ public final class JdkUtil {
             return new VerboseGcOldEvent(logLine);
         case VERBOSE_GC_YOUNG:
             return new VerboseGcYoungEvent(logLine);
-        case HEADER_COMMAND_LINE_FLAGS:
-            return new HeaderCommandLineFlagsEvent(logLine);
-        case HEADER_MEMORY:
-            return new HeaderMemoryEvent(logLine);
-        case HEADER_VERSION:
-            return new HeaderVersionEvent(logLine);
+        case VM_WARNING:
+            return new VmWarningEvent(logLine);
         default:
             throw new AssertionError("Unexpected event type value: " + eventType);
         }

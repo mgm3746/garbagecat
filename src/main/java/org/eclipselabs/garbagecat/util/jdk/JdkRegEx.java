@@ -31,11 +31,25 @@ public final class JdkRegEx {
      * For example: 328.75 MB/s
      */
     public static final String ALLOCATION_RATE = "\\d{1,6}(\\.\\d{2})? [BKM]B\\/s";
-
+    
     /**
      * Blank line.
      */
     public static final String BLANK_LINE = "^\\s+$";
+    
+    /**
+     * <p>
+     * Regular expression for valid JDK build date/time in MMM d yyyy HH:mm:ss format (see <code>SimpleDateFormat</code>
+     * for date and time pattern definitions).
+     * </p>
+     * 
+     * For example:
+     * 
+     * <pre>
+     * Oct  6 2018 06:46:09
+     * </pre>
+     */
+    public static final String BUILD_DATE_TIME = "([a-zA-Z]{3})[ ]{1,2}(\\d{1,2}) (\\d{4}) (\\d{2}):(\\d{2}):(\\d{2})";
 
     /**
      * Byte units identifier.
@@ -172,6 +186,21 @@ public final class JdkRegEx {
      * size = 200)
      */
     public static final String PRINT_PROMOTION_FAILURE = "( \\(\\d{1,2}: promotion failure size = \\d{1,10}\\) ){1,64}";
+
+    /**
+     * <p>
+     * Regular expression for a JDK release string.
+     * </p>
+     * 
+     * For example:
+     * 
+     * <pre>
+     * 1.8.0_131-b11
+     * 11.0.9+11-LTS
+     * 12.0.1+12
+     * </pre>
+     */
+    public static final String RELEASE_STRING = "((1.6.0|1.7.0|1.8.0|9|10|11|12|13|14|15|16).+)";
 
     /**
      * The size of memory in bytes (B), kilobytes (K), megabytes (M), or gigabytes (G) to a whole number or to one

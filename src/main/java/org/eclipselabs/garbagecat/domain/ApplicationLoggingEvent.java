@@ -97,7 +97,9 @@ public class ApplicationLoggingEvent implements ThrowAwayEvent {
             // JBoss CLASS_PATH
             "^  CLASSPATH:.*$",
             // JBoss JAVA_OPTS warning
-            "^JAVA_OPTS already set in environment; overriding default settings with values: -d64$"
+            "^JAVA_OPTS already set in environment; overriding default settings with values: -d64$",
+            // WARNING (e.g. infinispan)
+            "^WARNING:.+"
             //
     };
 

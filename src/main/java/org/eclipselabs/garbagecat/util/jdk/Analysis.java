@@ -112,6 +112,15 @@ public enum Analysis {
     ERROR_G1_HUMONGOUS_JDK_OLD("error.g1.humongous.jdk.old"),
 
     /**
+     * Property key for the following VM warning:
+     * 
+     * <pre>
+     * Failed to reserve shared memory. (error = 12)
+     * </pre>
+     */
+    ERROR_SHARED_MEMORY_12("error.shared.memory.12"),
+
+    /**
      * Property key for the garbage collection overhead limit being reached.
      */
     ERROR_GC_TIME_LIMIT_EXCEEEDED("error.gc.time.limit.exceeded"),

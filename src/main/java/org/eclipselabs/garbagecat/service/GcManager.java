@@ -72,6 +72,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
@@ -762,6 +763,12 @@ public class GcManager {
                     if (greater(((PermMetaspaceData) event).getPermSpace(), jvmDao.getMaxPermSpaceNonBlocking())) {
                         jvmDao.setMaxPermSpaceNonBlocking(
                                 (int) ((PermMetaspaceData) event).getPermSpace().getValue(KILOBYTES));
+                    }
+                } else if (event instanceof VmWarningEvent) {
+                    if (((VmWarningEvent) event).getErrNo().equals("12")) {
+                        if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SHARED_MEMORY_12)) {
+                            jvmDao.addAnalysis(Analysis.ERROR_SHARED_MEMORY_12);
+                        }
                     }
                 } else if (event instanceof UnknownEvent) {
                     if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {

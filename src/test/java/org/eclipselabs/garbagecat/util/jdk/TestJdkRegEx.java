@@ -315,4 +315,10 @@ class TestJdkRegEx {
         logLine = "2020-03-10T08:03:29.311-0400: 123.456: MGM";
         assertFalse(logLine.matches(JdkRegEx.DATESTAMP_EVENT), "'" + logLine + "' " + "not a valid datestamp event.");
     }
+
+    @Test
+    void testJdk12ReleaseString() {
+        String release = "12.0.1+12";
+        assertTrue(release.matches(JdkRegEx.RELEASE_STRING), "Release not identified.");
+    }
 }

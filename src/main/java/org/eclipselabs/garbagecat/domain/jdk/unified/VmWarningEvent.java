@@ -10,54 +10,39 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * HEADER_VERSION
+ * VM_WARNING
  * </p>
  * 
  * <p>
- * Version header.
+ * VM warning information.
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
- * <p>
- * 1) OpenJDK:
- * </p>
- * 
  * <pre>
- * OpenJDK 64-Bit Server VM (24.95-b01) for linux-amd64 JRE (1.7.0_95-b00), built on Jan 18 2016 21:57:50 by "mockbuild" with gcc 4.8.5 20150623 (Red Hat 4.8.5-4)
- * </pre>
- * 
- * <p>
- * 2) Oracle JDK:
- * </p>
- * 
- * <pre>
- * Java HotSpot(TM) 64-Bit Server VM (24.85-b08) for linux-amd64 JRE (1.7.0_85-b34), built on Sep 29 2015 08:44:21 by "java_re" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
+ * OpenJDK 64-Bit Server VM warning: Failed to reserve shared memory. (error = 12)
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class HeaderVersionEvent implements LogEvent {
+public class VmWarningEvent implements UnifiedLogging {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(Java HotSpot\\(TM\\)|OpenJDK)( 64-Bit)? Server VM \\(.+\\) for "
-            + "(linux|windows|solaris)-(amd64|ppc64|ppc64le|sparc|x86) JRE (\\(Zulu.+\\) )?\\("
-            + JdkRegEx.RELEASE_STRING + "\\).+ built on " + JdkRegEx.BUILD_DATE_TIME + ".+$";
+    private static final String REGEX = "^OpenJDK 64-Bit Server VM warning: (.+\\(error = (\\d{1,2})\\))$";
 
-    private static Pattern pattern = Pattern.compile(REGEX);
+    private static final Pattern pattern = Pattern.compile(REGEX);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -75,7 +60,7 @@ public class HeaderVersionEvent implements LogEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public HeaderVersionEvent(String logEntry) {
+    public VmWarningEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
     }
@@ -85,11 +70,23 @@ public class HeaderVersionEvent implements LogEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.HEADER_VERSION.toString();
+        return JdkUtil.LogEventType.VM_WARNING.toString();
     }
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    /**
+     * @return The warning errno.
+     */
+    public String getErrNo() {
+        String errNo = null;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            errNo = matcher.group(2);
+        }
+        return errNo;
     }
 
     /**

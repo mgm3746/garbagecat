@@ -1495,4 +1495,20 @@ class TestAnalysis {
         assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC),
                 Analysis.WARN_PRINT_HEAP_AT_GC + " analysis identified.");
     }
+
+    @Test
+    void testFailedToReserveSharedMemoryErrNo12() {
+        File testFile = TestUtil.getFile("dataset233.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.VM_WARNING),
+                JdkUtil.LogEventType.VM_WARNING.toString() + " collector identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SHARED_MEMORY_12),
+                Analysis.ERROR_SHARED_MEMORY_12 + " analysis identified.");
+    }
 }
