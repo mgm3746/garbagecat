@@ -139,14 +139,22 @@ class TestUnifiedG1FullGcEvent {
         assertEquals(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString(), event.getName(), "Event name incorrect.");
     }
 
-    /**
-     * Test with time, uptime decorator.
-     */
     @Test
     void testPreprocessedTriggerGcLockerInitiatedGc() {
         String logLine = "[2021-03-13T03:45:44.425+0530][80337493ms] GC(9216) Pause Full (GCLocker Initiated GC) "
                 + "Metaspace: 214103K->214103K(739328K) 8184M->8180M(8192M) 2101.341ms "
                 + "User=16.34s Sys=0.05s Real=2.10s";
+        assertTrue(UnifiedG1FullGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+        UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString(), event.getName(), "Event name incorrect.");
+    }
+
+    @Test
+    void testPreprocessedTriggerG1HumongousAllocation() {
+        String logLine = "[2021-10-29T21:02:24.624+0000][info][gc,start       ] GC(23863) Pause Full "
+                + "(G1 Humongous Allocation) Metaspace: 69475K->69475K(153600K) 16339M->14486M(16384M) 8842.979ms "
+                + "User=52.67s Sys=0.01s Real=8.84s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);

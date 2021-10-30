@@ -814,6 +814,35 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testG1FullGcTriggerG1HumongousAllocation() {
+        String logLine = "[2021-10-29T21:02:24.624+0000][info][gc,start       ] GC(23863) Pause Full "
+                + "(G1 Humongous Allocation)";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals(
+                "[2021-10-29T21:02:24.624+0000][info][gc,start       ] GC(23863) Pause Full (G1 Humongous Allocation)",
+                event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testG1FullGcTriggerG1HumongousAllocationDetails() {
+        String logLine = "[2021-10-29T21:02:33.467+0000][info][gc             ] GC(23863) Pause Full "
+                + "(G1 Humongous Allocation) 16339M->14486M(16384M) 8842.979ms";
+        String nextLogLine = "[2021-10-29T21:02:33.467+0000][info][gc,cpu         ] GC(23863) "
+                + "User=52.67s Sys=0.01s Real=8.84s";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(" 16339M->14486M(16384M) 8842.979ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testG1FullGcTriggerGcLockerInitiatedGcDetails() {
         String logLine = "[2021-03-13T03:45:46.526+0530][80339594ms] GC(9216) Pause Full (GCLocker Initiated GC) "
                 + "8184M->8180M(8192M) 2101.341ms";
@@ -2462,5 +2491,19 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testUnifiedG1FullGcTriggerG1HumongousAllocation() {
+        File testFile = TestUtil.getFile("dataset232.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_PARALLEL),
+                JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + " collector not identified.");
     }
 }
