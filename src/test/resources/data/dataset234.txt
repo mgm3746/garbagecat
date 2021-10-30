@@ -1,0 +1,17 @@
+20:40:55,453 FATAL (Connection.Receiver [254.14.9.208:7800 - 254.12.8.190:44515]-7,rhdg-cluster-w-prod-3-27192) [org.jgroups.protocols.TCP] rhdg-cluster-w-prod-3-27192: thread pool is full (max=200, active=200); thread dump (dumped once, until thread_dump is reset):
+main:
+    at jdk.internal.misc.Unsafe.park(Unsafe.java:-2)
+    at java.util.concurrent.locks.LockSupport.park(LockSupport.java:194)
+    at java.util.concurrent.CompletableFuture$Signaller.block(CompletableFuture.java:1796)
+    at java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3128)
+    at java.util.concurrent.CompletableFuture.waitingGet(CompletableFuture.java:1823)
+    at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1998)
+    at org.infinispan.server.Bootstrap.runInternal(Bootstrap.java:160)
+    at org.infinispan.server.tool.Main.run(Main.java:98)
+    at org.infinispan.server.Bootstrap.main(Bootstrap.java:47)
+    at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(NativeMethodAccessorImpl.java:-2)
+    at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+    at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:566)
+    at org.infinispan.server.loader.Loader.run(Loader.java:106)
+    at org.infinispan.server.loader.Loader.main(Loader.java:51)

@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
- * 
  */
 class TestThreadDumpEvent {
 
@@ -262,6 +261,28 @@ class TestThreadDumpEvent {
     void testSummaryCmsPermGenTotal() {
         String logLine = " concurrent-mark-sweep perm gen total 77736K, used 46547K "
                 + "[0xe4c40000, 0xe982a000, 0xf4c40000)";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
+    void testInfinispanThreadName() {
+        String logLine = "main:";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
+    void testInfinispanThreadNameComplex() {
+        String logLine = "Connection.Receiver "
+                + "[254.14.9.208:7800 - 254.12.11.128:39223]-448,rhdg-cluster-w-prod-3-27192:";
+        assertTrue(ThreadDumpEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+    }
+
+    @Test
+    void testInfinispanAt() {
+        String logLine = "    at jdk.internal.misc.Unsafe.park(Unsafe.java:-2)";
         assertTrue(ThreadDumpEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
     }

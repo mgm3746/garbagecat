@@ -71,6 +71,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
@@ -320,6 +321,11 @@ public class GcManager {
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED)) {
                     if (ReferenceGcEvent.match(currentLogLine)) {
                         jvmDao.getAnalysis().add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
+                    }
+                }
+                if (!jvmDao.getAnalysis().contains(Analysis.INFO_THREAD_DUMP)) {
+                    if (ThreadDumpEvent.match(currentLogLine)) {
+                        jvmDao.getAnalysis().add(Analysis.INFO_THREAD_DUMP);
                     }
                 }
                 currentLogLine = null;
@@ -769,6 +775,10 @@ public class GcManager {
                         if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SHARED_MEMORY_12)) {
                             jvmDao.addAnalysis(Analysis.ERROR_SHARED_MEMORY_12);
                         }
+                    }
+                } else if (event instanceof ThreadDumpEvent) {
+                    if (!jvmDao.getAnalysis().contains(Analysis.INFO_THREAD_DUMP)) {
+                        jvmDao.addAnalysis(Analysis.INFO_THREAD_DUMP);
                     }
                 } else if (event instanceof UnknownEvent) {
                     if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {

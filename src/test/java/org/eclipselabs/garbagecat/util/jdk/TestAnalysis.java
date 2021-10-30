@@ -1511,4 +1511,20 @@ class TestAnalysis {
         assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SHARED_MEMORY_12),
                 Analysis.ERROR_SHARED_MEMORY_12 + " analysis identified.");
     }
+
+    @Test
+    void testInfinispanThreadDump() {
+        // Check both preprocessed and not preprocessed
+        File testFile = TestUtil.getFile("dataset234.txt");
+        GcManager gcManager = new GcManager();
+        gcManager.store(testFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_THREAD_DUMP),
+                Analysis.INFO_THREAD_DUMP + " analysis identified.");
+        jvmRun.getAnalysis().clear();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_THREAD_DUMP),
+                Analysis.INFO_THREAD_DUMP + " analysis identified.");
+    }
 }

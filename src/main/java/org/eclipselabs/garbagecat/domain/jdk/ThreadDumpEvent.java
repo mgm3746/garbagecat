@@ -122,13 +122,17 @@ public class ThreadDumpEvent implements ThrowAwayEvent {
                     + "BLOCKED \\(on object monitor\\)|TIMED_WAITING \\(on object monitor\\)|TERMINATED|"
                     + "TIMED_WAITING \\(sleeping\\))$",
             // stack trace location line
-            "^\\tat (.*)$",
+            "^(\\t|[ ]{4})at (.*)$",
             // stack trace event line
             "^\\t- (locked|waiting to lock|waiting on) (.*)$",
             // Heap summary lines
             "^JNI global references: \\d{1,6}$", "^Heap$", "^ par new generation   total.*$", "^  eden space.*$",
             "^  from space.*$", "^  to   space.*$", "^ concurrent mark-sweep generation total.*$",
-            "^ concurrent-mark-sweep perm gen total.*$" };
+            "^ concurrent-mark-sweep perm gen total.*$",
+            // thread names as they appear in infinispan logging
+            "^[a-zA-Z].+:$"
+            //
+    };
     private static final Pattern PATTERN[] = new Pattern[REGEX.length];
 
     static {

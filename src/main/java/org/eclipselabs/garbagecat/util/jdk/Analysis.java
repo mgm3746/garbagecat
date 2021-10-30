@@ -112,15 +112,6 @@ public enum Analysis {
     ERROR_G1_HUMONGOUS_JDK_OLD("error.g1.humongous.jdk.old"),
 
     /**
-     * Property key for the following VM warning:
-     * 
-     * <pre>
-     * Failed to reserve shared memory. (error = 12)
-     * </pre>
-     */
-    ERROR_SHARED_MEMORY_12("error.shared.memory.12"),
-
-    /**
      * Property key for the garbage collection overhead limit being reached.
      */
     ERROR_GC_TIME_LIMIT_EXCEEEDED("error.gc.time.limit.exceeded"),
@@ -162,6 +153,15 @@ public enum Analysis {
      * Property key for the Parallel (Throughput) PARALLEL_SERIAL_OLD (single-threaded) collector.
      */
     ERROR_SERIAL_GC_PARALLEL("error.serial.gc.parallel"),
+
+    /**
+     * Property key for the following VM warning:
+     * 
+     * <pre>
+     * Failed to reserve shared memory. (error = 12)
+     * </pre>
+     */
+    ERROR_SHARED_MEMORY_12("error.shared.memory.12"),
 
     /**
      * Property key for the SHENANDOAH_FULL_GC collector being invoked.
@@ -306,6 +306,11 @@ public enum Analysis {
      * Property key for swapping.
      */
     INFO_SWAPPING("info.swapping"),
+
+    /**
+     * Property key for one or more thread dumps in gc logging.
+     */
+    INFO_THREAD_DUMP("info.thread.dump"),
 
     /**
      * Property key for otherwise unaccounted JVM options disabled.
