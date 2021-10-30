@@ -268,7 +268,7 @@ public class GcManager {
 
         String preprocessedLogLine = null;
 
-        if (currentLogLine != null)
+        if (currentLogLine != null) {
 
             /*
              * Other preprocessing.
@@ -418,7 +418,7 @@ public class GcManager {
                 }
                 context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             }
-
+        }
         return preprocessedLogLine;
     }
 

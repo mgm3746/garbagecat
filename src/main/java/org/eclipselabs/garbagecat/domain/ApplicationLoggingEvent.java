@@ -98,8 +98,10 @@ public class ApplicationLoggingEvent implements ThrowAwayEvent {
             "^  CLASSPATH:.*$",
             // JBoss JAVA_OPTS warning
             "^JAVA_OPTS already set in environment; overriding default settings with values: -d64$",
-            // WARNING (e.g. infinispan)
-            "^WARNING:.+"
+            // Infinispan
+            "^(GMS|WARNING):.+",
+            // Infinispan Divider
+            "^-------------------------------------------------------------------$"
             //
     };
 

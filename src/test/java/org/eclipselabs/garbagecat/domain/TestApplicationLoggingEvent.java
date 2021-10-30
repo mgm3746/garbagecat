@@ -131,4 +131,17 @@ class TestApplicationLoggingEvent {
                 + "operations";
         assertTrue(ApplicationLoggingEvent.match(logLine), "Log line not recognized as " + APPLICATION_LOGGING + ".");
     }
+
+    @Test
+    void testInfinispanDivider() {
+        String logLine = "-------------------------------------------------------------------";
+        assertTrue(ApplicationLoggingEvent.match(logLine), "Log line not recognized as " + APPLICATION_LOGGING + ".");
+    }
+
+    @Test
+    void testInfinispanGms() {
+        String logLine = "GMS: address=_rhdg-cluster-w-prod-5-58574:rhdg-cluster-w-prod, cluster=relay-global, "
+                + "physical address=10.36.176.150:30242";
+        assertTrue(ApplicationLoggingEvent.match(logLine), "Log line not recognized as " + APPLICATION_LOGGING + ".");
+    }
 }

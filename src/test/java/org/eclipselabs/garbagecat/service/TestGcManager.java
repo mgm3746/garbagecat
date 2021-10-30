@@ -33,5 +33,4 @@ class TestGcManager {
         GcManager gcManager = new GcManager();
         gcManager.preprocess(testFile, null);
     }
-
 }

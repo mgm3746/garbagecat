@@ -31,12 +31,12 @@ public final class JdkRegEx {
      * For example: 328.75 MB/s
      */
     public static final String ALLOCATION_RATE = "\\d{1,6}(\\.\\d{2})? [BKM]B\\/s";
-    
+
     /**
      * Blank line.
      */
     public static final String BLANK_LINE = "^\\s+$";
-    
+
     /**
      * <p>
      * Regular expression for valid JDK build date/time in MMM d yyyy HH:mm:ss format (see <code>SimpleDateFormat</code>
