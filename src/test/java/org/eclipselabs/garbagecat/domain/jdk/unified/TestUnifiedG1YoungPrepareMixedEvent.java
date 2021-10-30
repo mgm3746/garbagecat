@@ -136,14 +136,23 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 "Event name incorrect.");
     }
 
-    /**
-     * Test with time, uptime decorator.
-     */
     @Test
     void testPreprocessedTriggerGcLockerInitiatedGc() {
         String logLine = "[2021-10-14T00:22:54.796+0400][info][gc,start      ] GC(891) Pause Young (Prepare Mixed) "
                 + "(GCLocker Initiated GC) Metaspace: 360792K->360792K(1380352K) 10311M->3024M(12288M) 33.928ms "
                 + "User=0.25s Sys=0.04s Real=0.03s";
+        assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+        UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
+                "Event name incorrect.");
+    }
+
+    @Test
+    void testPreprocessedTriggerG1HumongousAllocation() {
+        String logLine = "[2021-10-29T20:56:08.426+0000][info][gc,start      ] GC(734) Pause Young (Prepare Mixed) "
+                + "(G1 Humongous Allocation) Metaspace: 66401K->66401K(151552K) 15678M->1575M(16384M) 24.193ms "
+                + "User=0.12s Sys=0.00s Real=0.03s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
