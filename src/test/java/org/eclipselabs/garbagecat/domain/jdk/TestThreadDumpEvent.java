@@ -270,52 +270,52 @@ class TestThreadDumpEvent {
     @Test
     void testSummaryHeap() {
         String logLine = "Heap";
-        assertTrue(ThreadDumpEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+        assertFalse(ThreadDumpEvent.match(logLine),
+                "Log line incorrectly recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
     }
 
     @Test
     void testSummaryParNewGeneration() {
         String logLine = " par new generation   total 917504K, used 808761K [0x44c40000, 0x84c40000, 0x84c40000)";
-        assertTrue(ThreadDumpEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+        assertFalse(ThreadDumpEvent.match(logLine),
+                "Log line incorrectly recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
     }
 
     @Test
     void testSummaryEdenSpace() {
         String logLine = "  eden space 786432K, 100% used [0x44c40000, 0x74c40000, 0x74c40000)";
-        assertTrue(ThreadDumpEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+        assertFalse(ThreadDumpEvent.match(logLine),
+                "Log line incorrectly recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
     }
 
     @Test
     void testSummaryFromSpace() {
         String logLine = "  from space 131072K,  17% used [0x7cc40000, 0x7e20e790, 0x84c40000)";
-        assertTrue(ThreadDumpEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+        assertFalse(ThreadDumpEvent.match(logLine),
+                "Log line incorrectly recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
     }
 
     @Test
     void testSummaryToSpace() {
         String logLine = "  to   space 131072K,   0% used [0x74c40000, 0x74c40000, 0x7cc40000)";
-        assertTrue(ThreadDumpEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+        assertFalse(ThreadDumpEvent.match(logLine),
+                "Log line incorrectly recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
     }
 
     @Test
     void testSummaryCmsGenerationTotal() {
         String logLine = " concurrent mark-sweep generation total 1572864K, used 1572863K "
                 + "[0x84c40000, 0xe4c40000, 0xe4c40000)";
-        assertTrue(ThreadDumpEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+        assertFalse(ThreadDumpEvent.match(logLine),
+                "Log line incorrectly recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
     }
 
     @Test
     void testSummaryCmsPermGenTotal() {
         String logLine = " concurrent-mark-sweep perm gen total 77736K, used 46547K "
                 + "[0xe4c40000, 0xe982a000, 0xf4c40000)";
-        assertTrue(ThreadDumpEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
+        assertFalse(ThreadDumpEvent.match(logLine),
+                "Log line incorrectly recognized as " + JdkUtil.LogEventType.THREAD_DUMP.toString() + ".");
     }
 
     @Test

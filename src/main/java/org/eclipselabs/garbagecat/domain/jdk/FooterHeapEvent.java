@@ -27,14 +27,30 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <p>
- * Heap information printed at the end of gc logging with unified detailed logging
- * (<code>-Xlog:gc*:file=&lt;file&gt;</code>).
+ * Heap information at the end of a {@link org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent}, Shenandoah gc
+ * logging, and unified detailed gc logging (<code>-Xlog:gc*:file=&lt;file&gt;</code>).
  * </p>
  * 
  * <h3>Example Logging</h3>
  * 
  * <p>
- * 1) G1:
+ * 1) End of {@link org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent}:
+ * </p>
+ * 
+ * <pre>
+ * Heap
+ *  PSYoungGen      total 149504K, used 2570K [0x0000000719d00000, 0x0000000724380000, 0x00000007c0000000)
+ *   eden space 128512K, 2% used [0x0000000719d00000,0x0000000719f82960,0x0000000721a80000)
+ *   from space 20992K, 0% used [0x0000000721a80000,0x0000000721a80000,0x0000000722f00000)
+ *   to   space 20992K, 0% used [0x0000000722f00000,0x0000000722f00000,0x0000000724380000)
+ *  ParOldGen       total 341504K, used 269K [0x00000005cd600000, 0x00000005e2380000, 0x0000000719d00000)
+ *   object space 341504K, 0% used [0x00000005cd600000,0x00000005cd6436a0,0x00000005e2380000)
+ *  Metaspace       used 3080K, capacity 4486K, committed 4864K, reserved 1056768K
+ *   class space    used 294K, capacity 386K, committed 512K, reserved 1048576K
+ * <pre>
+ * 
+ * <p>
+ * 2) G1:
  * </p>
  * 
  * <pre>
@@ -46,7 +62,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  *
  * <p>
- * 2) Shenandoah JDK8:
+ * 3) Shenandoah JDK8:
  * </p>
  * 
  * <pre>
@@ -63,7 +79,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 3) Shenandoah Unified:
+ * 4) Shenandoah Unified:
  * </p>
  * 
  * <pre>
@@ -83,7 +99,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 4) Serial:
+ * 5) Serial:
  * </p>
  * 
  * <pre>
@@ -99,7 +115,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 5) Parallel Serial:
+ * 6) Parallel Serial:
  * </p>
  * 
  * <pre>
@@ -115,7 +131,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 6) Parallel Serial Compacting:
+ * 7) Parallel Serial Compacting:
  * </p>
  * 
  * <pre>
@@ -131,7 +147,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 7) CMS:
+ * 8) CMS:
  * </p>
  * 
  * <pre>

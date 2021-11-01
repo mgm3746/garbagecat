@@ -130,10 +130,8 @@ public class ThreadDumpEvent implements ThrowAwayEvent {
             "^   No compile task$",
             // stack trace event line
             "^\\t- (locked|parking to wait for|waiting to (re-)?lock|waiting on) (.*)$",
-            // Heap summary lines
-            "^JNI global references: \\d{1,6}$", "^Heap$", "^ par new generation   total.*$", "^  eden space.*$",
-            "^  from space.*$", "^  to   space.*$", "^ concurrent mark-sweep generation total.*$",
-            "^ concurrent-mark-sweep perm gen total.*$",
+            // JNI global references
+            "^JNI global references: \\d{1,}$",
             // thread names as they appear in infinispan logging
             "^[a-zA-Z].+:$",
             // Threads class SMR info
