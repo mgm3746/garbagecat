@@ -144,7 +144,7 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ERGONOMICS + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")";
+            + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")";
 
     /**
      * Regular expression defining the logging.

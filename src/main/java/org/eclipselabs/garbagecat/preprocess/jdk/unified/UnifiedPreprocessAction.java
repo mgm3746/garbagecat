@@ -408,7 +408,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
 
     /**
      * Regular expression for retained beginning @link
-     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialOldEvent}.
+     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialOldEvent} and @link
+     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelCompactingOldEvent}.
      * 
      * <pre>
      * [0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure)
@@ -418,12 +419,14 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [2021-09-14T06:51:15.478-0500][3.530s][info][gc,start     ] GC(1) Pause Full (Metadata GC Threshold)
      * 
      * [2021-10-29T21:02:24.624+0000][info][gc,start       ] GC(23863) Pause Full (G1 Humongous Allocation)
+     *
+     * [2021-11-01T20:48:05.108+0000][240210707ms] GC(951) Pause Full (Heap Dump Initiated GC)
      * </pre>
      */
     private static final String REGEX_RETAIN_BEGINNING_SERIAL_OLD = "^(" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
             + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_ERGONOMICS + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|"
-            + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\))$";
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\))$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_OLD_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_SERIAL_OLD);
@@ -467,7 +470,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_YOUNG = "^(" + UnifiedRegEx.DECORATOR
             + " Pause Young( \\((Normal|Prepare Mixed|Mixed|Concurrent Start)\\))? \\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))$";
+            + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG);
 
@@ -536,9 +539,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.112s][info][gc             ] GC(3) Pause Young (Allocation Failure) 1M->1M(2M) 0.700ms
      * </pre>
      */
-    private static final String REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + ")$";
+    private static final String REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA = "^" + UnifiedRegEx.DECORATOR
+            + " Pause Young \\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC
+            + ")\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION
+            + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA);
@@ -563,6 +567,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [2021-10-29T21:02:33.467+0000][info][gc             ] GC(23863) Pause Full (G1 Humongous Allocation) 
      * 16339M-&gt;14486M(16384M) 8842.979ms
+     *
+     * [2021-11-01T20:48:05.297+0000][240210896ms] GC(951) Pause Full (Heap Dump Initiated GC) 166M-&gt;160M(1678M) 
+     * 189.216ms
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
@@ -603,6 +610,17 @@ public class UnifiedPreprocessAction implements PreprocessAction {
 
     private static final Pattern REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
+
+    /**
+     * Regular expression for retained "Promotion failed".
+     * 
+     * [2021-10-30T02:03:26.792+0000][404347ms] Promotion failed
+     */
+    private static final String REGEX_RETAIN_MIDDLE_PROMOTION_FAILED = "^(" + UnifiedRegEx.DECORATOR
+            + "( Promotion failed)$)";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_PROMOTION_FAILED_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_PROMOTION_FAILED);
 
     /**
      * Regular expression for retained 2nd line of safepoint logging.
@@ -996,7 +1014,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             matcher.reset();
             if (matcher.matches()) {
                 if (context.contains(TOKEN)) {
-                    this.logEntry = matcher.group(24);
+                    this.logEntry = matcher.group(25);
                 } else {
                     // Single line event
                     if (priorLogEntry != null && priorLogEntry.equals("")) {
@@ -1040,6 +1058,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 } else {
                     this.logEntry = Constants.LINE_SEPARATOR + logEntry;
                 }
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_PROMOTION_FAILED_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(25);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
@@ -1127,6 +1151,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_SPACE_DATA_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_PROMOTION_FAILED_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(logLine).matches()

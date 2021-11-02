@@ -175,4 +175,22 @@ class TestUnifiedParallelScavengeEvent {
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
     }
+
+    @Test
+    void testPreprocessedTriggerHeapDumpInitiatedGc() {
+        String logLine = "[2021-11-01T20:48:05.098+0000][240210697ms] GC(950) Pause Young (Heap Dump Initiated GC) "
+                + "PSYoungGen: 542130K->17888K(1538048K) ParOldGen: 152353K->152353K(180224K) "
+                + "Metaspace: 217673K->217673K(1275904K) 678M->166M(1678M) 9.184ms User=0.04s Sys=0.00s Real=0.01s";
+        assertTrue(UnifiedParallelScavengeEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+    }
+
+    @Test
+    void testPreprocessedPromotionFailed() {
+        String logLine = "[2021-10-30T02:03:26.100+0000][403655ms] GC(22) Pause Young (Allocation Failure) "
+                + "Promotion failed PSYoungGen: 1246735K->1246735K(1264128K) ParOldGen: 2927696K->3125241K(3125248K) "
+                + "Metaspace: 589156K->589156K(1687552K) 4076M->4269M(4286M) 692.086ms User=1.83s Sys=0.21s Real=0.69s";
+        assertTrue(UnifiedParallelScavengeEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+    }
 }

@@ -139,4 +139,13 @@ class TestUnifiedParallelCompactingOldEvent {
         assertTrue(UnifiedParallelCompactingOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + ".");
     }
+
+    @Test
+    void testPreprocessedTriggerHeapDumpInitiatedGc() {
+        String logLine = "[2021-11-01T20:48:05.108+0000][240210707ms] GC(951) Pause Full (Heap Dump Initiated GC) "
+                + "PSYoungGen: 17888K->0K(1538048K) ParOldGen: 152353K->163990K(180224K) "
+                + "Metaspace: 217673K->217673K(1275904K) 166M->160M(1678M) 189.216ms User=0.80s Sys=0.02s Real=0.19s";
+        assertTrue(UnifiedParallelCompactingOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + ".");
+    }
 }
