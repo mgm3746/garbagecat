@@ -175,7 +175,18 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
     private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
     /**
-     * Regular expression for class unloading enabled with <code>-XX:+CMSClassUnloadingEnabled</code>.
+     * Regular expression for class unloading enabled with <code>-XX:+CMSClassUnloadingEnabled</code> (default JDK8
+     * u25+).
+     * 
+     * 2021-11-27T09:12:25.283-0500: 0.078: [GC (CMS Final Remark) [YG occupancy: 188 K (1152
+     * K)]2021-11-27T09:12:25.283-0500: 0.078: [Rescan (non-parallel) 2021-11-27T09:12:25.283-0500: 0.078: [grey object
+     * rescan, 0.0000023 secs]2021-11-27T09:12:25.283-0500: 0.078: [root rescan, 0.0002962
+     * secs]2021-11-27T09:12:25.284-0500: 0.078: [visit unhandled CLDs, 0.0000026 secs]2021-11-27T09:12:25.284-0500:
+     * 0.078: [dirty klass scan, 0.0000123 secs], 0.0003211 secs]2021-11-27T09:12:25.284-0500: 0.078: [weak refs
+     * processing, 0.0000145 secs]2021-11-27T09:12:25.284-0500: 0.078: [class unloading, 0.0001938
+     * secs]2021-11-27T09:12:25.284-0500: 0.079: [scrub symbol table, 0.0004021 secs]2021-11-27T09:12:25.284-0500:
+     * 0.079: [scrub string table, 0.0001095 secs][1 CMS-remark: 509K(768K)] 697K(1920K), 0.0010805 secs] [Times:
+     * user=0.00 sys=0.00, real=0.01 secs]
      * 
      * TODO: Combine with REGEX.
      */
@@ -183,7 +194,9 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
             + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.DECORATOR + " \\[Rescan \\((non-)?parallel\\) ("
             + JdkRegEx.DECORATOR + " \\[grey object rescan, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
-            + " \\[root rescan, " + JdkRegEx.DURATION + "\\])?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[root rescan, " + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.DECORATOR
+            + " \\[visit unhandled CLDs, " + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.DECORATOR
+            + " \\[dirty klass scan, " + JdkRegEx.DURATION + "\\])?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
             + " \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR + " \\[class unloading, "
             + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR + " ((\\[scrub symbol & string tables, "
             + JdkRegEx.DURATION + "\\])|(\\[scrub symbol table, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
@@ -273,11 +286,11 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                     }
                 }
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMicros(matcher.group(144)).intValue();
-                if (matcher.group(147) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(148)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(149)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(150)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(178)).intValue();
+                if (matcher.group(181) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(182)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(183)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(184)).intValue();
                 }
             }
             classUnloading = true;

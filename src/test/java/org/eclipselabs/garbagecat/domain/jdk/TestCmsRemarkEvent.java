@@ -361,6 +361,33 @@ class TestCmsRemarkEvent {
     }
 
     @Test
+    void testLogLineDetails() {
+        String logLine = "2021-11-27T09:12:25.283-0500: 0.078: [GC (CMS Final Remark) [YG occupancy: 188 K (1152 K)]"
+                + "2021-11-27T09:12:25.283-0500: 0.078: [Rescan (non-parallel) "
+                + "2021-11-27T09:12:25.283-0500: 0.078: [grey object rescan, 0.0000023 secs]"
+                + "2021-11-27T09:12:25.283-0500: 0.078: [root rescan, 0.0002962 secs]"
+                + "2021-11-27T09:12:25.284-0500: 0.078: [visit unhandled CLDs, 0.0000026 secs]"
+                + "2021-11-27T09:12:25.284-0500: 0.078: [dirty klass scan, 0.0000123 secs], 0.0003211 secs]"
+                + "2021-11-27T09:12:25.284-0500: 0.078: [weak refs processing, 0.0000145 secs]"
+                + "2021-11-27T09:12:25.284-0500: 0.078: [class unloading, 0.0001938 secs]"
+                + "2021-11-27T09:12:25.284-0500: 0.079: [scrub symbol table, 0.0004021 secs]"
+                + "2021-11-27T09:12:25.284-0500: 0.079: [scrub string table, 0.0001095 secs]"
+                + "[1 CMS-remark: 509K(768K)] 697K(1920K), 0.0010805 secs] "
+                + "[Times: user=0.00 sys=0.00, real=0.01 secs]";
+        assertTrue(CmsRemarkEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
+        CmsRemarkEvent event = new CmsRemarkEvent(logLine);
+        assertEquals((long) 78, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_FINAL_REMARK), "Trigger not parsed correctly.");
+        assertEquals(1080, event.getDuration(), "Duration not parsed correctly.");
+        assertTrue(event.isClassUnloading(), "Class unloading not parsed correctly.");
+        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(1, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(0, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
     void testLogLineTruncated() {
         String logLine = "2017-09-15T09:53:41.262+0200: 19763.069: [GC (CMS Final Remark) "
                 + "[YG occupancy: 425526 K (613440 K)]";
