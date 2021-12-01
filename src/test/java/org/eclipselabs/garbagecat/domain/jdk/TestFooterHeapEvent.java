@@ -31,35 +31,35 @@ import org.junit.jupiter.api.Test;
 class TestFooterHeapEvent {
 
     @Test
-    void testLineJdk8Heap() {
+    void testJdk8Heap() {
         String logLine = "Heap";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedHeap() {
+    void testUnifiedHeap() {
         String logLine = "[25.016s][info][gc,heap,exit  ] Heap";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedHeapUptimeMillis() {
+    void testUnifiedHeapUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] Heap";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedHeap1SpaceAfterExit() {
+    void testUnifiedHeap1SpaceAfterExit() {
         String logLine = "[69.946s][info][gc,heap,exit ] Heap";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedHeap3SpacesAfterExit() {
+    void testUnifiedHeap3SpacesAfterExit() {
         String logLine = "[32.839s][info][gc,heap,exit   ] Heap";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
@@ -101,7 +101,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedGarbageFirst() {
+    void testUnifiedGarbageFirst() {
         String logLine = "[25.016s][info][gc,heap,exit  ]  garbage-first heap   total 59392K, used 38015K "
                 + "[0x00000000fc000000, 0x0000000100000000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -109,140 +109,140 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedShenandoah() {
+    void testUnifiedShenandoah() {
         String logLine = "[69.946s][info][gc,heap,exit ] Shenandoah Heap";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedShenandoahUptimeMillis() {
+    void testUnifiedShenandoahUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] Shenandoah Heap";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineJdk8ShenandoahTotalCommittedUsed() {
+    void testJdk8ShenandoahTotalCommittedUsed() {
         String logLine = " 128M total, 128M committed, 102M used";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedShenandoahTotalCommittedUsed() {
+    void testUnifiedShenandoahTotalCommittedUsed() {
         String logLine = "[69.946s][info][gc,heap,exit ]  65536K total, 65536K committed, 55031K used";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedShenandoahTotalCommittedUsedUptimeMillis() {
+    void testUnifiedShenandoahTotalCommittedUsedUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]  1334272K total, 107008K committed, 80727K used";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineJdk8ShenandoahRegions() {
+    void testJdk8ShenandoahRegions() {
         String logLine = " 512 x 256K regions";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedShenandoahRegions() {
+    void testUnifiedShenandoahRegions() {
         String logLine = "[69.946s][info][gc,heap,exit ]  256 x 256K regions";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedShenandoahRegionsUptimeMillis() {
+    void testUnifiedShenandoahRegionsUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]  2606 x 512K regions";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedStatus() {
+    void testUnifiedStatus() {
         String logLine = "[69.946s][info][gc,heap,exit ] Status: cancelled";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedStatusUptimeMillis() {
+    void testUnifiedStatusUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] Status: cancelled";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineJdk8StatusHasForwarded() {
+    void testJdk8StatusHasForwarded() {
         String logLine = "Status: has forwarded objects, cancelled";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedStatusHasForwarded() {
+    void testUnifiedStatusHasForwarded() {
         String logLine = "[103.682s][info][gc,heap,exit ] Status: has forwarded objects, cancelled";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineJdk8ReservedRegion() {
+    void testJdk8ReservedRegion() {
         String logLine = "Reserved region:";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedReservedRegion() {
+    void testUnifiedReservedRegion() {
         String logLine = "[69.946s][info][gc,heap,exit ] Reserved region:";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedReservedRegionUptimeMillis() {
+    void testUnifiedReservedRegionUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] Reserved region:";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineJdk8ReservedRegionAddress() {
+    void testJdk8ReservedRegionAddress() {
         String logLine = " - [0x00000000f8000000, 0x0000000100000000)";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedReservedRegionAddress() {
+    void testUnifiedReservedRegionAddress() {
         String logLine = "[69.946s][info][gc,heap,exit ]  - [0x00000000fc000000, 0x0000000100000000)";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedReservedRegionAddressUptimeMillis() {
+    void testUnifiedReservedRegionAddressUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]  - [0x00000000ae900000, 0x0000000100000000) ";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedRegion() {
+    void testUnifiedRegion() {
         String logLine = "[25.016s][info][gc,heap,exit  ]   region size 1024K, 13 young (13312K), 1 survivors (1024K)";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedRegion3DigitYoung2DigutSurvivors() {
+    void testUnifiedRegion3DigitYoung2DigutSurvivors() {
         String logLine = "[2020-03-12T13:13:49.821-0400][26578ms]   region size 1024K, 260 young (266240K), 26 "
                 + "survivors (26624K)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -250,7 +250,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedMetaspace() {
+    void testUnifiedMetaspace() {
         String logLine = "[25.016s][info][gc,heap,exit  ]  Metaspace       used 11079K, capacity 11287K, "
                 + "committed 11520K, reserved 1060864K";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -258,7 +258,15 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedMetaspaceUptimeMillis() {
+    void testUnifiedMetaspaceJdk17() {
+        String logLine = "[1.656s][info][gc,heap,exit   ]  Metaspace       used 3990K, committed 4160K, "
+                + "reserved 1056768K";
+        assertTrue(FooterHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
+    }
+
+    @Test
+    void testUnifiedMetaspaceUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]  Metaspace       used 80841K, capacity 89293K, "
                 + "committed 89600K, reserved 331776K";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -266,7 +274,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedMetaspace1SpaceAfterExit() {
+    void testUnifiedMetaspace1SpaceAfterExit() {
         String logLine = "[69.946s][info][gc,heap,exit ]  Metaspace       used 4066K, capacity 7271K, committed "
                 + "7296K, reserved 1056768K";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -274,7 +282,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedMetaspace3SpacesAfterExit() {
+    void testUnifiedMetaspace3SpacesAfterExit() {
         String logLine = "[32.839s][info][gc,heap,exit   ]  Metaspace       used 4109K, capacity 7271K, committed "
                 + "7296K, reserved 1056768K";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -282,7 +290,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedClass() {
+    void testUnifiedClassSpace() {
         String logLine = "[25.016s][info][gc,heap,exit  ]   class space    used 909K, capacity 995K, committed 1024K, "
                 + "reserved 1048576K";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -290,7 +298,15 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedClassUptimeMillis() {
+    void testUnifiedClassSpaceJdk17() {
+        String logLine = "[1.656s][info][gc,heap,exit   ]   class space    used 317K, committed 384K, reserved "
+                + "1048576K";
+        assertTrue(FooterHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
+    }
+
+    @Test
+    void testUnifiedClassUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]   class space    used 10193K, capacity 13027K, "
                 + "committed 13056K, reserved 253952K";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -298,7 +314,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedClass1SpaceAfterExit() {
+    void testUnifiedClass1SpaceAfterExit() {
         String logLine = "[69.946s][info][gc,heap,exit ]   class space    used 299K, capacity 637K, committed 640K, "
                 + "reserved 1048576K";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -306,7 +322,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedDefNew() {
+    void testUnifiedDefNew() {
         String logLine = "[32.839s][info][gc,heap,exit   ]  def new generation   total 11456K, used 4604K "
                 + "[0x00000000fc000000, 0x00000000fcc60000, 0x00000000fd550000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -314,7 +330,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedEden() {
+    void testUnifiedEden() {
         String logLine = "[32.839s][info][gc,heap,exit   ]   eden space 10240K,  43% used [0x00000000fc000000, "
                 + "0x00000000fc463ed8, 0x00000000fca00000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -322,7 +338,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedEdenNoSpacesBetweenAddresses() {
+    void testUnifiedEdenNoSpacesBetweenAddresses() {
         String logLine = "[37.098s][info][gc,heap,exit   ]   eden space 20480K, 33% used [0x00000000feb00000,"
                 + "0x00000000ff1cb940,0x00000000fff00000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -330,7 +346,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedFromSpace() {
+    void testUnifiedFromSpace() {
         String logLine = "[32.839s][info][gc,heap,exit   ]   from space 1216K,   8% used [0x00000000fca00000, "
                 + "0x00000000fca1b280, 0x00000000fcb30000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -338,7 +354,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedToSpace() {
+    void testUnifiedToSpace() {
         String logLine = "[32.839s][info][gc,heap,exit   ]   to   space 1216K,   0% used [0x00000000fcb30000, "
                 + "0x00000000fcb30000, 0x00000000fcc60000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -346,7 +362,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedTenured() {
+    void testUnifiedTenured() {
         String logLine = "[32.839s][info][gc,heap,exit   ]  tenured generation   total 25240K, used 24218K "
                 + "[0x00000000fd550000, 0x00000000fedf6000, 0x0000000100000000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -354,7 +370,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedTheSpace() {
+    void testUnifiedTheSpace() {
         String logLine = "[32.839s][info][gc,heap,exit   ]    the space 25240K,  95% used [0x00000000fd550000, "
                 + "0x00000000fecf6b58, 0x00000000fecf6c00, 0x00000000fedf6000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -362,7 +378,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedPsYoungGen() {
+    void testUnifiedPsYoungGen() {
         String logLine = "[37.098s][info][gc,heap,exit   ]  PSYoungGen      total 20992K, used 7054K "
                 + "[0x00000000feb00000, 0x0000000100000000, 0x0000000100000000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -370,7 +386,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedPsOldGen() {
+    void testUnifiedPsOldGen() {
         String logLine = "[37.098s][info][gc,heap,exit   ]  PSOldGen        total 32768K, used 27239K "
                 + "[0x00000000fc000000, 0x00000000fe000000, 0x00000000feb00000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -378,7 +394,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedParOldGen() {
+    void testUnifiedParOldGen() {
         String logLine = "[37.742s][info][gc,heap,exit   ]  ParOldGen       total 30720K, used 27745K "
                 + "[0x00000000fc000000, 0x00000000fde00000, 0x00000000feb00000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -386,7 +402,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedObjectSpace() {
+    void testUnifiedObjectSpace() {
         String logLine = "[37.098s][info][gc,heap,exit   ]   object space 32768K, 83% used [0x00000000fc000000,"
                 + "0x00000000fda99f58,0x00000000fe000000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -394,7 +410,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedParNewGeneration() {
+    void testUnifiedParNewGeneration() {
         String logLine = "[59.713s][info][gc,heap,exit ]  par new generation   total 1152K, used 713K "
                 + "[0x00000000fc000000, 0x00000000fc140000, 0x00000000fd550000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -402,7 +418,7 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineUnifiedParCmsGeneration() {
+    void testUnifiedParCmsGeneration() {
         String logLine = "[59.713s][info][gc,heap,exit ]  concurrent mark-sweep generation total 31228K, used 25431K "
                 + "[0x00000000fd550000, 0x00000000ff3cf000, 0x0000000100000000)";
         assertTrue(FooterHeapEvent.match(logLine),
@@ -410,49 +426,49 @@ class TestFooterHeapEvent {
     }
 
     @Test
-    void testLineJdk8Collection() {
+    void testJdk8Collection() {
         String logLine = "Collection set:";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedCollection() {
+    void testUnifiedCollection() {
         String logLine = "[103.682s][info][gc,heap,exit ] Collection set:";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineJdk8MapVanilla() {
+    void testJdk8MapVanilla() {
         String logLine = " - map (vanilla): 0x00007f271b2e5e00";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedMapVanilla() {
+    void testUnifiedMapVanilla() {
         String logLine = "[103.683s][info][gc,heap,exit ]  - map (vanilla): 0x00007fa7ea119f00";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineJdk8MapBiased() {
+    void testJdk8MapBiased() {
         String logLine = " - map (biased):  0x00007f271b2e2000";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineUnifiedMapBiased() {
+    void testUnifiedMapBiased() {
         String logLine = "[103.683s][info][gc,heap,exit ]  - map (biased):  0x00007fa7ea116000";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
     }
 
     @Test
-    void testLineShenandoahSoftMax() {
+    void testShenandoahSoftMax() {
         String logLine = "[2021-01-25T17:44:28.636-0500]  98304K max, 98304K soft max, 98304K committed, 58219K used";
         assertTrue(FooterHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");

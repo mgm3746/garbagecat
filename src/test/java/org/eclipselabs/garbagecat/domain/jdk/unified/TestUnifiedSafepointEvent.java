@@ -95,7 +95,7 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
-    void testLogLineWithSpacesAtEnd() {
+    void testWithSpacesAtEnd() {
         String logLine = "[2021-09-14T11:40:53.379-0500][144.035s][info][safepoint     ] Entering safepoint region: "
                 + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] "
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
@@ -106,7 +106,7 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
-    void testLogLineJdk11Uptime() {
+    void testJdk11Uptime() {
         String logLine = "[144.035s][info][safepoint     ] Entering safepoint region: CollectForMetadataAllocation"
                 + "[144.036s][info][safepoint     ] Leaving safepoint region[144.036s][info][safepoint     ] Total "
                 + "time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: "
@@ -121,7 +121,7 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
-    void testLogLineJdk11UptimeMillis() {
+    void testJdk11UptimeMillis() {
         String logLine = "[144035ms][info][safepoint     ] Entering safepoint region: CollectForMetadataAllocation"
                 + "[144036ms][info][safepoint     ] Leaving safepoint region[144036ms][info][safepoint     ] Total "
                 + "time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: "
@@ -136,7 +136,7 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
-    void testLogLineJdk11Time() {
+    void testJdk11Time() {
         String logLine = "[2021-09-14T11:40:53.379-0500][info][safepoint     ] Entering safepoint region: "
                 + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][info][safepoint     ] "
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][info][safepoint     ] Total time for which "
@@ -151,7 +151,7 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
-    void testLogLineJdk11TimeUptime() {
+    void testJdk11TimeUptime() {
         String logLine = "[2021-09-14T11:40:53.379-0500][144.035s][info][safepoint     ] Entering safepoint region: "
                 + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] "
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
@@ -167,7 +167,7 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
-    void testLogLineJdk11TimeUptimeMillis() {
+    void testJdk11TimeUptimeMillis() {
         String logLine = "[2021-09-14T11:40:53.379-0500][144035ms][info][safepoint     ] Entering safepoint region: "
                 + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][144036ms][info][safepoint     ] "
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144036ms][info][safepoint     ] Total time "
@@ -180,5 +180,18 @@ class TestUnifiedSafepointEvent {
         assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(204, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
         assertEquals(454, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
+    void testJdk17Uptime() {
+        String logLine = "[0.061s][info][safepoint   ] Safepoint \"GenCollectForAllocation\", Time since last: "
+                + "24548411 ns, Reaching safepoint: 69521 ns, At safepoint: 779732 ns, Total: 849253 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.GEN_COLLECT_FOR_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(61, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(69, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(779, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 }

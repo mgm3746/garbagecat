@@ -140,4 +140,16 @@ class TestUnifiedSerialNewEvent {
         assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) 3, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
+
+    @Test
+    void testJdk17() {
+        String logLine = "[0.035s][info][gc,start    ] GC(0) Pause Young (Allocation Failure) DefNew: "
+                + "1022K(1152K)->127K(1152K) Tenured: 0K(768K)->552K(768K) Metaspace: 155K(256K)->155K(256K) "
+                + "0M->0M(1M) 0.937ms User=0.00s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedSerialNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
+        UnifiedSerialNewEvent event = new UnifiedSerialNewEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString(), event.getName(), "Event name incorrect.");
+        assertEquals((long) 35, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
 }

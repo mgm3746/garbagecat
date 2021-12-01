@@ -135,6 +135,23 @@ class TestUnifiedYoungEvent {
     }
 
     @Test
+    void testJdk17() {
+        String logLine = "[0.070s][info][gc,start    ] GC(2) Pause Young (Allocation Failure) 1M->1M(2M) 0.663ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedYoungEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
+        UnifiedYoungEvent event = new UnifiedYoungEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_YOUNG.toString(), event.getName(), "Event name incorrect.");
+        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE), "Trigger not parsed correctly.");
+        assertEquals((long) (70 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyInit(),
+                "Combined begin size not parsed correctly.");
+        assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(2 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(663, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
     void testUnifiedYoungStandardLogging() {
         File testFile = TestUtil.getFile("dataset149.txt");
         GcManager gcManager = new GcManager();

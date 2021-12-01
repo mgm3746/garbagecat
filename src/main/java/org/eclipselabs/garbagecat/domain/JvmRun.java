@@ -306,7 +306,7 @@ public class JvmRun {
         }
 
         // Check to see if application stopped time enabled
-        if (!(eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
+        if (getBlockingEventCount() > 0 && !(eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
                 || eventTypes.contains(LogEventType.UNIFIED_SAFEPOINT))) {
             analysis.add(WARN_APPLICATION_STOPPED_TIME_MISSING);
         }

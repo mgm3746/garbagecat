@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
@@ -46,8 +47,20 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * 
  * <h3>Example Logging</h3>
  * 
+ * <p>
+ * 1) JDK8/11:
+ * </p>
+ * 
  * <pre>
  * [0.053s][info][gc] GC(0) Pause Young (Allocation Failure) 0M-&gt;0M(1M) 0.914ms
+ * </pre>
+ * 
+ * <p>
+ * 2) JDK17:
+ * </p>
+ * 
+ * <pre>
+ * [0.070s][info][gc,start    ] GC(2) Pause Young (Allocation Failure) 1M->1M(2M) 0.663ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -56,20 +69,37 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 public class UnifiedYoungEvent extends UnknownCollector
         implements UnifiedLogging, BlockingEvent, YoungCollection, CombinedData, TriggerData {
 
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
+    private static final Pattern pattern = Pattern.compile(UnifiedYoungEvent.REGEX);
 
     /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
+     * Regular expression defining the logging.
      */
-    private int duration;
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + UnifiedYoungEvent.TRIGGER
+            + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION
+            + TimesData.REGEX_JDK9 + "?[ ]*$";
 
     /**
-     * The time when the GC event started in milliseconds after JVM startup.
+     * Trigger(s) regular expression(s).
      */
-    private long timestamp;
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
+
+    /**
+     * Combined young + old generation allocation.
+     */
+    private Memory combinedAllocation;
 
     /**
      * Combined young + old generation size at beginning of GC event.
@@ -82,29 +112,24 @@ public class UnifiedYoungEvent extends UnknownCollector
     private Memory combinedEnd;
 
     /**
-     * Combined young + old generation allocation.
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private Memory combinedAllocation;
+    private int duration;
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
     /**
      * The trigger for the GC event.
      */
     private String trigger;
-
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
-
-    /**
-     * Regular expression defining the logging.
-     */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + TRIGGER + "\\) "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + "[ ]*$";
-
-    private static final Pattern pattern = Pattern.compile(REGEX);
 
     /**
      * 
@@ -157,46 +182,35 @@ public class UnifiedYoungEvent extends UnknownCollector
         this.duration = duration;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_YOUNG.toString();
-    }
-
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
+    public Memory getCombinedOccupancyEnd() {
+        return combinedEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
         return combinedBegin;
     }
 
-    public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
-    }
-
     public Memory getCombinedSpace() {
         return combinedAllocation;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public int getDuration() {
+        return duration;
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public String getLogEntry() {
+        return logEntry;
+    }
+
+    public String getName() {
+        return JdkUtil.LogEventType.UNIFIED_YOUNG.toString();
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getTrigger() {
+        return trigger;
     }
 }

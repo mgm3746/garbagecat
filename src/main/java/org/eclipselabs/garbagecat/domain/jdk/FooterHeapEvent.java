@@ -184,13 +184,13 @@ public class FooterHeapEvent implements ThrowAwayEvent {
             "^(" + UnifiedRegEx.DECORATOR + " )? " + JdkRegEx.SIZE + " (total|max)(, " + JdkRegEx.SIZE + " soft max)?, "
                     + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "  Metaspace       used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
-                    + ", committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
+            "^" + UnifiedRegEx.DECORATOR + "  Metaspace       used " + JdkRegEx.SIZE + "(, capacity " + JdkRegEx.SIZE
+                    + ")?, committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )? \\d{1,4} x " + JdkRegEx.SIZE + " regions$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "   class space    used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
-                    + ", " + "committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
+            "^" + UnifiedRegEx.DECORATOR + "   class space    used " + JdkRegEx.SIZE + "(, capacity " + JdkRegEx.SIZE
+                    + ")?, " + "committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
             //
             "^" + UnifiedRegEx.DECORATOR
                     + "  ((concurrent mark-sweep|def new|par new|tenured) generation|ParOldGen|PSOldGen|PSYoungGen)"

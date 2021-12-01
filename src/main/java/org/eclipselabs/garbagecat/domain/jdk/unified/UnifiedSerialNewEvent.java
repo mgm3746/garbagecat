@@ -45,11 +45,19 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * <h3>Example Logging</h3>
  * 
  * <p>
- * Preprocessed with {@link org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction}:
+ * 1) JDK8/11 preprocessed with {@link org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction}:
  * </p>
  * 
  * <pre>
  * [0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) DefNew: 983K-&gt;128K(1152K) Tenured: 0K-&gt;458K(768K) Metaspace: 246K-&gt;246K(1056768K) 0M-&gt;0M(1M) 1.393ms User=0.00s Sys=0.00s Real=0.00s
+ * </pre>
+ * 
+ * <p>
+ * JDK17 preprocessed with {@link org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction}:
+ * </p>
+ * 
+ * <pre>
+ * [0.060s][info][gc,start    ] GC(1) Pause Young (Allocation Failure) DefNew: 1147K(1152K)->128K(1152K) Tenured: 552K(768K)->754K(768K) Metaspace: 667K(832K)->667K(832K) 1M->0M(1M) 0.767ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -132,8 +140,9 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
      * Regular expression defining the logging.
      */
     private static final String REGEX_PREPROCESSED = "" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + TRIGGER
-            + "\\) \\DefNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Tenured: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "->"
+            + "\\) \\DefNew: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) Tenured: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
 
@@ -166,15 +175,15 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
             }
             trigger = matcher.group(24);
             young = memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
-            youngEnd = memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
-            youngAvailable = memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
-            old = memory(matcher.group(34), matcher.group(36).charAt(0)).convertTo(KILOBYTES);
-            oldEnd = memory(matcher.group(37), matcher.group(39).charAt(0)).convertTo(KILOBYTES);
-            oldAllocation = memory(matcher.group(40), matcher.group(42).charAt(0)).convertTo(KILOBYTES);
-            permGen = memory(matcher.group(43), matcher.group(45).charAt(0)).convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(46), matcher.group(48).charAt(0)).convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(61)).intValue();
+            youngEnd = memory(matcher.group(32), matcher.group(34).charAt(0)).convertTo(KILOBYTES);
+            youngAvailable = memory(matcher.group(35), matcher.group(37).charAt(0)).convertTo(KILOBYTES);
+            old = memory(matcher.group(38), matcher.group(40).charAt(0)).convertTo(KILOBYTES);
+            oldEnd = memory(matcher.group(45), matcher.group(47).charAt(0)).convertTo(KILOBYTES);
+            oldAllocation = memory(matcher.group(48), matcher.group(50).charAt(0)).convertTo(KILOBYTES);
+            permGen = memory(matcher.group(51), matcher.group(53).charAt(0)).convertTo(KILOBYTES);
+            permGenEnd = memory(matcher.group(58), matcher.group(60).charAt(0)).convertTo(KILOBYTES);
+            permGenAllocation = memory(matcher.group(61), matcher.group(63).charAt(0)).convertTo(KILOBYTES);
+            duration = JdkMath.convertMillisToMicros(matcher.group(73)).intValue();
         }
     }
 

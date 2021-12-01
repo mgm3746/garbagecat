@@ -87,6 +87,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1MixedPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPrepareMixedEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelCompactingOldEvent;
@@ -134,11 +135,11 @@ public final class JdkUtil {
         //
         UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
         //
-        UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
+        UNIFIED_HEADER, UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE,
         //
-        UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL,
+        UNIFIED_REMARK, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, USING_CMS, USING_G1, USING_PARALLEL,
         //
-        USING_SHENANDOAH,
+        USING_SERIAL, USING_SHENANDOAH,
         // serial
         SERIAL_NEW, SERIAL_OLD,
         // parallel
@@ -429,6 +430,8 @@ public final class JdkUtil {
             return LogEventType.UNIFIED_G1_YOUNG_PAUSE;
         if (UnifiedG1YoungPrepareMixedEvent.match(logLine))
             return LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
+        if (UnifiedHeaderEvent.match(logLine))
+            return LogEventType.UNIFIED_HEADER;
         if (UnifiedOldEvent.match(logLine))
             return LogEventType.UNIFIED_OLD;
         if (UnifiedParallelCompactingOldEvent.match(logLine))
@@ -623,6 +626,7 @@ public final class JdkUtil {
         case UNIFIED_SAFEPOINT:
         case UNIFIED_CONCURRENT:
         case UNIFIED_G1_INFO:
+        case UNIFIED_HEADER:
         case UNKNOWN:
         case USING_SERIAL:
         case USING_PARALLEL:
@@ -737,6 +741,7 @@ public final class JdkUtil {
         case SHENANDOAH_TRIGGER:
         case UNIFIED_BLANK_LINE:
         case UNIFIED_G1_INFO:
+        case UNIFIED_HEADER:
         case UNKNOWN:
         case VM_WARNING:
             return false;
@@ -783,6 +788,8 @@ public final class JdkUtil {
             return new UnifiedG1YoungPauseEvent(logLine);
         case UNIFIED_G1_YOUNG_PREPARE_MIXED:
             return new UnifiedG1YoungPrepareMixedEvent(logLine);
+        case UNIFIED_HEADER:
+            return new UnifiedHeaderEvent(logLine);
         case UNIFIED_OLD:
             return new UnifiedOldEvent(logLine);
         case UNIFIED_PARALLEL_COMPACTING_OLD:

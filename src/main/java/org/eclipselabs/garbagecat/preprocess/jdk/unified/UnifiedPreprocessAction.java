@@ -503,7 +503,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             .compile(REGEX_RETAIN_BEGINNING_SAFEPOINT);
 
     /**
-     * Regular expression for retained space data.
+     * Regular expression for retained middle space data.
+     * 
+     * <p>
+     * 1) JDK 8/11:
+     * </p>
      * 
      * <pre>
      * [0.112s][info][gc,heap        ] GC(3) DefNew: 1016K-&gt;128K(1152K)
@@ -523,11 +527,31 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.053s][info][gc,heap      ] GC(0) ParNew: 974K-&gt;128K(1152K)
      * 
      * [0.053s][info][gc,heap      ] GC(0) CMS: 0K-&gt;518K(960K)
+     *
+     * [32.636s][info][gc,heap        ] GC(9239) Tenured: 24193K->24195K(25240K)
+     * </pre>
+     * 
+     * <p>
+     * 2) JDK17:
+     * </p>
+     * 
+     * <pre>
+     * [0.036s][info][gc,heap     ] GC(0) DefNew: 1022K(1152K)-&gt;127K(1152K) Eden: 1022K(1024K)-&gt;0K(1024K) From: 
+     * 0K(128K)-&gt;127K(128K)
+     *
+     * [0.072s][info][gc,heap        ] GC(3) Tenured: 754K(768K)->1500K(2504K)
+     * 
+     * [0.036s][info][gc,metaspace] GC(0) Metaspace: 155K(256K)-&gt;155K(256K) NonClass: 149K(192K)-&gt;149K(192K) 
+     * Class: 5K(64K)-&gt;5K(64K)
+     * 
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_SPACE_DATA = "^" + UnifiedRegEx.DECORATOR
-            + "( (CMS|DefNew|Metaspace|ParNew|PSYoungGen|PSOldGen|ParOldGen|Tenured): " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))$";
+            + "( (CMS|DefNew|Metaspace|ParNew|PSYoungGen|PSOldGen|ParOldGen|Tenured): " + JdkRegEx.SIZE + "(\\("
+            + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))( (Eden|NonClass): "
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) (Class|From): " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\))?$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_SPACE_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_SPACE_DATA);
@@ -584,7 +608,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
 
     /**
      * Regular expression for retained Pause Young data.
-     * 
+     *
+     * <pre>
      * [15.060s][info][gc ] GC(1189) Pause Young (Normal) (G1 Evacuation Pause) 25M->13M(31M) 0.355ms
      * 
      * [0.337s][info][gc ] GC(0) Pause Young (G1 Evacuation Pause) 25M->4M(254M) 3.523ms
@@ -601,6 +626,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [2020-06-24T19:24:56.395-0700][4442390ms] GC(126) Pause Young (Concurrent Start) (G1 Humongous Allocation)
      * 882M->842M(1223M) 19.777ms
+     * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA = "^" + UnifiedRegEx.DECORATOR
             + " Pause Young( \\((Normal|Mixed|Prepare Mixed|Concurrent Start)\\))? \\(("

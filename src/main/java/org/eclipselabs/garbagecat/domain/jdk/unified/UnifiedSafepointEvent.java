@@ -79,22 +79,31 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
 public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
 
     /**
-     * Regular expressions defining the logging.
+     * Regular expressions defining the JDK8/11 logging.
      */
     public static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Entering safepoint region: "
             + UnifiedSafepoint.triggerRegEx() + UnifiedRegEx.DECORATOR + " Leaving safepoint region"
             + UnifiedRegEx.DECORATOR
-            + " Total time for which application threads were stopped: (\\d{1,4}[\\.\\,]\\d{7}) seconds, "
-            + "Stopping threads took: (\\d{1,4}[\\.\\,]\\d{7}) seconds[ ]*$";
+            + " Total time for which application threads were stopped: (\\d{1,}[\\.\\,]\\d{7}) seconds, "
+            + "Stopping threads took: (\\d{1,}[\\.\\,]\\d{7}) seconds[ ]*$";
 
     /**
      * RegEx pattern.
      */
-    private static Pattern pattern = Pattern.compile(REGEX);
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
-    public static Pattern getPattern() {
-        return pattern;
-    }
+    /**
+     * Regular expressions defining the JDK17 logging.
+     */
+    public static final String REGEX_JDK17 = "^" + UnifiedRegEx.DECORATOR + " Safepoint \""
+            + UnifiedSafepoint.triggerRegEx()
+            + "\", Time since last: \\d{1,} ns, Reaching safepoint: (\\d{1,}) ns, At safepoint: (\\d{1,}) ns, "
+            + "Total: \\d{1,} ns[ ]*$";
+
+    /**
+     * RegEx pattern.
+     */
+    private static final Pattern REGEX_JDK17_PATTERN = Pattern.compile(REGEX_JDK17);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -104,11 +113,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
-    }
-
-    public static void setPattern(Pattern pattern) {
-        UnifiedSafepointEvent.pattern = pattern;
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_JDK17_PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -144,27 +149,53 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      */
     public UnifiedSafepointEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
-        if (matcher.find()) {
-            trigger = UnifiedSafepoint.getTrigger(matcher.group(24));
-            if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                timestamp = Long.parseLong(matcher.group(12));
-            } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-            } else {
-                if (matcher.group(14) != null) {
-                    if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        timestamp = Long.parseLong(matcher.group(16));
-                    } else {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
-                    }
+        Matcher matcher;
+        if ((matcher = REGEX_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.find()) {
+                trigger = UnifiedSafepoint.getTrigger(matcher.group(24));
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    timestamp = Long.parseLong(matcher.group(12));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {
-                    // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    if (matcher.group(14) != null) {
+                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            timestamp = Long.parseLong(matcher.group(16));
+                        } else {
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    }
                 }
+                timeThreadsStopped = JdkMath.convertSecsToMicros(matcher.group(71)).intValue();
+                timeToStopThreads = JdkMath.convertSecsToMicros(matcher.group(72)).intValue();
             }
-            timeThreadsStopped = JdkMath.convertSecsToMicros(matcher.group(71)).intValue();
-            timeToStopThreads = JdkMath.convertSecsToMicros(matcher.group(72)).intValue();
+        } else if ((matcher = REGEX_JDK17_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.find()) {
+                trigger = UnifiedSafepoint.getTrigger(matcher.group(24));
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    timestamp = Long.parseLong(matcher.group(12));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                } else {
+                    if (matcher.group(14) != null) {
+                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            timestamp = Long.parseLong(matcher.group(16));
+                        } else {
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    }
+                }
+                timeThreadsStopped = JdkMath.convertNanosToMicros(matcher.group(26)).intValue();
+                timeToStopThreads = JdkMath.convertNanosToMicros(matcher.group(25)).intValue();
+            }
         }
     }
 

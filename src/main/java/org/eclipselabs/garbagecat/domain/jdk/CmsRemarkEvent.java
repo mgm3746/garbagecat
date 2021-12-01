@@ -194,12 +194,12 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
             + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.DECORATOR + " \\[Rescan \\((non-)?parallel\\) ("
             + JdkRegEx.DECORATOR + " \\[grey object rescan, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
-            + " \\[root rescan, " + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.DECORATOR
-            + " \\[visit unhandled CLDs, " + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.DECORATOR
-            + " \\[dirty klass scan, " + JdkRegEx.DURATION + "\\])?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
-            + " \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR + " \\[class unloading, "
-            + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR + " ((\\[scrub symbol & string tables, "
-            + JdkRegEx.DURATION + "\\])|(\\[scrub symbol table, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[root rescan, " + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.DECORATOR + " \\[visit unhandled CLDs, "
+            + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.DECORATOR + " \\[dirty klass scan, " + JdkRegEx.DURATION
+            + "\\])?, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR + " \\[weak refs processing, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR + " \\[class unloading, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.DECORATOR + " ((\\[scrub symbol & string tables, " + JdkRegEx.DURATION
+            + "\\])|(\\[scrub symbol table, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
             + " \\[scrub string table, " + JdkRegEx.DURATION + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE_K + "\\("
             + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
             + "\\]" + TimesData.REGEX + "?[ ]*$";
