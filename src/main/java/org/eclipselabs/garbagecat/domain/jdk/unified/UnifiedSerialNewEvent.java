@@ -57,7 +57,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <pre>
- * [0.060s][info][gc,start    ] GC(1) Pause Young (Allocation Failure) DefNew: 1147K(1152K)->128K(1152K) Tenured: 552K(768K)->754K(768K) Metaspace: 667K(832K)->667K(832K) 1M->0M(1M) 0.767ms User=0.00s Sys=0.00s Real=0.00s
+ * [0.060s][info][gc,start    ] GC(1) Pause Young (Allocation Failure) DefNew: 1147K(1152K)-&gt;128K(1152K) Tenured: 552K(768K)-&gt;754K(768K) Metaspace: 667K(832K)-&gt;667K(832K) 1M-&gt;0M(1M) 0.767ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

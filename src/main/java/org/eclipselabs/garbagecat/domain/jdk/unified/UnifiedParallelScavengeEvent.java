@@ -63,6 +63,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * <pre>
  * [0.029s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: 512K-&gt;432K(1024K) ParOldGen: 0K-&gt;8K(512K) Metaspace: 121K-&gt;121K(1056768K) 0M-&gt;0M(1M) 0.762ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
+ *
+ * <p>
+ * 3) JDK17:
+ * </p>
+ * 
+ * <pre>
+ * [0.026s][info][gc,start    ] GC(0) Pause Young (Allocation Failure) PSYoungGen: 512K(1024K)-&gt;448K(1024K) ParOldGen: 0K(512K)-&gt;8K(512K) Metaspace: 88K(192K)-&gt;88K(192K) 0M-&gt;0M(1M) 0.656ms User=0.01s Sys=0.00s Real=0.00s[0.029s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: 512K-&gt;432K(1024K) ParOldGen: 0K-&gt;8K(512K) Metaspace: 121K-&gt;121K(1056768K) 0M-&gt;0M(1M) 0.762ms User=0.00s Sys=0.00s Real=0.00s
+ * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
@@ -160,9 +168,10 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
      * Regular expression defining the logging.
      */
     private static final String REGEX_PREPROCESSED = "" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + TRIGGER
-            + "\\)( Promotion failed)? PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) (PS|Par)OldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
+            + "\\)( Promotion failed)? PSYoungGen: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) (PS|Par)OldGen: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE
+            + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "(\\("
+            + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(UnifiedParallelScavengeEvent.REGEX_PREPROCESSED);
@@ -194,18 +203,18 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
             }
             trigger = matcher.group(24);
             young = memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
-            youngEnd = memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
-            youngAvailable = memory(matcher.group(32), matcher.group(34).charAt(0)).convertTo(KILOBYTES);
-            old = memory(matcher.group(36), matcher.group(38).charAt(0)).convertTo(KILOBYTES);
-            oldEnd = memory(matcher.group(39), matcher.group(41).charAt(0)).convertTo(KILOBYTES);
-            oldAllocation = memory(matcher.group(42), matcher.group(44).charAt(0)).convertTo(KILOBYTES);
-            permGen = memory(matcher.group(45), matcher.group(47).charAt(0)).convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(48), matcher.group(50).charAt(0)).convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(51), matcher.group(53).charAt(0)).convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(63)).intValue();
-            timeUser = JdkMath.convertSecsToCentis(matcher.group(65)).intValue();
-            timeSys = JdkMath.convertSecsToCentis(matcher.group(66)).intValue();
-            timeReal = JdkMath.convertSecsToCentis(matcher.group(67)).intValue();
+            youngEnd = memory(matcher.group(33), matcher.group(35).charAt(0)).convertTo(KILOBYTES);
+            youngAvailable = memory(matcher.group(36), matcher.group(38).charAt(0)).convertTo(KILOBYTES);
+            old = memory(matcher.group(40), matcher.group(42).charAt(0)).convertTo(KILOBYTES);
+            oldEnd = memory(matcher.group(47), matcher.group(49).charAt(0)).convertTo(KILOBYTES);
+            oldAllocation = memory(matcher.group(50), matcher.group(52).charAt(0)).convertTo(KILOBYTES);
+            permGen = memory(matcher.group(53), matcher.group(55).charAt(0)).convertTo(KILOBYTES);
+            permGenEnd = memory(matcher.group(60), matcher.group(62).charAt(0)).convertTo(KILOBYTES);
+            permGenAllocation = memory(matcher.group(63), matcher.group(65).charAt(0)).convertTo(KILOBYTES);
+            duration = JdkMath.convertMillisToMicros(matcher.group(75)).intValue();
+            timeUser = JdkMath.convertSecsToCentis(matcher.group(77)).intValue();
+            timeSys = JdkMath.convertSecsToCentis(matcher.group(78)).intValue();
+            timeReal = JdkMath.convertSecsToCentis(matcher.group(79)).intValue();
         }
     }
 

@@ -60,7 +60,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <pre>
- * [0.070s][info][gc,start    ] GC(2) Pause Young (Allocation Failure) 1M->1M(2M) 0.663ms User=0.00s Sys=0.00s Real=0.00s
+ * [0.070s][info][gc,start    ] GC(2) Pause Young (Allocation Failure) 1M-&gt;1M(2M) 0.663ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

@@ -175,4 +175,18 @@ class TestUnifiedHeaderEvent {
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
     }
+
+    @Test
+    void testAlignments() {
+        String logLine = "[0.013s][info][gc,init] Alignments: Space 512K, Generation 512K, Heap 2M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testParallelWorkers() {
+        String logLine = "[0.013s][info][gc,init] Parallel Workers: 10";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
 }

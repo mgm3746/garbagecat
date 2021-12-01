@@ -47,7 +47,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  *   object space 341504K, 0% used [0x00000005cd600000,0x00000005cd6436a0,0x00000005e2380000)
  *  Metaspace       used 3080K, capacity 4486K, committed 4864K, reserved 1056768K
  *   class space    used 294K, capacity 386K, committed 512K, reserved 1048576K
- * <pre>
+ * </pre>
  * 
  * <p>
  * 2) G1:

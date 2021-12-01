@@ -148,4 +148,13 @@ class TestUnifiedParallelCompactingOldEvent {
         assertTrue(UnifiedParallelCompactingOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + ".");
     }
+
+    @Test
+    void testPreprocessedJdk17() {
+        String logLine = "[0.058s][info][gc,start    ] GC(3) Pause Full (Ergonomics) PSYoungGen: "
+                + "499K(1536K)->497K(1536K) ParOldGen: 400K(512K)->366K(2048K) Metaspace: 666K(832K)->666K(832K) "
+                + "0M->0M(3M) 2.095ms User=0.00s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedParallelCompactingOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + ".");
+    }
 }

@@ -63,7 +63,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <pre>
- * [0.071s][info][gc,start    ] GC(3) Pause Full (Allocation Failure) DefNew: 1125K(1152K)->0K(1152K) Tenured: 754K(768K)->1500K(2504K) Metaspace: 1003K(1088K)->1003K(1088K) 1M->1M(3M) 1.064ms User=0.00s Sys=0.00s Real=0.00s
+ * [0.071s][info][gc,start    ] GC(3) Pause Full (Allocation Failure) DefNew: 1125K(1152K)-&gt;0K(1152K) Tenured: 754K(768K)-&gt;1500K(2504K) Metaspace: 1003K(1088K)-&gt;1003K(1088K) 1M-&gt;1M(3M) 1.064ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

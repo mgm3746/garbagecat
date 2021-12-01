@@ -193,4 +193,13 @@ class TestUnifiedParallelScavengeEvent {
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
     }
+
+    @Test
+    void testJdk17() {
+        String logLine = "[0.026s][info][gc,start    ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
+                + "512K(1024K)->448K(1024K) ParOldGen: 0K(512K)->8K(512K) Metaspace: 88K(192K)->88K(192K) 0M->0M(1M) "
+                + "0.656ms User=0.01s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedParallelScavengeEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+    }
 }
