@@ -56,7 +56,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
  * <h3>Example Logging</h3>
  * 
  * <p>
- * Three lines:
+ * 1) JDK81/11 on three lines:
  * </p>
  * 
  * <pre>
@@ -71,6 +71,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
  * 
  * <pre>
  * [2021-09-14T11:40:53.379-0500][144.035s][info][safepoint     ] Entering safepoint region: CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 seconds
+ * </pre>
+ * 
+ * <p>
+ * 2) JDK17 on a single line:
+ * </p>
+ * 
+ * <pre>
+ * [0.062s][info][safepoint   ] Safepoint "G1CollectForAllocation", Time since last: 22756680 ns, Reaching safepoint: 19114 ns, At safepoint: 910407 ns, Total: 929521 ns
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

@@ -157,6 +157,10 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [2021-10-08T16:04:26.249-0400][8.983s] Concurrent String Deduplication 3428.0K-&gt;2498.6K(929.4K) avg 27.1% (8.937s, 8.983s) 45.667ms
  * </pre>
  * 
+ * <pre>
+ * [0.062s][info][gc          ] GC(2) Concurrent Mark Cycle
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -171,9 +175,9 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
             //
             "^" + UnifiedRegEx.DECORATOR
                     + " Concurrent (Cleanup for Next Mark|Clear Claimed Marks|Create Live Data|Mark|Mark Abort|"
-                    + "Mark From Roots|Preclean|Rebuild Remembered Sets|Reset|Scan Root Regions|String Deduplication.*|"
-                    + "Sweep)( \\(" + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( "
-                    + UnifiedRegEx.DURATION + ")?" + TimesData.REGEX_JDK9 + "?[ ]*$",
+                    + "Mark Cycle|Mark From Roots|Preclean|Rebuild Remembered Sets|Reset|Scan Root Regions|"
+                    + "String Deduplication.*|Sweep)( \\(" + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP
+                    + "s)?\\))?( " + UnifiedRegEx.DURATION + ")?" + TimesData.REGEX_JDK9 + "?[ ]*$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$"
             //

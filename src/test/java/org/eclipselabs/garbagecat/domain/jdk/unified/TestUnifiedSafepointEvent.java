@@ -194,4 +194,17 @@ class TestUnifiedSafepointEvent {
         assertEquals(69, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
         assertEquals(779, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
+
+    @Test
+    void testJdk17G1Concurrent() {
+        String logLine = "[0.064s][info][safepoint   ] Safepoint \"G1Concurrent\", Time since last: 1666947 ns, "
+                + "Reaching safepoint: 79150 ns, At safepoint: 349999 ns, Total: 429149 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.G1_CONCURRENT, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(64, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(79, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(349, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
 }

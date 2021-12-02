@@ -82,8 +82,8 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")";
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_G1_PREVENTIVE_COLLECTION + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")";
 
     /**
      * Regular expression defining standard logging (no details).
@@ -99,11 +99,14 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
      * 
      * [0.333s][info][gc,start ] GC(0) Pause Young (G1 Evacuation Pause) Metaspace: 6591K-&gt;6591K(1056768K)
      * 25M-&gt;4M(254M) 3.523ms User=0.00s Sys=0.00s Real=0.00s
+     *
+     * [0.037s][info][gc,start ] GC(0) Pause Young (Normal) (G1 Preventive Collection) Metaspace:
+     * 331K(512K)-&gt;331K(512K) 1M->1M(4M) 0.792ms User=0.00s Sys=0.00s Real=0.00s
      */
     private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR
-            + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + TRIGGER + "\\) Metaspace: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
+            + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + TRIGGER + "\\) Metaspace: " + JdkRegEx.SIZE
+            + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
@@ -231,16 +234,16 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
                 }
                 trigger = matcher.group(26);
                 permGen = memory(matcher.group(27), matcher.group(29).charAt(0)).convertTo(KILOBYTES);
-                permGenEnd = memory(matcher.group(30), matcher.group(32).charAt(0)).convertTo(KILOBYTES);
-                permGenAllocation = memory(matcher.group(33), matcher.group(35).charAt(0)).convertTo(KILOBYTES);
-                combinedBegin = memory(matcher.group(36), matcher.group(38).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(39), matcher.group(41).charAt(0)).convertTo(KILOBYTES);
-                combinedAllocation = memory(matcher.group(42), matcher.group(44).charAt(0)).convertTo(KILOBYTES);
-                duration = JdkMath.convertMillisToMicros(matcher.group(45)).intValue();
-                if (matcher.group(46) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(47)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(48)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(49)).intValue();
+                permGenEnd = memory(matcher.group(34), matcher.group(36).charAt(0)).convertTo(KILOBYTES);
+                permGenAllocation = memory(matcher.group(37), matcher.group(39).charAt(0)).convertTo(KILOBYTES);
+                combinedBegin = memory(matcher.group(40), matcher.group(42).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(43), matcher.group(45).charAt(0)).convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(46), matcher.group(48).charAt(0)).convertTo(KILOBYTES);
+                duration = JdkMath.convertMillisToMicros(matcher.group(49)).intValue();
+                if (matcher.group(50) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(51)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(52)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(53)).intValue();
                 } else {
                     timeUser = TimesData.NO_DATA;
                     timeReal = TimesData.NO_DATA;

@@ -362,6 +362,11 @@ public final class JdkRegEx {
     public static final String TRIGGER_G1_HUMONGOUS_ALLOCATION = "G1 Humongous Allocation";
 
     /**
+     * G1 preventive collection trigger.
+     */
+    public static final String TRIGGER_G1_PREVENTIVE_COLLECTION = "G1 Preventive Collection";
+
+    /**
      * GCLocker Initiated GC trigger. A GC initiated after the JNI critical region is released. This is caused when a GC
      * is requested when a thread is in the JNI critical region. GC is blocked until all threads exit the JNI critical
      * region.

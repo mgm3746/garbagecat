@@ -32,7 +32,7 @@ public class UnifiedSafepoint {
         //
         DEOPTIMIZE, ENABLE_BIASED_LOCKING, EXIT, FIND_DEADLOCKS, FORCE_SAFEPOINT,
         //
-        G1_COLLECT_FOR_ALLOCATION, G1_COLLECT_FULL, G1_INC_COLLECTION_PAUSE, GEN_COLLECT_FOR_ALLOCATION,
+        G1_COLLECT_FOR_ALLOCATION, G1_COLLECT_FULL, G1_CONCURRENT, G1_INC_COLLECTION_PAUSE, GEN_COLLECT_FOR_ALLOCATION,
         //
         GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK,
         //
@@ -156,6 +156,18 @@ public class UnifiedSafepoint {
      * </p>
      */
     public static final String G1_COLLECT_FULL = "G1CollectFull";
+
+    /**
+     * <p>
+     * Small pauses to set up and tear down
+     * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1ConcurrentEvent}s.
+     * </p>
+     * 
+     * <p>
+     * Small pauses that set up and tear down concurrent phases.
+     * </p>
+     */
+    public static final String G1_CONCURRENT = "G1Concurrent";
 
     /**
      * <p>
@@ -351,6 +363,8 @@ public class UnifiedSafepoint {
             return Trigger.G1_COLLECT_FOR_ALLOCATION;
         if (G1_COLLECT_FULL.matches(triggerLiteral))
             return Trigger.G1_COLLECT_FULL;
+        if (G1_CONCURRENT.matches(triggerLiteral))
+            return Trigger.G1_CONCURRENT;
         if (G1_INC_COLLECTION_PAUSE.matches(triggerLiteral))
             return Trigger.G1_INC_COLLECTION_PAUSE;
         if (GEN_COLLECT_FOR_ALLOCATION.matches(triggerLiteral))
@@ -447,6 +461,9 @@ public class UnifiedSafepoint {
             break;
         case G1_COLLECT_FULL:
             triggerLiteral = G1_COLLECT_FULL;
+            break;
+        case G1_CONCURRENT:
+            triggerLiteral = G1_CONCURRENT;
             break;
         case G1_INC_COLLECTION_PAUSE:
             triggerLiteral = G1_INC_COLLECTION_PAUSE;
@@ -552,6 +569,8 @@ public class UnifiedSafepoint {
             return Trigger.G1_COLLECT_FOR_ALLOCATION;
         if (Trigger.G1_COLLECT_FULL.name().matches(trigger))
             return Trigger.G1_COLLECT_FULL;
+        if (Trigger.G1_CONCURRENT.name().matches(trigger))
+            return Trigger.G1_CONCURRENT;
         if (Trigger.G1_INC_COLLECTION_PAUSE.name().matches(trigger))
             return Trigger.G1_INC_COLLECTION_PAUSE;
         if (Trigger.GEN_COLLECT_FOR_ALLOCATION.name().matches(trigger))

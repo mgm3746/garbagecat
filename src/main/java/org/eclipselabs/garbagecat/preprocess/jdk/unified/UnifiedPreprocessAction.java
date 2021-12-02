@@ -465,12 +465,15 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * (Metadata GC Threshold)
      * 
      * [2021-09-14T06:51:15.471-0500][3.523s][info][gc,start     ] GC(0) Pause Young (Metadata GC Threshold)
+     * 
+     * [0.037s][info][gc,start    ] GC(0) Pause Young (Normal) (G1 Preventive Collection)
      * </pre>
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG = "^(" + UnifiedRegEx.DECORATOR
             + " Pause Young( \\((Normal|Prepare Mixed|Mixed|Concurrent Start)\\))? \\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))$";
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_G1_PREVENTIVE_COLLECTION + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG);
 
@@ -626,13 +629,16 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [2020-06-24T19:24:56.395-0700][4442390ms] GC(126) Pause Young (Concurrent Start) (G1 Humongous Allocation)
      * 882M->842M(1223M) 19.777ms
+     * 
+     * [0.038s][info][gc          ] GC(0) Pause Young (Normal) (G1 Preventive Collection) 1M->1M(4M) 0.792ms
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA = "^" + UnifiedRegEx.DECORATOR
             + " Pause Young( \\((Normal|Mixed|Prepare Mixed|Concurrent Start)\\))? \\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\)( "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + ")$";
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_G1_PREVENTIVE_COLLECTION + "|"
+            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
@@ -722,6 +728,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [2021-09-14T11:41:18.173-0500][168.830s][info][gc,mmu        ] GC(26) MMU target violated: 201.0ms 
      * (200.0ms/201.0ms)
      * 
+     * [0.038s][info][gc,phases   ] GC(0)   Merge Heap Roots: 0.1ms
+     * 
+     * [0.038s][info][gc,heap     ] GC(0) Archive regions: 2->2
+     * 
      * PARALLEL_COMPACTING_OLD:
      * 
      * [0.083s][info][gc,phases,start] GC(3) Marking Phase
@@ -803,6 +813,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " MMU target violated:.+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Attempting maximally compacting collection$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + "   Merge Heap Roots:.+$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Archive regions:.+$",
             // Parallel
             "^" + UnifiedRegEx.DECORATOR + " (Adjust Roots|Compaction Phase|Marking Phase|Post Compact|Summary Phase)( "
                     + UnifiedRegEx.DURATION + ")?$",

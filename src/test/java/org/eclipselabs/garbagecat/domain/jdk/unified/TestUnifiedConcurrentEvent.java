@@ -319,4 +319,11 @@ class TestUnifiedConcurrentEvent {
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
     }
+
+    @Test
+    void testConcurrentMarkCycle() {
+        String logLine = "[0.062s][info][gc          ] GC(2) Concurrent Mark Cycle";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
 }

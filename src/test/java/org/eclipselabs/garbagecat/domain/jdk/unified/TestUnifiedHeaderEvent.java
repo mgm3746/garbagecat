@@ -31,122 +31,8 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedHeaderEvent {
 
     @Test
-    void testLogLine() {
-        String logLine = "[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)";
-        assertTrue(UnifiedHeaderEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        UnifiedHeaderEvent event = new UnifiedHeaderEvent(logLine);
-        assertEquals((long) 13, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testIdentityEventType() {
-        String logLine = "[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-    }
-
-    @Test
-    void testParseLogLine() {
-        String logLine = "[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedHeaderEvent,
-                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " not parsed.");
-    }
-
-    @Test
-    void testNotBlocking() {
-        String logLine = "[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_HEADER),
-                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
-    void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_HEADER);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " not indentified as unified.");
-    }
-
-    @Test
-    void testLineWithSpaces() {
-        String logLine = "[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)   ";
-        assertTrue(UnifiedHeaderEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-    }
-
-    @Test
-    void testTimeUptime() {
-        String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] Version: 17.0.1+12-LTS (release)";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-    }
-
-    @Test
-    void testCpus() {
-        String logLine = "[0.013s][info][gc,init] CPUs: 12 total, 12 available";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-    }
-
-    @Test
-    void testMemory() {
-        String logLine = "[0.013s][info][gc,init] Memory: 31907M";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-    }
-
-    @Test
-    void testLargePageSupport() {
-        String logLine = "[0.013s][info][gc,init] Large Page Support: Disabled";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-    }
-
-    @Test
-    void testNumaSupport() {
-        String logLine = "[0.013s][info][gc,init] NUMA Support: Disabled";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-    }
-
-    @Test
-    void testCompressedOops() {
-        String logLine = "[0.013s][info][gc,init] Compressed Oops: Enabled (32-bit)";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-    }
-
-    @Test
-    void testHeapMinCapacity() {
-        String logLine = "[0.013s][info][gc,init] Heap Min Capacity: 2M";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-    }
-
-    @Test
-    void testHeapInitialCapacity() {
-        String logLine = "[0.013s][info][gc,init] Heap Initial Capacity: 2M";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-    }
-
-    @Test
-    void testHeapMaxCapacity() {
-        String logLine = "[0.013s][info][gc,init] Heap Max Capacity: 64M";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-    }
-
-    @Test
-    void testPreTouch() {
-        String logLine = "[0.013s][info][gc,init] Pre-touch: Disabled";
+    void testAlignments() {
+        String logLine = "[0.013s][info][gc,init] Alignments: Space 512K, Generation 512K, Heap 2M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
     }
@@ -169,6 +55,99 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testCompressedOops() {
+        String logLine = "[0.013s][info][gc,init] Compressed Oops: Enabled (32-bit)";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testConcurrentRefinementWorkers() {
+        String logLine = "[0.014s][info][gc,init] Concurrent Refinement Workers: 10";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testConcurrentWorkers() {
+        String logLine = "[0.014s][info][gc,init] Concurrent Workers: 3";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testCpus() {
+        String logLine = "[0.013s][info][gc,init] CPUs: 12 total, 12 available";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testHeapInitialCapacity() {
+        String logLine = "[0.013s][info][gc,init] Heap Initial Capacity: 2M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testHeapMaxCapacity() {
+        String logLine = "[0.013s][info][gc,init] Heap Max Capacity: 64M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testHeapMinCapacity() {
+        String logLine = "[0.013s][info][gc,init] Heap Min Capacity: 2M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testHeapRegionSize() {
+        String logLine = "[0.014s][info][gc,init] Heap Region Size: 1M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testIdentityEventType() {
+        String logLine = "[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testLargePageSupport() {
+        String logLine = "[0.013s][info][gc,init] Large Page Support: Disabled";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testLineWithSpaces() {
+        String logLine = "[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)   ";
+        assertTrue(UnifiedHeaderEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+    }
+
+    @Test
+    void testLogLine() {
+        String logLine = "[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)";
+        assertTrue(UnifiedHeaderEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        UnifiedHeaderEvent event = new UnifiedHeaderEvent(logLine);
+        assertEquals((long) 13, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testMemory() {
+        String logLine = "[0.013s][info][gc,init] Memory: 31907M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
     void testNarrowKlassBase() {
         String logLine = "[0.013s][info][gc,metaspace] Narrow klass base: 0x0000000800000000, Narrow klass shift: 0, "
                 + "Narrow klass range: 0x100000000";
@@ -177,8 +156,15 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
-    void testAlignments() {
-        String logLine = "[0.013s][info][gc,init] Alignments: Space 512K, Generation 512K, Heap 2M";
+    void testNotBlocking() {
+        String logLine = "[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)";
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " incorrectly indentified as blocking.");
+    }
+
+    @Test
+    void testNumaSupport() {
+        String logLine = "[0.013s][info][gc,init] NUMA Support: Disabled";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
     }
@@ -188,5 +174,47 @@ class TestUnifiedHeaderEvent {
         String logLine = "[0.013s][info][gc,init] Parallel Workers: 10";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testParseLogLine() {
+        String logLine = "[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedHeaderEvent,
+                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " not parsed.");
+    }
+
+    @Test
+    void testPeriodicGc() {
+        String logLine = "[0.014s][info][gc,init] Periodic GC: Disabled";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testPreTouch() {
+        String logLine = "[0.013s][info][gc,init] Pre-touch: Disabled";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testReportable() {
+        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_HEADER),
+                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " incorrectly indentified as reportable.");
+    }
+
+    @Test
+    void testTimeUptime() {
+        String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] Version: 17.0.1+12-LTS (release)";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.UNIFIED_HEADER);
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " not indentified as unified.");
     }
 }
