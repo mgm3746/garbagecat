@@ -23,6 +23,8 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 /**
  * <p>
  * USING_SERIAL
+ * 
+ * TODO: Move to UnifiedHeaderEvent?
  * </p>
  * 
  * <p>

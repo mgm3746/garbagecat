@@ -28,19 +28,21 @@ public class UnifiedSafepoint {
      * TODO: Split into GC vs. non-GC?
      */
     public enum Trigger {
-        BULK_REVOKE_BIAS, CGC_OPERATION, CLEANUP, CMS_FINAL_REMARK, CMS_INITIAL_MARK, COLLECT_FOR_METADATA_ALLOCATION,
+        BULK_REVOKE_BIAS, CGC_OPERATION, CLEANUP, CLEAN_CLASSLOADER_DATA_METASPACES, CMS_FINAL_REMARK,
         //
-        DEOPTIMIZE, ENABLE_BIASED_LOCKING, EXIT, FIND_DEADLOCKS, FORCE_SAFEPOINT,
+        CMS_INITIAL_MARK, COLLECT_FOR_METADATA_ALLOCATION, DEOPTIMIZE, ENABLE_BIASED_LOCKING, EXIT, FIND_DEADLOCKS,
         //
-        G1_COLLECT_FOR_ALLOCATION, G1_COLLECT_FULL, G1_CONCURRENT, G1_INC_COLLECTION_PAUSE, GEN_COLLECT_FOR_ALLOCATION,
+        FORCE_SAFEPOINT, G1_COLLECT_FOR_ALLOCATION, G1_COLLECT_FULL, G1_CONCURRENT, G1_INC_COLLECTION_PAUSE,
         //
-        GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK,
+        GEN_COLLECT_FOR_ALLOCATION, GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES,
         //
-        IC_BUFFER_FULL, NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI,
+        HALT, HANDSHAKE_FALL_BACK, IC_BUFFER_FULL, NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION,
         //
-        PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS, SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_MARK_START_EVAC,
+        PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS, SHENANDOAH_DEGENERATED_GC,
         //
-        SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN
+        SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK,
+        //
+        SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN
     };
 
     /**
@@ -67,6 +69,13 @@ public class UnifiedSafepoint {
      * </p>
      */
     public static final String CLEANUP = "Cleanup";
+
+    /**
+     * <p>
+     * TODO:
+     * </p>
+     */
+    public static final String CLEAN_CLASSLOADER_DATA_METASPACES = "CleanClassLoaderDataMetaspaces";
 
     /**
      * <p>
@@ -160,7 +169,7 @@ public class UnifiedSafepoint {
     /**
      * <p>
      * Small pauses to set up and tear down
-     * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1ConcurrentEvent}s.
+     * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent}s.
      * </p>
      * 
      * <p>
@@ -343,6 +352,8 @@ public class UnifiedSafepoint {
             return Trigger.CGC_OPERATION;
         if (CLEANUP.matches(triggerLiteral))
             return Trigger.CLEANUP;
+        if (CLEAN_CLASSLOADER_DATA_METASPACES.matches(triggerLiteral))
+            return Trigger.CLEAN_CLASSLOADER_DATA_METASPACES;
         if (COLLECT_FOR_METADATA_ALLOCATION.matches(triggerLiteral))
             return Trigger.COLLECT_FOR_METADATA_ALLOCATION;
         if (CMS_FINAL_REMARK.matches(triggerLiteral))
@@ -428,6 +439,9 @@ public class UnifiedSafepoint {
             break;
         case CLEANUP:
             triggerLiteral = CLEANUP;
+            break;
+        case CLEAN_CLASSLOADER_DATA_METASPACES:
+            triggerLiteral = CLEAN_CLASSLOADER_DATA_METASPACES;
             break;
         case CGC_OPERATION:
             triggerLiteral = CGC_OPERATION;
@@ -549,6 +563,8 @@ public class UnifiedSafepoint {
             return Trigger.CGC_OPERATION;
         if (Trigger.CLEANUP.name().matches(trigger))
             return Trigger.CLEANUP;
+        if (Trigger.CLEAN_CLASSLOADER_DATA_METASPACES.name().matches(trigger))
+            return Trigger.CLEAN_CLASSLOADER_DATA_METASPACES;
         if (Trigger.COLLECT_FOR_METADATA_ALLOCATION.name().matches(trigger))
             return Trigger.COLLECT_FOR_METADATA_ALLOCATION;
         if (Trigger.CMS_FINAL_REMARK.name().matches(trigger))

@@ -426,7 +426,8 @@ public class FooterStatsEvent implements ThrowAwayEvent {
                     + "pre-$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?        and post-safepoint housekeeping. Use -XX:\\+PrintSafepointStatistics to dissect.$",
+                    + " )?        and post-safepoint housekeeping. Use (-XX:\\+PrintSafepointStatistics|"
+                    + "-Xlog:safepoint\\+stats) to dissect.$",
             //
             "^(" + UnifiedRegEx.DECORATOR
                     + " )?  \"\\(N\\)\" \\(net\\) pauses are the times spent in the actual GC code.$",

@@ -104,8 +104,29 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testHeapRegionCount() {
+        String logLine = "[0.014s][info][gc,init] Heap Region Count: 384";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
     void testHeapRegionSize() {
         String logLine = "[0.014s][info][gc,init] Heap Region Size: 1M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testHeuristics() {
+        String logLine = "[0.014s][info][gc,init] Heuristics: Adaptive";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testHumongousObjectThreshold() {
+        String logLine = "[0.014s][info][gc,init] Humongous Object Threshold: 256K";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
     }
@@ -143,6 +164,13 @@ class TestUnifiedHeaderEvent {
     @Test
     void testMemory() {
         String logLine = "[0.013s][info][gc,init] Memory: 31907M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testMode() {
+        String logLine = "[0.014s][info][gc,init] Mode: Snapshot-At-The-Beginning (SATB)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
     }
@@ -206,6 +234,13 @@ class TestUnifiedHeaderEvent {
     @Test
     void testTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] Version: 17.0.1+12-LTS (release)";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testTlabSizeMax() {
+        String logLine = "[0.014s][info][gc,init] TLAB Size Max: 256K";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
     }

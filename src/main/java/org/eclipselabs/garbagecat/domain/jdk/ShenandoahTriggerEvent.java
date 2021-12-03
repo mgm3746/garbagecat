@@ -61,6 +61,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [24.356s][info][gc] Trigger: Free (6M) is below minimum threshold (6M)
  * </pre>
  * 
+ * <p>
+ * 3) JDK17:
+ * </p>
+ * 
+ * <pre>
+ * [10.508s][info][gc          ] Trigger: Average GC time (16.09 ms) is above the time for average allocation rate (409 MB/s) to deplete free headroom (5742K) (margin of error = 1.80)
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -71,18 +79,19 @@ public class ShenandoahTriggerEvent extends ShenandoahCollector implements Throw
      */
     private static final String[] REGEX = {
             // Learning
-            "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Learning \\d of \\d. Free \\(" + JdkRegEx.SIZE
+            "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Learning \\d{1,} of \\d{1,}. Free \\(" + JdkRegEx.SIZE
                     + "\\) is below initial threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             // Average
             "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Average GC time \\(" + UnifiedRegEx.DURATION
-                    + "\\) is above the time for allocation rate \\(" + JdkRegEx.ALLOCATION_RATE
-                    + "\\) to deplete free headroom \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
+                    + "\\) is above the time for( average)? allocation rate \\(" + JdkRegEx.ALLOCATION_RATE
+                    + "\\) to deplete free headroom \\(" + JdkRegEx.SIZE
+                    + "\\)( \\(margin of error = \\d{1,}\\.\\d{2}\\))?[ ]*$",
             // Free
             "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Free \\(" + JdkRegEx.SIZE
                     + "\\) is below minimum threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             // Time
-            "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Time since last GC \\(\\d{1,7} ms\\) is larger "
-                    + "than guaranteed interval \\(\\d{1,7} ms\\)[ ]*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Time since last GC \\(\\d{1,} ms\\) is larger "
+                    + "than guaranteed interval \\(\\d{1,} ms\\)[ ]*$",
             // Allocation Failure
             "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Handle Allocation Failure[ ]*$"
             //

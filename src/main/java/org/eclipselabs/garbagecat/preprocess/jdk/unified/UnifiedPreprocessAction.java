@@ -338,7 +338,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 public class UnifiedPreprocessAction implements PreprocessAction {
 
     /**
-     * Regular expression for retained @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedC oncurrentEvent}.
+     * Regular expression for retained @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent}.
      * 
      * <pre>
      * [0.054s][info][gc           ] GC(1) Concurrent Mark 1.260ms
@@ -521,10 +521,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [0.032s][info][gc,heap      ] GC(0) PSOldGen: 0K-&gt;8K(512K)
      * 
-     * [0.032s][info][gc,metaspace ] GC(0) Metaspace: 120K-&gt;120K(1056768K)
-     * 
-     * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) Metaspace: 26116K-&gt;26116K(278528K)
-     * 
      * [0.030s][info][gc,heap      ] GC(0) ParOldGen: 0K-&gt;8K(512K)
      * 
      * [0.053s][info][gc,heap      ] GC(0) ParNew: 974K-&gt;128K(1152K)
@@ -543,21 +539,52 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 0K(128K)-&gt;127K(128K)
      *
      * [0.072s][info][gc,heap        ] GC(3) Tenured: 754K(768K)->1500K(2504K)
-     * 
-     * [0.036s][info][gc,metaspace] GC(0) Metaspace: 155K(256K)-&gt;155K(256K) NonClass: 149K(192K)-&gt;149K(192K) 
-     * Class: 5K(64K)-&gt;5K(64K)
-     * 
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_SPACE_DATA = "^" + UnifiedRegEx.DECORATOR
-            + "( (CMS|DefNew|Metaspace|ParNew|PSYoungGen|PSOldGen|ParOldGen|Tenured): " + JdkRegEx.SIZE + "(\\("
-            + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))( (Eden|NonClass): "
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) (Class|From): " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\))?$";
+            + "( (CMS|DefNew|ParNew|PSYoungGen|PSOldGen|ParOldGen|Tenured): " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE
+            + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))( Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) From: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_SPACE_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_SPACE_DATA);
+
+    /**
+     * Regular expression for retained middle metaspace data.
+     *
+     * Broken out from REGEX_RETAIN_MIDDLE_SPACE_DATA to distinguish between the Shenandoah Metaspace event printed
+     * after every gc.
+     * 
+     * <p>
+     * 1) JDK8/11:
+     * </p>
+     * 
+     * <pre>
+     * [0.032s][info][gc,metaspace ] GC(0) Metaspace: 120K-&gt;120K(1056768K)
+     * 
+     * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) Metaspace: 26116K-&gt;26116K(278528K)
+     * </pre>
+     * 
+     * <p>
+     * 2) JDK17:
+     * </p>
+     * 
+     * <pre>
+     * [0.084s][info][gc,metaspace] GC(4) Metaspace: 1174K(1344K)->1174K(1344K) NonClass: 1078K(1152K)->1078K(1152K) 
+     * Class: 95K(192K)->95K(192K)
+     * </pre>
+     */
+    private static final String REGEX_RETAIN_MIDDLE_METASPACE_DATA = "^\\[(" + JdkRegEx.DATESTAMP + "|"
+            + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|"
+            + UnifiedRegEx.UPTIMEMILLIS + ")\\])?(\\[info\\]\\[gc,metaspace[ ]{0,3}\\])? "
+            + UnifiedRegEx.GC_EVENT_NUMBER + "( Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))( NonClass: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Class: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_METASPACE_DATA);
 
     /**
      * Regular expression for retained Pause Young data.
@@ -898,8 +925,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalUpdateEvent}
             "^" + UnifiedRegEx.DECORATOR + " (\\[)?Pause (Init|Final) Update Refs(, start\\])?",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahConcurrentEvent}
-            "^" + UnifiedRegEx.DECORATOR + "[ ]{1,4}Using \\d{1,2} of \\d{1,2} workers for concurrent "
-                    + "(reset|marking|preclean|evacuation|reference update)$",
+            "^" + UnifiedRegEx.DECORATOR + "[ ]{1,4}Using \\d{1,2} of \\d{1,2} workers for [cC]oncurrent "
+                    + "(class unloading|reset|marking( roots)?|preclean|evacuation|reference update|strong root|"
+                    + "thread roots|weak references|weak root)$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
             "^" + UnifiedRegEx.DECORATOR + "[ ]{1,4}Collectable Garbage: " + JdkRegEx.SIZE
                     + " \\(\\d{1,3}%( of total)?\\)(, Immediate: " + JdkRegEx.SIZE + " \\(\\d{1,3}%\\))?, (CSet: )?"
@@ -1050,6 +1078,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(24);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(18);
+            }
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
@@ -1158,6 +1192,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             context.add(TOKEN_BEGINNING_OF_EVENT);
         } else if (JdkUtil.parseLogLine(logEntry) instanceof UnifiedConcurrentEvent && !isThrowaway(logEntry)) {
             // Stand alone event
+            // TODO: Instead of throwing away some concurrent events, could save them to output at the end
             this.logEntry = logEntry;
             context.add(TOKEN_BEGINNING_OF_EVENT);
         }
@@ -1191,6 +1226,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_SPACE_DATA_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_PROMOTION_FAILED_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(logLine).matches()

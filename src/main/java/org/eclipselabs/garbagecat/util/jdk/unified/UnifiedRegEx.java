@@ -88,9 +88,9 @@ public class UnifiedRegEx {
      */
     public static final String DECORATOR = "\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
             + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
-            + ")\\])?(\\[info\\]\\[(gc|safepoint)(,(cds|cpu|ergo|heap|init|marking|metaspace|mmu|phases|stats|start|"
-            + "stringtable|stringdedup|task))?(,(coops|exit|start))?[ ]{0,13}\\])?( " + UnifiedRegEx.GC_EVENT_NUMBER
-            + ")?";
+            + ")\\])?(\\[info\\]\\[(gc|safepoint)(,(cds|cpu|ergo|heap|init|marking|metaspace|mmu|phases|ref|stats|"
+            + "start|stringtable|stringdedup|task))?(,(coops|exit|start))?[ ]{0,13}\\])?( "
+            + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
 
     /**
      * The duration of the event in milliseconds with 3 decimal places, introduced JDK9.

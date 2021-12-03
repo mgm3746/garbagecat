@@ -31,6 +31,8 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 /**
  * <p>
  * SHENANDOAH_CONCURRENT
+ * 
+ * TODO: Move to general UnifiedConcurrent event? Some of these are shared w/ G1.
  * </p>
  * 
  * <p>
@@ -143,9 +145,10 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Concurrent (reset|uncommit|uncommit, start|marking( \\((unload classes|update refs)\\))?"
-            + "( \\(process weakrefs\\))?|" + "precleaning|evacuation|update references|cleanup)(( " + JdkRegEx.SIZE
-            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[,]{0,1} " + UnifiedRegEx.DURATION
+            + ") [\\[]{0,1}Concurrent (class unloading|cleanup|evacuation|marking( \\((unload classes|update refs)\\)|"
+            + " roots)?( \\(process weakrefs\\))?|precleaning|reset|uncommit|uncommit, start|"
+            + "(update|weak) references|(strong|thread|update thread|weak) roots)(( " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[,]{0,1} " + UnifiedRegEx.DURATION
             + ")?[\\]]{0,1}([,]{0,1} [\\[]{0,1}Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)[\\]]{0,1})?[ ]*$";
 
@@ -204,8 +207,8 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 int duration = 0;
-                if (matcher.group(53) != null) {
-                    duration = JdkMath.convertMillisToMicros(matcher.group(53)).intValue();
+                if (matcher.group(55) != null) {
+                    duration = JdkMath.convertMillisToMicros(matcher.group(55)).intValue();
                 }
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;
@@ -237,14 +240,14 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
                         timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                     }
                 }
-                if (matcher.group(43) != null) {
-                    combined = memory(matcher.group(44), matcher.group(46).charAt(0)).convertTo(KILOBYTES);
-                    combinedEnd = memory(matcher.group(47), matcher.group(49).charAt(0)).convertTo(KILOBYTES);
-                    combinedAvailable = memory(matcher.group(50), matcher.group(52).charAt(0)).convertTo(KILOBYTES);
-                    if (matcher.group(54) != null) {
-                        permGen = memory(matcher.group(55), matcher.group(57).charAt(0)).convertTo(KILOBYTES);
-                        permGenEnd = memory(matcher.group(58), matcher.group(60).charAt(0)).convertTo(KILOBYTES);
-                        permGenAllocation = memory(matcher.group(61), matcher.group(63).charAt(0)).convertTo(KILOBYTES);
+                if (matcher.group(45) != null) {
+                    combined = memory(matcher.group(46), matcher.group(48).charAt(0)).convertTo(KILOBYTES);
+                    combinedEnd = memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
+                    combinedAvailable = memory(matcher.group(52), matcher.group(54).charAt(0)).convertTo(KILOBYTES);
+                    if (matcher.group(56) != null) {
+                        permGen = memory(matcher.group(57), matcher.group(59).charAt(0)).convertTo(KILOBYTES);
+                        permGenEnd = memory(matcher.group(60), matcher.group(62).charAt(0)).convertTo(KILOBYTES);
+                        permGenAllocation = memory(matcher.group(63), matcher.group(65).charAt(0)).convertTo(KILOBYTES);
                     }
                 }
 

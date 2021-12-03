@@ -69,6 +69,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalUpdateEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitUpdateEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahMetaspaceEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahStatsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahTriggerEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
@@ -153,7 +154,9 @@ public final class JdkUtil {
         //
         SHENANDOAH_FULL_GC, SHENANDOAH_DEGENERATED_GC_MARK, SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK,
         //
-        SHENANDOAH_FINAL_UPDATE, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_STATS, SHENANDOAH_TRIGGER,
+        SHENANDOAH_FINAL_UPDATE, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE, SHENANDOAH_STATS,
+        //
+        SHENANDOAH_TRIGGER,
         // other
         APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, BLANK_LINE, CLASS_HISTOGRAM,
         //
@@ -538,6 +541,8 @@ public final class JdkUtil {
             return LogEventType.SHENANDOAH_INIT_MARK;
         if (ShenandoahInitUpdateEvent.match(logLine))
             return LogEventType.SHENANDOAH_INIT_UPDATE;
+        if (ShenandoahMetaspaceEvent.match(logLine))
+            return LogEventType.SHENANDOAH_METASPACE;
         if (ShenandoahStatsEvent.match(logLine))
             return LogEventType.SHENANDOAH_STATS;
         if (ShenandoahTriggerEvent.match(logLine))
@@ -619,6 +624,7 @@ public final class JdkUtil {
         case SHENANDOAH_CANCELLING_GC:
         case SHENANDOAH_CONCURRENT:
         case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
+        case SHENANDOAH_METASPACE:
         case SHENANDOAH_STATS:
         case SHENANDOAH_TRIGGER:
         case THREAD_DUMP:
@@ -737,6 +743,7 @@ public final class JdkUtil {
         case UNIFIED_SAFEPOINT:
         case SHENANDOAH_CANCELLING_GC:
         case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
+        case SHENANDOAH_METASPACE:
         case SHENANDOAH_STATS:
         case SHENANDOAH_TRIGGER:
         case UNIFIED_BLANK_LINE:
@@ -858,6 +865,8 @@ public final class JdkUtil {
             return new ShenandoahInitMarkEvent(logLine);
         case SHENANDOAH_INIT_UPDATE:
             return new ShenandoahInitUpdateEvent(logLine);
+        case SHENANDOAH_METASPACE:
+            return new ShenandoahMetaspaceEvent(logLine);
         case SHENANDOAH_STATS:
             return new ShenandoahStatsEvent();
         case SHENANDOAH_TRIGGER:

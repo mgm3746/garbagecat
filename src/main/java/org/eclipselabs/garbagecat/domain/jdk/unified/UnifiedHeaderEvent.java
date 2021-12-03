@@ -98,6 +98,32 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [0.014s][info][gc,metaspace] Narrow klass base: 0x0000000800000000, Narrow klass shift: 0, Narrow klass range: 0x100000000
  * </pre>
  * 
+ * <p>
+ * 4) Shenandoah:
+ * </p>
+ * 
+ * <pre>
+ * [0.014s][info][gc,ergo] Pacer for Idle. Initial: 1966K, Alloc Tax Rate: 1.0x
+ * [0.014s][info][gc,init] Version: 17.0.1+12-LTS (release)
+ * [0.014s][info][gc,init] CPUs: 12 total, 12 available
+ * [0.014s][info][gc,init] Memory: 31907M
+ * [0.014s][info][gc,init] Large Page Support: Disabled
+ * [0.014s][info][gc,init] NUMA Support: Disabled
+ * [0.014s][info][gc,init] Compressed Oops: Enabled (32-bit)
+ * [0.014s][info][gc,init] Heap Min Capacity: 32M
+ * [0.014s][info][gc,init] Heap Initial Capacity: 32M
+ * [0.014s][info][gc,init] Heap Max Capacity: 96M
+ * [0.014s][info][gc,init] Pre-touch: Disabled
+ * [0.014s][info][gc,init] Mode: Snapshot-At-The-Beginning (SATB)
+ * [0.014s][info][gc,init] Heuristics: Adaptive
+ * [0.014s][info][gc,init] Heap Region Count: 384
+ * [0.014s][info][gc,init] Heap Region Size: 256K
+ * [0.014s][info][gc,init] TLAB Size Max: 256K
+ * [0.014s][info][gc,init] Humongous Object Threshold: 256K
+ * [0.014s][info][gc,init] Parallel Workers: 6
+ * [0.014s][info][gc,init] Concurrent Workers: 3
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -108,9 +134,9 @@ public class UnifiedHeaderEvent extends G1Collector implements UnifiedLogging {
      */
     private static final String REGEX = "^" + UnifiedRegEx.DECORATOR
             + " (Alignments|(CDS archive\\(s\\)|Compressed class space) mapped at|Compressed Oops|"
-            + "Concurrent( Refinement)? Workers|CPUs|Heap (Initial|Max|Min) Capacity|Heap Region Size|"
-            + "Large Page Support|Memory|Narrow klass base|NUMA Support|Parallel Workers|Periodic GC|Pre-touch|Version)"
-            + ":.+$";
+            + "Concurrent( Refinement)? Workers|CPUs|Heap (Initial|Max|Min) Capacity|Heap Region (Count|Size)|"
+            + "Heuristics|Humongous Object Threshold|Large Page Support|Memory|Mode|Narrow klass base|NUMA Support|"
+            + "Parallel Workers|Periodic GC|Pre-touch|TLAB Size Max|Version):.+$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 

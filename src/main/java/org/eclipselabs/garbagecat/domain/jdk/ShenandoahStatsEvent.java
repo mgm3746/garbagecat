@@ -56,6 +56,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  *   Rebuild Free Set                   45 us
  * </pre>
  * 
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -73,13 +74,15 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
                     + ")?[ ]{0,}all workers. Dividing the <total> over the root stage time estimates parallelism.$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?Concurrent (Cleanup|Evacuation|Marking|Reset|Precleaning|Update Refs).+$",
+                    + " )?Concurrent (Class Unloading|Cleanup|Evacuation|Marking|Reset|Precleaning|"
+                    + "(Mark|Strong|Thread) Roots|Update (Refs|Thread Roots)|Weak (References|Roots)).+$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Init|Final) Mark \\((G|N)\\).+$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{2,4}(Accumulate Stats|Finish (Queues|Work)|Make Parsable|System Purge|"
-                    + "Update Region States|Weak References).*$",
+                    + " )?[ ]{2,4}(Accumulate Stats|Exception Caches|Finish (Mark|Queues|Work)|Make Parsable|"
+                    + "Manage GCLABs|Purge Unlinked|(Code )?Roots|Rendezvous|System (Purge|Dictionary)|Unlink Stale|"
+                    + "Update Region States|Weak (Class Links|References)).*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{2,4}(Scan|Update) Roots.*$",
             //
@@ -132,8 +135,9 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             "^(" + UnifiedRegEx.DECORATOR
                     + " )?[ ]{0,7}\\d{1,8} of[ ]{0,5}\\d{1,7} ms \\([ ]{0,2}\\d{1,}\\.\\d%\\):.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{4,6}(CU|DU|E|FA|FS|FU|S|UR|WR): "
-                    + "(<total>|(Code Cache|(String|Resolved) Table|CLDG) (Roots|Cleaning)) .*$"
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{2,6}(CMR|CSR|CTR|CU|CWR|CWRF|DU|E|FA|FS|FU|S|UR|WR): "
+                    + "(<total>|Code Cache|Weak References|(CLDG|(Resolved|String) Table|Thread|VM (Strong|Weak)) "
+                    + "Roots) .*$"
             //
     };
 

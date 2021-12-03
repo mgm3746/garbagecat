@@ -179,7 +179,9 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
                     + "String Deduplication.*|Sweep)( \\(" + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP
                     + "s)?\\))?( " + UnifiedRegEx.DURATION + ")?" + TimesData.REGEX_JDK9 + "?[ ]*$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$"
+            "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " (Discovered |Encountered|Enqueued   ) references: Soft:.+" + "$"
             //
     };
     private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);

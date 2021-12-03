@@ -24,6 +24,8 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 /**
  * <p>
  * GC_INFO
+ * 
+ * TODO: Move to UnifiedHeaderEvent?
  * </p>
  * 
  * <p>
