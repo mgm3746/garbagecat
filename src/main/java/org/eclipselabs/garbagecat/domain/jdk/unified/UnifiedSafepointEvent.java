@@ -137,12 +137,12 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
     /**
      * The elapsed clock time the application threads were stopped (at safepont) in microseconds (rounded).
      */
-    private int timeThreadsStopped;
+    private long timeThreadsStopped;
 
     /**
      * The elapsed clock time to stop all threads (bring the JVM to safepoint) in microseconds (rounded).
      */
-    private int timeToStopThreads;
+    private long timeToStopThreads;
 
     /**
      * The <code>Trigger</code> for the safepoint event.
@@ -219,7 +219,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      * @param timeThreadsStopped
      *            The elapsed clock time the application threads were stopped (at safepont) in microseconds (rounded).
      */
-    public UnifiedSafepointEvent(String logEntry, long timestamp, int timeToStopThreads, int timeThreadsStopped) {
+    public UnifiedSafepointEvent(String logEntry, long timestamp, long timeToStopThreads, long timeThreadsStopped) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.timeToStopThreads = timeToStopThreads;
@@ -230,7 +230,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      * The elapsed clock time for the safepoint event in microseconds (rounded). timeToStopThreads seems to be time in
      * addition to timeThreadsStopped.
      */
-    public int getDuration() {
+    public long getDuration() {
         return timeThreadsStopped + timeToStopThreads;
     }
 
@@ -246,11 +246,11 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
         return timestamp;
     }
 
-    public int getTimeThreadsStopped() {
+    public long getTimeThreadsStopped() {
         return timeThreadsStopped;
     }
 
-    public int getTimeToStopThreads() {
+    public long getTimeToStopThreads() {
         return timeToStopThreads;
     }
 

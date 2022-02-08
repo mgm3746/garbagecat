@@ -161,6 +161,17 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [59.713s][info][gc,heap,exit ]   class space    used 309K, capacity 671K, committed 768K, reserved 1048576K
  * </pre>
  * 
+ * <p>
+ * 9) Z unified:
+ * </p>
+ * 
+ * <pre>
+ * [2.640s] Heap
+ * [2.640s]  ZHeap           used 86M, capacity 96M, max capacity 96M
+ * [2.640s]  Metaspace       used 3992K, committed 4160K, reserved 1056768K
+ * [2.640s]   class space    used 315K, committed 384K, reserved 1048576K
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -207,7 +218,11 @@ public class FooterHeapEvent implements ThrowAwayEvent {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Collection set:$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )? - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$"
+            "^(" + UnifiedRegEx.DECORATOR + " )? - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$",
+            //
+            //
+            "^" + UnifiedRegEx.DECORATOR + "  ZHeap           used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
+                    + ", max capacity " + JdkRegEx.SIZE + "$"
             //
     };
 

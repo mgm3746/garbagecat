@@ -64,7 +64,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private int duration;
+    private long duration;
 
     /**
      * The time when the GC event started in milliseconds after JVM startup.
@@ -131,7 +131,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
     }
 
     /**
-     * Alternate constructor. Create CMS Initial Mark from values.
+     * Alternate constructor. Create detail logging event from values.
      * 
      * @param logEntry
      *            The log entry for the event.
@@ -150,7 +150,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
         return logEntry;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 

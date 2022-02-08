@@ -66,7 +66,7 @@ public class UnifiedParNewEvent extends ParallelCollector implements UnifiedLogg
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private int duration;
+    private long duration;
 
     /**
      * The time when the GC event started in milliseconds after JVM startup.
@@ -216,7 +216,7 @@ public class UnifiedParNewEvent extends ParallelCollector implements UnifiedLogg
         return logEntry;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 

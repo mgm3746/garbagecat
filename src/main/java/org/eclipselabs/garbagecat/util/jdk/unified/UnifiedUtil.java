@@ -62,9 +62,13 @@ public final class UnifiedUtil {
             case UNIFIED_YOUNG:
             case USING_CMS:
             case USING_G1:
-            case USING_SHENANDOAH:
             case USING_PARALLEL:
             case USING_SERIAL:
+            case USING_SHENANDOAH:
+            case USING_Z:
+            case Z_MARK_END:
+            case Z_MARK_START:
+            case Z_RELOCATE_START:
                 return true;
             default:
             }

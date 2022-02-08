@@ -22,4 +22,9 @@ package org.eclipselabs.garbagecat.domain;
  */
 public interface BlockingEvent extends SafepointEvent {
 
+    /**
+     * @return The elapsed clock time for the event in microseconds (rounded).
+     */
+    long getDuration();
+
 }

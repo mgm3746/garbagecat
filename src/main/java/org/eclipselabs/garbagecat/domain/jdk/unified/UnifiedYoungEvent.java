@@ -114,7 +114,7 @@ public class UnifiedYoungEvent extends UnknownCollector
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private int duration;
+    private long duration;
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -194,7 +194,7 @@ public class UnifiedYoungEvent extends UnknownCollector
         return combinedAllocation;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 

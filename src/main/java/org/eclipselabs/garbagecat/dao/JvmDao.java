@@ -18,7 +18,6 @@ import static java.util.stream.Collectors.summingLong;
 import static java.util.stream.Collectors.toList;
 import static org.eclipselabs.garbagecat.util.Memory.ZERO;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
-import static org.eclipselabs.garbagecat.util.jdk.JdkMath.convertMicrosToMillis;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -83,6 +82,10 @@ public class JvmDao {
     }
 
     private static <T> Stream<Integer> ints(List<T> list, Function<T, Integer> function) {
+        return list.stream().map(function).filter(Objects::nonNull);
+    }
+
+    private static <T> Stream<Long> longs(List<T> list, Function<T, Long> function) {
         return list.stream().map(function).filter(Objects::nonNull);
     }
 
@@ -300,19 +303,6 @@ public class JvmDao {
     }
 
     /**
-     * Retrieve all <code>SafepointEvent</code>s.
-     * 
-     * @return <code>List</code> of events.
-     */
-    public synchronized List<SafepointEvent> getSafepointEvents() {
-        if (!this.stoppedTimeEvents.isEmpty()) {
-            return this.stoppedTimeEvents.stream().map(JvmDao::toSafepointEvent).collect(toList());
-        } else {
-            return this.unifiedSafepointEvents.stream().map(JvmDao::toSafepointEvent).collect(toList());
-        }
-    }
-
-    /**
      * Retrieve all <code>BlockingEvent</code>s of the specified type.
      * 
      * @param eventType
@@ -380,11 +370,10 @@ public class JvmDao {
     /**
      * The total blocking event pause time.
      * 
-     * @return total pause duration (milliseconds).
+     * @return total pause duration (microseconds).
      */
     public synchronized long getGcPauseTotal() {
-        return convertMicrosToMillis(
-                ints(this.blockingEvents, BlockingEvent::getDuration).collect(summingLong(Long::valueOf))).longValue();
+        return longs(this.blockingEvents, BlockingEvent::getDuration).collect(summingLong(Long::valueOf));
     }
 
     /**
@@ -441,12 +430,10 @@ public class JvmDao {
     /**
      * The maximum GC blocking event pause time.
      * 
-     * @return maximum pause duration (milliseconds).
+     * @return maximum pause duration (microseconds).
      */
-    public synchronized int getMaxGcPause() {
-        return convertMicrosToMillis(
-                ints(this.blockingEvents, BlockingEvent::getDuration).mapToInt(Integer::valueOf).max().orElse(0))
-                        .intValue();
+    public synchronized long getMaxGcPause() {
+        return longs(this.blockingEvents, BlockingEvent::getDuration).mapToLong(Long::valueOf).max().orElse(0);
     }
 
     /**
@@ -613,6 +600,19 @@ public class JvmDao {
     }
 
     /**
+     * Retrieve all <code>SafepointEvent</code>s.
+     * 
+     * @return <code>List</code> of events.
+     */
+    public synchronized List<SafepointEvent> getSafepointEvents() {
+        if (!this.stoppedTimeEvents.isEmpty()) {
+            return this.stoppedTimeEvents.stream().map(JvmDao::toSafepointEvent).collect(toList());
+        } else {
+            return this.unifiedSafepointEvents.stream().map(JvmDao::toSafepointEvent).collect(toList());
+        }
+    }
+
+    /**
      * Generate <code>SafepointEventSummary</code>s.
      * 
      * @return <code>List</code> of <code>SafepointEventSummary</code>s.
@@ -637,7 +637,7 @@ public class JvmDao {
                 pst.setLong(TIME_STAMP_INDEX, event.getTimestamp());
                 // Use trigger for event name
                 pst.setString(TRIGGER_TYPE_INDEX, event.getTrigger().toString());
-                pst.setInt(DURATION_INDEX, event.getDuration());
+                pst.setLong(DURATION_INDEX, event.getDuration());
                 pst.setString(LOG_ENTRY_INDEX, event.getLogEntry());
                 pst.addBatch();
             }
@@ -701,21 +701,21 @@ public class JvmDao {
     /**
      * The maximum stopped time event pause time.
      * 
-     * @return maximum pause duration (milliseconds).
+     * @return maximum pause duration (microseconds).
      */
-    public synchronized int getStoppedTimeMax() {
-        return convertMicrosToMillis(ints(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
-                .mapToInt(Integer::valueOf).max().orElse(0)).intValue();
+    public synchronized long getStoppedTimeMax() {
+        return longs(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration).mapToLong(Long::valueOf).max()
+                .orElse(0);
     }
 
     /**
      * The total stopped time event pause time.
      * 
-     * @return total pause duration (milliseconds).
+     * @return total pause duration (microseconds).
      */
-    public synchronized int getStoppedTimeTotal() {
-        return convertMicrosToMillis(ints(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
-                .collect(summingLong(Long::valueOf))).intValue();
+    public synchronized long getStoppedTimeTotal() {
+        return longs(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
+                .collect(summingLong(Long::valueOf));
     }
 
     /**
@@ -748,21 +748,21 @@ public class JvmDao {
     /**
      * The maximum unified safepoint event pause time.
      * 
-     * @return maximum pause duration (milliseconds).
+     * @return maximum pause duration (microseconds).
      */
-    public synchronized int getUnifiedSafepointTimeMax() {
-        return convertMicrosToMillis(ints(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration)
-                .mapToInt(Integer::valueOf).max().orElse(0)).intValue();
+    public synchronized long getUnifiedSafepointTimeMax() {
+        return longs(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration).mapToLong(Long::valueOf).max()
+                .orElse(0);
     }
 
     /**
      * The total unified safepoint event pause time.
      * 
-     * @return total pause duration (milliseconds).
+     * @return total pause duration (microseconds).
      */
-    public synchronized int getUnifiedSafepointTimeTotal() {
-        return convertMicrosToMillis(ints(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration)
-                .collect(summingLong(Long::valueOf))).intValue();
+    public synchronized long getUnifiedSafepointTimeTotal() {
+        return longs(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration)
+                .collect(summingLong(Long::valueOf));
     }
 
     /**

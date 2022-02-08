@@ -129,6 +129,22 @@ class TestShenandoahTriggerEvent {
     }
 
     @Test
+    void testUnifiedTriggerAverageGcTimeAverageAllocation() {
+        String logLine = "[10.508s][info][gc          ] Trigger: Average GC time (16.09 ms) is above the time for "
+                + "average allocation rate (409 MB/s) to deplete free headroom (5742K) (margin of error = 1.80)";
+        assertTrue(ShenandoahTriggerEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
+    }
+
+    @Test
+    void testUnifiedTriggerAverageGcTimeInstantaneousAllocation() {
+        String logLine = "[11.569s] Trigger: Average GC time (11.12 ms) is above the time for instantaneous allocation "
+                + "rate (651 MB/s) to deplete free headroom (6262K) (spike threshold = 1.80)";
+        assertTrue(ShenandoahTriggerEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
+    }
+
+    @Test
     void testUnifiedTriggerAverageGcUptimeMillis() {
         String logLine = "[2019-02-05T14:48:05.666-0200][34578ms] Trigger: Average GC time (52.77 ms) is above the "
                 + "time for allocation rate (1313.84 MB/s) to deplete free headroom (67M)";
@@ -176,14 +192,6 @@ class TestShenandoahTriggerEvent {
     @Test
     void testUnifiedTriggerHandleAllocationFailure() {
         String logLine = "[52.883s][info][gc           ] Trigger: Handle Allocation Failure";
-        assertTrue(ShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
-    }
-
-    @Test
-    void testUnifiedTriggerAverageGcTime() {
-        String logLine = "[10.508s][info][gc          ] Trigger: Average GC time (16.09 ms) is above the time for "
-                + "average allocation rate (409 MB/s) to deplete free headroom (5742K) (margin of error = 1.80)";
         assertTrue(ShenandoahTriggerEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
     }

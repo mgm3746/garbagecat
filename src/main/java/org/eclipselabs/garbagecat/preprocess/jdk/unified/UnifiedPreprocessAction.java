@@ -455,6 +455,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [15.069s][info][gc,start     ] GC(1190) Pause Young (Concurrent Start) (G1 Evacuation Pause)
      * 
+     * [2021-12-20T10:29:00.098-0500] GC(0) Pause Young (Concurrent Start) (G1 Humongous Allocation)
+     * 
      * [2019-05-09T01:39:00.763+0000][5355ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
      * 
      * [2019-05-09T01:39:07.136+0000][11728ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC)
@@ -471,9 +473,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG = "^(" + UnifiedRegEx.DECORATOR
             + " Pause Young( \\((Normal|Prepare Mixed|Mixed|Concurrent Start)\\))? \\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_G1_PREVENTIVE_COLLECTION + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))$";
+            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|"
+            + JdkRegEx.TRIGGER_G1_PREVENTIVE_COLLECTION + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")\\))$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG);
 
@@ -722,6 +724,86 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * Regular expressions for lines thrown away.
      * 
      * <pre>
+     * 
+     * Z:
+     * 
+     * [2021-12-01T10:04:06.358-0500] GC(0) Garbage Collection (Warmup)
+     * 
+     * [2021-12-01T10:04:06.358-0500] GC(0) Using 1 workers
+     * 
+     * [0.275s] GC(2) Load: 0.53/0.41/0.33
+     *
+     * [0.132s][info][gc,load     ] GC(0) Load: 0.42/0.38/0.32
+     * 
+     * [0.275s] GC(2) MMU: 2ms/99.6%, 5ms/99.8%, 10ms/99.9%, 20ms/99.9%, 50ms/99.9%, 100ms/100.0%
+     * 
+     * [0.275s] GC(2) Mark: 1 stripe(s), 1 proactive flush(es), 1 terminate flush(es), 0 completion(s), 
+     * 0 continuation(s)
+     * 
+     * [0.275s] GC(2) Mark Stack Usage: 32M
+     * 
+     * [0.275s] GC(2) NMethods: 756 registered, 0 unregistered
+     * 
+     * [0.275s] GC(2) Metaspace: 3M used, 3M committed, 1032M reserved
+     * 
+     * [0.134s] GC(0) Soft: 3088 encountered, 0 discovered, 0 enqueued
+     * 
+     * [0.134s] GC(0) Weak: 225 encountered, 203 discovered, 43 enqueued
+     * 
+     * [0.134s] GC(0) Final: 2 encountered, 0 discovered, 0 enqueued
+     * 
+     * [0.134s] GC(0) Phantom: 25 encountered, 22 discovered, 20 enqueued
+     * 
+     * [0.134s] GC(0) Small Pages: 5 / 10M, Empty: 0M, Relocated: 3M, In-Place: 0
+     * 
+     * [0.134s] GC(0) Large Pages: 0 / 0M, Empty: 0M, Relocated: 0M, In-Place: 0
+     * 
+     * [0.134s] GC(0) Forwarding Usage: 0M
+     * 
+     * [0.132s][info][gc,heap     ] GC(0) Min Capacity: 32M(33%)
+     * 
+     * [0.132s][info][gc,heap     ] GC(0) Max Capacity: 96M(100%)     
+     * 
+     * [0.134s] GC(0) Soft Max Capacity: 96M(100%)
+     * 
+     * [0.134s] GC(0)                Mark Start          Mark End        Relocate Start      Relocate End           
+     * High               Low
+     *
+     * [0.134s] GC(0)  Capacity:       32M (33%)          32M (33%)          32M (33%)          32M (33%)          
+     * 32M (33%)          32M (33%)
+     * 
+     * [0.134s] GC(0)      Free:       86M (90%)          84M (88%)          84M (88%)          90M (94%)          
+     * 90M (94%)          82M (85%)
+     * 
+     * [0.134s] GC(0)      Used:       10M (10%)          12M (12%)          12M (12%)           6M (6%)           
+     * 14M (15%)           6M (6%)
+     * 
+     * [0.134s] GC(0)      Live:         -                 3M (4%)            3M (4%)            3M (4%)             
+     * -                  -
+     * 
+     * [0.134s] GC(0) Allocated:         -                 2M (2%)            2M (2%)            1M (2%)             
+     * -                  -
+     * 
+     * [0.134s] GC(0)   Garbage:         -                 6M (7%)            6M (7%)            0M (1%)             
+     * -                  -
+     * 
+     * [0.134s] GC(0) Reclaimed:         -                  -                 0M (0%)            5M (6%)             
+     * -                  -
+     * 
+     * [0.134s] GC(0) Garbage Collection (Warmup) 10M(10%)->6M(6%)
+     * 
+     * [0.262s] GC(2) Garbage Collection (Allocation Stall)
+     * 
+     * [0.262s] GC(2) Clearing All SoftReferences
+     * 
+     * [0.363s] Allocation Stall (main) 8.723ms
+     * 
+     * [0.407s] Relocation Stall (main) 0.668ms
+     *
+     * [0.424s] GC(7) Garbage Collection (Allocation Rate)
+     *
+     * [0.437s] GC(7) Garbage Collection (Allocation Rate) 54M(56%)->34M(35%)
+     * 
      * G1:
      * 
      * [4.057s][info][gc,phases,start] GC(2264) Phase 1: Mark live objects
@@ -815,9 +897,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * </pre>
      */
     private static final String[] REGEX_THROWAWAY = {
-            // SERIAL
+            // ***** SERIAL *****
             "^" + UnifiedRegEx.DECORATOR + " Phase \\d: .+?$",
-            // G1
+            // ***** G1 *****
             "^" + UnifiedRegEx.DECORATOR + " Using \\d{1,2} workers of \\d{1,2} for (evacuation|full compaction|"
                     + "marking)$",
             //
@@ -844,10 +926,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + "   Merge Heap Roots:.+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Archive regions:.+$",
-            // Parallel
+            // ***** Parallel *****
             "^" + UnifiedRegEx.DECORATOR + " (Adjust Roots|Compaction Phase|Marking Phase|Post Compact|Summary Phase)( "
                     + UnifiedRegEx.DURATION + ")?$",
-            // CMS
+            // ***** CMS *****
             "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Old: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
@@ -860,7 +942,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Application time:.+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " To-space exhausted$",
-            // AdaptiveSizePolicy
+            // ***** AdaptiveSizePolicy *****
             "^" + UnifiedRegEx.DECORATOR + " (PS)?AdaptiveSize.*$",
             //
             "^" + UnifiedRegEx.DECORATOR
@@ -869,9 +951,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + "  Eden, (from|to), (to|from):|    from:|Live_space:|  minor pause:|Minor_pause:|"
                     + "No full after scavenge|Old eden_size:|old_gen_capacity:|PSYoungGen::resize_spaces|      to:|"
                     + "Young generation size:).*$",
-            // Safepoint
+            // ***** Safepoint *****
             "^" + UnifiedRegEx.DECORATOR + " Entering safepoint region: (Exit|Halt)$",
-            // Shenandoah
+            // ***** Shenandoah *****
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitMarkEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
             "^" + UnifiedRegEx.DECORATOR
@@ -953,7 +1035,36 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR
                     + " (\\[)?Concurrent (cleanup|evacuation|marking|precleaning|reset|update references)"
-                    + "( \\((process weakrefs|unload classes|update refs)\\))?( \\(process weakrefs\\))?(, start\\])?$"
+                    + "( \\((process weakrefs|unload classes|update refs)\\))?( \\(process weakrefs\\))?(, start\\])?$",
+            // Informational Metaspace (no classification, no gc event number)
+            "^\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[("
+                    + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS + ")\\])? Metaspace: " + JdkRegEx.SIZE
+                    + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) NonClass: "
+                    + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+                    + "\\) Class: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
+                    + JdkRegEx.SIZE + "\\)$",
+            // ***** Z *****
+            "^" + UnifiedRegEx.DECORATOR + " Garbage Collection \\((Allocation (Rate|Stall)|Warmup)\\).*$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Using \\d{1,} workers$",
+            //
+            "^" + UnifiedRegEx.DECORATOR
+                    + "[ ]{1,}(Allocated|Capacity|Final|Forwarding Usage|Free|Garbage|Large Pages|Live|Load|Mark|"
+                    + "Mark Stack Usage|(Max|Min) Capacity|MMU|NMethods|Phantom|Reclaimed|Small Pages|Soft|"
+                    + "Soft Max Capacity|Used|Weak):.+$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Metaspace: " + JdkRegEx.SIZE + " used, " + JdkRegEx.SIZE + " committed, "
+                    + JdkRegEx.SIZE + " reserved$",
+            //
+            "^" + UnifiedRegEx.DECORATOR
+                    + "[ ]+Mark Start[ ]+Mark End[ ]+Relocate Start[ ]+Relocate End[ ]+High[ ]+Low[ ]*$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Clearing All SoftReferences$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Allocation Stall \\(main\\) " + UnifiedRegEx.DURATION + "$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Relocation Stall \\((main|C2 CompilerThread\\d{1,})\\) "
+                    + UnifiedRegEx.DURATION + "$"
             //
     };
 

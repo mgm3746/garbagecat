@@ -24,6 +24,6 @@ public interface SafepointEvent extends LogEvent {
     /**
      * @return The elapsed clock time for the event in microseconds (rounded).
      */
-    int getDuration();
+    long getDuration();
 
 }

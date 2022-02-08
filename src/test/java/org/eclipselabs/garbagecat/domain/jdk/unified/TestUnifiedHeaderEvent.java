@@ -16,11 +16,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.TestUtil;
+import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -31,8 +37,29 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedHeaderEvent {
 
     @Test
+    void testAddressSpaceSize() {
+        String logLine = "[0.014s][info][gc,init] Address Space Size: 1536M x 3 = 4608M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testAddressSpaceType() {
+        String logLine = "[0.014s][info][gc,init] Address Space Type: Contiguous/Unrestricted/Complete";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
     void testAlignments() {
         String logLine = "[0.013s][info][gc,init] Alignments: Space 512K, Generation 512K, Heap 2M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testAvailableSpaceFilesystem() {
+        String logLine = "[0.015s][info][gc,init] Available space on backing filesystem: N/A";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
     }
@@ -78,6 +105,27 @@ class TestUnifiedHeaderEvent {
     @Test
     void testCpus() {
         String logLine = "[0.013s][info][gc,init] CPUs: 12 total, 12 available";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testGcWorkers() {
+        String logLine = "[0.014s][info][gc,init] GC Workers: 1 (dynamic)";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testHeapBackingFile() {
+        String logLine = "[0.014s][info][gc,init] Heap Backing File: /memfd:java_heap";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testHeapBackingFilesystem() {
+        String logLine = "[0.014s][info][gc,init] Heap Backing Filesystem: tmpfs (0x1021994)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
     }
@@ -139,6 +187,20 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testInitialCapacity() {
+        String logLine = "[0.015s][info][gc,init] Initial Capacity: 32M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testInitializingTheZCollector() {
+        String logLine = "[0.014s][info][gc,init] Initializing The Z Garbage Collector";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
     void testLargePageSupport() {
         String logLine = "[0.013s][info][gc,init] Large Page Support: Disabled";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
@@ -162,8 +224,29 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testMaxCapacity() {
+        String logLine = "[0.015s][info][gc,init] Max Capacity: 96M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testMediumPageSize() {
+        String logLine = "[0.015s][info][gc,init] Medium Page Size: N/A";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
     void testMemory() {
         String logLine = "[0.013s][info][gc,init] Memory: 31907M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testMinCapacity() {
+        String logLine = "[0.015s][info][gc,init] Min Capacity: 32M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
     }
@@ -232,6 +315,13 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testRuntimeWorkers() {
+        String logLine = "[0.018s][info][gc,init] Runtime Workers: 1";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
     void testTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] Version: 17.0.1+12-LTS (release)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
@@ -246,10 +336,104 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testUncommit() {
+        String logLine = "[0.015s][info][gc,init] Uncommit: Enabled";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testUncommitDelay() {
+        String logLine = "[0.015s][info][gc,init] Uncommit Delay: 300s";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_HEADER);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
                 JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " not indentified as unified.");
+    }
+
+    @Test
+    void testSerial() {
+        File testFile = TestUtil.getFile("dataset237.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_SERIAL),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_SERIAL.toString() + ".");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+    }
+
+    @Test
+    void testParallel() {
+        File testFile = TestUtil.getFile("dataset238.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_PARALLEL),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+    }
+
+    @Test
+    void testG1() {
+        File testFile = TestUtil.getFile("dataset239.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_G1),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+    }
+
+    @Test
+    void testShenandoah() {
+        File testFile = TestUtil.getFile("dataset240.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_SHENANDOAH),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+    }
+
+    @Test
+    void testZ() {
+        File testFile = TestUtil.getFile("dataset241.txt");
+        GcManager gcManager = new GcManager();
+        File preprocessedFile = gcManager.preprocess(testFile, null);
+        gcManager.store(preprocessedFile, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_Z),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_Z.toString() + ".");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 }

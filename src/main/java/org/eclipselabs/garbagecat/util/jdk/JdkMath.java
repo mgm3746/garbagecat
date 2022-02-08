@@ -115,7 +115,7 @@ public final class JdkMath {
     /**
      * Convert microseconds to milliseconds.
      * 
-     * For example: Convert 987654321 to 987.654.
+     * For example: Convert 987654321 to 987654.321.
      * 
      * @param micros
      *            Microseconds as a whole number.
@@ -124,6 +124,20 @@ public final class JdkMath {
     public static BigDecimal convertMicrosToMillis(long micros) {
         BigDecimal duration = new BigDecimal(micros);
         return duration.movePointLeft(3).setScale(3, RoundingMode.HALF_EVEN);
+    }
+
+    /**
+     * Convert microseconds to seconds.
+     * 
+     * For example: Convert 987654321 to 987.654.
+     * 
+     * @param micros
+     *            Microseconds as a whole number.
+     * @return Seconds rounded to 3 decimal places.
+     */
+    public static BigDecimal convertMicrosToSecs(long micros) {
+        BigDecimal duration = new BigDecimal(micros);
+        return duration.movePointLeft(6).setScale(3, RoundingMode.HALF_EVEN);
     }
 
     /**

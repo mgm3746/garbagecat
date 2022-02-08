@@ -161,6 +161,26 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [0.062s][info][gc          ] GC(2) Concurrent Mark Cycle
  * </pre>
  * 
+ * <p>
+ * ZGC:
+ * </p>
+ * 
+ * <pre>
+ * [0.129s] GC(0) Concurrent Mark Free 0.000ms
+ * </pre>
+ * 
+ * <pre>
+ * [0.130s] GC(0) Concurrent Process Non-Strong References 0.685ms
+ * </pre>
+ * 
+ * <pre>
+ * [0.131s] GC(0) Concurrent Select Relocation Set 1.444ms
+ * </pre>
+ * 
+ * <pre>
+ * [0.134s] GC(0) Concurrent Relocate 2.550ms
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -175,7 +195,8 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
             //
             "^" + UnifiedRegEx.DECORATOR
                     + " Concurrent (Cleanup for Next Mark|Clear Claimed Marks|Create Live Data|Mark|Mark Abort|"
-                    + "Mark Cycle|Mark From Roots|Preclean|Rebuild Remembered Sets|Reset|Scan Root Regions|"
+                    + "Mark Cycle|Mark Free|Mark From Roots|Preclean|Process Non-Strong References|"
+                    + "Rebuild Remembered Sets|Relocate|Reset|Scan Root Regions|Select Relocation Set|"
                     + "String Deduplication.*|Sweep)( \\(" + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP
                     + "s)?\\))?( " + UnifiedRegEx.DURATION + ")?" + TimesData.REGEX_JDK9 + "?[ ]*$",
             //

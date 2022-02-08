@@ -79,6 +79,13 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testConcurrentMarkFree() {
+        String logLine = "[0.129s] GC(0) Concurrent Mark Free 0.000ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testConcurrentMarkWithDuration() {
         String logLine = "[0.083s][info][gc] GC(1) Concurrent Mark 1.428ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
@@ -115,6 +122,20 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testConcurrentProcessNoStrongReferences() {
+        String logLine = "[0.130s] GC(0) Concurrent Process Non-Strong References 0.685ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testConcurrentRelocate() {
+        String logLine = "[0.134s] GC(0) Concurrent Relocate 2.550ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testConcurrentReset() {
         String logLine = "[0.085s][info][gc] GC(1) Concurrent Reset";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
@@ -132,6 +153,13 @@ class TestUnifiedConcurrentEvent {
     void testConcurrentResetWithTimesData() {
         String logLine = "[0.056s][info][gc           ] GC(1) Concurrent Reset 0.693ms "
                 + "User=0.01s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testConcurrentSelectRelocationSet() {
+        String logLine = "[0.131s] GC(0) Concurrent Select Relocation Set 1.444ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
     }

@@ -409,11 +409,16 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * 2017-06-22T12:25:26.515+0530: 66155.261: [GC pause (G1 Humongous Allocation) (mixed) (to-space exhausted),
      * 0.2466797 secs]
+     * 
+     * 2021-12-15T12:19:59.319-0300: 5612.998: [GC pause (GCLocker Initiated GC) (mixed) 5612.999: [G1Ergonomics (CSet
+     * Construction) start choosing CSet, _pending_cards: 434455, predicted base time: 121.64 ms, remaining time: 378.36
+     * ms, target pause time: 500.00 ms]
      */
     private static final String REGEX_RETAIN_BEGINNING_MIXED = "^(" + JdkRegEx.DECORATOR + " \\[GC pause( \\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION
-            + ")\\))? \\(mixed\\)( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION
-            + "\\])?)( " + JdkRegEx.DECORATOR + " \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\))? \\(mixed\\)( \\(("
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.DECORATOR
+            + " \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_MIXED_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_MIXED);
 

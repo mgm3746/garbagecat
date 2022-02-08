@@ -316,26 +316,29 @@ public class Main {
                         && jvmRun.getMaxYoungSpace().getValue(KILOBYTES) > 0) {
                     printWriter.write("NewRatio: " + jvmRun.getNewRatio() + LINE_SEPARATOR);
                 }
-                // Max heap occupancy.
-                if (jvmRun.getMaxHeapOccupancy() != null) {
-                    printWriter.write("Heap Occupancy Max: " + jvmRun.getMaxHeapOccupancy().convertTo(KILOBYTES)
-                            + LINE_SEPARATOR);
-                } else if (jvmRun.getMaxHeapOccupancyNonBlocking() != null) {
-                    printWriter.write("Heap Occupancy Max: "
-                            + jvmRun.getMaxHeapOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
-                }
-                // Max heap after GC.
-                if (jvmRun.getMaxHeapAfterGc() != null) {
-                    printWriter.write(
-                            "Heap After GC Max: " + jvmRun.getMaxHeapAfterGc().convertTo(KILOBYTES) + LINE_SEPARATOR);
-                }
-                // Max heap space.
-                if (jvmRun.getMaxHeapSpace() != null) {
-                    printWriter
-                            .write("Heap Space Max: " + jvmRun.getMaxHeapSpace().convertTo(KILOBYTES) + LINE_SEPARATOR);
-                } else if (jvmRun.getMaxHeapSpaceNonBlocking() != null) {
-                    printWriter.write("Heap Space Max: " + jvmRun.getMaxHeapSpaceNonBlocking().convertTo(KILOBYTES)
-                            + LINE_SEPARATOR);
+
+                if (jvmRun.getMaxHeapSpace().greaterThan(ZERO)) {
+                    // Max heap occupancy.
+                    if (jvmRun.getMaxHeapOccupancy() != null) {
+                        printWriter.write("Heap Occupancy Max: " + jvmRun.getMaxHeapOccupancy().convertTo(KILOBYTES)
+                                + LINE_SEPARATOR);
+                    } else if (jvmRun.getMaxHeapOccupancyNonBlocking() != null) {
+                        printWriter.write("Heap Occupancy Max: "
+                                + jvmRun.getMaxHeapOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                    }
+                    // Max heap after GC.
+                    if (jvmRun.getMaxHeapAfterGc() != null) {
+                        printWriter.write("Heap After GC Max: " + jvmRun.getMaxHeapAfterGc().convertTo(KILOBYTES)
+                                + LINE_SEPARATOR);
+                    }
+                    // Max heap space.
+                    if (jvmRun.getMaxHeapSpace() != null) {
+                        printWriter.write(
+                                "Heap Space Max: " + jvmRun.getMaxHeapSpace().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                    } else if (jvmRun.getMaxHeapSpaceNonBlocking() != null) {
+                        printWriter.write("Heap Space Max: " + jvmRun.getMaxHeapSpaceNonBlocking().convertTo(KILOBYTES)
+                                + LINE_SEPARATOR);
+                    }
                 }
 
                 if (jvmRun.getMaxPermSpace().greaterThan(ZERO)) {
@@ -398,11 +401,23 @@ public class Main {
                 }
 
                 // GC max pause
-                BigDecimal maxGcPause = JdkMath.convertMillisToSecs(jvmRun.getMaxGcPause());
-                printWriter.write("GC Pause Max: " + maxGcPause.toString() + " secs" + LINE_SEPARATOR);
+                BigDecimal maxGcPause = JdkMath.convertMicrosToSecs(jvmRun.getMaxGcPause());
+                printWriter.write("GC Pause Max: ");
+                if (maxGcPause.compareTo(BigDecimal.ZERO) == 0 && jvmRun.getBlockingEventCount() > 0) {
+                    // Provide rounding clue
+                    printWriter.write("~");
+                }
+                printWriter.write(maxGcPause.toString());
+                printWriter.write(" secs" + LINE_SEPARATOR);
                 // GC total pause time
-                BigDecimal totalGcPause = JdkMath.convertMillisToSecs(jvmRun.getGcPauseTotal());
-                printWriter.write("GC Pause Total: " + totalGcPause.toString() + " secs" + LINE_SEPARATOR);
+                BigDecimal totalGcPause = JdkMath.convertMicrosToSecs(jvmRun.getGcPauseTotal());
+                printWriter.write("GC Pause Total: ");
+                if (totalGcPause.compareTo(BigDecimal.ZERO) == 0 && jvmRun.getBlockingEventCount() > 0) {
+                    // Provide rounding clue
+                    printWriter.write("~");
+                }
+                printWriter.write(totalGcPause.toString());
+                printWriter.write(" secs" + LINE_SEPARATOR);
             }
             if (jvmRun.getStoppedTimeEventCount() > 0) {
                 // Stopped time throughput
@@ -413,10 +428,10 @@ public class Main {
                 }
                 printWriter.write(jvmRun.getStoppedTimeThroughput() + "%" + LINE_SEPARATOR);
                 // Max stopped time
-                BigDecimal maxStoppedPause = JdkMath.convertMillisToSecs(jvmRun.getStoppedTimeMax());
+                BigDecimal maxStoppedPause = JdkMath.convertMicrosToSecs(jvmRun.getStoppedTimeMax());
                 printWriter.write("Stopped Time Max: " + maxStoppedPause.toString() + " secs" + LINE_SEPARATOR);
                 // Total stopped time
-                BigDecimal totalStoppedTime = JdkMath.convertMillisToSecs(jvmRun.getStoppedTimeTotal());
+                BigDecimal totalStoppedTime = JdkMath.convertMicrosToSecs(jvmRun.getStoppedTimeTotal());
                 printWriter.write("Stopped Time Total: " + totalStoppedTime.toString() + " secs" + LINE_SEPARATOR);
                 // Ratio of GC vs. stopped time. 100 means all stopped time due to GC.
                 if (jvmRun.getBlockingEventCount() > 0) {
@@ -433,10 +448,16 @@ public class Main {
                 }
                 printWriter.write(jvmRun.getUnifiedSafepointThroughput() + "%" + LINE_SEPARATOR);
                 // Max safepoint time
-                BigDecimal maxSafepointPause = JdkMath.convertMillisToSecs(jvmRun.getUnifiedSafepointTimeMax());
-                printWriter.write("Safepoint Pause Max: " + maxSafepointPause.toString() + " secs" + LINE_SEPARATOR);
+                BigDecimal maxSafepointPause = JdkMath.convertMicrosToSecs(jvmRun.getUnifiedSafepointTimeMax());
+                printWriter.write("Safepoint Pause Max: ");
+                if (maxSafepointPause.compareTo(BigDecimal.ZERO) == 0) {
+                    // Provide rounding clue
+                    printWriter.write("~");
+                }
+                printWriter.write(maxSafepointPause.toString());
+                printWriter.write(" secs" + LINE_SEPARATOR);
                 // Total safepoint time
-                BigDecimal totalSafepointTime = JdkMath.convertMillisToSecs(jvmRun.getUnifiedSafepointTimeTotal());
+                BigDecimal totalSafepointTime = JdkMath.convertMicrosToSecs(jvmRun.getUnifiedSafepointTimeTotal());
                 printWriter.write("Safepoint Pause Total: " + totalSafepointTime.toString() + " secs" + LINE_SEPARATOR);
                 // Ratio of GC vs. safepoint time. 100 means all stopped time due to GC.
                 if (jvmRun.getBlockingEventCount() > 0) {
@@ -456,7 +477,7 @@ public class Main {
                     Iterator<SafepointEventSummary> iterator = summaries.iterator();
                     while (iterator.hasNext()) {
                         SafepointEventSummary summary = iterator.next();
-                        BigDecimal pauseTotal = JdkMath.convertMillisToSecs(summary.getPauseTotal());
+                        BigDecimal pauseTotal = JdkMath.convertMicrosToSecs(summary.getPauseTotal());
                         String pauseTotalString = null;
                         if (pauseTotal.toString().equals("0.000")) {
                             // give rounding hint
@@ -464,10 +485,15 @@ public class Main {
                         } else {
                             pauseTotalString = pauseTotal.toString();
                         }
-                        BigDecimal percent = new BigDecimal(summary.getPauseTotal());
-                        percent = percent.divide(new BigDecimal(jvmRun.getUnifiedSafepointTimeTotal()), 2,
-                                RoundingMode.HALF_EVEN);
-                        percent = percent.movePointRight(2);
+                        BigDecimal percent;
+                        if (jvmRun.getUnifiedSafepointTimeTotal() > 0) {
+                            percent = new BigDecimal(summary.getPauseTotal());
+                            percent = percent.divide(new BigDecimal(jvmRun.getUnifiedSafepointTimeTotal()), 2,
+                                    RoundingMode.HALF_EVEN);
+                            percent = percent.movePointRight(2);
+                        } else {
+                            percent = new BigDecimal(100);
+                        }
                         String percentString = null;
                         if (percent.intValue() == 0) {
                             // give rounding hint
@@ -475,7 +501,7 @@ public class Main {
                         } else {
                             percentString = percent.toString();
                         }
-                        BigDecimal pauseMax = JdkMath.convertMillisToSecs(summary.getPauseMax());
+                        BigDecimal pauseMax = JdkMath.convertMicrosToSecs(summary.getPauseMax());
                         String pauseMaxString = null;
                         if (pauseMax.toString().equals("0.000")) {
                             // give rounding hint

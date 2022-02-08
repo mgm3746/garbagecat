@@ -83,9 +83,9 @@ public class JvmRun {
     private List<String> gcBottlenecks;
 
     /**
-     * Maximum GC pause duration (milliseconds).
+     * Maximum GC pause duration (microseconds).
      */
-    private int gcPauseMax;
+    private long gcPauseMax;
 
     /**
      * Total GC pause duration (microseconds).
@@ -203,14 +203,14 @@ public class JvmRun {
     private int stoppedTimeEventCount;
 
     /**
-     * Maximum stopped time duration (milliseconds).
+     * Maximum stopped time duration (microseconds).
      */
-    private int stoppedTimeMax;
+    private long stoppedTimeMax;
 
     /**
-     * Total stopped time duration (milliseconds).
+     * Total stopped time duration (microseconds).
      */
-    private int stoppedTimeTotal;
+    private long stoppedTimeTotal;
 
     /**
      * Minimum throughput (percent of time spent not doing garbage collection for a given time interval) to not be
@@ -229,14 +229,14 @@ public class JvmRun {
     private int unifiedSafepointEventCount;
 
     /**
-     * Maximum safepoint time duration (milliseconds).
+     * Maximum safepoint time duration (microseconds).
      */
-    private int unifiedSafepointTimeMax;
+    private long unifiedSafepointTimeMax;
 
     /**
-     * Total unified safepoint time duration (milliseconds).
+     * Total unified safepoint time duration (microseconds).
      */
-    private int unifiedSafepointTimeTotal;
+    private long unifiedSafepointTimeTotal;
 
     /**
      * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
@@ -320,7 +320,7 @@ public class JvmRun {
 
         // Check for significant safepoint time unrelated to GC
         if (eventTypes.contains(LogEventType.UNIFIED_SAFEPOINT)
-                && getGcUnifiedSafepointRatio() < Constants.GC_SAFEPOINT_RATIO_THRESHOLD
+                && getGcUnifiedSafepointRatio() < Constants.GC_SAFEPOINT_RATIO_THRESHOLD && getJvmRunDuration() > 0
                 && getUnifiedSafepointThroughput() != getGcThroughput()) {
             analysis.add(WARN_GC_SAFEPOINT_RATIO);
         }
@@ -962,7 +962,7 @@ public class JvmRun {
         if (blockingEventCount <= 0) {
             return 100L;
         }
-        long timeNotGc = getJvmRunDuration() - gcPauseTotal;
+        long timeNotGc = getJvmRunDuration() - JdkMath.convertMicrosToMillis(gcPauseTotal).longValue();
         BigDecimal throughput = new BigDecimal(timeNotGc);
         throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
         return throughput.movePointRight(2).longValue();
@@ -1041,7 +1041,7 @@ public class JvmRun {
         return lastSafepointEvent;
     }
 
-    public int getMaxGcPause() {
+    public long getMaxGcPause() {
         return gcPauseMax;
     }
 
@@ -1121,7 +1121,7 @@ public class JvmRun {
         return stoppedTimeEventCount;
     }
 
-    public int getStoppedTimeMax() {
+    public long getStoppedTimeMax() {
         return stoppedTimeMax;
     }
 
@@ -1137,13 +1137,13 @@ public class JvmRun {
         if (getJvmRunDuration() <= 0) {
             return 0L;
         }
-        long timeNotStopped = getJvmRunDuration() - stoppedTimeTotal;
+        long timeNotStopped = getJvmRunDuration() - JdkMath.convertMicrosToMillis(stoppedTimeTotal).longValue();
         BigDecimal throughput = new BigDecimal(timeNotStopped);
         throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
         return throughput.movePointRight(2).longValue();
     }
 
-    public int getStoppedTimeTotal() {
+    public long getStoppedTimeTotal() {
         return stoppedTimeTotal;
     }
 
@@ -1171,17 +1171,18 @@ public class JvmRun {
         if (getJvmRunDuration() <= 0) {
             return 0L;
         }
-        long timeNotSafepoint = getJvmRunDuration() - unifiedSafepointTimeTotal;
+        long timeNotSafepoint = getJvmRunDuration()
+                - JdkMath.convertMicrosToMillis(unifiedSafepointTimeTotal).longValue();
         BigDecimal throughput = new BigDecimal(timeNotSafepoint);
         throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
         return throughput.movePointRight(2).longValue();
     }
 
-    public int getUnifiedSafepointTimeMax() {
+    public long getUnifiedSafepointTimeMax() {
         return unifiedSafepointTimeMax;
     }
 
-    public int getUnifiedSafepointTimeTotal() {
+    public long getUnifiedSafepointTimeTotal() {
         return unifiedSafepointTimeTotal;
     }
 
@@ -1232,7 +1233,7 @@ public class JvmRun {
         this.gcBottlenecks = gcBottlenecks;
     }
 
-    public void setGcPauseMax(int gcPauseMax) {
+    public void setGcPauseMax(long gcPauseMax) {
         this.gcPauseMax = gcPauseMax;
     }
 
@@ -1328,11 +1329,11 @@ public class JvmRun {
         this.stoppedTimeEventCount = stoppedTimeEventCount;
     }
 
-    public void setStoppedTimeMax(int stoppedTimeMax) {
+    public void setStoppedTimeMax(long stoppedTimeMax) {
         this.stoppedTimeMax = stoppedTimeMax;
     }
 
-    public void setStoppedTimeTotal(int stoppedTimeTotal) {
+    public void setStoppedTimeTotal(long stoppedTimeTotal) {
         this.stoppedTimeTotal = stoppedTimeTotal;
     }
 
@@ -1348,11 +1349,11 @@ public class JvmRun {
         this.unifiedSafepointEventCount = unifiedSafepointEventCount;
     }
 
-    public void setUnifiedSafepointTimeMax(int unifiedSafepointTimeMax) {
+    public void setUnifiedSafepointTimeMax(long unifiedSafepointTimeMax) {
         this.unifiedSafepointTimeMax = unifiedSafepointTimeMax;
     }
 
-    public void setUnifiedSafepointTimeTotal(int unifiedSafepointTimeTotal) {
+    public void setUnifiedSafepointTimeTotal(long unifiedSafepointTimeTotal) {
         this.unifiedSafepointTimeTotal = unifiedSafepointTimeTotal;
     }
 

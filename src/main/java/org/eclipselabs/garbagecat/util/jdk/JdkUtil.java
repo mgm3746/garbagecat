@@ -103,7 +103,11 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UsingG1Event;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingParallelEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingSerialEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingShenandoahEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UsingZEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkStartEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZRelocateStartEvent;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
@@ -122,7 +126,7 @@ public final class JdkUtil {
      * Defined collector families.
      */
     public enum CollectorFamily {
-        CMS, G1, PARALLEL, SERIAL, SHENANDOAH, UNKNOWN
+        CMS, G1, PARALLEL, SERIAL, SHENANDOAH, UNKNOWN, Z
     };
 
     /**
@@ -157,6 +161,8 @@ public final class JdkUtil {
         SHENANDOAH_FINAL_UPDATE, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE, SHENANDOAH_STATS,
         //
         SHENANDOAH_TRIGGER,
+        // z
+        USING_Z, Z_MARK_END, Z_MARK_START, Z_RELOCATE_START,
         // other
         APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, BLANK_LINE, CLASS_HISTOGRAM,
         //
@@ -461,6 +467,14 @@ public final class JdkUtil {
             return LogEventType.USING_SERIAL;
         if (UsingShenandoahEvent.match(logLine))
             return LogEventType.USING_SHENANDOAH;
+        if (UsingZEvent.match(logLine))
+            return LogEventType.USING_Z;
+        if (ZMarkEndEvent.match(logLine))
+            return LogEventType.Z_MARK_END;
+        if (ZMarkStartEvent.match(logLine))
+            return LogEventType.Z_MARK_START;
+        if (ZRelocateStartEvent.match(logLine))
+            return LogEventType.Z_RELOCATE_START;
 
         // Unknown
         if (VerboseGcYoungEvent.match(logLine))
@@ -639,6 +653,7 @@ public final class JdkUtil {
         case USING_CMS:
         case USING_G1:
         case USING_SHENANDOAH:
+        case USING_Z:
         case VM_WARNING:
             return false;
         default:
@@ -819,6 +834,8 @@ public final class JdkUtil {
             return new UsingG1Event(logLine);
         case USING_SHENANDOAH:
             return new UsingShenandoahEvent(logLine);
+        case USING_Z:
+            return new UsingZEvent(logLine);
         case FOOTER_HEAP:
             return new FooterHeapEvent(logLine);
         case FOOTER_STATS:
@@ -871,6 +888,14 @@ public final class JdkUtil {
             return new ShenandoahStatsEvent();
         case SHENANDOAH_TRIGGER:
             return new ShenandoahTriggerEvent();
+
+        // Z
+        case Z_MARK_END:
+            return new ZMarkEndEvent(logLine);
+        case Z_MARK_START:
+            return new ZMarkStartEvent(logLine);
+        case Z_RELOCATE_START:
+            return new ZRelocateStartEvent(logLine);
 
         // CMS
         case PAR_NEW:

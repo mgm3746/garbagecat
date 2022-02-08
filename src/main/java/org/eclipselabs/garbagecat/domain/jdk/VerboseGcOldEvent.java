@@ -72,7 +72,7 @@ public class VerboseGcOldEvent extends UnknownCollector
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private int duration;
+    private long duration;
 
     /**
      * The time when the GC event started in milliseconds after JVM startup.
@@ -177,7 +177,7 @@ public class VerboseGcOldEvent extends UnknownCollector
         return logEntry;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 

@@ -88,8 +88,8 @@ public class UnifiedRegEx {
      */
     public static final String DECORATOR = "\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
             + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
-            + ")\\])?(\\[info\\]\\[(gc|safepoint)(,(cds|cpu|ergo|heap|init|marking|metaspace|mmu|phases|ref|stats|"
-            + "start|stringtable|stringdedup|task))?(,(coops|exit|start))?[ ]{0,13}\\])?( "
+            + ")\\])?(\\[info\\]\\[(gc|safepoint)(,(cds|cpu|ergo|heap|init|load|marking|metaspace|mmu|nmethod|phases|"
+            + "ref|reloc|stats|start|stringtable|stringdedup|task))?(,(coops|exit|start))?[ ]{0,}\\])?( "
             + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
 
     /**

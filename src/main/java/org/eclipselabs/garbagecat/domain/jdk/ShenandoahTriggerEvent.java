@@ -83,9 +83,9 @@ public class ShenandoahTriggerEvent extends ShenandoahCollector implements Throw
                     + "\\) is below initial threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             // Average
             "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Average GC time \\(" + UnifiedRegEx.DURATION
-                    + "\\) is above the time for( average)? allocation rate \\(" + JdkRegEx.ALLOCATION_RATE
-                    + "\\) to deplete free headroom \\(" + JdkRegEx.SIZE
-                    + "\\)( \\(margin of error = \\d{1,}\\.\\d{2}\\))?[ ]*$",
+                    + "\\) is above the time for( (average|instantaneous))? allocation rate \\("
+                    + JdkRegEx.ALLOCATION_RATE + "\\) to deplete free headroom \\(" + JdkRegEx.SIZE
+                    + "\\)( \\((margin of error|spike threshold) = \\d{1,}\\.\\d{2}\\))?[ ]*$",
             // Free
             "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Free \\(" + JdkRegEx.SIZE
                     + "\\) is below minimum threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$",

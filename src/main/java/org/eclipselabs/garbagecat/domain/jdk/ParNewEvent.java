@@ -141,7 +141,7 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private int duration;
+    private long duration;
 
     /**
      * The time when the GC event started in milliseconds after JVM startup.
@@ -272,7 +272,7 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         return logEntry;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 

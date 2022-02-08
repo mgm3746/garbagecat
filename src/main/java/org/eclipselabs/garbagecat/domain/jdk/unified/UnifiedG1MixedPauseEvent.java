@@ -67,7 +67,7 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
 
     /**
      * Regular expression defining preprocessed logging.
@@ -87,7 +87,7 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private int duration;
+    private long duration;
 
     /**
      * The time when the GC event started in milliseconds after JVM startup.
@@ -214,7 +214,7 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
         return logEntry;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 

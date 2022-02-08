@@ -130,12 +130,12 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
     /**
      * The elapsed clock time the application threads were stopped (at safepont) in microseconds (rounded).
      */
-    private int timeThreadsStopped;
+    private long timeThreadsStopped;
 
     /**
      * The elapsed clock time to stop all threads (bring the JVM to safepoint) in microseconds (rounded).
      */
-    private int timeToStopThreads;
+    private long timeToStopThreads;
 
     /**
      * Create event from log entry.
@@ -180,7 +180,8 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
      * @param timeThreadsStopped
      *            The elapsed clock time the application threads were stopped (at safepont) in microseconds (rounded).
      */
-    public ApplicationStoppedTimeEvent(String logEntry, long timestamp, int timeToStopThreads, int timeThreadsStopped) {
+    public ApplicationStoppedTimeEvent(String logEntry, long timestamp, long timeToStopThreads,
+            long timeThreadsStopped) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.timeToStopThreads = timeToStopThreads;
@@ -191,7 +192,7 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
      * The elapsed clock time for the safepoint event in microseconds (rounded). timeToStopThreads seems to be a subset
      * of timeThreadsStopped.
      */
-    public int getDuration() {
+    public long getDuration() {
         return timeThreadsStopped;
     }
 
@@ -207,11 +208,11 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
         return timestamp;
     }
 
-    public int getTimeThreadsStopped() {
+    public long getTimeThreadsStopped() {
         return timeThreadsStopped;
     }
 
-    public int getTimeToStopThreads() {
+    public long getTimeToStopThreads() {
         return timeToStopThreads;
     }
 
