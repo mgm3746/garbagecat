@@ -1079,6 +1079,31 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testParallelCompactingOldTriggerMetadataGcClearSoftReferencesBegin() {
+        String logLine = "[2022-02-08T07:33:13.183+0000][7731431ms] GC(112) Pause Full (Metadata GC Clear Soft "
+                + "References)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testParallelCompactingOldTriggerMetadataGcClearSoftReferencesMiddle() {
+        String priorLine = "[2022-02-08T07:33:13.853+0000][7732101ms] GC(112) Metaspace: 243927K->243728K(481280K)";
+        String logLine = "[2022-02-08T07:33:13.853+0000][7732101ms] GC(112) Pause Full (Metadata GC Clear Soft "
+                + "References) 141M->141M(2147M) 670.712ms";
+        String nextLogLine = "[2022-02-08T07:33:13.854+0000][7732102ms] GC(112) User=1.05s Sys=0.01s Real=0.67s";
+        Set<String> context = new HashSet<String>();
+        context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        context.add(UnifiedPreprocessAction.TOKEN);
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(priorLine, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(" 141M->141M(2147M) 670.712ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testParallelCompactingOlSummaryPhaseStart() {
         String logLine = "[0.084s][info][gc,phases,start] GC(3) Summary Phase";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -1111,6 +1136,31 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE),
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testParallelScavengeTriggerMetadataGcClearSoftReferencesBegin() {
+        String logLine = "[2022-02-08T07:33:13.178+0000][7731426ms] GC(111) Pause Young (Metadata GC Clear Soft "
+                + "References)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testParallelScavengeTriggerMetadataGcClearSoftReferencesMiddle() {
+        String priorLogLine = "[2022-02-08T07:33:13.182+0000][7731430ms] GC(111) Metaspace: 243927K->243927K(481280K)";
+        String logLine = "[2022-02-08T07:33:13.183+0000][7731431ms] GC(111) Pause Young (Metadata GC Clear Soft "
+                + "References) 141M->141M(2147M) 4.151ms";
+        String nextLogLine = "[2022-02-08T07:33:13.183+0000][7731431ms] GC(111) User=0.00s Sys=0.00s Real=0.01s";
+        Set<String> context = new HashSet<String>();
+        context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        context.add(UnifiedPreprocessAction.TOKEN);
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(priorLogLine, logLine, nextLogLine,
+                entangledLogLines, context);
+        assertEquals(" 141M->141M(2147M) 4.151ms", event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test

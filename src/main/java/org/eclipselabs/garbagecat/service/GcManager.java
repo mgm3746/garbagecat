@@ -72,6 +72,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.OomeMetaspaceEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
@@ -282,8 +283,7 @@ public class GcManager {
             if (isThrowawayEvent(currentLogLine)) {
                 // Analysis
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING)) {
-                    if (ClassUnloadingEvent.match(currentLogLine)
-                            && !jvmDao.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING)) {
+                    if (ClassUnloadingEvent.match(currentLogLine)) {
                         jvmDao.getAnalysis().add(Analysis.WARN_TRACE_CLASS_UNLOADING);
                     }
                 }
@@ -326,6 +326,11 @@ public class GcManager {
                 if (!jvmDao.getAnalysis().contains(Analysis.INFO_THREAD_DUMP)) {
                     if (ThreadDumpEvent.match(currentLogLine)) {
                         jvmDao.getAnalysis().add(Analysis.INFO_THREAD_DUMP);
+                    }
+                }
+                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_OOME_METASPACE)) {
+                    if (OomeMetaspaceEvent.match(currentLogLine)) {
+                        jvmDao.getAnalysis().add(Analysis.ERROR_OOME_METASPACE);
                     }
                 }
                 currentLogLine = null;

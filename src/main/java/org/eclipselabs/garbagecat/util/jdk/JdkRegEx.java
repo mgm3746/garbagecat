@@ -401,6 +401,11 @@ public final class JdkRegEx {
     public static final String TRIGGER_METADATA_GC_THRESHOLD = "Metadata GC Threshold";
 
     /**
+     * Metadata GC Clear Soft References.
+     */
+    public static final String TRIGGER_METADATE_GC_CLEAR_SOFT_REFERENCES = "Metadata GC Clear Soft References";
+
+    /**
      * <p>
      * Promotion failed trigger.
      * </p>

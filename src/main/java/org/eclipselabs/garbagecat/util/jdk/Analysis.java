@@ -130,6 +130,11 @@ public enum Analysis {
     ERROR_METASPACE_SIZE_LT_COMP_CLASS_SIZE("error.metaspace.size.lt.comp.class.size"),
 
     /**
+     * Property key for Metaspace::report_metadata_oome at the end of gc.log.
+     */
+    ERROR_OOME_METASPACE("error.oome.metaspace"),
+
+    /**
      * Property key for insufficient physical memory.
      */
     ERROR_PHYSICAL_MEMORY("error.physical.memory"),

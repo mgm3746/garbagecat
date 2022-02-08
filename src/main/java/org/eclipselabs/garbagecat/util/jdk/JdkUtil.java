@@ -78,6 +78,8 @@ import org.eclipselabs.garbagecat.domain.jdk.VerboseGcOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcYoungEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.HeapAddressEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.HeapRegionSizeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.MetaspaceUtilsReportEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.OomeMetaspaceEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
@@ -134,17 +136,17 @@ public final class JdkUtil {
      */
     public enum LogEventType {
         // unified
-        FOOTER_STATS, G1_FULL_GC_PARALLEL, GC_INFO, HEAP_REGION_SIZE, HEAP_ADDRESS, UNIFIED_SAFEPOINT,
+        FOOTER_STATS, G1_FULL_GC_PARALLEL, GC_INFO, HEAP_REGION_SIZE, HEAP_ADDRESS, METASPACE_UTILS_REPORT,
         //
-        UNIFIED_BLANK_LINE, UNIFIED_CONCURRENT, UNIFIED_CMS_INITIAL_MARK, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO,
+        OOME_METASPACE, UNIFIED_SAFEPOINT, UNIFIED_BLANK_LINE, UNIFIED_CONCURRENT, UNIFIED_CMS_INITIAL_MARK,
         //
-        UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
+        UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK,
         //
-        UNIFIED_HEADER, UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE,
+        UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER, UNIFIED_OLD, UNIFIED_PAR_NEW,
         //
-        UNIFIED_REMARK, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, USING_CMS, USING_G1, USING_PARALLEL,
+        UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SERIAL_NEW,
         //
-        USING_SERIAL, USING_SHENANDOAH,
+        UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH,
         // serial
         SERIAL_NEW, SERIAL_OLD,
         // parallel
@@ -417,6 +419,10 @@ public final class JdkUtil {
             return LogEventType.HEAP_ADDRESS;
         if (HeapRegionSizeEvent.match(logLine))
             return LogEventType.HEAP_REGION_SIZE;
+        if (MetaspaceUtilsReportEvent.match(logLine))
+            return LogEventType.METASPACE_UTILS_REPORT;
+        if (OomeMetaspaceEvent.match(logLine))
+            return LogEventType.OOME_METASPACE;
         if (UnifiedSafepointEvent.match(logLine))
             return LogEventType.UNIFIED_SAFEPOINT;
         if (UnifiedBlankLineEvent.match(logLine) && !BlankLineEvent.match(logLine))
@@ -754,6 +760,8 @@ public final class JdkUtil {
         case HEAP_AT_GC:
         case HEAP_REGION_SIZE:
         case LOG_FILE:
+        case METASPACE_UTILS_REPORT:
+        case OOME_METASPACE:
         case REFERENCE_GC:
         case UNIFIED_SAFEPOINT:
         case SHENANDOAH_CANCELLING_GC:
@@ -954,6 +962,10 @@ public final class JdkUtil {
             return new HeapAtGcEvent(logLine);
         case LOG_FILE:
             return new LogFileEvent(logLine);
+        case METASPACE_UTILS_REPORT:
+            return new MetaspaceUtilsReportEvent();
+        case OOME_METASPACE:
+            return new OomeMetaspaceEvent();
         case REFERENCE_GC:
             return new ReferenceGcEvent(logLine);
         case TENURING_DISTRIBUTION:

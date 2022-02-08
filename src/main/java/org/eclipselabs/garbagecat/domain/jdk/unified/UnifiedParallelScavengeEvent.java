@@ -162,7 +162,7 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
             + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")";
+            + JdkRegEx.TRIGGER_METADATE_GC_CLEAR_SOFT_REFERENCES + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")";
 
     /**
      * Regular expression defining the logging.
