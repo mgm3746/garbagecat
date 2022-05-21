@@ -973,6 +973,19 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testMetaspaceDataJdk11Shenandoah() {
+        String logLine = "[0.258s] Metaspace: 3477K->3501K(1056768K)";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testMetaspaceDataJdk17() {
         String logLine = "[0.061s][info][gc,metaspace] GC(1) Metaspace: 667K(832K)->667K(832K) NonClass: "
                 + "617K(704K)->617K(704K) Class: 49K(128K)->49K(128K)";

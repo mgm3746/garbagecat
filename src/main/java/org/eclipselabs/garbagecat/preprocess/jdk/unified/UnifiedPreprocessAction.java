@@ -1052,10 +1052,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // Informational Metaspace (no classification, no gc event number)
             "^\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[("
                     + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS + ")\\])? Metaspace: " + JdkRegEx.SIZE
-                    + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) NonClass: "
+                    + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)( NonClass: "
                     + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
                     + "\\) Class: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
-                    + JdkRegEx.SIZE + "\\)$",
+                    + JdkRegEx.SIZE + "\\))?$",
             // ***** Z *****
             "^" + UnifiedRegEx.DECORATOR + " Garbage Collection \\((Allocation (Rate|Stall)|Warmup)\\).*$",
             //

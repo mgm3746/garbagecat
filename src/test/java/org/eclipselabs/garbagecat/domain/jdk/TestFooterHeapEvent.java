@@ -444,6 +444,14 @@ class TestFooterHeapEvent {
     }
 
     @Test
+    void testUnifiedStatusHasForwardedEvacuating() {
+        String logLine = "[2022-05-20T11:20:57.559-0400] Status: has forwarded objects, evacuating, concurrent weak "
+                + "roots, cancelled";
+        assertTrue(FooterHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
+    }
+
+    @Test
     void testUnifiedStatusUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] Status: cancelled";
         assertTrue(FooterHeapEvent.match(logLine),
