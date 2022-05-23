@@ -29,7 +29,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * CMS Free List Space statistics.
  * </p>
  * 
- * <h3>Example Logging with -XX:PrintFLSStatistics=1</h3>
+ * <h2>Example Logging with -XX:PrintFLSStatistics=1</h2>
  * 
  * <pre>
  * 1.118: [GC Before GC:

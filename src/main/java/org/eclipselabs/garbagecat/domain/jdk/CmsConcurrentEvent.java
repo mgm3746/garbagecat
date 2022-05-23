@@ -30,7 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * included in the GC analysis since there is no application pause time.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  *
  * <pre>
  * 251.781: [CMS-concurrent-mark-start]

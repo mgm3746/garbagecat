@@ -38,7 +38,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * {@link org.eclipselabs.garbagecat.domain.jdk.G1CleanupEvent} with unified logging (JDK9+).
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Logging without details:

@@ -44,7 +44,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * CommandLine flags: -XX:InitialHeapSize=257840832 -XX:MaxHeapSize=4125453312 -XX:MaxNewSize=697933824 -XX:MaxTenuringThreshold=6 -XX:OldPLABSize=16 -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseParNewGC
  * </pre>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * 1) Standard JVM format:
  * 

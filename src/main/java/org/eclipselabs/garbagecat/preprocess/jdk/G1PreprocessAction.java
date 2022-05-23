@@ -34,7 +34,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <code>-XX:+PrintGCDetails</code>. It is currently not being used for analysis. Other general G1 preprocessing.
  * </p>
  *
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Young collection:

@@ -30,7 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * The first phase of the Z garbage collector. Mark objects pointed to by roots.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <pre>
  * [0.124s][info][gc,phases   ] GC(0) Pause Mark Start 0.004ms

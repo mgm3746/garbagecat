@@ -38,7 +38,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * included in the GC analysis since there is no application pause time.
  * </p>
  * 
- * <h3>CMS</h3>
+ * <h2>CMS</h2>
  * 
  * <pre>
  * [0.082s][info][gc] GC(1) Concurrent Mark

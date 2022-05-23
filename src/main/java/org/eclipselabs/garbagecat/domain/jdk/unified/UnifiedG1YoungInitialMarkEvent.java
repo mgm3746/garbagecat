@@ -45,7 +45,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * survivor region or promoted to the old space.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  *
  * <pre>
  * [2.752s][info][gc            ] GC(53) Pause Initial Mark (G1 Humongous Allocation) 562M-&gt;5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s

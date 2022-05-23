@@ -30,7 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * The third phase of the Z garbage collector. Region compaction.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <pre>
  * [0.132s] GC(0) Pause Relocate Start 0.004ms

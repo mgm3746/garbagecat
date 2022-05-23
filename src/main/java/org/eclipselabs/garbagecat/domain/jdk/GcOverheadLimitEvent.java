@@ -29,7 +29,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * feature can be disabled with the <code>-XX:-UseGCOverheadLimit</code> option.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) With "would exceed":

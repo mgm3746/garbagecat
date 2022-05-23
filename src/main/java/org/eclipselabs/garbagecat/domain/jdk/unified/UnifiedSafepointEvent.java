@@ -53,7 +53,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
  * <li>EnableBiasLocking</li>
  * </ul>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) JDK81/11 on three lines:

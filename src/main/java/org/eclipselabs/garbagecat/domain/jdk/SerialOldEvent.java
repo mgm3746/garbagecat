@@ -41,7 +41,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * Enabled with the <code>-XX:+UseSerialGC</code> JVM option. Uses a mark-sweep-compact algorithm.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Standard format:
@@ -68,7 +68,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * the old generation free space, so a full collection is triggered to free up old space.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <pre>
  * 3727.365: [GC 3727.365: [DefNew: 400314K-&gt;400314K(400384K), 0.0000550 secs]3727.365: [Tenured: 837793K-&gt;597490K(889536K), 44.7498530 secs] 1238107K-&gt;597490K(1289920K), [Perm : 54745K-&gt;54745K(54784K)], 44.7501880 secs] [Times: user=5.32 sys=0.33, real=44.75 secs]

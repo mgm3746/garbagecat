@@ -29,7 +29,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * Logging output at the beginning of gc log when using the Shenandoah collector.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) With <code>-Xlog:gc*:file=&lt;file&gt;</code>:

@@ -33,7 +33,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * reachable from GC roots. This event does not do any garbage collection, only marking of objects.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Standard format:

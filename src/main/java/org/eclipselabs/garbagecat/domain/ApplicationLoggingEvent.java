@@ -32,7 +32,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * and avoid mixing application and garbage collection logging.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * 1) Lines beginning with HH:MM:SS timestamp:
  * 

@@ -31,7 +31,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * Fix issues with Serial logging.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * *
  * <p>

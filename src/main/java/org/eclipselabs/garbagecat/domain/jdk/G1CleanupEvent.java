@@ -37,7 +37,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * that are candidates for mixed garbage collection) and scrubbing takes place.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Standard format:

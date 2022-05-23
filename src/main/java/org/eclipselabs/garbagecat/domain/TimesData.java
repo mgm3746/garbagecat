@@ -15,7 +15,7 @@ package org.eclipselabs.garbagecat.domain;
 /**
  * Times data block output at the end of some garbage collection logging events.
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * JDK8 and prior:

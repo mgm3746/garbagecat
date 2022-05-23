@@ -28,7 +28,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * Heap address information printed at the beginning of gc logging.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) With <code>-Xlog:gc*:file=&lt;file&gt;</code>:

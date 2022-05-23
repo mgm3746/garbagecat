@@ -45,7 +45,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent}.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) JDK8/11:

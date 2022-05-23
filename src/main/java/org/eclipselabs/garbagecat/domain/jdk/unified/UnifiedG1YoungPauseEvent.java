@@ -46,7 +46,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * survivor region or promoted to the old space.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Standard format:

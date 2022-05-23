@@ -50,7 +50,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * useful.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <pre>
  * 2016-09-13T06:54:06.773+0100: 11662.232: [Full GC 11662.233: [Class Histogram:

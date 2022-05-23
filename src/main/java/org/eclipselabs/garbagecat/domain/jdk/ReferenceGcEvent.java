@@ -29,7 +29,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * Logging with -XX:+PrintReferenceGC.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <pre>
  * 0.341: [GC (Allocation Failure) 0.344: [SoftReference, 0 refs, 0.0000327 secs]0.344: [WeakReference, 19 refs, 0.0000049 secs]0.344: [FinalReference, 296 refs, 0.0002385 secs]0.344: [PhantomReference, 0 refs, 0 refs, 0.0000033 secs]0.344: [JNI Weak Reference, 0.0000041 secs][PSYoungGen: 63488K-&gt;3151K(73728K)] 63488K-&gt;3159K(241664K), 0.0032820 secs] [Times: user=0.02 sys=0.00, real=0.00 secs]

@@ -35,7 +35,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * objects. It is actually 3 events, but for GC analysis, it is treated as one event.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Standard format:

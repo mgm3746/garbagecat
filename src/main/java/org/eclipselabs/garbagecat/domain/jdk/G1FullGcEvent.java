@@ -44,7 +44,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * directly in the old space), or when there are more allocations than the G1 can concurrently collect.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Standard format:

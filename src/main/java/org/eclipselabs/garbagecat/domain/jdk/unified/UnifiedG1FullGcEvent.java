@@ -47,7 +47,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * The {@link org.eclipselabs.garbagecat.domain.jdk.G1FullGcEvent} is parallel in JDK10+. See
  * <a href="https://openjdk.java.net/jeps/307">JEP 307: Parallel Full GC for G1</a>.
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * Preprocessed:

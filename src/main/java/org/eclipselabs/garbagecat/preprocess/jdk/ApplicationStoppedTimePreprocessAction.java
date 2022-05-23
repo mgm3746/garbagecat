@@ -31,7 +31,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * Fix issues with APPLICATION_STOPPED_TIME logging.
  * </p>
  *
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Normal (no preprocessing needed):

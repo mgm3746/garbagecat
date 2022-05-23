@@ -26,7 +26,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * VM warning information.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <pre>
  * OpenJDK 64-Bit Server VM warning: Failed to reserve shared memory. (error = 12)

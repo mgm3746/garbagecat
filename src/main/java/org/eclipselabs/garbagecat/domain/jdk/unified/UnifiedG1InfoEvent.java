@@ -29,7 +29,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * Information logging not used for GC analysis.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  *
  * <pre>
  * [2.726s][info][gc,start     ] GC(51) Pause Initial Mark (G1 Humongous Allocation)

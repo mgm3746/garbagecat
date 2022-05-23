@@ -29,7 +29,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * intermingled with the old collection logging. This data is currently not being used for analysis.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Underlying {@link org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent}:
