@@ -26,6 +26,7 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_OUTPUT_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_OUTPUT_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_PREPROCESS_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_REORDER_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_REPORT_CONSOLE_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_LONG;
@@ -71,9 +72,9 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
  * garbagecat main class. A controller that prepares the model (by parsing GC log entries) and provides analysis (the
  * report view).
  * </p>
- * 
+ *
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
- * 
+ *
  */
 public class Main {
 
@@ -115,7 +116,7 @@ public class Main {
 
     /**
      * Output usage help.
-     * 
+     *
      * @param options
      */
     private static void usage() {
@@ -142,7 +143,7 @@ public class Main {
              * started there was no <code>-XX:+PrintGCDateStamps</code> option. When it was introduced in JDK 1.6 update
              * 4, the easiest thing to do to handle datestamps was to preprocess the datestamps and convert them to
              * timestamps.
-             * 
+             *
              * TODO: Handle datetimes separately from preprocessing so preprocessing doesn't require passing in the JVM
              * start date/time.
              */
@@ -165,16 +166,19 @@ public class Main {
         JvmRun jvmRun = gcManager.getJvmRun(jvm, throughputThreshold);
         String outputFileName = cmd.hasOption(OPTION_OUTPUT_LONG) ? cmd.getOptionValue(OPTION_OUTPUT_SHORT)
                 : OUTPUT_FILE_NAME;
+        boolean reportConsole = cmd.hasOption(OPTION_REPORT_CONSOLE_LONG);
         boolean version = cmd.hasOption(OPTION_VERSION_LONG);
         boolean latestVersion = cmd.hasOption(OPTION_LATEST_VERSION_LONG);
-        createReport(jvmRun, outputFileName, version, latestVersion, logFileName);
+        createReport(jvmRun, reportConsole, outputFileName, version, latestVersion, logFileName);
     }
 
     /**
      * Create Garbage Collection Analysis report.
-     * 
+     *
      * @param jvmRun
      *            JVM run data.
+     * @param reportConsole
+     *            Whether print the report to the console or to a file.
      * @param reportFileName
      *            Report file name.
      * @param version
@@ -184,14 +188,18 @@ public class Main {
      * @param gcLogFileName
      *            The gc log file analyzed.
      */
-    public static void createReport(JvmRun jvmRun, String reportFileName, boolean version, boolean latestVersion,
-            String gcLogFileName) {
+    public static void createReport(JvmRun jvmRun, boolean reportConsole, String reportFileName, boolean version,
+            boolean latestVersion, String gcLogFileName) {
         File reportFile = new File(reportFileName);
         FileWriter fileWriter = null;
         PrintWriter printWriter = null;
         try {
             fileWriter = new FileWriter(reportFile);
-            printWriter = new PrintWriter(fileWriter);
+            if (reportConsole) {
+                printWriter = new PrintWriter(System.out);
+            } else {
+                printWriter = new PrintWriter(fileWriter);
+            }
             File gcLogFile = new File(gcLogFileName);
             printWriter.write(gcLogFile.getName());
             printWriter.write(LINE_SEPARATOR);

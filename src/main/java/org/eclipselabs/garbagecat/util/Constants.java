@@ -109,6 +109,16 @@ public class Constants {
     public static final String OPTION_REORDER_SHORT = "r";
 
     /**
+     * Report console command line long option.
+     */
+    public static final String OPTION_REPORT_CONSOLE_LONG = "console";
+
+    /**
+     * Report console command line short option.
+     */
+    public static final String OPTION_REPORT_CONSOLE_SHORT = "c";
+
+    /**
      * JVM start datetime command line long option.
      */
     public static final String OPTION_STARTDATETIME_LONG = "startdatetime";
