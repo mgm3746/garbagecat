@@ -748,7 +748,7 @@ public class JvmDao {
     /**
      * The maximum unified safepoint event pause time.
      * 
-     * @return maximum pause duration (microseconds).
+     * @return maximum pause duration (nanoseconds).
      */
     public synchronized long getUnifiedSafepointTimeMax() {
         return longs(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration).mapToLong(Long::valueOf).max()
@@ -758,7 +758,7 @@ public class JvmDao {
     /**
      * The total unified safepoint event pause time.
      * 
-     * @return total pause duration (microseconds).
+     * @return total pause duration (nanoseconds).
      */
     public synchronized long getUnifiedSafepointTimeTotal() {
         return longs(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration)

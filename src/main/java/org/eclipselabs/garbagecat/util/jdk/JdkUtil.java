@@ -135,44 +135,37 @@ public final class JdkUtil {
      * Defined logging events.
      */
     public enum LogEventType {
-        // unified
-        FOOTER_STATS, G1_FULL_GC_PARALLEL, GC_INFO, HEAP_REGION_SIZE, HEAP_ADDRESS, METASPACE_UTILS_REPORT,
-        //
-        OOME_METASPACE, UNIFIED_SAFEPOINT, UNIFIED_BLANK_LINE, UNIFIED_CONCURRENT, UNIFIED_CMS_INITIAL_MARK,
-        //
-        UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK,
-        //
-        UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER, UNIFIED_OLD, UNIFIED_PAR_NEW,
-        //
-        UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SERIAL_NEW,
-        //
-        UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH,
-        // serial
-        SERIAL_NEW, SERIAL_OLD,
-        // parallel
-        PAR_NEW, PARALLEL_SCAVENGE, PARALLEL_SERIAL_OLD, PARALLEL_COMPACTING_OLD,
-        // cms
-        CMS_SERIAL_OLD, CMS_REMARK, CMS_INITIAL_MARK, CMS_CONCURRENT,
-        // g1
-        G1_YOUNG_PAUSE, G1_MIXED_PAUSE, G1_CONCURRENT, G1_YOUNG_INITIAL_MARK, G1_REMARK, G1_CLEANUP, G1_FULL_GC_SERIAL,
-        // shenandoah
-        SHENANDOAH_CANCELLING_GC, SHENANDOAH_CONCURRENT, SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK,
-        //
-        SHENANDOAH_FULL_GC, SHENANDOAH_DEGENERATED_GC_MARK, SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK,
-        //
-        SHENANDOAH_FINAL_UPDATE, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE, SHENANDOAH_STATS,
-        //
-        SHENANDOAH_TRIGGER,
-        // z
-        USING_Z, Z_MARK_END, Z_MARK_START, Z_RELOCATE_START,
-        // other
         APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, BLANK_LINE, CLASS_HISTOGRAM,
         //
-        CLASS_UNLOADING, FLS_STATISTICS, FOOTER_HEAP, GC_LOCKER, GC_OVERHEAD_LIMIT, HEADER_COMMAND_LINE_FLAGS,
+        CLASS_UNLOADING, CMS_CONCURRENT, CMS_INITIAL_MARK, CMS_REMARK, CMS_SERIAL_OLD, FLS_STATISTICS, FOOTER_HEAP,
         //
-        HEADER_MEMORY, HEADER_VERSION, HEAP_AT_GC, LOG_FILE, REFERENCE_GC, TENURING_DISTRIBUTION, THREAD_DUMP,
+        FOOTER_STATS, G1_CLEANUP, G1_CONCURRENT, G1_FULL_GC_PARALLEL, G1_FULL_GC_SERIAL, G1_MIXED_PAUSE, G1_REMARK,
         //
-        UNKNOWN, VERBOSE_GC_YOUNG, VERBOSE_GC_OLD, VM_WARNING
+        G1_YOUNG_INITIAL_MARK, G1_YOUNG_PAUSE, GC_INFO, GC_LOCKER, GC_OVERHEAD_LIMIT, HEADER_COMMAND_LINE_FLAGS,
+        //
+        HEADER_MEMORY, HEADER_VERSION, HEAP_ADDRESS, HEAP_AT_GC, HEAP_REGION_SIZE, LOG_FILE, METASPACE_UTILS_REPORT,
+        //
+        OOME_METASPACE, PAR_NEW, PARALLEL_COMPACTING_OLD, PARALLEL_SCAVENGE, PARALLEL_SERIAL_OLD, REFERENCE_GC,
+        //
+        SERIAL_NEW, SERIAL_OLD, SHENANDOAH_CANCELLING_GC, SHENANDOAH_CONCURRENT,
+        //
+        SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK, SHENANDOAH_DEGENERATED_GC_MARK, SHENANDOAH_FINAL_EVAC,
+        //
+        SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_UPDATE, SHENANDOAH_FULL_GC, SHENANDOAH_INIT_MARK,
+        //
+        SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE, SHENANDOAH_STATS, SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION,
+        //
+        THREAD_DUMP, UNIFIED_BLANK_LINE, UNIFIED_CMS_INITIAL_MARK, UNIFIED_CONCURRENT, UNIFIED_G1_CLEANUP,
+        //
+        UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE,
+        //
+        UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER, UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD,
+        //
+        UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD,
+        //
+        UNIFIED_YOUNG, UNKNOWN, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH, USING_Z,
+        //
+        VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
     };
 
     /**
@@ -186,13 +179,13 @@ public final class JdkUtil {
      * Defined triggers.
      */
     public enum TriggerType {
-        SYSTEM_GC, METADATA_GC_THRESHOLD, ALLOCATION_FAILURE, UNDEFINED, UNKNOWN, TO_SPACE_EXHAUSTED,
+        ALLOCATION_FAILURE, CLASS_HISTOGRAM, CMS_CONCURRENT_MODE_FAILURE, CMS_CONCURRENT_MODE_INTERRUPTED,
         //
-        G1_EVACUATION_PAUSE, GCLOCATER_INITIATED_GC, CMS_INITIAL_MARK, CMS_FINAL_REMARK, CMS_CONCURRENT_MODE_FAILURE,
+        CMS_FINAL_REMARK, CMS_INITIAL_MARK, ERGONOMICS, G1_EVACUATION_PAUSE, GCLOCATER_INITIATED_GC,
         //
-        CMS_CONCURRENT_MODE_INTERRUPTED, CLASS_HISTOGRAM, LAST_DITCH_COLLECTION, JVMTI_FORCED_GARBAGE_COLLECTION,
+        HEAP_DUMP_INITIATED_GC, HEAP_INSPECTION_INITIATED_GC, JVMTI_FORCED_GARBAGE_COLLECTION, LAST_DITCH_COLLECTION,
         //
-        ERGONOMICS, HEAP_INSPECTION_INITIATED_GC, HEAP_DUMP_INITIATED_GC;
+        METADATA_GC_THRESHOLD, SYSTEM_GC, TO_SPACE_EXHAUSTED, UNDEFINED, UNKNOWN;
     };
 
     /**
@@ -688,34 +681,46 @@ public final class JdkUtil {
          * seems to have threading issues where sometimes logging gets mixed up under heavy load, and an event appears
          * to start before the previous event finished. They are mainly very small overlaps or a few milliseconds.
          */
-        long eventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(event.getTimestamp())).longValue();
+        long eventTimestampNanos = JdkMath.convertMillisToNanos(String.valueOf(event.getTimestamp())).longValue();
         // Exclude <code>ApplicationStoppedTime</code> w/o datestamp/timestamp
         // Exclude microevents where timestamps are equal (for report readability)
-        if (eventTimestampMicros > 0 && event.getTimestamp() != priorEvent.getTimestamp()) {
-            long priorEventTimestampMicros = JdkMath.convertMillisToMicros(String.valueOf(priorEvent.getTimestamp()))
+        if (eventTimestampNanos > 0 && event.getTimestamp() != priorEvent.getTimestamp()) {
+            long priorEventTimestampNanos = JdkMath.convertMillisToNanos(String.valueOf(priorEvent.getTimestamp()))
                     .longValue();
-            if (eventTimestampMicros < priorEventTimestampMicros) {
+            long priorEventDurationNanos;
+            if (priorEvent instanceof UnifiedSafepointEvent) {
+                priorEventDurationNanos = priorEvent.getDuration();
+            } else {
+                priorEventDurationNanos = JdkMath.convertMicrosToNanos(priorEvent.getDuration()).longValue();
+            }
+            if (eventTimestampNanos < priorEventTimestampNanos) {
                 throw new TimeWarpException("Bad order: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
                         + Constants.LINE_SEPARATOR + event.getLogEntry());
-            } else if (eventTimestampMicros < priorEventTimestampMicros + priorEvent.getDuration() - 5000000) {
+            } else if (eventTimestampNanos < priorEventTimestampNanos + priorEventDurationNanos - 5000000000L) {
                 // Only report if overlap > 5 sec to account for overlaps due to JDK threading issues and use of
                 // -XX:+UseFastUnorderedTimeStamps
                 // TODO: Make this configurable w/ a command line option?
                 throw new TimeWarpException("Event overlap: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
                         + Constants.LINE_SEPARATOR + event.getLogEntry());
             } else {
+                long eventDurationNanos;
+                if (event instanceof UnifiedSafepointEvent) {
+                    eventDurationNanos = event.getDuration();
+                } else {
+                    eventDurationNanos = JdkMath.convertMicrosToNanos(event.getDuration()).longValue();
+                }
                 /*
                  * Timestamp is the start of a vm event; therefore, the interval is from the end of the prior event to
                  * the end of the current event.
                  */
-                long interval = eventTimestampMicros + event.getDuration() - priorEventTimestampMicros
-                        - priorEvent.getDuration();
+                long interval = eventTimestampNanos + eventDurationNanos - priorEventTimestampNanos
+                        - priorEventDurationNanos;
                 // Determine the maximum duration for the given interval that meets the throughput goal.
-                BigDecimal durationThreshold = new BigDecimal(100 - throughputThreshold);
-                durationThreshold = durationThreshold.movePointLeft(2);
-                durationThreshold = durationThreshold.multiply(new BigDecimal(interval));
-                durationThreshold.setScale(0, RoundingMode.DOWN);
-                isBottleneck = event.getDuration() > durationThreshold.longValue();
+                BigDecimal durationThresholdNanos = new BigDecimal(100 - throughputThreshold);
+                durationThresholdNanos = durationThresholdNanos.movePointLeft(2);
+                durationThresholdNanos = durationThresholdNanos.multiply(new BigDecimal(interval));
+                durationThresholdNanos.setScale(0, RoundingMode.DOWN);
+                isBottleneck = eventDurationNanos > durationThresholdNanos.longValue();
             }
         }
         return isBottleneck;

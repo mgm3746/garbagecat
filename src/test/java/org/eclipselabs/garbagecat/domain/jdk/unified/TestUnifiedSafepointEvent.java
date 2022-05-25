@@ -53,8 +53,8 @@ class TestUnifiedSafepointEvent {
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(684934853379L, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(204, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(454, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
@@ -69,8 +69,8 @@ class TestUnifiedSafepointEvent {
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(204, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(454, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
@@ -85,8 +85,8 @@ class TestUnifiedSafepointEvent {
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(204, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(454, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
@@ -100,8 +100,8 @@ class TestUnifiedSafepointEvent {
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(204, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(454, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
@@ -115,8 +115,8 @@ class TestUnifiedSafepointEvent {
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(204, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(454, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
@@ -128,8 +128,8 @@ class TestUnifiedSafepointEvent {
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.CLEAN_CLASSLOADER_DATA_METASPACES, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(192, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(138, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(73, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(138450, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(73766, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
@@ -141,8 +141,8 @@ class TestUnifiedSafepointEvent {
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.G1_CONCURRENT, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(64, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(79, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(349, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(79150, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(349999, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
@@ -154,8 +154,8 @@ class TestUnifiedSafepointEvent {
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.GEN_COLLECT_FOR_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(61, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(69, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(779, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(69521, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(779732, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
@@ -167,8 +167,8 @@ class TestUnifiedSafepointEvent {
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.Z_MARK_END, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(129, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(79, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(16, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(79105, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(16082, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
@@ -180,8 +180,8 @@ class TestUnifiedSafepointEvent {
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.Z_MARK_START, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(124, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(99, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(30, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(99888, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(30677, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
@@ -193,8 +193,8 @@ class TestUnifiedSafepointEvent {
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.Z_RELOCATE_START, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(132, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(138, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(15, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(138018, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(15653, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
@@ -209,8 +209,8 @@ class TestUnifiedSafepointEvent {
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(204, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(454, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test

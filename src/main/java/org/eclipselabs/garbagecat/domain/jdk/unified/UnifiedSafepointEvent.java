@@ -135,12 +135,12 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
     private long timestamp;
 
     /**
-     * The elapsed clock time the application threads were stopped (at safepont) in microseconds (rounded).
+     * The elapsed clock time the application threads were stopped (at safepont) in nanoseconds (rounded).
      */
     private long timeThreadsStopped;
 
     /**
-     * The elapsed clock time to stop all threads (bring the JVM to safepoint) in microseconds (rounded).
+     * The elapsed clock time to stop all threads (bring the JVM to safepoint) in nanoseconds (rounded).
      */
     private long timeToStopThreads;
 
@@ -178,8 +178,8 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
                         timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                timeThreadsStopped = JdkMath.convertSecsToMicros(matcher.group(71)).intValue();
-                timeToStopThreads = JdkMath.convertSecsToMicros(matcher.group(72)).intValue();
+                timeThreadsStopped = JdkMath.convertSecsToNanos(matcher.group(71)).intValue();
+                timeToStopThreads = JdkMath.convertSecsToNanos(matcher.group(72)).intValue();
             }
         } else if ((matcher = REGEX_JDK17_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
@@ -201,8 +201,8 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
                         timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                timeThreadsStopped = JdkMath.convertNanosToMicros(matcher.group(26)).intValue();
-                timeToStopThreads = JdkMath.convertNanosToMicros(matcher.group(25)).intValue();
+                timeThreadsStopped = Long.parseLong(matcher.group(26));
+                timeToStopThreads = Long.parseLong(matcher.group(25));
             }
         }
     }

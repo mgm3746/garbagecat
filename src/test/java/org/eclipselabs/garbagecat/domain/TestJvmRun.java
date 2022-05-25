@@ -636,20 +636,21 @@ class TestJvmRun {
         assertEquals((long) 167, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
         assertEquals(362, jvmRun.getLastGcEvent().getDuration(), "GC last duration not correct.");
         assertEquals(12, jvmRun.getUnifiedSafepointEventCount(), "Safepoint event count not correct.");
-        assertEquals(25552, jvmRun.getUnifiedSafepointTimeTotal(), "Safepoint time total not correct.");
+        assertEquals(25565000, jvmRun.getUnifiedSafepointTimeTotal(), "Safepoint time total not correct.");
         assertEquals((long) 29, jvmRun.getFirstSafepointEvent().getTimestamp(),
                 "Safepoint first timestamp not correct.");
         assertEquals((long) 166, jvmRun.getLastSafepointEvent().getTimestamp(),
                 "Safepoint last timestamp not correct.");
-        assertEquals(439, jvmRun.getLastSafepointEvent().getDuration(), "Safepoint last duration not correct.");
+        assertEquals(439900, jvmRun.getLastSafepointEvent().getDuration(), "Safepoint last duration not correct.");
         assertEquals((long) 29, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
         assertEquals((long) 167, jvmRun.getLastEvent().getTimestamp(), "JVM last event timestamp not correct.");
         assertEquals((long) 167, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
         assertEquals((long) 86, jvmRun.getGcThroughput(), "GC throughput not correct.");
+        assertEquals((long) 25565000, jvmRun.getUnifiedSafepointTimeTotal(), "Safepoint total time not correct.");
         assertEquals((long) 85, jvmRun.getUnifiedSafepointThroughput(), "Safepoint throughput not correct.");
         assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
-        assertEquals((long) 95, jvmRun.getGcUnifiedSafepointRatio(), "GC/Safepoint ratio not correct.");
+        assertEquals((long) 94, jvmRun.getGcUnifiedSafepointRatio(), "GC/Safepoint ratio not correct.");
         assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_GC_SAFEPOINT_RATIO),
                 Analysis.WARN_GC_SAFEPOINT_RATIO + " incorrectly not identified.");
     }
@@ -682,12 +683,12 @@ class TestJvmRun {
         assertEquals((long) 2625, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
         assertEquals(4, jvmRun.getLastGcEvent().getDuration(), "GC last duration not correct.");
         assertEquals(154, jvmRun.getUnifiedSafepointEventCount(), "Safepoint event count not correct.");
-        assertEquals(12690, jvmRun.getUnifiedSafepointTimeTotal(), "Safepoint time total not correct.");
+        assertEquals(12839885, jvmRun.getUnifiedSafepointTimeTotal(), "Safepoint time total not correct.");
         assertEquals((long) 125, jvmRun.getFirstSafepointEvent().getTimestamp(),
                 "Safepoint first timestamp not correct.");
         assertEquals((long) 2625, jvmRun.getLastSafepointEvent().getTimestamp(),
                 "Safepoint last timestamp not correct.");
-        assertEquals(157, jvmRun.getLastSafepointEvent().getDuration(), "Safepoint last duration not correct.");
+        assertEquals(158429, jvmRun.getLastSafepointEvent().getDuration(), "Safepoint last duration not correct.");
         assertEquals((long) 125, jvmRun.getFirstEvent().getTimestamp(), "JVM first event timestamp not correct.");
         assertEquals((long) 2625, jvmRun.getLastEvent().getTimestamp(), "JVM last event timestamp not correct.");
         assertEquals((long) 2625, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");

@@ -229,12 +229,12 @@ public class JvmRun {
     private int unifiedSafepointEventCount;
 
     /**
-     * Maximum safepoint time duration (microseconds).
+     * Maximum safepoint time duration (nanoseconds).
      */
     private long unifiedSafepointTimeMax;
 
     /**
-     * Total unified safepoint time duration (microseconds).
+     * Total unified safepoint time duration (nanoseconds).
      */
     private long unifiedSafepointTimeTotal;
 
@@ -970,15 +970,16 @@ public class JvmRun {
 
     /**
      * 
-     * @return Ratio of GC to unified safepoint time as a percent rounded to the nearest integer. 100 means all
-     *         safepoint time spent doing GC. 0 means none of the safepoint time was due to GC.
+     * @return Ratio of GC (microseconds) to unified safepoint (nanoseconds) time as a percent rounded to the nearest
+     *         integer. 100 means all safepoint time spent doing GC. 0 means none of the safepoint time was due to GC.
      */
     public long getGcUnifiedSafepointRatio() {
-        if (gcPauseTotal <= 0 || unifiedSafepointTimeTotal <= 0) {
+        long unifiedSafepointTimeTotalMicros = JdkMath.convertNanosToMicros(unifiedSafepointTimeTotal).longValue();
+        if (gcPauseTotal <= 0 || unifiedSafepointTimeTotalMicros <= 0) {
             return 100L;
         }
         BigDecimal ratio = new BigDecimal(gcPauseTotal);
-        ratio = ratio.divide(new BigDecimal(unifiedSafepointTimeTotal), 2, HALF_EVEN);
+        ratio = ratio.divide(new BigDecimal(unifiedSafepointTimeTotalMicros), 2, HALF_EVEN);
         return ratio.movePointRight(2).longValue();
     }
 
@@ -1172,7 +1173,7 @@ public class JvmRun {
             return 0L;
         }
         long timeNotSafepoint = getJvmRunDuration()
-                - JdkMath.convertMicrosToMillis(unifiedSafepointTimeTotal).longValue();
+                - JdkMath.convertNanosToMillis(unifiedSafepointTimeTotal).longValue();
         BigDecimal throughput = new BigDecimal(timeNotSafepoint);
         throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
         return throughput.movePointRight(2).longValue();

@@ -127,6 +127,21 @@ public final class JdkMath {
     }
 
     /**
+     * Convert microseconds to nanoseconds.
+     * 
+     * For example: Convert 98 to 98000.
+     * 
+     * @param micros
+     *            Microseconds as a whole number.
+     * @return Nanoseconds rounded down to a whole.
+     */
+    public static BigDecimal convertMicrosToNanos(long micros) {
+        BigDecimal nanos = new BigDecimal(micros).movePointRight(3);
+        // Round down to avoid TimeWarpExceptions when events are spaced close together
+        return nanos.setScale(0, RoundingMode.DOWN);
+    }
+
+    /**
      * Convert microseconds to seconds.
      * 
      * For example: Convert 987654321 to 987.654.
@@ -157,6 +172,22 @@ public final class JdkMath {
     }
 
     /**
+     * Convert milliseconds to nanoseconds.
+     * 
+     * For example: Convert 0.003 to 3000
+     * 
+     * @param millis
+     *            Milliseconds as a whole number or decimal.
+     * @return Nanoseconds rounded to a whole number.
+     */
+    public static BigDecimal convertMillisToNanos(String millis) {
+        // BigDecimal does not accept decimal commas, only decimal periods
+        BigDecimal duration = new BigDecimal(millis.replace(",", ".")).movePointRight(6);
+        // Round down to avoid TimeWarpExceptions when events are spaced close together
+        return duration.setScale(0, RoundingMode.DOWN);
+    }
+
+    /**
      * Convert milliseconds to seconds.
      * 
      * For example: Convert 123456 to 123.456.
@@ -173,6 +204,20 @@ public final class JdkMath {
     /**
      * Convert nanoseconds to microseconds.
      * 
+     * For example: Convert 987654321 to 987654.321.
+     * 
+     * @param nanos
+     *            Nanoseconds as a whole number.
+     * @return Microseconds rounded to 3 decimal places.
+     */
+    public static BigDecimal convertNanosToMicros(long nanos) {
+        BigDecimal duration = new BigDecimal(nanos);
+        return duration.movePointLeft(3).setScale(3, RoundingMode.HALF_EVEN);
+    }
+
+    /**
+     * Convert nanoseconds to microseconds.
+     * 
      * For example: Convert 98765 to 98.
      * 
      * @param nanos
@@ -183,6 +228,20 @@ public final class JdkMath {
         BigDecimal micros = new BigDecimal(nanos).movePointLeft(3);
         // Round down to avoid TimeWarpExceptions when events are spaced close together
         return micros.setScale(0, RoundingMode.DOWN);
+    }
+
+    /**
+     * Convert nanoseconds to milliseconds.
+     * 
+     * For example: Convert 987654321 to 987.654.
+     * 
+     * @param nanos
+     *            Nanoseconds as a whole number.
+     * @return Milliseconds rounded to 3 decimal places.
+     */
+    public static BigDecimal convertNanosToMillis(long nanos) {
+        BigDecimal duration = new BigDecimal(nanos);
+        return duration.movePointLeft(6).setScale(3, RoundingMode.HALF_EVEN);
     }
 
     /**
@@ -231,6 +290,22 @@ public final class JdkMath {
         BigDecimal millis = new BigDecimal(secs.replace(",", ".")).movePointRight(3);
         // Round down to avoid TimeWarpExceptions when events are spaced close together
         return millis.setScale(0, RoundingMode.DOWN);
+    }
+
+    /**
+     * Convert seconds to nanoseconds.
+     * 
+     * For example: Convert 0.0225213 to 23521000
+     * 
+     * @param secs
+     *            Seconds as a whole number or decimal.
+     * @return Nanoseconds rounded to a whole number.
+     */
+    public static BigDecimal convertSecsToNanos(String secs) {
+        // BigDecimal does not accept decimal commas, only decimal periods
+        BigDecimal micros = new BigDecimal(secs.replace(",", ".")).movePointRight(9);
+        // Round down to avoid TimeWarpExceptions when events are spaced close together
+        return micros.setScale(0, RoundingMode.DOWN);
     }
 
     public static Memory convertSizeToKilobytes(double size, char units) {
