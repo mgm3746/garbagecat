@@ -24,6 +24,8 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_PREPROCESS_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_PREPROCESS_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_REORDER_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_REORDER_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_REPORT_CONSOLE_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_REPORT_CONSOLE_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_LONG;
@@ -75,6 +77,8 @@ public class OptionsParser {
         options.addOption(OPTION_REORDER_SHORT, OPTION_REORDER_LONG, false, "reorder logging by timestamp");
         options.addOption(OPTION_OUTPUT_SHORT, OPTION_OUTPUT_LONG, true,
                 "output file name (default " + OUTPUT_FILE_NAME + ")");
+        options.addOption(OPTION_REPORT_CONSOLE_SHORT, OPTION_REPORT_CONSOLE_LONG, false,
+                "print report to stdout instead of file");
     }
 
     /**

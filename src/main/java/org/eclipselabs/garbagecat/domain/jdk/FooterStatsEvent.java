@@ -30,7 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * (<code>-Xlog:gc*:file=&lt;file&gt;</code>).
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) JDK8 standard format:

@@ -38,7 +38,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * Young generation collector used when <code>-XX:+UseSerialGC</code> JVM option specified.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Standard format:

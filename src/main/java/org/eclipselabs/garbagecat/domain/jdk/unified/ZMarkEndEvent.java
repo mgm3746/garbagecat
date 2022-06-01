@@ -30,7 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * The second phase of the Z garbage collector. Do reference processing, weak root cleaning, mark regions to compact.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <pre>
  * [2021-12-01T10:04:06.364-0500] GC(0) Pause Mark End 0.005ms

@@ -31,7 +31,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * logging, and unified detailed gc logging (<code>-Xlog:gc*:file=&lt;file&gt;</code>).
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) End of {@link org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent}:

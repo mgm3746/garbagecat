@@ -25,7 +25,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * GC log file information.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <pre>
  * 2016-09-29 07:13:12 GC log file created /path/to/gc.log

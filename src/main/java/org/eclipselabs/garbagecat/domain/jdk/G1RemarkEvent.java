@@ -31,7 +31,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * G1 collector remarking phase.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Standard format:

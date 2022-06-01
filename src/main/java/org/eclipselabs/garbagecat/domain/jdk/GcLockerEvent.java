@@ -31,7 +31,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * Retain logging, to allow analysis if trigger information is not being printed.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <pre>
  * 2017-01-08T14:18:15.878+0300: 58626.878: [GC (GCLocker Initiated GC)2017-01-08T14:18:15.878+0300: 58626.878: [ParNew: 5908427K-&gt;5908427K(8388608K), 0.0000320 secs] 19349630K-&gt;19349630K(22020096K) icms_dc=100 , 0.0002560 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]

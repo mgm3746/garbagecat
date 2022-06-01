@@ -31,7 +31,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * Initial line of JDK9+ logging indicating collector family.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) With <code>-Xlog:gc:file=&lt;file&gt;</code> (no details).

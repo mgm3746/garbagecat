@@ -53,7 +53,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <li>EnableBiasLocking</li>
  * </ul>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Standard format:
@@ -63,7 +63,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * Total time for which application threads were stopped: 0.0968457 seconds
  * </pre>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Prior to JDK8 update 40:

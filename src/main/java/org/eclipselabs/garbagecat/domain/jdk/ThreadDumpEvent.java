@@ -33,7 +33,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * avoid mixing thread dumps with garbage collection logging.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Thread dump date/time line (added with JDK 1.6):

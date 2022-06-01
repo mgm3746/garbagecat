@@ -47,7 +47,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * heap occupancy threshold for initiating a mixed pause.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * Preprocessed:

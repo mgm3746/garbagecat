@@ -42,7 +42,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * {@link org.eclipselabs.garbagecat.domain.jdk.ParNewEvent} with unified logging (JDK9+).
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * Preprocessed with {@link org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction}:

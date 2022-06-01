@@ -32,7 +32,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * Therefore, advise against using it, as it adds overhead with no analysis value.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <pre>
  * Application time: 130.5284640 seconds

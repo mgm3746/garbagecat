@@ -28,7 +28,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * JDK17 Metaspace event printed at the bottom of every Shenandoah gc.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <pre>
  * [0.303s][info][gc,metaspace] Metaspace: 3378K(3584K)-&gt;3378K(3584K) NonClass: 3120K(3200K)-&gt;3120K(3200K) Class: 258K(384K)-&gt;258K(384K)

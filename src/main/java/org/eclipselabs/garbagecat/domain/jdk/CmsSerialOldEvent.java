@@ -49,7 +49,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * specified with the <code>-XX:+UseConcMarkSweepGC</code> JVM option.
  * </p>
  * 
- * <h3>Example Logging</h3>
+ * <h2>Example Logging</h2>
  * 
  * <p>
  * 1) Standard format:

@@ -124,6 +124,17 @@ Put the YUM repo file into your /etc/yum/repos.d/:
 * [RHEL 7 repo file](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-7/bostrt-garbagecat-epel-7.repo)
 * [RHEL 8 repo file](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-8/bostrt-garbagecat-epel-78.repo)
 
+### Docker
+
+```bash
+$ docker run -v "$PWD":/home/garbagecat/files:z garbagecat:latest --help
+$ docker run -v "$PWD":/home/garbagecat/files:z garbagecat:latest --console /home/garbagecat/files/src/test/gc-example.log >> report.txt
+```
+
+NOTES:
+1. Local directory get mounted on existing `/home/garbagecat/files` directory.
+1. You need to use the stdout with `--console`.
+
 ## Building ##
 
 Download the latest Maven: [http://maven.apache.org/download.html](http://maven.apache.org/download.html).
@@ -169,14 +180,15 @@ $ /opt/apache-maven-3.6.3/bin/mvn -U -fn clean install
 ```
 $ java -jar garbagecat.jar --help
 usage: garbagecat [OPTION]... [FILE]
+ -c,--console               print report to stdout instead of file
  -h,--help                  help
  -j,--jvmoptions <arg>      JVM options used during JVM run
- -l,--latest                latest version 
+ -l,--latest                latest version
  -o,--output <arg>          output file name (default report.txt)
  -p,--preprocess            do preprocessing
  -r,--reorder               reorder logging by timestamp
  -s,--startdatetime <arg>   JVM start datetime (yyyy-MM-dd HH:mm:ss.SSS)
-                            for converting GC logging timestamps to datetime
+                            required for handling datestamp-only logging
  -t,--threshold <arg>       threshold (0-100) for throughput bottleneck
                             reporting
  -v,--version               version
@@ -187,8 +199,8 @@ Notes:
   1. JVM options are can be passed in if they are not present in the gc logging header. Specifying the JVM options used during the JVM run allows for more detailed analysis.
   1. By default a report called report.txt is created in the directory where the **garbagecat** tool is run. Specifying a custom name for the output file is useful when analyzing multiple gc logs.
   1. Version information is included in the report by using the version and.or latest version options.
-  1. Preprocessing is sometimes required (e.g. when non-standard JVM options are used). It removes extraneous logging and makes any format adjustments needed for parsing (e.g. combining logging that the JVM sometimes splits across multiple lines). 
-  1. When preprocessing is enabled, a preprocessed file will be created in the same location as the input file with a ".pp" file extension added. 
+  1. Preprocessing is sometimes required (e.g. when non-standard JVM options are used). It removes extraneous logging and makes any format adjustments needed for parsing (e.g. combining logging that the JVM sometimes splits across multiple lines).
+  1. When preprocessing is enabled, a preprocessed file will be created in the same location as the input file with a ".pp" file extension added.
   1. Reordering is for gc logging that has gotten out of time/date order. Very rare, but some logging management systems/processes are susceptible to this happening (e.g. logging stored in a central repository).
   1. The startdatetime option is required when the gc logging has datestamps (e.g. 2017-04-03T03:13:06.756-0500) but no timestamps (e.g. 121.107), something that will not happen when using the standard recommended JVM options. Timestamps are required for garbagecat analysis, so if the logging does not have timestamps, you will need to pass in the JVM startup datetime so gc logging timestamps can be computed.
   1. If threshold is not defined, it defaults to 90.
