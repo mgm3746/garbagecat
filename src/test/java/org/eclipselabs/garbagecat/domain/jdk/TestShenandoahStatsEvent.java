@@ -17,6 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -597,43 +601,37 @@ class TestShenandoahStatsEvent {
     }
 
     @Test
-    void testJdk11() {
+    void testJdk11() throws IOException {
         File testFile = TestUtil.getFile("dataset195.txt");
-        GcManager gcManager1 = new GcManager();
-        gcManager1.store(testFile, false);
-        GcManager gcManager2 = new GcManager();
-        File preprocessedFile = gcManager1.preprocess(testFile, null);
-        gcManager2.store(preprocessedFile, false);
-        JvmRun jvmRun1 = gcManager1.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2, jvmRun1.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun1.getEventTypes().contains(LogEventType.UNKNOWN),
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun1.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
                 JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " collector not identified.");
-        assertTrue(jvmRun1.getEventTypes().contains(LogEventType.UNIFIED_BLANK_LINE),
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_BLANK_LINE),
                 JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " collector not identified.");
-        JvmRun jvmRun2 = gcManager2.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(0, jvmRun2.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
-    void testJdk11Time() {
+    void testJdk11Time() throws IOException {
         File testFile = TestUtil.getFile("dataset197.txt");
-        GcManager gcManager1 = new GcManager();
-        gcManager1.store(testFile, false);
-        GcManager gcManager2 = new GcManager();
-        File preprocessedFile = gcManager1.preprocess(testFile, null);
-        gcManager2.store(preprocessedFile, false);
-        JvmRun jvmRun1 = gcManager1.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2, jvmRun1.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun1.getEventTypes().contains(LogEventType.UNKNOWN),
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun1.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
                 JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " collector not identified.");
-        assertTrue(jvmRun1.getEventTypes().contains(LogEventType.UNIFIED_BLANK_LINE),
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_BLANK_LINE),
                 JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " collector not identified.");
-        JvmRun jvmRun2 = gcManager2.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(0, jvmRun2.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test

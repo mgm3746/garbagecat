@@ -17,6 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -358,11 +362,12 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
-    void testSerial() {
+    void testSerial() throws IOException {
         File testFile = TestUtil.getFile("dataset237.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -374,11 +379,12 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
-    void testParallel() {
+    void testParallel() throws IOException {
         File testFile = TestUtil.getFile("dataset238.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -390,11 +396,12 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
-    void testG1() {
+    void testG1() throws IOException {
         File testFile = TestUtil.getFile("dataset239.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -406,11 +413,13 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
-    void testShenandoah() {
+    void testShenandoah() throws IOException {
         File testFile = TestUtil.getFile("dataset240.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -422,11 +431,12 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
-    void testZ() {
+    void testZ() throws IOException {
         File testFile = TestUtil.getFile("dataset241.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");

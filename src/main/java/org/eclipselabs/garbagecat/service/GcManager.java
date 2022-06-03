@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -160,7 +161,7 @@ public class GcManager {
             bufferedReader = new BufferedReader(new FileReader(logFile));
             bufferedWriter = new BufferedWriter(new FileWriter(preprocessFile));
 
-            // Used for detangling intermingled logging events that span multiple lines
+            // Used for de-tangling intermingled logging events that span multiple lines
             List<String> entangledLogLines = new ArrayList<String>();
             // Used to provide context for preprocessing decisions
             Set<String> context = new HashSet<String>();
@@ -240,6 +241,149 @@ public class GcManager {
     }
 
     /**
+     * Preprocess. Remove extraneous information and format for parsing.
+     * 
+     * @param logLines
+     *            Raw garbage collection logging.
+     * @param jvmStartDate
+     *            The date and time the JVM was started.
+     * @return Preprocessed garbage collection logging.
+     */
+    public List<String> preprocess(List<String> logLines, Date jvmStartDate) {
+        if (logLines == null)
+            throw new IllegalArgumentException("logLines == null!!");
+
+        List<String> preprocessedLogList = new ArrayList<String>();
+
+        if (!logLines.isEmpty()) {
+
+            // Used for de-tangling intermingled logging events that span multiple lines
+            List<String> entangledLogLines = new ArrayList<String>();
+            // Used to provide context for preprocessing decisions
+            Set<String> context = new HashSet<String>();
+
+            String priorLogEntry = Constants.LINE_SEPARATOR;
+
+            Iterator<String> iterator = logLines.iterator();
+
+            String currentLogLine = iterator.next();
+            String priorLogLine = "";
+            String preprocessedLogLine = "";
+            String nextLogLine = null;
+
+            if (iterator.hasNext()) {
+                nextLogLine = iterator.next();
+            }
+
+            while (nextLogLine != null) {
+                preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
+                        entangledLogLines, context);
+                if (preprocessedLogLine != null) {
+                    String[] preprocessedLogLines = preprocessedLogLine.split(Constants.LINE_SEPARATOR);
+                    if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
+                            && !priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
+                        for (int i = 0; i < preprocessedLogLines.length; i++) {
+                            if (preprocessedLogLines[i] != "") {
+                                preprocessedLogList.add(preprocessedLogLines[i]);
+                            }
+                        }
+                    } else {
+                        if (preprocessedLogList.isEmpty()) {
+                            preprocessedLogList.add(preprocessedLogLine);
+
+                        } else {
+                            if (!priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
+                                String lastPreprocessedLogEntry = preprocessedLogList
+                                        .get(preprocessedLogList.size() - 1);
+                                preprocessedLogList.remove(preprocessedLogList.size() - 1);
+                                preprocessedLogList.add(lastPreprocessedLogEntry + preprocessedLogLines[0]);
+                                if (preprocessedLogLines.length > 1) {
+                                    for (int i = 1; i < preprocessedLogLines.length; i++) {
+                                        if (preprocessedLogLines[i] != "") {
+                                            preprocessedLogList.add(preprocessedLogLines[i]);
+                                        }
+                                    }
+                                }
+                            } else {
+                                if (preprocessedLogLines.length > 1) {
+                                    for (int i = 0; i < preprocessedLogLines.length; i++) {
+                                        if (preprocessedLogLines[i] != "") {
+                                            preprocessedLogList.add(preprocessedLogLines[i]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    priorLogEntry = preprocessedLogLine;
+                }
+
+                priorLogLine = currentLogLine;
+                currentLogLine = nextLogLine;
+                if (iterator.hasNext()) {
+                    nextLogLine = iterator.next();
+                } else {
+                    nextLogLine = null;
+                }
+            }
+
+            // Process last line
+            lastLogLineUnprocessed = currentLogLine;
+            preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
+                    entangledLogLines, context);
+            if (preprocessedLogLine != null) {
+                String[] preprocessedLogLines = preprocessedLogLine.split(Constants.LINE_SEPARATOR);
+                if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
+                        && !priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
+                    for (int i = 0; i < preprocessedLogLines.length; i++) {
+                        if (preprocessedLogLines[i] != "") {
+                            preprocessedLogList.add(preprocessedLogLines[i]);
+                        }
+                    }
+                } else {
+                    if (preprocessedLogList.isEmpty()) {
+                        preprocessedLogList.add(preprocessedLogLine);
+                    } else {
+                        if (!priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
+                            String lastPreprocessedLogEntry = preprocessedLogList.get(preprocessedLogList.size() - 1);
+                            preprocessedLogList.remove(preprocessedLogList.size() - 1);
+                            preprocessedLogList.add(lastPreprocessedLogEntry + preprocessedLogLines[0]);
+                            if (preprocessedLogLines.length > 1) {
+                                for (int i = 1; i < preprocessedLogLines.length; i++) {
+                                    if (preprocessedLogLines[i] != "") {
+                                        preprocessedLogList.add(preprocessedLogLines[i]);
+                                    }
+                                }
+                            }
+                        } else {
+                            if (preprocessedLogLines.length > 1) {
+                                for (int i = 0; i < preprocessedLogLines.length; i++) {
+                                    if (preprocessedLogLines[i] != "") {
+                                        preprocessedLogList.add(preprocessedLogLines[i]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // output entangled log lines
+            if (!entangledLogLines.isEmpty()) {
+                for (String logLine : entangledLogLines) {
+                    preprocessedLogList.add(logLine);
+                }
+                // Reset entangled log lines
+                entangledLogLines.clear();
+            }
+
+            preprocessed = true;
+        }
+
+        return preprocessedLogList;
+    }
+
+    /**
      * Determine the preprocessed log entry given the current, previous, and next log lines.
      * 
      * The previous log line is needed to prevent preprocessing overlap where preprocessors have common patterns that
@@ -264,7 +408,7 @@ public class GcManager {
      *            Information to make preprocessing decisions.
      * @return The preprocessed log line, or null if it was thrown away.
      */
-    private String getPreprocessedLogEntry(String currentLogLine, String priorLogLine, String nextLogLine,
+    public String getPreprocessedLogEntry(String currentLogLine, String priorLogLine, String nextLogLine,
             Date jvmStartDate, List<String> entangledLogLines, Set<String> context) {
 
         String preprocessedLogLine = null;
@@ -430,406 +574,386 @@ public class GcManager {
     /**
      * Parse the garbage collection logging for the JVM run and store the data in the data store.
      * 
-     * @param logFile
-     *            The garbage collection log file.
+     * @param logLines
+     *            The garbage collection loggine.
      * @param reorder
      *            Whether or not to allow logging to be reordered by timestamp.
      */
-    public void store(File logFile, boolean reorder) {
+    public void store(List<String> logLines, boolean reorder) {
 
-        if (logFile == null) {
+        if (logLines == null || logLines.isEmpty()) {
             return;
         }
 
-        // Parse gc log file
-        BufferedReader bufferedReader = null;
-        try {
-            bufferedReader = new BufferedReader(new FileReader(logFile));
-            String logLine = bufferedReader.readLine();
-            BlockingEvent priorEvent = null;
-            while (logLine != null) {
-                // If event has no timestamp, use most recent blocking timestamp.
-                LogEvent event = JdkUtil.parseLogLine(logLine);
-                if (event instanceof BlockingEvent) {
+        String logLine = null;
+        BlockingEvent priorEvent = null;
 
-                    // Verify logging in correct order. If overridden, logging will be stored and reordered by timestamp
-                    // for analysis.
-                    if (!reorder && priorEvent != null && event.getTimestamp() < priorEvent.getTimestamp()) {
-                        throw new TimeWarpException("Logging reversed: " + Constants.LINE_SEPARATOR
-                                + priorEvent.getLogEntry() + Constants.LINE_SEPARATOR + event.getLogEntry());
-                    }
+        Iterator<String> iterator = logLines.iterator();
+        while (iterator.hasNext()) {
+            logLine = iterator.next();
+            // If event has no timestamp, use most recent blocking timestamp.
+            LogEvent event = JdkUtil.parseLogLine(logLine);
+            if (event instanceof BlockingEvent) {
 
-                    jvmDao.addBlockingEvent((BlockingEvent) event);
+                // Verify logging in correct order. If overridden, logging will be stored and reordered by timestamp
+                // for analysis.
+                if (!reorder && priorEvent != null && event.getTimestamp() < priorEvent.getTimestamp()) {
+                    throw new TimeWarpException("Logging reversed: " + Constants.LINE_SEPARATOR
+                            + priorEvent.getLogEntry() + Constants.LINE_SEPARATOR + event.getLogEntry());
+                }
 
-                    // Analysis
+                jvmDao.addBlockingEvent((BlockingEvent) event);
 
-                    // 1) Explicit GC
-                    if (event instanceof TriggerData) {
-                        String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                            CollectorFamily collectorFamily = ((GcEvent) event).getCollectorFamily();
+                // Analysis
 
-                            switch (collectorFamily) {
-                            case G1:
-                                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1)
-                                        && event instanceof G1FullGcEvent) {
-                                    jvmDao.addAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1);
-                                } else if (!jvmDao.getAnalysis()
-                                        .contains(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK)
-                                        && event instanceof G1YoungInitialMarkEvent) {
-                                    jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK);
-                                }
-                                break;
-                            case CMS:
-                                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS)) {
-                                    jvmDao.addAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS);
-                                }
-                                break;
-                            case PARALLEL:
-                                if (event instanceof ParallelSerialOldEvent) {
-                                    if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL)) {
-                                        jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL);
-                                    }
-                                    if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL)) {
-                                        jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL);
-                                    }
-                                } else if (event instanceof ParallelCompactingOldEvent) {
-                                    if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_PARALLEL)) {
-                                        jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_PARALLEL);
-                                    }
-                                }
-                                break;
-                            case SERIAL:
-                                if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_SERIAL)) {
-                                    jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_SERIAL);
-                                }
-                                break;
-                            case SHENANDOAH:
-                                break;
-                            case UNKNOWN:
-                                if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN)) {
-                                    jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN);
-                                }
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-                    }
-
-                    // 2) Serial collections not caused by explicit GC
-                    if (event instanceof SerialCollection) {
-                        String trigger = null;
-                        if (event instanceof TriggerData) {
-                            trigger = ((TriggerData) event).getTrigger();
-                        }
+                // 1) Explicit GC
+                if (event instanceof TriggerData) {
+                    String trigger = ((TriggerData) event).getTrigger();
+                    if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
                         CollectorFamily collectorFamily = ((GcEvent) event).getCollectorFamily();
 
-                        if (trigger == null || (!trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)
-                                && !trigger.matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM)
-                                && !trigger.matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC)
-                                && !trigger.matches(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC))) {
-                            switch (collectorFamily) {
-                            case G1:
-                                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_G1)) {
-                                    jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC_G1);
+                        switch (collectorFamily) {
+                        case G1:
+                            if (!jvmDao.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1)
+                                    && event instanceof G1FullGcEvent) {
+                                jvmDao.addAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1);
+                            } else if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK)
+                                    && event instanceof G1YoungInitialMarkEvent) {
+                                jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK);
+                            }
+                            break;
+                        case CMS:
+                            if (!jvmDao.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS)) {
+                                jvmDao.addAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS);
+                            }
+                            break;
+                        case PARALLEL:
+                            if (event instanceof ParallelSerialOldEvent) {
+                                if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL)) {
+                                    jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL);
                                 }
-                                break;
-                            case CMS:
-                                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS)) {
-                                    jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC_CMS);
-                                }
-                                break;
-                            case PARALLEL:
                                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL)) {
                                     jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL);
                                 }
-                                break;
-                            case SERIAL:
-                                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC)) {
-                                    jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC);
+                            } else if (event instanceof ParallelCompactingOldEvent) {
+                                if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_PARALLEL)) {
+                                    jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_PARALLEL);
                                 }
-                                break;
-                            case UNKNOWN:
-                                break;
-                            default:
-                                break;
                             }
+                            break;
+                        case SERIAL:
+                            if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_SERIAL)) {
+                                jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_SERIAL);
+                            }
+                            break;
+                        case SHENANDOAH:
+                            break;
+                        case UNKNOWN:
+                            if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN)) {
+                                jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN);
+                            }
+                            break;
+                        default:
+                            break;
                         }
                     }
+                }
 
-                    // 3) CMS concurrent mode failure
-                    if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE)) {
-                        if (event instanceof CmsSerialOldEvent) {
-                            String trigger = ((TriggerData) event).getTrigger();
-                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE)) {
-                                jvmDao.addAnalysis(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE);
+                // 2) Serial collections not caused by explicit GC
+                if (event instanceof SerialCollection) {
+                    String trigger = null;
+                    if (event instanceof TriggerData) {
+                        trigger = ((TriggerData) event).getTrigger();
+                    }
+                    CollectorFamily collectorFamily = ((GcEvent) event).getCollectorFamily();
+
+                    if (trigger == null || (!trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)
+                            && !trigger.matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM)
+                            && !trigger.matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC)
+                            && !trigger.matches(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC))) {
+                        switch (collectorFamily) {
+                        case G1:
+                            if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_G1)) {
+                                jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC_G1);
                             }
+                            break;
+                        case CMS:
+                            if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS)) {
+                                jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC_CMS);
+                            }
+                            break;
+                        case PARALLEL:
+                            if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL)) {
+                                jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL);
+                            }
+                            break;
+                        case SERIAL:
+                            if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC)) {
+                                jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC);
+                            }
+                            break;
+                        case UNKNOWN:
+                            break;
+                        default:
+                            break;
                         }
                     }
+                }
 
-                    // 4) CMS concurrent mode interrupted
-                    if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED)) {
-                        if (event instanceof CmsSerialOldEvent) {
-                            String trigger = ((TriggerData) event).getTrigger();
-                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED)) {
-                                jvmDao.addAnalysis(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED);
-                            }
+                // 3) CMS concurrent mode failure
+                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE)) {
+                    if (event instanceof CmsSerialOldEvent) {
+                        String trigger = ((TriggerData) event).getTrigger();
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE)) {
+                            jvmDao.addAnalysis(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE);
                         }
                     }
+                }
 
-                    // 5) CMS incremental mode
-                    if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_INCREMENTAL_MODE)) {
-                        if (event instanceof CmsIncrementalModeCollector) {
-                            if (((CmsIncrementalModeCollector) event).isIncrementalMode()) {
-                                jvmDao.addAnalysis(Analysis.WARN_CMS_INCREMENTAL_MODE);
-                            }
+                // 4) CMS concurrent mode interrupted
+                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED)) {
+                    if (event instanceof CmsSerialOldEvent) {
+                        String trigger = ((TriggerData) event).getTrigger();
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED)) {
+                            jvmDao.addAnalysis(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED);
                         }
                     }
+                }
 
-                    // 6) Heap dump initiated gc
-                    if (!jvmDao.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_INITIATED_GC)) {
-                        if (event instanceof TriggerData) {
-                            String trigger = ((TriggerData) event).getTrigger();
-                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC)) {
-                                jvmDao.addAnalysis(Analysis.WARN_HEAP_DUMP_INITIATED_GC);
-                            }
+                // 5) CMS incremental mode
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_INCREMENTAL_MODE)) {
+                    if (event instanceof CmsIncrementalModeCollector) {
+                        if (((CmsIncrementalModeCollector) event).isIncrementalMode()) {
+                            jvmDao.addAnalysis(Analysis.WARN_CMS_INCREMENTAL_MODE);
                         }
                     }
+                }
 
-                    // 7) Heap inspection initiated gc
-                    if (!jvmDao.getAnalysis().contains(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC)) {
-                        if (event instanceof TriggerData) {
-                            String trigger = ((TriggerData) event).getTrigger();
-                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC)) {
-                                jvmDao.addAnalysis(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC);
-                            }
-                        }
-                    }
-
-                    // 8) Metaspace allocation failure
-                    if (!jvmDao.getAnalysis().contains(Analysis.ERROR_METASPACE_ALLOCATION_FAILURE)) {
-                        if (event instanceof TriggerData) {
-                            String trigger = ((TriggerData) event).getTrigger();
-                            if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION)) {
-                                jvmDao.addAnalysis(Analysis.ERROR_METASPACE_ALLOCATION_FAILURE);
-                            }
-                        }
-                    }
-
-                    // 9) JVM TI explicit gc
-                    if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_JVMTI)) {
-                        if (event instanceof TriggerData) {
-                            String trigger = ((TriggerData) event).getTrigger();
-                            if (trigger != null
-                                    && trigger.matches(JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION)) {
-                                jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_JVMTI);
-                            }
-                        }
-                    }
-
-                    // 10) G1 evacuation failure
+                // 6) Heap dump initiated gc
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_INITIATED_GC)) {
                     if (event instanceof TriggerData) {
                         String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && (trigger.matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED)
-                                || trigger.matches(JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW))) {
-                            if (!jvmDao.getAnalysis().contains(Analysis.ERROR_G1_EVACUATION_FAILURE)) {
-                                jvmDao.addAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE);
-                            }
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC)) {
+                            jvmDao.addAnalysis(Analysis.WARN_HEAP_DUMP_INITIATED_GC);
                         }
                     }
+                }
 
-                    // 11) CMS promotion failure
+                // 7) Heap inspection initiated gc
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC)) {
                     if (event instanceof TriggerData) {
                         String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_PROMOTION_FAILED)) {
-                            CollectorFamily collectorFamily = ((GcEvent) event).getCollectorFamily();
-                            if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED)
-                                    && collectorFamily.equals(CollectorFamily.CMS)) {
-                                jvmDao.addAnalysis(Analysis.ERROR_CMS_PROMOTION_FAILED);
-                            }
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC)) {
+                            jvmDao.addAnalysis(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC);
                         }
                     }
+                }
 
-                    // 12) -XX:+PrintGCCause is essential for troubleshooting G1 full GCs
-                    if (event instanceof G1FullGcEvent) {
+                // 8) Metaspace allocation failure
+                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_METASPACE_ALLOCATION_FAILURE)) {
+                    if (event instanceof TriggerData) {
                         String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger == null) {
-                            if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED)) {
-                                jvmDao.addAnalysis(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
-                            }
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION)) {
+                            jvmDao.addAnalysis(Analysis.ERROR_METASPACE_ALLOCATION_FAILURE);
                         }
                     }
+                }
 
-                    // 13) CMS_REMARK class unloading
-                    if (event instanceof CmsRemarkEvent && !((CmsRemarkEvent) event).isClassUnloading()
-                            && !jvmDao.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
-                        jvmDao.addAnalysis(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
-                    }
-
-                    // 14) Humongous allocation
-                    if (event instanceof G1Collector && event instanceof TriggerData
-                            && !jvmDao.getAnalysis().contains(Analysis.INFO_G1_HUMONGOUS_ALLOCATION)) {
+                // 9) JVM TI explicit gc
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_JVMTI)) {
+                    if (event instanceof TriggerData) {
                         String trigger = ((TriggerData) event).getTrigger();
-                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION)) {
-                            jvmDao.addAnalysis(Analysis.INFO_G1_HUMONGOUS_ALLOCATION);
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION)) {
+                            jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_JVMTI);
                         }
                     }
+                }
 
-                    // 15) Inverted parallelism
-                    if (event instanceof ParallelEvent && event instanceof TimesData) {
-                        if (((TimesData) event).getTimeUser() != TimesData.NO_DATA
-                                && ((TimesData) event).getTimeReal() != TimesData.NO_DATA) {
-                            jvmDao.setParallelCount(jvmDao.getParallelCount() + 1);
-                            if (event instanceof TimesData && ((TimesData) event).getTimeUser() > 0
-                                    && JdkMath.isInvertedParallelism(((TimesData) event).getParallelism())) {
-                                jvmDao.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount() + 1);
-                                if (jvmDao.getWorstInvertedParallelismEvent() == null) {
+                // 10) G1 evacuation failure
+                if (event instanceof TriggerData) {
+                    String trigger = ((TriggerData) event).getTrigger();
+                    if (trigger != null && (trigger.matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED)
+                            || trigger.matches(JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW))) {
+                        if (!jvmDao.getAnalysis().contains(Analysis.ERROR_G1_EVACUATION_FAILURE)) {
+                            jvmDao.addAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE);
+                        }
+                    }
+                }
+
+                // 11) CMS promotion failure
+                if (event instanceof TriggerData) {
+                    String trigger = ((TriggerData) event).getTrigger();
+                    if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_PROMOTION_FAILED)) {
+                        CollectorFamily collectorFamily = ((GcEvent) event).getCollectorFamily();
+                        if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED)
+                                && collectorFamily.equals(CollectorFamily.CMS)) {
+                            jvmDao.addAnalysis(Analysis.ERROR_CMS_PROMOTION_FAILED);
+                        }
+                    }
+                }
+
+                // 12) -XX:+PrintGCCause is essential for troubleshooting G1 full GCs
+                if (event instanceof G1FullGcEvent) {
+                    String trigger = ((TriggerData) event).getTrigger();
+                    if (trigger == null) {
+                        if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED)) {
+                            jvmDao.addAnalysis(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
+                        }
+                    }
+                }
+
+                // 13) CMS_REMARK class unloading
+                if (event instanceof CmsRemarkEvent && !((CmsRemarkEvent) event).isClassUnloading()
+                        && !jvmDao.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
+                    jvmDao.addAnalysis(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
+                }
+
+                // 14) Humongous allocation
+                if (event instanceof G1Collector && event instanceof TriggerData
+                        && !jvmDao.getAnalysis().contains(Analysis.INFO_G1_HUMONGOUS_ALLOCATION)) {
+                    String trigger = ((TriggerData) event).getTrigger();
+                    if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION)) {
+                        jvmDao.addAnalysis(Analysis.INFO_G1_HUMONGOUS_ALLOCATION);
+                    }
+                }
+
+                // 15) Inverted parallelism
+                if (event instanceof ParallelEvent && event instanceof TimesData) {
+                    if (((TimesData) event).getTimeUser() != TimesData.NO_DATA
+                            && ((TimesData) event).getTimeReal() != TimesData.NO_DATA) {
+                        jvmDao.setParallelCount(jvmDao.getParallelCount() + 1);
+                        if (event instanceof TimesData && ((TimesData) event).getTimeUser() > 0
+                                && JdkMath.isInvertedParallelism(((TimesData) event).getParallelism())) {
+                            jvmDao.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount() + 1);
+                            if (jvmDao.getWorstInvertedParallelismEvent() == null) {
+                                jvmDao.setWorstInvertedParallelismEvent(event);
+                            } else {
+                                if (((TimesData) event)
+                                        .getParallelism() < ((TimesData) jvmDao.getWorstInvertedParallelismEvent())
+                                                .getParallelism()) {
+                                    // Update lowest "low"
                                     jvmDao.setWorstInvertedParallelismEvent(event);
-                                } else {
-                                    if (((TimesData) event)
-                                            .getParallelism() < ((TimesData) jvmDao.getWorstInvertedParallelismEvent())
-                                                    .getParallelism()) {
-                                        // Update lowest "low"
-                                        jvmDao.setWorstInvertedParallelismEvent(event);
-                                    }
                                 }
                             }
                         }
                     }
+                }
 
-                    // 16) Check for CMS initial mark low parallelism
-                    if (event instanceof CmsInitialMarkEvent && ((TimesData) event).getTimeUser() > 0
-                            && ((TimesData) event).getTimeReal() > 0 && ((BlockingEvent) event).getDuration() >= 10000
-                            && JdkMath.isLowParallelism(((TimesData) event).getParallelism())) {
-                        if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM)) {
-                            jvmDao.addAnalysis(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM);
-                        }
-                    }
-
-                    // 17) Check for CMS remark low parallelism
-                    if (event instanceof CmsRemarkEvent && ((TimesData) event).getTimeUser() > 0
-                            && ((TimesData) event).getTimeReal() > 0 && ((BlockingEvent) event).getDuration() >= 10000
-                            && JdkMath.isLowParallelism(((TimesData) event).getParallelism())) {
-                        if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM)) {
-                            jvmDao.addAnalysis(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM);
-                        }
-                    }
-
-                    // 18) Check for old JDKs using perm gen
-                    if (event instanceof PermMetaspaceData && event.getLogEntry() != null
-                            && event.getLogEntry().matches("^.*Perm.*$")) {
-                        if (!jvmDao.getAnalysis().contains(Analysis.INFO_PERM_GEN)) {
-                            jvmDao.addAnalysis(Analysis.INFO_PERM_GEN);
-                        }
-                    }
-
-                    // 19) Shenandoah Full GC
-                    if (event instanceof ShenandoahFullGcEvent) {
-                        if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SHENANDOAH_FULL_GC)) {
-                            jvmDao.addAnalysis(Analysis.ERROR_SHENANDOAH_FULL_GC);
-                        }
-                    }
-
-                    priorEvent = (BlockingEvent) event;
-
-                } else if (event instanceof ApplicationStoppedTimeEvent) {
-                    jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
-                } else if (event instanceof UnifiedSafepointEvent) {
-                    jvmDao.addSafepointEvent((UnifiedSafepointEvent) event);
-                } else if (event instanceof HeaderCommandLineFlagsEvent) {
-                    jvmDao.setOptions(((HeaderCommandLineFlagsEvent) event).getJvmOptions());
-                } else if (event instanceof HeaderMemoryEvent) {
-                    jvmDao.setMemory(((HeaderMemoryEvent) event).getLogEntry());
-                    jvmDao.setPhysicalMemory((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemory()));
-                    jvmDao.setPhysicalMemoryFree(
-                            (long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemoryFree()));
-                    jvmDao.setSwap((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwap()));
-                    jvmDao.setSwapFree((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwapFree()));
-                } else if (event instanceof HeaderVersionEvent) {
-                    jvmDao.setVersion(((HeaderVersionEvent) event).getLogEntry());
-                } else if (event instanceof GcOverheadLimitEvent) {
-                    if (!jvmDao.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED)) {
-                        jvmDao.getAnalysis().add(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED);
-                    }
-                } else if (event instanceof GcLockerEvent) {
-                    if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED)) {
-                        jvmDao.addAnalysis(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED);
-                    }
-                } else if (event instanceof ShenandoahConcurrentEvent) {
-                    if (greater(((CombinedData) event).getCombinedOccupancyInit(),
-                            jvmDao.getMaxHeapOccupancyNonBlocking())) {
-                        jvmDao.setMaxHeapOccupancyNonBlocking(
-                                (int) ((CombinedData) event).getCombinedOccupancyInit().getValue(KILOBYTES));
-                    }
-                    if (greater(((CombinedData) event).getCombinedSpace(), jvmDao.getMaxHeapSpaceNonBlocking())) {
-                        jvmDao.setMaxHeapSpaceNonBlocking(
-                                (int) ((CombinedData) event).getCombinedSpace().getValue(KILOBYTES));
-                    }
-                    if (greater(((PermMetaspaceData) event).getPermOccupancyInit(),
-                            jvmDao.getMaxPermOccupancyNonBlocking())) {
-                        jvmDao.setMaxPermOccupancyNonBlocking(
-                                (int) ((PermMetaspaceData) event).getPermOccupancyInit().getValue(KILOBYTES));
-                    }
-                    if (greater(((PermMetaspaceData) event).getPermSpace(), jvmDao.getMaxPermSpaceNonBlocking())) {
-                        jvmDao.setMaxPermSpaceNonBlocking(
-                                (int) ((PermMetaspaceData) event).getPermSpace().getValue(KILOBYTES));
-                    }
-                } else if (event instanceof VmWarningEvent) {
-                    if (((VmWarningEvent) event).getErrNo().equals("12")) {
-                        if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SHARED_MEMORY_12)) {
-                            jvmDao.addAnalysis(Analysis.ERROR_SHARED_MEMORY_12);
-                        }
-                    }
-                } else if (event instanceof ThreadDumpEvent) {
-                    if (!jvmDao.getAnalysis().contains(Analysis.INFO_THREAD_DUMP)) {
-                        jvmDao.addAnalysis(Analysis.INFO_THREAD_DUMP);
-                    }
-                } else if (event instanceof UnknownEvent) {
-                    if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
-                        jvmDao.getUnidentifiedLogLines().add(logLine);
+                // 16) Check for CMS initial mark low parallelism
+                if (event instanceof CmsInitialMarkEvent && ((TimesData) event).getTimeUser() > 0
+                        && ((TimesData) event).getTimeReal() > 0 && ((BlockingEvent) event).getDuration() >= 10000
+                        && JdkMath.isLowParallelism(((TimesData) event).getParallelism())) {
+                    if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM)) {
+                        jvmDao.addAnalysis(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM);
                     }
                 }
 
-                // Populate events list.
-                List<JdkUtil.LogEventType> eventTypes = jvmDao.getEventTypes();
-                JdkUtil.LogEventType eventType = JdkUtil.determineEventType(event.getName());
-                if (!eventTypes.contains(eventType)) {
-                    eventTypes.add(eventType);
-                }
-
-                // Populate collector type list.
-                if (event instanceof GcEvent) {
-                    List<JdkUtil.CollectorFamily> collectorFamilies = jvmDao.getCollectorFamilies();
-                    if (!collectorFamilies.contains(((GcEvent) event).getCollectorFamily())) {
-                        collectorFamilies.add(((GcEvent) event).getCollectorFamily());
+                // 17) Check for CMS remark low parallelism
+                if (event instanceof CmsRemarkEvent && ((TimesData) event).getTimeUser() > 0
+                        && ((TimesData) event).getTimeReal() > 0 && ((BlockingEvent) event).getDuration() >= 10000
+                        && JdkMath.isLowParallelism(((TimesData) event).getParallelism())) {
+                    if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM)) {
+                        jvmDao.addAnalysis(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM);
                     }
                 }
 
-                logLine = bufferedReader.readLine();
-
-                // Check for partial last line
-                if (logLine == null) {
-                    if (event instanceof UnknownEvent && jvmDao.getUnidentifiedLogLines().size() == 1) {
-                        jvmDao.addAnalysis(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
+                // 18) Check for old JDKs using perm gen
+                if (event instanceof PermMetaspaceData && event.getLogEntry() != null
+                        && event.getLogEntry().matches("^.*Perm.*$")) {
+                    if (!jvmDao.getAnalysis().contains(Analysis.INFO_PERM_GEN)) {
+                        jvmDao.addAnalysis(Analysis.INFO_PERM_GEN);
                     }
+                }
+
+                // 19) Shenandoah Full GC
+                if (event instanceof ShenandoahFullGcEvent) {
+                    if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SHENANDOAH_FULL_GC)) {
+                        jvmDao.addAnalysis(Analysis.ERROR_SHENANDOAH_FULL_GC);
+                    }
+                }
+
+                priorEvent = (BlockingEvent) event;
+
+            } else if (event instanceof ApplicationStoppedTimeEvent) {
+                jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
+            } else if (event instanceof UnifiedSafepointEvent) {
+                jvmDao.addSafepointEvent((UnifiedSafepointEvent) event);
+            } else if (event instanceof HeaderCommandLineFlagsEvent) {
+                jvmDao.setOptions(((HeaderCommandLineFlagsEvent) event).getJvmOptions());
+            } else if (event instanceof HeaderMemoryEvent) {
+                jvmDao.setMemory(((HeaderMemoryEvent) event).getLogEntry());
+                jvmDao.setPhysicalMemory((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemory()));
+                jvmDao.setPhysicalMemoryFree(
+                        (long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemoryFree()));
+                jvmDao.setSwap((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwap()));
+                jvmDao.setSwapFree((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwapFree()));
+            } else if (event instanceof HeaderVersionEvent) {
+                jvmDao.setVersion(((HeaderVersionEvent) event).getLogEntry());
+            } else if (event instanceof GcOverheadLimitEvent) {
+                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED)) {
+                    jvmDao.getAnalysis().add(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED);
+                }
+            } else if (event instanceof GcLockerEvent) {
+                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED)) {
+                    jvmDao.addAnalysis(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED);
+                }
+            } else if (event instanceof ShenandoahConcurrentEvent) {
+                if (greater(((CombinedData) event).getCombinedOccupancyInit(),
+                        jvmDao.getMaxHeapOccupancyNonBlocking())) {
+                    jvmDao.setMaxHeapOccupancyNonBlocking(
+                            (int) ((CombinedData) event).getCombinedOccupancyInit().getValue(KILOBYTES));
+                }
+                if (greater(((CombinedData) event).getCombinedSpace(), jvmDao.getMaxHeapSpaceNonBlocking())) {
+                    jvmDao.setMaxHeapSpaceNonBlocking(
+                            (int) ((CombinedData) event).getCombinedSpace().getValue(KILOBYTES));
+                }
+                if (greater(((PermMetaspaceData) event).getPermOccupancyInit(),
+                        jvmDao.getMaxPermOccupancyNonBlocking())) {
+                    jvmDao.setMaxPermOccupancyNonBlocking(
+                            (int) ((PermMetaspaceData) event).getPermOccupancyInit().getValue(KILOBYTES));
+                }
+                if (greater(((PermMetaspaceData) event).getPermSpace(), jvmDao.getMaxPermSpaceNonBlocking())) {
+                    jvmDao.setMaxPermSpaceNonBlocking(
+                            (int) ((PermMetaspaceData) event).getPermSpace().getValue(KILOBYTES));
+                }
+            } else if (event instanceof VmWarningEvent) {
+                if (((VmWarningEvent) event).getErrNo().equals("12")) {
+                    if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SHARED_MEMORY_12)) {
+                        jvmDao.addAnalysis(Analysis.ERROR_SHARED_MEMORY_12);
+                    }
+                }
+            } else if (event instanceof ThreadDumpEvent) {
+                if (!jvmDao.getAnalysis().contains(Analysis.INFO_THREAD_DUMP)) {
+                    jvmDao.addAnalysis(Analysis.INFO_THREAD_DUMP);
+                }
+            } else if (event instanceof UnknownEvent) {
+                if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
+                    jvmDao.getUnidentifiedLogLines().add(logLine);
                 }
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            // Close streams
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+            // Populate events list.
+            List<JdkUtil.LogEventType> eventTypes = jvmDao.getEventTypes();
+            JdkUtil.LogEventType eventType = JdkUtil.determineEventType(event.getName());
+            if (!eventTypes.contains(eventType)) {
+                eventTypes.add(eventType);
+            }
+
+            // Populate collector type list.
+            if (event instanceof GcEvent) {
+                List<JdkUtil.CollectorFamily> collectorFamilies = jvmDao.getCollectorFamilies();
+                if (!collectorFamilies.contains(((GcEvent) event).getCollectorFamily())) {
+                    collectorFamilies.add(((GcEvent) event).getCollectorFamily());
+                }
+            }
+
+            // Check for partial last line
+            if (!iterator.hasNext()) {
+                if (event instanceof UnknownEvent && jvmDao.getUnidentifiedLogLines().size() == 1) {
+                    jvmDao.addAnalysis(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
                 }
             }
         }
-
     }
 
     private static boolean greater(Memory memory, int value) {

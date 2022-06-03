@@ -18,6 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
@@ -322,13 +327,17 @@ class TestG1MixedPauseEvent {
     /**
      * Test preprocessing TRIGGER_TO_SPACE_EXHAUSTED after "mixed".
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testPreprocessingTriggerToSpaceExhausted() {
+    void testPreprocessingTriggerToSpaceExhausted() throws IOException {
         File testFile = TestUtil.getFile("dataset99.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -342,13 +351,17 @@ class TestG1MixedPauseEvent {
     /**
      * Test preprocessing TRIGGER_G1_EVACUATION_PAUSE before "mixed" and TRIGGER_TO_SPACE_EXHAUSTED after "mixed".
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testPreprocessingDoubleTriggerG1EvacuationPauseToSpaceExhausted() {
+    void testPreprocessingDoubleTriggerG1EvacuationPauseToSpaceExhausted() throws IOException {
         File testFile = TestUtil.getFile("dataset102.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -362,13 +375,17 @@ class TestG1MixedPauseEvent {
     /**
      * Test preprocessing TRIGGER_G1_HUMONGOUS_ALLOCATION before "mixed" and TRIGGER_TO_SPACE_EXHAUSTED after "mixed".
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testPreprocessingDoubleTriggerHumongousAllocationToSpaceExhausted() {
+    void testPreprocessingDoubleTriggerHumongousAllocationToSpaceExhausted() throws IOException {
         File testFile = TestUtil.getFile("dataset133.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),

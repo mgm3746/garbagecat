@@ -18,7 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
+import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
@@ -425,13 +430,17 @@ class TestParNewEvent {
     /**
      * Test preprocessing a split <code>ParNewCmsConcurrentEvent</code> that does not include the "concurrent mode
      * failure" text.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSplitParNewCmsConcurrentEventAbortablePrecleanLogging() {
+    void testSplitParNewCmsConcurrentEventAbortablePrecleanLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset15.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
@@ -442,15 +451,18 @@ class TestParNewEvent {
 
     /**
      * Test identifying <code>ParNewEvent</code> running in incremental mode.
+     * 
+     * @throws IOException
      */
     @Test
-    void testCmsIncrementalModeAnalysis() {
+    void testCmsIncrementalModeAnalysis() throws IOException {
         File testFile = TestUtil.getFile("dataset68.txt");
         String jvmOptions = "Xss128k -XX:+CMSIncrementalMode -XX:CMSInitiatingOccupancyFraction=70 -Xms2048M";
         Jvm jvm = new Jvm(jvmOptions, null);
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INCREMENTAL_MODE),
                 Analysis.WARN_CMS_INCREMENTAL_MODE + " analysis not identified.");
@@ -460,14 +472,17 @@ class TestParNewEvent {
 
     /**
      * Test datestamp only logging without passing in JVM start datetime.
+     * 
+     * @throws IOException
      */
     @Test
-    void testParNewDatestampNoTimestampNoJvmStartDate() {
+    void testParNewDatestampNoTimestampNoJvmStartDate() throws IOException {
         File testFile = TestUtil.getFile("dataset113.txt");
         Jvm jvm = new Jvm(null, null);
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         // Don't report datestamp only lines unidentified
         assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE),
@@ -480,15 +495,18 @@ class TestParNewEvent {
 
     /**
      * Test datestamp only logging with passing in JVM start datetime.
+     * 
+     * @throws IOException
      */
     @Test
-    void testParNewDatestampNoTimestampJvmStartDate() {
+    void testParNewDatestampNoTimestampJvmStartDate() throws IOException {
         File testFile = TestUtil.getFile("dataset113.txt");
         Date jvmStartDate = GcUtil.parseDateStamp("2017-02-28T11:26:24.135+0100");
         Jvm jvm = new Jvm(null, jvmStartDate);
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, jvmStartDate);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),

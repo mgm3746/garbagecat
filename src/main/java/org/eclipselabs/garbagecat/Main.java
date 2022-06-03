@@ -47,6 +47,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -99,8 +102,9 @@ public class Main {
      * @param args
      *            The argument list includes one or more scope options followed by the name of the gc log file to
      *            inspect.
+     * @throws IOException
      */
-    public static void main(String... args) {
+    public static void main(String... args) throws IOException {
         try {
             CommandLine cmd = parseOptions(args);
             if (cmd == null || cmd.hasOption(OPTION_HELP_LONG) || cmd.hasOption(OPTION_HELP_LONG)) {
@@ -125,7 +129,7 @@ public class Main {
         formatter.printHelp("garbagecat [OPTION]... [FILE]", options);
     }
 
-    public static void createReport(CommandLine cmd) {
+    public static void createReport(CommandLine cmd) throws IOException {
         // Determine JVM environment information.
         Date jvmStartDate = cmd.hasOption(OPTION_STARTDATETIME_LONG)
                 ? parseStartDateTime(cmd.getOptionValue(OPTION_STARTDATETIME_SHORT))
@@ -133,6 +137,8 @@ public class Main {
         String jvmOptions = cmd.hasOption(OPTION_JVMOPTIONS_LONG) ? cmd.getOptionValue(OPTION_JVMOPTIONS_SHORT) : null;
         String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
         File logFile = new File(logFileName);
+        URI logFileUri = logFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
 
         GcManager gcManager = new GcManager();
 
@@ -147,14 +153,14 @@ public class Main {
              * TODO: Handle datetimes separately from preprocessing so preprocessing doesn't require passing in the JVM
              * start date/time.
              */
-            logFile = gcManager.preprocess(logFile, jvmStartDate);
+            logLines = gcManager.preprocess(logLines, jvmStartDate);
         }
 
         // Allow logging to be reordered?
         boolean reorder = cmd.hasOption(OPTION_REORDER_LONG);
 
         // Store garbage collection logging in data store.
-        gcManager.store(logFile, reorder);
+        gcManager.store(logLines, reorder);
 
         // Create report
         Jvm jvm = new Jvm(jvmOptions, jvmStartDate);

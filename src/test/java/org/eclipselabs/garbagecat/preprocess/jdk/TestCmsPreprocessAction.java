@@ -17,6 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -1201,13 +1205,17 @@ class TestCmsPreprocessAction {
 
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>CmsSerialOldEvent</code>.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSplitPrintHeapAtGcCmsSerialOldLogging() {
+    void testSplitPrintHeapAtGcCmsSerialOldLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset6.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
@@ -1218,13 +1226,17 @@ class TestCmsPreprocessAction {
 
     /**
      * Test with underlying <code>CmsSerialOld</code> triggered by concurrent mode failure.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSplitPrintHeapAtGcCmsSerialOldConcurrentModeFailureLogging() {
+    void testSplitPrintHeapAtGcCmsSerialOldConcurrentModeFailureLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset8.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
@@ -1239,13 +1251,17 @@ class TestCmsPreprocessAction {
 
     /**
      * Test <code>CmsPreprocessAction</code>: split <code>CmsSerialOldEvent</code> and <code>CmsConcurrentEvent</code>.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSplitCmsConcurrentModeFailureEventMarkLogging() {
+    void testSplitCmsConcurrentModeFailureEventMarkLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset10.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1260,13 +1276,17 @@ class TestCmsPreprocessAction {
 
     /**
      * Test <code>CmsPreprocessAction</code>: split <code>CmsSerialOldEvent</code> and <code>CmsConcurrentEvent</code>.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSplitCmsConcurrentModeFailureEventAbortablePrecleanLogging() {
+    void testSplitCmsConcurrentModeFailureEventAbortablePrecleanLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset11.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1281,13 +1301,17 @@ class TestCmsPreprocessAction {
 
     /**
      * Test preprocessing <code>CmsSerialOldConcurrentModeFailureEvent</code> split over 3 lines.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSplit3LinesCmsConcurrentModeFailureEventLogging() {
+    void testSplit3LinesCmsConcurrentModeFailureEventLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset14.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1301,13 +1325,17 @@ class TestCmsPreprocessAction {
     /**
      * Test preprocessing a split <code>ParNewPromotionFailedCmsConcurrentModeFailurePermDataEvent</code> with
      * -XX:+PrintTenuringDistribution logging between the initial and final lines.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSplitMixedTenuringParNewPromotionFailedEventLogging() {
+    void testSplitMixedTenuringParNewPromotionFailedEventLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset18.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -1320,13 +1348,17 @@ class TestCmsPreprocessAction {
 
     /**
      * Test preprocessing <code>PrintHeapAtGcEvent</code> with underlying <code>ParNewConcurrentModeFailureEvent</code>.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSplitPrintHeapAtGcParNewPromotionFailedCmsConcurrentModeFailureEventLogging() {
+    void testSplitPrintHeapAtGcParNewPromotionFailedCmsConcurrentModeFailureEventLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset21.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -1340,11 +1372,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testParNewPromotionFailedTruncatedEventLogging() {
+    void testParNewPromotionFailedTruncatedEventLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset23.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -1362,13 +1396,17 @@ class TestCmsPreprocessAction {
     /**
      * Test PAR_NEW mixed with CMS_CONCURRENT over 2 lines.
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testParNewMixedCmsConcurrent() {
+    void testParNewMixedCmsConcurrent() throws IOException {
         File testFile = TestUtil.getFile("dataset58.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -1382,13 +1420,17 @@ class TestCmsPreprocessAction {
     /**
      * Test CMS_SERIAL_OLD with concurrent mode failure trigger mixed with CMS_CONCURRENT over 2 lines.
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testCmsSerialConcurrentModeFailureMixedCmsConcurrent() {
+    void testCmsSerialConcurrentModeFailureMixedCmsConcurrent() throws IOException {
         File testFile = TestUtil.getFile("dataset61.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -1404,13 +1446,17 @@ class TestCmsPreprocessAction {
     /**
      * Test split <code>ParNewEvent</code> with a trigger and -XX:+PrintTenuringDistribution logging between the initial
      * and final lines.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSplitMixedTenuringParNewPromotionEventWithTriggerLogging() {
+    void testSplitMixedTenuringParNewPromotionEventWithTriggerLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset67.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PAR_NEW),
@@ -1420,13 +1466,17 @@ class TestCmsPreprocessAction {
     /**
      * Test CMS_SERIAL_OLD with concurrent mode failure trigger mixed with CMS_CONCURRENT over 2 lines on JDK8.
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testCmsSerialConcurrentModeFailureMixedCmsConcurrentJdk8() {
+    void testCmsSerialConcurrentModeFailureMixedCmsConcurrentJdk8() throws IOException {
         File testFile = TestUtil.getFile("dataset69.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1444,13 +1494,17 @@ class TestCmsPreprocessAction {
     /**
      * Test CMS_SERIAL_OLD with concurrent mode interrupted trigger mixed with CMS_CONCURRENT over 2 lines.
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testCmsSerialOldConcurrentModeInterruptedMixedCmsConcurrent() {
+    void testCmsSerialOldConcurrentModeInterruptedMixedCmsConcurrent() throws IOException {
         File testFile = TestUtil.getFile("dataset71.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1466,13 +1520,17 @@ class TestCmsPreprocessAction {
     /**
      * Test preprocessing CMS_SERIAL_OLD triggered by <code>PrintClassHistogramEvent</code> across many lines.
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testCmsSerialOldPrintClassHistogramTriggerAcross5Lines() {
+    void testCmsSerialOldPrintClassHistogramTriggerAcross5Lines() throws IOException {
         File testFile = TestUtil.getFile("dataset81.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1484,13 +1542,17 @@ class TestCmsPreprocessAction {
     /**
      * Test preprocessing PAR_NEW mixed with <code>PrintHeapAtGcEvent</code>.
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testParNewPrintHeapAtGc() {
+    void testParNewPrintHeapAtGc() throws IOException {
         File testFile = TestUtil.getFile("dataset83.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1504,13 +1566,17 @@ class TestCmsPreprocessAction {
     /**
      * Test preprocessing PAR_NEW with extraneous prefix.
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testParNewPrefixed() {
+    void testParNewPrefixed() throws IOException {
         File testFile = TestUtil.getFile("dataset89.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1522,13 +1588,17 @@ class TestCmsPreprocessAction {
     /**
      * Test preprocessing CMS_SERIAL_OLD with JvmtiEnv ForceGarbageCollection and concurrent mode interrupted.
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testCmsSerialOldTriggerJvmtiEnvForceGarbageCollectionWithConcurrentModeInterrupted() {
+    void testCmsSerialOldTriggerJvmtiEnvForceGarbageCollectionWithConcurrentModeInterrupted() throws IOException {
         File testFile = TestUtil.getFile("dataset90.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1544,13 +1614,17 @@ class TestCmsPreprocessAction {
     /**
      * Test preprocessing CMS_SERIAL_OLD with Metadata GC Threshold and concurrent mode interrupted.
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testCmsSerialOldTriggerMetadataGcThresholdWithConcurrentModeInterrupted() {
+    void testCmsSerialOldTriggerMetadataGcThresholdWithConcurrentModeInterrupted() throws IOException {
         File testFile = TestUtil.getFile("dataset91.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1566,13 +1640,17 @@ class TestCmsPreprocessAction {
     /**
      * Test preprocessing PAR_NEW with FLS_STATISTICS.
      * 
+     * @throws IOException
+     * 
      */
     @Test
-    void testParNewWithFlsStatistics() {
+    void testParNewWithFlsStatistics() throws IOException {
         File testFile = TestUtil.getFile("dataset94.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1584,11 +1662,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testBeginningParNewWithNoParNewWithCmsConcurrentPreclean() {
+    void testBeginningParNewWithNoParNewWithCmsConcurrentPreclean() throws IOException {
         File testFile = TestUtil.getFile("dataset105.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1606,11 +1686,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testUnknownWithCmsConcurrent() {
+    void testUnknownWithCmsConcurrent() throws IOException {
         File testFile = TestUtil.getFile("dataset111.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         String lastLogLineUnprocessed = "130454.251: [Full GC (Allocation Failure) 130454.251: [CMS130456.427: "
                 + "[CMS-concurrent-mark: 2.176/2.182 secs] [Times: user=2.18 sys=0.00, real=2.18 secs]";
@@ -1627,11 +1709,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testParNewCmsConcurrentOver3Lines() {
+    void testParNewCmsConcurrentOver3Lines() throws IOException {
         File testFile = TestUtil.getFile("dataset112.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
@@ -1643,11 +1727,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testPrintPromotionFailure() {
+    void testPrintPromotionFailure() throws IOException {
         File testFile = TestUtil.getFile("dataset115.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
@@ -1657,11 +1743,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testPrintFLSStatistics2ParNewOver4Lines() {
+    void testPrintFLSStatistics2ParNewOver4Lines() throws IOException {
         File testFile = TestUtil.getFile("dataset117.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
@@ -1673,11 +1761,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testCmsScavengeBeforeRemarkNoPrintGcDetails() {
+    void testCmsScavengeBeforeRemarkNoPrintGcDetails() throws IOException {
         File testFile = TestUtil.getFile("dataset120.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
@@ -1685,11 +1775,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testParNewConcurrentModeFailureMixedAbortPrecleanDueToTime() {
+    void testParNewConcurrentModeFailureMixedAbortPrecleanDueToTime() throws IOException {
         File testFile = TestUtil.getFile("dataset121.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
@@ -1701,11 +1793,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testParNewConcurrentModeFailureMixedConcurrentPreclean() {
+    void testParNewConcurrentModeFailureMixedConcurrentPreclean() throws IOException {
         File testFile = TestUtil.getFile("dataset122.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
@@ -1717,11 +1811,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testParNewConcurrentModeFailureMixedConcurrentMark() {
+    void testParNewConcurrentModeFailureMixedConcurrentMark() throws IOException {
         File testFile = TestUtil.getFile("dataset123.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
@@ -1733,11 +1829,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testCmsSerialOldConcurrentModeFailureMixedConcurrentMark() {
+    void testCmsSerialOldConcurrentModeFailureMixedConcurrentMark() throws IOException {
         File testFile = TestUtil.getFile("dataset124.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
@@ -1749,11 +1847,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testCmsConcurrentMixedApplicationConcurrentTime() {
+    void testCmsConcurrentMixedApplicationConcurrentTime() throws IOException {
         File testFile = TestUtil.getFile("dataset135.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1767,11 +1867,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testCmsScavengeBeforeRemarkJdk8MixedHeapAtGc() {
+    void testCmsScavengeBeforeRemarkJdk8MixedHeapAtGc() throws IOException {
         File testFile = TestUtil.getFile("dataset136.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1783,11 +1885,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testCmsScavengeBeforeRemarkJMixedHeapAtGc() {
+    void testCmsScavengeBeforeRemarkJMixedHeapAtGc() throws IOException {
         File testFile = TestUtil.getFile("dataset140.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1799,11 +1903,13 @@ class TestCmsPreprocessAction {
     }
 
     @Test
-    void testParNewMixedHeapAtGc() {
+    void testParNewMixedHeapAtGc() throws IOException {
         File testFile = TestUtil.getFile("dataset141.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),

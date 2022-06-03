@@ -12,9 +12,16 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipselabs.garbagecat.TestUtil;
+import org.eclipselabs.garbagecat.util.Constants;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -32,5 +39,47 @@ class TestGcManager {
         File testFile = TestUtil.getFile("dataset31.txt");
         GcManager gcManager = new GcManager();
         gcManager.preprocess(testFile, null);
+    }
+
+    @Test
+    void testCmsConcurrentPrecleanPreprocessing() {
+        String currentLogLine = "233307.425: [CMS-concurrent-preclean: 0.137/0.151 secs]" + Constants.LINE_SEPARATOR;
+        String priorLogLine = null;
+        String nextLogLine = null;
+        Date jvmStartDate = null;
+        List<String> entangledLogLines = null;
+        Set<String> context = new HashSet<String>();
+        GcManager gcManager = new GcManager();
+        String preprocessedLogLine = gcManager.getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine,
+                jvmStartDate, entangledLogLines, context);
+        assertEquals(currentLogLine, preprocessedLogLine, "Preprocessing incorrectly changed log line.");
+    }
+
+    @Test
+    void testCmsConcurrentPrecleanStartPreprocessing() {
+        String currentLogLine = "233307.273: [CMS-concurrent-preclean-start]" + Constants.LINE_SEPARATOR;
+        String priorLogLine = null;
+        String nextLogLine = null;
+        Date jvmStartDate = null;
+        List<String> entangledLogLines = null;
+        Set<String> context = new HashSet<String>();
+        GcManager gcManager = new GcManager();
+        String preprocessedLogLine = gcManager.getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine,
+                jvmStartDate, entangledLogLines, context);
+        assertEquals(currentLogLine, preprocessedLogLine, "Preprocessing incorrectly changed log line.");
+    }
+
+    @Test
+    void testCmsConcurrentAbortablePrecleanStartPreprocessing() {
+        String currentLogLine = "233307.425: [CMS-concurrent-abortable-preclean-start]" + Constants.LINE_SEPARATOR;
+        String priorLogLine = null;
+        String nextLogLine = null;
+        Date jvmStartDate = null;
+        List<String> entangledLogLines = null;
+        Set<String> context = new HashSet<String>();
+        GcManager gcManager = new GcManager();
+        String preprocessedLogLine = gcManager.getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine,
+                jvmStartDate, entangledLogLines, context);
+        assertEquals(currentLogLine, preprocessedLogLine, "Preprocessing incorrectly changed log line.");
     }
 }

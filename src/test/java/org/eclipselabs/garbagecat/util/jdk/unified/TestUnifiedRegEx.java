@@ -83,6 +83,12 @@ class TestUnifiedRegEx {
     }
 
     @Test
+    void testDecoratorWithSpaces() {
+        String decorator = "[932126.909s][info   ][safepoint     ]";
+        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
+    }
+
+    @Test
     void testDurationJdk9() {
         String duration = "2.969ms";
         assertTrue(duration.matches(UnifiedRegEx.DURATION), "'" + duration + "' is a valid duration.");

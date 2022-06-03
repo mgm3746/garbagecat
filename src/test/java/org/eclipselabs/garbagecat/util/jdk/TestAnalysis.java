@@ -19,6 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,13 +58,15 @@ class TestAnalysis {
     /**
      * Test analysis perm gen or metaspace size not set.
      * 
+     * @throws IOException
      */
     @Test
-    void testAnalysisPermSizeNotSet() {
+    void testAnalysisPermSizeNotSet() throws IOException {
         File testFile = TestUtil.getFile("dataset60.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PERM_SIZE_NOT_SET),
                 Analysis.WARN_PERM_SIZE_NOT_SET + " analysis not identified.");
@@ -70,13 +76,17 @@ class TestAnalysis {
 
     /**
      * Test application/gc logging mixed.
+     * 
+     * @throws IOException
      */
     @Test
-    void testApplicationLogging() {
+    void testApplicationLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset114.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_LOGGING),
                 Analysis.WARN_APPLICATION_LOGGING + " analysis not identified.");
@@ -160,13 +170,16 @@ class TestAnalysis {
 
     /**
      * Test CMS class unloading disabled.
+     * 
+     * @throws IOException
      */
     @Test
-    void testCmsClassunloadingDisabled() {
+    void testCmsClassunloadingDisabled() throws IOException {
         File testFile = TestUtil.getFile("dataset110.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED),
                 Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis not identified.");
@@ -216,13 +229,16 @@ class TestAnalysis {
 
     /**
      * Test CMS initial mark low parallelism.
+     * 
+     * @throws IOException
      */
     @Test
-    void testCmsInitialMarkSerial() {
+    void testCmsInitialMarkSerial() throws IOException {
         File testFile = TestUtil.getFile("dataset130.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM),
                 Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis not identified.");
@@ -252,13 +268,16 @@ class TestAnalysis {
 
     /**
      * Test CMS remark low parallelism.
+     * 
+     * @throws IOException
      */
     @Test
-    void testCmsRemarkSerial() {
+    void testCmsRemarkSerial() throws IOException {
         File testFile = TestUtil.getFile("dataset131.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM),
                 Analysis.WARN_CMS_REMARK_LOW_PARALLELISM + " analysis not identified.");
@@ -267,13 +286,16 @@ class TestAnalysis {
     /**
      * Test CMS_SERIAL_OLD caused by <code>Analysis.KEY_EXPLICIT_GC_SERIAL</code> does not return
      * <code>Analysis.KEY_SERIAL_GC_CMS</code>.
+     * 
+     * @throws IOException
      */
     @Test
-    void testCmsSerialOldExplicitGc() {
+    void testCmsSerialOldExplicitGc() throws IOException {
         File testFile = TestUtil.getFile("dataset85.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -290,13 +312,16 @@ class TestAnalysis {
 
     /**
      * Test CMS_SERIAL_OLD triggered by GCLocker promotion failure.
+     * 
+     * @throws IOException
      */
     @Test
-    void testCmsSerialOldGcLocker() {
+    void testCmsSerialOldGcLocker() throws IOException {
         File testFile = TestUtil.getFile("dataset119.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED),
                 Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED + " analysis not identified.");
@@ -467,13 +492,16 @@ class TestAnalysis {
 
     /**
      * Test compressed oops disabled with heap >= 32G.
+     * 
+     * @throws IOException
      */
     @Test
-    void testCompressedOopsDisabledLargeHeap() {
+    void testCompressedOopsDisabledLargeHeap() throws IOException {
         File testFile = TestUtil.getFile("dataset106.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals("45097156608", jvmRun.getJvm().getMaxHeapValue(), "Max heap value not parsed correctly.");
         assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_COMP_OOPS_DISABLED_HEAP_LT_32G),
@@ -548,13 +576,16 @@ class TestAnalysis {
 
     /**
      * Test diagnostic options
+     * 
+     * @throws IOException
      */
     @Test
-    void testDiagnosticOptions() {
+    void testDiagnosticOptions() throws IOException {
         File testFile = TestUtil.getFile("dataset192.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_JMX_ENABLED),
                 Analysis.INFO_JMX_ENABLED + " analysis not identified.");
@@ -628,11 +659,12 @@ class TestAnalysis {
     }
 
     @Test
-    void testFailedToReserveSharedMemoryErrNo12() {
+    void testFailedToReserveSharedMemoryErrNo12() throws IOException {
         File testFile = TestUtil.getFile("dataset233.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -645,13 +677,16 @@ class TestAnalysis {
 
     /**
      * Test -XX:+UseFastUnorderedTimeStamps
+     * 
+     * @throws IOException
      */
     @Test
-    void testFastUnorderedTimestamps() {
+    void testFastUnorderedTimestamps() throws IOException {
         File testFile = TestUtil.getFile("dataset193.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_FAST_UNORDERED_TIMESTAMPS),
                 Analysis.WARN_FAST_UNORDERED_TIMESTAMPS + " analysis incorrectly identified.");
@@ -659,13 +694,17 @@ class TestAnalysis {
 
     /**
      * Test FooterHeapEvent not incorrectly identified as PrintHeapAtGc
+     * 
+     * @throws IOException
      */
     @Test
-    void testFooterHeapEvent() {
+    void testFooterHeapEvent() throws IOException {
         File testFile = TestUtil.getFile("dataset208.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(5, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -688,24 +727,28 @@ class TestAnalysis {
 
     /**
      * Test small gc log file size.
+     * 
+     * @throws IOException
      */
     @Test
-    void testGcLogFileSizeSmall() {
+    void testGcLogFileSizeSmall() throws IOException {
         File testFile = TestUtil.getFile("dataset181.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_SIZE_SMALL),
                 Analysis.WARN_GC_LOG_FILE_SIZE_SMALL + " analysis not identified.");
     }
 
     @Test
-    void testHeaderLogging() {
+    void testHeaderLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset42.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS),
                 JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " information not identified.");
@@ -749,11 +792,12 @@ class TestAnalysis {
     }
 
     @Test
-    void testHeapDumpPathFilename() {
+    void testHeapDumpPathFilename() throws IOException {
         File testFile = TestUtil.getFile("dataset95.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_PATH_FILENAME),
                 Analysis.WARN_HEAP_DUMP_PATH_FILENAME + " analysis not identified.");
@@ -761,13 +805,16 @@ class TestAnalysis {
 
     /**
      * Test heap dump location missing
+     * 
+     * @throws IOException
      */
     @Test
-    void testHeapDumpPathMissing() {
+    void testHeapDumpPathMissing() throws IOException {
         File testFile = TestUtil.getFile("dataset181.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_HEAP_DUMP_PATH_MISSING),
                 Analysis.INFO_HEAP_DUMP_PATH_MISSING + " analysis not identified.");
@@ -775,13 +822,16 @@ class TestAnalysis {
 
     /**
      * Test humongous allocations on old JDK not able to reclaim humongous objects during young collections.
+     * 
+     * @throws IOException
      */
     @Test
-    void testHumongousAllocationsNotCollectedYoung() {
+    void testHumongousAllocationsNotCollectedYoung() throws IOException {
         File testFile = TestUtil.getFile("dataset118.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD),
                 Analysis.ERROR_G1_HUMONGOUS_JDK_OLD + " analysis not identified.");
@@ -794,30 +844,30 @@ class TestAnalysis {
     }
 
     @Test
-    void testInfinispanThreadDump() {
+    void testInfinispanThreadDump() throws IOException {
         // Check both preprocessed and not preprocessed
         File testFile = TestUtil.getFile("dataset234.txt");
         GcManager gcManager = new GcManager();
-        gcManager.store(testFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_THREAD_DUMP),
-                Analysis.INFO_THREAD_DUMP + " analysis identified.");
-        jvmRun.getAnalysis().clear();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_THREAD_DUMP),
                 Analysis.INFO_THREAD_DUMP + " analysis identified.");
     }
 
     /**
      * Test CMS remark low parallelism not reported with pause times less than times data centisecond precision.
+     * 
+     * @throws IOException
      */
     @Test
-    void testInitialMarkLowParallelismFalseReportSmallPause() {
+    void testInitialMarkLowParallelismFalseReportSmallPause() throws IOException {
         File testFile = TestUtil.getFile("dataset138.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM),
                 Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis incorrectly identified.");
@@ -827,13 +877,16 @@ class TestAnalysis {
 
     /**
      * Test CMS remark low parallelism not reported with pause times less than zero.
+     * 
+     * @throws IOException
      */
     @Test
-    void testInitialMarkLowParallelismFalseReportZeroReal() {
+    void testInitialMarkLowParallelismFalseReportZeroReal() throws IOException {
         File testFile = TestUtil.getFile("dataset137.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM),
                 Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis incorrectly identified.");
@@ -1010,13 +1063,16 @@ class TestAnalysis {
 
     /**
      * Test Metadata GC Threshold
+     * 
+     * @throws IOException
      */
     @Test
-    void testMetadataGcThreshold() {
+    void testMetadataGcThreshold() throws IOException {
         File testFile = TestUtil.getFile("dataset199.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1050,11 +1106,13 @@ class TestAnalysis {
     }
 
     @Test
-    void testOomeMetaspace() {
+    void testOomeMetaspace() throws IOException {
         File testFile = TestUtil.getFile("dataset244.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1065,13 +1123,16 @@ class TestAnalysis {
 
     /**
      * Test PARALLEL_COMPACTING_OLD caused by <code>Analysis.KEY_EXPLICIT_GC_SERIAL</code>.
+     * 
+     * @throws IOException
      */
     @Test
-    void testParallelOldCompactingExplicitGc() {
+    void testParallelOldCompactingExplicitGc() throws IOException {
         File testFile = TestUtil.getFile("dataset86.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1089,13 +1150,16 @@ class TestAnalysis {
 
     /**
      * Test PAR_NEW disabled with -XX:-UseParNewGC.
+     * 
+     * @throws IOException
      */
     @Test
-    void testParNewDisabled() {
+    void testParNewDisabled() throws IOException {
         File testFile = TestUtil.getFile("dataset101.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1118,13 +1182,16 @@ class TestAnalysis {
 
     /**
      * Test physical memory less than heap + perm/metaspace.
+     * 
+     * @throws IOException
      */
     @Test
-    void testPhysicalMemoryLessThanHeapAllocation() {
+    void testPhysicalMemoryLessThanHeapAllocation() throws IOException {
         File testFile = TestUtil.getFile("dataset109.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(bytes(1968287744L), jvmRun.getJvm().getPhysicalMemory(), "Physical not parsed correctly.");
         assertEquals(bytes(4718592000L), jvmRun.getJvm().getMaxHeapBytes(), "Heap size not parsed correctly.");
@@ -1137,13 +1204,16 @@ class TestAnalysis {
 
     /**
      * Test physical memory less than heap + perm/metaspace.
+     * 
+     * @throws IOException
      */
     @Test
-    void testPhysicalMemoryLessThanJvmMemoryWithCompressedClassPointerSpace() {
+    void testPhysicalMemoryLessThanJvmMemoryWithCompressedClassPointerSpace() throws IOException {
         File testFile = TestUtil.getFile("dataset107.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(bytes(16728526848L), jvmRun.getJvm().getPhysicalMemory(), "Physical not parsed correctly.");
         assertEquals(bytes(5368709120L), jvmRun.getJvm().getMaxHeapBytes(), "Heap size not parsed correctly.");
@@ -1157,13 +1227,16 @@ class TestAnalysis {
 
     /**
      * Test physical memory less than heap + perm/metaspace.
+     * 
+     * @throws IOException
      */
     @Test
-    void testPhysicalMemoryLessThanJvmMemoryWithoutCompressedClassPointerSpace() {
+    void testPhysicalMemoryLessThanJvmMemoryWithoutCompressedClassPointerSpace() throws IOException {
         File testFile = TestUtil.getFile("dataset106.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(bytes(50465866752L), jvmRun.getJvm().getPhysicalMemory(), "Physical not parsed correctly.");
         assertEquals(bytes(45097156608L), jvmRun.getJvm().getMaxHeapBytes(), "Heap size not parsed correctly.");
@@ -1301,13 +1374,16 @@ class TestAnalysis {
 
     /**
      * Test <code>-XX:PrintFLSStatistics</code> and <code>-XX:PrintPromotionFailure</code>.
+     * 
+     * @throws IOException
      */
     @Test
-    void testPrintFlsStatisticsPrintPromotionFailure() {
+    void testPrintFlsStatisticsPrintPromotionFailure() throws IOException {
         File testFile = TestUtil.getFile("dataset115.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_PRINT_FLS_STATISTICS),
                 Analysis.INFO_PRINT_FLS_STATISTICS + " analysis not identified.");
@@ -1335,13 +1411,16 @@ class TestAnalysis {
 
     /**
      * Test PrintGCDetails disabled with VERBOSE_GC logging.
+     * 
+     * @throws IOException
      */
     @Test
-    void testPrintGcDetailsDisabledWithVerboseGc() {
+    void testPrintGcDetailsDisabledWithVerboseGc() throws IOException {
         File testFile = TestUtil.getFile("dataset107.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG),
                 JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + " collector not identified.");
@@ -1392,13 +1471,16 @@ class TestAnalysis {
 
     /**
      * Test serial promotion failed is not reported as cms promotion failed.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSerialPromotionFailed() {
+    void testSerialPromotionFailed() throws IOException {
         File testFile = TestUtil.getFile("dataset129.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED),
                 Analysis.ERROR_CMS_PROMOTION_FAILED + " analysis incorrectly identified.");
@@ -1417,13 +1499,16 @@ class TestAnalysis {
 
     /**
      * Test swap disabled.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSwapDisabled() {
+    void testSwapDisabled() throws IOException {
         File testFile = TestUtil.getFile("dataset187.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_SWAP_DISABLED),
                 Analysis.INFO_SWAP_DISABLED + " analysis not identified.");
@@ -1452,11 +1537,12 @@ class TestAnalysis {
     }
 
     @Test
-    void testThreadStackSizeAnalysis32Bit() {
+    void testThreadStackSizeAnalysis32Bit() throws IOException {
         File testFile = TestUtil.getFile("dataset87.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_THREAD_STACK_SIZE_NOT_SET),
                 Analysis.WARN_THREAD_STACK_SIZE_NOT_SET + " analysis not identified.");
@@ -1515,13 +1601,16 @@ class TestAnalysis {
 
     /**
      * Test VERBOSE_GC_OLD triggered by explicit GC.
+     * 
+     * @throws IOException
      */
     @Test
-    void testVerboseGcOldExplicitGc() {
+    void testVerboseGcOldExplicitGc() throws IOException {
         File testFile = TestUtil.getFile("dataset125.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         // VERGOSE_GC_OLD looks the same as G1_FULL without -XX:+PrintGCDetails
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN),
@@ -1530,13 +1619,16 @@ class TestAnalysis {
 
     /**
      * Test VERBOSE_GC_YOUNG triggered by explicit GC.
+     * 
+     * @throws IOException
      */
     @Test
-    void testVerboseGcYoungExplicitGc() {
+    void testVerboseGcYoungExplicitGc() throws IOException {
         File testFile = TestUtil.getFile("dataset126.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN),
                 Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.");

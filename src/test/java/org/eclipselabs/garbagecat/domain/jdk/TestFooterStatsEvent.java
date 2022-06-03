@@ -17,6 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,49 +95,43 @@ class TestFooterStatsEvent {
     }
 
     @Test
-    void testJdk11Time() {
+    void testJdk11Time() throws IOException {
         File testFile = TestUtil.getFile("dataset196.txt");
-        GcManager gcManager1 = new GcManager();
-        gcManager1.store(testFile, false);
-        GcManager gcManager2 = new GcManager();
-        File preprocessedFile = gcManager1.preprocess(testFile, null);
-        gcManager2.store(preprocessedFile, false);
-        JvmRun jvmRun1 = gcManager1.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3, jvmRun1.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun1.getEventTypes().contains(LogEventType.UNKNOWN),
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun1.getEventTypes().contains(LogEventType.FOOTER_STATS),
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.FOOTER_STATS),
                 JdkUtil.LogEventType.FOOTER_STATS.toString() + " collector not identified.");
         // Some logging patterns are exactly the same as SHENANDOAH_STATS. No easy way to distinguish them.
-        assertTrue(jvmRun1.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
                 JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " collector not identified.");
-        assertTrue(jvmRun1.getEventTypes().contains(LogEventType.UNIFIED_BLANK_LINE),
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_BLANK_LINE),
                 JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " collector not identified.");
-        JvmRun jvmRun2 = gcManager2.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(0, jvmRun2.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
-    void testJdk8() {
+    void testJdk8() throws IOException {
         File testFile = TestUtil.getFile("dataset198.txt");
-        GcManager gcManager1 = new GcManager();
-        gcManager1.store(testFile, false);
-        GcManager gcManager2 = new GcManager();
-        File preprocessedFile = gcManager1.preprocess(testFile, null);
-        gcManager2.store(preprocessedFile, false);
-        JvmRun jvmRun1 = gcManager1.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3, jvmRun1.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun1.getEventTypes().contains(LogEventType.UNKNOWN),
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun1.getEventTypes().contains(LogEventType.FOOTER_STATS),
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.FOOTER_STATS),
                 JdkUtil.LogEventType.FOOTER_STATS.toString() + " collector not identified.");
         // Some logging patterns are exactly the same as SHENANDOAH_STATS. No easy way to distinguish them.
-        assertTrue(jvmRun1.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
                 JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " collector not identified.");
-        assertTrue(jvmRun1.getEventTypes().contains(LogEventType.BLANK_LINE),
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.BLANK_LINE),
                 JdkUtil.LogEventType.BLANK_LINE.toString() + " collector not identified.");
-        JvmRun jvmRun2 = gcManager2.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(0, jvmRun2.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -516,13 +514,17 @@ class TestFooterStatsEvent {
 
     /**
      * Test logging.
+     * 
+     * @throws IOException
      */
     @Test
-    void testUnifiedUptimeMillis() {
+    void testUnifiedUptimeMillis() throws IOException {
         File testFile = TestUtil.getFile("dataset165.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),

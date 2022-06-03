@@ -17,7 +17,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipselabs.garbagecat.TestUtil;
@@ -229,13 +234,17 @@ class TestParallelPreprocessAction {
 
     /**
      * Test preprocessing <code>GcTimeLimitExceededEvent</code>.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSplitParallelSerialOldEventLogging() {
+    void testSplitParallelSerialOldEventLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset9.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -251,13 +260,17 @@ class TestParallelPreprocessAction {
     /**
      * Test preprocessing <code>UnloadingClassPreprocessAction</code> with underlying
      * <code>ParallelSerialOldEvent</code>.
+     * 
+     * @throws IOException
      */
     @Test
-    void testUnloadingClassPreprocessActionParallelSerialOldEventLogging() {
+    void testUnloadingClassPreprocessActionParallelSerialOldEventLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset24.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD),
@@ -267,13 +280,17 @@ class TestParallelPreprocessAction {
     /**
      * Test preprocessing <code>PrintTenuringDistributionPreprocessAction</code> with underlying
      * <code>ParallelScavengeEvent</code>.
+     * 
+     * @throws IOException
      */
     @Test
-    void testSplitParallelScavengeEventLogging() {
+    void testSplitParallelScavengeEventLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset30.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE),
@@ -284,13 +301,17 @@ class TestParallelPreprocessAction {
 
     /**
      * Test preprocessing <code>GcTimeLimitExceededEvent</code> with logging mixed across multiple lines.
+     * 
+     * @throws IOException
      */
     @Test
-    void testParallelSerialOldAcrossMultipleLinesMixedGcTimeLimitLogging() {
+    void testParallelSerialOldAcrossMultipleLinesMixedGcTimeLimitLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset132.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SERIAL_OLD),
@@ -305,13 +326,17 @@ class TestParallelPreprocessAction {
 
     /**
      * Test preprocessing -XX:+PrintAdaptiveSizePolicy logging.
+     * 
+     * @throws IOException
      */
     @Test
-    void testPreprocessingPrintAdaptiveSizePolicy() {
+    void testPreprocessingPrintAdaptiveSizePolicy() throws IOException {
         File testFile = TestUtil.getFile("dataset209.txt");
         GcManager gcManager = new GcManager();
-        File preprocessedFile = gcManager.preprocess(testFile, null);
-        gcManager.store(preprocessedFile, false);
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE),
