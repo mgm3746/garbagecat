@@ -75,7 +75,7 @@ public class JvmDao {
      */
     private static final String[] TABLES_CREATE_SQL = {
             "create table safepoint_event (id integer identity, time_stamp bigint, trigger_type varchar(64), "
-                    + "duration integer, log_entry varchar(500))" };
+                    + "duration bigint, log_entry varchar(500))" };
 
     private static Memory add(Memory m1, Memory m2) {
         return m1 == null ? nullSafe(m2) : m1.plus(nullSafe(m2));
@@ -666,7 +666,7 @@ public class JvmDao {
                 Trigger trigger = UnifiedSafepoint.identifyTrigger(rs.getString(1));
                 SafepointEventSummary summary = new SafepointEventSummary(trigger, rs.getLong(2),
                         JdkMath.convertNanosToMillis(rs.getLong(3)).longValue(),
-                        JdkMath.convertNanosToMillis(rs.getInt(4)).intValue());
+                        JdkMath.convertNanosToMillis(rs.getLong(4)).intValue());
                 safepointEventSummaries.add(summary);
             }
         } catch (SQLException e) {
