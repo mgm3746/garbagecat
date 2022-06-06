@@ -665,8 +665,8 @@ public class JvmDao {
             while (rs.next()) {
                 Trigger trigger = UnifiedSafepoint.identifyTrigger(rs.getString(1));
                 SafepointEventSummary summary = new SafepointEventSummary(trigger, rs.getLong(2),
-                        JdkMath.convertMicrosToMillis(rs.getLong(3)).longValue(),
-                        JdkMath.convertMicrosToMillis(rs.getInt(4)).intValue());
+                        JdkMath.convertNanosToMillis(rs.getLong(3)).longValue(),
+                        JdkMath.convertNanosToMillis(rs.getInt(4)).intValue());
                 safepointEventSummaries.add(summary);
             }
         } catch (SQLException e) {

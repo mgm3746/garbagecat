@@ -462,7 +462,7 @@ public class Main {
                 }
                 printWriter.write(jvmRun.getUnifiedSafepointThroughput() + "%" + LINE_SEPARATOR);
                 // Max safepoint time
-                BigDecimal maxSafepointPause = JdkMath.convertMicrosToSecs(jvmRun.getUnifiedSafepointTimeMax());
+                BigDecimal maxSafepointPause = JdkMath.convertNanosToSecs(jvmRun.getUnifiedSafepointTimeMax());
                 printWriter.write("Safepoint Pause Max: ");
                 if (maxSafepointPause.compareTo(BigDecimal.ZERO) == 0) {
                     // Provide rounding clue
@@ -471,7 +471,7 @@ public class Main {
                 printWriter.write(maxSafepointPause.toString());
                 printWriter.write(" secs" + LINE_SEPARATOR);
                 // Total safepoint time
-                BigDecimal totalSafepointTime = JdkMath.convertMicrosToSecs(jvmRun.getUnifiedSafepointTimeTotal());
+                BigDecimal totalSafepointTime = JdkMath.convertNanosToSecs(jvmRun.getUnifiedSafepointTimeTotal());
                 printWriter.write("Safepoint Pause Total: " + totalSafepointTime.toString() + " secs" + LINE_SEPARATOR);
                 // Ratio of GC vs. safepoint time. 100 means all stopped time due to GC.
                 if (jvmRun.getBlockingEventCount() > 0) {
@@ -491,7 +491,7 @@ public class Main {
                     Iterator<SafepointEventSummary> iterator = summaries.iterator();
                     while (iterator.hasNext()) {
                         SafepointEventSummary summary = iterator.next();
-                        BigDecimal pauseTotal = JdkMath.convertMicrosToSecs(summary.getPauseTotal());
+                        BigDecimal pauseTotal = JdkMath.convertMillisToSecs(summary.getPauseTotal());
                         String pauseTotalString = null;
                         if (pauseTotal.toString().equals("0.000")) {
                             // give rounding hint
@@ -515,7 +515,7 @@ public class Main {
                         } else {
                             percentString = percent.toString();
                         }
-                        BigDecimal pauseMax = JdkMath.convertMicrosToSecs(summary.getPauseMax());
+                        BigDecimal pauseMax = JdkMath.convertMillisToSecs(summary.getPauseMax());
                         String pauseMaxString = null;
                         if (pauseMax.toString().equals("0.000")) {
                             // give rounding hint

@@ -245,6 +245,20 @@ public final class JdkMath {
     }
 
     /**
+     * Convert nanoseconds to seconds.
+     * 
+     * For example: Convert 987654321000 to 987.654.
+     * 
+     * @param nanos
+     *            Nanoseconds as a whole number.
+     * @return Seconds rounded to 3 decimal places.
+     */
+    public static BigDecimal convertNanosToSecs(long micros) {
+        BigDecimal duration = new BigDecimal(micros);
+        return duration.movePointLeft(9).setScale(3, RoundingMode.HALF_EVEN);
+    }
+
+    /**
      * Convert seconds to centiseconds.
      * 
      * For example: Convert 1.02 to 102.
