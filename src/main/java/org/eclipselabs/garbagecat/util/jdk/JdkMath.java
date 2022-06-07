@@ -253,8 +253,8 @@ public final class JdkMath {
      *            Nanoseconds as a whole number.
      * @return Seconds rounded to 3 decimal places.
      */
-    public static BigDecimal convertNanosToSecs(long micros) {
-        BigDecimal duration = new BigDecimal(micros);
+    public static BigDecimal convertNanosToSecs(long nanos) {
+        BigDecimal duration = new BigDecimal(nanos);
         return duration.movePointLeft(9).setScale(3, RoundingMode.HALF_EVEN);
     }
 

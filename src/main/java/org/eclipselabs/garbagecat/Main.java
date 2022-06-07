@@ -103,6 +103,7 @@ public class Main {
      *            The argument list includes one or more scope options followed by the name of the gc log file to
      *            inspect.
      * @throws IOException
+     *             if gc log file cannot be read.
      */
     public static void main(String... args) throws IOException {
         try {

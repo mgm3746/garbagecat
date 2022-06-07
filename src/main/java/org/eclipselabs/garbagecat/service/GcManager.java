@@ -334,7 +334,7 @@ public class GcManager {
             if (preprocessedLogLine != null) {
                 String[] preprocessedLogLines = preprocessedLogLine.split(Constants.LINE_SEPARATOR);
                 if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)) {
-                      //  && !priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
+                    // && !priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
                     for (int i = 0; i < preprocessedLogLines.length; i++) {
                         if (preprocessedLogLines[i] != "") {
                             preprocessedLogList.add(preprocessedLogLines[i]);
