@@ -15,6 +15,10 @@ package org.eclipselabs.garbagecat.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -35,10 +39,17 @@ class TestGcManager {
      * http://code.google.com/a/eclipselabs.org/p/garbagecat/issues/detail?id=17
      */
     @Test
-    void testNullPointerExceptionNotRaised() {
-        File testFile = TestUtil.getFile("dataset31.txt");
+    void testCmsConcurrentAbortablePrecleanStartPreprocessing() {
+        String currentLogLine = "233307.425: [CMS-concurrent-abortable-preclean-start]" + Constants.LINE_SEPARATOR;
+        String priorLogLine = null;
+        String nextLogLine = null;
+        Date jvmStartDate = null;
+        List<String> entangledLogLines = null;
+        Set<String> context = new HashSet<String>();
         GcManager gcManager = new GcManager();
-        gcManager.preprocess(testFile, null);
+        String preprocessedLogLine = gcManager.getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine,
+                jvmStartDate, entangledLogLines, context);
+        assertEquals(currentLogLine, preprocessedLogLine, "Preprocessing incorrectly changed log line.");
     }
 
     @Test
@@ -69,17 +80,17 @@ class TestGcManager {
         assertEquals(currentLogLine, preprocessedLogLine, "Preprocessing incorrectly changed log line.");
     }
 
+    /**
+     * Test for NullPointerException.
+     * 
+     * @throws IOException
+     */
     @Test
-    void testCmsConcurrentAbortablePrecleanStartPreprocessing() {
-        String currentLogLine = "233307.425: [CMS-concurrent-abortable-preclean-start]" + Constants.LINE_SEPARATOR;
-        String priorLogLine = null;
-        String nextLogLine = null;
-        Date jvmStartDate = null;
-        List<String> entangledLogLines = null;
-        Set<String> context = new HashSet<String>();
+    void testNullPointerExceptionNotRaised() throws IOException {
+        File testFile = TestUtil.getFile("dataset31.txt");
         GcManager gcManager = new GcManager();
-        String preprocessedLogLine = gcManager.getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine,
-                jvmStartDate, entangledLogLines, context);
-        assertEquals(currentLogLine, preprocessedLogLine, "Preprocessing incorrectly changed log line.");
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
     }
 }

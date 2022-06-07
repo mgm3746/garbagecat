@@ -338,7 +338,8 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 public class UnifiedPreprocessAction implements PreprocessAction {
 
     /**
-     * Regular expression for retained @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent}.
+     * Regular expression for retained @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent} with
+     * durations.
      * 
      * <pre>
      * [0.054s][info][gc           ] GC(1) Concurrent Mark 1.260ms
@@ -1266,33 +1267,54 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
-            if (priorLogEntry != null && REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN.matcher(priorLogEntry).matches()) {
+            if (priorLogEntry != null && REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN.matcher(priorLogEntry).matches()
+                    && nextLogEntry != null && REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(nextLogEntry).matches()) {
+                // not entangled
                 this.logEntry = logEntry;
                 context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             } else {
-                // Get beginning safepoint logging from entangledLogLines
-                if (entangledLogLines.size() == 1
-                        && REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN.matcher(entangledLogLines.get(0)).matches()) {
-                    this.logEntry = entangledLogLines.get(0);
-                    entangledLogLines.clear();
-                }
-                if (matcher.matches()) {
-                    if (this.logEntry == null) {
-                        this.logEntry = matcher.group(1);
-                        context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-                    } else {
-                        this.logEntry = this.logEntry + matcher.group(1);
+                // entangled with other logging events
+                if (entangledLogLines.size() == 1 && entangledLogLines.get(0) != null
+                        && REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN.matcher(entangledLogLines.get(0)).matches()
+                        && nextLogEntry != null && REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(nextLogEntry).matches()) {
+                    // Remaining logging not entangled
+                    if (matcher.matches()) {
+                        this.logEntry = entangledLogLines.get(0) + matcher.group(1);
+                        context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                        entangledLogLines.clear();
+                    }
+                } else {
+                    // Remaining logging entangled
+                    if (matcher.matches()) {
+                        if (entangledLogLines.size() == 1 && entangledLogLines.get(0) != null
+                                && REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN.matcher(entangledLogLines.get(0))
+                                        .matches()) {
+                            this.logEntry = entangledLogLines.get(0) + matcher.group(1);
+                            entangledLogLines.clear();
+                            entangledLogLines.add(this.logEntry);
+                            this.logEntry = null;
+                            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                        } else {
+                            this.logEntry = matcher.group(1);
+                            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                        }
                     }
                 }
             }
         } else if ((matcher = REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
+                if (entangledLogLines.size() == 1) {
+                    this.logEntry = entangledLogLines.get(0) + matcher.group(1);
+                    entangledLogLines.clear();
+                    context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                } else {
+                    this.logEntry = matcher.group(1);
+                    context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                    context.remove(TOKEN);
+                    clearEntangledLines(entangledLogLines);
+                }
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-            context.remove(TOKEN);
-            clearEntangledLines(entangledLogLines);
         } else if ((matcher = REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(logEntry)).matches()) {
             // End logging
             matcher.reset();

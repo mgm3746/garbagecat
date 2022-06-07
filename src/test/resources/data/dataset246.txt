@@ -1,0 +1,49 @@
+[2022-06-06T08:27:45.251-0500] Entering safepoint region: G1CollectForAllocation
+[2022-06-06T08:27:45.252-0500] GC(98824) Pause Young (Concurrent Start) (G1 Evacuation Pause)
+[2022-06-06T08:27:45.252-0500] GC(98824) Using 28 workers of 28 for evacuation
+[2022-06-06T08:27:45.322-0500] GC(98824)   Pre Evacuate Collection Set: 1.0ms
+[2022-06-06T08:27:45.322-0500] GC(98824)   Evacuate Collection Set: 62.4ms
+[2022-06-06T08:27:45.322-0500] GC(98824)   Post Evacuate Collection Set: 2.1ms
+[2022-06-06T08:27:45.322-0500] GC(98824)   Other: 4.8ms
+[2022-06-06T08:27:45.322-0500] GC(98824) Eden regions: 80->0(99)
+[2022-06-06T08:27:45.322-0500] GC(98824) Survivor regions: 7->7(11)
+[2022-06-06T08:27:45.322-0500] GC(98824) Old regions: 1876->1877
+[2022-06-06T08:27:45.322-0500] GC(98824) Humongous regions: 1->1
+[2022-06-06T08:27:45.322-0500] GC(98824) Metaspace: 124512K->124512K(126976K)
+[2022-06-06T08:27:45.322-0500] GC(98824) Pause Young (Concurrent Start) (G1 Evacuation Pause) 62812M->60287M(86016M) 70.235ms
+[2022-06-06T08:27:45.322-0500] GC(98824) User=1.67s Sys=0.03s Real=0.07s
+[2022-06-06T08:27:45.322-0500] GC(98825) Concurrent Cycle
+[2022-06-06T08:27:45.322-0500] GC(98825) Concurrent Clear Claimed Marks
+[2022-06-06T08:27:45.323-0500] Leaving safepoint region
+[2022-06-06T08:27:45.323-0500] GC(98825) Concurrent Clear Claimed Marks 0.175ms
+[2022-06-06T08:27:45.323-0500] Total time for which application threads were stopped: 0.0728312 seconds, Stopping threads took: 0.0007938 seconds
+[2022-06-06T08:27:45.323-0500] GC(98825) Concurrent Scan Root Regions
+[2022-06-06T08:27:45.371-0500] GC(98825) Concurrent Scan Root Regions 47.873ms
+[2022-06-06T08:27:45.371-0500] GC(98825) Concurrent Mark (846234.699s)
+[2022-06-06T08:27:45.371-0500] GC(98825) Concurrent Mark From Roots
+[2022-06-06T08:27:45.371-0500] GC(98825) Using 24 workers of 24 for marking
+[2022-06-06T08:27:45.919-0500] GC(98825) Concurrent Mark From Roots 547.912ms
+[2022-06-06T08:27:45.919-0500] GC(98825) Concurrent Preclean
+[2022-06-06T08:27:45.926-0500] GC(98825) Concurrent Preclean 7.389ms
+[2022-06-06T08:27:45.926-0500] GC(98825) Concurrent Mark (846234.699s, 846235.254s) 555.386ms
+[2022-06-06T08:27:45.926-0500] Application time: 0.6033846 seconds
+[2022-06-06T08:27:45.926-0500] Entering safepoint region: CGC_Operation
+[2022-06-06T08:27:45.928-0500] GC(98825) Pause Remark
+[2022-06-06T08:27:46.002-0500] GC(98825) Cleaned string and symbol table, strings: 48869 processed, 332 removed, symbols: 272445 processed, 0 removed
+[2022-06-06T08:27:46.003-0500] GC(98825) Pause Remark 60620M->60620M(86016M) 75.746ms
+[2022-06-06T08:27:46.004-0500] GC(98825) User=0.27s Sys=1.69s Real=0.08s
+[2022-06-06T08:27:46.004-0500] Leaving safepoint region
+[2022-06-06T08:27:46.004-0500] Total time for which application threads were stopped: 0.0778110 seconds, Stopping threads took: 0.0003865 seconds
+[2022-06-06T08:27:46.004-0500] GC(98825) Concurrent Rebuild Remembered Sets
+[2022-06-06T08:27:46.356-0500] GC(98825) Concurrent Rebuild Remembered Sets 351.686ms
+[2022-06-06T08:27:46.356-0500] Application time: 0.3518374 seconds
+[2022-06-06T08:27:46.356-0500] Entering safepoint region: CGC_Operation
+[2022-06-06T08:27:46.357-0500] GC(98825) Pause Cleanup
+[2022-06-06T08:27:46.359-0500] GC(98825) Pause Cleanup 60679M->60679M(86016M) 1.822ms
+[2022-06-06T08:27:46.359-0500] GC(98825) User=0.01s Sys=0.00s Real=0.00s
+[2022-06-06T08:27:46.360-0500] Leaving safepoint region
+[2022-06-06T08:27:46.360-0500] Total time for which application threads were stopped: 0.0037516 seconds, Stopping threads took: 0.0003399 seconds
+[2022-06-06T08:27:46.360-0500] GC(98825) Concurrent Cleanup for Next Mark
+[2022-06-06T08:27:46.462-0500] GC(98825) Concurrent Cleanup for Next Mark 102.677ms
+[2022-06-06T08:27:46.462-0500] GC(98825) Concurrent Cycle 1139.888ms
+[2022-06-06T08:27:49.549-0500] Application time: 3.1897113 seconds
