@@ -1831,7 +1831,7 @@ class TestG1PreprocessAction {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
-        assertEquals("390M->119M(512M)", event.getLogEntry(), "Log line not parsed correctly.");
+        assertEquals(" 390M->119M(512M)", event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -1841,7 +1841,7 @@ class TestG1PreprocessAction {
         assertTrue(G1PreprocessAction.match(logLine, null, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
         G1PreprocessAction action = new G1PreprocessAction(null, logLine, null, null, context);
-        String preprocessedLine = "1831M->1213M(5120M), 5.1353878 secs]";
+        String preprocessedLine = " 1831M->1213M(5120M), 5.1353878 secs]";
         assertEquals(preprocessedLine, action.getLogEntry(), "Preprocessing failed.");
     }
 
@@ -2379,8 +2379,8 @@ class TestG1PreprocessAction {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        // assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-        // JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_SERIAL),
                 JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + " collector not identified.");
         assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_G1),

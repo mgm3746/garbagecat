@@ -68,7 +68,7 @@ class TestG1FullGcEvent {
 
     @Test
     void testLogLineDatestamp() {
-        String logLine = "2017-02-27T02:55:32.523+0300: [Full GC (Allocation Failure)21G->20G(22G), "
+        String logLine = "2017-02-27T02:55:32.523+0300: [Full GC (Allocation Failure) 21G->20G(22G), "
                 + "40.6782890 secs][Eden: 0.0B(1040.0M)->0.0B(1120.0M) Survivors: 80.0M->0.0B "
                 + "Heap: 22.0G(22.0G)->20.6G(22.0G)], [Perm: 1252884K->1252884K(2097152K)] "
                 + "[Times: user=56.34 sys=1.78, real=40.67 secs]";
@@ -81,7 +81,7 @@ class TestG1FullGcEvent {
     @Test
     void testLogLinePreprocessedClassHistogram() {
         String logLine = "49689.217: [Full GC49689.217: [Class Histogram (before full gc):, 8.8690440 secs]"
-                + "11G->2270M(12G), 19.8185620 secs][Eden: 0.0B(612.0M)->0.0B(7372.0M) Survivors: 0.0B->0.0B "
+                + " 11G->2270M(12G), 19.8185620 secs][Eden: 0.0B(612.0M)->0.0B(7372.0M) Survivors: 0.0B->0.0B "
                 + "Heap: 11.1G(12.0G)->2270.1M(12.0G)], [Perm: 730823K->730823K(2097152K)]";
         assertTrue(G1FullGcEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
@@ -121,7 +121,7 @@ class TestG1FullGcEvent {
 
     @Test
     void testLogLinePreprocessedDetailsPermNoSpaceAfterTriggerWithDatestamp() {
-        String logLine = "2017-02-27T02:55:32.523+0300: 35911.404: [Full GC (Allocation Failure)21G->20G(22G), "
+        String logLine = "2017-02-27T02:55:32.523+0300: 35911.404: [Full GC (Allocation Failure) 21G->20G(22G), "
                 + "40.6782890 secs][Eden: 0.0B(1040.0M)->0.0B(1120.0M) Survivors: 80.0M->0.0B "
                 + "Heap: 22.0G(22.0G)->20.6G(22.0G)], [Perm: 1252884K->1252884K(2097152K)] "
                 + "[Times: user=56.34 sys=1.78, real=40.67 secs]";
@@ -289,7 +289,7 @@ class TestG1FullGcEvent {
     void testLogLinePreprocessedTriggerHeapDumpInitiatedGcClassHistogram() {
         String logLine = "2021-10-07T10:05:34.135+0100: 69302.241: [Full GC (Heap Dump Initiated GC) "
                 + "2021-10-07T10:05:34.135+0100: 69302.241: [Class Histogram (before full gc):, 4.7148918 secs]"
-                + "8185M->7616M(31G), 24.5727654 secs][Eden: 448.0M(7936.0M)->0.0B(7936.0M) Survivors: 0.0B->0.0B "
+                + " 8185M->7616M(31G), 24.5727654 secs][Eden: 448.0M(7936.0M)->0.0B(7936.0M) Survivors: 0.0B->0.0B "
                 + "Heap: 8185.5M(31.0G)->7616.3M(31.0G)], [Metaspace: 668658K->668658K(1169408K)]"
                 + "2021-10-07T10:05:58.708+0100: 69326.814: [Class Histogram (after full gc):, 4.5682980 secs] "
                 + "[Times: user=33.60 sys=0.00, real=29.14 secs]";
