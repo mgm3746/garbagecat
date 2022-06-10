@@ -1494,7 +1494,8 @@ public class Jvm {
     }
 
     /**
-     * @return The JDK version (e.g. '8'), or `0` if it could not be determined.
+     * @return The JDK version (e.g. '8'), or `0` if it could not be determined. Not available in unified logging
+     *         (JDK11+).
      */
     public int JdkNumber() {
         String regex = "^.+JRE \\(1\\.(5|6|7|8|9).+$";

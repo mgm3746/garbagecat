@@ -289,6 +289,21 @@ public class JvmRun {
             }
         }
 
+        // Try to infer event types when gc details are missing
+        if (getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)) {
+            if (getCollectorFamilies().contains(CollectorFamily.G1)) {
+                if (getJvm().JdkNumber() == 8) {
+                    if (!getEventTypes().contains(LogEventType.G1_FULL_GC_SERIAL)) {
+                        getEventTypes().add(LogEventType.G1_FULL_GC_SERIAL);
+                        getEventTypes().remove(LogEventType.VERBOSE_GC_OLD);
+                    }
+                    if (!getAnalysis().contains(Analysis.ERROR_SERIAL_GC_G1)) {
+                        getAnalysis().add(Analysis.ERROR_SERIAL_GC_G1);
+                    }
+                }
+            }
+        }
+
         if (haveData()) {
             doDataAnalysis();
         }

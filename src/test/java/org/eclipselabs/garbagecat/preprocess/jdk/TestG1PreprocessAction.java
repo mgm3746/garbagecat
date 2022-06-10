@@ -660,6 +660,38 @@ class TestG1PreprocessAction {
     }
 
     /**
+     * Test for G1_Full identification without -XX:+PrintGCDetails are.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1FullIdentificationWithoutPrintGcDetails() throws IOException {
+        File testFile = TestUtil.getFile("dataset247.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.HEADER_VERSION),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEADER_VERSION.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_SERIAL),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.VERBOSE_GC_OLD),
+                JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + " collector identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_G1),
+                Analysis.ERROR_SERIAL_GC_G1 + " analysis not identified.");
+    }
+
+    /**
      * Test preprocessing G1_FULL triggered by TRIGGER_JVMTI_FORCED_GARBAGE_COLLECTION.
      * 
      * @throws IOException

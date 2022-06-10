@@ -1,0 +1,24 @@
+Java HotSpot(TM) 64-Bit Server VM (25.121-b13) for linux-amd64 JRE (1.8.0_121-b13), built on Dec 12 2016 16:36:53 by "java_re" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
+61273.557: [Full GC (Metadata GC Threshold) 61273.557: [GC concurrent-root-region-scan-start]
+61273.560: [GC concurrent-root-region-scan-end, 0.0029799 secs]
+61273.560: [GC concurrent-mark-start]
+ 1604M->1178M(4096M), 5.7141264 secs]
+61279.272: [GC concurrent-mark-abort]
+61286.487: [GC pause (G1 Evacuation Pause) (young)
+Desired survivor size 161480704 bytes, new threshold 15 (max 15)
+- age   1:   10694768 bytes,   10694768 total
+- age   2:   16768888 bytes,   27463656 total
+- age   3:    2756400 bytes,   30220056 total
+- age   4:    9082248 bytes,   39302304 total
+- age   5:    1833232 bytes,   41135536 total
+- age   6:    3269112 bytes,   44404648 total
+- age   7:    5012408 bytes,   49417056 total
+- age   8:    2067672 bytes,   51484728 total
+- age   9:    2168544 bytes,   53653272 total
+- age  10:    2948496 bytes,   56601768 total
+- age  11:    3352408 bytes,   59954176 total
+- age  12:    3960600 bytes,   63914776 total
+- age  13:     867808 bytes,   64782584 total
+- age  14:    2365552 bytes,   67148136 total
+- age  15:    1562440 bytes,   68710576 total
+ 3667M->1269M(4096M), 0.1379835 secs]
