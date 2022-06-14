@@ -1,4 +1,4 @@
-# garbagecat #
+# garbagecat ![Build Status](https://github.com/mgm3746/garbagecat/actions/workflows/docker-publish.yml/badge.svg)
 
 A command line tool that parses Java garbage collection logging and does analysis to support JVM tuning and troubleshooting for OpenJDK and Sun/Oracle JDK. It differs from other tools in that it goes beyond the simple math of calculating statistics such as maximum pause time and throughput. It analyzes collectors, triggers, JVM version, JVM options, and OS information and reports error/warn/info level analysis and recommendations.
 
@@ -127,8 +127,8 @@ Put the YUM repo file into your /etc/yum/repos.d/:
 ### Docker
 
 ```bash
-$ docker run -v "$PWD":/home/garbagecat/files:z garbagecat:latest --help
-$ docker run -v "$PWD":/home/garbagecat/files:z garbagecat:latest --console /home/garbagecat/files/src/test/gc-example.log >> report.txt
+$ docker run -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/garbagecat:main --help
+$ docker run -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/garbagecat:main --console /home/garbagecat/files/src/test/gc-example.log >> report.txt
 ```
 
 NOTES:
