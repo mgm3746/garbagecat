@@ -4,7 +4,7 @@ COPY src /usr/src/app/src
 COPY pom.xml /usr/src/app
 WORKDIR /usr/src/app
 RUN java -version && mvn -v
-RUN mvn --batch-mode -f /usr/src/app/pom.xml compile assembly:single &&\
+RUN mvn --batch-mode -f /usr/src/app/pom.xml package &&\
   mvn --batch-mode -f /usr/src/app/pom.xml checkstyle:check &&\
   mvn --batch-mode -f /usr/src/app/pom.xml javadoc:javadoc
 
