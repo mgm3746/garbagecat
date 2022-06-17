@@ -872,6 +872,16 @@ public class GcManager {
                     }
                 }
 
+                // 20) Diagnostic explicit gc
+                if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC)) {
+                    if (event instanceof TriggerData) {
+                        String trigger = ((TriggerData) event).getTrigger();
+                        if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_DIAGNOSTIC_COMMAND)) {
+                            jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC);
+                        }
+                    }
+                }
+
                 priorEvent = (BlockingEvent) event;
 
             } else if (event instanceof ApplicationStoppedTimeEvent) {

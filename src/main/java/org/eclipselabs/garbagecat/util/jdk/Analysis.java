@@ -430,6 +430,11 @@ public enum Analysis {
     WARN_COMP_OOPS_DISABLED_HEAP_UNK("warn.comp.oops.disabled.heap.unk"),
 
     /**
+     * Property key for diagnostic initiated gc.
+     */
+    WARN_EXPLICIT_GC_DIAGNOSTIC("warn.explicit.gc.diagnostic"),
+
+    /**
      * Property key for explicit garbage collection disabled.
      */
     WARN_EXPLICIT_GC_DISABLED("warn.explicit.gc.disabled"),

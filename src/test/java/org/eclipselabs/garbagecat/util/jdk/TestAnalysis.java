@@ -618,6 +618,25 @@ class TestAnalysis {
                 Analysis.INFO_EXPERIMENTAL_VM_OPTIONS + " analysis not identified.");
     }
 
+    @Test
+    void testExplicitGcDiagnostic() throws IOException {
+        File testFile = TestUtil.getFile("dataset249.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC),
+                Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC + " analysis not identified.");
+    }
+
     /**
      * Test analysis explicit GC not concurrent.
      */

@@ -446,6 +446,20 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testConcurrentMarkResetForOverflow() {
+        String logLine = "[2022-05-12T14:50:49.174-0500][410877.325s][info][gc,marking    ] GC(566) Concurrent Mark "
+                + "reset for overflow";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testConcurrentMarkSpaceAtEnd() {
         String logLine = "[0.053s][info][gc           ] GC(1) Concurrent Mark ";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -605,6 +619,14 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testG1FullGcTriggerDiagnosticCommand() {
+        String logLine = "[2022-05-12T14:53:58.573-0500][411066.724s][info][gc,start      ] GC(567) Pause Full "
+                + "(Diagnostic Command)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testG1FullGcTriggerG1EvacuationPause() {
         String logLine = "[2021-03-13T03:37:40.051+0530][79853119ms] GC(8646) Pause Full (G1 Evacuation Pause)";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -638,6 +660,21 @@ class TestUnifiedPreprocessAction {
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
         assertEquals(" 16339M->14486M(16384M) 8842.979ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testG1FullGcTriggerDiagnosticCommandDetails() {
+        String logLine = "[2022-05-12T14:54:09.413-0500][411077.565s][info][gc             ] GC(567) Pause Full "
+                + "(Diagnostic Command) 41808M->35651M(49152M) 10840.271ms";
+        String nextLogLine = "[2022-05-12T14:54:09.413-0500][411077.565s][info][gc,cpu         ] GC(567) "
+                + "User=84.75s Sys=0.00s Real=10.85s";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(" 41808M->35651M(49152M) 10840.271ms", event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test

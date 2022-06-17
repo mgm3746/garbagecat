@@ -333,6 +333,13 @@ public final class JdkRegEx {
 
     /**
      * <p>
+     * Explicit garbage collection trigger (e.g. Distributed Garbage Collection (DGC), jcmd &lt;pid&gt; GC.run).
+     * </p>
+     */
+    public static final String TRIGGER_DIAGNOSTIC_COMMAND = "Diagnostic Command";
+
+    /**
+     * <p>
      * Ergonomics trigger. GC happens for a heuristics reason. A heuristic is a rule of thumb or pattern the JVM uses to
      * achieve a performance goal or improve performance.
      * </p>

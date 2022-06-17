@@ -1,0 +1,17 @@
+[2022-05-12T14:53:58.573-0500][411066.724s][info][gc,start      ] GC(567) Pause Full (Diagnostic Command)
+[2022-05-12T14:53:58.574-0500][411066.725s][info][gc,phases,start] GC(567) Phase 1: Mark live objects
+[2022-05-12T14:54:03.102-0500][411071.254s][info][gc,stringtable ] GC(567) Cleaned string and symbol table, strings: 29584 processed, 1 removed, symbols: 197226 processed, 0 removed
+[2022-05-12T14:54:03.102-0500][411071.254s][info][gc,phases      ] GC(567) Phase 1: Mark live objects 4528.399ms
+[2022-05-12T14:54:03.102-0500][411071.254s][info][gc,phases,start] GC(567) Phase 2: Prepare for compaction
+[2022-05-12T14:54:04.459-0500][411072.611s][info][gc,phases      ] GC(567) Phase 2: Prepare for compaction 1356.703ms
+[2022-05-12T14:54:04.459-0500][411072.611s][info][gc,phases,start] GC(567) Phase 3: Adjust pointers
+[2022-05-12T14:54:05.893-0500][411074.045s][info][gc,phases      ] GC(567) Phase 3: Adjust pointers 1434.056ms
+[2022-05-12T14:54:05.893-0500][411074.045s][info][gc,phases,start] GC(567) Phase 4: Compact heap
+[2022-05-12T14:54:09.394-0500][411077.546s][info][gc,phases      ] GC(567) Phase 4: Compact heap 3501.147ms
+[2022-05-12T14:54:09.413-0500][411077.565s][info][gc,heap        ] GC(567) Eden regions: 76->0(423)
+[2022-05-12T14:54:09.413-0500][411077.565s][info][gc,heap        ] GC(567) Survivor regions: 16->0(29)
+[2022-05-12T14:54:09.413-0500][411077.565s][info][gc,heap        ] GC(567) Old regions: 2504->2216
+[2022-05-12T14:54:09.413-0500][411077.565s][info][gc,heap        ] GC(567) Humongous regions: 19->19
+[2022-05-12T14:54:09.413-0500][411077.565s][info][gc,metaspace   ] GC(567) Metaspace: 77197K->77197K(79872K)
+[2022-05-12T14:54:09.413-0500][411077.565s][info][gc             ] GC(567) Pause Full (Diagnostic Command) 41808M->35651M(49152M) 10840.271ms
+[2022-05-12T14:54:09.413-0500][411077.565s][info][gc,cpu         ] GC(567) User=84.75s Sys=0.00s Real=10.85s
