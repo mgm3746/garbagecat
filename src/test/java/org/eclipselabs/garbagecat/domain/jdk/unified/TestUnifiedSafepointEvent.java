@@ -260,6 +260,21 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
+    void testPreprocessedTriggerGcHeapInspection() {
+        String logLine = "[2022-06-16T10:19:46.929-0400][72053295ms] Entering safepoint region: GC_HeapInspection"
+                + "[2022-06-16T10:20:00.205-0400][72066571ms] Leaving safepoint region"
+                + "[2022-06-16T10:20:00.205-0400][72066571ms] Total time for which application threads were stopped: "
+                + "13.2756956 seconds, Stopping threads took: 0.0000456 seconds";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.GC_HEAP_INSPECTION, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(72053295, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(45600, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(13275695600L, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
     void testReportable() {
         assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_SAFEPOINT),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " incorrectly indentified as reportable.");

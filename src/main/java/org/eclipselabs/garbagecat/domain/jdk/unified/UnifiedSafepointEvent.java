@@ -178,8 +178,8 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
                         timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                timeThreadsStopped = JdkMath.convertSecsToNanos(matcher.group(71)).intValue();
-                timeToStopThreads = JdkMath.convertSecsToNanos(matcher.group(72)).intValue();
+                timeThreadsStopped = JdkMath.convertSecsToNanos(matcher.group(71)).longValue();
+                timeToStopThreads = JdkMath.convertSecsToNanos(matcher.group(72)).longValue();
             }
         } else if ((matcher = REGEX_JDK17_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
@@ -215,9 +215,9 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      * @param timestamp
      *            The time when the safepoint event started in milliseconds after JVM startup.
      * @param timeToStopThreads
-     *            The elapsed clock time to stop all threads (bring the JVM to safepoint) in microseconds (rounded).
+     *            The elapsed clock time to stop all threads (bring the JVM to safepoint) in nanoseconds (rounded).
      * @param timeThreadsStopped
-     *            The elapsed clock time the application threads were stopped (at safepont) in microseconds (rounded).
+     *            The elapsed clock time the application threads were stopped (at safepoint) in nanoseconds (rounded).
      */
     public UnifiedSafepointEvent(String logEntry, long timestamp, long timeToStopThreads, long timeThreadsStopped) {
         this.logEntry = logEntry;
@@ -227,7 +227,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
     }
 
     /**
-     * The elapsed clock time for the safepoint event in microseconds (rounded). timeToStopThreads seems to be time in
+     * The elapsed clock time for the safepoint event in nanoseconds (rounded). timeToStopThreads seems to be time in
      * addition to timeThreadsStopped.
      */
     public long getDuration() {
