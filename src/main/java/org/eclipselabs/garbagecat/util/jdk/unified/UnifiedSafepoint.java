@@ -34,15 +34,17 @@ public class UnifiedSafepoint {
         //
         FORCE_SAFEPOINT, G1_COLLECT_FOR_ALLOCATION, G1_COLLECT_FULL, G1_CONCURRENT, G1_INC_COLLECTION_PAUSE,
         //
-        GEN_COLLECT_FOR_ALLOCATION, GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES,
+        GC_HEAP_INSPECTION, GEN_COLLECT_FOR_ALLOCATION, GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES,
         //
-        HALT, HANDSHAKE_FALL_BACK, IC_BUFFER_FULL, NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION,
+        GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK, IC_BUFFER_FULL, NO_VM_OPERATION,
         //
-        PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS, SHENANDOAH_DEGENERATED_GC,
+        PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS,
         //
-        SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK,
+        SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS,
         //
-        SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN, Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
+        SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN, Z_MARK_END, Z_MARK_START,
+        //
+        Z_RELOCATE_START
     };
 
     /**
@@ -184,6 +186,14 @@ public class UnifiedSafepoint {
      * </p>
      */
     public static final String G1_INC_COLLECTION_PAUSE = "G1IncCollectionPause";
+
+    /**
+     * <p>
+     * Prints class histogram on SIGBREAK if PrintClassHistogram is specified and also the attach "inspectheap"
+     * operation (e.g. jcmd &lt;pid&gt; GC.class_histogram).
+     * </p>
+     */
+    public static final String GC_HEAP_INSPECTION = "GC_HeapInspection";
 
     /**
      * <p>
@@ -340,18 +350,18 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * The first phase of the Z garbage collector. Mark objects pointed to by roots.
-     * </p>
-     */
-    public static final String Z_MARK_START = "ZMarkStart";
-
-    /**
-     * <p>
      * The second phase of the Z garbage collector. Do reference processing, weak root cleaning, mark regions to
      * compact.
      * </p>
      */
     public static final String Z_MARK_END = "ZMarkEnd";
+
+    /**
+     * <p>
+     * The first phase of the Z garbage collector. Mark objects pointed to by roots.
+     * </p>
+     */
+    public static final String Z_MARK_START = "ZMarkStart";
 
     /**
      * <p>
@@ -392,6 +402,8 @@ public class UnifiedSafepoint {
             return Trigger.FIND_DEADLOCKS;
         if (FORCE_SAFEPOINT.matches(triggerLiteral))
             return Trigger.FORCE_SAFEPOINT;
+        if (GC_HEAP_INSPECTION.matches(triggerLiteral))
+            return Trigger.GC_HEAP_INSPECTION;
         if (G1_COLLECT_FOR_ALLOCATION.matches(triggerLiteral))
             return Trigger.G1_COLLECT_FOR_ALLOCATION;
         if (G1_COLLECT_FULL.matches(triggerLiteral))
@@ -497,6 +509,9 @@ public class UnifiedSafepoint {
             break;
         case FORCE_SAFEPOINT:
             triggerLiteral = FORCE_SAFEPOINT;
+            break;
+        case GC_HEAP_INSPECTION:
+            triggerLiteral = GC_HEAP_INSPECTION;
             break;
         case G1_COLLECT_FOR_ALLOCATION:
             triggerLiteral = G1_COLLECT_FOR_ALLOCATION;
@@ -618,6 +633,8 @@ public class UnifiedSafepoint {
             return Trigger.FIND_DEADLOCKS;
         if (Trigger.FORCE_SAFEPOINT.name().matches(trigger))
             return Trigger.FORCE_SAFEPOINT;
+        if (Trigger.GC_HEAP_INSPECTION.name().matches(trigger))
+            return Trigger.GC_HEAP_INSPECTION;
         if (Trigger.G1_COLLECT_FOR_ALLOCATION.name().matches(trigger))
             return Trigger.G1_COLLECT_FOR_ALLOCATION;
         if (Trigger.G1_COLLECT_FULL.name().matches(trigger))

@@ -1,0 +1,3 @@
+[2022-06-16T10:19:46.929-0400][72053295ms] Entering safepoint region: GC_HeapInspection
+[2022-06-16T10:20:00.205-0400][72066571ms] Leaving safepoint region
+[2022-06-16T10:20:00.205-0400][72066571ms] Total time for which application threads were stopped: 13.2756956 seconds, Stopping threads took: 0.0000456 seconds
