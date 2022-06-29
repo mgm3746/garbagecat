@@ -97,28 +97,28 @@ public class UnifiedRegEx {
      * 
      * For example: 2.969ms, 0.2ms, 15.91 ms
      */
-    public static final String DURATION = "(\\d{1,7}[\\.\\,]\\d{1,3})[ ]{0,1}ms";
+    public static final String DURATION = "(\\d{1,}[\\.\\,]\\d{1,3})[ ]{0,1}ms";
 
     /**
      * The garbage collection event number in JDK9+ unified logging.
      * 
      * For example: GC(6)
      */
-    public static final String GC_EVENT_NUMBER = "GC\\(\\d{1,7}\\)";
+    public static final String GC_EVENT_NUMBER = "GC\\(\\d{1,}\\)";
 
     /**
      * Seconds since JVM started.
      * 
      * For example: 25.016s
      */
-    public static final String UPTIME = "(\\d{0,12}[\\.\\,]\\d{3})s";
+    public static final String UPTIME = "(\\d{0,}[\\.\\,]\\d{3})s";
 
     /**
      * Milliseconds since JVM started.
      * 
      * For example: 3ms
      */
-    public static final String UPTIMEMILLIS = "(\\d{1,15})ms";
+    public static final String UPTIMEMILLIS = "(\\d{1,})ms";
 
     /**
      * Make default constructor private so the class cannot be instantiated.
