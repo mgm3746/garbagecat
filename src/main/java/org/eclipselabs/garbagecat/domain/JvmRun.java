@@ -33,6 +33,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * JVM run data.
@@ -555,7 +556,7 @@ public class JvmRun {
             analysis.add(WARN_PRINT_GC_DETAILS_DISABLED);
         } else {
             // Check if print gc details option missing
-            if (jvm.getPrintGCDetailsOption() == null) {
+            if (!UnifiedUtil.isUnifiedLogging(getEventTypes()) && jvm.getPrintGCDetailsOption() == null) {
                 analysis.add(WARN_PRINT_GC_DETAILS_MISSING);
             }
         }

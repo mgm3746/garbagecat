@@ -1461,6 +1461,12 @@ class TestAnalysis {
         jvmRun.doAnalysis();
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING),
                 Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis not identified.");
+        // Not applicable to unified logging
+        jvmRun.getAnalysis().clear();
+        jvmRun.getEventTypes().add(LogEventType.UNIFIED_CONCURRENT);
+        jvmRun.doAnalysis();
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING),
+                Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.");
     }
 
     /**
