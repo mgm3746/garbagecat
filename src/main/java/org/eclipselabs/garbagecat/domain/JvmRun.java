@@ -718,7 +718,7 @@ public class JvmRun {
                 analysis.add(WARN_GC_LOG_FILE_OVERWRITE);
             }
         } else {
-            if (jvm.getUseGcLogFileRotationEnabled() == null) {
+            if (jvm.getUseGcLogFileRotationEnabled() == null && !UnifiedUtil.isUnifiedLogging(getEventTypes())) {
                 analysis.add(INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED);
                 if (jvm.getGcLogFileName() != null && !jvm.getGcLogFileName().contains("%")) {
                     analysis.add(WARN_GC_LOG_FILE_OVERWRITE);

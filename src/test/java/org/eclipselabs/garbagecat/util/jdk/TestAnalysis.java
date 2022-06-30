@@ -744,6 +744,21 @@ class TestAnalysis {
                 Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT + " analysis incorrectly identified.");
     }
 
+    @Test
+    void testGcLogFileRotationNotEnabled() {
+        String jvmOptions = "-XX:+UseG1";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED),
+                Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis not identified.");
+        jvmRun.getAnalysis().clear();
+        jvmRun.getEventTypes().add(LogEventType.UNIFIED_CONCURRENT);
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED),
+                Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.");
+    }
+
     /**
      * Test small gc log file size.
      * 
