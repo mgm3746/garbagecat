@@ -547,6 +547,7 @@ public class JvmRun {
 
         // Check for command line flags output.
         if (jvm.getPrintCommandLineFlagsOption() == null && !getEventTypes().isEmpty()
+                && !UnifiedUtil.isUnifiedLogging(getEventTypes())
                 && !getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS)) {
             analysis.add(WARN_PRINT_COMMANDLINE_FLAGS);
         }
@@ -556,7 +557,8 @@ public class JvmRun {
             analysis.add(WARN_PRINT_GC_DETAILS_DISABLED);
         } else {
             // Check if print gc details option missing
-            if (!UnifiedUtil.isUnifiedLogging(getEventTypes()) && jvm.getPrintGCDetailsOption() == null) {
+            if (!getEventTypes().isEmpty() && !UnifiedUtil.isUnifiedLogging(getEventTypes())
+                    && jvm.getPrintGCDetailsOption() == null) {
                 analysis.add(WARN_PRINT_GC_DETAILS_MISSING);
             }
         }
@@ -718,7 +720,8 @@ public class JvmRun {
                 analysis.add(WARN_GC_LOG_FILE_OVERWRITE);
             }
         } else {
-            if (jvm.getUseGcLogFileRotationEnabled() == null && !UnifiedUtil.isUnifiedLogging(getEventTypes())) {
+            if (jvm.getUseGcLogFileRotationEnabled() == null && !getEventTypes().isEmpty()
+                    && !UnifiedUtil.isUnifiedLogging(getEventTypes())) {
                 analysis.add(INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED);
                 if (jvm.getGcLogFileName() != null && !jvm.getGcLogFileName().contains("%")) {
                     analysis.add(WARN_GC_LOG_FILE_OVERWRITE);

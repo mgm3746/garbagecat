@@ -751,10 +751,16 @@ class TestAnalysis {
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED),
+                Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.");
+        jvmRun.getAnalysis().clear();
+        jvmRun.getEventTypes().add(LogEventType.PARALLEL_SCAVENGE);
+        jvmRun.doAnalysis();
         assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED),
                 Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis not identified.");
         jvmRun.getAnalysis().clear();
         jvmRun.getEventTypes().add(LogEventType.UNIFIED_CONCURRENT);
+        jvmRun.doAnalysis();
         assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED),
                 Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.");
     }
@@ -1473,6 +1479,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.getEventTypes().add(LogEventType.PARALLEL_SCAVENGE);
         jvmRun.doAnalysis();
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING),
                 Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis not identified.");

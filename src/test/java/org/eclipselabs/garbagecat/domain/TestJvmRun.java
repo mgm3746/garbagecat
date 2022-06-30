@@ -192,6 +192,7 @@ class TestJvmRun {
         GcManager gcManager = new GcManager();
         Jvm jvm = new Jvm(jvmOptions, null);
         JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.getEventTypes().add(LogEventType.PARALLEL_SCAVENGE);
         jvmRun.doAnalysis();
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_OVERWRITE),
                 Analysis.WARN_GC_LOG_FILE_OVERWRITE + " analysis not identified.");
