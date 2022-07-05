@@ -315,10 +315,20 @@ public class JvmRun {
      */
     private void doDataAnalysis() {
         // Check for partial log
-        if (firstGcEvent != null && !firstGcEvent.getLogEntry().matches(JdkRegEx.DATESTAMP_EVENT)
-                && !firstGcEvent.getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)
-                && GcUtil.isPartialLog(firstGcEvent.getTimestamp())) {
-            analysis.add(INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
+        if (firstGcEvent != null || firstSafepointEvent != null) {
+            long firstTimeStamp = Long.MIN_VALUE;
+            if (firstGcEvent != null && !firstGcEvent.getLogEntry().matches(JdkRegEx.DATESTAMP_EVENT)
+                    && !firstGcEvent.getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
+                firstTimeStamp = firstGcEvent.getTimestamp();
+            }
+            if (firstSafepointEvent != null && !firstSafepointEvent.getLogEntry().matches(JdkRegEx.DATESTAMP_EVENT)
+                    && !firstSafepointEvent.getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)
+                    && firstSafepointEvent.getTimestamp() < firstTimeStamp) {
+                firstTimeStamp = firstSafepointEvent.getTimestamp();
+            }
+            if (GcUtil.isPartialLog(firstTimeStamp)) {
+                analysis.add(INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
+            }
         }
 
         // Check to see if application stopped time enabled

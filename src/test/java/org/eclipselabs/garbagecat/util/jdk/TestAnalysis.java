@@ -711,6 +711,18 @@ class TestAnalysis {
                 Analysis.WARN_FAST_UNORDERED_TIMESTAMPS + " analysis incorrectly identified.");
     }
 
+    @Test
+    void testFirstTimestampThreshhold() throws IOException {
+        File testFile = TestUtil.getFile("dataset250.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED),
+                Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis incorrectly identified.");
+    }
+
     /**
      * Test FooterHeapEvent not incorrectly identified as PrintHeapAtGc
      * 

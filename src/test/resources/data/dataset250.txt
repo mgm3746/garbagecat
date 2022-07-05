@@ -1,0 +1,22 @@
+OpenJDK 64-Bit Server VM (25.332-b09) for linux-amd64 JRE (1.8.0_332-b09), built on Apr 19 2022 00:14:41 by "mockbuild" with gcc 4.8.5 20150623 (Red Hat 4.8.5-44)
+Memory: 4k page, physical 16247564k(11380408k free), swap 5242876k(5242876k free)
+CommandLine flags: -XX:InitialHeapSize=1079194416 -XX:MaxHeapSize=4294967296 -XX:MaxNewSize=1073741824 -XX:NewSize=1073741824 -XX:+PrintGC -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseParallelGC
+0.106: Total time for which application threads were stopped: 0.0001328 seconds, Stopping threads took: 0.0000410 seconds
+0.142: Total time for which application threads were stopped: 0.0001235 seconds, Stopping threads took: 0.0000449 seconds
+0.298: Total time for which application threads were stopped: 0.0001278 seconds, Stopping threads took: 0.0000340 seconds
+0.377: Total time for which application threads were stopped: 0.0001401 seconds, Stopping threads took: 0.0000373 seconds
+0.594: Total time for which application threads were stopped: 0.0002344 seconds, Stopping threads took: 0.0000374 seconds
+0.648: Total time for which application threads were stopped: 0.0001919 seconds, Stopping threads took: 0.0000349 seconds
+0.732: Total time for which application threads were stopped: 0.0001952 seconds, Stopping threads took: 0.0000320 seconds
+1.732: Total time for which application threads were stopped: 0.0001522 seconds, Stopping threads took: 0.0000316 seconds
+3.732: Total time for which application threads were stopped: 0.0000814 seconds, Stopping threads took: 0.0000354 seconds
+4.052: Total time for which application threads were stopped: 0.0001999 seconds, Stopping threads took: 0.0000384 seconds
+5.052: Total time for which application threads were stopped: 0.0000805 seconds, Stopping threads took: 0.0000428 seconds
+7.053: Total time for which application threads were stopped: 0.0000717 seconds, Stopping threads took: 0.0000324 seconds
+11.053: Total time for which application threads were stopped: 0.0000856 seconds, Stopping threads took: 0.0000455 seconds
+13.053: Total time for which application threads were stopped: 0.0000771 seconds, Stopping threads took: 0.0000314 seconds
+24.054: Total time for which application threads were stopped: 0.0001024 seconds, Stopping threads took: 0.0000668 seconds
+68.058: Total time for which application threads were stopped: 0.0001046 seconds, Stopping threads took: 0.0000626 seconds
+75.059: Total time for which application threads were stopped: 0.0000717 seconds, Stopping threads took: 0.0000314 seconds
+76.059: Total time for which application threads were stopped: 0.0001614 seconds, Stopping threads took: 0.0000553 seconds
+76.291: [GC (Allocation Failure) [PSYoungGen: 786432K->7788K(917504K)] 786432K->7932K(923648K), 0.0090844 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]
