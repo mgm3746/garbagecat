@@ -132,8 +132,9 @@ $ docker run -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/garbagecat:main 
 ```
 
 NOTES:
-1. Local directory get mounted on existing `/home/garbagecat/files` directory.
+1. Local directory gets mounted on existing `/home/garbagecat/files` directory.
 1. You need to use the stdout with `--console`.
+1. The local directory must have world execute permission (Linux).
 
 ## Building ##
 
