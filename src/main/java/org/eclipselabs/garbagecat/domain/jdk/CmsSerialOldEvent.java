@@ -136,73 +136,56 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements BlockingEvent, YoungCollection,
-        OldCollection, PermMetaspaceCollection, YoungData, OldData, PermMetaspaceData, TriggerData, SerialCollection {
+public class CmsSerialOldEvent extends CmsIncrementalModeCollector
+        implements BlockingEvent, YoungCollection, OldCollection, PermMetaspaceCollection, YoungData, OldData,
+        PermMetaspaceData, TriggerData, SerialCollection, TimesData {
 
     /**
-     * The log entry for the event. Can be used for debugging purposes.
+     * Regular expression defining the logging beginning with "Full GC".
      */
-    private String logEntry;
+    private static final String REGEX_FULL_GC = "^" + JdkRegEx.DECORATOR + " \\[Full GC( \\("
+            + CmsSerialOldEvent.TRIGGER_FULL_GC + "\\))?[ ]{0,1}(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?"
+            + JdkRegEx.DECORATOR + " " + "\\[CMS(bailing out to foreground collection)?( \\("
+            + CmsSerialOldEvent.TRIGGER_CMS + "\\))?( \\(" + CmsSerialOldEvent.TRIGGER_CMS + "\\))?("
+            + CmsSerialOldEvent.REMARK_BLOCK + ")?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")? "
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
+            + "\\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern REGEX_FULL_GC_PATTERN = Pattern.compile(REGEX_FULL_GC);
 
     /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
+     * Regular expression defining the logging beginning with "GC".
      */
-    private long duration;
+    private static final String REGEX_GC = "^" + JdkRegEx.DECORATOR + " \\[GC( \\(" + CmsSerialOldEvent.TRIGGER_GC
+            + "\\))?[ ]{0,1}" + JdkRegEx.DECORATOR + " \\[ParNew(" + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\("
+            + CmsSerialOldEvent.TRIGGER_PAR_NEW + "\\))?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?(("
+            + JdkRegEx.DECORATOR + " \\[(CMS|Tenured))?(Java HotSpot\\(TM\\) Server VM warning: )?"
+            + "(bailing out to foreground collection)?( \\(" + CmsSerialOldEvent.TRIGGER_CMS + "\\))?(: "
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
+            + "\\])?)?(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?( " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K
+            + "\\(" + JdkRegEx.SIZE_K + "\\)(, \\[(CMS Perm |Perm |Metaspace): " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\])?" + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern REGEX_GC_PATTERN = Pattern.compile(REGEX_GC);
 
     /**
-     * The time when the GC event started in milliseconds after JVM startup.
+     * Regular expression for CMS_REMARK block in some events.
      */
-    private long timestamp;
+    private static final String REMARK_BLOCK = "\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K
+            + "\\)\\]" + JdkRegEx.DECORATOR + " \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.DECORATOR + " \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\]";
 
     /**
-     * Young generation size at beginning of GC event.
+     * Trigger(s) after "CMS".
      */
-    private Memory young = Memory.ZERO;
-
-    /**
-     * Young generation size at end of GC event.
-     */
-    private Memory youngEnd = Memory.ZERO;
-
-    /**
-     * Available space in young generation. Equals young generation allocation minus one survivor space.
-     */
-    private Memory youngAvailable = Memory.ZERO;
-
-    /**
-     * Old generation size at beginning of GC event.
-     */
-    private Memory old = Memory.ZERO;
-
-    /**
-     * Old generation size at end of GC event.
-     */
-    private Memory oldEnd = Memory.ZERO;
-
-    /**
-     * Space allocated to old generation.
-     */
-    private Memory oldAllocation = Memory.ZERO;
-
-    /**
-     * Permanent generation size at beginning of GC event.
-     */
-    private Memory permGen = Memory.ZERO;
-
-    /**
-     * Permanent generation size at end of GC event.
-     */
-    private Memory permGenEnd = Memory.ZERO;
-
-    /**
-     * Space allocated to permanent generation.
-     */
-    private Memory permGenAllocation = Memory.ZERO;
-
-    /**
-     * The trigger for the GC event.
-     */
-    private String trigger;
+    private static final String TRIGGER_CMS = "(" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|"
+            + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + ")";
 
     /**
      * Trigger(s) after "Full GC".
@@ -219,55 +202,100 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
     private static final String TRIGGER_GC = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
 
     /**
-     * Trigger(s) after "CMS".
-     */
-    private static final String TRIGGER_CMS = "(" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|"
-            + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + ")";
-
-    /**
      * Trigger(s) after "ParNew".
      */
     private static final String TRIGGER_PAR_NEW = "(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")";
 
     /**
-     * Regular expression for CMS_REMARK block in some events.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private static final String REMARK_BLOCK = "\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K
-            + "\\)\\]" + JdkRegEx.DECORATOR + " \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.DECORATOR + " \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
-            + " \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
-            + " \\[scrub symbol & string tables, " + JdkRegEx.DURATION + "\\]";
+    public static boolean match(String logLine) {
+        return REGEX_FULL_GC_PATTERN.matcher(logLine).matches() || REGEX_GC_PATTERN.matcher(logLine).matches();
+    }
 
     /**
-     * Regular expression defining the logging beginning with "Full GC".
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private static final String REGEX_FULL_GC = "^" + JdkRegEx.DECORATOR + " \\[Full GC( \\(" + TRIGGER_FULL_GC
-            + "\\))?[ ]{0,1}(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + JdkRegEx.DECORATOR + " "
-            + "\\[CMS(bailing out to foreground collection)?( \\(" + TRIGGER_CMS + "\\))?( \\(" + TRIGGER_CMS + "\\))?("
-            + REMARK_BLOCK + ")?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
-            + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")? " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + "\\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE_K
-            + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, "
-            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
-
-    private static final Pattern REGEX_FULL_GC_PATTERN = Pattern.compile(REGEX_FULL_GC);
+    private long duration;
 
     /**
-     * Regular expression defining the logging beginning with "GC".
+     * The log entry for the event. Can be used for debugging purposes.
      */
-    private static final String REGEX_GC = "^" + JdkRegEx.DECORATOR + " \\[GC( \\(" + TRIGGER_GC + "\\))?[ ]{0,1}"
-            + JdkRegEx.DECORATOR + " \\[ParNew(" + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\(" + TRIGGER_PAR_NEW
-            + "\\))?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
-            + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?((" + JdkRegEx.DECORATOR
-            + " \\[(CMS|Tenured))?(Java HotSpot\\(TM\\) Server VM warning: )?"
-            + "(bailing out to foreground collection)?( \\(" + TRIGGER_CMS + "\\))?(: " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?)?("
-            + ClassHistogramEvent.REGEX_PREPROCESSED + ")?( " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)(, \\[(CMS Perm |Perm |Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K
-            + "\\(" + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\])?"
-            + TimesData.REGEX + "?[ ]*$";
+    private String logEntry;
 
-    private static final Pattern REGEX_GC_PATTERN = Pattern.compile(REGEX_GC);
+    /**
+     * Old generation size at beginning of GC event.
+     */
+    private Memory old = Memory.ZERO;
+
+    /**
+     * Space allocated to old generation.
+     */
+    private Memory oldAllocation = Memory.ZERO;
+
+    /**
+     * Old generation size at end of GC event.
+     */
+    private Memory oldEnd = Memory.ZERO;
+
+    /**
+     * Permanent generation size at beginning of GC event.
+     */
+    private Memory permGen = Memory.ZERO;
+
+    /**
+     * Space allocated to permanent generation.
+     */
+    private Memory permGenAllocation = Memory.ZERO;
+
+    /**
+     * Permanent generation size at end of GC event.
+     */
+    private Memory permGenEnd = Memory.ZERO;
+
+    /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
+
+    /**
+     * The time of all user (non-kernel) threads added together in centiseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
+
+    /**
+     * Young generation size at beginning of GC event.
+     */
+    private Memory young = Memory.ZERO;
+
+    /**
+     * Available space in young generation. Equals young generation allocation minus one survivor space.
+     */
+    private Memory youngAvailable = Memory.ZERO;
+
+    /**
+     * Young generation size at end of GC event.
+     */
+    private Memory youngEnd = Memory.ZERO;
 
     /**
      * Create event from log entry.
@@ -313,6 +341,11 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
                     super.setIncrementalMode(true);
                 }
                 this.duration = JdkMath.convertSecsToMicros(matcher.group(156)).intValue();
+                if (matcher.group(159) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(160)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(161)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(162)).intValue();
+                }
             }
         } else if (logEntry.matches(REGEX_GC)) {
             Pattern pattern = Pattern.compile(REGEX_GC);
@@ -375,6 +408,11 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
                 if (matcher.group(116) != null) {
                     this.duration = JdkMath.convertSecsToMicros(matcher.group(116)).intValue();
                 }
+                if (matcher.group(119) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(120)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(121)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(122)).intValue();
+                }
             }
         }
     }
@@ -395,122 +433,127 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
         this.duration = duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    protected void setLogEntry(String logEntry) {
-        this.logEntry = logEntry;
-    }
-
     public long getDuration() {
         return duration;
     }
 
-    protected void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    protected void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public Memory getYoungOccupancyInit() {
-        return young;
-    }
-
-    protected void setYoungOccupancyInit(Memory young) {
-        this.young = young;
-    }
-
-    public Memory getYoungOccupancyEnd() {
-        return youngEnd;
-    }
-
-    protected void setYoungOccupancyEnd(Memory youngEnd) {
-        this.youngEnd = youngEnd;
-    }
-
-    public Memory getYoungSpace() {
-        return youngAvailable;
-    }
-
-    protected void setYoungSpace(Memory youngAvailable) {
-        this.youngAvailable = youngAvailable;
-    }
-
-    public Memory getOldOccupancyInit() {
-        return old;
-    }
-
-    protected void setOldOccupancyInit(Memory old) {
-        this.old = old;
-    }
-
-    public Memory getOldOccupancyEnd() {
-        return oldEnd;
-    }
-
-    protected void setOldOccupancyEnd(Memory oldEnd) {
-        this.oldEnd = oldEnd;
-    }
-
-    public Memory getOldSpace() {
-        return oldAllocation;
-    }
-
-    protected void setOldSpace(Memory oldAllocation) {
-        this.oldAllocation = oldAllocation;
-    }
-
-    public Memory getPermOccupancyInit() {
-        return permGen;
-    }
-
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
-    }
-
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
-    }
-
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.CMS_SERIAL_OLD.toString();
     }
 
+    public Memory getOldOccupancyEnd() {
+        return oldEnd;
+    }
+
+    public Memory getOldOccupancyInit() {
+        return old;
+    }
+
+    public Memory getOldSpace() {
+        return oldAllocation;
+    }
+
+    public int getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
+    }
+
+    public Memory getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    public Memory getPermOccupancyInit() {
+        return permGen;
+    }
+
+    public Memory getPermSpace() {
+        return permGenAllocation;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
     public String getTrigger() {
         return trigger;
+    }
+
+    public Memory getYoungOccupancyEnd() {
+        return youngEnd;
+    }
+
+    public Memory getYoungOccupancyInit() {
+        return young;
+    }
+
+    public Memory getYoungSpace() {
+        return youngAvailable;
+    }
+
+    protected void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    protected void setLogEntry(String logEntry) {
+        this.logEntry = logEntry;
+    }
+
+    protected void setOldOccupancyEnd(Memory oldEnd) {
+        this.oldEnd = oldEnd;
+    }
+
+    protected void setOldOccupancyInit(Memory old) {
+        this.old = old;
+    }
+
+    protected void setOldSpace(Memory oldAllocation) {
+        this.oldAllocation = oldAllocation;
+    }
+
+    protected void setPermOccupancyEnd(Memory permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    protected void setPermOccupancyInit(Memory permGen) {
+        this.permGen = permGen;
+    }
+
+    protected void setPermSpace(Memory permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
+    }
+
+    protected void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     protected void setTrigger(String trigger) {
         this.trigger = trigger;
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static boolean match(String logLine) {
-        return REGEX_FULL_GC_PATTERN.matcher(logLine).matches() || REGEX_GC_PATTERN.matcher(logLine).matches();
+    protected void setYoungOccupancyEnd(Memory youngEnd) {
+        this.youngEnd = youngEnd;
+    }
+
+    protected void setYoungOccupancyInit(Memory young) {
+        this.young = young;
+    }
+
+    protected void setYoungSpace(Memory youngAvailable) {
+        this.youngAvailable = youngAvailable;
     }
 }

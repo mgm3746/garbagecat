@@ -133,6 +133,10 @@ class TestUnifiedSerialOldEvent {
         assertEquals(kilobytes(701), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1056768), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
         assertEquals(1849, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(Integer.MAX_VALUE, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
     @Test

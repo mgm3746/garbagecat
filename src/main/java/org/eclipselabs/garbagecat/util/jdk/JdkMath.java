@@ -37,7 +37,7 @@ public final class JdkMath {
      * @param timeReal
      *            The wall (clock) time in centiseconds.
      * 
-     * @return Percent user:real time rounded up the the nearest whole number.
+     * @return Percent user+sy:real time rounded up the the nearest whole number.
      */
     public static int calcParallelism(final int timeUser, final int timeSys, final int timeReal) {
         int calc;
@@ -343,13 +343,24 @@ public final class JdkMath {
 
     /**
      * @param parallelism
-     *            The parallelism percent (ratio or user to wall (real time).
+     *            The parallelism percent (ratio of user + sys to wall (real) time).
      * 
-     * @return True if the parallelism is "inverted", false otherwise. Inverted parallelism is &lt;= 100. In other
-     *         words, the parallel collection performance is less than serial (single-threaded).
+     * @return True if the parallelism is "inverted", false otherwise. Inverted parallelism is &lt; 100. In other words,
+     *         the parallel collection performance is less than serial (single-threaded).
      */
     public static boolean isInvertedParallelism(int parallelism) {
         return (parallelism < 100);
+    }
+
+    /**
+     * @param serialism
+     *            The serialism percent (ratio of user + sys to wall (real) time).
+     * 
+     * @return True if the serialism is "inverted", false otherwise. Inverted serialism is &lt; 90. In other words, real
+     *         time is ~11% more than user+sys.
+     */
+    public static boolean isInvertedSerialism(int serialism) {
+        return (serialism < 90);
     }
 
     /**

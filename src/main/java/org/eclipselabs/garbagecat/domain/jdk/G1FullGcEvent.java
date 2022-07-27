@@ -84,7 +84,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCollection, OldCollection,
-        PermMetaspaceCollection, CombinedData, PermMetaspaceData, TriggerData, SerialCollection {
+        PermMetaspaceCollection, CombinedData, PermMetaspaceData, TriggerData, SerialCollection, TimesData {
 
     /**
      * Regular expression standard format.
@@ -114,19 +114,15 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
     /**
-     * The log entry for the event. Can be used for debugging purposes.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private String logEntry;
-
-    /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
-     */
-    private long duration;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
+    public static final boolean match(String logLine) {
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+    }
 
     /**
      * Combined size at beginning of GC event.
@@ -134,14 +130,24 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
     private Memory combined = Memory.ZERO;
 
     /**
+     * Combined available space.
+     */
+    private Memory combinedAvailable = Memory.ZERO;
+
+    /**
      * Combined size at end of GC event.
      */
     private Memory combinedEnd = Memory.ZERO;
 
     /**
-     * Combined available space.
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private Memory combinedAvailable = Memory.ZERO;
+    private long duration;
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
     /**
      * Permanent generation size at beginning of GC event.
@@ -149,14 +155,34 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
     private Memory permGen = Memory.ZERO;
 
     /**
+     * Space allocated to permanent generation.
+     */
+    private Memory permGenAllocation = Memory.ZERO;
+
+    /**
      * Permanent generation size at end of GC event.
      */
     private Memory permGenEnd = Memory.ZERO;
 
     /**
-     * Space allocated to permanent generation.
+     * The wall (clock) time in centiseconds.
      */
-    private Memory permGenAllocation = Memory.ZERO;
+    private int timeReal;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
+
+    /**
+     * The time of all user (non-kernel) threads added together in centiseconds.
+     */
+    private int timeUser;
 
     /**
      * The trigger for the GC event.
@@ -190,6 +216,11 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
                 combinedEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
                 combinedAvailable = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.convertSecsToMicros(matcher.group(26)).intValue();
+                if (matcher.group(29) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(31)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(32)).intValue();
+                }
             }
         } else if ((matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
@@ -218,6 +249,11 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
                 permGenEnd = memory(matcher.group(84), matcher.group(86).charAt(0)).convertTo(KILOBYTES);
                 permGenAllocation = memory(matcher.group(87), matcher.group(89).charAt(0)).convertTo(KILOBYTES);
             }
+            if (matcher.group(110) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(111)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(112)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(113)).intValue();
+            }
         }
     }
 
@@ -237,82 +273,87 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
         this.duration = duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    protected void setLogEntry(String logEntry) {
-        this.logEntry = logEntry;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    protected void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    protected void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public Memory getCombinedOccupancyEnd() {
+        return combinedEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
         return combined;
     }
 
-    public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
-    }
-
     public Memory getCombinedSpace() {
         return combinedAvailable;
     }
 
-    public Memory getPermOccupancyInit() {
-        return permGen;
+    public long getDuration() {
+        return duration;
     }
 
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
-    }
-
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
-    }
-
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString();
     }
 
+    public int getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
+    }
+
+    public Memory getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    public Memory getPermOccupancyInit() {
+        return permGen;
+    }
+
+    public Memory getPermSpace() {
+        return permGenAllocation;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
     public String getTrigger() {
         return trigger;
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+    protected void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    protected void setLogEntry(String logEntry) {
+        this.logEntry = logEntry;
+    }
+
+    protected void setPermOccupancyEnd(Memory permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    protected void setPermOccupancyInit(Memory permGen) {
+        this.permGen = permGen;
+    }
+
+    protected void setPermSpace(Memory permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
+    }
+
+    protected void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

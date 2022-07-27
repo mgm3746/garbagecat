@@ -127,6 +127,11 @@ public class JvmDao {
     private long invertedParallelismCount;
 
     /**
+     * Number of <code>SerialCollection</code> with "inverted" serialism.
+     */
+    private long invertedSerialismCount;
+
+    /**
      * Used for tracking max heap occupancy outside of <code>BlockingEvent</code>s.
      */
     private int maxHeapOccupancyNonBlocking;
@@ -172,6 +177,11 @@ public class JvmDao {
     private long physicalMemoryFree;
 
     /**
+     * Number of <code>SerialCollection</code> events.
+     */
+    private long serialCount;
+
+    /**
      * Stopped time events.
      */
     private List<ApplicationStoppedTimeEvent> stoppedTimeEvents = new ArrayList<>();
@@ -207,6 +217,11 @@ public class JvmDao {
      * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
      */
     private LogEvent worstInvertedParallelismEvent;
+
+    /**
+     * <code>SerialCollection</code> event with the lowest "inverted" serialism.
+     */
+    private LogEvent worstInvertedSerialismEvent;
 
     public JvmDao() {
         if (created) {
@@ -381,6 +396,13 @@ public class JvmDao {
      */
     public long getInvertedParallelismCount() {
         return invertedParallelismCount;
+    }
+
+    /**
+     * @return The number of "inverted" serialism events.
+     */
+    public long getInvertedSerialismCount() {
+        return invertedSerialismCount;
     }
 
     /**
@@ -690,6 +712,13 @@ public class JvmDao {
     }
 
     /**
+     * @return The number of <code>SerialCollection</code> events.
+     */
+    public long getSerialCount() {
+        return serialCount;
+    }
+
+    /**
      * The total number of stopped time events.
      * 
      * @return total number of stopped time events.
@@ -779,6 +808,13 @@ public class JvmDao {
         return worstInvertedParallelismEvent;
     }
 
+    /**
+     * @return The <code>SerialCollection</code> event with the lowest "inverted" serialism.
+     */
+    public LogEvent getWorstInvertedSerialismEvent() {
+        return worstInvertedSerialismEvent;
+    }
+
     private int insertPosition(BlockingEvent event) {
         int size = blockingEvents.size();
         if (size > 0 && COMPARE_BY_TIMESTAMP.compare(blockingEvents.get(size - 1), event) <= 0) {
@@ -803,6 +839,14 @@ public class JvmDao {
      */
     public void setInvertedParallelismCount(long invertedParallelismCount) {
         this.invertedParallelismCount = invertedParallelismCount;
+    }
+
+    /**
+     * @param invertedSerialismCount
+     *            The number of "low" serialism events.
+     */
+    public void setInvertedSerialismCount(long invertedSerialismCount) {
+        this.invertedSerialismCount = invertedSerialismCount;
     }
 
     /**
@@ -878,6 +922,14 @@ public class JvmDao {
     }
 
     /**
+     * @param serialCount
+     *            The number of <code>SerialCollection</code> events.
+     */
+    public void setSerialCount(long serialCount) {
+        this.serialCount = serialCount;
+    }
+
+    /**
      * @param swap
      *            The JVM swap to set.
      */
@@ -907,5 +959,13 @@ public class JvmDao {
      */
     public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {
         this.worstInvertedParallelismEvent = worstInvertedParallelismEvent;
+    }
+
+    /**
+     * @param worstInvertedSerialismEvent
+     *            The <code>SerialCollection</code> event with the lowest "inverted" serialism.
+     */
+    public void setWorstInvertedSerialismEvent(LogEvent worstInvertedSerialismEvent) {
+        this.worstInvertedSerialismEvent = worstInvertedSerialismEvent;
     }
 }

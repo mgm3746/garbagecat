@@ -67,7 +67,7 @@ class TestG1FullGcEvent {
     }
 
     @Test
-    void testLogLineDatestamp() {
+    void testLogLinePreprocessedDatestamp() {
         String logLine = "2017-02-27T02:55:32.523+0300: [Full GC (Allocation Failure) 21G->20G(22G), "
                 + "40.6782890 secs][Eden: 0.0B(1040.0M)->0.0B(1120.0M) Survivors: 80.0M->0.0B "
                 + "Heap: 22.0G(22.0G)->20.6G(22.0G)], [Perm: 1252884K->1252884K(2097152K)] "
@@ -117,6 +117,10 @@ class TestG1FullGcEvent {
         assertEquals(kilobytes(175031), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(175104), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
         assertEquals(3426206, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(443, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(5, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(344, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(131, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
     @Test

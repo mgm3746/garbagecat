@@ -315,7 +315,7 @@ public class Main {
                     }
                 }
                 printWriter.write(LINE_SEPARATOR);
-                // Inverted parallelism. Only report if we have Serial/Parallel/CMS/G1 events with times data.
+                // Inverted parallelism
                 if (jvmRun.getCollectorFamilies() != null && !jvmRun.getCollectorFamilies().isEmpty()
                         && jvmRun.getParallelCount() > 0) {
                     printWriter.write("# Parallel Events: " + jvmRun.getParallelCount() + LINE_SEPARATOR);
@@ -324,6 +324,16 @@ public class Main {
                     if (jvmRun.getInvertedParallelismCount() > 0) {
                         printWriter.write("Inverted Parallelism Max: "
                                 + jvmRun.getWorstInvertedParallelismEvent().getLogEntry() + LINE_SEPARATOR);
+                    }
+                }
+                // Inverted serialism
+                if (jvmRun.getCollectorFamilies() != null && !jvmRun.getCollectorFamilies().isEmpty()
+                        && jvmRun.getSerialCount() > 0) {
+                    printWriter.write("# Serial Events: " + jvmRun.getSerialCount() + LINE_SEPARATOR);
+                    printWriter.write("# Inverted Serialism: " + jvmRun.getInvertedSerialismCount() + LINE_SEPARATOR);
+                    if (jvmRun.getInvertedSerialismCount() > 0) {
+                        printWriter.write("Inverted Serialism Max: "
+                                + jvmRun.getWorstInvertedSerialismEvent().getLogEntry() + LINE_SEPARATOR);
                     }
                 }
                 // NewRatio

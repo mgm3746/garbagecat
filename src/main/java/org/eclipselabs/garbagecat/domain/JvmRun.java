@@ -99,6 +99,11 @@ public class JvmRun {
     private long invertedParallelismCount;
 
     /**
+     * Number of <code>SerialCollection</code> with "inverted" serialism.
+     */
+    private long invertedSerialismCount;
+
+    /**
      * JVM environment information.
      */
     private Jvm jvm;
@@ -179,9 +184,14 @@ public class JvmRun {
     private Memory maxYoungSpace;
 
     /**
-     * SMALL Number of <code>ParallelCollection</code> events.
+     * Number of <code>ParallelCollection</code> events.
      */
     private long parallelCount;
+    
+    /**
+     * Number of <code>SerialCollection</code> events.
+     */
+    private long serialCount;
 
     /**
      * Whether or not the JVM events are from a preprocessed file.
@@ -243,6 +253,11 @@ public class JvmRun {
      * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
      */
     private LogEvent worstInvertedParallelismEvent;
+    
+    /**
+     * <code>Serial Collection</code> event with the lowest "inverted" serialism.
+     */
+    private LogEvent worstInvertedSerialismEvent;
 
     /**
      * Constructor accepting throughput threshold, JVM services, and JVM environment information.
@@ -426,6 +441,11 @@ public class JvmRun {
         // Check for inverted parallelism
         if (getInvertedParallelismCount() > 0) {
             analysis.add(WARN_PARALLELISM_INVERTED);
+        }
+
+        // Check for inverted serialism
+        if (getInvertedSerialismCount() > 0) {
+            analysis.add(WARN_SERIALISM_INVERTED);
         }
 
         // Check for diagnostic options enabled
@@ -1016,6 +1036,10 @@ public class JvmRun {
         return invertedParallelismCount;
     }
 
+    public long getInvertedSerialismCount() {
+        return invertedSerialismCount;
+    }
+
     public Jvm getJvm() {
         return jvm;
     }
@@ -1138,6 +1162,9 @@ public class JvmRun {
     public long getParallelCount() {
         return parallelCount;
     }
+    public long getSerialCount() {
+        return serialCount;
+    }
 
     public List<String> getSafepointBottlenecks() {
         return safepointBottlenecks;
@@ -1219,7 +1246,10 @@ public class JvmRun {
     public LogEvent getWorstInvertedParallelismEvent() {
         return worstInvertedParallelismEvent;
     }
-
+    public LogEvent getWorstInvertedSerialismEvent() {
+        return worstInvertedSerialismEvent;
+    }
+    
     /**
      * @return true if there is data, false otherwise (e.g. no logging lines recognized).
      */
@@ -1273,6 +1303,10 @@ public class JvmRun {
 
     public void setInvertedParallelismCount(long invertedParallelismCount) {
         this.invertedParallelismCount = invertedParallelismCount;
+    }
+    
+    public void setInvertedSerialismCount(long invertedSerialismCount) {
+        this.invertedSerialismCount = invertedSerialismCount;
     }
 
     public void setJvm(Jvm jvm) {
@@ -1342,6 +1376,10 @@ public class JvmRun {
     public void setParallelCount(long parallelCount) {
         this.parallelCount = parallelCount;
     }
+    
+    public void setSerialCount(long serialCount) {
+        this.serialCount = serialCount;
+    }
 
     public void setPreprocessed(boolean preprocessed) {
         this.preprocessed = preprocessed;
@@ -1389,5 +1427,9 @@ public class JvmRun {
 
     public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {
         this.worstInvertedParallelismEvent = worstInvertedParallelismEvent;
+    }
+    
+    public void setWorstInvertedSerialismEvent(LogEvent worstInvertedSerialismEvent) {
+        this.worstInvertedSerialismEvent = worstInvertedSerialismEvent;
     }
 }

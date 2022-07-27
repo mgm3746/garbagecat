@@ -73,6 +73,10 @@ class TestSerialNewEvent {
         assertEquals(kilobytes(11664 - 8512), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(1325760 - 76672), event.getOldSpace(), "Old allocation size not parsed correctly.");
         assertEquals(53064, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(4, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(5, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(80, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
     @Test

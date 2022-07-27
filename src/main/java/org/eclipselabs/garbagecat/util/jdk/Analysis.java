@@ -663,15 +663,20 @@ public enum Analysis {
      * Property key for large (&gt;24 hours) sun.rmi.dgc.server.gcInterval.
      */
     WARN_RMI_DGC_SERVER_GCINTERVAL_LARGE("warn.rmi.dgc.server.gcInterval.large"),
+
     /**
      * Property key for -Dsun.rmi.dgc.server.gcInterval.redundant in combination with -XX:+DisableExplicitGC.
      */
     WARN_RMI_DGC_SERVER_GCINTERVAL_REDUNDANT("warn.rmi.dgc.server.gcInterval.redundant"),
-
     /**
      * Property key for small (&lt;1 hour)sun.rmi.dgc.server.gcInterval.
      */
     WARN_RMI_DGC_SERVER_GCINTERVAL_SMALL("warn.rmi.dgc.server.gcInterval.small"),
+
+    /**
+     * Property key for inverted serialism.
+     */
+    WARN_SERIALISM_INVERTED("warn.serialism.inverted"),
 
     /**
      * Property key for disabling tenuring with -XX:MaxTenuringThreshold=0 or by setting it to a value greater than 15

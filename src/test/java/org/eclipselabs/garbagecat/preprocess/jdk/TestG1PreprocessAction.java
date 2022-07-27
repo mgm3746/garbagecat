@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
@@ -1788,6 +1789,26 @@ class TestG1PreprocessAction {
         String logLine = "      [Inspected:           10116]";
         assertTrue(G1PreprocessAction.match(logLine, null, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+    }
+
+    @Test
+    void testInvertedSerialism() throws IOException {
+        File testFile = TestUtil.getFile("dataset251.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_SERIAL),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+        assertEquals((long) 6, jvmRun.getSerialCount(), "Serial event count not correct.");
+        assertEquals((long) 3, jvmRun.getInvertedSerialismCount(), "Inverted serialism event count not correct.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_SERIALISM_INVERTED),
+                Analysis.WARN_SERIALISM_INVERTED + " analysis not identified.");
+        LogEvent event = jvmRun.getWorstInvertedSerialismEvent();
+        assertEquals(400000, event.getTimestamp(), "Worst inverted serialism event timestamp not correct.");
     }
 
     @Test

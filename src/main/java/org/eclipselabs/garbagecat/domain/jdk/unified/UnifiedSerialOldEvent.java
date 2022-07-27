@@ -69,8 +69,9 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedSerialOldEvent extends SerialCollector implements UnifiedLogging, BlockingEvent, YoungCollection,
-        OldCollection, PermMetaspaceCollection, SerialCollection, YoungData, OldData, PermMetaspaceData, TriggerData {
+public class UnifiedSerialOldEvent extends SerialCollector
+        implements UnifiedLogging, BlockingEvent, YoungCollection, OldCollection, PermMetaspaceCollection,
+        SerialCollection, YoungData, OldData, PermMetaspaceData, TriggerData, TimesData {
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -81,11 +82,41 @@ public class UnifiedSerialOldEvent extends SerialCollector implements UnifiedLog
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private long duration;
+    /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
 
     /**
      * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
+
+    /**
+     * The time of all user (non-kernel) threads added together in centiseconds.
+     */
+    private int timeUser;
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public int getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
 
     /**
      * Young generation size at beginning of GC event.
@@ -191,6 +222,11 @@ public class UnifiedSerialOldEvent extends SerialCollector implements UnifiedLog
             permGenEnd = memory(matcher.group(60), matcher.group(62).charAt(0)).convertTo(KILOBYTES);
             permGenAllocation = memory(matcher.group(63), matcher.group(65).charAt(0)).convertTo(KILOBYTES);
             duration = JdkMath.convertMillisToMicros(matcher.group(75)).intValue();
+            if (matcher.group(76) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(77)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(78)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(79)).intValue();
+            }
         }
     }
 
