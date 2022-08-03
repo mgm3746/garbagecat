@@ -199,6 +199,11 @@ public class JvmDao {
     private long swapFree;
 
     /**
+     * Number of<code>ParallelCollection</code> or <code>Serial Collection</code> where sys exceeds user time.
+     */
+    private long sysGtUserCount;
+
+    /**
      * Logging lines that do not match any known GC events.
      */
     private List<String> unidentifiedLogLines = new ArrayList<>();
@@ -222,6 +227,11 @@ public class JvmDao {
      * <code>SerialCollection</code> event with the lowest "inverted" serialism.
      */
     private LogEvent worstInvertedSerialismEvent;
+
+    /**
+     * <code>ParallelCollection</code> or <code>Serial Collection</code> event with the greatest sys - user.
+     */
+    private LogEvent worstSysGtUserEvent;
 
     public JvmDao() {
         if (created) {
@@ -761,6 +771,13 @@ public class JvmDao {
         return swapFree;
     }
 
+    /**
+     * @return The number of sys &gt; user time events.
+     */
+    public long getSysGtUserCount() {
+        return sysGtUserCount;
+    }
+
     public List<String> getUnidentifiedLogLines() {
         return unidentifiedLogLines;
     }
@@ -813,6 +830,13 @@ public class JvmDao {
      */
     public LogEvent getWorstInvertedSerialismEvent() {
         return worstInvertedSerialismEvent;
+    }
+
+    /**
+     * @return The <code>ParallelCollection</code> or <code>SerialCollection</code> event with the greatest sys - user.
+     */
+    public LogEvent getWorstSysGtUserEvent() {
+        return worstSysGtUserEvent;
     }
 
     private int insertPosition(BlockingEvent event) {
@@ -946,6 +970,14 @@ public class JvmDao {
     }
 
     /**
+     * @param sysGtUserCount
+     *            The number of events with sys &gt; user time.
+     */
+    public void setSysGtUserCount(long sysGtUserCount) {
+        this.sysGtUserCount = sysGtUserCount;
+    }
+
+    /**
      * @param version
      *            The JVM version information to set.
      */
@@ -967,5 +999,13 @@ public class JvmDao {
      */
     public void setWorstInvertedSerialismEvent(LogEvent worstInvertedSerialismEvent) {
         this.worstInvertedSerialismEvent = worstInvertedSerialismEvent;
+    }
+
+    /**
+     * @param worstSysGtUserEvent
+     *            <code>ParallelCollection</code> or <code>Serial Collection</code> event with the greatest sys - user.
+     */
+    public void setWorstSysGtUserEvent(LogEvent worstSysGtUserEvent) {
+        this.worstSysGtUserEvent = worstSysGtUserEvent;
     }
 }

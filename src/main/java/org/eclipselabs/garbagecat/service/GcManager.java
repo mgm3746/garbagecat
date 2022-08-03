@@ -290,6 +290,8 @@ public class GcManager {
         jvmRun.setSerialCount(jvmDao.getSerialCount());
         jvmRun.setInvertedSerialismCount(jvmDao.getInvertedSerialismCount());
         jvmRun.setWorstInvertedSerialismEvent(jvmDao.getWorstInvertedSerialismEvent());
+        jvmRun.setSysGtUserCount(jvmDao.getSysGtUserCount());
+        jvmRun.setWorstSysGtUserEvent(jvmDao.getWorstSysGtUserEvent());
         jvmRun.setMaxHeapOccupancyNonBlocking(kilobytes(jvmDao.getMaxHeapOccupancyNonBlocking()));
         jvmRun.setMaxHeapSpaceNonBlocking(kilobytes(jvmDao.getMaxHeapSpaceNonBlocking()));
         jvmRun.setMaxPermOccupancyNonBlocking(kilobytes(jvmDao.getMaxPermOccupancyNonBlocking()));
@@ -1061,9 +1063,10 @@ public class GcManager {
                 // 15) Inverted parallelism
                 if (event instanceof ParallelEvent && event instanceof TimesData) {
                     if (((TimesData) event).getTimeUser() != TimesData.NO_DATA
+                            && ((TimesData) event).getTimeSys() != TimesData.NO_DATA
                             && ((TimesData) event).getTimeReal() != TimesData.NO_DATA) {
                         jvmDao.setParallelCount(jvmDao.getParallelCount() + 1);
-                        if (event instanceof TimesData && ((TimesData) event).getTimeUser() > 0
+                        if (((TimesData) event).getTimeUser() > 0
                                 && JdkMath.isInvertedParallelism(((TimesData) event).getParallelism())) {
                             jvmDao.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount() + 1);
                             if (jvmDao.getWorstInvertedParallelismEvent() == null) {
@@ -1075,6 +1078,21 @@ public class GcManager {
                                     // Update lowest "low"
                                     jvmDao.setWorstInvertedParallelismEvent(event);
                                 }
+                            }
+                        }
+                    }
+                    // sys > user: ignore sys - user = .01 secs
+                    if (((TimesData) event).getTimeSys() > 0 && ((TimesData) event).getTimeUser() > 0
+                            && ((TimesData) event).getTimeSys() > ((TimesData) event).getTimeUser() + 1) {
+                        jvmDao.setSysGtUserCount(jvmDao.getSysGtUserCount() + 1);
+                        if (jvmDao.getWorstSysGtUserEvent() == null) {
+                            jvmDao.setWorstSysGtUserEvent(event);
+                        } else {
+                            if ((((TimesData) event).getTimeSys() - ((TimesData) event)
+                                    .getTimeUser()) > (((TimesData) jvmDao.getWorstSysGtUserEvent()).getTimeSys()
+                                            - ((TimesData) jvmDao.getWorstSysGtUserEvent()).getTimeUser())) {
+                                // Update greatest user - sys
+                                jvmDao.setWorstSysGtUserEvent(event);
                             }
                         }
                     }
@@ -1126,10 +1144,11 @@ public class GcManager {
                 // 21) Inverted serialism
                 if (event instanceof SerialCollection && event instanceof TimesData) {
                     if (((TimesData) event).getTimeUser() != TimesData.NO_DATA
+                            && ((TimesData) event).getTimeSys() != TimesData.NO_DATA
                             && ((TimesData) event).getTimeReal() != TimesData.NO_DATA) {
                         jvmDao.setSerialCount(jvmDao.getSerialCount() + 1);
-                        // Ignore real vs user + sys < .1 secs
-                        if (event instanceof TimesData && ((TimesData) event).getTimeUser() > 0
+                        // Inverted serialism: Ignore real vs user + sys < .1 secs
+                        if (((TimesData) event).getTimeUser() > 0
                                 && JdkMath.isInvertedSerialism(((TimesData) event).getParallelism())
                                 && (((TimesData) event).getTimeReal() - ((TimesData) event).getTimeUser()
                                         - ((TimesData) event).getTimeSys() > 10)) {
@@ -1142,6 +1161,21 @@ public class GcManager {
                                                 .getParallelism()) {
                                     // Update lowest "low"
                                     jvmDao.setWorstInvertedSerialismEvent(event);
+                                }
+                            }
+                        }
+                        // sys > user: ignore sys - user = .01 secs
+                        if (((TimesData) event).getTimeSys() > 0 && ((TimesData) event).getTimeUser() > 0
+                                && ((TimesData) event).getTimeSys() > ((TimesData) event).getTimeUser() + 1) {
+                            jvmDao.setSysGtUserCount(jvmDao.getSysGtUserCount() + 1);
+                            if (jvmDao.getWorstSysGtUserEvent() == null) {
+                                jvmDao.setWorstSysGtUserEvent(event);
+                            } else {
+                                if ((((TimesData) event).getTimeSys() - ((TimesData) event)
+                                        .getTimeUser()) > (((TimesData) jvmDao.getWorstSysGtUserEvent()).getTimeSys()
+                                                - ((TimesData) jvmDao.getWorstSysGtUserEvent()).getTimeUser())) {
+                                    // Update greatest user - sys
+                                    jvmDao.setWorstSysGtUserEvent(event);
                                 }
                             }
                         }
