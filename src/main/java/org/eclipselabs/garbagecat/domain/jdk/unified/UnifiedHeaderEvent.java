@@ -164,11 +164,12 @@ public class UnifiedHeaderEvent extends G1Collector implements UnifiedLogging {
      */
     private static final String REGEX = "^" + UnifiedRegEx.DECORATOR
             + " (Address Space (Size|Type)|Alignments|Available space on backing filesystem|(Initial|Max|Min) Capacity|"
-            + "(CDS archive\\(s\\)|Compressed class space) mapped at|Compressed Oops|Concurrent( Refinement)? Workers|"
-            + "CPUs|GC Workers|Heap (Initial|Max|Min) Capacity|Heap Backing Filesystem|Heap Backing File|"
-            + "Heap Region (Count|Size)|Heuristics|Humongous Object Threshold|Initializing The Z Garbage Collector|"
-            + "Large Page Support|Medium Page Size|Memory|Mode|Narrow klass base|NUMA Support|Parallel Workers|"
-            + "Periodic GC|Pre-touch|Runtime Workers|TLAB Size Max|Uncommit( Delay)?|Version)(:)?.*$";
+            + "CardTable entry size|(CDS archive\\(s\\)|Compressed class space) mapped at|Compressed Oops|"
+            + "Concurrent( Refinement)? Workers|CPUs|GC Workers|Heap (Initial|Max|Min) Capacity|"
+            + "Heap Backing Filesystem|Heap Backing File|Heap Region (Count|Size)|Heuristics|"
+            + "Humongous Object Threshold|Initializing The Z Garbage Collector|Large Page Support|Medium Page Size|"
+            + "Memory|Mode|Narrow klass base|NUMA Support|Parallel Workers|Periodic GC|Pre-touch|Runtime Workers|"
+            + "TLAB Size Max|Uncommit( Delay)?|Version)(:)?.*$";
 
     private static Pattern pattern = Pattern.compile(REGEX);
 

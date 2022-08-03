@@ -68,6 +68,16 @@ class TestUnifiedHeaderEvent {
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
     }
 
+    /**
+     * Added in JDK18.
+     */
+    @Test
+    void testCardTableEntrySize() {
+        String logLine = "[0.016s][info][gc,init] CardTable entry size: 512";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
     @Test
     void testCdsArchivesMappedAt() {
         String logLine = "[0.013s][info][gc,metaspace] CDS archive(s) mapped at: "
@@ -111,6 +121,23 @@ class TestUnifiedHeaderEvent {
         String logLine = "[0.013s][info][gc,init] CPUs: 12 total, 12 available";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
+    void testG1() throws IOException {
+        File testFile = TestUtil.getFile("dataset239.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_G1),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -285,6 +312,23 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testParallel() throws IOException {
+        File testFile = TestUtil.getFile("dataset238.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_PARALLEL),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+    }
+
+    @Test
     void testParallelWorkers() {
         String logLine = "[0.013s][info][gc,init] Parallel Workers: 10";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
@@ -326,6 +370,41 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testSerial() throws IOException {
+        File testFile = TestUtil.getFile("dataset237.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_SERIAL),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_SERIAL.toString() + ".");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+    }
+
+    @Test
+    void testShenandoah() throws IOException {
+        File testFile = TestUtil.getFile("dataset240.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_SHENANDOAH),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+    }
+
+    @Test
     void testTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] Version: 17.0.1+12-LTS (release)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
@@ -359,75 +438,6 @@ class TestUnifiedHeaderEvent {
         eventTypes.add(LogEventType.UNIFIED_HEADER);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
                 JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " not indentified as unified.");
-    }
-
-    @Test
-    void testSerial() throws IOException {
-        File testFile = TestUtil.getFile("dataset237.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_SERIAL),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_SERIAL.toString() + ".");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-    }
-
-    @Test
-    void testParallel() throws IOException {
-        File testFile = TestUtil.getFile("dataset238.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_PARALLEL),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-    }
-
-    @Test
-    void testG1() throws IOException {
-        File testFile = TestUtil.getFile("dataset239.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_G1),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-    }
-
-    @Test
-    void testShenandoah() throws IOException {
-        File testFile = TestUtil.getFile("dataset240.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_SHENANDOAH),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
