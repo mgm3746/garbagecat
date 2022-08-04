@@ -41,6 +41,12 @@ class TestUnifiedRegEx {
     }
 
     @Test
+    void testDecoratorNoInfo() {
+        String decorator = "[2022-08-03T06:58:38.019+0000][safepoint   ]";
+        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
+    }
+
+    @Test
     void testDecoratorSafepoint() {
         String decorator = "[0.031s][info][safepoint    ]";
         assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
@@ -49,37 +55,43 @@ class TestUnifiedRegEx {
     @Test
     void testDecoratorTime() {
         String decorator = "[2020-02-14T15:21:55.207-0500]";
-        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Time decorator " + decorator + " not recognized.");
+        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
+    }
+
+    @Test
+    void testDecoratorTimePidTags() {
+        String decorator = "[2022-08-03T06:58:37.646+0000][1863][gc,init]";
+        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
     }
 
     @Test
     void testDecoratorTimeUptime() {
         String decorator = "[2020-02-14T15:21:55.207-0500][25.016s]";
-        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Time decorator " + decorator + " not recognized.");
+        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
     }
 
     @Test
     void testDecoratorTimeUptimemillis() {
         String decorator = "[2020-02-14T15:21:55.207-0500][25016ms]";
-        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Time decorator " + decorator + " not recognized.");
+        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
     }
 
     @Test
     void testDecoratorUptime() {
         String decorator = "[25.016s]";
-        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Time decorator " + decorator + " not recognized.");
+        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
     }
 
     @Test
     void testDecoratorUptimeMillis() {
         String decorator = "[25016ms]";
-        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Time decorator " + decorator + " not recognized.");
+        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
     }
 
     @Test
     void testDecoratorUptimeMillis15Digits() {
         String decorator = "[115443156312345ms]";
-        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Time decorator " + decorator + " not recognized.");
+        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
     }
 
     @Test

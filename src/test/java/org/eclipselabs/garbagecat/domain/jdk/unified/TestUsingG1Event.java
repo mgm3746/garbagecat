@@ -107,6 +107,24 @@ class TestUsingG1Event {
         assertEquals((long) 18, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
+    @Test
+    void testLineDatestampNoLevelNoGc() {
+        String logLine = "[2019-05-09T01:38:55.426+0000] Using G1";
+        assertTrue(UsingG1Event.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
+        UsingG1Event event = new UsingG1Event(logLine);
+        assertEquals(610663135426L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLineUtcNoInfo() {
+        String logLine = "[2022-08-03T06:58:37.056+0000][gc] Using G1";
+        assertTrue(UsingG1Event.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
+        UsingG1Event event = new UsingG1Event(logLine);
+        assertEquals(712807117056L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
     /**
      * Test logging.
      * 

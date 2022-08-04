@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -104,7 +106,7 @@ public class ZMarkStartEvent extends ZCollector implements UnifiedLogging, Block
                         endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(24)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 1)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             }
         }

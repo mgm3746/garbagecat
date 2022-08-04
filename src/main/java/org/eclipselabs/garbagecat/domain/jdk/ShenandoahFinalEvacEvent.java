@@ -21,6 +21,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -54,20 +55,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  */
 public class ShenandoahFinalEvacEvent extends ShenandoahCollector implements BlockingEvent, ParallelEvent {
 
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
-
-    /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
-     */
-    private long duration;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
+    private static final Pattern pattern = Pattern.compile(ShenandoahFinalEvacEvent.REGEX);
 
     /**
      * Regular expressions defining the logging.
@@ -75,7 +63,31 @@ public class ShenandoahFinalEvacEvent extends ShenandoahCollector implements Blo
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
             + ") [\\[]{0,1}Pause Final Evac[,]{0,1} " + UnifiedRegEx.DURATION + "[\\]]{0,1}[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
+
+    /**
+     * The elapsed clock time for the GC event in microseconds (rounded).
+     */
+    private long duration;
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
     /**
      * Create event from log entry.
@@ -89,19 +101,23 @@ public class ShenandoahFinalEvacEvent extends ShenandoahCollector implements Blo
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                duration = JdkMath.convertMillisToMicros(matcher.group(38)).intValue();
+                duration = JdkMath
+                        .convertMillisToMicros(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 2))
+                        .intValue();
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;
                     if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        endTimestamp = Long.parseLong(matcher.group(30));
+                        endTimestamp = Long.parseLong(matcher.group(UnifiedUtil.DECORATOR_SIZE + 7));
                     } else if (matcher.group(15).matches(UnifiedRegEx.UPTIME)) {
-                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(25)).longValue();
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 12))
+                                .longValue();
                     } else {
-                        if (matcher.group(28) != null) {
-                            if (matcher.group(28).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                                endTimestamp = Long.parseLong(matcher.group(30));
+                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 14) != null) {
+                            if (matcher.group(JdkUtil.DECORATOR_SIZE + 15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                                endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 17));
                             } else {
-                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(29)).longValue();
+                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 16))
+                                        .longValue();
                             }
                         } else {
                             // Datestamp only.
@@ -140,30 +156,19 @@ public class ShenandoahFinalEvacEvent extends ShenandoahCollector implements Blo
         this.duration = duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
     public long getDuration() {
         return duration;
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString();
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public long getTimestamp() {
+        return timestamp;
     }
 }

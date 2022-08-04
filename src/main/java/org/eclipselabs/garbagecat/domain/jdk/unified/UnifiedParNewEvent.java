@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -179,20 +180,29 @@ public class UnifiedParNewEvent extends ParallelCollector implements UnifiedLogg
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(24);
-            young = memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
-            youngEnd = memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
-            youngAvailable = memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
-            old = memory(matcher.group(34), matcher.group(36).charAt(0)).convertTo(KILOBYTES);
-            oldEnd = memory(matcher.group(37), matcher.group(39).charAt(0)).convertTo(KILOBYTES);
-            oldAllocation = memory(matcher.group(40), matcher.group(42).charAt(0)).convertTo(KILOBYTES);
-            permGen = memory(matcher.group(43), matcher.group(45).charAt(0)).convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(46), matcher.group(48).charAt(0)).convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(61)).intValue();
-            timeUser = JdkMath.convertSecsToCentis(matcher.group(63)).intValue();
-            timeSys = JdkMath.convertSecsToCentis(matcher.group(64)).intValue();
-            timeReal = JdkMath.convertSecsToCentis(matcher.group(65)).intValue();
+            trigger = matcher.group(DECORATOR_SIZE + 1);
+            young = memory(matcher.group(DECORATOR_SIZE + 2), matcher.group(DECORATOR_SIZE + 4).charAt(0))
+                    .convertTo(KILOBYTES);
+            youngEnd = memory(matcher.group(DECORATOR_SIZE + 5), matcher.group(DECORATOR_SIZE + 7).charAt(0))
+                    .convertTo(KILOBYTES);
+            youngAvailable = memory(matcher.group(DECORATOR_SIZE + 8), matcher.group(DECORATOR_SIZE + 10).charAt(0))
+                    .convertTo(KILOBYTES);
+            old = memory(matcher.group(DECORATOR_SIZE + 11), matcher.group(DECORATOR_SIZE + 13).charAt(0))
+                    .convertTo(KILOBYTES);
+            oldEnd = memory(matcher.group(DECORATOR_SIZE + 14), matcher.group(DECORATOR_SIZE + 16).charAt(0))
+                    .convertTo(KILOBYTES);
+            oldAllocation = memory(matcher.group(DECORATOR_SIZE + 17), matcher.group(DECORATOR_SIZE + 19).charAt(0))
+                    .convertTo(KILOBYTES);
+            permGen = memory(matcher.group(DECORATOR_SIZE + 20), matcher.group(DECORATOR_SIZE + 22).charAt(0))
+                    .convertTo(KILOBYTES);
+            permGenEnd = memory(matcher.group(DECORATOR_SIZE + 23), matcher.group(DECORATOR_SIZE + 25).charAt(0))
+                    .convertTo(KILOBYTES);
+            permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 26), matcher.group(DECORATOR_SIZE + 28).charAt(0))
+                    .convertTo(KILOBYTES);
+            duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 38)).intValue();
+            timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 40)).intValue();
+            timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 41)).intValue();
+            timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 42)).intValue();
         }
     }
 

@@ -85,11 +85,20 @@ public class UnifiedRegEx {
      * <pre>
      * [2020-02-14T15:21:55.207-0500][52ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
      * </pre>
+     * 
+     * <p>
+     * 7) -Xlog:gc*,gc+age=trace,safepoint:file=gc_%p_%t.log:utctime,pid,tags:filecount=32,filesize=64m (Elasticsearch
+     * default):
+     * </p>
+     * 
+     * <pre>
+     * [2022-08-03T06:58:37.056+0000][1863][gc] Using G1
+     * </pre>
      */
     public static final String DECORATOR = "\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
             + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
-            + ")\\])?(\\[info[ ]{0,}\\]\\[(gc|safepoint)(,(cds|cpu|ergo|heap|init|load|marking|metaspace|mmu|nmethod|"
-            + "phases|ref|reloc|stats|start|stringtable|stringdedup|task))?(,(coops|exit|start))?[ ]{0,}\\])?( "
+            + ")\\])?(\\[\\d{1,}\\])?(\\[info[ ]{0,}\\])?(\\[(gc|safepoint)(,(cds|cpu|ergo|heap|init|load|marking|metaspace|mmu|"
+            + "nmethod|phases|ref|reloc|stats|start|stringtable|stringdedup|task))?(,(coops|exit|start))?[ ]{0,}\\])?( "
             + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
 
     /**

@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,12 +131,12 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
                         endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(33)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 10)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                if (matcher.group(34) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
+                if (matcher.group(DECORATOR_SIZE + 11) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 12)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 13)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 14)).intValue();
                 }
             }
         }

@@ -129,7 +129,7 @@ public final class JdkUtil {
      */
     public enum CollectorFamily {
         CMS, G1, PARALLEL, SERIAL, SHENANDOAH, UNKNOWN, Z
-    };
+    }
 
     /**
      * Defined logging events.
@@ -189,6 +189,13 @@ public final class JdkUtil {
     };
 
     /**
+     * The number of regex patterns in <code>UnifiedRegEx.DECORATOR</code>. Convenience field to make the code resilient
+     * to decorator pattern changes.
+     */
+    public static final int DECORATOR_SIZE = Pattern.compile(JdkRegEx.DECORATOR)
+            .matcher("2020-03-10T08:03:29.311-0400: 0.373:").groupCount();;
+
+    /**
      * Convert datestamp to milliseconds. For example: Convert 2019-02-05T14:47:34.229-0200 to 23.
      * 
      * @param datestamp
@@ -198,7 +205,7 @@ public final class JdkUtil {
     public static long convertDatestampToMillis(String datestamp) {
         // Calculate uptimemillis from random date/time
         Date eventDate = GcUtil.parseDateStamp(datestamp);
-        return GcUtil.dateDiff(UnifiedUtil.jvmStartDate, eventDate);
+        return GcUtil.dateDiff(UnifiedUtil.JVM_START_DATE, eventDate);
     }
 
     /**

@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -157,11 +158,14 @@ public class UnifiedYoungEvent extends UnknownCollector
                     endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(24);
-            combinedBegin = memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
-            combinedEnd = memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
-            combinedAllocation = memory(matcher.group(32), matcher.group(34).charAt(0)).convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(35)).intValue();
+            trigger = matcher.group(DECORATOR_SIZE + 1);
+            combinedBegin = memory(matcher.group(DECORATOR_SIZE + 3), matcher.group(DECORATOR_SIZE + 5).charAt(0))
+                    .convertTo(KILOBYTES);
+            combinedEnd = memory(matcher.group(DECORATOR_SIZE + 6), matcher.group(DECORATOR_SIZE + 8).charAt(0))
+                    .convertTo(KILOBYTES);
+            combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 9), matcher.group(DECORATOR_SIZE + 11).charAt(0))
+                    .convertTo(KILOBYTES);
+            duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 12)).intValue();
             timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
         }
     }

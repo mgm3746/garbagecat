@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -149,15 +150,18 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
                         endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                trigger = matcher.group(24);
-                combinedBegin = memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(28), matcher.group(30).charAt(0)).convertTo(KILOBYTES);
-                combinedAllocation = memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
-                duration = JdkMath.convertMillisToMicros(matcher.group(34)).intValue();
+                trigger = matcher.group(DECORATOR_SIZE + 1);
+                combinedBegin = memory(matcher.group(DECORATOR_SIZE + 2), matcher.group(DECORATOR_SIZE + 4).charAt(0))
+                        .convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(DECORATOR_SIZE + 5), matcher.group(DECORATOR_SIZE + 7).charAt(0))
+                        .convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 8),
+                        matcher.group(DECORATOR_SIZE + 10).charAt(0)).convertTo(KILOBYTES);
+                duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 11)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(37)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(38)).intValue();
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 13)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 14)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 15)).intValue();
             }
         }
     }

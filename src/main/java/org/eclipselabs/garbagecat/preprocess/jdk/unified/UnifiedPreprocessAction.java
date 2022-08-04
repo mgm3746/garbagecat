@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk.unified;
 
+import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -1204,7 +1206,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(24);
+                this.logEntry = matcher.group(DECORATOR_SIZE + 1);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
@@ -1217,7 +1219,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             matcher.reset();
             if (matcher.matches()) {
                 if (context.contains(TOKEN)) {
-                    this.logEntry = matcher.group(25);
+                    this.logEntry = matcher.group(DECORATOR_SIZE + 2);
                 } else {
                     // Single line event
                     if (priorLogEntry != null && priorLogEntry.equals("")) {
@@ -1234,7 +1236,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             if (nextLogEntry != null && REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(nextLogEntry).matches()) {
                 // Middle logging
                 if (matcher.matches()) {
-                    this.logEntry = matcher.group(26);
+                    this.logEntry = matcher.group(DECORATOR_SIZE + 3);
                 }
             } else if (!context.contains(TOKEN)) {
                 // Single line event
@@ -1251,7 +1253,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             if (nextLogEntry != null && REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(nextLogEntry).matches()) {
                 // Middle logging
                 if (matcher.matches()) {
-                    this.logEntry = matcher.group(27);
+                    this.logEntry = matcher.group(DECORATOR_SIZE + 4);
                 }
             } else if (!context.contains(TOKEN)) {
                 // Single line event
@@ -1266,7 +1268,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PROMOTION_FAILED_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(25);
+                this.logEntry = matcher.group(DECORATOR_SIZE + 2);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
@@ -1323,7 +1325,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // End logging
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(24);
+                this.logEntry = matcher.group(DECORATOR_SIZE + 1);
             }
             // Only output beginning safepoint logging if middle safepoint line is next, or it's the last log line
             if ((entangledLogLines.size() == 1

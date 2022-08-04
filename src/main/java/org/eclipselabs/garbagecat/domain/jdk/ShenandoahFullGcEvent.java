@@ -27,6 +27,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -123,19 +124,23 @@ public class ShenandoahFullGcEvent extends ShenandoahCollector
         if (logEntry.matches(REGEX)) {
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                duration = JdkMath.convertMillisToMicros(matcher.group(47)).intValue();
+                duration = JdkMath
+                        .convertMillisToMicros(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 11))
+                        .intValue();
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;
                     if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        endTimestamp = Long.parseLong(matcher.group(26));
+                        endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 13));
                     } else if (matcher.group(15).matches(UnifiedRegEx.UPTIME)) {
-                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(25)).longValue();
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 12))
+                                .longValue();
                     } else {
-                        if (matcher.group(28) != null) {
-                            if (matcher.group(28).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                                endTimestamp = Long.parseLong(matcher.group(30));
+                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 14) != null) {
+                            if (matcher.group(JdkUtil.DECORATOR_SIZE + 15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                                endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 17));
                             } else {
-                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(29)).longValue();
+                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 16))
+                                        .longValue();
                             }
                         } else {
                             // Datestamp only.
@@ -154,13 +159,25 @@ public class ShenandoahFullGcEvent extends ShenandoahCollector
                         timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                     }
                 }
-                combined = memory(matcher.group(38), matcher.group(40).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(41), matcher.group(43).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = memory(matcher.group(44), matcher.group(46).charAt(0)).convertTo(KILOBYTES);
-                if (matcher.group(48) != null) {
-                    permGen = memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
-                    permGenEnd = memory(matcher.group(52), matcher.group(54).charAt(0)).convertTo(KILOBYTES);
-                    permGenAllocation = memory(matcher.group(55), matcher.group(57).charAt(0)).convertTo(KILOBYTES);
+                combined = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 2),
+                        matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 4).charAt(0))
+                                .convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 5),
+                        matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 7).charAt(0))
+                                .convertTo(KILOBYTES);
+                combinedAvailable = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 8),
+                        matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 10).charAt(0))
+                                .convertTo(KILOBYTES);
+                if (matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 12) != null) {
+                    permGen = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 13),
+                            matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 15).charAt(0))
+                                    .convertTo(KILOBYTES);
+                    permGenEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 16),
+                            matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 18).charAt(0))
+                                    .convertTo(KILOBYTES);
+                    permGenAllocation = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 19),
+                            matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 21).charAt(0))
+                                    .convertTo(KILOBYTES);
                 }
             }
         }

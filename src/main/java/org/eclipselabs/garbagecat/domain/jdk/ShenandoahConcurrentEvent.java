@@ -27,6 +27,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -141,6 +142,8 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 public class ShenandoahConcurrentEvent extends ShenandoahCollector
         implements LogEvent, ParallelEvent, CombinedData, PermMetaspaceData {
 
+    private static Pattern pattern = Pattern.compile(ShenandoahConcurrentEvent.REGEX);
+
     /**
      * Regular expressions defining the logging.
      */
@@ -152,17 +155,16 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
             + ")?[\\]]{0,1}([,]{0,1} [\\[]{0,1}Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)[\\]]{0,1})?[ ]*$";
 
-    private static Pattern pattern = Pattern.compile(REGEX);
-
     /**
-     * The log entry for the event. Can be used for debugging purposes.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private String logEntry;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * Combined size at beginning of GC event.
@@ -170,14 +172,19 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
     private Memory combined;
 
     /**
+     * Combined available space.
+     */
+    private Memory combinedAvailable;
+
+    /**
      * Combined size at end of GC event.
      */
     private Memory combinedEnd;
 
     /**
-     * Combined available space.
+     * The log entry for the event. Can be used for debugging purposes.
      */
-    private Memory combinedAvailable;
+    private String logEntry;
 
     /**
      * Permanent generation size at beginning of GC event.
@@ -185,14 +192,19 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
     private Memory permGen;
 
     /**
+     * Space allocated to permanent generation.
+     */
+    private Memory permGenAllocation;
+
+    /**
      * Permanent generation size at end of GC event.
      */
     private Memory permGenEnd;
 
     /**
-     * Space allocated to permanent generation.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
-    private Memory permGenAllocation;
+    private long timestamp;
 
     /**
      * Create event from log entry.
@@ -207,21 +219,24 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 int duration = 0;
-                if (matcher.group(55) != null) {
-                    duration = JdkMath.convertMillisToMicros(matcher.group(55)).intValue();
+                if (matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 19) != null) {
+                    duration = JdkMath.convertMillisToMicros(
+                            matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 19)).intValue();
                 }
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;
                     if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        endTimestamp = Long.parseLong(matcher.group(30));
+                        endTimestamp = Long.parseLong(matcher.group(UnifiedUtil.DECORATOR_SIZE + 7));
                     } else if (matcher.group(15).matches(UnifiedRegEx.UPTIME)) {
-                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(25)).longValue();
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 12))
+                                .longValue();
                     } else {
-                        if (matcher.group(28) != null) {
-                            if (matcher.group(28).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                                endTimestamp = Long.parseLong(matcher.group(30));
+                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 14) != null) {
+                            if (matcher.group(JdkUtil.DECORATOR_SIZE + 15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                                endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 17));
                             } else {
-                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(29)).longValue();
+                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 16))
+                                        .longValue();
                             }
                         } else {
                             // Datestamp only.
@@ -240,14 +255,20 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
                         timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                     }
                 }
-                if (matcher.group(45) != null) {
-                    combined = memory(matcher.group(46), matcher.group(48).charAt(0)).convertTo(KILOBYTES);
-                    combinedEnd = memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES);
-                    combinedAvailable = memory(matcher.group(52), matcher.group(54).charAt(0)).convertTo(KILOBYTES);
-                    if (matcher.group(56) != null) {
-                        permGen = memory(matcher.group(57), matcher.group(59).charAt(0)).convertTo(KILOBYTES);
-                        permGenEnd = memory(matcher.group(60), matcher.group(62).charAt(0)).convertTo(KILOBYTES);
-                        permGenAllocation = memory(matcher.group(63), matcher.group(65).charAt(0)).convertTo(KILOBYTES);
+                if (matcher.group(UnifiedUtil.DECORATOR_SIZE + 22) != null) {
+                    combined = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 23),
+                            matcher.group(UnifiedUtil.DECORATOR_SIZE + 25).charAt(0)).convertTo(KILOBYTES);
+                    combinedEnd = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 26),
+                            matcher.group(UnifiedUtil.DECORATOR_SIZE + 28).charAt(0)).convertTo(KILOBYTES);
+                    combinedAvailable = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 29),
+                            matcher.group(UnifiedUtil.DECORATOR_SIZE + 31).charAt(0)).convertTo(KILOBYTES);
+                    if (matcher.group(UnifiedUtil.DECORATOR_SIZE + 33) != null) {
+                        permGen = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 34),
+                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 36).charAt(0)).convertTo(KILOBYTES);
+                        permGenEnd = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 37),
+                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 39).charAt(0)).convertTo(KILOBYTES);
+                        permGenAllocation = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 40),
+                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 42).charAt(0)).convertTo(KILOBYTES);
                     }
                 }
 
@@ -255,62 +276,51 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
         }
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
+    public Memory getCombinedOccupancyEnd() {
+        return combinedEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
         return combined;
     }
 
-    public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
-    }
-
     public Memory getCombinedSpace() {
         return combinedAvailable;
     }
 
-    public Memory getPermOccupancyInit() {
-        return permGen;
-    }
-
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
-    }
-
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
-    }
-
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString();
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public Memory getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    public Memory getPermOccupancyInit() {
+        return permGen;
+    }
+
+    public Memory getPermSpace() {
+        return permGenAllocation;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    protected void setPermOccupancyEnd(Memory permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    protected void setPermOccupancyInit(Memory permGen) {
+        this.permGen = permGen;
+    }
+
+    protected void setPermSpace(Memory permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
     }
 }
