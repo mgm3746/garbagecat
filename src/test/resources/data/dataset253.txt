@@ -1,0 +1,18 @@
+[2022-08-03T06:58:41.313+0000][gc,start    ] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+[2022-08-03T06:58:41.313+0000][gc,task     ] GC(0) Using 8 workers of 8 for evacuation
+[2022-08-03T06:58:41.313+0000][gc,age      ] GC(0) Desired survivor size 41943040 bytes, new threshold 15 (max threshold 15)
+[2022-08-03T06:58:41.321+0000][gc,age      ] GC(0) Age table with threshold 15 (max threshold 15)
+[2022-08-03T06:58:41.321+0000][gc,age      ] GC(0) - age   1:   16037032 bytes,   16037032 total
+[2022-08-03T06:58:41.321+0000][gc,phases   ] GC(0)   Pre Evacuate Collection Set: 0,2ms
+[2022-08-03T06:58:41.321+0000][gc,phases   ] GC(0)   Merge Heap Roots: 0,1ms
+[2022-08-03T06:58:41.321+0000][gc,phases   ] GC(0)   Evacuate Collection Set: 6,4ms
+[2022-08-03T06:58:41.321+0000][gc,phases   ] GC(0)   Post Evacuate Collection Set: 1,0ms
+[2022-08-03T06:58:41.321+0000][gc,phases   ] GC(0)   Other: 0,2ms
+[2022-08-03T06:58:41.321+0000][gc,heap     ] GC(0) Eden regions: 76->0(74)
+[2022-08-03T06:58:41.321+0000][gc,heap     ] GC(0) Survivor regions: 0->2(10)
+[2022-08-03T06:58:41.321+0000][gc,heap     ] GC(0) Old regions: 0->0
+[2022-08-03T06:58:41.321+0000][gc,heap     ] GC(0) Archive regions: 2->2
+[2022-08-03T06:58:41.321+0000][gc,heap     ] GC(0) Humongous regions: 0->0
+[2022-08-03T06:58:41.321+0000][gc,metaspace] GC(0) Metaspace: 19460K(19840K)->19460K(19840K) NonClass: 17082K(17280K)->17082K(17280K) Class: 2378K(2560K)->2378K(2560K)
+[2022-08-03T06:58:41.321+0000][gc          ] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 615M->23M(12288M) 7,870ms
+[2022-08-03T06:58:41.321+0000][gc,cpu      ] GC(0) User=0,04s Sys=0,00s Real=0,01s

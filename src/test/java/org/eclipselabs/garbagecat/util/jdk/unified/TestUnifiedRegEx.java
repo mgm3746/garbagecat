@@ -23,6 +23,12 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedRegEx {
 
     @Test
+    void testDecoratorGcAge() {
+        String decorator = "[2022-08-03T06:58:41.313+0000][gc,age      ] GC(0)";
+        assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
+    }
+
+    @Test
     void testDecoratorGcCds() {
         String decorator = "[0.004s][info][gc,cds       ]";
         assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");

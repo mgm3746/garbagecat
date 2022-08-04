@@ -565,8 +565,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained middle metaspace data.
      *
-     * Broken out from REGEX_RETAIN_MIDDLE_SPACE_DATA to distinguish between the Shenandoah Metaspace event printed
-     * after every gc.
+     * UnifiedRegEx.DECORATOR not used and broken out from REGEX_RETAIN_MIDDLE_SPACE_DATA to distinguish between the
+     * Shenandoah Metaspace event printed after every gc.
      * 
      * <p>
      * 1) JDK8/11:
@@ -589,7 +589,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_MIDDLE_METASPACE_DATA = "^\\[(" + JdkRegEx.DATESTAMP + "|"
             + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|"
-            + UnifiedRegEx.UPTIMEMILLIS + ")\\])?(\\[info\\]\\[gc,metaspace[ ]{0,3}\\])? "
+            + UnifiedRegEx.UPTIMEMILLIS + ")\\])?(\\[info\\])?(\\[gc,metaspace[ ]{0,3}\\])? "
             + UnifiedRegEx.GC_EVENT_NUMBER + "( Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))( NonClass: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Class: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
@@ -1084,7 +1084,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Allocation Stall \\(main\\) " + UnifiedRegEx.DURATION + "$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Relocation Stall \\((main|C2 CompilerThread\\d{1,})\\) "
-                    + UnifiedRegEx.DURATION + "$"
+                    + UnifiedRegEx.DURATION + "$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " (Age table|- age).+$"
             //
     };
 
@@ -1212,7 +1214,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(18);
+                this.logEntry = matcher.group(19);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN.matcher(logEntry)).matches()) {
