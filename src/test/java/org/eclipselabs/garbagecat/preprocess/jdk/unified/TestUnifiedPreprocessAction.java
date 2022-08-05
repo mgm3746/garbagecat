@@ -1138,7 +1138,7 @@ class TestUnifiedPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
+        assertEquals(" Metaspace: 3477K->3501K(1056768K)", event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -1166,7 +1166,7 @@ class TestUnifiedPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
+        assertEquals(" Metaspace: 3146K(3328K)->3161K(3328K)", event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -1188,6 +1188,21 @@ class TestUnifiedPreprocessAction {
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
         assertEquals(" Metaspace: 19460K(19840K)->19460K(19840K)", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testMetaspaceTimePidTags() {
+        String logLine = "[2022-08-04T11:38:08.058+0000][1908][gc,metaspace] GC(0) Metaspace: 21086K(21504K)->"
+                + "21086K(21504K) NonClass: 18491K(18752K)->18491K(18752K) Class: 2594K(2752K)->2594K(2752K)";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(" Metaspace: 21086K(21504K)->21086K(21504K)", event.getLogEntry(),
                 "Log line not parsed correctly.");
     }
 
@@ -2556,7 +2571,7 @@ class TestUnifiedPreprocessAction {
     void testShenandoahMetaspaceJdk17() {
         String logLine = "[0.196s][info][gc,metaspace] Metaspace: 3118K(3328K)->3130K(3328K) NonClass: "
                 + "2860K(2944K)->2872K(2944K) Class: 258K(384K)->258K(384K)";
-        assertFalse(UnifiedPreprocessAction.match(logLine),
+        assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line incorrectly recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
     }
 
