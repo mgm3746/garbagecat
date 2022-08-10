@@ -21,11 +21,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalUpdateEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitUpdateEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahMetaspaceEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -582,7 +584,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained middle metaspace data.
      *
-     * Bsroken out from REGEX_RETAIN_MIDDLE_SPACE_DATA to distinguish between the Shenandoah Metaspace event printed
+     * Broken out from REGEX_RETAIN_MIDDLE_SPACE_DATA to distinguish between the Shenandoah Metaspace event printed
      * after every gc.
      * 
      * <p>
@@ -817,7 +819,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [0.363s] Allocation Stall (main) 8.723ms
      * 
+     * [3.394s] Allocation Stall (C1 CompilerThread0) 24.753ms
+     * 
      * [0.407s] Relocation Stall (main) 0.668ms
+     * 
+     * [3.394s] Relocation Stall (C1 CompilerThread0) 0.334ms
      *
      * [0.424s] GC(7) Garbage Collection (Allocation Rate)
      *
@@ -1080,12 +1086,15 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " Clearing All SoftReferences$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Allocation Stall \\(main\\) " + UnifiedRegEx.DURATION + "$",
-            //
-            "^" + UnifiedRegEx.DECORATOR + " Relocation Stall \\((main|C2 CompilerThread\\d{1,})\\) "
+            "^" + UnifiedRegEx.DECORATOR + " Allocation Stall \\((main|C[12] CompilerThread\\d{1,})\\) "
                     + UnifiedRegEx.DURATION + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " (Age table|- age).+$"
+            "^" + UnifiedRegEx.DECORATOR + " Relocation Stall \\((main|C[12] CompilerThread\\d{1,})\\) "
+                    + UnifiedRegEx.DURATION + "$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " (Age table|- age).+$",
+            //
+            UnifiedBlankLineEvent.REGEX
             //
     };
 
@@ -1150,6 +1159,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(logLine).matches()
                 || JdkUtil.parseLogLine(logLine) instanceof UnifiedConcurrentEvent
+                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahConcurrentEvent
                 || JdkUtil.parseLogLine(logLine) instanceof ShenandoahInitUpdateEvent
                 || JdkUtil.parseLogLine(logLine) instanceof ShenandoahInitMarkEvent
                 || JdkUtil.parseLogLine(logLine) instanceof ShenandoahFinalMarkEvent
@@ -1265,13 +1275,14 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(DECORATOR_SIZE + 1);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if ((matcher = REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logEntry)).matches()
-                && !(JdkUtil.parseLogLine(logEntry) instanceof ShenandoahMetaspaceEvent)) {
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
-            if (matcher.matches()) {
+            if (matcher.matches() && !(JdkUtil.parseLogLine(logEntry) instanceof ShenandoahMetaspaceEvent)) {
                 this.logEntry = matcher.group(DECORATOR_SIZE + 1);
+                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            } else {
+                this.logEntry = logEntry;
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
@@ -1399,7 +1410,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             matcher.reset();
             this.logEntry = logEntry;
             context.add(TOKEN_BEGINNING_OF_EVENT);
-        } else if (JdkUtil.parseLogLine(logEntry) instanceof UnifiedConcurrentEvent && !isThrowaway(logEntry)) {
+        } else if ((JdkUtil.parseLogLine(logEntry) instanceof UnifiedConcurrentEvent
+                || JdkUtil.parseLogLine(logEntry) instanceof ShenandoahConcurrentEvent) && !isThrowaway(logEntry)) {
             // Stand alone event
             // TODO: Instead of throwing away some concurrent events, could save them to output at the end
             this.logEntry = logEntry;

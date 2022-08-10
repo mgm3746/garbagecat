@@ -213,7 +213,7 @@ public class FooterHeapEvent implements ThrowAwayEvent {
                     + JdkRegEx.ADDRESS + "(,[ ]{0,1}" + JdkRegEx.ADDRESS + ")?\\)$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?Status: (has forwarded objects, )?(evacuating, concurrent weak roots, )?cancelled$",
+                    + " )?Status: ((has forwarded objects|marking), )?(evacuating, concurrent weak roots, )?cancelled$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Reserved region:$",
             //

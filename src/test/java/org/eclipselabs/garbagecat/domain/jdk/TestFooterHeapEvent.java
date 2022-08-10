@@ -101,6 +101,13 @@ class TestFooterHeapEvent {
     }
 
     @Test
+    void testJdk8StatusMarking() {
+        String logLine = "[4.421s][info][gc,heap,exit  ] Status: marking, cancelled";
+        assertTrue(FooterHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_HEAP.toString() + ".");
+    }
+
+    @Test
     void testNotBlocking() {
         String logLine = "[25.016s][info][gc,heap,exit  ] Heap";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),

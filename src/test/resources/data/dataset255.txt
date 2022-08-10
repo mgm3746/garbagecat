@@ -1,0 +1,6 @@
+2022-08-09T16:05:31.213-0400: [Concurrent cleanup 92712K->19815K(95744K), 0.060 ms]
+Trigger: Average GC time (22.25 ms) is above the time for allocation rate (1080 MB/s) to deplete free headroom (16161K)
+2022-08-09T16:05:31.240-0400: [Concurrent reset
+    Failed to allocate Shared, 288B
+    Cancelling GC: Allocation Failure
+, 13.279 ms]

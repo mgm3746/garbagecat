@@ -1,0 +1,7 @@
+[2022-08-09T16:06:02.622-0400] Entering safepoint region: RevokeBias
+[2022-08-09T16:06:02.622-0400] GC(0) Concurrent evacuation 5.359ms
+[2022-08-09T16:06:02.623-0400] GC(0) Pause Init Update Refs
+[2022-08-09T16:06:02.623-0400] GC(0) Pacer for Update Refs. Used: 31392K, Free: 66048K, Non-Taxable: 6604K, Alloc Tax Rate: 1.1x
+[2022-08-09T16:06:02.623-0400] GC(0) Pause Init Update Refs 0.031ms
+[2022-08-09T16:06:02.623-0400] Leaving safepoint region
+[2022-08-09T16:06:02.623-0400] Total time for which application threads were stopped: 0.0011584 seconds, Stopping threads took: 0.0000722 seconds

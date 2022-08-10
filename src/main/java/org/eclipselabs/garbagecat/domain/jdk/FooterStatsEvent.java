@@ -489,7 +489,7 @@ public class FooterStatsEvent implements ThrowAwayEvent {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?      \\d{1,7} caused by allocation failure$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?        \\d{1,7} happened at (Mark|Outside of Cycle)$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?        \\d{1,7} happened at (Mark|Outside of Cycle|Update Refs)$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?      \\d{1,7} upgraded from Degenerated GC$",
             //

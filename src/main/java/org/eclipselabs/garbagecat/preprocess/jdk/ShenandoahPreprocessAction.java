@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -58,12 +59,18 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained beginning //SHENANDOAH_CONCURRENT marking event
      * 
+     * 2021-10-27T19:37:39.139-0400: [Concurrent evacuation
+     * 
      * 2020-08-18T14:05:39.789+0000: 854865.439: [Concurrent marking
+     * 
+     * 2022-08-09T16:05:31.240-0400: [Concurrent reset
+     * 
+     * 19.373: [Concurrent update references
      */
-    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING = "^(" + JdkRegEx.DECORATOR
-            + " \\[Concurrent marking)$";
-    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING_PATTERN = Pattern
-            .compile(REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING);
+    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(" + JdkRegEx.DECORATOR
+            + " \\[Concurrent (evacuation|marking|reset|update references))$";
+    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_CONCURRENT);
 
     /**
      * Regular expression for retained beginning SHENANDOAH_CONCURRENT cleanup event
@@ -75,26 +82,6 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             + UnifiedRegEx.DURATION + "\\])$";
     private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP);
-
-    /**
-     * Regular expression for retained beginning SHENANDOAH_CONCURRENT update references event
-     * 
-     * 19.373: [Concurrent update references
-     */
-    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT_UPDATE_REFERENCES = "^(" + JdkRegEx.DECORATOR
-            + " \\[Concurrent update references)$";
-    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_UPDATE_REFERENCES_PATTERN = Pattern
-            .compile(REGEX_RETAIN_BEGINNING_CONCURRENT_UPDATE_REFERENCES);
-
-    /**
-     * Regular expression for retained beginning SHENANDOAH_CONCURRENT evacuation event
-     * 
-     * 2021-10-27T19:37:39.139-0400: [Concurrent evacuation
-     */
-    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT_EVACUATION = "^(" + JdkRegEx.DECORATOR
-            + " \\[Concurrent evacuation)$";
-    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_EVACUATION_PATTERN = Pattern
-            .compile(REGEX_RETAIN_BEGINNING_CONCURRENT_EVACUATION);
 
     /**
      * Regular expression for retained Metaspace block.
@@ -182,7 +169,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             //
     };
 
-    private static final List<Pattern> REGEX_THROWAWAY_LIST = new ArrayList<>(REGEX_THROWAWAY.length);
+    private static final List<Pattern> THROWAWAY_PATTERN_LIST = new ArrayList<>(REGEX_THROWAWAY.length);
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -201,7 +188,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
 
     static {
         for (String regex : REGEX_THROWAWAY) {
-            REGEX_THROWAWAY_LIST.add(Pattern.compile(regex));
+            THROWAWAY_PATTERN_LIST.add(Pattern.compile(regex));
         }
     }
 
@@ -222,8 +209,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
     public ShenandoahPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
             List<String> entangledLogLines, Set<String> context) {
         // Beginning logging
-        if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING);
+        if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)) {
+            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
@@ -232,22 +219,6 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
-            }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-            context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT_UPDATE_REFERENCES)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT_UPDATE_REFERENCES);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
-            }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-            context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT_EVACUATION)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT_EVACUATION);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
@@ -272,6 +243,11 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                 clearEntangledLines(entangledLogLines);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if (JdkUtil.parseLogLine(logEntry) instanceof ShenandoahConcurrentEvent && !isThrowaway(logEntry)) {
+            // Stand alone event
+            // TODO: Instead of throwing away some concurrent events, could save them to output at the end
+            this.logEntry = logEntry;
+            context.add(TOKEN_BEGINNING_OF_EVENT);
         }
     }
 
@@ -290,22 +266,13 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        if (REGEX_RETAIN_BEGINNING_CONCURRENT_MARKING_PATTERN.matcher(logLine).matches()
+        if (REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_CONCURRENT_UPDATE_REFERENCES_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_CONCURRENT_EVACUATION_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_METASPACE_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_DURATION_PATTERN.matcher(logLine).matches()) {
             match = true;
-        } else {
-            // TODO: Get rid of this and make them throwaway events?
-            for (int i = 0; i < REGEX_THROWAWAY_LIST.size(); i++) {
-                Pattern pattern = REGEX_THROWAWAY_LIST.get(i);
-                if (pattern.matcher(logLine).matches()) {
-                    match = true;
-                    break;
-                }
-            }
+        } else if (isThrowaway(logLine)) {
+            match = true;
         }
         return match;
     }
@@ -339,5 +306,22 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     private boolean newLoggingEvent(String logLine) {
         return true;
+    }
+
+    /**
+     * Determine if the log line is can be thrown away
+     * 
+     * @return true if the log line matches a throwaway pattern, false otherwise.
+     */
+    private static final boolean isThrowaway(String logLine) {
+        boolean throwaway = false;
+        for (int i = 0; i < THROWAWAY_PATTERN_LIST.size(); i++) {
+            Pattern pattern = THROWAWAY_PATTERN_LIST.get(i);
+            if (pattern.matcher(logLine).matches()) {
+                throwaway = true;
+                break;
+            }
+        }
+        return throwaway;
     }
 }

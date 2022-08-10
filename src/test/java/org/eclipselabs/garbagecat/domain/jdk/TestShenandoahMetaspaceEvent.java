@@ -47,6 +47,14 @@ class TestShenandoahMetaspaceEvent {
     }
 
     @Test
+    void testNoLogLevelNoTags() {
+        String logLine = "[2022-08-09T17:56:59.141-0400] Metaspace: 3448K(3648K)->3465K(3648K) NonClass: "
+                + "3163K(3264K)->3179K(3264K) Class: 285K(384K)->285K(384K)";
+        assertTrue(ShenandoahMetaspaceEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_METASPACE.toString() + ".");
+    }
+
+    @Test
     void testNotBlocking() {
         String logLine = "[0.196s][info][gc,metaspace] Metaspace: 3118K(3328K)->3130K(3328K) NonClass: "
                 + "2860K(2944K)->2872K(2944K) Class: 258K(384K)->258K(384K)";

@@ -290,6 +290,13 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testBlankLine() {
+        String logLine = "[2022-08-09T17:56:59.074-0400]";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testCmsData() {
         String logLine = "[0.053s][info][gc,heap      ] GC(0) CMS: 0K->518K(960K)";
         String nextLogLine = null;
@@ -351,6 +358,29 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testConcurrentCleanup() {
+        String logLine = "[2022-08-09T17:56:59.058-0400] GC(0) Concurrent cleanup";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testConcurrentCleanupConcurrentReset() throws IOException {
+        File testFile = TestUtil.getFile("dataset255.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
+                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.");
     }
 
     @Test
@@ -1153,20 +1183,6 @@ class TestUnifiedPreprocessAction {
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
         assertEquals(" Metaspace: 667K(832K)->667K(832K)", event.getLogEntry(), "Log line not parsed correctly.");
-    }
-
-    @Test
-    void testMetaspaceDataJdk17Shenandoah() {
-        String logLine = "[2022-02-04T14:20:26.741-0500] Metaspace: 3146K(3328K)->3161K(3328K) NonClass: "
-                + "2884K(2944K)->2898K(2944K) Class: 262K(384K)->262K(384K)";
-        String nextLogLine = null;
-        Set<String> context = new HashSet<String>();
-        assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
-        List<String> entangledLogLines = new ArrayList<String>();
-        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
-        assertEquals(" Metaspace: 3146K(3328K)->3161K(3328K)", event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -2222,6 +2238,13 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testShenandoahConcurrent() {
+        String logLine = "[2022-08-09T17:56:59.059-0400] GC(0) Concurrent cleanup 28M->27M(32M) 0.103ms";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testShenandoahConcurrentMarkingUnloadClasses() {
         String logLine = "[5.593s][info][gc,start     ] GC(99) Concurrent marking (unload classes)";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -2568,11 +2591,43 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testShenandoahJdk17() throws IOException {
+        File testFile = TestUtil.getFile("dataset256.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(7, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
+                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.");
+    }
+
+    @Test
     void testShenandoahMetaspaceJdk17() {
         String logLine = "[0.196s][info][gc,metaspace] Metaspace: 3118K(3328K)->3130K(3328K) NonClass: "
                 + "2860K(2944K)->2872K(2944K) Class: 258K(384K)->258K(384K)";
         assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line incorrectly recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testShenandoahMetaspaceJdk17NoTags() {
+        String logLine = "[2022-08-09T17:56:59.074-0400] Metaspace: 3369K(3520K)->3419K(3648K) NonClass: "
+                + "3091K(3136K)->3133K(3264K) Class: 278K(384K)->285K(384K)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -2624,10 +2679,8 @@ class TestUnifiedPreprocessAction {
     void testShenandoahPauseFinalMark() {
         String logLine = "[2021-10-27T13:03:16.630-0400] GC(0) Pause Final Mark (process weakrefs) 0.674ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
-        Set<String> context = new HashSet<String>();
-        assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        Set<String> context = new HashSet<String>();
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
@@ -2637,10 +2690,8 @@ class TestUnifiedPreprocessAction {
     void testShenandoahPauseFinalMarkNoDuration() {
         String logLine = "[2021-10-27T13:03:16.629-0400] GC(0) Pause Final Mark (process weakrefs)";
         assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
-        Set<String> context = new HashSet<String>();
-        assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        Set<String> context = new HashSet<String>();
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
@@ -2650,10 +2701,8 @@ class TestUnifiedPreprocessAction {
     void testShenandoahPauseFinalUpdate() {
         String logLine = "[2021-10-27T13:03:16.634-0400] GC(0) Pause Final Update Refs 0.084ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
-        Set<String> context = new HashSet<String>();
-        assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        Set<String> context = new HashSet<String>();
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
@@ -2663,10 +2712,8 @@ class TestUnifiedPreprocessAction {
     void testShenandoahPauseFinalUpdateNoDuration() {
         String logLine = "[2021-10-27T13:03:16.634-0400] GC(0) Pause Final Update Refs";
         assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
-        Set<String> context = new HashSet<String>();
-        assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        Set<String> context = new HashSet<String>();
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
@@ -2677,6 +2724,26 @@ class TestUnifiedPreprocessAction {
         String logLine = "[2021-10-27T13:03:16.627-0400] GC(0) Pause Init Mark (process weakrefs) 0.575ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahPauseInitUpdateRefs() throws IOException {
+        File testFile = TestUtil.getFile("dataset254.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_INIT_UPDATE),
+                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
+                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
     }
 
     @Test
@@ -3128,7 +3195,14 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
-    void testZAllocationStall() {
+    void testZAllocationStallC1() {
+        String logLine = "[3.394s] Allocation Stall (C1 CompilerThread0) 24.753ms";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZAllocationStallMain() {
         String logLine = "[0.274s] Allocation Stall (main) 12.040ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
@@ -3343,7 +3417,14 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
-    void testZRelocationStall() {
+    void testZRelocationStallC1() {
+        String logLine = "[3.394s] Relocation Stall (C1 CompilerThread0) 0.334ms";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZRelocationStallC2() {
         String logLine = "[0.407s] Relocation Stall (C2 CompilerThread0) 0.702ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");

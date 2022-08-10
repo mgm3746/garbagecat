@@ -31,7 +31,7 @@ public class UnifiedBlankLineEvent implements ThrowAwayEvent {
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = UnifiedRegEx.BLANK_LINE;
+    public static final String REGEX = UnifiedRegEx.BLANK_LINE;
 
     private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 

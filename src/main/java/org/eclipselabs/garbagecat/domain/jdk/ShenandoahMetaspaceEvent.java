@@ -25,13 +25,27 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <p>
- * JDK17 Metaspace event printed at the bottom of every Shenandoah gc.
+ * JDK17 Metaspace event printed at the bottom of every Shenandoah gc. Looks the same as
+ * <code>UnifiedPreprocessAction.REGEX_RETAIN_MIDDLE_METASPACE_DATA</code> except there is no
+ * <code>UnifiedRegEx.GC_EVENT_NUMBER</code>.
  * </p>
  * 
  * <h2>Example Logging</h2>
  * 
+ * <p>
+ * 1) With log level, tags:
+ * </p>
+ * 
  * <pre>
  * [0.303s][info][gc,metaspace] Metaspace: 3378K(3584K)-&gt;3378K(3584K) NonClass: 3120K(3200K)-&gt;3120K(3200K) Class: 258K(384K)-&gt;258K(384K)
+ * </pre>
+ *
+ * <p>
+ * 2) Datestamp only:
+ * </p>
+ * 
+ * <pre>
+ * [2022-08-09T17:56:59.141-0400] Metaspace: 3448K(3648K)-&gt;3465K(3648K) NonClass: 3163K(3264K)-&gt;3179K(3264K) Class: 285K(384K)-&gt;285K(384K)
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -46,7 +60,7 @@ public class ShenandoahMetaspaceEvent extends ShenandoahCollector implements Thr
      */
     private static final String REGEX = "^^\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
             + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
-            + ")\\])?\\[info\\]\\[gc,metaspace\\] Metaspace: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
+            + ")\\])?(\\[info\\]\\[gc,metaspace\\])? Metaspace: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) NonClass: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Class: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[ ]*$";

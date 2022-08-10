@@ -72,6 +72,13 @@ class TestFooterStatsEvent {
     }
 
     @Test
+    void testHappenedAtUpdateRefs() {
+        String logLine = "        1 happened at Update Refs";
+        assertTrue(FooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
     void testHigherDelay() {
         String logLine = "[66.558s][info][gc,stats      ]   Higher delay would prevent application outpacing the GC, "
                 + "but it will hide the GC latencies";
