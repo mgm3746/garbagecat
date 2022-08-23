@@ -127,6 +127,7 @@ Put the YUM repo file into your /etc/yum/repos.d/:
 ### Docker
 
 ```bash
+$ docker pull ghcr.io/mgm3746/garbagecat:main
 $ docker run -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/garbagecat:main --help
 $ docker run -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/garbagecat:main --console /home/garbagecat/files/src/test/gc-example.log >> report.txt
 ```
