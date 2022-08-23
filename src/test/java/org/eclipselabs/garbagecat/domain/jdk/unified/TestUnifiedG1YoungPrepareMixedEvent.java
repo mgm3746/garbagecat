@@ -136,6 +136,18 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     }
 
     @Test
+    void testPreprocessedTriggerG1PreventiveCollection() {
+        String logLine = "[2022-08-22T16:07:11.203+0000][248.117s] GC(26) Pause Young (Prepare Mixed) "
+                + "(G1 Preventive Collection) Metaspace: 52236K(52736K)->52236K(52736K) 269M->81M(300M) 14.821ms "
+                + "User=0.02s Sys=0.00s Real=0.01s";
+        assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+        UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
+                "Event name incorrect.");
+    }
+
+    @Test
     void testPreprocessedTriggerGcLockerInitiatedGc() {
         String logLine = "[2021-10-14T00:22:54.796+0400][info][gc,start      ] GC(891) Pause Young (Prepare Mixed) "
                 + "(GCLocker Initiated GC) Metaspace: 360792K->360792K(1380352K) 10311M->3024M(12288M) 33.928ms "

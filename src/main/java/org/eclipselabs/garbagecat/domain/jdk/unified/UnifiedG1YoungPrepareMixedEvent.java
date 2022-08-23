@@ -62,7 +62,8 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements Unif
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_G1_PREVENTIVE_COLLECTION + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
 
     /**
      * Regular expression defining preprocessed logging.
