@@ -24,8 +24,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Flags header the displays a combination of options passed to the JVM and options/settings triggered by the options
- * passed in. It is not just the options passed to the JVM.
+ * Flags header that displays a combination of the following: (1) Options passed to the JVM. (2) Options/settings
+ * triggered by the options passed in. It is not just the options passed to the JVM.
  * </p>
  * 
  * <p>
