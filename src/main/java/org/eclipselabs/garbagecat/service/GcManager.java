@@ -389,7 +389,7 @@ public class GcManager {
                     }
                 }
                 if (!jvmDao.getAnalysis().contains(Analysis.INFO_THREAD_DUMP)) {
-                    if (ThreadDumpEvent.match(currentLogLine)) {
+                    if (JdkUtil.parseLogLine(currentLogLine) instanceof ThreadDumpEvent) {
                         jvmDao.getAnalysis().add(Analysis.INFO_THREAD_DUMP);
                     }
                 }
@@ -431,7 +431,7 @@ public class GcManager {
                     && !context.contains(UnifiedPreprocessAction.TOKEN)
                     && CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC)) {
-                    // Only match initial line, as FooterHeapEvent and HeatAtGcEvent share patterns
+                    // Only match initial line, as FooterHeapEvent and HeapAtGcEvent share patterns
                     if (currentLogLine.matches("^.+Heap (after|before) (gc|GC) invocations.+$")) {
                         jvmDao.getAnalysis().add(Analysis.WARN_PRINT_HEAP_AT_GC);
                     }
