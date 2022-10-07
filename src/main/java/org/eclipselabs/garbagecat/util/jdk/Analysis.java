@@ -232,6 +232,11 @@ public enum Analysis {
     INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED("info.gc.log.file.rotation.not.enabled"),
 
     /**
+     * Property key for GC log being sent to stdout.
+     */
+    INFO_GC_LOG_STDOUT("info.gc.log.stdout"),
+
+    /**
      * Property key for heap dumps enabled without specifying a location with the -XX:HeapDumpPath option.
      */
     INFO_HEAP_DUMP_PATH_MISSING("info.heap.dump.path.missing"),
@@ -502,7 +507,7 @@ public enum Analysis {
     WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT("warn.g1.mixed.gc.live.thrshld.prcnt"),
 
     /**
-     * Property key for specifying the number of GC log files (-XX:NumberOfGCLogFiles) to keep with log rotation is
+     * Property key for specifying the number of GC log files (-XX:NumberOfGCLogFiles) to keep when log rotation is
      * disabled (-XX:-UseGCLogFileRotation).
      */
     WARN_GC_LOG_FILE_NUM_ROTATION_DISABLED("warn.gc.log.file.num.rotation.disabled"),

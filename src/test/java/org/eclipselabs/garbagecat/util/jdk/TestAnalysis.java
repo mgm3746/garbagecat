@@ -327,8 +327,10 @@ class TestAnalysis {
                 Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED + " analysis not identified.");
         assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED),
                 Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED + " analysis incorrectly identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED),
-                Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_STDOUT),
+                Analysis.INFO_GC_LOG_STDOUT + " analysis not identified.");
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED),
+                Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.");
     }
 
     /**
@@ -772,6 +774,19 @@ class TestAnalysis {
                 Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis not identified.");
         jvmRun.getAnalysis().clear();
         jvmRun.getEventTypes().add(LogEventType.UNIFIED_CONCURRENT);
+        jvmRun.doAnalysis();
+        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED),
+                Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.");
+    }
+
+    @Test
+    void testGcLogFileRotationLoggingToStdout() {
+        // If -Xloggc is not used, output goes to stdout
+        String jvmOptions = "-XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCTimeStamps";
+        GcManager gcManager = new GcManager();
+        Jvm jvm = new Jvm(jvmOptions, null);
+        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.getJvm().setVersion(" JRE (1.8.0_342-b07) ");
         jvmRun.doAnalysis();
         assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED),
                 Analysis.INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED + " analysis incorrectly identified.");

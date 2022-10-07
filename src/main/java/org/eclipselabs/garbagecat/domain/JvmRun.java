@@ -765,8 +765,9 @@ public class JvmRun {
                 analysis.add(WARN_GC_LOG_FILE_OVERWRITE);
             }
         } else {
-            if (jvm.getUseGcLogFileRotationEnabled() == null && !getEventTypes().isEmpty()
-                    && !UnifiedUtil.isUnifiedLogging(getEventTypes())) {
+            if (jvm.getUseGcLogFileRotationEnabled() == null && !jvm.isGcLoggingToStdout()
+                    && ((jvm.JdkNumber() >= 5 && jvm.JdkNumber() <= 8)
+                            || !getEventTypes().isEmpty() && !UnifiedUtil.isUnifiedLogging(getEventTypes()))) {
                 analysis.add(INFO_GC_LOG_FILE_ROTATION_NOT_ENABLED);
                 if (jvm.getGcLogFileName() != null && !jvm.getGcLogFileName().contains("%")) {
                     analysis.add(WARN_GC_LOG_FILE_OVERWRITE);
@@ -784,6 +785,11 @@ public class JvmRun {
             if (jvm.getGcLogFileSizeBytes().lessThan(megabytes(5))) {
                 analysis.add(WARN_GC_LOG_FILE_SIZE_SMALL);
             }
+        }
+
+        // Check if gc logging being sent to stdout
+        if (jvm.isGcLoggingToStdout()) {
+            analysis.add(INFO_GC_LOG_STDOUT);
         }
 
         // If explicit gc is disabled, don't need to set explicit gc options

@@ -37,24 +37,14 @@ import org.eclipselabs.garbagecat.util.Memory.Unit;
 public class Jvm {
 
     /**
-     * The date and time the JVM was started.
+     * JVM memory information.
      */
-    private Date startDate;
+    private String memory;
 
     /**
      * The JVM options for the JVM run.
      */
     private String options;
-
-    /**
-     * JVM version.
-     */
-    private String version;
-
-    /**
-     * JVM memory information.
-     */
-    private String memory;
 
     /**
      * Physical memory.
@@ -67,6 +57,11 @@ public class Jvm {
     private Memory physicalMemoryFree = Memory.ZERO;
 
     /**
+     * The date and time the JVM was started.
+     */
+    private Date startDate;
+
+    /**
      * Swap size.
      */
     private Memory swap = Memory.ZERO;
@@ -75,6 +70,11 @@ public class Jvm {
      * Swap free.
      */
     private Memory swapFree = Memory.ZERO;
+
+    /**
+     * JVM version.
+     */
+    private String version;
 
     /**
      * Constructor accepting list of JVM options.
@@ -90,126 +90,213 @@ public class Jvm {
     }
 
     /**
-     * @return The date and time the JVM was started.
-     */
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    /**
-     * @return The JVM options.
-     */
-    public String getOptions() {
-        return options;
-    }
-
-    /**
-     * @param options
-     *            The JVM options to set.
-     */
-    public void setOptions(String options) {
-        this.options = options;
-    }
-
-    /**
-     * @return The JVM version information.
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
-     * @param version
-     *            The JVM version information to set.
-     */
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    /**
-     * @return The JVM memory information.
-     */
-    public String getMemory() {
-        return memory;
-    }
-
-    /**
-     * @param memory
-     *            The JVM memory information to set.
-     */
-    public void setMemory(String memory) {
-        this.memory = memory;
-    }
-
-    public Memory getPhysicalMemory() {
-        return physicalMemory;
-    }
-
-    public void setPhysicalMemory(Memory physicalMemory) {
-        this.physicalMemory = physicalMemory;
-    }
-
-    public Memory getPhysicalMemoryFree() {
-        return physicalMemoryFree;
-    }
-
-    public void setPhysicalMemoryFree(Memory physicalMemoryFree) {
-        this.physicalMemoryFree = physicalMemoryFree;
-    }
-
-    public Memory getSwap() {
-        return swap;
-    }
-
-    public void setSwap(Memory swap) {
-        this.swap = swap;
-    }
-
-    public Memory getSwapFree() {
-        return swapFree;
-    }
-
-    public void setSwapFree(Memory swapFree) {
-        this.swapFree = swapFree;
-    }
-
-    /**
-     * Thread stack size. Specified with either the <code>-Xss</code>, <code>-ss</code>, or
-     * <code>-XX:ThreadStackSize</code> options. For example:
+     * agentpath instrumentation option. For example:
      * 
      * <pre>
-     * -Xss128k
+     * -agentpath:/path/to/agent.so
      * </pre>
      * 
-     * <pre>
-     * -XX:ThreadStackSize=128
-     * </pre>
-     * 
-     * The <code>-Xss</code> options does not work on Solaris, only the <code>-XX:ThreadStackSize</code> option.
-     * 
-     * @return The JVM thread stack size setting, or null if not explicitly set.
+     * @return the option if it exists, null otherwise.
      */
-    public String getThreadStackSizeOption() {
-        String regex = "(-(X)?(ss|X:ThreadStackSize=)(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
+    public String getAgentpathOption() {
+        String regex = "(-agentpath:[\\S]+)";
         return getJvmOption(regex);
     }
 
     /**
-     * Thread stack size value.
+     * The option for bias locking disabled. For example:
      * 
      * <pre>
-     * 256K
+     * -XX:-UseBiasedLocking
      * </pre>
      * 
-     * @return The thread stack size value, or null if not set. For example:
+     * @return the option if it exists, null otherwise.
      */
-    public Memory getThreadStackSizeValue() {
-        String threadStackSizeOption = getThreadStackSizeOption();
-        if (threadStackSizeOption == null) {
-            return null;
+    public String getBiasedLockingDisabled() {
+        String regex = "(-XX:\\-UseBiasedLocking)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for class unloading disabled.
+     * 
+     * <pre>
+     * -XX:-ClassUnloading
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getClassUnloadingDisabled() {
+        String regex = "(-XX:\\-ClassUnloading)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for disabling the CMS collector to collect Perm/Metaspace. For example:
+     * 
+     * <pre>
+     * -XX:-CMSClassUnloadingEnabled
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCMSClassUnloadingDisabled() {
+        String regex = "(-XX:\\-CMSClassUnloadingEnabled)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for allowing the CMS collector to collect Perm/Metaspace. For example:
+     * 
+     * <pre>
+     * -XX:+CMSClassUnloadingEnabled
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCMSClassUnloadingEnabled() {
+        String regex = "(-XX:\\+CMSClassUnloadingEnabled)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for setting CMS initiating occupancy fraction, the tenured generation occupancy percentage that
+     * triggers a concurrent collection. For example:
+     * 
+     * <pre>
+     * -XX:CMSInitiatingOccupancyFraction=70
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCMSInitiatingOccupancyFraction() {
+        String regex = "(-XX:CMSInitiatingOccupancyFraction=\\d{1,3})";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for disabling heuristics (calculating anticipated promotions) and use only the occupancy fraction to
+     * determine when to trigger a CMS cycle. When an application has large variances in object allocation and young
+     * generation promotion rates, the CMS collector is not able to accurately predict when to start the CMS cycle. For
+     * example:
+     * 
+     * <pre>
+     * -XX:+UseCMSInitiatingOccupancyOnly
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCMSInitiatingOccupancyOnlyEnabled() {
+        String regex = "(-XX:\\+UseCMSInitiatingOccupancyOnly)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option to disable multi-threaded CMS initial mark. For example:
+     * 
+     * <pre>
+     * -XX:-CMSParallelInitialMarkEnabled
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCmsParallelInitialMarkDisabled() {
+        String regex = "(-XX:-CMSParallelInitialMarkEnabled)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option to disable multi-threaded CMS remark. For example:
+     * 
+     * <pre>
+     * -XX:-CMSParallelRemarkEnabled
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCmsParallelRemarkDisabled() {
+        String regex = "(-XX:-CMSParallelRemarkEnabled)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * @return The compressed class space in bytes, or 0 if not set.
+     */
+    public Memory getCompressedClassSpaceSizeBytes() {
+        return getCompressedClassSpaceSizeValue() == null ? Memory.ZERO
+                : Memory.fromOptionSize(getCompressedClassSpaceSizeValue());
+    }
+
+    /**
+     * The option for setting CompressedClassSpaceSize.
+     * 
+     * <pre>
+     * -XX:CompressedClassSpaceSize=768m
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getCompressedClassSpaceSizeOption() {
+        String regex = "(-XX:CompressedClassSpaceSize=((\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?))";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The compressed class space size value. For example:
+     * 
+     * <pre>
+     * 768m
+     * </pre>
+     * 
+     * @return The compressed class space size value, or null if not set. For example:
+     * 
+     */
+    public String getCompressedClassSpaceSizeValue() {
+        return getOptionValue(getCompressedClassSpaceSizeOption());
+    }
+
+    /**
+     * The option for specifying 64-bit.
+     * 
+     * <pre>
+     * -d64
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getD64() {
+        String regex = "(-d64)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option to disable background compilation of bytecode. For example:
+     * 
+     * <pre>
+     * -XX:-BackgroundCompilation
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getDisableBackgroundCompilationOption() {
+        String regex = "(-XX:-BackgroundCompilation)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * Disabled JVM options.
+     * 
+     * @return the disabled JVM options, null otherwise.
+     */
+    public ArrayList<String> getDisabledOptions() {
+        String regex = "(-XX:-[\\S]+)";
+        ArrayList<String> disabledOptions = new ArrayList<String>();
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(options);
+        while (matcher.find()) {
+            disabledOptions.add(matcher.group(1));
         }
-        Unit unit = threadStackSizeOption.startsWith("-XX:ThreadStackSize=") ? KILOBYTES : BYTES;
-        return fromOptionSize(getOptionValue(threadStackSizeOption), unit);
+        return disabledOptions;
     }
 
     /**
@@ -223,237 +310,206 @@ public class Jvm {
     }
 
     /**
-     * Minimum heap space. Specified with the <code>-Xms</code> option. For example:
+     * The option for explicit gc invokes concurrent and unloads classes disabled.
      * 
      * <pre>
-     * -Xms1024m
-     * -XX:InitialHeapSize=1234567890
+     * -XX:-ExplicitGCInvokesConcurrentAndUnloadsClasses
      * </pre>
      * 
-     * @return The minimum heap space, or null if not explicitly set.
+     * @return the option if it exists, null otherwise.
      */
-    public String getMinHeapOption() {
-        String regex = "(-X(ms|X:InitialHeapSize=)(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
+    public String getExplicitGcInvokesConcurrentAndUnloadsClassesDisabled() {
+        String regex = "(-XX:\\-ExplicitGCInvokesConcurrentAndUnloadsClasses)";
         return getJvmOption(regex);
     }
 
     /**
-     * @return The minimum heap space value, or null if not set. For example:
-     * 
-     *         <pre>
-     * 2048M
-     *         </pre>
-     */
-    public String getMinHeapValue() {
-        return getOptionValue(getMinHeapOption());
-    }
-
-    /**
-     * Maximum heap space. Specified with the <code>-Xmx</code> option. For example:
+     * The option to allow explicit garbage collection to be handled concurrently by the CMS and G1 collectors. For
+     * example:
      * 
      * <pre>
-     * -Xmx1024m
-     * -XX:MaxHeapSize=1234567890
+     * -XX:+ExplicitGCInvokesConcurrent
      * </pre>
      * 
-     * @return The maximum heap space, or null if not explicitly set.
+     * @return the option if it exists, null otherwise.
      */
-    public String getMaxHeapOption() {
-        String regex = "(-X(mx|X:MaxHeapSize=)(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
+    public String getExplicitGcInvokesConcurrentOption() {
+        String regex = "(-XX:\\+ExplicitGCInvokesConcurrent)";
         return getJvmOption(regex);
     }
 
     /**
-     * @return The maximum heap space value, or null if not set. For example:
-     * 
-     *         <pre>
-     * 2048M
-     *         </pre>
-     */
-    public String getMaxHeapValue() {
-        return getOptionValue(getMaxHeapOption());
-    }
-
-    /**
-     * @return The maximum heap space, or 0 if not set.
-     */
-    public Memory getMaxHeapBytes() {
-        return getMaxHeapValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxHeapValue());
-    }
-
-    /**
-     * @return The maximum perm space in bytes, or 0 if not set.
-     */
-    public Memory getMaxPermBytes() {
-        return getMaxPermValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxPermValue());
-    }
-
-    /**
-     * @return The maximum metaspace in bytes, or 0 if not set.
-     */
-    public Memory getMaxMetaspaceBytes() {
-        return getMaxMetaspaceValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxMetaspaceValue());
-    }
-
-    /**
-     * 
-     * @return True if the minimum and maximum heap space are set equal.
-     */
-    public boolean isMinAndMaxHeapSpaceEqual() {
-        return getMaxHeapValue() != null && getMinHeapValue() != null
-                && getMaxHeapValue().toUpperCase().equals(getMinHeapValue().toUpperCase());
-    }
-
-    /**
-     * Minimum permanent generation space. Specified with the <code>-XX:PermSize</code> option. For example:
+     * The option for setting the G1 heap waste percentage. For example:
      * 
      * <pre>
-     * -XX:PermSize=128M
+     * -XX:G1HeapWastePercent=5
      * </pre>
      * 
-     * @return The minimum permanent generation space, or null if not explicitly set.
+     * @return the option if it exists, null otherwise.
      */
-    public String getMinPermOption() {
-        String regex = "(-XX:PermSize=(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
+    public String getG1HeapWastePercent() {
+        String regex = "(-XX:G1HeapWastePercent=\\d{1,3})";
         return getJvmOption(regex);
     }
 
     /**
-     * @return The minimum permanent generation space value, or null if not set. For example:
+     * @return The G1 heap waste percentage, or null if not set. For example:
      * 
      *         <pre>
-     * 128M
+     *         5
      *         </pre>
      */
-    public String getMinPermValue() {
-        return getOptionValue(getMinPermOption());
+    public String getG1HeapWastePercentValue() {
+        // Cannot use JdkUtil.getOptionValue() because the option name has a number in it.
+        String value = null;
+        if (getG1HeapWastePercent() != null) {
+            String regex = "^-XX:G1HeapWastePercent=(\\d{1,3})$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(getG1HeapWastePercent());
+            if (matcher.find()) {
+                value = matcher.group(1);
+            }
+        }
+        return value;
     }
 
     /**
-     * Minimum Metaspace. Specified with the <code>-XX:MetsspaceSize</code> option. For example:
+     * The option for setting the occupancy threshold for a region to be considered as a candidate region for a
+     * G1_CLEANUP collection. For example:
      * 
      * <pre>
-     * -XX:MetaspaceSize=128M
+     * -XX:G1MixedGCLiveThresholdPercent=85
      * </pre>
      * 
-     * @return The minimum permanent generation space, or null if not explicitly set.
+     * @return the option if it exists, null otherwise.
      */
-    public String getMinMetaspaceOption() {
-        String regex = "(-XX:MetaspaceSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
+    public String getG1MixedGCLiveThresholdPercent() {
+        String regex = "(-XX:G1MixedGCLiveThresholdPercent=\\d{1,3})";
         return getJvmOption(regex);
     }
 
     /**
-     * @return The minimum Metaspace value, or null if not set. For example:
+     * @return The occupancy threshold percent for a region to be considered as a candidate region for a G1_CLEANUP
+     *         collection, or null if not set. For example:
      * 
      *         <pre>
-     * 128M
+     *         85
      *         </pre>
      */
-    public String getMinMetaspaceValue() {
-        return getOptionValue(getMinMetaspaceOption());
+    public String getG1MixedGCLiveThresholdPercentValue() {
+        // Cannot use JdkUtil.getOptionValue() because the option name has a number in it.
+        String value = null;
+        if (getG1MixedGCLiveThresholdPercent() != null) {
+            String regex = "^-XX:G1MixedGCLiveThresholdPercent=(\\d{1,3})$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(getG1MixedGCLiveThresholdPercent());
+            if (matcher.find()) {
+                value = matcher.group(1);
+            }
+        }
+        return value;
     }
 
     /**
-     * Maximum permanent generation space (<code>-XX:MaxPermSize</code>). For example:
+     * The option for enabling output of summarized remembered set processing info. For example:
      * 
      * <pre>
-     * -XX:MaxPermSize=128M
+     * -XX:+G1SummarizeRSetStats
      * </pre>
      * 
-     * @return The maximum permanent generation space, or null if not explicitly set.
+     * @return the option if it exists, null otherwise.
      */
-    public String getMaxPermOption() {
-        String regex = "(-XX:MaxPermSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
+    public String getG1SummarizeRSetStatsEnabled() {
+        String regex = "(-XX:\\+G1SummarizeRSetStats)";
         return getJvmOption(regex);
     }
 
     /**
-     * @return The maximum permanent generation space value, or null if not set. For example:
-     * 
-     *         <pre>
-     * 128M
-     *         </pre>
-     */
-    public String getMaxPermValue() {
-        return getOptionValue(getMaxPermOption());
-    }
-
-    /**
-     * Maximum Metaspace (<code>-XX:MaxMetaspaceSize</code>). For example:
+     * The option for setting the # of GCs to output update buffer processing info (0 = disabled). For example:
      * 
      * <pre>
-     * -XX:MaxMetaspaceSize=128M
+     * -XX:G1SummarizeRSetStatsPeriod=1
      * </pre>
      * 
-     * @return The maximum Metaspace, or null if not explicitly set.
+     * @return the option if it exists, null otherwise.
      */
-    public String getMaxMetaspaceOption() {
-        String regex = "(-XX:MaxMetaspaceSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
+    public String getG1SummarizeRSetStatsPeriod() {
+        String regex = "(-XX:G1SummarizeRSetStatsPeriod=\\d{1,3})";
         return getJvmOption(regex);
     }
 
     /**
-     * @return The maximum Metaspace value, or null if not set. For example:
+     * @return The # of GCs to output buffer processing info. For example:
      * 
      *         <pre>
-     * 128M
+     *         1
      *         </pre>
      */
-    public String getMaxMetaspaceValue() {
-        return getOptionValue(getMaxMetaspaceOption());
+    public String getG1SummarizeRSetStatsPeriodValue() {
+        // Cannot use JdkUtil.getOptionValue() because the option name has a number in it.
+        String value = null;
+        if (getG1SummarizeRSetStatsPeriod() != null) {
+            String regex = "^-XX:G1SummarizeRSetStatsPeriod=(\\d{1,3})$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(getG1SummarizeRSetStatsPeriod());
+            if (matcher.find()) {
+                value = matcher.group(1);
+            }
+        }
+        return value;
     }
 
     /**
-     * Client Distributed Garbage Collection (DGC) interval in milliseconds.
+     * GC log file name.
+     * 
+     * @return the GC log file name, null otherwise.
+     */
+    public String getGcLogFileName() {
+        String gcLogFileName = null;
+        String regex = "-Xloggc:(.+)";
+        Pattern pattern = Pattern.compile(regex);
+        if (getXlogGcOption() != null) {
+            Matcher matcher = pattern.matcher(getXlogGcOption());
+            if (matcher.find()) {
+                gcLogFileName = matcher.group(1);
+            }
+        }
+        return gcLogFileName;
+    }
+
+    /**
+     * The option for setting the gc log file size that triggers rotation. For example:
      * 
      * <pre>
-     * -Dsun.rmi.dgc.client.gcInterval=14400000
+     * -XX:GCLogFileSize=5M
      * </pre>
      * 
-     * @return The client Distributed Garbage Collection (DGC), or null if not explicitly set.
+     * @return the option if it exists, null otherwise.
      */
-    public String getRmiDgcClientGcIntervalOption() {
-        String regex = "(-Dsun.rmi.dgc.client.gcInterval=(\\d{1,12}))";
+    public String getGcLogFileSize() {
+        String regex = "(-XX:GCLogFileSize=(\\d{1,9})([kKmM])?)";
         return getJvmOption(regex);
     }
 
     /**
-     * @return The client Distributed Garbage Collection (DGC) interval value in (milliseconds), or null if not set. For
-     *         example:
-     * 
-     *         <pre>
-     *         14400000
-     *         </pre>
+     * @return The gc log file size in bytes, or 0 if not set.
      */
-    public String getRmiDgcClientGcIntervalValue() {
-        return getOptionValue(getRmiDgcClientGcIntervalOption());
+    public Memory getGcLogFileSizeBytes() {
+        return getGcLogFileSizeValue() == null ? Memory.ZERO : Memory.fromOptionSize(getGcLogFileSizeValue());
     }
 
     /**
-     * Server Distributed Garbage Collection (DGC) interval in milliseconds.
+     * The compressed class space size value. For example:
      * 
      * <pre>
-     * -Dsun.rmi.dgc.server.gcInterval=14400000
+     * 5M
      * </pre>
      * 
-     * @return The server Distributed Garbage Collection (DGC), or null if not explicitly set.
-     */
-    public String getRmiDgcServerGcIntervalOption() {
-        String regex = "(-Dsun.rmi.dgc.server.gcInterval=(\\d{1,12}))";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * @return The server Distributed Garbage Collection (DGC) interval value in (milliseconds), or null if not set. For
-     *         example:
+     * @return The gc log file size, or null if not set. For example:
      * 
-     *         <pre>
-     *         14400000
-     *         </pre>
      */
-    public String getRmiDgcServerGcIntervalValue() {
-        return getOptionValue(getRmiDgcServerGcIntervalOption());
+    public String getGcLogFileSizeValue() {
+        return getOptionValue(getGcLogFileSize());
     }
 
     /**
@@ -534,329 +590,283 @@ public class Jvm {
     }
 
     /**
-     * agentpath instrumentation option. For example:
+     * @param regex
+     *            The option regular expression.
+     * @return The JVM option, or null if not explicitly set.
+     */
+    public String getJvmOption(final String regex) {
+        if (options != null) {
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(options);
+            if (matcher.find()) {
+                return matcher.group(1);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return The maximum heap space, or 0 if not set.
+     */
+    public Memory getMaxHeapBytes() {
+        return getMaxHeapValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxHeapValue());
+    }
+
+    /**
+     * Maximum heap space. Specified with the <code>-Xmx</code> option. For example:
      * 
      * <pre>
-     * -agentpath:/path/to/agent.so
+     * -Xmx1024m
+     * -XX:MaxHeapSize=1234567890
      * </pre>
      * 
-     * @return the option if it exists, null otherwise.
+     * @return The maximum heap space, or null if not explicitly set.
      */
-    public String getAgentpathOption() {
-        String regex = "(-agentpath:[\\S]+)";
+    public String getMaxHeapOption() {
+        String regex = "(-X(mx|X:MaxHeapSize=)(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
         return getJvmOption(regex);
     }
 
     /**
-     * The option to disable background compilation of bytecode. For example:
+     * @return The maximum heap space value, or null if not set. For example:
+     * 
+     *         <pre>
+     * 2048M
+     *         </pre>
+     */
+    public String getMaxHeapValue() {
+        return getOptionValue(getMaxHeapOption());
+    }
+
+    /**
+     * @return The maximum metaspace in bytes, or 0 if not set.
+     */
+    public Memory getMaxMetaspaceBytes() {
+        return getMaxMetaspaceValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxMetaspaceValue());
+    }
+
+    /**
+     * Maximum Metaspace (<code>-XX:MaxMetaspaceSize</code>). For example:
      * 
      * <pre>
-     * -Xbatch
+     * -XX:MaxMetaspaceSize=128M
      * </pre>
      * 
-     * @return the option if it exists, null otherwise.
+     * @return The maximum Metaspace, or null if not explicitly set.
      */
-    public String getXBatchOption() {
-        String regex = "(-Xbatch)";
+    public String getMaxMetaspaceOption() {
+        String regex = "(-XX:MaxMetaspaceSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
         return getJvmOption(regex);
     }
 
     /**
-     * The option to disable background compilation of bytecode. For example:
+     * @return The maximum Metaspace value, or null if not set. For example:
+     * 
+     *         <pre>
+     * 128M
+     *         </pre>
+     */
+    public String getMaxMetaspaceValue() {
+        return getOptionValue(getMaxMetaspaceOption());
+    }
+
+    /**
+     * @return The maximum perm space in bytes, or 0 if not set.
+     */
+    public Memory getMaxPermBytes() {
+        return getMaxPermValue() == null ? Memory.ZERO : Memory.fromOptionSize(getMaxPermValue());
+    }
+
+    /**
+     * Maximum permanent generation space (<code>-XX:MaxPermSize</code>). For example:
      * 
      * <pre>
-     * -XX:-BackgroundCompilation
+     * -XX:MaxPermSize=128M
      * </pre>
      * 
-     * @return the option if it exists, null otherwise.
+     * @return The maximum permanent generation space, or null if not explicitly set.
      */
-    public String getDisableBackgroundCompilationOption() {
-        String regex = "(-XX:-BackgroundCompilation)";
+    public String getMaxPermOption() {
+        String regex = "(-XX:MaxPermSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
         return getJvmOption(regex);
     }
 
     /**
-     * The option to enable compilation of bytecode on first invocation. For example:
+     * @return The maximum permanent generation space value, or null if not set. For example:
+     * 
+     *         <pre>
+     * 128M
+     *         </pre>
+     */
+    public String getMaxPermValue() {
+        return getOptionValue(getMaxPermOption());
+    }
+
+    /**
+     * The option for setting the maximum tenuring threshold option (the number of times objects surviving a young
+     * collection are copied to a survivor space).
      * 
      * <pre>
-     * -Xcomp
+     * -XX:MaxTenuringThreshold=0
      * </pre>
      * 
      * @return the option if it exists, null otherwise.
      */
-    public String getXCompOption() {
-        String regex = "(-Xcomp)";
+    public String getMaxTenuringThresholdOption() {
+        String regex = "(-XX:MaxTenuringThreshold=(\\d+))";
         return getJvmOption(regex);
     }
 
     /**
-     * The option to disable just in time (JIT) compilation. For example:
+     * @return The JVM memory information.
+     */
+    public String getMemory() {
+        return memory;
+    }
+
+    /**
+     * Minimum heap space. Specified with the <code>-Xms</code> option. For example:
      * 
      * <pre>
-     * -Xint
+     * -Xms1024m
+     * -XX:InitialHeapSize=1234567890
      * </pre>
      * 
-     * @return the option if it exists, null otherwise.
+     * @return The minimum heap space, or null if not explicitly set.
      */
-    public String getXIntOption() {
-        String regex = "(-Xint)";
+    public String getMinHeapOption() {
+        String regex = "(-X(ms|X:InitialHeapSize=)(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
         return getJvmOption(regex);
     }
 
     /**
-     * The option to allow explicit garbage collection to be handled concurrently by the CMS and G1 collectors. For
-     * example:
+     * @return The minimum heap space value, or null if not set. For example:
+     * 
+     *         <pre>
+     * 2048M
+     *         </pre>
+     */
+    public String getMinHeapValue() {
+        return getOptionValue(getMinHeapOption());
+    }
+
+    /**
+     * Minimum Metaspace. Specified with the <code>-XX:MetsspaceSize</code> option. For example:
      * 
      * <pre>
-     * -XX:+ExplicitGCInvokesConcurrent
+     * -XX:MetaspaceSize=128M
      * </pre>
      * 
-     * @return the option if it exists, null otherwise.
+     * @return The minimum permanent generation space, or null if not explicitly set.
      */
-    public String getExplicitGcInvokesConcurrentOption() {
-        String regex = "(-XX:\\+ExplicitGCInvokesConcurrent)";
+    public String getMinMetaspaceOption() {
+        String regex = "(-XX:MetaspaceSize=(\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?)";
         return getJvmOption(regex);
     }
 
     /**
-     * The option to output JVM command line options at the beginning of gc logging. For example:
+     * @return The minimum Metaspace value, or null if not set. For example:
+     * 
+     *         <pre>
+     * 128M
+     *         </pre>
+     */
+    public String getMinMetaspaceValue() {
+        return getOptionValue(getMinMetaspaceOption());
+    }
+
+    /**
+     * Minimum permanent generation space. Specified with the <code>-XX:PermSize</code> option. For example:
      * 
      * <pre>
-     * -XX:+PrintCommandLineFlags
+     * -XX:PermSize=128M
      * </pre>
      * 
-     * @return the option if it exists, null otherwise.
+     * @return The minimum permanent generation space, or null if not explicitly set.
      */
-    public String getPrintCommandLineFlagsOption() {
-        String regex = "(-XX:\\+PrintCommandLineFlags)";
+    public String getMinPermOption() {
+        String regex = "(-XX:PermSize=(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
         return getJvmOption(regex);
     }
 
     /**
-     * The option to output details at gc. For example:
+     * @return The minimum permanent generation space value, or null if not set. For example:
+     * 
+     *         <pre>
+     * 128M
+     *         </pre>
+     */
+    public String getMinPermValue() {
+        return getOptionValue(getMinPermOption());
+    }
+
+    /**
+     * The option for setting number of log files to rotate. For example:
      * 
      * <pre>
-     * -XX:+PrintGCDetails
+     * -XX:NumberOfGCLogFiles=5
      * </pre>
      * 
      * @return the option if it exists, null otherwise.
      */
-    public String getPrintGCDetailsOption() {
-        String regex = "(-XX:\\+PrintGCDetails)";
+    public String getNumberOfGcLogFiles() {
+        String regex = "(-XX:NumberOfGCLogFiles=\\d{1,2})";
         return getJvmOption(regex);
     }
 
     /**
-     * The option to output details at gc disabled. For example:
+     * @return The JVM options.
+     */
+    public String getOptions() {
+        return options;
+    }
+
+    /**
+     * @return The percentage of swap that is free. 100 means no swap used. 0 means all swap used.
+     */
+    public long getPercentSwapFree() {
+        if (!swap.greaterThan(Memory.ZERO)) {
+            return 100L;
+        }
+        BigDecimal percentFree = new BigDecimal(swapFree.getValue(BYTES));
+        percentFree = percentFree.divide(new BigDecimal(swap.getValue(BYTES)), 2, RoundingMode.HALF_EVEN);
+        percentFree = percentFree.movePointRight(2);
+        return percentFree.longValue();
+    }
+
+    public Memory getPhysicalMemory() {
+        return physicalMemory;
+    }
+
+    public Memory getPhysicalMemoryFree() {
+        return physicalMemoryFree;
+    }
+
+    /**
+     * The option for disabling Adaptive Resize Policy output.
      * 
      * <pre>
-     * -XX:-PrintGCDetails
+     * -XX:-PrintAdaptiveSizePolicy
      * </pre>
      * 
      * @return the option if it exists, null otherwise.
      */
-    public String getPrintGCDetailsDisabled() {
-        String regex = "(-XX:\\-PrintGCDetails)";
+    public String getPrintAdaptiveResizePolicyDisabled() {
+        String regex = "(-XX:\\-PrintAdaptiveSizePolicy)";
         return getJvmOption(regex);
     }
 
     /**
-     * The option for the CMS young collector. For example:
+     * The option for enabling Adaptive Resize Policy output.
      * 
      * <pre>
-     * -XX:+UseParNewGC
+     * -XX:+PrintAdaptiveSizePolicy
      * </pre>
      * 
      * @return the option if it exists, null otherwise.
      */
-    public String getUseParNewGCOption() {
-        String regex = "(-XX:\\+UseParNewGC)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option to disable the PAR_NEW collector. For example:
-     * 
-     * <pre>
-     * -XX:-UseParNewGC
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getUseParNewGcDisabled() {
-        String regex = "(-XX:\\-UseParNewGC)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for the CMS old collector. For example:
-     * 
-     * <pre>
-     * -XX:+UseConcMarkSweepGC
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getUseConcMarkSweepGCOption() {
-        String regex = "(-XX:\\+UseConcMarkSweepGC)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for allowing the CMS collector to collect Perm/Metaspace. For example:
-     * 
-     * <pre>
-     * -XX:+CMSClassUnloadingEnabled
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getCMSClassUnloadingEnabled() {
-        String regex = "(-XX:\\+CMSClassUnloadingEnabled)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for disabling the CMS collector to collect Perm/Metaspace. For example:
-     * 
-     * <pre>
-     * -XX:-CMSClassUnloadingEnabled
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getCMSClassUnloadingDisabled() {
-        String regex = "(-XX:\\-CMSClassUnloadingEnabled)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for outputting times for reference processing (weak, soft,JNI). For example:
-     * 
-     * <pre>
-     * -XX:+PrintReferenceGC
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getPrintReferenceGC() {
-        String regex = "(-XX:\\+PrintReferenceGC)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for printing trigger information. For example:
-     * 
-     * <pre>
-     * -XX:+PrintGCCause
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getPrintGCCause() {
-        String regex = "(-XX:\\+PrintGCCause)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for printing trigger information disabled. For example:
-     * 
-     * <pre>
-     * -XX:-PrintGCCause
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getPrintGCCauseDisabled() {
-        String regex = "(-XX:\\-PrintGCCause)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for enabling tiered compilation. For example:
-     * 
-     * <pre>
-     * -XX:+TieredCompilation
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getTieredCompilation() {
-        String regex = "(-XX:\\+TieredCompilation)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for string deduplication statistics. For example:
-     * 
-     * <pre>
-     * -XX:+PrintStringDeduplicationStatistics
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getPrintStringDeduplicationStatistics() {
-        String regex = "(-XX:\\+PrintStringDeduplicationStatistics)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for setting CMS initiating occupancy fraction, the tenured generation occupancy percentage that
-     * triggers a concurrent collection. For example:
-     * 
-     * <pre>
-     * -XX:CMSInitiatingOccupancyFraction=70
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getCMSInitiatingOccupancyFraction() {
-        String regex = "(-XX:CMSInitiatingOccupancyFraction=\\d{1,3})";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for disabling heuristics (calculating anticipated promotions) and use only the occupancy fraction to
-     * determine when to trigger a CMS cycle. When an application has large variances in object allocation and young
-     * generation promotion rates, the CMS collector is not able to accurately predict when to start the CMS cycle. For
-     * example:
-     * 
-     * <pre>
-     * -XX:+UseCMSInitiatingOccupancyOnly
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getCMSInitiatingOccupancyOnlyEnabled() {
-        String regex = "(-XX:\\+UseCMSInitiatingOccupancyOnly)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for bias locking disabled. For example:
-     * 
-     * <pre>
-     * -XX:-UseBiasedLocking
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getBiasedLockingDisabled() {
-        String regex = "(-XX:\\-UseBiasedLocking)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for printing a class histogram when a thread dump is taken:
-     * 
-     * <pre>
-     * -XX:+PrintClassHistogram
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getPrintClassHistogramEnabled() {
-        String regex = "(-XX:\\+PrintClassHistogram)\\b";
+    public String getPrintAdaptiveResizePolicyEnabled() {
+        String regex = "(-XX:\\+PrintAdaptiveSizePolicy)";
         return getJvmOption(regex);
     }
 
@@ -889,6 +899,48 @@ public class Jvm {
     }
 
     /**
+     * The option for printing a class histogram when a thread dump is taken:
+     * 
+     * <pre>
+     * -XX:+PrintClassHistogram
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintClassHistogramEnabled() {
+        String regex = "(-XX:\\+PrintClassHistogram)\\b";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option to output JVM command line options at the beginning of gc logging. For example:
+     * 
+     * <pre>
+     * -XX:+PrintCommandLineFlags
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintCommandLineFlagsOption() {
+        String regex = "(-XX:\\+PrintCommandLineFlags)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for outputting statistics for the CMS FreeListSpace.
+     * 
+     * <pre>
+     * -XX:PrintFLSStatistics=1
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintFLStatistics() {
+        String regex = "(-XX:PrintFLSStatistics=(\\d))";
+        return getJvmOption(regex);
+    }
+
+    /**
      * The option for printing application concurrent time:
      * 
      * <pre>
@@ -903,6 +955,266 @@ public class Jvm {
     }
 
     /**
+     * The option for printing trigger information. For example:
+     * 
+     * <pre>
+     * -XX:+PrintGCCause
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintGCCause() {
+        String regex = "(-XX:\\+PrintGCCause)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for printing trigger information disabled. For example:
+     * 
+     * <pre>
+     * -XX:-PrintGCCause
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintGCCauseDisabled() {
+        String regex = "(-XX:\\-PrintGCCause)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option to output details at gc disabled. For example:
+     * 
+     * <pre>
+     * -XX:-PrintGCDetails
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintGCDetailsDisabled() {
+        String regex = "(-XX:\\-PrintGCDetails)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option to output details at gc. For example:
+     * 
+     * <pre>
+     * -XX:+PrintGCDetails
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintGCDetailsOption() {
+        String regex = "(-XX:\\+PrintGCDetails)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for enabling printing promotion failure information.
+     * 
+     * <pre>
+     * -XX:+PrintPromotionFailure
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintPromotionFailureEnabled() {
+        String regex = "(-XX:\\+PrintPromotionFailure)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for outputting times for reference processing (weak, soft,JNI). For example:
+     * 
+     * <pre>
+     * -XX:+PrintReferenceGC
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintReferenceGC() {
+        String regex = "(-XX:\\+PrintReferenceGC)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for string deduplication statistics. For example:
+     * 
+     * <pre>
+     * -XX:+PrintStringDeduplicationStatistics
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintStringDeduplicationStatistics() {
+        String regex = "(-XX:\\+PrintStringDeduplicationStatistics)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for outputting tenuring distribution information.
+     * 
+     * <pre>
+     * -XX:+PrintTenuringDistribution
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getPrintTenuringDistribution() {
+        String regex = "(-XX:\\+PrintTenuringDistribution)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * Client Distributed Garbage Collection (DGC) interval in milliseconds.
+     * 
+     * <pre>
+     * -Dsun.rmi.dgc.client.gcInterval=14400000
+     * </pre>
+     * 
+     * @return The client Distributed Garbage Collection (DGC), or null if not explicitly set.
+     */
+    public String getRmiDgcClientGcIntervalOption() {
+        String regex = "(-Dsun.rmi.dgc.client.gcInterval=(\\d{1,12}))";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * @return The client Distributed Garbage Collection (DGC) interval value in (milliseconds), or null if not set. For
+     *         example:
+     * 
+     *         <pre>
+     *         14400000
+     *         </pre>
+     */
+    public String getRmiDgcClientGcIntervalValue() {
+        return getOptionValue(getRmiDgcClientGcIntervalOption());
+    }
+
+    /**
+     * Server Distributed Garbage Collection (DGC) interval in milliseconds.
+     * 
+     * <pre>
+     * -Dsun.rmi.dgc.server.gcInterval=14400000
+     * </pre>
+     * 
+     * @return The server Distributed Garbage Collection (DGC), or null if not explicitly set.
+     */
+    public String getRmiDgcServerGcIntervalOption() {
+        String regex = "(-Dsun.rmi.dgc.server.gcInterval=(\\d{1,12}))";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * @return The server Distributed Garbage Collection (DGC) interval value in (milliseconds), or null if not set. For
+     *         example:
+     * 
+     *         <pre>
+     *         14400000
+     *         </pre>
+     */
+    public String getRmiDgcServerGcIntervalValue() {
+        return getOptionValue(getRmiDgcServerGcIntervalOption());
+    }
+
+    /**
+     * @return The date and time the JVM was started.
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * The option for setting the size of the eden space compared to ONE survivor space.
+     * 
+     * <pre>
+     * -XX:SurvivorRatio=6
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getSurvivorRatio() {
+        String regex = "(-XX:SurvivorRatio=(\\d+))";
+        return getJvmOption(regex);
+    }
+
+    public Memory getSwap() {
+        return swap;
+    }
+
+    public Memory getSwapFree() {
+        return swapFree;
+    }
+
+    /**
+     * The option for setting the percentage of the survivor space allowed to be occupied.
+     * 
+     * <pre>
+     * -XX:TargetSurvivorRatio=90
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getTargetSurvivorRatio() {
+        String regex = "(-XX:TargetSurvivorRatio=(\\d{1,3}))";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * Thread stack size. Specified with either the <code>-Xss</code>, <code>-ss</code>, or
+     * <code>-XX:ThreadStackSize</code> options. For example:
+     * 
+     * <pre>
+     * -Xss128k
+     * </pre>
+     * 
+     * <pre>
+     * -XX:ThreadStackSize=128
+     * </pre>
+     * 
+     * The <code>-Xss</code> options does not work on Solaris, only the <code>-XX:ThreadStackSize</code> option.
+     * 
+     * @return The JVM thread stack size setting, or null if not explicitly set.
+     */
+    public String getThreadStackSizeOption() {
+        String regex = "(-(X)?(ss|X:ThreadStackSize=)(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * Thread stack size value.
+     * 
+     * <pre>
+     * 256K
+     * </pre>
+     * 
+     * @return The thread stack size value, or null if not set. For example:
+     */
+    public Memory getThreadStackSizeValue() {
+        String threadStackSizeOption = getThreadStackSizeOption();
+        if (threadStackSizeOption == null) {
+            return null;
+        }
+        Unit unit = threadStackSizeOption.startsWith("-XX:ThreadStackSize=") ? KILOBYTES : BYTES;
+        return fromOptionSize(getOptionValue(threadStackSizeOption), unit);
+    }
+
+    /**
+     * The option for enabling tiered compilation. For example:
+     * 
+     * <pre>
+     * -XX:+TieredCompilation
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getTieredCompilation() {
+        String regex = "(-XX:\\+TieredCompilation)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * The option for trace class unloading output:
      * 
      * <pre>
@@ -913,6 +1225,114 @@ public class Jvm {
      */
     public String getTraceClassUnloading() {
         String regex = "(-XX:\\+TraceClassUnloading)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * Unaccounted disabled JVM options otherwise.
+     * 
+     * @return the unaccounted disabled JVM options, null otherwise.
+     */
+    public String getUnaccountedDisabledOptions() {
+        String accountedDisabledOptions = "-XX:-HeapDumpOnOutOfMemoryError -XX:-BackgroundCompilation "
+                + "-XX:-PrintGCDetails -XX:-UseParNewGC -XX:-CMSClassUnloadingEnabled "
+                + "-XX:-PrintGCCause -XX:-UseBiasedLocking -XX:-UseCompressedOops "
+                + "-XX:-UseGCLogFileRotation -XX:-UseCompressedClassPointers "
+                + "-XX:-ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:-ClassUnloading "
+                + "-XX:-PrintAdaptiveSizePolicy -XX:-CMSParallelInitialMarkEnabled -XX:-CMSParallelRemarkEnabled "
+                + "-XX:-UseAdaptiveSizePolicy -XX:-PrintGCTimeStamps -XX:-PrintGCDateStamps -XX:-UseParallelOldGC";
+
+        String unaccountedDisabledOptions = null;
+        for (String disabledOption : getDisabledOptions()) {
+            if (accountedDisabledOptions.lastIndexOf(disabledOption) == -1) {
+                unaccountedDisabledOptions = unaccountedDisabledOptions == null ? disabledOption
+                        : unaccountedDisabledOptions + ", " + disabledOption;
+            }
+        }
+        return unaccountedDisabledOptions;
+    }
+
+    /**
+     * The option for enabling JVM diagnostic options:
+     * 
+     * <pre>
+     * -XX:+UnlockDiagnosticVMOptions
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUnlockDiagnosticVmOptions() {
+        String regex = "(-XX:\\+UnlockDiagnosticVMOptions)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for enabling experimental JVM options.
+     * 
+     * <pre>
+     * -XX:+UnlockExperimentalVMOptions
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUnlockExperimentalVmOptionsEnabled() {
+        String regex = "(-XX:\\+UnlockExperimentalVMOptions)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option to disable allowing the JVM to automatically resize heap regions to meet performance goals. For
+     * example:
+     * 
+     * <pre>
+     * -XX:-UseAdaptiveSizePolicy
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseAdaptiveSizePolicyDisabledOption() {
+        return getJvmOption("(-XX:-UseAdaptiveSizePolicy)");
+    }
+
+    /**
+     * The option for enabling cgroup memory limit for heap sizing.
+     * 
+     * <pre>
+     * -XX:+UseCGroupMemoryLimitForHeap
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseCGroupMemoryLimitForHeap() {
+        String regex = "(-XX:\\+UseCGroupMemoryLimitForHeap)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for compressed class pointers disabled.
+     * 
+     * <pre>
+     * -XX:-UseCompressedClassPointers
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseCompressedClassPointersDisabled() {
+        String regex = "(-XX:\\-UseCompressedClassPointers)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for compressed class pointers enabled.
+     * 
+     * <pre>
+     * -XX:+UseCompressedClassPointers
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseCompressedClassPointersEnabled() {
+        String regex = "(-XX:\\+UseCompressedClassPointers)";
         return getJvmOption(regex);
     }
 
@@ -945,6 +1365,48 @@ public class Jvm {
     }
 
     /**
+     * The option for the CMS old collector. For example:
+     * 
+     * <pre>
+     * -XX:+UseConcMarkSweepGC
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseConcMarkSweepGCOption() {
+        String regex = "(-XX:\\+UseConcMarkSweepGC)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for enabling fast unordered timestamps.
+     * 
+     * <pre>
+     * -XX:+UseFastUnorderedTimeStamps
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseFastUnorderedTimeStampsEnabled() {
+        String regex = "(-XX:\\+UseFastUnorderedTimeStamps)";
+        return getJvmOption(regex);
+    }
+
+    /**
+     * The option for specifying the G1 collector. For example:
+     * 
+     * <pre>
+     * -XX:+UseG1GC
+     * </pre>
+     * 
+     * @return the option if it exists, null otherwise.
+     */
+    public String getUseG1Gc() {
+        String regex = "(-XX:\\+UseG1GC)";
+        return getJvmOption(regex);
+    }
+
+    /**
      * The option for disabling log file rotation.
      * 
      * <pre>
@@ -973,203 +1435,6 @@ public class Jvm {
     }
 
     /**
-     * The option for setting number of log files to rotate. For example:
-     * 
-     * <pre>
-     * -XX:NumberOfGCLogFiles=5
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getNumberOfGcLogFiles() {
-        String regex = "(-XX:NumberOfGCLogFiles=\\d{1,2})";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for setting the gc log file size that triggers rotation. For example:
-     * 
-     * <pre>
-     * -XX:GCLogFileSize=5M
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getGcLogFileSize() {
-        String regex = "(-XX:GCLogFileSize=(\\d{1,9})([kKmM])?)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The compressed class space size value. For example:
-     * 
-     * <pre>
-     * 5M
-     * </pre>
-     * 
-     * @return The gc log file size, or null if not set. For example:
-     * 
-     */
-    public String getGcLogFileSizeValue() {
-        return getOptionValue(getGcLogFileSize());
-    }
-
-    /**
-     * @return The gc log file size in bytes, or 0 if not set.
-     */
-    public Memory getGcLogFileSizeBytes() {
-        return getGcLogFileSizeValue() == null ? Memory.ZERO : Memory.fromOptionSize(getGcLogFileSizeValue());
-    }
-
-    /**
-     * The option for compressed class pointers enabled.
-     * 
-     * <pre>
-     * -XX:+UseCompressedClassPointers
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getUseCompressedClassPointersEnabled() {
-        String regex = "(-XX:\\+UseCompressedClassPointers)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for compressed class pointers disabled.
-     * 
-     * <pre>
-     * -XX:-UseCompressedClassPointers
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getUseCompressedClassPointersDisabled() {
-        String regex = "(-XX:\\-UseCompressedClassPointers)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for setting CompressedClassSpaceSize.
-     * 
-     * <pre>
-     * -XX:CompressedClassSpaceSize=768m
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getCompressedClassSpaceSizeOption() {
-        String regex = "(-XX:CompressedClassSpaceSize=((\\d{1,10})(" + JdkRegEx.OPTION_SIZE + ")?))";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The compressed class space size value. For example:
-     * 
-     * <pre>
-     * 768m
-     * </pre>
-     * 
-     * @return The compressed class space size value, or null if not set. For example:
-     * 
-     */
-    public String getCompressedClassSpaceSizeValue() {
-        return getOptionValue(getCompressedClassSpaceSizeOption());
-    }
-
-    /**
-     * @return The compressed class space in bytes, or 0 if not set.
-     */
-    public Memory getCompressedClassSpaceSizeBytes() {
-        return getCompressedClassSpaceSizeValue() == null ? Memory.ZERO
-                : Memory.fromOptionSize(getCompressedClassSpaceSizeValue());
-    }
-
-    /**
-     * The option for outputting statistics for the CMS FreeListSpace.
-     * 
-     * <pre>
-     * -XX:PrintFLSStatistics=1
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getPrintFLStatistics() {
-        String regex = "(-XX:PrintFLSStatistics=(\\d))";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for outputting tenuring distribution information.
-     * 
-     * <pre>
-     * -XX:+PrintTenuringDistribution
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getPrintTenuringDistribution() {
-        String regex = "(-XX:\\+PrintTenuringDistribution)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for explicit gc invokes concurrent and unloads classes disabled.
-     * 
-     * <pre>
-     * -XX:-ExplicitGCInvokesConcurrentAndUnloadsClasses
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getExplicitGcInvokesConcurrentAndUnloadsClassesDisabled() {
-        String regex = "(-XX:\\-ExplicitGCInvokesConcurrentAndUnloadsClasses)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for class unloading disabled.
-     * 
-     * <pre>
-     * -XX:-ClassUnloading
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getClassUnloadingDisabled() {
-        String regex = "(-XX:\\-ClassUnloading)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for specifying 64-bit.
-     * 
-     * <pre>
-     * -d64
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getD64() {
-        String regex = "(-d64)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for enabling printing promotion failure information.
-     * 
-     * <pre>
-     * -XX:+PrintPromotionFailure
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getPrintPromotionFailureEnabled() {
-        String regex = "(-XX:\\+PrintPromotionFailure)";
-        return getJvmOption(regex);
-    }
-
-    /**
      * The option for enabling a strict memory barrier.
      * 
      * <pre>
@@ -1184,279 +1449,154 @@ public class Jvm {
     }
 
     /**
-     * The option for disabling Adaptive Resize Policy output.
+     * The option to disable the PAR_NEW collector. For example:
      * 
      * <pre>
-     * -XX:-PrintAdaptiveSizePolicy
+     * -XX:-UseParNewGC
      * </pre>
      * 
      * @return the option if it exists, null otherwise.
      */
-    public String getPrintAdaptiveResizePolicyDisabled() {
-        String regex = "(-XX:\\-PrintAdaptiveSizePolicy)";
+    public String getUseParNewGcDisabled() {
+        String regex = "(-XX:\\-UseParNewGC)";
         return getJvmOption(regex);
     }
 
     /**
-     * The option for enabling Adaptive Resize Policy output.
+     * The option for the CMS young collector. For example:
      * 
      * <pre>
-     * -XX:+PrintAdaptiveSizePolicy
+     * -XX:+UseParNewGC
      * </pre>
      * 
      * @return the option if it exists, null otherwise.
      */
-    public String getPrintAdaptiveResizePolicyEnabled() {
-        String regex = "(-XX:\\+PrintAdaptiveSizePolicy)";
+    public String getUseParNewGCOption() {
+        String regex = "(-XX:\\+UseParNewGC)";
         return getJvmOption(regex);
     }
 
     /**
-     * The option for setting the maximum tenuring threshold option (the number of times objects surviving a young
-     * collection are copied to a survivor space).
+     * @return The JVM version information.
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * The option to disable background compilation of bytecode. For example:
      * 
      * <pre>
-     * -XX:MaxTenuringThreshold=0
+     * -Xbatch
      * </pre>
      * 
      * @return the option if it exists, null otherwise.
      */
-    public String getMaxTenuringThresholdOption() {
-        String regex = "(-XX:MaxTenuringThreshold=(\\d+))";
+    public String getXBatchOption() {
+        String regex = "(-Xbatch)";
         return getJvmOption(regex);
     }
 
     /**
-     * The option for setting the size of the eden space compared to ONE survivor space.
+     * The option to enable compilation of bytecode on first invocation. For example:
      * 
      * <pre>
-     * -XX:SurvivorRatio=6
+     * -Xcomp
      * </pre>
      * 
      * @return the option if it exists, null otherwise.
      */
-    public String getSurvivorRatio() {
-        String regex = "(-XX:SurvivorRatio=(\\d+))";
+    public String getXCompOption() {
+        String regex = "(-Xcomp)";
         return getJvmOption(regex);
     }
 
     /**
-     * The option for setting the percentage of the survivor space allowed to be occupied.
+     * The option to disable just in time (JIT) compilation. For example:
      * 
      * <pre>
-     * -XX:TargetSurvivorRatio=90
+     * -Xint
      * </pre>
      * 
      * @return the option if it exists, null otherwise.
      */
-    public String getTargetSurvivorRatio() {
-        String regex = "(-XX:TargetSurvivorRatio=(\\d{1,3}))";
+    public String getXIntOption() {
+        String regex = "(-Xint)";
         return getJvmOption(regex);
     }
 
     /**
-     * The option for enabling experimental JVM options.
+     * The JDK8 option to specify GC log file name. For example:
      * 
      * <pre>
-     * -XX:+UnlockExperimentalVMOptions
+     * -Xloggc:gc.log
      * </pre>
      * 
      * @return the option if it exists, null otherwise.
      */
-    public String getUnlockExperimentalVmOptionsEnabled() {
-        String regex = "(-XX:\\+UnlockExperimentalVMOptions)";
-        return getJvmOption(regex);
+    public String getXlogGcOption() {
+        return getJvmOption("(-Xloggc:\\S+)");
     }
 
     /**
-     * The option for enabling fast unordered timestamps.
-     * 
-     * <pre>
-     * -XX:+UseFastUnorderedTimeStamps
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
+     * @return True if stack size &gt;= 1024k, false otherwise.
      */
-    public String getUseFastUnorderedTimeStampsEnabled() {
-        String regex = "(-XX:\\+UseFastUnorderedTimeStamps)";
-        return getJvmOption(regex);
+    public boolean hasLargeThreadStackSize() {
+        Memory threadStackSize = getThreadStackSizeValue();
+        return threadStackSize != null && threadStackSize.compareTo(megabytes(1)) >= 0;
     }
 
     /**
-     * The option for setting the occupancy threshold for a region to be considered as a candidate region for a
-     * G1_CLEANUP collection. For example:
-     * 
-     * <pre>
-     * -XX:G1MixedGCLiveThresholdPercent=85
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
+     * @return True if 64 bit, false otherwise.
      */
-    public String getG1MixedGCLiveThresholdPercent() {
-        String regex = "(-XX:G1MixedGCLiveThresholdPercent=\\d{1,3})";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * @return The occupancy threshold percent for a region to be considered as a candidate region for a G1_CLEANUP
-     *         collection, or null if not set. For example:
-     * 
-     *         <pre>
-     *         85
-     *         </pre>
-     */
-    public String getG1MixedGCLiveThresholdPercentValue() {
-        // Cannot use JdkUtil.getOptionValue() because the option name has a number in it.
-        String value = null;
-        if (getG1MixedGCLiveThresholdPercent() != null) {
-            String regex = "^-XX:G1MixedGCLiveThresholdPercent=(\\d{1,3})$";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(getG1MixedGCLiveThresholdPercent());
-            if (matcher.find()) {
-                value = matcher.group(1);
-            }
+    public boolean is64Bit() {
+        boolean is64BitVersion = false;
+        if (version != null) {
+            is64BitVersion = version.matches("^.+64-Bit.+$");
         }
-        return value;
-    }
-
-    /**
-     * The option for setting the G1 heap waste percentage. For example:
-     * 
-     * <pre>
-     * -XX:G1HeapWastePercent=5
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getG1HeapWastePercent() {
-        String regex = "(-XX:G1HeapWastePercent=\\d{1,3})";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * @return The G1 heap waste percentage, or null if not set. For example:
-     * 
-     *         <pre>
-     *         5
-     *         </pre>
-     */
-    public String getG1HeapWastePercentValue() {
-        // Cannot use JdkUtil.getOptionValue() because the option name has a number in it.
-        String value = null;
-        if (getG1HeapWastePercent() != null) {
-            String regex = "^-XX:G1HeapWastePercent=(\\d{1,3})$";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(getG1HeapWastePercent());
-            if (matcher.find()) {
-                value = matcher.group(1);
-            }
+        boolean is64BitOption = false;
+        if (getD64() != null) {
+            is64BitOption = true;
         }
-        return value;
+        return is64BitVersion || is64BitOption;
     }
 
     /**
-     * The option for specifying the G1 collector. For example:
-     * 
-     * <pre>
-     * -XX:+UseG1GC
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
+     * @return True if the GC logging is sent to stdout, false otherwise.
      */
-    public String getUseG1Gc() {
-        String regex = "(-XX:\\+UseG1GC)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option to disable multi-threaded CMS initial mark. For example:
-     * 
-     * <pre>
-     * -XX:-CMSParallelInitialMarkEnabled
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getCmsParallelInitialMarkDisabled() {
-        String regex = "(-XX:-CMSParallelInitialMarkEnabled)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option to disable multi-threaded CMS remark. For example:
-     * 
-     * <pre>
-     * -XX:-CMSParallelRemarkEnabled
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getCmsParallelRemarkDisabled() {
-        String regex = "(-XX:-CMSParallelRemarkEnabled)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for enabling output of summarized remembered set processing info. For example:
-     * 
-     * <pre>
-     * -XX:+G1SummarizeRSetStats
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getG1SummarizeRSetStatsEnabled() {
-        String regex = "(-XX:\\+G1SummarizeRSetStats)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * The option for setting the # of GCs to output update buffer processing info (0 = disabled). For example:
-     * 
-     * <pre>
-     * -XX:G1SummarizeRSetStatsPeriod=1
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getG1SummarizeRSetStatsPeriod() {
-        String regex = "(-XX:G1SummarizeRSetStatsPeriod=\\d{1,3})";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * @return The # of GCs to output buffer processing info. For example:
-     * 
-     *         <pre>
-     *         1
-     *         </pre>
-     */
-    public String getG1SummarizeRSetStatsPeriodValue() {
-        // Cannot use JdkUtil.getOptionValue() because the option name has a number in it.
-        String value = null;
-        if (getG1SummarizeRSetStatsPeriod() != null) {
-            String regex = "^-XX:G1SummarizeRSetStatsPeriod=(\\d{1,3})$";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(getG1SummarizeRSetStatsPeriod());
-            if (matcher.find()) {
-                value = matcher.group(1);
-            }
+    public boolean isGcLoggingToStdout() {
+        boolean isGcLoggingStdout = false;
+        boolean isGcLoggingEnabled = false;
+        if (getJvmOption("(-XX:\\+PrintGC)") != null || getJvmOption("(-XX:\\+PrintGCDetails)") != null
+                || getJvmOption("(-XX:\\+PrintGCTimeStamps)") != null
+                || getJvmOption("(-XX:\\+PrintGCDateStamps)") != null
+                || getJvmOption("(-XX:\\+PrintGCApplicationStoppedTime)") != null) {
+            isGcLoggingEnabled = true;
         }
-        return value;
+        if (isGcLoggingEnabled && getXlogGcOption() == null) {
+            isGcLoggingStdout = true;
+        }
+        return isGcLoggingStdout;
     }
 
     /**
-     * The option for enabling cgroup memory limit for heap sizing.
-     * 
-     * <pre>
-     * -XX:+UseCGroupMemoryLimitForHeap
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
+     * @return true if JMX enable, false otherwise.
      */
-    public String getUseCGroupMemoryLimitForHeap() {
-        String regex = "(-XX:\\+UseCGroupMemoryLimitForHeap)";
-        return getJvmOption(regex);
+    public boolean IsJmxEnabled() {
+        boolean isJmxEnabled = false;
+        if (getJvmOption("(-XX:\\+ManagementServer)") != null
+                || getJvmOption("(-Dcom.sun.management.jmxremote)") != null) {
+            isJmxEnabled = true;
+        }
+        return isJmxEnabled;
+    }
+
+    /**
+     * @return True if the minimum and maximum heap space are set equal.
+     */
+    public boolean isMinAndMaxHeapSpaceEqual() {
+        return getMaxHeapValue() != null && getMinHeapValue() != null
+                && getMaxHeapValue().toUpperCase().equals(getMinHeapValue().toUpperCase());
     }
 
     /**
@@ -1467,30 +1607,6 @@ public class Jvm {
         return (getMinPermValue() == null && getMaxPermValue() == null)
                 || (getMinPermValue() != null && getMaxPermValue() != null
                         && Memory.fromOptionSize(getMinPermValue()).equals(Memory.fromOptionSize(getMaxPermValue())));
-    }
-
-    /**
-     * @param regex
-     *            The option regular expression.
-     * @return The JVM option, or null if not explicitly set.
-     */
-    public String getJvmOption(final String regex) {
-        if (options != null) {
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(options);
-            if (matcher.find()) {
-                return matcher.group(1);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @return True if stack size &gt;= 1024k, false otherwise.
-     */
-    public boolean hasLargeThreadStackSize() {
-        Memory threadStackSize = getThreadStackSizeValue();
-        return threadStackSize != null && threadStackSize.compareTo(megabytes(1)) >= 0;
     }
 
     /**
@@ -1531,141 +1647,42 @@ public class Jvm {
     }
 
     /**
-     * @return True if 64 bit, false otherwise.
+     * @param memory
+     *            The JVM memory information to set.
      */
-    public boolean is64Bit() {
-        boolean is64BitVersion = false;
-        if (version != null) {
-            is64BitVersion = version.matches("^.+64-Bit.+$");
-        }
-        boolean is64BitOption = false;
-        if (getD64() != null) {
-            is64BitOption = true;
-        }
-        return is64BitVersion || is64BitOption;
+    public void setMemory(String memory) {
+        this.memory = memory;
     }
 
     /**
-     * @return The percentage of swap that is free. 100 means no swap used. 0 means all swap used.
+     * @param options
+     *            The JVM options to set.
      */
-    public long getPercentSwapFree() {
-        if (!swap.greaterThan(Memory.ZERO)) {
-            return 100L;
-        }
-        BigDecimal percentFree = new BigDecimal(swapFree.getValue(BYTES));
-        percentFree = percentFree.divide(new BigDecimal(swap.getValue(BYTES)), 2, RoundingMode.HALF_EVEN);
-        percentFree = percentFree.movePointRight(2);
-        return percentFree.longValue();
+    public void setOptions(String options) {
+        this.options = options;
+    }
+
+    public void setPhysicalMemory(Memory physicalMemory) {
+        this.physicalMemory = physicalMemory;
+    }
+
+    public void setPhysicalMemoryFree(Memory physicalMemoryFree) {
+        this.physicalMemoryFree = physicalMemoryFree;
+    }
+
+    public void setSwap(Memory swap) {
+        this.swap = swap;
+    }
+
+    public void setSwapFree(Memory swapFree) {
+        this.swapFree = swapFree;
     }
 
     /**
-     * The option for enabling JVM diagnostic options:
-     * 
-     * <pre>
-     * -XX:+UnlockDiagnosticVMOptions
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
+     * @param version
+     *            The JVM version information to set.
      */
-    public String getUnlockDiagnosticVmOptions() {
-        String regex = "(-XX:\\+UnlockDiagnosticVMOptions)";
-        return getJvmOption(regex);
-    }
-
-    /**
-     * @return true if JMX enable, false otherwise.
-     */
-    public boolean IsJmxEnabled() {
-        boolean isJmxEnabled = false;
-        if (getJvmOption("(-XX:\\+ManagementServer)") != null
-                || getJvmOption("(-Dcom.sun.management.jmxremote)") != null) {
-            isJmxEnabled = true;
-        }
-        return isJmxEnabled;
-    }
-
-    /**
-     * Disabled JVM options.
-     * 
-     * @return the disabled JVM options, null otherwise.
-     */
-    public ArrayList<String> getDisabledOptions() {
-        String regex = "(-XX:-[\\S]+)";
-        ArrayList<String> disabledOptions = new ArrayList<String>();
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(options);
-        while (matcher.find()) {
-            disabledOptions.add(matcher.group(1));
-        }
-        return disabledOptions;
-    }
-
-    /**
-     * Unaccounted disabled JVM options otherwise.
-     * 
-     * @return the unaccounted disabled JVM options, null otherwise.
-     */
-    public String getUnaccountedDisabledOptions() {
-        String accountedDisabledOptions = "-XX:-HeapDumpOnOutOfMemoryError -XX:-BackgroundCompilation "
-                + "-XX:-PrintGCDetails -XX:-UseParNewGC -XX:-CMSClassUnloadingEnabled "
-                + "-XX:-PrintGCCause -XX:-UseBiasedLocking -XX:-UseCompressedOops "
-                + "-XX:-UseGCLogFileRotation -XX:-UseCompressedClassPointers "
-                + "-XX:-ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:-ClassUnloading "
-                + "-XX:-PrintAdaptiveSizePolicy -XX:-CMSParallelInitialMarkEnabled -XX:-CMSParallelRemarkEnabled "
-                + "-XX:-UseAdaptiveSizePolicy -XX:-PrintGCTimeStamps -XX:-PrintGCDateStamps -XX:-UseParallelOldGC";
-
-        String unaccountedDisabledOptions = null;
-        for (String disabledOption : getDisabledOptions()) {
-            if (accountedDisabledOptions.lastIndexOf(disabledOption) == -1) {
-                unaccountedDisabledOptions = unaccountedDisabledOptions == null ? disabledOption
-                        : unaccountedDisabledOptions + ", " + disabledOption;
-            }
-        }
-        return unaccountedDisabledOptions;
-    }
-
-    /**
-     * The option to disable allowing the JVM to automatically resize heap regions to meet performance goals. For
-     * example:
-     * 
-     * <pre>
-     * -XX:-UseAdaptiveSizePolicy
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getUseAdaptiveSizePolicyDisabledOption() {
-        return getJvmOption("(-XX:-UseAdaptiveSizePolicy)");
-    }
-
-    /**
-     * The JDK8 option to specify GC log file name. For example:
-     * 
-     * <pre>
-     * -Xloggc:gc.log
-     * </pre>
-     * 
-     * @return the option if it exists, null otherwise.
-     */
-    public String getXlogGcOption() {
-        return getJvmOption("(-Xloggc:\\S+)");
-    }
-
-    /**
-     * GC log file name.
-     * 
-     * @return the GC log file name, null otherwise.
-     */
-    public String getGcLogFileName() {
-        String gcLogFileName = null;
-        String regex = "-Xloggc:(.+)";
-        Pattern pattern = Pattern.compile(regex);
-        if (getXlogGcOption() != null) {
-            Matcher matcher = pattern.matcher(getXlogGcOption());
-            if (matcher.find()) {
-                gcLogFileName = matcher.group(1);
-            }
-        }
-        return gcLogFileName;
+    public void setVersion(String version) {
+        this.version = version;
     }
 }
