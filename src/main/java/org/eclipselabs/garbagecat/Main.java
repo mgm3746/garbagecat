@@ -121,8 +121,6 @@ public class Main {
 
     /**
      * Output usage help.
-     *
-     * @param options
      */
     private static void usage() {
         // Use the built in formatter class
