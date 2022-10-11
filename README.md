@@ -160,7 +160,7 @@ Build it:
 ```
 $ cd garbagecat
 $ /opt/apache-maven-3.6.3/bin/mvn clean (rebuilding)
-$ /opt/apache-maven-3.6.3/bin/mvn assembly:assembly
+$ /opt/apache-maven-3.6.3/bin/mvn package
 $ export JAVA_HOME=/usr/lib/jvm/java/ (or wherever a JDK is installed)
 $ /opt/apache-maven-3.6.3/bin/mvn javadoc:javadoc
 ```
