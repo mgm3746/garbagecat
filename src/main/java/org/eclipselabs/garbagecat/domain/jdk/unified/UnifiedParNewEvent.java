@@ -53,6 +53,10 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: 974K-&gt;128K(1152K) CMS: 0K-&gt;518K(960K) Metaspace: 250K-&gt;250K(1056768K) 0M-&gt;0M(2M) 3.544ms User=0.01s Sys=0.01s Real=0.01s
  * </pre>
  * 
+ * <pre>
+ * [2022-10-25T08:41:22.776-0400] GC(0) Pause Young (Allocation Failure) ParNew: 935K-&gt;128K(1152K) CMS: 0K-&gt;486K(960K) Metaspace: 244K(4480K)-&gt;244K(4480K) 0M-&gt;0M(2M) 1.944ms User=0.00s Sys=0.00s Real=0.00s
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -149,9 +153,9 @@ public class UnifiedParNewEvent extends ParallelCollector implements UnifiedLogg
      */
     private static final String REGEX_PREPROCESSED = "" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + TRIGGER
             + "\\) ParNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) CMS: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "(\\("
+            + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
 
     private static final Pattern pattern = Pattern.compile(UnifiedParNewEvent.REGEX_PREPROCESSED);
 
@@ -195,14 +199,14 @@ public class UnifiedParNewEvent extends ParallelCollector implements UnifiedLogg
                     .convertTo(KILOBYTES);
             permGen = memory(matcher.group(DECORATOR_SIZE + 20), matcher.group(DECORATOR_SIZE + 22).charAt(0))
                     .convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(DECORATOR_SIZE + 23), matcher.group(DECORATOR_SIZE + 25).charAt(0))
+            permGenEnd = memory(matcher.group(DECORATOR_SIZE + 27), matcher.group(DECORATOR_SIZE + 29).charAt(0))
                     .convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 26), matcher.group(DECORATOR_SIZE + 28).charAt(0))
+            permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 30), matcher.group(DECORATOR_SIZE + 32).charAt(0))
                     .convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 38)).intValue();
-            timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 40)).intValue();
-            timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 41)).intValue();
-            timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 42)).intValue();
+            duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 42)).intValue();
+            timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 44)).intValue();
+            timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 45)).intValue();
+            timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 46)).intValue();
         }
     }
 

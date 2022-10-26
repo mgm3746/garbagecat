@@ -136,6 +136,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * [5.601s][info][gc           ] GC(99) Concurrent marking (unload classes) 7.346ms
  * </pre>
  * 
+ * <p>
+ * 6) JDK11 preprocessed with Metaspace block:
+ * </p>
+ * 
+ * <pre>
+ * [0.266s][info][gc           ] GC(0) Concurrent cleanup 34M-&gt;20M(36M) 0.028ms Metaspace: 3692K(7168K)-&gt;3714K(7168K)
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -152,8 +160,8 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
             + " roots)?( \\(process weakrefs\\))?|precleaning|reset|uncommit|uncommit, start|"
             + "(update|weak) references|(strong|thread|update thread|weak) roots)(( " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[,]{0,1} " + UnifiedRegEx.DURATION
-            + ")?[\\]]{0,1}([,]{0,1} [\\[]{0,1}Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)[\\]]{0,1})?[ ]*$";
+            + ")?[\\]]{0,1}([,]{0,1} [\\[]{0,1}Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[\\]]{0,1})?[ ]*$";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -265,10 +273,10 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
                     if (matcher.group(UnifiedUtil.DECORATOR_SIZE + 33) != null) {
                         permGen = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 34),
                                 matcher.group(UnifiedUtil.DECORATOR_SIZE + 36).charAt(0)).convertTo(KILOBYTES);
-                        permGenEnd = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 37),
-                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 39).charAt(0)).convertTo(KILOBYTES);
-                        permGenAllocation = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 40),
-                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 42).charAt(0)).convertTo(KILOBYTES);
+                        permGenEnd = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 41),
+                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 43).charAt(0)).convertTo(KILOBYTES);
+                        permGenAllocation = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 44),
+                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 46).charAt(0)).convertTo(KILOBYTES);
                     }
                 }
 

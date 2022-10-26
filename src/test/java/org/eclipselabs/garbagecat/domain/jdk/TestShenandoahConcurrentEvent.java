@@ -13,6 +13,7 @@
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.megabytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,6 +46,23 @@ class TestShenandoahConcurrentEvent {
         String logLine = "[0.437s][info][gc] GC(0) Concurrent reset 15M->16M(64M) 4.701ms";
         assertEquals(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.SHENANDOAH_CONCURRENT + "not identified.");
+    }
+
+    @Test
+    void testJdk11PreprocessedWithMetaspace() {
+        String logLine = "[0.266s][info][gc           ] GC(0) Concurrent cleanup 34M->20M(36M) 0.028ms Metaspace: "
+                + "3692K(7168K)->3714K(7168K)";
+        assertTrue(ShenandoahConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".");
+        ShenandoahConcurrentEvent event = new ShenandoahConcurrentEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString(), event.getName(), "Event name incorrect.");
+        assertEquals((long) 266, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(megabytes(34), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
+        assertEquals(megabytes(20), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(megabytes(36), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(kilobytes(3692), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(3714), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(7168), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
     }
 
     @Test

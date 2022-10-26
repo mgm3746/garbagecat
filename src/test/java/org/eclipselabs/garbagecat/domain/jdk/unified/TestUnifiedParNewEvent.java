@@ -32,6 +32,63 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedParNewEvent {
 
     @Test
+    void testHydration() {
+        LogEventType eventType = JdkUtil.LogEventType.UNIFIED_PAR_NEW;
+        String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
+                + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
+                + "User=0.01s Sys=0.01s Real=0.01s";
+        long timestamp = 27091;
+        int duration = 0;
+        assertTrue(JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof UnifiedParNewEvent,
+                JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " not parsed.");
+    }
+
+    @Test
+    void testIdentityEventType() {
+        String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
+                + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
+                + "User=0.01s Sys=0.01s Real=0.01s";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_PAR_NEW + "not identified.");
+    }
+
+    @Test
+    void testIsBlocking() {
+        String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
+                + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
+                + "User=0.01s Sys=0.01s Real=0.01s";
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " not indentified as blocking.");
+    }
+
+    @Test
+    void testLogLineWhitespaceAtEnd() {
+        String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
+                + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
+                + "User=0.01s Sys=0.01s Real=0.01s    ";
+        assertTrue(UnifiedParNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + ".");
+    }
+
+    @Test
+    void testMetaspaceWithBeginSize() {
+        String logLine = "[2022-10-25T08:41:22.776-0400] GC(0) Pause Young (Allocation Failure) ParNew: "
+                + "935K->128K(1152K) CMS: 0K->486K(960K) Metaspace: 244K(4480K)->244K(4480K) 0M->0M(2M) 1.944ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_PAR_NEW + "not identified.");
+    }
+
+    @Test
+    void testParseLogLine() {
+        String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
+                + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
+                + "User=0.01s Sys=0.01s Real=0.01s";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedParNewEvent,
+                JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " not parsed.");
+    }
+
+    @Test
     void testPreprocessed() {
         String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
                 + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
@@ -59,45 +116,6 @@ class TestUnifiedParNewEvent {
     }
 
     @Test
-    void testIdentityEventType() {
-        String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
-                + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
-                + "User=0.01s Sys=0.01s Real=0.01s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_PAR_NEW + "not identified.");
-    }
-
-    @Test
-    void testParseLogLine() {
-        String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
-                + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
-                + "User=0.01s Sys=0.01s Real=0.01s";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedParNewEvent,
-                JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " not parsed.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
-                + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
-                + "User=0.01s Sys=0.01s Real=0.01s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " not indentified as blocking.");
-    }
-
-    @Test
-    void testHydration() {
-        LogEventType eventType = JdkUtil.LogEventType.UNIFIED_PAR_NEW;
-        String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
-                + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
-                + "User=0.01s Sys=0.01s Real=0.01s";
-        long timestamp = 27091;
-        int duration = 0;
-        assertTrue(JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof UnifiedParNewEvent,
-                JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " not parsed.");
-    }
-
-    @Test
     void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_PAR_NEW),
                 JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " not indentified as reportable.");
@@ -109,14 +127,5 @@ class TestUnifiedParNewEvent {
         eventTypes.add(LogEventType.UNIFIED_PAR_NEW);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
                 JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " not indentified as unified.");
-    }
-
-    @Test
-    void testLogLineWhitespaceAtEnd() {
-        String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
-                + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
-                + "User=0.01s Sys=0.01s Real=0.01s    ";
-        assertTrue(UnifiedParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + ".");
     }
 }
