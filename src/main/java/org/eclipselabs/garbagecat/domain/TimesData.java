@@ -13,7 +13,10 @@
 package org.eclipselabs.garbagecat.domain;
 
 /**
- * Times data block output at the end of some garbage collection logging events.
+ * Times data block output at the end of some garbage collection logging events. It is cpu time only and computed with a
+ * different clock than gc time. Therefore, it's possible that the real time does not match the gc total time. For
+ * example, if something delays writing to the gc log file, the gc time will be longer because it includes time waiting
+ * doing nothing (no cpu used).
  * 
  * <h2>Example Logging</h2>
  * 
