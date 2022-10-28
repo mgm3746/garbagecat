@@ -198,7 +198,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
  * </p>
  *
  * <pre>
- * [0.369s][info][gc,start     ] GC(6) Pause Young (Normal) (G1 Evacuation Pause) Metaspace: 9085K-&gt;9085K(1058816K) 3M-&gt;2M(7M) 0.929ms User=0.01s Sys=0.00s Real=0.01s
+ * [0.369s][info][gc,start     ] GC(6) Pause Young (Normal) (G1 Evacuation Pause) Humongous regions: 0-&gt;0 Metaspace: 9085K-&gt;9085K(1058816K) 3M-&gt;2M(7M) 0.929ms User=0.01s Sys=0.00s Real=0.01s
  * </pre>
  * 
  * <p>
@@ -546,6 +546,19 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_END_TIMES_DATA = "^" + UnifiedRegEx.DECORATOR + TimesData.REGEX_JDK9 + "$";
 
     private static final Pattern REGEX_RETAIN_END_TIMES_DATA_PATTERN = Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);
+
+    /**
+     * Regular expression for retained G1 humongous data used to distinguish
+     * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent} from
+     * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent}
+     * 
+     * [2021-09-22T10:57:21.297-0500][5259442ms] GC(5172) Humongous regions: 13->13
+     */
+    private static final String REGEX_RETAIN_MIDDLE_G1_HUMONGOUS = "^" + UnifiedRegEx.DECORATOR
+            + "( Humongous regions: \\d{1,}->\\d{1,})$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_G1_HUMONGOUS_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_G1_HUMONGOUS);
 
     /**
      * Regular expression for retained Pause Young data.
@@ -931,8 +944,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + "   ((Pre Evacuate|Evacuate|Post Evacuate|Other) Collection Set|Other): "
                     + UnifiedRegEx.DURATION + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR
-                    + " (Eden|Survivor|Old|Humongous) regions: \\d{1,4}->\\d{1,4}(\\(\\d{1,4}\\))?$",
+            "^" + UnifiedRegEx.DECORATOR + " (Eden|Survivor|Old) regions: \\d{1,4}->\\d{1,4}(\\(\\d{1,4}\\))?$",
             "^" + UnifiedRegEx.DECORATOR + " Pause Remark$",
             //
             "^" + UnifiedRegEx.DECORATOR
@@ -1149,6 +1161,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_BEGINNING_YOUNG_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_G1_CLEANUP_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_G1_HUMONGOUS_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA_PATTERN.matcher(logLine).matches()
@@ -1199,7 +1212,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         if ((matcher = REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
+                if (!context.contains(REGEX_RETAIN_BEGINNING_G1_FULL_GC)) {
+                    this.logEntry = matcher.group(1);
+                }
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
@@ -1239,6 +1254,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
+                context.add(REGEX_RETAIN_BEGINNING_G1_FULL_GC);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
@@ -1316,6 +1332,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 }
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_G1_HUMONGOUS_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(DECORATOR_SIZE + 1);
+                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (nextLogEntry != null && REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(nextLogEntry).matches()) {
@@ -1403,6 +1425,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 clearEntangledLines(entangledLogLines);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(REGEX_RETAIN_BEGINNING_G1_FULL_GC);
         } else if (JdkUtil.parseLogLine(logEntry) instanceof ShenandoahInitUpdateEvent
                 || JdkUtil.parseLogLine(logEntry) instanceof ShenandoahInitMarkEvent
                 || JdkUtil.parseLogLine(logEntry) instanceof ShenandoahFinalMarkEvent
@@ -1410,12 +1433,19 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             matcher.reset();
             this.logEntry = logEntry;
             context.add(TOKEN_BEGINNING_OF_EVENT);
-        } else if ((JdkUtil.parseLogLine(logEntry) instanceof UnifiedConcurrentEvent
-                || JdkUtil.parseLogLine(logEntry) instanceof ShenandoahConcurrentEvent) && !isThrowaway(logEntry)) {
+        } else if (JdkUtil.parseLogLine(logEntry) instanceof ShenandoahConcurrentEvent && !isThrowaway(logEntry)) {
             // Stand alone event
-            // TODO: Instead of throwing away some concurrent events, could save them to output at the end
             this.logEntry = logEntry;
             context.add(TOKEN_BEGINNING_OF_EVENT);
+        } else if (JdkUtil.parseLogLine(logEntry) instanceof UnifiedConcurrentEvent && !isThrowaway(logEntry)) {
+            // Stand alone event
+            // Throw away intermingled concurrent events
+            // TODO: Don't throw away, output at end?
+            if (!context.contains(REGEX_RETAIN_BEGINNING_G1_FULL_GC)) {
+                this.logEntry = logEntry;
+                context.add(TOKEN_BEGINNING_OF_EVENT);
+            }
+
         }
     }
 

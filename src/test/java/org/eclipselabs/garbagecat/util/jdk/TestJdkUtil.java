@@ -126,12 +126,12 @@ class TestJdkUtil {
     @Test
     void testBottleneckDetectionUnified() {
         String previousLogLine = "[2021-03-13T03:57:31.060+0530][81044128ms] GC(10043) Pause Full "
-                + "(G1 Evacuation Pause) Metaspace: 214120K->214120K(739328K) 8185M->8181M(8192M) 2431.688ms "
-                + "User=16.31s Sys=0.07s Real=2.44s";
+                + "(G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 214120K->214120K(739328K) "
+                + "8185M->8181M(8192M) 2431.688ms User=16.31s Sys=0.07s Real=2.44s";
         UnifiedG1FullGcEvent priorEvent = (UnifiedG1FullGcEvent) JdkUtil.parseLogLine(previousLogLine);
         String logLine = "[2021-03-13T03:57:33.494+0530][81046562ms] GC(10044) Pause Young (Concurrent Start) "
-                + "(G1 Evacuation Pause) Metaspace: 214120K->214120K(739328K) 8185M->8185M(8192M) 2.859ms "
-                + "User=0.01s Sys=0.00s Real=0.00s";
+                + "(G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 214120K->214120K(739328K) "
+                + "8185M->8185M(8192M) 2.859ms User=0.01s Sys=0.00s Real=0.00s";
         UnifiedG1YoungPauseEvent gcEvent = (UnifiedG1YoungPauseEvent) JdkUtil.parseLogLine(logLine);
         // Test boundary
         int throughputThreshold = 20;

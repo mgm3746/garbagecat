@@ -46,7 +46,8 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     void testHydration() {
         LogEventType eventType = JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
-                + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
+                + "Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
         long timestamp = 15108;
         int duration = 0;
         assertTrue(
@@ -58,7 +59,8 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
-                + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
+                + "Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED + "not identified.");
     }
@@ -66,7 +68,8 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     @Test
     void testIsBlocking() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
-                + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
+                + "Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as blocking.");
     }
@@ -74,7 +77,8 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     @Test
     void testLogLinePreprocessed() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
-                + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
+                + "Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
@@ -98,7 +102,8 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     @Test
     void testLogLineWhitespaceAtEnd() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
-                + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s    ";
+                + "Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
+                + "User=0.00s Sys=0.00s Real=0.00s    ";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
     }
@@ -106,7 +111,8 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
-                + "Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
+                + "Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1YoungPrepareMixedEvent,
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not parsed.");
     }
@@ -114,8 +120,8 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     @Test
     void testPreprocessedJdk17() {
         String logLine = "[2022-08-05T05:08:51.394+0000][1908][gc,start    ] GC(1360) Pause Young (Prepare Mixed) "
-                + "(G1 Evacuation Pause) Metaspace: 147162K(149824K)->147162K(149824K) 24336M->9999M(32768M) 26,821ms "
-                + "User=0,18s Sys=0,00s Real=0,03s";
+                + "(G1 Evacuation Pause) Humongous regions: 13->13 Metaspace: 147162K(149824K)->147162K(149824K) "
+                + "24336M->9999M(32768M) 26,821ms User=0,18s Sys=0,00s Real=0,03s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
@@ -126,8 +132,8 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     @Test
     void testPreprocessedTriggerG1HumongousAllocation() {
         String logLine = "[2021-10-29T20:56:08.426+0000][info][gc,start      ] GC(734) Pause Young (Prepare Mixed) "
-                + "(G1 Humongous Allocation) Metaspace: 66401K->66401K(151552K) 15678M->1575M(16384M) 24.193ms "
-                + "User=0.12s Sys=0.00s Real=0.03s";
+                + "(G1 Humongous Allocation) Humongous regions: 13->13 Metaspace: 66401K->66401K(151552K) "
+                + "15678M->1575M(16384M) 24.193ms User=0.12s Sys=0.00s Real=0.03s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
@@ -138,8 +144,8 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     @Test
     void testPreprocessedTriggerG1PreventiveCollection() {
         String logLine = "[2022-08-22T16:07:11.203+0000][248.117s] GC(26) Pause Young (Prepare Mixed) "
-                + "(G1 Preventive Collection) Metaspace: 52236K(52736K)->52236K(52736K) 269M->81M(300M) 14.821ms "
-                + "User=0.02s Sys=0.00s Real=0.01s";
+                + "(G1 Preventive Collection) Humongous regions: 13->13 Metaspace: 52236K(52736K)->52236K(52736K) "
+                + "269M->81M(300M) 14.821ms User=0.02s Sys=0.00s Real=0.01s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
@@ -150,8 +156,8 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     @Test
     void testPreprocessedTriggerGcLockerInitiatedGc() {
         String logLine = "[2021-10-14T00:22:54.796+0400][info][gc,start      ] GC(891) Pause Young (Prepare Mixed) "
-                + "(GCLocker Initiated GC) Metaspace: 360792K->360792K(1380352K) 10311M->3024M(12288M) 33.928ms "
-                + "User=0.25s Sys=0.04s Real=0.03s";
+                + "(GCLocker Initiated GC) Humongous regions: 13->13 Metaspace: 360792K->360792K(1380352K) "
+                + "10311M->3024M(12288M) 33.928ms User=0.25s Sys=0.04s Real=0.03s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
@@ -187,8 +193,8 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     @Test
     void testTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] GC(6) Pause Young (Prepare Mixed) "
-                + "(G1 Evacuation Pause) Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
-                + "User=0.00s Sys=0.00s Real=0.00s";
+                + "(G1 Evacuation Pause) Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) "
+                + "24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);

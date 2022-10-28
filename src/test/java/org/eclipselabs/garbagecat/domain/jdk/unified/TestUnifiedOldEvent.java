@@ -177,7 +177,7 @@ class TestUnifiedOldEvent {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_OLD),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
     }
 }

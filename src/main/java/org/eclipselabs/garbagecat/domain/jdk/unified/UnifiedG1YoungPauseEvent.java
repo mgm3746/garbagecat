@@ -98,16 +98,17 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
     /**
      * Regular expression defining preprocessed logging.
      * 
-     * [0.333s][info][gc,start ] GC(0) Pause Young (G1 Evacuation Pause) Metaspace: 6591K-&gt;6591K(1056768K)
-     * 25M-&gt;4M(254M) 3.523ms User=0.00s Sys=0.00s Real=0.00s
+     * [0.333s][info][gc,start ] GC(0) Pause Young (G1 Evacuation Pause) Humongous regions: 13->13 Metaspace:
+     * 6591K-&gt;6591K(1056768K) 25M-&gt;4M(254M) 3.523ms User=0.00s Sys=0.00s Real=0.00s
      *
-     * [0.037s][info][gc,start ] GC(0) Pause Young (Normal) (G1 Preventive Collection) Metaspace:
-     * 331K(512K)-&gt;331K(512K) 1M->1M(4M) 0.792ms User=0.00s Sys=0.00s Real=0.00s
+     * [0.037s][info][gc,start ] GC(0) Pause Young (Normal) (G1 Preventive Collection) Humongous regions: 13->13
+     * Metaspace: 331K(512K)-&gt;331K(512K) 1M->1M(4M) 0.792ms User=0.00s Sys=0.00s Real=0.00s
      */
     private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR
-            + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + TRIGGER + "\\) Metaspace: " + JdkRegEx.SIZE
-            + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
+            + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + TRIGGER
+            + "\\) Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 

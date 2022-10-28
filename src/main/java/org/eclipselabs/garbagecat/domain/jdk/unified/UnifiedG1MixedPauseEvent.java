@@ -55,7 +55,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <pre>
- * [15.114s][info][gc            ] GC(1195) Pause Young (Mixed) (G1 Evacuation Pause) 15M-&gt;12M(31M) 4.194ms User=0.01s Sys=0.00s Real=0.00s
+ * [16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 3801K-&gt;3801K(1056768K) 15M-&gt;12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -74,9 +74,9 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
      * Regular expression defining preprocessed logging.
      */
     private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(Mixed\\) \\("
-            + TRIGGER + "\\) Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
-            + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
+            + TRIGGER + "\\) Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE
+            + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 

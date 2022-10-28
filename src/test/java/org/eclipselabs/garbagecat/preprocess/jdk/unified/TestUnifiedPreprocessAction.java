@@ -43,7 +43,6 @@ import org.junit.jupiter.api.Test;
  * 
  */
 class TestUnifiedPreprocessAction {
-
     @Test
     void testAdaptiveSizeNoFullAfterScavenge() {
         String logLine = "[2021-06-15T16:04:45.320-0400][339.481s] No full after scavenge average_promoted "
@@ -358,6 +357,24 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testG1FullGcParallelConcurrentIntermingled() throws IOException {
+        File testFile = TestUtil.getFile("dataset257.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_PARALLEL),
+                JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
+                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
     }
 
     @Test
@@ -772,9 +789,15 @@ class TestUnifiedPreprocessAction {
 
     @Test
     void testG1Humongous() {
-        String logLine = "[0.101s][info][gc,heap      ] GC(0) Humongous regions: 0->0";
+        String logLine = "[2021-09-22T10:57:21.297-0500][5259442ms] GC(5172) Humongous regions: 13->13";
+        String nextLogLine = "[2021-09-22T10:57:21.297-0500][5259442ms] GC(5172) Metaspace: 82409K->82409K(1126400K)";
+        Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(" Humongous regions: 13->13", event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -2019,8 +2042,8 @@ class TestUnifiedPreprocessAction {
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_OLD),
-                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_PARALLEL),
+                JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
     }

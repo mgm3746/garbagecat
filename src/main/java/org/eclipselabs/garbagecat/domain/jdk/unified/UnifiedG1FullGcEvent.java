@@ -37,11 +37,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
- * UNIFIED_G1_FULL_GC
- * </p>
- * 
- * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.G1FullGcEvent} with unified logging (JDK9+).
+ * G1_FULL_GC_PARALLEL
  * </p>
  * 
  * <p>
@@ -55,7 +51,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <pre>
- * [2021-03-13T03:37:40.051+0530][79853119ms] GC(8646) Pause Full (G1 Evacuation Pause) Metaspace: 214096K-&gt;214096K(739328K) 8186M-&gt;8178M(8192M) 2127.343ms User=16.40s Sys=0.09s Real=2.13s
+ * [2021-03-13T03:37:40.051+0530][79853119ms] GC(8646) Pause Full (G1 Evacuation Pause) Humongous regions: 13-&gt;13 Metaspace: 214096K-&gt;214096K(739328K) 8186M-&gt;8178M(8192M) 2127.343ms User=16.40s Sys=0.09s Real=2.13s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -70,15 +66,16 @@ public class UnifiedG1FullGcEvent extends G1Collector
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
             + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_DIAGNOSTIC_COMMAND + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + ")";
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|"
+            + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
 
     /**
      * Regular expression defining preprocessed logging.
      */
     private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + TRIGGER
-            + "\\) Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE
-            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9
-            + "[ ]*$";
+            + "\\) Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
+            + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
@@ -175,23 +172,23 @@ public class UnifiedG1FullGcEvent extends G1Collector
                 }
             }
             trigger = matcher.group(DECORATOR_SIZE + 1);
-            permGen = memory(matcher.group(DECORATOR_SIZE + 2), matcher.group(DECORATOR_SIZE + 4).charAt(0))
+            permGen = memory(matcher.group(DECORATOR_SIZE + 3), matcher.group(DECORATOR_SIZE + 5).charAt(0))
                     .convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(DECORATOR_SIZE + 5), matcher.group(DECORATOR_SIZE + 7).charAt(0))
+            permGenEnd = memory(matcher.group(DECORATOR_SIZE + 6), matcher.group(DECORATOR_SIZE + 8).charAt(0))
                     .convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 8), matcher.group(DECORATOR_SIZE + 10).charAt(0))
+            permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 9), matcher.group(DECORATOR_SIZE + 11).charAt(0))
                     .convertTo(KILOBYTES);
-            combinedBegin = memory(matcher.group(DECORATOR_SIZE + 11), matcher.group(DECORATOR_SIZE + 13).charAt(0))
+            combinedBegin = memory(matcher.group(DECORATOR_SIZE + 12), matcher.group(DECORATOR_SIZE + 14).charAt(0))
                     .convertTo(KILOBYTES);
-            combinedEnd = memory(matcher.group(DECORATOR_SIZE + 14), matcher.group(DECORATOR_SIZE + 16).charAt(0))
+            combinedEnd = memory(matcher.group(DECORATOR_SIZE + 15), matcher.group(DECORATOR_SIZE + 17).charAt(0))
                     .convertTo(KILOBYTES);
-            combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 17),
-                    matcher.group(DECORATOR_SIZE + 19).charAt(0)).convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 20)).intValue();
-            if (matcher.group(DECORATOR_SIZE + 21) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 22)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 23)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 24)).intValue();
+            combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 18),
+                    matcher.group(DECORATOR_SIZE + 20).charAt(0)).convertTo(KILOBYTES);
+            duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 21)).intValue();
+            if (matcher.group(DECORATOR_SIZE + 22) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 23)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 24)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 25)).intValue();
             } else {
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;

@@ -796,8 +796,6 @@ public final class JdkUtil {
     /**
      * Create <code>LogEvent</code> from GC log line.
      * 
-     * @param logLine
-     *            The log line as it appears in the GC log.
      * @return The <code>LogEvent</code> corresponding to the log line.
      */
     public static final LogEvent parseLogLine(String logLine) {

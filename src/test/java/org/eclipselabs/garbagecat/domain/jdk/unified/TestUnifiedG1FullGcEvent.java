@@ -47,7 +47,7 @@ class TestUnifiedG1FullGcEvent {
     void testHydration() {
         LogEventType eventType = JdkUtil.LogEventType.G1_FULL_GC_PARALLEL;
         String logLine = "[2021-03-13T03:37:40.051+0530][79853119ms] GC(8646) Pause Full (G1 Evacuation Pause) "
-                + "Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
+                + "Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
                 + "User=16.40s Sys=0.09s Real=2.13s";
         long timestamp = 15108;
         int duration = 0;
@@ -59,7 +59,7 @@ class TestUnifiedG1FullGcEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[2021-03-13T03:37:40.051+0530][79853119ms] GC(8646) Pause Full (G1 Evacuation Pause) "
-                + "Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
+                + "Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
                 + "User=16.40s Sys=0.09s Real=2.13s";
         assertEquals(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.G1_FULL_GC_PARALLEL + "not identified.");
@@ -68,7 +68,7 @@ class TestUnifiedG1FullGcEvent {
     @Test
     void testIsBlocking() {
         String logLine = "[2021-03-13T03:37:40.051+0530][79853119ms] GC(8646) Pause Full (G1 Evacuation Pause) "
-                + "Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
+                + "Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
                 + "User=16.40s Sys=0.09s Real=2.13s";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
                 JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + " not indentified as blocking.");
@@ -77,7 +77,7 @@ class TestUnifiedG1FullGcEvent {
     @Test
     void testLogLinePreprocessed() {
         String logLine = "[2021-03-13T03:37:40.051+0530][79853119ms] GC(8646) Pause Full (G1 Evacuation Pause) "
-                + "Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
+                + "Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
                 + "User=16.40s Sys=0.09s Real=2.13s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
@@ -100,7 +100,7 @@ class TestUnifiedG1FullGcEvent {
     @Test
     void testLogLineWhitespaceAtEnd() {
         String logLine = "[2021-03-13T03:37:40.051+0530][79853119ms] GC(8646) Pause Full (G1 Evacuation Pause) "
-                + "Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
+                + "Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
                 + "User=16.40s Sys=0.09s Real=2.13s   ";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
@@ -109,7 +109,7 @@ class TestUnifiedG1FullGcEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[2021-03-13T03:37:40.051+0530][79853119ms] GC(8646) Pause Full (G1 Evacuation Pause) "
-                + "Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
+                + "Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
                 + "User=16.40s Sys=0.09s Real=2.13s";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1FullGcEvent,
                 JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + " not parsed.");
@@ -118,8 +118,8 @@ class TestUnifiedG1FullGcEvent {
     @Test
     void testPreprocessedTriggerG1HumongousAllocation() {
         String logLine = "[2021-10-29T21:02:24.624+0000][info][gc,start       ] GC(23863) Pause Full "
-                + "(G1 Humongous Allocation) Metaspace: 69475K->69475K(153600K) 16339M->14486M(16384M) 8842.979ms "
-                + "User=52.67s Sys=0.01s Real=8.84s";
+                + "(G1 Humongous Allocation) Humongous regions: 0->0 Metaspace: 69475K->69475K(153600K) "
+                + "16339M->14486M(16384M) 8842.979ms User=52.67s Sys=0.01s Real=8.84s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
@@ -129,8 +129,19 @@ class TestUnifiedG1FullGcEvent {
     @Test
     void testPreprocessedTriggerGcLockerInitiatedGc() {
         String logLine = "[2021-03-13T03:45:44.425+0530][80337493ms] GC(9216) Pause Full (GCLocker Initiated GC) "
-                + "Metaspace: 214103K->214103K(739328K) 8184M->8180M(8192M) 2101.341ms "
+                + "Humongous regions: 0->0 Metaspace: 214103K->214103K(739328K) 8184M->8180M(8192M) 2101.341ms "
                 + "User=16.34s Sys=0.05s Real=2.10s";
+        assertTrue(UnifiedG1FullGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+        UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString(), event.getName(), "Event name incorrect.");
+    }
+
+    @Test
+    void testPreprocessedTriggerSystemGc() {
+        String logLine = "[2022-10-26T09:02:09.409-0500][284552496ms] GC(73591) Pause Full (System.gc()) "
+                + "Humongous regions: 0->0 Metaspace: 590830K->590830K(1644544K) 2878M->2837M(3072M) 3952.620ms "
+                + "User=13.07s Sys=0.00s Real=3.95s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
@@ -181,7 +192,7 @@ class TestUnifiedG1FullGcEvent {
     @Test
     void testTimeUptime() {
         String logLine = "[2021-03-13T03:37:40.051+0530][79853.119s] GC(8646) Pause Full (G1 Evacuation Pause) "
-                + "Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
+                + "Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) 8186M->8178M(8192M) 2127.343ms "
                 + "User=16.40s Sys=0.09s Real=2.13s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
