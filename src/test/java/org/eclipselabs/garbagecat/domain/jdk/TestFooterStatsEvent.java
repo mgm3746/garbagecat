@@ -72,6 +72,13 @@ class TestFooterStatsEvent {
     }
 
     @Test
+    void testHappenedAtUpdateReferences() {
+        String logLine = "[5.106s][info][gc,stats    ]         1 happened at Update References";
+        assertTrue(FooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
     void testHappenedAtUpdateRefs() {
         String logLine = "        1 happened at Update Refs";
         assertTrue(FooterStatsEvent.match(logLine),
@@ -119,6 +126,21 @@ class TestFooterStatsEvent {
                 JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_BLANK_LINE),
                 JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testJdk17Shenendoah() throws IOException {
+        File testFile = TestUtil.getFile("dataset258.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.FOOTER_STATS),
+                JdkUtil.LogEventType.FOOTER_STATS.toString() + " collector not identified.");
     }
 
     @Test
@@ -339,6 +361,14 @@ class TestFooterStatsEvent {
     void testReportable() {
         assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.FOOTER_STATS),
                 JdkUtil.LogEventType.FOOTER_STATS.toString() + " incorrectly indentified as reportable.");
+    }
+
+    @Test
+    void testSTotal() {
+        String logLine = "[2020-10-26T14:52:27.770-0400]     S: <total>                 =    0.136 s (a =       98 us) "
+                + "(n =  1398) (lvls, us =       62,       84,       92,      104,     1170)";
+        assertTrue(FooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
 
     @Test

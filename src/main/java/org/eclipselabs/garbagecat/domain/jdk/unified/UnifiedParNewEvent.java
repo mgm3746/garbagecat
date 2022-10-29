@@ -146,7 +146,8 @@ public class UnifiedParNewEvent extends ParallelCollector implements UnifiedLogg
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
 
     /**
      * Regular expression defining the logging.

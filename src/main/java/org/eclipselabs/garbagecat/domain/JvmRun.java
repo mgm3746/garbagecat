@@ -1029,7 +1029,7 @@ public class JvmRun {
      *         doing GC.
      */
     public long getGcThroughput() {
-        if (blockingEventCount <= 0) {
+        if (blockingEventCount <= 0 || getJvmRunDuration() == 0) {
             return 100L;
         }
         long timeNotGc = getJvmRunDuration() - JdkMath.convertMicrosToMillis(gcPauseTotal).longValue();

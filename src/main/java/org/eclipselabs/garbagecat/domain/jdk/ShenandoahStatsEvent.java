@@ -80,64 +80,54 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Init|Final) Mark \\((G|N)\\).+$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{2,4}(Accumulate Stats|Exception Caches|Finish (Mark|Queues|Work)|Make Parsable|"
-                    + "Manage GCLABs|Purge Unlinked|(Code )?Roots|Rendezvous|System (Purge|Dictionary)|Unlink Stale|"
-                    + "Update Region States|Weak (Class Links|References)).*$",
+                    + " )?[ ]{1,}(Accumulate Stats|Evacuation|Exception Caches|Finish (Mark|Queues|Work)|"
+                    + "Make Parsable|Manage (GCLABs|GC/TLABs)|Purge Unlinked|(Code )?Roots|Rendezvous|"
+                    + "System (Purge|Dictionary)|Unlink Stale|Update (References|Region States)|"
+                    + "Weak (Class Links|References)).*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{2,4}(Scan|Update) Roots.*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(Scan|Update) Roots.*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{4,5}(DU|E|S): JNI Handles Roots.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,}(Choose|Trash) Collection Set.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{4,6}(DU|E|FA|FU|S|WR): JFR Weak Roots.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,}Rebuild Free Set.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?    (DU|S|WR): JNI Weak Roots.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + ")?    (E|S): Flat Profiler Roots.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{2,3}(Choose|Trash) Collection Set.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{2,3}Rebuild Free Set.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  Finish Work.+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}Finish Work.+$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Degenerated|Full) GC \\((G|N)\\).+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  Degen Update Roots.+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?  Degen (STW Mark|Update Roots).+$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{2,6}(Cleanup|CLDG|Deallocate Metadata|Enqueue|Parallel Cleanup|Process|Unload Classes|"
+                    + " )?[ ]{1,}(Cleanup|CLDG|Deallocate Metadata|Enqueue|Parallel Cleanup|Process|Unload Classes|"
                     + "Weak Roots).*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  (Initial|Prepare)( Evacuation)?.*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(Initial|Prepare)( Evacuation)?.*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  (Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs).*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )?  (Adjust Pointers|Calculate Addresses|Copy Objects|(Post|Pre) Heap Dump|Mark).*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs).*$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?    ((Humongous|Regular) Objects|Rebuild Region Sets|Reset Complete Bitmap).*$",
+                    + " )?[ ]{1,}(Adjust Pointers|Calculate Addresses|Copy Objects|(Post|Pre) Heap Dump|Mark).*$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{4,6}(DU|E|FA|FS|FU|S|U|UR): (CLDG|Code Cache|Flat Profiler|JNI|JNI Handles|JNI Weak|"
-                    + "Management|String Table|Synchronizer|System Dict|Thread|Universe|JVMTI) Roots.*$",
+                    + " )?[ ]{1,}((Humongous|Regular) Objects|Rebuild Region Sets|Reset Complete Bitmap).*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Init[ ]{0,1}|Final) (Mark|Update Refs|Evac) \\([G|N]\\).*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + ")?    (DU|S): (CLDG|Code Cache|Flat Profiler|JVMTI|Management|String Table|Synchronizer|"
-                    + "System Dict|Thread|Universe) Roots.+$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Allocation pacing accrued:$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Pacing.*$",
             // ,
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{0,7}\\d{1,8} of[ ]{0,5}\\d{1,7} ms \\([ ]{0,2}\\d{1,}\\.\\d%\\):.+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{0,}\\d{1,} of[ ]{0,}\\d{1,} ms \\([ ]{0,}\\d{1,}\\.\\d%\\):.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{2,6}(CMR|CSR|CTR|CU|CWR|CWRF|DU|E|FA|FS|FU|S|UR|WR): "
-                    + "(<total>|Code Cache|Weak References|(CLDG|(Resolved|String) Table|Thread|VM (Strong|Weak)) "
-                    + "Roots) .*$"
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?[ ]{1,}(DU|E|FA|FS|FU|S|U|UR): (CLDG|Code Cache|Flat Profiler|JNI|JNI Handles|JNI Weak|"
+                    + "Management|String Table|Synchronizer|System Dict|Thread|Universe|JVMTI) Roots.*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(CMR|CSR|CTR|CU|CWR|CWRF|DCU|DSM|DU|DWR|E|FA|FS|FU|S|UR|WR|WRP):"
+                    + " (<total>|CLDG Roots|Code Cache Cleaning|Code Cache Roots|Flat Profiler Roots|JFR Weak Roots|"
+                    + "JNI Handles Roots|JNI Weak Roots|Parallel Mark|Weak References|Resolved Table Roots|"
+                    + "String Table Roots|Thread Roots|Unload Code Caches|Unlink CLDs|VM Strong Roots|VM Weak Roots)"
+                    + "[ ]{1,}\\d{1,} us.*$"
             //
     };
 

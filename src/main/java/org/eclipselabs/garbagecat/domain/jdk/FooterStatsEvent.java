@@ -453,8 +453,11 @@ public class FooterStatsEvent implements ThrowAwayEvent {
             "^(" + UnifiedRegEx.DECORATOR + " )?  ((Scan|(Degen )?Update) Roots|Finish Work)[ ]{1,}=.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?    (DU|E|S|U|UR): (CLDG|Code Cache|FlatProfiler|JNI|JNI Weak|Management|String Table|"
-                    + "Synchronizer|System Dict|Thread|Universe|JVMTI) Roots[ ]{1,}=.*$",
+                    + " )?[ ]{1,}(CMR|CSR|CTR|CU|CWR|CWRF|DCU|DSM|DU|DWR|E|S|U|UR|WR|WRP): (<total>|CLDG Roots|"
+                    + "Code Cache Cleaning |Code Cache Roots|FlatProfiler Roots|JFR Weak Roots|JNI Roots|"
+                    + "JNI Weak Roots|JVMTI Roots|Management Roots|Parallel Mark|Resolved Table Roots|"
+                    + "String Table Roots|Synchronizer Roots|System Dict Roots|Thread Roots|Universe Roots|Unlink CLDs|"
+                    + "Unload Code Caches|VM Strong Roots|VM Weak Roots|Weak References)[ ]{1,}=.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?  (Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs)[ ]{1,}=.*$",
             //
@@ -489,7 +492,8 @@ public class FooterStatsEvent implements ThrowAwayEvent {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?      \\d{1,7} caused by allocation failure$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?        \\d{1,7} happened at (Mark|Outside of Cycle|Update Refs)$",
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?        \\d{1,7} happened at (Mark|Outside of Cycle|Update References|Update Refs)$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?      \\d{1,7} upgraded from Degenerated GC$",
             //

@@ -122,6 +122,15 @@ class TestUnifiedParNewEvent {
     }
 
     @Test
+    void testTriggerGCLocaterInitiateGC() {
+        String logLine = "[2022-10-23T10:40:35.421+0200] GC(2) Pause Young (GCLocker Initiated GC) ParNew: "
+                + "596352K->18048K(596352K) CMS: 69520K->113365K(1482752K) Metaspace: 94138K->94138K(604160K) "
+                + "650M->128M(2030M) 102,315ms User=0,18s Sys=0,02s Real=0,10s";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_PAR_NEW + "not identified.");
+    }
+
+    @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_PAR_NEW);

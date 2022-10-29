@@ -401,8 +401,8 @@ public class GcManager {
                 currentLogLine = null;
             } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                     && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                    && !context.contains(UnifiedPreprocessAction.TOKEN)
                     && ShenandoahPreprocessAction.match(currentLogLine)) {
+                // ShenandoahPreprocessAction leverages UnifiedPreprocessAction
                 ShenandoahPreprocessAction action = new ShenandoahPreprocessAction(priorLogLine, currentLogLine,
                         nextLogLine, entangledLogLines, context);
                 if (action.getLogEntry() != null) {
@@ -410,8 +410,8 @@ public class GcManager {
                 }
             } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                     && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
-                    && !context.contains(ShenandoahPreprocessAction.TOKEN)
                     && UnifiedPreprocessAction.match(currentLogLine)) {
+                // UnifiedPreprocessAction is used by UnifiedPreprocessAction
                 UnifiedPreprocessAction action = new UnifiedPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                         entangledLogLines, context);
                 if (action.getLogEntry() != null) {
@@ -765,7 +765,7 @@ public class GcManager {
             if (preprocessedLogLine != null) {
                 String[] preprocessedLogLines = preprocessedLogLine.split(Constants.LINE_SEPARATOR);
                 if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)) {
-                    // && !priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
+                    // Output on new line
                     for (int i = 0; i < preprocessedLogLines.length; i++) {
                         if (preprocessedLogLines[i] != "") {
                             preprocessedLogList.add(preprocessedLogLines[i]);
@@ -775,8 +775,9 @@ public class GcManager {
                     if (preprocessedLogList.isEmpty()) {
                         preprocessedLogList.add(preprocessedLogLine);
                     } else {
-                        if (!priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
-                            String lastPreprocessedLogEntry = preprocessedLogList.get(preprocessedLogList.size() - 1);
+                        // Add to prior line if prior line does not end with LINE_SEPARATOR
+                        String lastPreprocessedLogEntry = preprocessedLogList.get(preprocessedLogList.size() - 1);
+                        if (!lastPreprocessedLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
                             preprocessedLogList.remove(preprocessedLogList.size() - 1);
                             preprocessedLogList.add(lastPreprocessedLogEntry + preprocessedLogLines[0]);
                             if (preprocessedLogLines.length > 1) {

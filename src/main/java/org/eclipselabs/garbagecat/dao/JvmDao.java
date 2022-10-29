@@ -558,7 +558,7 @@ public class JvmDao {
     /**
      * The maximum perm/metaspace occupancy during the JVM run.
      * 
-     * @return maximum perm/metaspac occupancy (kilobytes).
+     * @return maximum perm/metaspace occupancy (kilobytes).
      */
     public synchronized int getMaxPermOccupancy() {
         return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermOccupancyInit).max().orElse(0);

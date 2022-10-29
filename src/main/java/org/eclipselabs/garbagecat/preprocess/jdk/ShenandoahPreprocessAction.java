@@ -19,6 +19,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahDegeneratedGcMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalUpdateEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitUpdateEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahMetaspaceEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -57,7 +63,13 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 public class ShenandoahPreprocessAction implements PreprocessAction {
 
     /**
-     * Regular expression for retained beginning //SHENANDOAH_CONCURRENT marking event
+     * The number of regex patterns in <code>UnifiedRegEx.DECORATOR</code>. Convenience field to make the code resilient
+     * to decorator pattern changes.
+     */
+    public static final int DECORATOR_SIZE = Pattern.compile(UnifiedRegEx.DECORATOR)
+            .matcher("[2020-02-14T15:21:55.207-0500] GC(44) Pause Young (Normal) (G1 Evacuation Pause)").groupCount();
+    /**
+     * Regular expression for retained beginning of SHENANDOAH_CONCURRENT
      * 
      * 2021-10-27T19:37:39.139-0400: [Concurrent evacuation
      * 
@@ -69,28 +81,28 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(" + JdkRegEx.DECORATOR
             + " \\[Concurrent (evacuation|marking|reset|update references))$";
+
     private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_CONCURRENT);
 
     /**
-     * Regular expression for retained beginning SHENANDOAH_CONCURRENT cleanup event
+     * Regular expression for retained beginning event.
+     * 
+     * {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent} cleanup:
      * 
      * 2020-08-21T09:40:29.929-0400: 0.467: [Concurrent cleanup 21278K->4701K(37888K), 0.048 ms]
-     */
-    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP = "^(" + JdkRegEx.DECORATOR
-            + " \\[Concurrent cleanup " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + UnifiedRegEx.DURATION + "\\])$";
-    private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP_PATTERN = Pattern
-            .compile(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP);
-
-    /**
-     * Regular expression for retained Metaspace block.
      * 
-     * , [Metaspace: 6477K->6481K(1056768K)]
+     * 2022-10-28T10:58:59.285-0400: [Concurrent marking, 0.506 ms]
+     * 
+     * {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent} cleanup:
+     * 
+     * 2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms]
      */
-    private static final String REGEX_RETAIN_METASPACE = "(, \\[Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\)\\])[ ]*";
-    private static final Pattern REGEX_RETAIN_METASPACE_PATTERN = Pattern.compile(REGEX_RETAIN_METASPACE);
+    private static final String REGEX_RETAIN_BEGINNING_EVENT = "^(" + JdkRegEx.DECORATOR
+            + " \\[(Concurrent (cleanup|marking)|Pause Full)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\))?, " + UnifiedRegEx.DURATION + "\\])$";
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_EVENT_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_EVENT);
 
     /**
      * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
@@ -99,7 +111,50 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      * , 27.5589374 secs]
      */
     private static final String REGEX_RETAIN_DURATION = "(, " + UnifiedRegEx.DURATION + "\\])[ ]*";
+
     private static final Pattern REGEX_RETAIN_DURATION_PATTERN = Pattern.compile(REGEX_RETAIN_DURATION);
+    /**
+     * Regular expression for retained ending Metaspace block.
+     * 
+     * , [Metaspace: 6477K->6481K(1056768K)]
+     */
+    private static final String REGEX_RETAIN_END_METASPACE = "(, \\[Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)\\])[ ]*";
+
+    private static final Pattern REGEX_RETAIN_END_METASPACE_PATTERN = Pattern.compile(REGEX_RETAIN_END_METASPACE);
+    /**
+     * Regular expression for retained middle metaspace data.
+     *
+     * Broken out from REGEX_RETAIN_MIDDLE_SPACE_DATA to distinguish between the Shenandoah Metaspace event printed
+     * after every gc.
+     * 
+     * <p>
+     * 1) JDK8/11:
+     * </p>
+     * 
+     * <pre>
+     * [0.032s][info][gc,metaspace ] GC(0) Metaspace: 120K-&gt;120K(1056768K)
+     * 
+     * [2019-05-09T01:39:00.821+0000][5413ms] GC(0) Metaspace: 26116K-&gt;26116K(278528K)
+     * </pre>
+     * 
+     * <p>
+     * 2) JDK17:
+     * </p>
+     * 
+     * <pre>
+     * [0.084s][info][gc,metaspace] GC(4) Metaspace: 1174K(1344K)->1174K(1344K) NonClass: 1078K(1152K)->1078K(1152K) 
+     * Class: 95K(192K)->95K(192K)
+     * </pre>
+     */
+    private static final String REGEX_RETAIN_MIDDLE_METASPACE_DATA = "^" + UnifiedRegEx.DECORATOR + "( Metaspace: "
+            + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\))( NonClass: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) Class: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\))?$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_METASPACE_DATA);
 
     /**
      * Regular expressions for lines thrown away.
@@ -107,74 +162,93 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
     private static final String[] REGEX_THROWAWAY = {
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitMarkEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
-            "^" + JdkRegEx.DECORATOR
-                    + " (\\[)?Pause (Init|Final) Mark( \\((update refs|unload classes)\\))?( \\(process weakrefs\\))?"
+            "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+                    + ") (\\[)?Pause (Init|Final) Mark( \\((update refs|unload classes)\\))?( \\(process weakrefs\\))?"
                     + "(, start\\])?$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcEvent}
-            "^" + JdkRegEx.DECORATOR
-                    + " (\\[)?Pause Degenerated GC \\((Evacuation|Mark|Outside of Cycle|Update Refs)\\)"
+            "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+                    + ") (\\[)?Pause Degenerated GC \\((Evacuation|Mark|Outside of Cycle|Update Refs)\\)"
                     + "(, start\\])?$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFullGcEvent}
-            "^" + JdkRegEx.DECORATOR + " \\[Pause Full, start\\]$",
+            "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR + ") \\[Pause Full, start\\]$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalEvacEvent}
-            "^" + JdkRegEx.DECORATOR + " (\\[)?Pause Final Evac(, start\\])?$",
+            "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR + ") (\\[)?Pause Final Evac(, start\\])?$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitUpdateEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalUpdateEvent}
-            "^" + JdkRegEx.DECORATOR + " (\\[)?Pause (Init|Final) Update Refs(, start\\])?",
+            "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+                    + ") (\\[)?Pause (Init|Final) Update Refs(, start\\])?",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcMarkEvent}
-            "^[ ]{1,4}(Bad|Good) progress for (free|used) space: " + JdkRegEx.SIZE + ", need " + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}(Bad|Good) progress for (free|used) space: " + JdkRegEx.SIZE
+                    + ", need " + JdkRegEx.SIZE + "$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitUpdateEvent}
-            "^[ ]{1,4}Pacer for Update Refs. Used: " + JdkRegEx.SIZE + ", Free: " + JdkRegEx.SIZE + ", Non-Taxable: "
-                    + JdkRegEx.SIZE + ", Alloc Tax Rate: (inf|\\d{1,}\\.\\d)x",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for Update Refs. Used: " + JdkRegEx.SIZE + ", Free: "
+                    + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: (inf|\\d{1,}\\.\\d)x",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
-            "^[ ]{1,4}Immediate Garbage: " + JdkRegEx.SIZE + " \\(\\d{1,3}% of total\\), \\d{1,4} regions",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Immediate Garbage: " + JdkRegEx.SIZE
+                    + " \\(\\d{1,3}% of total\\), \\d{1,4} regions",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitMarkEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalUpdateEvent}
-            "^[ ]{1,4}Using \\d of \\d workers for (init|final) (marking|reference update)$",
+            "^(" + UnifiedRegEx.DECORATOR
+                    + ")?[ ]{1,4}Using \\d of \\d workers for (init|final) (marking|reference update)$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitMarkEvent}
-            "^[ ]{1,4}Pacer for Mark. Expected Live: " + JdkRegEx.SIZE + ", Free: " + JdkRegEx.SIZE + ", Non-Taxable: "
-                    + JdkRegEx.SIZE + ", Alloc Tax Rate: (inf|\\d{1,}\\.\\d)x$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for Mark. Expected Live: " + JdkRegEx.SIZE + ", Free: "
+                    + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: (inf|\\d{1,}\\.\\d)x$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
-            "^[ ]{1,4}Adaptive CSet Selection. Target Free: " + JdkRegEx.SIZE + ", Actual Free: " + JdkRegEx.SIZE
-                    + ", Max CSet: " + JdkRegEx.SIZE + ", Min Garbage: " + JdkRegEx.SIZE,
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Adaptive CSet Selection. Target Free: " + JdkRegEx.SIZE
+                    + ", Actual Free: " + JdkRegEx.SIZE + ", Max CSet: " + JdkRegEx.SIZE + ", Min Garbage: "
+                    + JdkRegEx.SIZE,
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalEvacEvent}
-            "^[ ]{1,4}Pacer for Evacuation. Used CSet: " + JdkRegEx.SIZE + ", Free: " + JdkRegEx.SIZE
-                    + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: \\d{1,}\\.\\dx$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for Evacuation. Used CSet: " + JdkRegEx.SIZE + ", Free: "
+                    + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: \\d{1,}\\.\\dx$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahConcurrentEvent}
             "^[ ]{1,4}Using \\d{1,2} of \\d{1,2} workers for concurrent "
                     + "(reset|marking|preclean|evacuation|reference update)$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
-            "^[ ]{1,4}Collectable Garbage: " + JdkRegEx.SIZE + " \\(\\d{1,3}%( of total)?\\)(, Immediate: "
-                    + JdkRegEx.SIZE + " \\(\\d{1,3}%\\))?, (CSet: )?" + JdkRegEx.SIZE
-                    + " (\\(\\d{1,3}%\\))?(CSet, \\d{1,3} CSet regions)?",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Collectable Garbage: " + JdkRegEx.SIZE
+                    + " \\(\\d{1,3}%( of total)?\\)(, Immediate: " + JdkRegEx.SIZE + " \\(\\d{1,3}%\\))?, (CSet: )?"
+                    + JdkRegEx.SIZE + " (\\(\\d{1,3}%\\))?(CSet, \\d{1,3} CSet regions)?",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcMarkEvent}
             "^[ ]{1,4}Using \\d of \\d workers for (full|stw degenerated) gc$",
             //
-            "^[ ]{1,4}Pacer for (Reset|Precleaning). Non-Taxable: " + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for (Reset|Precleaning). Non-Taxable: " + JdkRegEx.SIZE
+                    + "$",
             //
-            "^[ ]{0,4}Failed to allocate ((Shared|TLAB), )?" + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{0,4}Failed to allocate ((Shared|TLAB), )?" + JdkRegEx.SIZE + "$",
             //
-            "^[ ]{0,4}Cancelling GC: (Allocation Failure|Stopping VM|Upgrade To Full GC)$",
+            "^(" + UnifiedRegEx.DECORATOR
+                    + ")?[ ]{0,4}Cancelling GC: (Allocation Failure|Stopping VM|Upgrade To Full GC)$",
             //
-            "^Free: " + JdkRegEx.SIZE + " \\(\\d{1,4} regions\\), Max regular: " + JdkRegEx.SIZE + ", Max humongous: "
-                    + JdkRegEx.SIZE + ", External frag: \\d{1,3}%, Internal frag: \\d{1,3}%$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{0,1}Free: " + JdkRegEx.SIZE
+                    + " \\(\\d{1,4} regions\\), Max regular: " + JdkRegEx.SIZE + ", Max humongous: " + JdkRegEx.SIZE
+                    + ", External frag: \\d{1,3}%, Internal frag: \\d{1,3}%$",
             //
-            "^Free headroom: " + JdkRegEx.SIZE + " \\(free\\) - " + JdkRegEx.SIZE + " \\(spike\\) - " + JdkRegEx.SIZE
-                    + " \\(penalties\\) = " + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{0,1}Free headroom: " + JdkRegEx.SIZE + " \\(free\\) - "
+                    + JdkRegEx.SIZE + " \\(spike\\) - " + JdkRegEx.SIZE + " \\(penalties\\) = " + JdkRegEx.SIZE + "$",
             //
-            "^" + JdkRegEx.DECORATOR
-                    + " (\\[)?Concurrent (cleanup|evacuation|marking|precleaning|reset|update references)"
-                    + "( \\((process weakrefs|unload classes|update refs)\\))?( \\(process weakrefs\\))?(, start\\])?$"
+            "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+                    + ") (\\[)?Concurrent (cleanup|evacuation|marking|precleaning|reset|update references)"
+                    + "( \\((process weakrefs|unload classes|update refs)\\))?( \\(process weakrefs\\))?(, start\\])?$",
+            // ***** Unified *****
+            // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahConcurrentEvent}
+            "^" + UnifiedRegEx.DECORATOR + "[ ]{1,4}Using \\d{1,2} of \\d{1,2} workers for [cC]oncurrent "
+                    + "(class unloading|reset|marking( roots)?|preclean|evacuation|reference update|strong root|"
+                    + "thread roots|weak references|weak root)$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Evacuation Reserve: " + JdkRegEx.SIZE
+                    + " \\(\\d{1,3} regions\\), Max regular: " + JdkRegEx.SIZE + "$",
+            // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcMarkEvent}
+            "^" + UnifiedRegEx.DECORATOR + "[ ]{1,4}Using \\d of \\d workers for (full|stw degenerated) gc$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Pacer for Idle. Initial: " + JdkRegEx.SIZE
+                    + ", Alloc Tax Rate: \\d{1,3}\\.\\dx$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Uncommitted " + JdkRegEx.SIZE + ". Heap: " + JdkRegEx.SIZE + " reserved, "
+                    + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$"
             //
     };
 
     private static final List<Pattern> THROWAWAY_PATTERN_LIST = new ArrayList<>(REGEX_THROWAWAY.length);
-
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
 
     /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. Shenandoah, G1).
@@ -185,12 +259,59 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      * non-concurrent event.
      */
     public static final String TOKEN = "SHENANDOAH_PREPROCESS_ACTION_TOKEN";
-
     static {
         for (String regex : REGEX_THROWAWAY) {
             THROWAWAY_PATTERN_LIST.add(Pattern.compile(regex));
         }
     }
+
+    /**
+     * Determine if the log line is can be thrown away
+     * 
+     * @return true if the log line matches a throwaway pattern, false otherwise.
+     */
+    private static final boolean isThrowaway(String logLine) {
+        boolean throwaway = false;
+        for (int i = 0; i < THROWAWAY_PATTERN_LIST.size(); i++) {
+            Pattern pattern = THROWAWAY_PATTERN_LIST.get(i);
+            if (pattern.matcher(logLine).matches()) {
+                throwaway = true;
+                break;
+            }
+        }
+        return throwaway;
+    }
+
+    /**
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        boolean match = false;
+        if (REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_EVENT_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_END_METASPACE_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_DURATION_PATTERN.matcher(logLine).matches()
+                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahConcurrentEvent
+                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahDegeneratedGcMarkEvent
+                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahInitUpdateEvent
+                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahInitMarkEvent
+                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahFinalMarkEvent
+                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahFinalUpdateEvent
+                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahMetaspaceEvent) {
+            match = true;
+        } else if (isThrowaway(logLine)) {
+            match = true;
+        }
+        return match;
+    }
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
     /**
      * Create event from log entry.
@@ -208,73 +329,75 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     public ShenandoahPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
             List<String> entangledLogLines, Set<String> context) {
+
+        Matcher matcher;
+
         // Beginning logging
-        if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT);
-            Matcher matcher = pattern.matcher(logEntry);
+        if ((matcher = REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
+                context.add(REGEX_RETAIN_BEGINNING_CONCURRENT);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_EVENT_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
+                context.add(REGEX_RETAIN_BEGINNING_EVENT);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
-        } else if (logEntry.matches(REGEX_RETAIN_METASPACE)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_METASPACE);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches() && !(JdkUtil.parseLogLine(logEntry) instanceof ShenandoahMetaspaceEvent)) {
+                this.logEntry = matcher.group(DECORATOR_SIZE + 1);
+                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            } else {
+                this.logEntry = logEntry;
+            }
+        } else if ((matcher = REGEX_RETAIN_END_METASPACE_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
+                // throw away unrelated metaspace lines
+                if (context.contains(REGEX_RETAIN_BEGINNING_EVENT)
+                        || context.contains(REGEX_RETAIN_BEGINNING_CONCURRENT)) {
+                    this.logEntry = logEntry;
+                    context.remove(REGEX_RETAIN_BEGINNING_CONCURRENT);
+                    context.remove(REGEX_RETAIN_BEGINNING_EVENT);
+                }
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if (logEntry.matches(REGEX_RETAIN_DURATION)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_DURATION);
-            Matcher matcher = pattern.matcher(logEntry);
+        } else if ((matcher = REGEX_RETAIN_DURATION_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
             // Sometimes this is the end of a logging event
             if (entangledLogLines != null && !entangledLogLines.isEmpty() && newLoggingEvent(nextLogEntry)) {
                 clearEntangledLines(entangledLogLines);
+                context.remove(REGEX_RETAIN_BEGINNING_CONCURRENT);
+                context.remove(REGEX_RETAIN_BEGINNING_EVENT);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(REGEX_RETAIN_BEGINNING_EVENT);
+            context.remove(REGEX_RETAIN_BEGINNING_CONCURRENT);
+        } else if (JdkUtil.parseLogLine(logEntry) instanceof ShenandoahInitUpdateEvent
+                || JdkUtil.parseLogLine(logEntry) instanceof ShenandoahInitMarkEvent
+                || JdkUtil.parseLogLine(logEntry) instanceof ShenandoahFinalMarkEvent
+                || JdkUtil.parseLogLine(logEntry) instanceof ShenandoahDegeneratedGcMarkEvent
+                || JdkUtil.parseLogLine(logEntry) instanceof ShenandoahFinalUpdateEvent) {
+            this.logEntry = logEntry;
+            context.add(TOKEN_BEGINNING_OF_EVENT);
         } else if (JdkUtil.parseLogLine(logEntry) instanceof ShenandoahConcurrentEvent && !isThrowaway(logEntry)) {
             // Stand alone event
             // TODO: Instead of throwing away some concurrent events, could save them to output at the end
             this.logEntry = logEntry;
             context.add(TOKEN_BEGINNING_OF_EVENT);
+            context.remove(REGEX_RETAIN_BEGINNING_CONCURRENT);
+            context.remove(REGEX_RETAIN_BEGINNING_EVENT);
         }
-    }
-
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.PreprocessActionType.SHENANDOAH.toString();
-    }
-
-    /**
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        boolean match = false;
-        if (REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_CONCURRENT_CLEANUP_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_METASPACE_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_DURATION_PATTERN.matcher(logLine).matches()) {
-            match = true;
-        } else if (isThrowaway(logLine)) {
-            match = true;
-        }
-        return match;
     }
 
     /**
@@ -296,6 +419,14 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
         }
     }
 
+    public String getLogEntry() {
+        return logEntry;
+    }
+
+    public String getName() {
+        return JdkUtil.PreprocessActionType.SHENANDOAH.toString();
+    }
+
     /**
      * Convenience method to test if a log line is the start of a new logging event or a complete logging event (vs. the
      * middle or end of a multi line logging event).
@@ -306,22 +437,5 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     private boolean newLoggingEvent(String logLine) {
         return true;
-    }
-
-    /**
-     * Determine if the log line is can be thrown away
-     * 
-     * @return true if the log line matches a throwaway pattern, false otherwise.
-     */
-    private static final boolean isThrowaway(String logLine) {
-        boolean throwaway = false;
-        for (int i = 0; i < THROWAWAY_PATTERN_LIST.size(); i++) {
-            Pattern pattern = THROWAWAY_PATTERN_LIST.get(i);
-            if (pattern.matcher(logLine).matches()) {
-                throwaway = true;
-                break;
-            }
-        }
-        return throwaway;
     }
 }

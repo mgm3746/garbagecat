@@ -1,0 +1,138 @@
+[2022-10-27T22:37:06.695-0400] GC STATISTICS:
+[2022-10-27T22:37:06.695-0400]   "(G)" (gross) pauses include VM time: time to notify and block threads, do the pre-
+[2022-10-27T22:37:06.695-0400]         and post-safepoint housekeeping. Use -Xlog:safepoint+stats to dissect.
+[2022-10-27T22:37:06.695-0400]   "(N)" (net) pauses are the times spent in the actual GC code.
+[2022-10-27T22:37:06.695-0400]   "a" is average time for each phase, look at levels to see if average makes sense.
+[2022-10-27T22:37:06.695-0400]   "lvls" are quantiles: 0% (minimum), 25%, 50% (median), 75%, 100% (maximum).
+[2022-10-27T22:37:06.695-0400] 
+[2022-10-27T22:37:06.695-0400]   All times are wall-clock times, except per-root-class counters, that are sum over
+[2022-10-27T22:37:06.695-0400]   all workers. Dividing the <total> over the root stage time estimates parallelism.
+[2022-10-27T22:37:06.695-0400] 
+[2022-10-27T22:37:06.695-0400]   Pacing delays are measured from entering the pacing code till exiting it. Therefore,
+[2022-10-27T22:37:06.695-0400]   observed pacing delays may be higher than the threshold when paced thread spent more
+[2022-10-27T22:37:06.695-0400]   time in the pacing code. It usually happens when thread is de-scheduled while paced,
+[2022-10-27T22:37:06.695-0400]   OS takes longer to unblock the thread, or JVM experiences an STW pause.
+[2022-10-27T22:37:06.695-0400] 
+[2022-10-27T22:37:06.695-0400]   Higher delay would prevent application outpacing the GC, but it will hide the GC latencies
+[2022-10-27T22:37:06.695-0400]   from the STW pause times. Pacing affects the individual threads, and so it would also be
+[2022-10-27T22:37:06.695-0400]   invisible to the usual profiling tools, but would add up to end-to-end application latency.
+[2022-10-27T22:37:06.695-0400]   Raise max pacing delay with care.
+[2022-10-27T22:37:06.695-0400] 
+[2022-10-27T22:37:06.695-0400] Concurrent Reset               =    0.046 s (a =      493 us) (n =    94) (lvls, us =      123,      266,      346,      510,     3815)
+[2022-10-27T22:37:06.695-0400] Pause Init Mark (G)            =    0.026 s (a =      271 us) (n =    94) (lvls, us =       90,      174,      217,      270,     1264)
+[2022-10-27T22:37:06.695-0400] Pause Init Mark (N)            =    0.005 s (a =       56 us) (n =    94) (lvls, us =       25,       36,       46,       58,      554)
+[2022-10-27T22:37:06.695-0400]   Update Region States         =    0.001 s (a =        6 us) (n =    94) (lvls, us =        2,        3,        4,        6,       22)
+[2022-10-27T22:37:06.695-0400] Concurrent Mark Roots          =    0.041 s (a =      435 us) (n =    94) (lvls, us =      141,      320,      398,      457,     1418)
+[2022-10-27T22:37:06.695-0400]   CMR: <total>                 =    0.047 s (a =      503 us) (n =    94) (lvls, us =      162,      398,      490,      549,     1638)
+[2022-10-27T22:37:06.695-0400]   CMR: Thread Roots            =    0.041 s (a =      441 us) (n =    94) (lvls, us =      119,      354,      443,      486,     1592)
+[2022-10-27T22:37:06.695-0400]   CMR: VM Strong Roots         =    0.001 s (a =        9 us) (n =    94) (lvls, us =        3,        4,        6,        7,      124)
+[2022-10-27T22:37:06.695-0400]   CMR: CLDG Roots              =    0.005 s (a =       54 us) (n =    94) (lvls, us =       28,       38,       43,       56,      274)
+[2022-10-27T22:37:06.695-0400] Concurrent Marking             =    0.799 s (a =     8594 us) (n =    93) (lvls, us =     4590,     6660,     7852,     9492,    26820)
+[2022-10-27T22:37:06.695-0400] Pause Final Mark (G)           =    0.020 s (a =      213 us) (n =    93) (lvls, us =       96,      152,      193,      246,      950)
+[2022-10-27T22:37:06.695-0400] Pause Final Mark (N)           =    0.013 s (a =      143 us) (n =    93) (lvls, us =       71,      102,      137,      162,      912)
+[2022-10-27T22:37:06.695-0400]   Finish Mark                  =    0.005 s (a =       50 us) (n =    93) (lvls, us =       13,       18,       35,       63,      812)
+[2022-10-27T22:37:06.695-0400]   Update Region States         =    0.001 s (a =       13 us) (n =    93) (lvls, us =        4,        7,        9,       16,       50)
+[2022-10-27T22:37:06.695-0400]   Choose Collection Set        =    0.003 s (a =       37 us) (n =    93) (lvls, us =       24,       28,       35,       43,       74)
+[2022-10-27T22:37:06.695-0400]   Rebuild Free Set             =    0.000 s (a =        4 us) (n =    93) (lvls, us =        2,        3,        3,        4,       23)
+[2022-10-27T22:37:06.695-0400] Concurrent Thread Roots        =    0.034 s (a =      371 us) (n =    93) (lvls, us =      131,      295,      363,      432,     1643)
+[2022-10-27T22:37:06.695-0400]   CTR: <total>                 =    0.043 s (a =      457 us) (n =    93) (lvls, us =      148,      383,      453,      537,     1190)
+[2022-10-27T22:37:06.695-0400]   CTR: Thread Roots            =    0.043 s (a =      457 us) (n =    93) (lvls, us =      148,      383,      453,      537,     1190)
+[2022-10-27T22:37:06.695-0400] Concurrent Weak References     =    0.006 s (a =       64 us) (n =    93) (lvls, us =       23,       41,       50,       64,      532)
+[2022-10-27T22:37:06.695-0400]   CWRF: <total>                =    0.002 s (a =       18 us) (n =    93) (lvls, us =        3,       11,       14,       21,       69)
+[2022-10-27T22:37:06.695-0400]   CWRF: Weak References        =    0.002 s (a =       18 us) (n =    93) (lvls, us =        3,       11,       14,       21,       69)
+[2022-10-27T22:37:06.695-0400] Concurrent Weak Roots          =    0.042 s (a =      455 us) (n =    93) (lvls, us =      193,      309,      381,      502,     1285)
+[2022-10-27T22:37:06.695-0400]   Roots                        =    0.038 s (a =      404 us) (n =    93) (lvls, us =      158,      264,      340,      445,     1101)
+[2022-10-27T22:37:06.695-0400]     CWR: <total>               =    0.063 s (a =      676 us) (n =    93) (lvls, us =      289,      465,      555,      736,     1947)
+[2022-10-27T22:37:06.695-0400]     CWR: Code Cache Roots      =    0.049 s (a =      522 us) (n =    93) (lvls, us =      207,      322,      424,      582,     1643)
+[2022-10-27T22:37:06.695-0400]     CWR: VM Weak Roots         =    0.014 s (a =      149 us) (n =    93) (lvls, us =       75,      105,      127,      174,      349)
+[2022-10-27T22:37:06.695-0400]     CWR: CLDG Roots            =    0.000 s (a =        5 us) (n =    93) (lvls, us =        2,        3,        4,        6,       16)
+[2022-10-27T22:37:06.695-0400]   Rendezvous                   =    0.003 s (a =       29 us) (n =    93) (lvls, us =       10,       15,       20,       28,      102)
+[2022-10-27T22:37:06.695-0400] Concurrent Cleanup             =    0.004 s (a =       44 us) (n =    93) (lvls, us =       24,       29,       37,       50,      124)
+[2022-10-27T22:37:06.695-0400] Concurrent Class Unloading     =    0.116 s (a =     1246 us) (n =    93) (lvls, us =      611,      854,     1074,     1484,     2933)
+[2022-10-27T22:37:06.695-0400]   Unlink Stale                 =    0.101 s (a =     1089 us) (n =    93) (lvls, us =      533,      736,      961,     1250,     2538)
+[2022-10-27T22:37:06.695-0400]     System Dictionary          =    0.001 s (a =        7 us) (n =    93) (lvls, us =        2,        3,        4,        8,       28)
+[2022-10-27T22:37:06.695-0400]     Weak Class Links           =    0.000 s (a =        1 us) (n =    93) (lvls, us =        0,        0,        0,        1,        6)
+[2022-10-27T22:37:06.695-0400]     Code Roots                 =    0.101 s (a =     1081 us) (n =    93) (lvls, us =      529,      727,      957,     1250,     2526)
+[2022-10-27T22:37:06.695-0400]   Rendezvous                   =    0.003 s (a =       35 us) (n =    93) (lvls, us =       10,       16,       23,       50,      169)
+[2022-10-27T22:37:06.695-0400]   Purge Unlinked               =    0.008 s (a =       91 us) (n =    93) (lvls, us =       31,       56,       71,      105,      540)
+[2022-10-27T22:37:06.695-0400]     Code Roots                 =    0.008 s (a =       87 us) (n =    93) (lvls, us =       28,       53,       67,      102,      536)
+[2022-10-27T22:37:06.695-0400]     CLDG                       =    0.000 s (a =        4 us) (n =    93) (lvls, us =        2,        2,        3,        4,       13)
+[2022-10-27T22:37:06.695-0400]     Exception Caches           =    0.000 s (a =        0 us) (n =    93) (lvls, us =        0,        0,        0,        0,        1)
+[2022-10-27T22:37:06.695-0400] Concurrent Strong Roots        =    0.010 s (a =      104 us) (n =    93) (lvls, us =       37,       54,       80,      121,      633)
+[2022-10-27T22:37:06.695-0400]   CSR: <total>                 =    0.006 s (a =       62 us) (n =    93) (lvls, us =       18,       28,       37,       79,      293)
+[2022-10-27T22:37:06.695-0400]   CSR: VM Strong Roots         =    0.000 s (a =        3 us) (n =    93) (lvls, us =        1,        2,        3,        4,        8)
+[2022-10-27T22:37:06.695-0400]   CSR: CLDG Roots              =    0.005 s (a =       59 us) (n =    93) (lvls, us =       16,       25,       34,       72,      286)
+[2022-10-27T22:37:06.695-0400] Concurrent Evacuation          =    0.064 s (a =      691 us) (n =    93) (lvls, us =      271,      428,      520,      742,     3261)
+[2022-10-27T22:37:06.695-0400] Pause Init Update Refs (G)     =    0.010 s (a =      108 us) (n =    93) (lvls, us =       39,       62,       88,      133,      490)
+[2022-10-27T22:37:06.695-0400] Pause Init Update Refs (N)     =    0.003 s (a =       32 us) (n =    93) (lvls, us =       17,       23,       29,       37,       99)
+[2022-10-27T22:37:06.695-0400]   Manage GCLABs                =    0.000 s (a =        3 us) (n =    93) (lvls, us =        1,        2,        2,        4,       13)
+[2022-10-27T22:37:06.695-0400] Concurrent Update Refs         =    0.431 s (a =     4638 us) (n =    93) (lvls, us =     2637,     3594,     4160,     5410,     8412)
+[2022-10-27T22:37:06.695-0400] Concurrent Update Thread Roots =    0.041 s (a =      437 us) (n =    93) (lvls, us =      135,      342,      418,      506,     1067)
+[2022-10-27T22:37:06.695-0400] Pause Final Update Refs (G)    =    0.013 s (a =      142 us) (n =    93) (lvls, us =       54,       91,      125,      170,      699)
+[2022-10-27T22:37:06.695-0400] Pause Final Update Refs (N)    =    0.004 s (a =       45 us) (n =    93) (lvls, us =       27,       34,       40,       50,      106)
+[2022-10-27T22:37:06.695-0400]   Update Region States         =    0.001 s (a =       10 us) (n =    93) (lvls, us =        4,        6,        8,       12,       37)
+[2022-10-27T22:37:06.695-0400]   Trash Collection Set         =    0.000 s (a =        3 us) (n =    93) (lvls, us =        1,        3,        3,        4,        8)
+[2022-10-27T22:37:06.695-0400]   Rebuild Free Set             =    0.000 s (a =        3 us) (n =    93) (lvls, us =        2,        3,        3,        4,       11)
+[2022-10-27T22:37:06.695-0400] Concurrent Cleanup             =    0.005 s (a =       53 us) (n =    93) (lvls, us =       36,       44,       49,       57,      103)
+[2022-10-27T22:37:06.695-0400] Pause Degenerated GC (G)       =    0.009 s (a =     9262 us) (n =     1) (lvls, us =     9258,     9258,     9258,     9258,     9262)
+[2022-10-27T22:37:06.695-0400] Pause Degenerated GC (N)       =    0.009 s (a =     9193 us) (n =     1) (lvls, us =     9180,     9180,     9180,     9180,     9193)
+[2022-10-27T22:37:06.695-0400]   Degen STW Mark               =    0.004 s (a =     3914 us) (n =     1) (lvls, us =     3906,     3906,     3906,     3906,     3914)
+[2022-10-27T22:37:06.695-0400]     DSM: <total>               =    0.015 s (a =    15432 us) (n =     1) (lvls, us =    15430,    15430,    15430,    15430,    15432)
+[2022-10-27T22:37:06.695-0400]     DSM: Thread Roots          =    0.002 s (a =     2118 us) (n =     1) (lvls, us =     2109,     2109,     2109,     2109,     2118)
+[2022-10-27T22:37:06.695-0400]     DSM: VM Strong Roots       =    0.000 s (a =        4 us) (n =     1) (lvls, us =        4,        4,        4,        4,        4)
+[2022-10-27T22:37:06.695-0400]     DSM: CLDG Roots            =    0.000 s (a =       44 us) (n =     1) (lvls, us =       44,       44,       44,       44,       44)
+[2022-10-27T22:37:06.695-0400]     DSM: Parallel Mark         =    0.013 s (a =    13266 us) (n =     1) (lvls, us =    13086,    13086,    13086,    13086,    13266)
+[2022-10-27T22:37:06.695-0400]     System Purge               =    0.001 s (a =     1278 us) (n =     1) (lvls, us =     1270,     1270,     1270,     1270,     1278)
+[2022-10-27T22:37:06.695-0400]       Weak References          =    0.000 s (a =      138 us) (n =     1) (lvls, us =      137,      137,      137,      137,      138)
+[2022-10-27T22:37:06.695-0400]         WRP: <total>           =    0.000 s (a =       93 us) (n =     1) (lvls, us =       93,       93,       93,       93,       93)
+[2022-10-27T22:37:06.695-0400]         WRP: Weak References   =    0.000 s (a =       93 us) (n =     1) (lvls, us =       93,       93,       93,       93,       93)
+[2022-10-27T22:37:06.695-0400]       Unload Classes           =    0.001 s (a =     1072 us) (n =     1) (lvls, us =     1055,     1055,     1055,     1055,     1072)
+[2022-10-27T22:37:06.695-0400]         DCU: <total>           =    0.003 s (a =     2985 us) (n =     1) (lvls, us =     2969,     2969,     2969,     2969,     2985)
+[2022-10-27T22:37:06.695-0400]         DCU: Unload Code Caches =    0.002 s (a =     1527 us) (n =     1) (lvls, us =     1523,     1523,     1523,     1523,     1527)
+[2022-10-27T22:37:06.695-0400]         DCU: Unlink CLDs       =    0.001 s (a =     1458 us) (n =     1) (lvls, us =     1445,     1445,     1445,     1445,     1458)
+[2022-10-27T22:37:06.695-0400]       Weak Roots               =    0.000 s (a =       48 us) (n =     1) (lvls, us =       48,       48,       48,       48,       48)
+[2022-10-27T22:37:06.695-0400]         DWR: <total>           =    0.000 s (a =       88 us) (n =     1) (lvls, us =       88,       88,       88,       88,       88)
+[2022-10-27T22:37:06.695-0400]         DWR: VM Weak Roots     =    0.000 s (a =       88 us) (n =     1) (lvls, us =       88,       88,       88,       88,       88)
+[2022-10-27T22:37:06.695-0400]       CLDG                     =    0.000 s (a =       17 us) (n =     1) (lvls, us =       17,       17,       17,       17,       17)
+[2022-10-27T22:37:06.695-0400]   Update Region States         =    0.000 s (a =        6 us) (n =     1) (lvls, us =        6,        6,        6,        6,        6)
+[2022-10-27T22:37:06.695-0400]   Manage GC/TLABs              =    0.000 s (a =        3 us) (n =     1) (lvls, us =        3,        3,        3,        3,        3)
+[2022-10-27T22:37:06.695-0400]   Choose Collection Set        =    0.000 s (a =       58 us) (n =     1) (lvls, us =       58,       58,       58,       58,       58)
+[2022-10-27T22:37:06.695-0400]   Rebuild Free Set             =    0.000 s (a =        5 us) (n =     1) (lvls, us =        5,        5,        5,        5,        5)
+[2022-10-27T22:37:06.695-0400]   Evacuation                   =    0.000 s (a =      348 us) (n =     1) (lvls, us =      348,      348,      348,      348,      348)
+[2022-10-27T22:37:06.695-0400]   Manage GCLABs                =    0.000 s (a =        2 us) (n =     1) (lvls, us =        2,        2,        2,        2,        2)
+[2022-10-27T22:37:06.695-0400]   Update References            =    0.003 s (a =     2520 us) (n =     1) (lvls, us =     2520,     2520,     2520,     2520,     2520)
+[2022-10-27T22:37:06.695-0400]   Update Region States         =    0.000 s (a =       11 us) (n =     1) (lvls, us =       11,       11,       11,       11,       11)
+[2022-10-27T22:37:06.695-0400]   Trash Collection Set         =    0.000 s (a =        5 us) (n =     1) (lvls, us =        5,        5,        5,        5,        5)
+[2022-10-27T22:37:06.695-0400]   Rebuild Free Set             =    0.000 s (a =        3 us) (n =     1) (lvls, us =        3,        3,        3,        3,        3)
+[2022-10-27T22:37:06.695-0400]   Degen Update Roots           =    0.001 s (a =      630 us) (n =     1) (lvls, us =      629,      629,      629,      629,      630)
+[2022-10-27T22:37:06.695-0400]     DU: <total>                =    0.002 s (a =     2222 us) (n =     1) (lvls, us =     2207,     2207,     2207,     2207,     2222)
+[2022-10-27T22:37:06.695-0400]     DU: Thread Roots           =    0.000 s (a =       57 us) (n =     1) (lvls, us =       56,       56,       56,       56,       57)
+[2022-10-27T22:37:06.695-0400]     DU: Code Cache Roots       =    0.002 s (a =     1786 us) (n =     1) (lvls, us =     1777,     1777,     1777,     1777,     1786)
+[2022-10-27T22:37:06.695-0400]     DU: VM Strong Roots        =    0.000 s (a =        4 us) (n =     1) (lvls, us =        4,        4,        4,        4,        4)
+[2022-10-27T22:37:06.695-0400]     DU: VM Weak Roots          =    0.000 s (a =      314 us) (n =     1) (lvls, us =      312,      312,      312,      312,      314)
+[2022-10-27T22:37:06.695-0400]     DU: CLDG Roots             =    0.000 s (a =       61 us) (n =     1) (lvls, us =       61,       61,       61,       61,       61)
+[2022-10-27T22:37:06.696-0400]   Cleanup                      =    0.000 s (a =       39 us) (n =     1) (lvls, us =       39,       39,       39,       39,       39)
+[2022-10-27T22:37:06.696-0400] Pacing                         =    1.707 s (a =    17968 us) (n =    95) (lvls, us =        0,    13086,    18164,    20312,    67922)
+[2022-10-27T22:37:06.696-0400] 
+[2022-10-27T22:37:06.696-0400] 
+[2022-10-27T22:37:06.696-0400] Under allocation pressure, concurrent cycles may cancel, and either continue cycle
+[2022-10-27T22:37:06.696-0400] under stop-the-world pause or result in stop-the-world Full GC. Increase heap size,
+[2022-10-27T22:37:06.696-0400] tune GC heuristics, set more aggressive pacing delay, or lower allocation rate
+[2022-10-27T22:37:06.696-0400] to avoid Degenerated and Full GC cycles.
+[2022-10-27T22:37:06.696-0400] 
+[2022-10-27T22:37:06.696-0400]    93 successful concurrent GCs
+[2022-10-27T22:37:06.696-0400]       0 invoked explicitly
+[2022-10-27T22:37:06.696-0400]       0 invoked implicitly
+[2022-10-27T22:37:06.696-0400] 
+[2022-10-27T22:37:06.696-0400]     1 Degenerated GCs
+[2022-10-27T22:37:06.696-0400]       1 caused by allocation failure
+[2022-10-27T22:37:06.696-0400]         1 happened at Outside of Cycle
+[2022-10-27T22:37:06.696-0400]       0 upgraded to Full GC
+[2022-10-27T22:37:06.696-0400] 
+[2022-10-27T22:37:06.696-0400]     0 Full GCs
+[2022-10-27T22:37:06.696-0400]       0 invoked explicitly
+[2022-10-27T22:37:06.696-0400]       0 invoked implicitly
+[2022-10-27T22:37:06.696-0400]       0 caused by allocation failure
+[2022-10-27T22:37:06.696-0400]       0 upgraded from Degenerated GC
+[2022-10-27T22:37:06.696-0400] 
+[2022-10-27T22:37:06.696-0400] 

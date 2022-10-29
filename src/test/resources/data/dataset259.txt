@@ -1,0 +1,124 @@
+2022-10-28T10:58:59.284-0400: [Concurrent marking, start]
+    Using 3 of 6 workers for concurrent marking
+2022-10-28T10:58:59.285-0400: [Concurrent marking, 0.506 ms]
+Free: 0B, Max: 0B regular, 0B humongous, Frag: 0% external, 0% internal; Reserve: 6656K, Max: 256K
+
+All times are wall-clock times, except per-root-class counters, that are sum over
+all workers. Dividing the <total> over the root stage time estimates parallelism.
+
+Concurrent Reset                  22380 us
+Pause Init Mark (G)                 531 us
+Pause Init Mark (N)                 442 us
+  Accumulate Stats                    4 us
+  Make Parsable                       1 us
+  Update Region States                8 us
+  Scan Roots                        394 us, parallelism: 1.62x
+    S: <total>                      637 us
+    S: Thread Roots                 235 us, workers (us):  77, 156,   0,   1,   0,   0, 
+    S: Universe Roots                 2 us, workers (us):   2, ---, ---, ---, ---, ---, 
+    S: JNI Handles Roots              2 us, workers (us):   2, ---, ---, ---, ---, ---, 
+    S: JFR Weak Roots                 1 us, workers (us):   1, ---, ---, ---, ---, ---, 
+    S: JNI Weak Roots                 9 us, workers (us):   9, ---, ---, ---, ---, ---, 
+    S: String Table Roots           339 us, workers (us): 189, 150,   0,   0,   0,   0, 
+    S: Synchronizer Roots             2 us, workers (us):   0,   1,   0,   0,   0,   0, 
+    S: Flat Profiler Roots            1 us, workers (us): ---,   1, ---, ---, ---, ---, 
+    S: Management Roots               1 us, workers (us):   1, ---, ---, ---, ---, ---, 
+    S: System Dict Roots              6 us, workers (us):   6, ---, ---, ---, ---, ---, 
+    S: CLDG Roots                    37 us, workers (us):  28,   3,   2,   3,   2,   1, 
+    S: JVMTI Roots                    1 us, workers (us):   1, ---, ---, ---, ---, ---, 
+  Resize TLABs                        1 us
+Concurrent Marking                  492 us
+Pacing                             7532 us
+
+Allocation pacing accrued:
+      8 of    50 ms ( 15.0%): main
+      8 of    50 ms ( 15.0%): <total>
+      1 of    50 ms (  1.5%): <average total>
+      8 of    50 ms ( 15.0%): <average non-zero>
+
+, [Metaspace: 8522K->8522K(1056768K)]
+Pacer for Idle. Initial: 2621K, Alloc Tax Rate: 1.0x
+Trigger: Handle Allocation Failure
+Free: 0B, Max: 0B regular, 0B humongous, Frag: 0% external, 0% internal; Reserve: 6656K, Max: 256K
+2022-10-28T10:58:59.286-0400: [Pause Degenerated GC (Mark), start]
+    Using 6 of 6 workers for stw degenerated gc
+    Adaptive CSet Selection. Target Free: 18568K, Actual Free: 6656K, Max CSet: 5461K, Min Garbage: 11912K
+    Collectable Garbage: 102M (98%), Immediate: 0B (0%), CSet: 102M (98%)
+    Pacer for Evacuation. Used CSet: 103M, Free: 304B, Non-Taxable: 30B, Alloc Tax Rate: 869041.9x
+    Pacer for Update Refs. Used: 121M, Free: 304B, Non-Taxable: 30B, Alloc Tax Rate: 513498.6x
+    Good progress for free space: 102M, need 1310K
+    Good progress for used space: 102M, need 256K
+2022-10-28T10:58:59.295-0400: [Pause Degenerated GC (Mark) 121M->19211K(122M), 9.421 ms]
+2022-10-28T10:58:59.295-0400: Total time for which application threads were stopped: 0.0094943 seconds, Stopping threads took: 0.0000166 seconds
+Free: 102M, Max: 256K regular, 100096K humongous, Frag: 5% external, 0% internal; Reserve: 6656K, Max: 256K
+
+All times are wall-clock times, except per-root-class counters, that are sum over
+all workers. Dividing the <total> over the root stage time estimates parallelism.
+
+  Finish Queues                    3950 us
+  Update Region States               11 us
+  Retire TLABs                        2 us
+  Choose Collection Set              54 us
+  Rebuild Free Set                    5 us
+  Initial Evacuation                  6 us
+  Prepare                             1 us
+  Finish Work                      2394 us
+  Update Region States                3 us
+  Trash Collection Set               19 us
+  Rebuild Free Set                    5 us
+Pause Degenerated GC (G)           9546 us
+Pause Degenerated GC (N)           9450 us
+  Degen Update Roots                337 us, parallelism: 3.20x
+    DU: <total>                    1078 us
+    DU: Thread Roots                346 us, workers (us): 226,  88,  27,   3,   0,   1, 
+    DU: Code Cache Roots             97 us, workers (us):   0,   0,  83,  14,   0,   0, 
+    DU: Universe Roots                1 us, workers (us):   1, ---, ---, ---, ---, ---, 
+    DU: JNI Handles Roots             1 us, workers (us):   1, ---, ---, ---, ---, ---, 
+    DU: JFR Weak Roots                1 us, workers (us): ---, ---, ---,   1, ---, ---, 
+    DU: JNI Weak Roots               20 us, workers (us): ---, ---, ---,  20, ---, ---, 
+    DU: String Table Roots          546 us, workers (us):  43, 162, 148, 193,   0,   0, 
+    DU: Synchronizer Roots            3 us, workers (us):   3,   0,   0,   0,   0,   0, 
+    DU: Flat Profiler Roots           2 us, workers (us): ---,   2, ---, ---, ---, ---, 
+    DU: Management Roots              2 us, workers (us):   2, ---, ---, ---, ---, ---, 
+    DU: System Dict Roots            17 us, workers (us): ---,  17, ---, ---, ---, ---, 
+    DU: CLDG Roots                   40 us, workers (us):   2,   2,  10,  23,   2,   2, 
+    DU: JVMTI Roots                   1 us, workers (us):   1, ---, ---, ---, ---, ---, 
+
+Allocation pacing accrued:
+      0 of    11 ms (  0.0%): <total>
+      0 of    11 ms (  0.0%): <average total>
+
+, [Metaspace: 8522K->8522K(1056768K)]
+Pacer for Idle. Initial: 2621K, Alloc Tax Rate: 1.0x
+Trigger: Average GC time (25.08 ms) is above the time for allocation rate (1092 MB/s) to deplete free headroom (26312K)
+Free headroom: 45973K (free) - 6553K (spike) - 13107K (penalties) = 26312K
+Free: 45940K, Max: 256K regular, 45568K humongous, Frag: 0% external, 1% internal; Reserve: 6656K, Max: 256K
+2022-10-28T10:58:59.339-0400: [Concurrent reset, start]
+    Using 3 of 6 workers for concurrent reset
+    Pacer for Reset. Non-Taxable: 128M
+2022-10-28T10:58:59.340-0400: [Concurrent reset, 0.918 ms]
+2022-10-28T10:58:59.340-0400: [Pause Init Mark, start]
+    Using 6 of 6 workers for init marking
+    Pacer for Mark. Expected Live: 17970K, Free: 44564K, Non-Taxable: 4456K, Alloc Tax Rate: 0.5x
+2022-10-28T10:58:59.341-0400: [Pause Init Mark, 0.677 ms]
+2022-10-28T10:58:59.341-0400: Total time for which application threads were stopped: 0.0008600 seconds, Stopping threads took: 0.0000783 seconds
+2022-10-28T10:58:59.341-0400: [Concurrent marking, start]
+    Using 3 of 6 workers for concurrent marking
+2022-10-28T10:58:59.349-0400: [Concurrent marking, 8.058 ms]
+2022-10-28T10:58:59.349-0400: [Pause Final Mark, start]
+    Using 6 of 6 workers for final marking
+    Adaptive CSet Selection. Target Free: 18568K, Actual Free: 45568K, Max CSet: 5461K, Min Garbage: 0B
+    Collectable Garbage: 60513K (98%), Immediate: 0B (0%), CSet: 60513K (98%)
+    Pacer for Evacuation. Used CSet: 60672K, Free: 39284K, Non-Taxable: 3928K, Alloc Tax Rate: 3.8x
+2022-10-28T10:58:59.351-0400: [Pause Final Mark, 2.067 ms]
+2022-10-28T10:58:59.351-0400: Total time for which application threads were stopped: 0.0022336 seconds, Stopping threads took: 0.0000662 seconds
+2022-10-28T10:58:59.351-0400: [Concurrent cleanup, start]
+2022-10-28T10:58:59.351-0400: [Concurrent cleanup 85036K->85036K(122M), 0.068 ms]
+Free: 39284K, Max: 256K regular, 38912K humongous, Frag: 0% external, 2% internal; Reserve: 6656K, Max: 256K
+2022-10-28T10:58:59.351-0400: [Concurrent evacuation, start]
+    Using 3 of 6 workers for concurrent evacuation
+2022-10-28T10:58:59.352-0400: [Concurrent evacuation, 0.768 ms]
+2022-10-28T10:58:59.352-0400: [Pause Init Update Refs, start]
+    Pacer for Update Refs. Used: 85260K, Free: 39284K, Non-Taxable: 3928K, Alloc Tax Rate: 2.7x
+2022-10-28T10:58:59.352-0400: [Pause Init Update Refs, 0.017 ms]
+2022-10-28T10:58:59.352-0400: Total time for which application threads were stopped: 0.0000852 seconds, Stopping threads took: 0.0000264 seconds

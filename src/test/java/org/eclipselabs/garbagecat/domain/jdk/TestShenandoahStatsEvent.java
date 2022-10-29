@@ -317,6 +317,29 @@ class TestShenandoahStatsEvent {
     }
 
     @Test
+    void testDcuTotal() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]         DCU: <total>               2985 us";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testDcuUnlinkClds() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]         DCU: Unlink CLDs           1458 us, workers (us):"
+                + " 445, 506, 506,   0, ---, ---,";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testDcuUnloadCodeCaches() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]         DCU: Unload Code Caches     1527 us, workers (us):"
+                + " 547, 485, 496,   0, ---, ---,";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
     void testDeallocateMetadata() {
         String logLine = "    Deallocate Metadata              24 us";
         assertTrue(ShenandoahStatsEvent.match(logLine),
@@ -338,8 +361,55 @@ class TestShenandoahStatsEvent {
     }
 
     @Test
+    void testDegenStwMark() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]   Degen STW Mark                   3914 us, parallelism: "
+                + "3.94x";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
     void testDegenUpdateRoots() {
         String logLine = "  Degen Update Roots               5869 us, parallelism: 17.30x";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testDsmCldgRoots() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]     DSM: CLDG Roots                  44 us, workers (us):"
+                + "   1,  42,   1,   1, ---, ---,";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testDsmParallelMark() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]     DSM: Parallel Mark            13266 us, workers (us):"
+                + " 3473, 3763, 2256, 3774, ---, ---,";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testDsmThreadRoots() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]     DSM: Thread Roots              2118 us, workers (us):"
+                + " 87,  52, 1612,  67, ---, ---,";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testDsmTotal() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]     DSM: <total>                  15432 us";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testDsmVmStrongRoots() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]     DSM: VM Strong Roots              4 us, workers (us):"
+                + "   0,   0,   0,   3, ---, ---,";
         assertTrue(ShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
     }
@@ -450,6 +520,21 @@ class TestShenandoahStatsEvent {
     }
 
     @Test
+    void testDwrTotal() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]         DWR: <total>                 88 us";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testDwrVmWeakRoots() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]         DWR: VM Weak Roots           88 us, workers (us):"
+                + "  31,  30,  26,   1, ---, ---,";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
     void testEFlat() {
         String logLine = "    E: Flat Profiler Roots           22 us, workers (us):  22, ---, ---, ---, ---, ---, ---, "
                 + "---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---,";
@@ -491,6 +576,13 @@ class TestShenandoahStatsEvent {
     @Test
     void testETotalUnified() {
         String logLine = "[0.484s][info][gc,stats     ]     E: <total>                      876 us";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testEvacuation() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]   Evacuation                        348 us";
         assertTrue(ShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
     }
@@ -651,6 +743,13 @@ class TestShenandoahStatsEvent {
     @Test
     void testManageGcLabs() {
         String logLine = "[0.196s][info][gc,stats    ]   Manage GCLABs                       2 us";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testManageGcTlabs() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]   Manage GC/TLABs                     3 us";
         assertTrue(ShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
     }
@@ -870,6 +969,13 @@ class TestShenandoahStatsEvent {
     }
 
     @Test
+    void testUpdateReferences() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]   Update References                2520 us";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
     void testUpdateRegionStates() {
         String logLine = "  Update Region States              789 us";
         assertTrue(ShenandoahStatsEvent.match(logLine),
@@ -920,7 +1026,7 @@ class TestShenandoahStatsEvent {
 
     @Test
     void testWeakReferences() {
-        String logLine = "    Weak References               26451 us";
+        String logLine = "  Weak References                  2251 us";
         assertTrue(ShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
     }
@@ -951,6 +1057,21 @@ class TestShenandoahStatsEvent {
     void testWrJni() {
         String logLine = "    WR: JNI Weak Roots               33 us, workers (us):  33, ---, ---, ---, ---, ---, ---, "
                 + "---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---,";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testWrpTotal() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]         WRP: <total>                 93 us";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testWrpWeakReferences() {
+        String logLine = "[2022-10-27T22:37:03.153-0400]         WRP: Weak References         93 us, workers (us):"
+                + "  81,  12,   0,   0, ---, ---,";
         assertTrue(ShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
     }
