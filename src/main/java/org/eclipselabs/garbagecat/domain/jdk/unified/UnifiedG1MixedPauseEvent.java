@@ -55,7 +55,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <pre>
- * [16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 3801K-&gt;3801K(1056768K) 15M-&gt;12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s
+ * [16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) Humongous regions: 0-&gt;0 Metaspace: 3801K-&gt;3801K(1056768K) 15M-&gt;12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
