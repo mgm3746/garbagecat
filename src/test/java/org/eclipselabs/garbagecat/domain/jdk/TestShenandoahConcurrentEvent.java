@@ -289,6 +289,13 @@ class TestShenandoahConcurrentEvent {
     }
 
     @Test
+    void testUnifiedEvacuationNoSize() {
+        String logLine = "2022-10-28T10:58:59.352-0400: [Concurrent evacuation, 0.768 ms]";
+        assertTrue(ShenandoahConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".");
+    }
+    
+    @Test
     void testUnifiedMarking() {
         String logLine = "[0.528s][info][gc] GC(1) Concurrent marking 16M->17M(64M) 7.045ms";
         assertTrue(ShenandoahConcurrentEvent.match(logLine),

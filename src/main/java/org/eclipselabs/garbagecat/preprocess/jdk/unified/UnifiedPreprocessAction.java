@@ -21,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.TimesData;
-import org.eclipselabs.garbagecat.domain.jdk.ShenandoahMetaspaceEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
@@ -232,104 +231,6 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
  * <pre>
  * [16.082s][info][gc            ] GC(969) Pause Cleanup 28M-&gt;28M(46M) 0.064ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
- * 
- * <p>
- * 9) {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitMarkEvent}:
- * </p>
- *
- * <pre>
- * [41.893s][info][gc,start     ] GC(1500) Pause Init Mark (update refs) (process weakrefs)
- * [41.893s][info][gc,task      ] GC(1500) Using 2 of 4 workers for init marking
- * [41.893s][info][gc,ergo      ] GC(1500) Pacer for Mark. Expected Live: 22M, Free: 9M, Non-Taxable: 0M, Alloc Tax Rate: 8.5x
- * [41.893s][info][gc           ] GC(1500) Pause Init Mark (update refs) (process weakrefs) 0.295ms
- * </pre>
- *
- * <p>
- * Preprocessed:
- * </p>
- *
- * <pre>
- * [41.893s][info][gc           ] GC(1500) Pause Init Mark (update refs) (process weakrefs) 0.295ms
- * </pre>
- * 
- * <p>
- * 10) {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalMarkEvent}:
- * </p>
- *
- * <pre>
- * [41.911s][info][gc,start     ] GC(1500) Pause Final Mark (update refs) (process weakrefs)
- * [41.911s][info][gc,task      ] GC(1500) Using 2 of 4 workers for final marking
- * [41.911s][info][gc,ergo      ] GC(1500) Adaptive CSet Selection. Target Free: 6M, Actual Free: 14M, Max CSet: 2M, Min Garbage: 0M
- * [41.911s][info][gc,ergo      ] GC(1500) Collectable Garbage: 5M (18% of total), 0M CSet, 21 CSet regions
- * [41.911s][info][gc,ergo      ] GC(1500) Immediate Garbage: 9M (33% of total), 37 regions
- * [41.911s][info][gc,ergo      ] GC(1500) Pacer for Evacuation. Used CSet: 5M, Free: 18M, Non-Taxable: 1M, Alloc Tax Rate: 1.1x
- * [41.911s][info][gc           ] GC(1500) Pause Final Mark (update refs) (process weakrefs) 0.429ms
- * </pre>
- *
- * <p>
- * Preprocessed:
- * </p>
- *
- * <pre>
- * [41.911s][info][gc           ] GC(1500) Pause Final Mark (update refs) (process weakrefs) 0.429ms
- * </pre>
- *
- * <p>
- * 11) {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalEvacEvent}:
- * </p>
- *
- * <pre>
- * [41.912s][info][gc,start     ] GC(1500) Pause Final Evac
- * [41.912s][info][gc           ] GC(1500) Pause Final Evac 0.022ms
- * </pre>
- *
- * <p>
- * Preprocessed:
- * </p>
- *
- * <pre>
- * [41.912s][info][gc           ] GC(1500) Pause Final Evac 0.022ms
- * </pre>
- * 
- * <p>
- * 12) {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitUpdateEvent}:
- * </p>
- *
- * <pre>
- * [69.612s][info][gc,start     ] GC(2582) Pause Init Update Refs
- * [69.612s][info][gc,ergo      ] GC(2582) Pacer for Update Refs. Used: 49M, Free: 11M, Non-Taxable: 1M, Alloc Tax Rate: 5.4x
- * [69.612s][info][gc           ] GC(2582) Pause Init Update Refs 0.036ms
- * </pre>
- *
- * <p>
- * Preprocessed:
- * </p>
- *
- * <pre>
- * [69.612s][info][gc           ] GC(2582) Pause Init Update Refs 0.036ms
- * </pre>
- * 
- * <p>
- * 13) {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalUpdateEvent}:
- * </p>
- *
- * <pre>
- * [69.644s][info][gc,start     ] GC(2582) Pause Final Update Refs
- * [69.644s][info][gc,task      ] GC(2582) Using 2 of 4 workers for final reference update
- * [69.644s][info][gc           ] GC(2582) Pause Final Update Refs 0.302ms
- * </pre>
- *
- * <p>
- * Preprocessed:
- * </p>
- *
- * <pre>
- * [69.644s][info][gc           ] GC(2582) Pause Final Update Refs 0.302ms
- * </pre>
- * 
- * <p>
- * 14) {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalUpdateEvent}:
- * </p>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  *
@@ -591,11 +492,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     /**
      * Regular expression for retained middle metaspace data.
      *
-     * Broken out from REGEX_RETAIN_MIDDLE_SPACE_DATA to distinguish between the Shenandoah Metaspace event printed
-     * after every gc.
-     * 
      * <p>
-     * 1) JDK8/11:
+     * 1) JDK8/11 same REGEX_RETAIN_MIDDLE_SPACE_DATA:
      * </p>
      * 
      * <pre>
@@ -740,10 +638,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_SPACE_DATA = "^" + UnifiedRegEx.DECORATOR
-            + "( (CMS|DefNew|ParNew|PSYoungGen|PSOldGen|ParOldGen|Tenured): " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE
-            + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))( Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) From: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?$";
+            + "( (CMS|DefNew|Metaspace|ParNew|PSYoungGen|PSOldGen|ParOldGen|Tenured): " + JdkRegEx.SIZE + "(\\("
+            + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))( Eden: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) From: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_SPACE_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_SPACE_DATA);
@@ -1031,6 +929,20 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     public static final String TOKEN = "UNIFIED_PREPROCESS_ACTION_TOKEN";
 
+    /**
+     * Indicates the current log entry is either the beginning of a @link
+     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent} that spans multiple logging lines, or it is a
+     * single line logging event.
+     */
+    private static final String TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC = "TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC";
+
+    /**
+     * Indicates the current log entry is either the beginning of a @link
+     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent} that spans multiple logging lines, or it is
+     * a single line logging event.
+     */
+    private static final String TOKEN_BEGINNING_OF_UNIFIED_SAFEPOINT = "TOKEN_BEGINNING_OF_UNIFIED_SAFEPOINT";
+
     static {
         for (String regex : REGEX_THROWAWAY) {
             THROWAWAY_PATTERN_LIST.add(Pattern.compile(regex));
@@ -1115,12 +1027,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         if ((matcher = REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                if (!context.contains(REGEX_RETAIN_BEGINNING_G1_FULL_GC)) {
+                if (!context.contains(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC)) {
                     this.logEntry = logEntry;
                     context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
                 } else {
                     // output intermingled lines at end
-                    entangledLogLines.add(logEntry);
+                    entangledLogLines.add(logEntry + Constants.LINE_SEPARATOR);
                     context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
                 }
             }
@@ -1161,7 +1073,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
-                context.add(REGEX_RETAIN_BEGINNING_G1_FULL_GC);
+                context.add(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
@@ -1192,7 +1104,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 }
                 context.add(TOKEN);
             }
-            context.add(REGEX_RETAIN_BEGINNING_SAFEPOINT);
+            context.add(TOKEN_BEGINNING_OF_UNIFIED_SAFEPOINT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
@@ -1201,11 +1113,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
-            if (matcher.matches() && !(JdkUtil.parseLogLine(logEntry) instanceof ShenandoahMetaspaceEvent)) {
+            if (matcher.matches()) {
                 this.logEntry = matcher.group(DECORATOR_SIZE + 1);
                 context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-            } else {
-                this.logEntry = logEntry;
             }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
@@ -1279,7 +1189,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     this.logEntry = matcher.group(1);
                     context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
                 }
-                context.add(REGEX_RETAIN_MIDDLE_SAFEPOINT);
             }
         } else if ((matcher = REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
@@ -1294,8 +1203,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 } else {
                     this.logEntry = logEntry;
                 }
-                context.remove(REGEX_RETAIN_BEGINNING_SAFEPOINT);
-                context.remove(REGEX_RETAIN_MIDDLE_SAFEPOINT);
+                context.remove(TOKEN_BEGINNING_OF_UNIFIED_SAFEPOINT);
             }
         } else if ((matcher = REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(logEntry)).matches()) {
             // End logging
@@ -1303,22 +1211,19 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(DECORATOR_SIZE + 1);
             }
-            if (!(context.contains(REGEX_RETAIN_BEGINNING_SAFEPOINT)
-                    || context.contains(REGEX_RETAIN_MIDDLE_SAFEPOINT))) {
+            if (!context.contains(TOKEN_BEGINNING_OF_UNIFIED_SAFEPOINT)) {
                 clearEntangledLines(entangledLogLines);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-            context.remove(REGEX_RETAIN_BEGINNING_G1_FULL_GC);
+            context.remove(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC);
         } else if (JdkUtil.parseLogLine(logEntry) instanceof UnifiedConcurrentEvent && !isThrowaway(logEntry)) {
             // Stand alone eventlogEntry
-            if (!(context.contains(REGEX_RETAIN_BEGINNING_G1_FULL_GC)
-                    || context.contains(REGEX_RETAIN_MIDDLE_SAFEPOINT))) {
-                // this.logEntry = matcher.group(1);
+            if (!context.contains(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC)) {
                 this.logEntry = logEntry;
                 context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             } else {
                 // output intermingled lines at end
-                entangledLogLines.add(logEntry);
+                entangledLogLines.add(logEntry + Constants.LINE_SEPARATOR);
                 context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             }
         }
@@ -1335,7 +1240,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         if (entangledLogLines != null && !entangledLogLines.isEmpty()) {
             // Output any entangled log lines
             for (String logLine : entangledLogLines) {
-                this.logEntry = this.logEntry + Constants.LINE_SEPARATOR + logLine;
+                // Add to prior line if current line is not an ending pattern
+                if (this.logEntry.matches(TimesData.REGEX_JDK9) || !logLine.endsWith(Constants.LINE_SEPARATOR)) {
+                    this.logEntry = this.logEntry + Constants.LINE_SEPARATOR + logLine;
+                } else {
+                    this.logEntry = this.logEntry + logLine;
+                }
             }
             // Reset entangled log lines
             entangledLogLines.clear();

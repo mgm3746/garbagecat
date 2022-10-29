@@ -461,7 +461,7 @@ public class GcManager {
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
-            } else if (ApplicationStoppedTimePreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
+            } else if (ApplicationStoppedTimePreprocessAction.match(currentLogLine)) {
                 // single line preprocessing
                 ApplicationStoppedTimePreprocessAction action = new ApplicationStoppedTimePreprocessAction(priorLogLine,
                         currentLogLine, nextLogLine, entangledLogLines, context);

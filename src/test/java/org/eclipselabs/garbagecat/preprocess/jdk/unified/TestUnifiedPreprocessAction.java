@@ -367,22 +367,6 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
-    void testConcurrentCleanupConcurrentReset() throws IOException {
-        File testFile = TestUtil.getFile("dataset255.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.");
-    }
-
-    @Test
     void testConcurrentClearClaimedMarks() {
         String logLine = "[2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Clear Claimed Marks";
         String nextLogLine = null;
@@ -1145,34 +1129,6 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
-    void testJdk17Shenandoah() throws IOException {
-        File testFile = TestUtil.getFile("dataset236.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_INIT_MARK),
-                JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_FINAL_MARK),
-                JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_INIT_UPDATE),
-                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_FINAL_UPDATE),
-                JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
-        assertEquals(7, jvmRun.getEventTypes().size(), "Event type count not correct.");
-    }
-
-    @Test
     void testMergeHeapRoots() {
         String logLine = "[0.038s][info][gc,phases   ] GC(0)   Merge Heap Roots: 0.1ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -1182,6 +1138,20 @@ class TestUnifiedPreprocessAction {
     @Test
     void testMetaspace2Spaces() {
         String logLine = "[16.072s][info][gc,metaspace  ] GC(971) Metaspace: 10793K->10793K(1058816K)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testSafepointEnteringShenandoahInitMark() {
+        String logLine = "[2021-10-27T13:03:16.666-0400] Entering safepoint region: ShenandoahInitMark";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testSafepointEnteringShenandoahInitUpdateRefs() {
+        String logLine = "[2021-10-27T13:03:16.666-0400] Entering safepoint region: ShenandoahInitUpdateRefs";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -1197,19 +1167,6 @@ class TestUnifiedPreprocessAction {
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
         assertEquals(" Metaspace: 120K->120K(1056768K)", event.getLogEntry(), "Log line not parsed correctly.");
-    }
-
-    @Test
-    void testMetaspaceDataJdk11Shenandoah() {
-        String logLine = "[0.258s] Metaspace: 3477K->3501K(1056768K)";
-        String nextLogLine = null;
-        Set<String> context = new HashSet<String>();
-        assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
-        List<String> entangledLogLines = new ArrayList<String>();
-        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
-        assertEquals(" Metaspace: 3477K->3501K(1056768K)", event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -2030,20 +1987,6 @@ class TestUnifiedPreprocessAction {
     @Test
     void testSafepointEnteringG1CollectFull() {
         String logLine = "[2021-09-22T10:31:58.206-0500][3736351ms] Entering safepoint region: G1CollectFull";
-        assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
-    }
-
-    @Test
-    void testSafepointEnteringShenandoahInitMark() {
-        String logLine = "[2021-10-27T13:03:16.666-0400] Entering safepoint region: ShenandoahInitMark";
-        assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
-    }
-
-    @Test
-    void testSafepointEnteringShenandoahInitUpdateRefs() {
-        String logLine = "[2021-10-27T13:03:16.666-0400] Entering safepoint region: ShenandoahInitUpdateRefs";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }

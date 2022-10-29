@@ -47,7 +47,7 @@ class TestApplicationStoppedTimePreprocessAction {
                 + "stopped: 40.6810160 seconds";
         String nextLogLine = "";
         Set<String> context = new HashSet<String>();
-        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine, null, nextLogLine),
+        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,
@@ -62,7 +62,7 @@ class TestApplicationStoppedTimePreprocessAction {
                 + "threads took: 0.0000136 seconds";
         String nextLogLine = "";
         Set<String> context = new HashSet<String>();
-        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine, null, nextLogLine),
+        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,
@@ -78,7 +78,7 @@ class TestApplicationStoppedTimePreprocessAction {
                 + "application threads were stopped: 0.0013170 seconds, Stopping threads took: 0.0000454 seconds";
         String nextLogLine = "";
         Set<String> context = new HashSet<String>();
-        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine, null, nextLogLine),
+        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,
@@ -96,7 +96,7 @@ class TestApplicationStoppedTimePreprocessAction {
                 + "application threads were stopped: 0.0007018 seconds, Stopping threads took: 0.0000202 seconds";
         String nextLogLine = "";
         Set<String> context = new HashSet<String>();
-        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine, null, nextLogLine),
+        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,
@@ -114,7 +114,7 @@ class TestApplicationStoppedTimePreprocessAction {
                 + "application threads were stopped: 0.0012571 seconds, Stopping threads took: 0.0000262 seconds";
         String nextLogLine = "";
         Set<String> context = new HashSet<String>();
-        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine, null, nextLogLine),
+        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,
@@ -132,7 +132,7 @@ class TestApplicationStoppedTimePreprocessAction {
                 + "which application threads were stopped: 0.0012393 seconds, Stopping threads took: 0.0000233 seconds";
         String nextLogLine = "";
         Set<String> context = new HashSet<String>();
-        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine, null, nextLogLine),
+        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,
@@ -150,7 +150,7 @@ class TestApplicationStoppedTimePreprocessAction {
                 + "application threads were stopped: 0.0014232 seconds, Stopping threads took: 0.0000111 seconds";
         String nextLogLine = "";
         Set<String> context = new HashSet<String>();
-        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine, null, nextLogLine),
+        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,

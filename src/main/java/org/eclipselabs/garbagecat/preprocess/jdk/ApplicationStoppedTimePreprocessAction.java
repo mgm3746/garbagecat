@@ -257,7 +257,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
                 this.logEntry = matcher.group(1) + ": " + matcher.group(19) + ": " + matcher.group(21);
             }
             context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        }
+        }        
     }
 
     public String getLogEntry() {
@@ -279,7 +279,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
      *            The next log entry processed.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
+    public static final boolean match(String logLine) {
         return REGEX_NO_PREPROCESSING_PATTERN.matcher(logLine).matches()
                 || REGEX_DECORATOR_MISSING_PATTERN.matcher(logLine).matches()
                 || REGEX_DATESTAMP_DATESTAMP_PATTERN.matcher(logLine).matches()
