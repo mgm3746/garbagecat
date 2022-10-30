@@ -337,33 +337,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             .compile(REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK);
 
     /**
-     * Regular expression for retained @link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent} with
-     * durations.
-     * 
-     * <pre>
-     * [0.054s][info][gc           ] GC(1) Concurrent Mark 1.260ms
-     * 
-     * [0.054s][info][gc           ] GC(1) Concurrent Preclean 0.033ms
-     * 
-     * [0.055s][info][gc           ] GC(1) Concurrent Sweep 0.298ms
-     * 
-     * [0.056s][info][gc           ] GC(1) Concurrent Reset 0.693ms
-     * 
-     * [2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Clear Claimed Marks 0.080ms
-     * 
-     * [2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Scan Root Regions 0.006ms
-     * 
-     * [2021-03-13T03:37:46.439+0530][79859507ms] GC(8652) Concurrent Mark From Roots 2126.315ms
-     * </pre>
-     */
-    private static final String REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT = "^(" + UnifiedRegEx.DECORATOR
-            + " Concurrent (Clear Claimed Marks|Mark|Mark From Roots|Preclean|Reset|Scan Root Regions|Sweep) "
-            + UnifiedRegEx.DURATION + ")$";
-
-    private static final Pattern REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT_PATTERN = Pattern
-            .compile(REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT);
-
-    /**
      * Regular expression for retained beginning @link
      * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedRemarkEvent}.
      * 
@@ -973,8 +946,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        if (REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK_PATTERN.matcher(logLine).matches()
+        if (REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_UNIFIED_REMARK_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_PAUSE_YOUNG_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_OLD_PATTERN.matcher(logLine).matches()
@@ -1024,20 +996,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
 
         Matcher matcher;
 
-        if ((matcher = REGEX_RETAIN_BEGINNING_UNIFIED_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
-            matcher.reset();
-            if (matcher.matches()) {
-                if (!context.contains(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC)) {
-                    this.logEntry = logEntry;
-                    context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-                } else {
-                    // output intermingled lines at end
-                    entangledLogLines.add(logEntry + Constants.LINE_SEPARATOR);
-                    context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-                }
-            }
-            context.add(TOKEN);
-        } else if ((matcher = REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK_PATTERN.matcher(logEntry)).matches()) {
+        if ((matcher = REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
@@ -1223,7 +1182,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             } else {
                 // output intermingled lines at end
-                entangledLogLines.add(logEntry + Constants.LINE_SEPARATOR);
+                entangledLogLines.add(logEntry);
                 context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             }
         }

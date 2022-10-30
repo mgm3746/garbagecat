@@ -305,29 +305,28 @@ public class GcManager {
     }
 
     /**
-     * Determine the preprocessed log entry given the current, previous, and next log lines.
-     * 
-     * The previous log line is needed to prevent preprocessing overlap where preprocessors have common patterns that
-     * are treated in different ways (e.g. removing vs. keeping matches, line break at end vs. no line break, etc.). For
-     * example, there is overlap between the <code>CmsConcurrentModeFailurePreprocessEvent</code> and the
-     * <code>PrintHeapAtGcPreprocessEvent</code>.
-     * 
-     * The next log line is needed to distinguish between truncated and split logging. A truncated log entry can look
-     * exactly the same as the initial line of split logging.
+     * Determine the preprocessed log entry.
      * 
      * @param currentLogLine
      *            The current log line.
      * @param priorLogLine
-     *            The previous log line.
+     *            The previous log line. Needed to prevent preprocessing overlap where preprocessors have common
+     *            patterns that are treated in different ways (e.g. removing vs. keeping matches, line break at end vs.
+     *            no line break, etc.).
      * @param nextLogLine
-     *            The next log line.
+     *            The next log line. Needed to distinguish between truncated and split logging. A truncated log entry
+     *            can look exactly the same as the initial line of split logging.
      * @param jvmStartDate
      *            The date and time the JVM was started.
      * @param entangledLogLines
-     *            Log lines mixed in with other logging events.
+     *            Log lines mixed in with other logging events. Used for de-tangling intermingled logging events that
+     *            span multiple lines. It follows the convention that the previous entry determines if the current entry
+     *            is added to the previous entry (it's part of a multi-line event) or a new entry (it's a single-line
+     *            event.
      * @param context
      *            Information to make preprocessing decisions.
-     * @return The preprocessed log line, or null if it was thrown away.
+     * @return The preprocessed log line(s), or null if it will be thrown away. Multiple lines are delimited by a
+     *         newline.
      */
     public String getPreprocessedLogEntry(String currentLogLine, String priorLogLine, String nextLogLine,
             Date jvmStartDate, List<String> entangledLogLines, Set<String> context) {
@@ -567,7 +566,15 @@ public class GcManager {
     }
 
     /**
-     * Preprocess log file. Remove extraneous information and format the log file for parsing.
+     * <p>
+     * Preprocess the log file:
+     * </p>
+     * 
+     * <ul>
+     * <li>Compose events logged to multiple lines into a single line (removing extraneous information).</li>
+     * <li>Datafixing (e.g. JDK8 multiple and mixed date/time stamps.</li>
+     * <li>Throw away logging not used for analysis.</li>
+     * </ul>
      * 
      * @param logFile
      *            Raw garbage collection log file.
@@ -592,8 +599,14 @@ public class GcManager {
             bufferedReader = new BufferedReader(new FileReader(logFile));
             bufferedWriter = new BufferedWriter(new FileWriter(preprocessFile));
 
-            // Used for de-tangling intermingled logging events that span multiple lines
+            /*
+             * Used for de-tangling intermingled logging events that span multiple lines. It follows the convention that
+             * the previous entry determines the current entry is a single-line event or the end of a multi-line event
+             * (the previous entry ends with a newline), or the current entry is part of a multi-line event (the
+             * previous entry does not end with a newline).
+             */
             List<String> entangledLogLines = new ArrayList<String>();
+
             // Used to provide context for preprocessing decisions
             Set<String> context = new HashSet<String>();
 
@@ -604,10 +617,13 @@ public class GcManager {
                 preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
                         entangledLogLines, context);
                 if (preprocessedLogLine != null) {
+                    if(priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
+                        System.out.println("here!!!");
+                    }
                     if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
                             && !priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
                         bufferedWriter.write(Constants.LINE_SEPARATOR + preprocessedLogLine);
-                    } else {
+                    } else {                        
                         bufferedWriter.write(preprocessedLogLine);
                     }
                     priorLogEntry = preprocessedLogLine;
