@@ -41,18 +41,21 @@ import org.junit.jupiter.api.Test;
 class TestApplicationStoppedTimePreprocessAction {
 
     @Test
-    void testLogLineNoPreprocessingNeeded() {
-        String priorLogLine = "";
-        String logLine = "2017-02-27T02:56:13.203+0300: 35952.084: Total time for which application threads were "
-                + "stopped: 40.6810160 seconds";
-        String nextLogLine = "";
-        Set<String> context = new HashSet<String>();
-        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
-        List<String> entangledLogLines = new ArrayList<String>();
-        ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,
-                nextLogLine, entangledLogLines, context);
-        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
+    void testG1() throws IOException {
+        File testFile = TestUtil.getFile("dataset223.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_CONCURRENT),
+                "Log line not recognized as " + LogEventType.G1_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME),
+                "Log line not recognized as " + LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
     }
 
     @Test
@@ -72,10 +75,10 @@ class TestApplicationStoppedTimePreprocessAction {
     }
 
     @Test
-    void testLogLineDatestampDatestampTimestampDoubleColon() {
+    void testLogLineDatestampDatestamp() {
         String priorLogLine = "";
-        String logLine = "2021-10-27T10:52:38.345-0400: 2021-10-27T10:52:38.345-04000.181: : Total time for which "
-                + "application threads were stopped: 0.0013170 seconds, Stopping threads took: 0.0000454 seconds";
+        String logLine = "2021-10-28T07:39:54.391-0400: 2021-10-28T07:39:54.391-0400: Total time for which "
+                + "application threads were stopped: 0.0014232 seconds, Stopping threads took: 0.0000111 seconds";
         String nextLogLine = "";
         Set<String> context = new HashSet<String>();
         assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
@@ -84,8 +87,8 @@ class TestApplicationStoppedTimePreprocessAction {
         ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,
                 nextLogLine, entangledLogLines, context);
         assertEquals(
-                "2021-10-27T10:52:38.345-0400: 0.181: Total time for which application threads were stopped: "
-                        + "0.0013170 seconds, Stopping threads took: 0.0000454 seconds",
+                "2021-10-28T07:39:54.391-0400: Total time for which application threads were stopped: 0.0014232 "
+                        + "seconds, Stopping threads took: 0.0000111 seconds",
                 event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -108,10 +111,10 @@ class TestApplicationStoppedTimePreprocessAction {
     }
 
     @Test
-    void testLogLineDatestampTimestampDatestamp() {
+    void testLogLineDatestampDatestampTimestampDoubleColon() {
         String priorLogLine = "";
-        String logLine = "2021-10-27T12:32:13.753-0400: 0.250: 2021-10-27T12:32:13.753-0400: Total time for which "
-                + "application threads were stopped: 0.0012571 seconds, Stopping threads took: 0.0000262 seconds";
+        String logLine = "2021-10-27T10:52:38.345-0400: 2021-10-27T10:52:38.345-04000.181: : Total time for which "
+                + "application threads were stopped: 0.0013170 seconds, Stopping threads took: 0.0000454 seconds";
         String nextLogLine = "";
         Set<String> context = new HashSet<String>();
         assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
@@ -120,8 +123,8 @@ class TestApplicationStoppedTimePreprocessAction {
         ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,
                 nextLogLine, entangledLogLines, context);
         assertEquals(
-                "2021-10-27T12:32:13.753-0400: 0.250: Total time for which application threads were stopped: 0.0012571 "
-                        + "seconds, Stopping threads took: 0.0000262 seconds",
+                "2021-10-27T10:52:38.345-0400: 0.181: Total time for which application threads were stopped: "
+                        + "0.0013170 seconds, Stopping threads took: 0.0000454 seconds",
                 event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -144,10 +147,10 @@ class TestApplicationStoppedTimePreprocessAction {
     }
 
     @Test
-    void testLogLineDatestampDatestamp() {
+    void testLogLineDatestampDatestampTimestampTimestampNoColonNoSpace() {
         String priorLogLine = "";
-        String logLine = "2021-10-28T07:39:54.391-0400: 2021-10-28T07:39:54.391-0400: Total time for which "
-                + "application threads were stopped: 0.0014232 seconds, Stopping threads took: 0.0000111 seconds";
+        String logLine = "2022-10-30T08:28:23.839-0400: 2022-10-30T08:28:23.839-0400: 0.408: 0.408Total time for which "
+                + "application threads were stopped: 0.0078201 seconds, Stopping threads took: 0.0000168 seconds";
         String nextLogLine = "";
         Set<String> context = new HashSet<String>();
         assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
@@ -156,26 +159,41 @@ class TestApplicationStoppedTimePreprocessAction {
         ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,
                 nextLogLine, entangledLogLines, context);
         assertEquals(
-                "2021-10-28T07:39:54.391-0400: Total time for which application threads were stopped: 0.0014232 "
-                        + "seconds, Stopping threads took: 0.0000111 seconds",
+                "2022-10-30T08:28:23.839-0400: 0.408: Total time for which application threads were stopped: 0.0078201 "
+                        + "seconds, Stopping threads took: 0.0000168 seconds",
                 event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
-    void testG1() throws IOException {
-        File testFile = TestUtil.getFile("dataset223.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_CONCURRENT),
-                "Log line not recognized as " + LogEventType.G1_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME),
-                "Log line not recognized as " + LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
+    void testLogLineDatestampTimestampDatestamp() {
+        String priorLogLine = "";
+        String logLine = "2021-10-27T12:32:13.753-0400: 0.250: 2021-10-27T12:32:13.753-0400: Total time for which "
+                + "application threads were stopped: 0.0012571 seconds, Stopping threads took: 0.0000262 seconds";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,
+                nextLogLine, entangledLogLines, context);
+        assertEquals(
+                "2021-10-27T12:32:13.753-0400: 0.250: Total time for which application threads were stopped: 0.0012571 "
+                        + "seconds, Stopping threads took: 0.0000262 seconds",
+                event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineNoPreprocessingNeeded() {
+        String priorLogLine = "";
+        String logLine = "2017-02-27T02:56:13.203+0300: 35952.084: Total time for which application threads were "
+                + "stopped: 40.6810160 seconds";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(ApplicationStoppedTimePreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        ApplicationStoppedTimePreprocessAction event = new ApplicationStoppedTimePreprocessAction(priorLogLine, logLine,
+                nextLogLine, entangledLogLines, context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 }

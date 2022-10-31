@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.preprocess.jdk;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -244,6 +245,21 @@ class TestG1PreprocessAction {
         G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
         assertEquals("2021-10-26T18:15:06.169-0400: 0.156: [GC concurrent-root-region-scan-start]", event.getLogEntry(),
                 "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testConcurrentMissingDecorator() {
+        // Decorator is intermingled in previous log line. Throw away the logging, as it's not essential for analysis,
+        // not worth the trouble to untangle it.
+        String priorLogLine = "2022-10-30T08:28:23.839-0400: 2022-10-30T08:28:23.839-0400: 0.408: 0.408Total time for "
+                + "which application threads were stopped: 0.0078201 seconds, Stopping threads took: 0.0000168 seconds";
+        String logLine = ": [GC concurrent-root-region-scan-start]";
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test

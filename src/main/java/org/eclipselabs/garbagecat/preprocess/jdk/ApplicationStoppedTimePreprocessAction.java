@@ -171,7 +171,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
      */
     private static final String REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP = "^" + JdkRegEx.DATESTAMP + ": "
             + JdkRegEx.DATESTAMP + ": " + JdkRegEx.TIMESTAMP + ": " + JdkRegEx.TIMESTAMP
-            + ": (Total time for which application threads were stopped: "
+            + "(: )?(Total time for which application threads were stopped: "
             + "(-)?\\d{1,4}[\\.\\,]\\d{7} seconds, Stopping threads took: (-)?\\d{1,4}[\\.\\,]\\d{7} seconds)[ ]*$";
 
     private static final Pattern REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP_PATTERN = Pattern
@@ -254,7 +254,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
         } else if ((matcher = REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1) + ": " + matcher.group(19) + ": " + matcher.group(21);
+                this.logEntry = matcher.group(1) + ": " + matcher.group(20) + ": " + matcher.group(22);
             }
             context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         }

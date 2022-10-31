@@ -655,7 +655,7 @@ public class G1PreprocessAction implements PreprocessAction {
             //
             "^         \\[Termination Attempts( )?:.+$",
             // Partial concurrent event. Maybe a logging bug?
-            "^\\[GC concurrent.+$",
+            "^(: )?\\[GC concurrent.+$",
             //
             "^       Avg:.+$",
             // Ergonomics.
