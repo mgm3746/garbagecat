@@ -84,6 +84,17 @@ public class SerialPreprocessAction implements PreprocessAction {
     public static final String TOKEN = "SERIAL_PREPROCESS_ACTION_TOKEN";
 
     /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return logLine.matches(REGEX_RETAIN_BEGINNING) || logLine.matches(REGEX_RETAIN_END);
+    }
+
+    /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
@@ -127,14 +138,6 @@ public class SerialPreprocessAction implements PreprocessAction {
         }
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.PreprocessActionType.SERIAL.toString();
-    }
-
     /**
      * TODO: Move to superclass.
      * 
@@ -155,14 +158,11 @@ public class SerialPreprocessAction implements PreprocessAction {
         }
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return logLine.matches(REGEX_RETAIN_BEGINNING) || logLine.matches(REGEX_RETAIN_END);
+    public String getLogEntry() {
+        return logEntry;
+    }
+
+    public String getName() {
+        return JdkUtil.PreprocessActionType.SERIAL.toString();
     }
 }

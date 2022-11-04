@@ -38,6 +38,20 @@ class TestOomeMetaspaceEvent {
     }
 
     @Test
+    void testLineTimeUptimeMillis() {
+        String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (data) allocation failed for size 11";
+        assertTrue(OomeMetaspaceEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.OOME_METASPACE.toString() + ".");
+    }
+
+    @Test
+    void testLineUptimeMillis() {
+        String logLine = "[7732788ms] Metaspace (data) allocation failed for size 11";
+        assertTrue(OomeMetaspaceEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.OOME_METASPACE.toString() + ".");
+    }
+
+    @Test
     void testParseLogLine() {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (data) allocation failed for size 11";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof OomeMetaspaceEvent,
@@ -57,19 +71,5 @@ class TestOomeMetaspaceEvent {
         eventTypes.add(LogEventType.OOME_METASPACE);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
                 JdkUtil.LogEventType.OOME_METASPACE.toString() + " not indentified as unified.");
-    }
-
-    @Test
-    void testLineTimeUptimeMillis() {
-        String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (data) allocation failed for size 11";
-        assertTrue(OomeMetaspaceEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.OOME_METASPACE.toString() + ".");
-    }
-
-    @Test
-    void testLineUptimeMillis() {
-        String logLine = "[7732788ms] Metaspace (data) allocation failed for size 11";
-        assertTrue(OomeMetaspaceEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.OOME_METASPACE.toString() + ".");
     }
 }

@@ -23,6 +23,11 @@ import org.eclipselabs.garbagecat.util.Memory;
 public interface CombinedData {
 
     /**
+     * @return Young + old generation end occupancy (kilobytes).
+     */
+    Memory getCombinedOccupancyEnd();
+
+    /**
      * @return Young + old generation initial occupancy (kilobytes).
      */
     Memory getCombinedOccupancyInit();
@@ -31,9 +36,4 @@ public interface CombinedData {
      * @return Total young + old generation space (kilobytes) at the end of the event (i.e. it reflects any resizing).
      */
     Memory getCombinedSpace();
-
-    /**
-     * @return Young + old generation end occupancy (kilobytes).
-     */
-    Memory getCombinedOccupancyEnd();
 }

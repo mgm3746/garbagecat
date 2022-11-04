@@ -30,16 +30,10 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedCmsInitialMarkEvent {
 
     @Test
-    void testLogLine() {
+    void testBlocking() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        assertTrue(UnifiedCmsInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
-        UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
-        assertEquals((long) (178 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(157, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
-        assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -50,31 +44,16 @@ class TestUnifiedCmsInitialMarkEvent {
     }
 
     @Test
-    void testParseLogLine() {
+    void testLogLine() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedCmsInitialMarkEvent,
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not parsed.");
-    }
-
-    @Test
-    void testBlocking() {
-        String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as blocking.");
-    }
-
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK),
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as reportable.");
-    }
-
-    @Test
-    void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_CMS_INITIAL_MARK);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as unified.");
+        assertTrue(UnifiedCmsInitialMarkEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
+        UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
+        assertEquals((long) (178 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(157, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
     @Test
@@ -96,5 +75,26 @@ class TestUnifiedCmsInitialMarkEvent {
         assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
+    void testParseLogLine() {
+        String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedCmsInitialMarkEvent,
+                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not parsed.");
+    }
+
+    @Test
+    void testReportable() {
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK),
+                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as reportable.");
+    }
+
+    @Test
+    void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.UNIFIED_CMS_INITIAL_MARK);
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as unified.");
     }
 }

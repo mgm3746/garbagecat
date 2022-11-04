@@ -21,11 +21,6 @@ package org.eclipselabs.garbagecat.domain;
 public interface LogEvent {
 
     /**
-     * @return The time when the event begins, in milliseconds after JVM startup.
-     */
-    long getTimestamp();
-
-    /**
      * @return The log entry for the event.
      */
     String getLogEntry();
@@ -36,4 +31,9 @@ public interface LogEvent {
      * @return The event identifier.
      */
     String getName();
+
+    /**
+     * @return The time when the event begins, in milliseconds after JVM startup.
+     */
+    long getTimestamp();
 }

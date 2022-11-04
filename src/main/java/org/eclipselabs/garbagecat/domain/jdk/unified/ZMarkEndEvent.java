@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ZCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
@@ -48,7 +49,7 @@ public class ZMarkEndEvent extends ZCollector implements UnifiedLogging, Blockin
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Mark End " + UnifiedRegEx.DURATION
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Mark End " + JdkRegEx.DURATION_MS
             + "[ ]*$";
 
     /**

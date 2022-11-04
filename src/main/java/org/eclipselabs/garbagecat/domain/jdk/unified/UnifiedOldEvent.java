@@ -74,35 +74,38 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging, BlockingEvent, OldCollection,
         PermMetaspaceCollection, PermMetaspaceData, CombinedData, TriggerData, ParallelEvent, TimesData {
 
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
+    private static final Pattern pattern = Pattern.compile(UnifiedOldEvent.REGEX);
 
     /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
+     * Regular expressions defining the logging.
      */
-    private long duration;
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + UnifiedOldEvent.TRIGGER
+            + "\\)( Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))? "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
+            + TimesData.REGEX_JDK9 + "?[ ]*$";
 
     /**
-     * The time when the GC event started in milliseconds after JVM startup.
+     * Trigger(s) regular expression(s).
      */
-    private long timestamp;
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+            + JdkRegEx.TRIGGER_ERGONOMICS + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
 
     /**
-     * Permanent generation size at beginning of GC event.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private Memory permGen;
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
-     * Permanent generation size at end of GC event.
+     * Combined young + old generation allocation.
      */
-    private Memory permGenEnd;
-
-    /**
-     * Space allocated to permanent generation.
-     */
-    private Memory permGenAllocation;
+    private Memory combinedAllocation;
 
     /**
      * Combined young + old generation size at beginning of GC event.
@@ -115,14 +118,43 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
     private Memory combinedEnd;
 
     /**
-     * Combined young + old generation allocation.
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private Memory combinedAllocation;
+    private long duration;
 
     /**
-     * The trigger for the GC event.
+     * The log entry for the event. Can be used for debugging purposes.
      */
-    private String trigger;
+    private String logEntry;
+
+    /**
+     * Permanent generation size at beginning of GC event.
+     */
+    private Memory permGen;
+
+    /**
+     * Space allocated to permanent generation.
+     */
+    private Memory permGenAllocation;
+
+    /**
+     * Permanent generation size at end of GC event.
+     */
+    private Memory permGenEnd;
+    /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
 
     /**
      * The time of all user (non-kernel) threads added together in centiseconds.
@@ -130,29 +162,9 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
     private int timeUser;
 
     /**
-     * The time of all system (kernel) threads added together in centiseconds.
+     * The trigger for the GC event.
      */
-    private int timeSys;
-    /**
-     * The wall (clock) time in centiseconds.
-     */
-    private int timeReal;
-
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_ERGONOMICS + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
-
-    /**
-     * Regular expressions defining the logging.
-     */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + TRIGGER + "\\)( Metaspace: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))? " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "?[ ]*$";
-
-    private static final Pattern pattern = Pattern.compile(REGEX);
+    private String trigger;
 
     /**
      * Create event from log entry.
@@ -222,86 +234,75 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
         this.duration = duration;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_OLD.toString();
-    }
-
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public Memory getPermOccupancyInit() {
-        return permGen;
-    }
-
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
-    }
-
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
-    }
-
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
+    public Memory getCombinedOccupancyEnd() {
+        return combinedEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
         return combinedBegin;
     }
 
-    public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
-    }
-
     public Memory getCombinedSpace() {
         return combinedAllocation;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public long getDuration() {
+        return duration;
     }
 
-    public int getTimeUser() {
-        return timeUser;
+    public String getLogEntry() {
+        return logEntry;
     }
 
-    public int getTimeSys() {
-        return timeSys;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
+    public String getName() {
+        return JdkUtil.LogEventType.UNIFIED_OLD.toString();
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public Memory getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    public Memory getPermOccupancyInit() {
+        return permGen;
+    }
+
+    public Memory getPermSpace() {
+        return permGenAllocation;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public String getTrigger() {
+        return trigger;
+    }
+
+    protected void setPermOccupancyEnd(Memory permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    protected void setPermOccupancyInit(Memory permGen) {
+        this.permGen = permGen;
+    }
+
+    protected void setPermSpace(Memory permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
     }
 }

@@ -159,7 +159,7 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
             + ") [\\[]{0,1}Concurrent (class unloading|cleanup|evacuation|marking( \\((unload classes|update refs)\\)|"
             + " roots)?( \\(process weakrefs\\))?|precleaning|reset|uncommit|uncommit, start|"
             + "(update|weak) references|(strong|thread|update thread|weak) roots)(( " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[,]{0,1} " + UnifiedRegEx.DURATION
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[,]{0,1} " + JdkRegEx.DURATION_MS
             + ")?[\\]]{0,1}([,]{0,1} [\\[]{0,1}Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[\\]]{0,1})?[ ]*$";
 

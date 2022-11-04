@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.OtherTime;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
@@ -62,15 +63,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs][Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 12.9G(30.0G)-&gt;11.3G(30.0G)] [Times: user=0.19 sys=0.00, real=0.05 secs]
- * </pre>
- * 
- * <p>
- * 4) After {@link org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction} without trigger:
- * </p>
- * 
- * <pre>
- * 3082.652: [GC pause (mixed), 0.0762060 secs] 12083M-&gt;9058M(26624M) [Times: user=0.30 sys=0.00, real=0.08 secs]
+ * 2017-06-22T12:25:26.515+0530: 66155.261: [GC pause (G1 Humongous Allocation) (mixed) (to-space exhausted), 0.2466797 secs][Other: 23.0 ms][Eden: 32.0M(204.0M)-&gt;0.0B(204.0M) Survivors: 0.0B-&gt;0.0B Heap: 3816.0M(4096.0M)-&gt;3734.5M(4096.0M)] [Times: user=0.39 sys=0.03, real=0.25 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -78,7 +71,28 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class G1MixedPauseEvent extends G1Collector
-        implements BlockingEvent, ParallelEvent, CombinedData, TriggerData, TimesData {
+        implements BlockingEvent, ParallelEvent, CombinedData, TriggerData, TimesData, OtherTime {
+
+    /**
+     * Regular expression standard format.
+     */
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC pause( \\(" + G1MixedPauseEvent.TRIGGER
+            + "\\))? \\(mixed\\)(--)? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+
+    /**
+     * Regular expression preprocessed.
+     */
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause( \\("
+            + G1MixedPauseEvent.TRIGGER + "\\))? \\(mixed\\)( \\(" + G1MixedPauseEvent.TRIGGER + "\\))?, "
+            + JdkRegEx.DURATION + "\\]" + OtherTime.REGEX + "\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
     /**
      * Trigger(s) regular expression(s).
@@ -88,39 +102,15 @@ public class G1MixedPauseEvent extends G1Collector
             + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")";
 
     /**
-     * Regular expression standard format.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC pause( \\(" + TRIGGER
-            + "\\))? \\(mixed\\)(--)? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
-
-    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
-
-    /**
-     * Regular expression preprocessed.
-     */
-    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause( \\(" + TRIGGER
-            + "\\))? \\(mixed\\)( \\(" + TRIGGER + "\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
-
-    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
-
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
-
-    /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
-     */
-    private long duration;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
+    public static final boolean match(String logLine) {
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+    }
 
     /**
      * Combined generation size at beginning of GC event.
@@ -128,24 +118,39 @@ public class G1MixedPauseEvent extends G1Collector
     private Memory combined;
 
     /**
-     * Combined generation size at end of GC event.
-     */
-    private Memory combinedEnd;
-
-    /**
      * Available space in multiple generation.
      */
     private Memory combinedAvailable;
 
     /**
-     * The trigger for the GC event.
+     * Combined generation size at end of GC event.
      */
-    private String trigger;
+    private Memory combinedEnd;
 
     /**
-     * The time of all user (non-kernel) threads added together in centiseconds.
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private int timeUser;
+    private long eventTime;
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * Time spent outside of garbage collection in microseconds (rounded).
+     */
+    private long otherTime;
+
+    /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
     /**
      * The time of all system (kernel) threads added together in centiseconds.
@@ -153,9 +158,14 @@ public class G1MixedPauseEvent extends G1Collector
     private int timeSys;
 
     /**
-     * The wall (clock) time in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
-    private int timeReal;
+    private int timeUser;
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Create event from log entry.
@@ -182,7 +192,7 @@ public class G1MixedPauseEvent extends G1Collector
                 combined = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
                 combinedEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
                 combinedAvailable = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
-                duration = JdkMath.convertSecsToMicros(matcher.group(26)).intValue();
+                eventTime = JdkMath.convertSecsToMicros(matcher.group(26)).intValue();
                 if (matcher.group(29) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
                     timeSys = JdkMath.convertSecsToCentis(matcher.group(31)).intValue();
@@ -207,14 +217,19 @@ public class G1MixedPauseEvent extends G1Collector
                 } else if (matcher.group(15) != null) {
                     trigger = matcher.group(15);
                 }
-                duration = JdkMath.convertSecsToMicros(matcher.group(18)).intValue();
-                combined = JdkMath.convertSizeToKilobytes(matcher.group(39), matcher.group(41).charAt(0));
-                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(45), matcher.group(47).charAt(0));
-                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(48), matcher.group(50).charAt(0));
-                if (matcher.group(51) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(52)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(53)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(54)).intValue();
+                eventTime = JdkMath.convertSecsToMicros(matcher.group(18)).intValue();
+                if (matcher.group(22) != null) {
+                    otherTime = JdkMath.convertMillisToMicros(matcher.group(22)).intValue();
+                } else {
+                    otherTime = TimesData.NO_DATA;
+                }
+                combined = JdkMath.convertSizeToKilobytes(matcher.group(41), matcher.group(43).charAt(0));
+                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(47), matcher.group(49).charAt(0));
+                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(50), matcher.group(52).charAt(0));
+                if (matcher.group(53) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(54)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(55)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
                 }
             }
         }
@@ -233,65 +248,59 @@ public class G1MixedPauseEvent extends G1Collector
     public G1MixedPauseEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
-        this.duration = duration;
-    }
-
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public Memory getCombinedOccupancyInit() {
-        return combined;
+        this.eventTime = duration;
     }
 
     public Memory getCombinedOccupancyEnd() {
         return combinedEnd;
     }
 
+    public Memory getCombinedOccupancyInit() {
+        return combined;
+    }
+
     public Memory getCombinedSpace() {
         return combinedAvailable;
+    }
+
+    public long getDuration() {
+        return eventTime + otherTime;
+    }
+
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.G1_MIXED_PAUSE.toString();
     }
 
-    public String getTrigger() {
-        return trigger;
-    }
-
-    public int getTimeUser() {
-        return timeUser;
-    }
-
-    public int getTimeSys() {
-        return timeSys;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
+    @Override
+    public long getOtherTime() {
+        return otherTime;
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public String getTrigger() {
+        return trigger;
     }
 }

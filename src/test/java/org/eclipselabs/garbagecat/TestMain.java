@@ -42,38 +42,18 @@ import org.junit.jupiter.api.io.TempDir;
 
 class TestMain {
 
+    private static void assertHasOption(CommandLine cmd, String option) {
+        assertTrue(cmd.hasOption(option), "'-" + option + "' is a valid option");
+    }
+
     @Test
-    void testShortOptions(@TempDir File temporaryFolder) throws Exception {
+    void testLongHelpOption() throws Exception {
         // Method arguments
-        String[] args = new String[] { //
-                "-h", //
-                "-j", //
-                "-Xmx2048m", //
-                "-p", //
-                "-s", //
-                "2009-09-18 00:00:08.172", //
-                "-t", //
-                "80", //
-                "-r", //
-                "-o", //
-                "12345678.txt", //
-                "-v", //
-                "-l", //
-                // Instead of a file, use a location sure to exist.
-                temporaryFolder.getAbsolutePath() //
-        };
+        String[] args = new String[] { "--help" };
+        // Pass null object since parseOptions is static
         CommandLine cmd = OptionsParser.parseOptions(args);
-        assertNotNull(cmd);
-        assertHasOption(cmd, OPTION_HELP_SHORT);
-        assertHasOption(cmd, OPTION_JVMOPTIONS_SHORT);
-        assertHasOption(cmd, OPTION_PREPROCESS_SHORT);
-        assertHasOption(cmd, OPTION_STARTDATETIME_SHORT);
-        assertHasOption(cmd, OPTION_THRESHOLD_SHORT);
-        assertHasOption(cmd, OPTION_REORDER_SHORT);
-        assertHasOption(cmd, OPTION_OUTPUT_SHORT);
-        assertHasOption(cmd, OPTION_VERSION_SHORT);
-        assertHasOption(cmd, OPTION_LATEST_VERSION_SHORT);
-        assertHasOption(cmd, OPTION_LATEST_VERSION_SHORT);
+        // CommandLine will be null if only the help option is passed in.
+        assertNull(cmd);
     }
 
     @Test
@@ -119,17 +99,37 @@ class TestMain {
     }
 
     @Test
-    void testLongHelpOption() throws Exception {
+    void testShortOptions(@TempDir File temporaryFolder) throws Exception {
         // Method arguments
-        String[] args = new String[] { "--help" };
-        // Pass null object since parseOptions is static
+        String[] args = new String[] { //
+                "-h", //
+                "-j", //
+                "-Xmx2048m", //
+                "-p", //
+                "-s", //
+                "2009-09-18 00:00:08.172", //
+                "-t", //
+                "80", //
+                "-r", //
+                "-o", //
+                "12345678.txt", //
+                "-v", //
+                "-l", //
+                // Instead of a file, use a location sure to exist.
+                temporaryFolder.getAbsolutePath() //
+        };
         CommandLine cmd = OptionsParser.parseOptions(args);
-        // CommandLine will be null if only the help option is passed in.
-        assertNull(cmd);
-    }
-
-    private static void assertHasOption(CommandLine cmd, String option) {
-        assertTrue(cmd.hasOption(option), "'-" + option + "' is a valid option");
+        assertNotNull(cmd);
+        assertHasOption(cmd, OPTION_HELP_SHORT);
+        assertHasOption(cmd, OPTION_JVMOPTIONS_SHORT);
+        assertHasOption(cmd, OPTION_PREPROCESS_SHORT);
+        assertHasOption(cmd, OPTION_STARTDATETIME_SHORT);
+        assertHasOption(cmd, OPTION_THRESHOLD_SHORT);
+        assertHasOption(cmd, OPTION_REORDER_SHORT);
+        assertHasOption(cmd, OPTION_OUTPUT_SHORT);
+        assertHasOption(cmd, OPTION_VERSION_SHORT);
+        assertHasOption(cmd, OPTION_LATEST_VERSION_SHORT);
+        assertHasOption(cmd, OPTION_LATEST_VERSION_SHORT);
     }
 
 }

@@ -141,6 +141,24 @@ public class TenuringDistributionEvent implements ThrowAwayEvent {
             "^- age[ ]+\\d{1,2}:[ ]+\\d{1,11} bytes,[ ]+\\d{1,11} total$" };
 
     /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        boolean isMatch = false;
+        for (int i = 0; i < REGEX.length; i++) {
+            if (logLine.matches(REGEX[i])) {
+                isMatch = true;
+                break;
+            }
+        }
+        return isMatch;
+    }
+
+    /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
@@ -171,23 +189,5 @@ public class TenuringDistributionEvent implements ThrowAwayEvent {
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        boolean isMatch = false;
-        for (int i = 0; i < REGEX.length; i++) {
-            if (logLine.matches(REGEX[i])) {
-                isMatch = true;
-                break;
-            }
-        }
-        return isMatch;
     }
 }

@@ -113,6 +113,20 @@ public final class JdkMath {
     }
 
     /**
+     * Convert microseconds to centiseconds.
+     * 
+     * For example: Convert 123456 to 12.
+     * 
+     * @param micros
+     *            Microseconds as a whole number.
+     * @return Centiseconds rounded down to a whole number
+     */
+    public static BigDecimal convertMicrosToCentis(long micros) {
+        BigDecimal centis = new BigDecimal(micros);
+        return centis.movePointLeft(4).setScale(0, RoundingMode.DOWN);
+    }
+
+    /**
      * Convert microseconds to milliseconds.
      * 
      * For example: Convert 987654321 to 987654.321.

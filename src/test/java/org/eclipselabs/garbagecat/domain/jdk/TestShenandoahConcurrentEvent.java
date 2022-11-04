@@ -294,7 +294,7 @@ class TestShenandoahConcurrentEvent {
         assertTrue(ShenandoahConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".");
     }
-    
+
     @Test
     void testUnifiedMarking() {
         String logLine = "[0.528s][info][gc] GC(1) Concurrent marking 16M->17M(64M) 7.045ms";

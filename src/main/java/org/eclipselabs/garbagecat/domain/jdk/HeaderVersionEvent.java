@@ -50,6 +50,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class HeaderVersionEvent implements LogEvent {
 
+    private static Pattern pattern = Pattern.compile(HeaderVersionEvent.REGEX);
+
     /**
      * Regular expressions defining the logging.
      */
@@ -57,7 +59,16 @@ public class HeaderVersionEvent implements LogEvent {
             + "(linux|windows|solaris)-(amd64|ppc64|ppc64le|sparc|x86) JRE (\\(Zulu.+\\) )?\\("
             + JdkRegEx.RELEASE_STRING + "\\).+ built on " + JdkRegEx.BUILD_DATE_TIME + ".+$";
 
-    private static Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -90,16 +101,5 @@ public class HeaderVersionEvent implements LogEvent {
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
     }
 }

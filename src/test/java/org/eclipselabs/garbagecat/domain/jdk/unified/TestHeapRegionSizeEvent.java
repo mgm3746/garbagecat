@@ -31,13 +31,6 @@ import org.junit.jupiter.api.Test;
 class TestHeapRegionSizeEvent {
 
     @Test
-    void testLine() {
-        String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
-        assertTrue(HeapRegionSizeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + ".");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
         assertEquals(JdkUtil.LogEventType.HEAP_REGION_SIZE, JdkUtil.identifyEventType(logLine),
@@ -45,10 +38,10 @@ class TestHeapRegionSizeEvent {
     }
 
     @Test
-    void testParseLogLine() {
+    void testLine() {
         String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapRegionSizeEvent,
-                JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " not parsed.");
+        assertTrue(HeapRegionSizeEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + ".");
     }
 
     @Test
@@ -56,6 +49,13 @@ class TestHeapRegionSizeEvent {
         String logLine = "[25.016s][info][gc,heap,exit  ] Heap";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
                 JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " incorrectly indentified as blocking.");
+    }
+
+    @Test
+    void testParseLogLine() {
+        String logLine = "[0.003s][info][gc,heap] Heap region size: 1M";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapRegionSizeEvent,
+                JdkUtil.LogEventType.HEAP_REGION_SIZE.toString() + " not parsed.");
     }
 
     @Test

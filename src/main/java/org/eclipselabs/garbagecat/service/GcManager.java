@@ -38,6 +38,7 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.OtherTime;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.SafepointEvent;
@@ -265,8 +266,8 @@ public class GcManager {
         jvmRun.setMaxPermSpace(kilobytes(jvmDao.getMaxPermSpace()));
         jvmRun.setMaxPermOccupancy(kilobytes(jvmDao.getMaxPermOccupancy()));
         jvmRun.setMaxPermAfterGc(kilobytes(jvmDao.getMaxPermAfterGc()));
-        jvmRun.setGcPauseMax(jvmDao.getMaxGcPause());
-        jvmRun.setGcPauseTotal(jvmDao.getGcPauseTotal());
+        jvmRun.setGcPauseMax(jvmDao.getDurationMax());
+        jvmRun.setGcPauseTotal(jvmDao.getDurationTotal());
         jvmRun.setBlockingEventCount(jvmDao.getBlockingEventCount());
         jvmRun.setFirstSafepointEvent(jvmDao.getFirstSafepointEvent());
         jvmRun.setLastSafepointEvent(jvmDao.getLastSafepointEvent());
@@ -296,6 +297,8 @@ public class GcManager {
         jvmRun.setMaxHeapSpaceNonBlocking(kilobytes(jvmDao.getMaxHeapSpaceNonBlocking()));
         jvmRun.setMaxPermOccupancyNonBlocking(kilobytes(jvmDao.getMaxPermOccupancyNonBlocking()));
         jvmRun.setMaxPermSpaceNonBlocking(kilobytes(jvmDao.getMaxPermSpaceNonBlocking()));
+        jvmRun.setDurationGtRealCount(jvmDao.getDurationGtRealCount());
+        jvmRun.setWorstDurationGtRealTimeEvent(jvmDao.getWorstDurationGtRealTimeEvent());
         jvmRun.doAnalysis();
         return jvmRun;
     }
@@ -617,13 +620,13 @@ public class GcManager {
                 preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
                         entangledLogLines, context);
                 if (preprocessedLogLine != null) {
-                    if(priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
+                    if (priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
                         System.out.println("here!!!");
                     }
                     if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
                             && !priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
                         bufferedWriter.write(Constants.LINE_SEPARATOR + preprocessedLogLine);
-                    } else {                        
+                    } else {
                         bufferedWriter.write(preprocessedLogLine);
                     }
                     priorLogEntry = preprocessedLogLine;
@@ -1193,6 +1196,30 @@ public class GcManager {
                                                 - ((TimesData) jvmDao.getWorstSysGtUserEvent()).getTimeUser())) {
                                     // Update greatest user - sys
                                     jvmDao.setWorstSysGtUserEvent(event);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 22) <code>BlockingEvent</code> duration &gt; <code>TimesData</code> "real" time.
+                if (event instanceof OtherTime && event instanceof TimesData
+                        && ((TimesData) event).getTimeReal() != TimesData.NO_DATA) {
+                    long duration = ((BlockingEvent) event).getDuration();
+                    if (duration > 0) {
+                        duration = JdkMath.convertMicrosToCentis(duration).intValue();
+                        int real = ((TimesData) event).getTimeReal();
+                        if (duration > real) {
+                            jvmDao.setDurationGtRealCount(jvmDao.getDurationGtRealCount() + 1);
+                            LogEvent worstEvent = jvmDao.getWorstDurationGtRealTimeEvent();
+                            if (worstEvent == null) {
+                                jvmDao.setWorstDurationGtRealTimeEvent(event);
+                            } else {
+                                long worstDifference = ((BlockingEvent) worstEvent).getDuration()
+                                        - ((TimesData) worstEvent).getTimeReal();
+                                if (((BlockingEvent) event).getDuration()
+                                        - ((TimesData) event).getTimeReal() > worstDifference) {
+                                    jvmDao.setWorstDurationGtRealTimeEvent(event);
                                 }
                             }
                         }

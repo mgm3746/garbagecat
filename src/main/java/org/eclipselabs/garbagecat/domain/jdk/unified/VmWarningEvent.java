@@ -37,12 +37,23 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class VmWarningEvent implements UnifiedLogging {
 
+    private static final Pattern pattern = Pattern.compile(VmWarningEvent.REGEX);
+
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^OpenJDK 64-Bit Server VM warning: (.+\\(error = (\\d{1,2})\\))$";
 
-    private static final Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -65,18 +76,6 @@ public class VmWarningEvent implements UnifiedLogging {
         this.timestamp = 0L;
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.VM_WARNING.toString();
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
     /**
      * @return The warning errno.
      */
@@ -89,14 +88,15 @@ public class VmWarningEvent implements UnifiedLogging {
         return errNo;
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public String getLogEntry() {
+        return logEntry;
+    }
+
+    public String getName() {
+        return JdkUtil.LogEventType.VM_WARNING.toString();
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 }

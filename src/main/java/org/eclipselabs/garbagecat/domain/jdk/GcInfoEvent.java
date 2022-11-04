@@ -154,6 +154,25 @@ public class GcInfoEvent implements ThrowAwayEvent {
     }
 
     /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        boolean match = false;
+        for (int i = 0; i < REGEX_PATTERN_LIST.size(); i++) {
+            Pattern pattern = REGEX_PATTERN_LIST.get(i);
+            if (pattern.matcher(logLine).matches()) {
+                match = true;
+                break;
+            }
+        }
+        return match;
+    }
+
+    /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
@@ -184,24 +203,5 @@ public class GcInfoEvent implements ThrowAwayEvent {
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        boolean match = false;
-        for (int i = 0; i < REGEX_PATTERN_LIST.size(); i++) {
-            Pattern pattern = REGEX_PATTERN_LIST.get(i);
-            if (pattern.matcher(logLine).matches()) {
-                match = true;
-                break;
-            }
-        }
-        return match;
     }
 }

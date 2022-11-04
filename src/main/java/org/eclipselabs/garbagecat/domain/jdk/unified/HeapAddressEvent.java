@@ -55,13 +55,24 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  */
 public class HeapAddressEvent implements UnifiedLogging, ThrowAwayEvent {
 
+    private static final Pattern pattern = Pattern.compile(HeapAddressEvent.REGEX);
+
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Heap address: " + JdkRegEx.ADDRESS
             + ", size: \\d{1,8} MB, Compressed Oops mode: (32-bit|Zero based, Oop shift amount: \\d)$";
 
-    private static final Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -94,16 +105,5 @@ public class HeapAddressEvent implements UnifiedLogging, ThrowAwayEvent {
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
     }
 }

@@ -31,59 +31,6 @@ import org.junit.jupiter.api.Test;
 class TestShenandoahInitUpdateEvent {
 
     @Test
-    void testLogLineJdk8() {
-        String logLine = "2020-03-10T08:03:46.284-0400: 17.346: [Pause Init Update Refs, 0.017 ms]";
-        assertTrue(ShenandoahInitUpdateEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
-        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
-        assertEquals((long) 17346, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(17, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineJdk8Timestamp() {
-        String logLine = "17.346: [Pause Init Update Refs, 0.017 ms]";
-        assertTrue(ShenandoahInitUpdateEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
-        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
-        assertEquals((long) 17346, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineJdk8Datestamp() {
-        String logLine = "2020-03-10T08:03:46.284-0400: [Pause Init Update Refs, 0.017 ms]";
-        assertTrue(ShenandoahInitUpdateEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
-        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
-        assertEquals(637139026284L, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(17, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineUnified() {
-        String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms";
-        assertTrue(ShenandoahInitUpdateEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
-        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
-        assertEquals((long) (4766 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(4, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testIdentityEventType() {
-        String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE + "not identified.");
-    }
-
-    @Test
-    void testParseLogLine() {
-        String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahInitUpdateEvent,
-                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " not parsed.");
-    }
-
-    @Test
     void testBlocking() {
         String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
@@ -103,24 +50,49 @@ class TestShenandoahInitUpdateEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE),
-                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " not indentified as reportable.");
+    void testIdentityEventType() {
+        String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms";
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE + "not identified.");
     }
 
     @Test
-    void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.SHENANDOAH_INIT_UPDATE);
-        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " incorrectly indentified as unified.");
-    }
-
-    @Test
-    void testLogLineWhitespaceAtEnd() {
-        String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms    ";
+    void testLogLineJdk8() {
+        String logLine = "2020-03-10T08:03:46.284-0400: 17.346: [Pause Init Update Refs, 0.017 ms]";
         assertTrue(ShenandoahInitUpdateEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
+        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
+        assertEquals((long) 17346, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(17, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Datestamp() {
+        String logLine = "2020-03-10T08:03:46.284-0400: [Pause Init Update Refs, 0.017 ms]";
+        assertTrue(ShenandoahInitUpdateEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
+        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
+        assertEquals(637139026284L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(17, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Timestamp() {
+        String logLine = "17.346: [Pause Init Update Refs, 0.017 ms]";
+        assertTrue(ShenandoahInitUpdateEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
+        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
+        assertEquals((long) 17346, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineUnified() {
+        String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms";
+        assertTrue(ShenandoahInitUpdateEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
+        ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
+        assertEquals((long) (4766 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(4, event.getDuration(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -134,12 +106,13 @@ class TestShenandoahInitUpdateEvent {
     }
 
     @Test
-    void testLogLineUnifiedTimeUptimeMillis() {
-        String logLine = "[2019-02-05T14:47:34.229-0200][3141ms] GC(0) Pause Init Update Refs 0.092ms";
+    void testLogLineUnifiedTime() {
+        String logLine = "[2019-02-05T14:47:34.229-0200] GC(0) Pause Init Update Refs 0.092ms";
         assertTrue(ShenandoahInitUpdateEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
         ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
-        assertEquals((long) (3141 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(JdkUtil.convertDatestampToMillis("2019-02-05T14:47:34.229-0200") - 0, event.getTimestamp(),
+                "Time stamp not parsed correctly.");
         assertEquals(92, event.getDuration(), "Duration not parsed correctly.");
     }
 
@@ -154,13 +127,40 @@ class TestShenandoahInitUpdateEvent {
     }
 
     @Test
-    void testLogLineUnifiedTime() {
-        String logLine = "[2019-02-05T14:47:34.229-0200] GC(0) Pause Init Update Refs 0.092ms";
+    void testLogLineUnifiedTimeUptimeMillis() {
+        String logLine = "[2019-02-05T14:47:34.229-0200][3141ms] GC(0) Pause Init Update Refs 0.092ms";
         assertTrue(ShenandoahInitUpdateEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
         ShenandoahInitUpdateEvent event = new ShenandoahInitUpdateEvent(logLine);
-        assertEquals(JdkUtil.convertDatestampToMillis("2019-02-05T14:47:34.229-0200") - 0, event.getTimestamp(),
-                "Time stamp not parsed correctly.");
+        assertEquals((long) (3141 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(92, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineWhitespaceAtEnd() {
+        String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms    ";
+        assertTrue(ShenandoahInitUpdateEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + ".");
+    }
+
+    @Test
+    void testParseLogLine() {
+        String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahInitUpdateEvent,
+                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " not parsed.");
+    }
+
+    @Test
+    void testReportable() {
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE),
+                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " not indentified as reportable.");
+    }
+
+    @Test
+    void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.SHENANDOAH_INIT_UPDATE);
+        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " incorrectly indentified as unified.");
     }
 }

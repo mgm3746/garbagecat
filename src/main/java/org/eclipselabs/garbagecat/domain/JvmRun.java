@@ -64,6 +64,21 @@ public class JvmRun {
     private List<CollectorFamily> collectorFamilies;
 
     /**
+     * Number of <code>BlockingEvent</code>s where duration &gt; <code>TimesData</code> "real" time.
+     */
+    private long durationGtRealCount;
+
+    /**
+     * Maximum GC pause duration (microseconds).
+     */
+    private long durationMax;
+
+    /**
+     * Total GC pause duration (microseconds).
+     */
+    private long durationTotal;
+
+    /**
      * Event types.
      */
     private List<LogEventType> eventTypes;
@@ -82,16 +97,6 @@ public class JvmRun {
      * <code>BlockingEvent</code>s where throughput does not meet the throughput goal.
      */
     private List<String> gcBottlenecks;
-
-    /**
-     * Maximum GC pause duration (microseconds).
-     */
-    private long gcPauseMax;
-
-    /**
-     * Total GC pause duration (microseconds).
-     */
-    private long gcPauseTotal;
 
     /**
      * Number of <code>ParallelCollection</code> with "inverted" parallelism.
@@ -163,6 +168,14 @@ public class JvmRun {
      */
     private Memory maxPermOccupancy;
 
+    public LogEvent getWorstDurationGtRealTimeEvent() {
+        return worstDurationGtRealTimeEvent;
+    }
+
+    public void setWorstDurationGtRealTimeEvent(LogEvent worstDurationGtRealTimeEvent) {
+        this.worstDurationGtRealTimeEvent = worstDurationGtRealTimeEvent;
+    }
+
     /**
      * Used for tracking max perm occupancy outside of <code>BlockingEvent</code>s.
      */
@@ -187,7 +200,6 @@ public class JvmRun {
      * Number of <code>ParallelCollection</code> events.
      */
     private long parallelCount;
-
     /**
      * Whether or not the JVM events are from a preprocessed file.
      */
@@ -253,6 +265,12 @@ public class JvmRun {
      * Total unified safepoint time duration (nanoseconds).
      */
     private long unifiedSafepointTimeTotal;
+
+    /**
+     * The <code>BlockingEvent</code> with the greatest difference between the <code>BlockingEvent</code> duration and
+     * the <code>TimesData</code> "other" time.
+     */
+    private LogEvent worstDurationGtRealTimeEvent;
 
     /**
      * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
@@ -957,6 +975,18 @@ public class JvmRun {
         return collectorFamilies;
     }
 
+    public long getDurationGtRealCount() {
+        return durationGtRealCount;
+    }
+
+    public long getDurationMax() {
+        return durationMax;
+    }
+
+    public long getDurationTotal() {
+        return durationTotal;
+    }
+
     public List<LogEventType> getEventTypes() {
         return eventTypes;
     }
@@ -1005,20 +1035,16 @@ public class JvmRun {
         return gcBottlenecks;
     }
 
-    public long getGcPauseTotal() {
-        return gcPauseTotal;
-    }
-
     /**
      * 
      * @return Ratio of GC to Stopped Time as a percent rounded to the nearest integer. 100 means all stopped time spent
      *         doing GC. 0 means none of the stopped time was due to GC.
      */
     public long getGcStoppedRatio() {
-        if (gcPauseTotal <= 0 || stoppedTimeTotal <= 0) {
+        if (durationTotal <= 0 || stoppedTimeTotal <= 0) {
             return 100L;
         }
-        BigDecimal ratio = new BigDecimal(gcPauseTotal);
+        BigDecimal ratio = new BigDecimal(durationTotal);
         ratio = ratio.divide(new BigDecimal(stoppedTimeTotal), 2, HALF_EVEN);
         return ratio.movePointRight(2).longValue();
     }
@@ -1032,7 +1058,7 @@ public class JvmRun {
         if (blockingEventCount <= 0 || getJvmRunDuration() == 0) {
             return 100L;
         }
-        long timeNotGc = getJvmRunDuration() - JdkMath.convertMicrosToMillis(gcPauseTotal).longValue();
+        long timeNotGc = getJvmRunDuration() - JdkMath.convertMicrosToMillis(durationTotal).longValue();
         BigDecimal throughput = new BigDecimal(timeNotGc);
         throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
         return throughput.movePointRight(2).longValue();
@@ -1045,10 +1071,10 @@ public class JvmRun {
      */
     public long getGcUnifiedSafepointRatio() {
         long unifiedSafepointTimeTotalMicros = JdkMath.convertNanosToMicros(unifiedSafepointTimeTotal).longValue();
-        if (gcPauseTotal <= 0 || unifiedSafepointTimeTotalMicros <= 0) {
+        if (durationTotal <= 0 || unifiedSafepointTimeTotalMicros <= 0) {
             return 100L;
         }
-        BigDecimal ratio = new BigDecimal(gcPauseTotal);
+        BigDecimal ratio = new BigDecimal(durationTotal);
         ratio = ratio.divide(new BigDecimal(unifiedSafepointTimeTotalMicros), 2, HALF_EVEN);
         return ratio.movePointRight(2).longValue();
     }
@@ -1114,10 +1140,6 @@ public class JvmRun {
 
     public SafepointEvent getLastSafepointEvent() {
         return lastSafepointEvent;
-    }
-
-    public long getMaxGcPause() {
-        return gcPauseMax;
     }
 
     public Memory getMaxHeapAfterGc() {
@@ -1308,6 +1330,10 @@ public class JvmRun {
         this.collectorFamilies = collectorFamilies;
     }
 
+    public void setDurationGtRealCount(long durationGtRealCount) {
+        this.durationGtRealCount = durationGtRealCount;
+    }
+
     public void setEventTypes(List<LogEventType> eventTypes) {
         this.eventTypes = eventTypes;
     }
@@ -1325,11 +1351,11 @@ public class JvmRun {
     }
 
     public void setGcPauseMax(long gcPauseMax) {
-        this.gcPauseMax = gcPauseMax;
+        this.durationMax = gcPauseMax;
     }
 
     public void setGcPauseTotal(long gcPauseTotal) {
-        this.gcPauseTotal = gcPauseTotal;
+        this.durationTotal = gcPauseTotal;
     }
 
     public void setInvertedParallelismCount(long invertedParallelismCount) {

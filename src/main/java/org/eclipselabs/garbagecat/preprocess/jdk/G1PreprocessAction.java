@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.OtherTime;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -74,7 +75,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 0.304: [GC pause (young), 0.00376500 secs] 8192K-&gt;2112K(59M) [Times: user=0.01 sys=0.00, real=0.01 secs]
+ * 0.304: [GC pause (young), 0.00376500 secs][Other:   0.1 ms] 8192K-&gt;2112K(59M) [Times: user=0.01 sys=0.00, real=0.01 secs]
  * </pre>
  * 
  * <p>
@@ -112,7 +113,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 2.192: [GC pause (G1 Evacuation Pause) (young), 0.0209631 secs][Eden: 128.0M(128.0M)-&gt;0.0B(112.0M) Survivors: 0.0B-&gt;16.0M Heap: 128.0M(30.0G)-&gt;24.9M(30.0G)] [Times: user=0.09 sys=0.02, real=0.03 secs]
+ * 2.192: [GC pause (G1 Evacuation Pause) (young), 0.0209631 secs][Other: 8.2 ms][Eden: 128.0M(128.0M)-&gt;0.0B(112.0M) Survivors: 0.0B-&gt;16.0M Heap: 128.0M(30.0G)-&gt;24.9M(30.0G)] [Times: user=0.09 sys=0.02, real=0.03 secs]
  * </pre>
  * 
  * <p>
@@ -151,7 +152,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 5.293: [GC pause (GCLocker Initiated GC) (young), 0.0176868 secs][Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 415.0M(30.0G)-&gt;313.0M(30.0G)] [Times: user=0.01 sys=0.00, real=0.02 secs]
+ * 5.293: [GC pause (GCLocker Initiated GC) (young), 0.0176868 secs][Other: 8.3 ms][Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 415.0M(30.0G)-&gt;313.0M(30.0G)] [Times: user=0.01 sys=0.00, real=0.02 secs]
  * </pre>
  * 
  * <p>
@@ -212,7 +213,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs][Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 12.9G(30.0G)-&gt;11.3G(30.0G)] [Times: user=0.19 sys=0.00, real=0.05 secs]
+ * 2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs][Other: 2.7 ms][Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 12.9G(30.0G)-&gt;11.3G(30.0G)] [Times: user=0.19 sys=0.00, real=0.05 secs]
  * </pre>
  * 
  * <p>
@@ -327,19 +328,38 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * 2021-10-27T12:32:11.621-0400: 2021-10-27T12:32:11.621-04000.210: : [GC concurrent-root-region-scan-start]
      *
-     * 5) DATESTAMP: DATESTAMP: TIMESTAMP: TIMESTAMP
+     * 5) DATESTAMP: DATESTAMP: TIMESTAMP: TIMESTAMP:
      *
      * 2021-10-26T18:15:06.169-0400: 2021-10-26T18:15:06.169-0400: 0.156: 0.156: [GC concurrent-root-region-scan-start]
      *
      * 2021-10-27T08:03:11.806-04002021-10-27T08:03:11.806-0400: : 0.2230.223: : [GC concurrent-root-region-scan-start]
+     *
+     * 2022-10-31T21:51:10.608+0800: 2022-10-31T21:51:10.608+0800494958.042: : 494958.042: [GC
+     * concurrent-root-region-scan-start]
+     * 
+     * 6) DATESTAMP: TIMESTAMP: DATESTAMP:
+     * 
+     * 2022-10-31T17:20:02.747+0800: 478690.181: 2022-10-31T17:20:02.747+0800: [GC concurrent-root-region-scan-start]
+     * 
+     * 2022-10-31T21:13:16.044+0800: 492683.478: 2022-10-31T21:13:16.044+0800[GC concurrent-root-region-scan-start]
+     * 
+     * 7) DATESTAMP: TIMESTAMP: DATESTAMP: TIMESTAMP:
+     * 
+     * 2022-10-31T22:59:37.717+0800: 499065.151: 2022-10-31T22:59:37.717+0800: 499065.151: [GC
+     * concurrent-root-region-scan-start]
+     * 
+     * 2022-11-01T20:32:55.433+0800: 576662.8672022-11-01T20:32:55.433+0800: : 576662.867: [GC
+     * concurrent-root-region-scan-start]
      */
     private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^((" + JdkRegEx.DECORATOR + ")|("
             + JdkRegEx.DATESTAMP + "(: )?" + JdkRegEx.DATESTAMP + "(:)?( :)?)|(" + JdkRegEx.TIMESTAMP + "(: )?"
-            + JdkRegEx.TIMESTAMP + ")(: :)?|(" + JdkRegEx.DATESTAMP + ": " + JdkRegEx.DATESTAMP + "(: )?"
-            + JdkRegEx.TIMESTAMP + ":( :)?)|(" + JdkRegEx.DATESTAMP + "(: )?" + JdkRegEx.DATESTAMP + ": (: )?"
-            + JdkRegEx.TIMESTAMP + "(: )?" + JdkRegEx.TIMESTAMP
-            + ":( :)?))[ ]{0,1}(\\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, "
-            + JdkRegEx.DURATION + ")?\\])[ ]*$";
+            + JdkRegEx.TIMESTAMP + "(: :)?)|(" + JdkRegEx.DATESTAMP + ": " + JdkRegEx.DATESTAMP + "(: )?"
+            + JdkRegEx.TIMESTAMP + ":( :)?)|(" + JdkRegEx.DATESTAMP + "(: )?" + JdkRegEx.DATESTAMP + "(: ){0,2}"
+            + JdkRegEx.TIMESTAMP + "(: ){0,2}" + JdkRegEx.TIMESTAMP + "(: ){0,2})|(" + JdkRegEx.DATESTAMP + ": "
+            + JdkRegEx.TIMESTAMP + "(: )?" + JdkRegEx.DATESTAMP + "(: ){0,2})|(" + JdkRegEx.DATESTAMP + ": "
+            + JdkRegEx.TIMESTAMP + "(: ){0,1}" + JdkRegEx.DATESTAMP + "(: ){1,2}" + JdkRegEx.TIMESTAMP
+            + ": ))[ ]{0,1}(\\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, " + JdkRegEx.DURATION
+            + ")?\\])[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_CONCURRENT);
@@ -446,8 +466,9 @@ public class G1PreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK = "^(" + JdkRegEx.DECORATOR
             + " \\[GC pause( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE
             + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\))? \\(young\\) \\(initial-mark\\)(, " + JdkRegEx.DURATION
-            + "\\])?)( " + JdkRegEx.DECORATOR + " \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
+            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_SYSTEM_GC
+            + ")\\))? \\(young\\) \\(initial-mark\\)(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.DECORATOR
+            + " \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK);
@@ -562,6 +583,16 @@ public class G1PreprocessAction implements PreprocessAction {
 
     private static final Pattern REGEX_RETAIN_MIDDLE_EDEN_PATTERN = Pattern.compile(REGEX_RETAIN_MIDDLE_EDEN);
 
+    /**
+     * Regular expression for retained <code>OtherTime</code> data.
+     * 
+     * [Other: 0.9 ms]
+     */
+    private static final String REGEX_RETAIN_MIDDLE_OTHER_TIME = "^[ ]{3}" + OtherTime.REGEX + "$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_OTHER_TIME);
+
     private static final Pattern REGEX_RETAIN_MIDDLE_PATTERN = Pattern.compile(REGEX_RETAIN_MIDDLE);
 
     /**
@@ -629,9 +660,8 @@ public class G1PreprocessAction implements PreprocessAction {
             "^   \\[Complete CSet Marking:.+$",
             //
             "^   \\[Clear CT:.+$",
-            // Other
-            // JDK8 has 3 leading spaces
-            "^   (   )?\\[Other:.+$",
+            // Toss Parallel block Other: dataset32.txt
+            "^[ ]{6}\\[Other:.+$",
             //
             "^      \\[Redirty Cards:.+$",
             //
@@ -784,6 +814,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_BEGINNING_FULL_CONCURRENT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_YOUNG_PAUSE_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_EDEN_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_DURATION_PATTERN.matcher(logLine).matches()
@@ -900,15 +931,19 @@ public class G1PreprocessAction implements PreprocessAction {
                     decorator = matcher.group(39) + ":";
                 } else if (matcher.group(43) != null) {
                     decorator = matcher.group(44) + ": " + matcher.group(63) + ":";
-                } else {
+                } else if (matcher.group(65) != null) {
                     decorator = matcher.group(66) + ": " + matcher.group(86) + ":";
+                } else if (matcher.group(90) != null) {
+                    decorator = matcher.group(91) + ": " + matcher.group(100) + ":";
+                } else {
+                    decorator = matcher.group(113) + ": " + matcher.group(122) + ":";
                 }
                 if (!context.contains(TOKEN)) {
                     // Output now
-                    this.logEntry = decorator + " " + matcher.group(90);
+                    this.logEntry = decorator + " " + matcher.group(135);
                 } else {
                     // Output later
-                    entangledLogLines.add(decorator + " " + matcher.group(90));
+                    entangledLogLines.add(decorator + " " + matcher.group(135));
                 }
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
@@ -981,6 +1016,12 @@ public class G1PreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1);
+                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            }
         } else if ((matcher = REGEX_RETAIN_END_PATTERN.matcher(logEntry)).matches()) {
             // End of logging event
             matcher.reset();

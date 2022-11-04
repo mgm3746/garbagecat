@@ -108,6 +108,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class G1ConcurrentEvent extends G1Collector implements LogEvent, ParallelEvent {
 
+    private static final Pattern pattern = Pattern.compile(G1ConcurrentEvent.REGEX);
+
     /**
      * Regular expressions defining the logging.
      */
@@ -117,7 +119,16 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent, Parallel
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?(, avg " + JdkRegEx.PERCENT + ", " + JdkRegEx.DURATION
             + "\\])?" + TimesData.REGEX + "?[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -164,16 +175,5 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent, Parallel
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
     }
 }

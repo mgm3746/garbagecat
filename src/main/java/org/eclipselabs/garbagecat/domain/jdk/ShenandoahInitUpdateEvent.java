@@ -59,10 +59,24 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  */
 public class ShenandoahInitUpdateEvent extends ShenandoahCollector implements BlockingEvent, ParallelEvent {
 
+    public static final Pattern pattern = Pattern.compile(ShenandoahInitUpdateEvent.REGEX);
+
     /**
-     * The log entry for the event. Can be used for debugging purposes.
+     * Regular expressions defining the logging.
      */
-    private String logEntry;
+    public static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+            + ") [\\[]{0,1}Pause Init Update Refs[,]{0,1} " + JdkRegEx.DURATION_MS + "[\\]]{0,1}[ ]*$";
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -70,17 +84,14 @@ public class ShenandoahInitUpdateEvent extends ShenandoahCollector implements Bl
     private long duration;
 
     /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
      * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
-
-    /**
-     * Regular expressions defining the logging.
-     */
-    public static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Pause Init Update Refs[,]{0,1} " + UnifiedRegEx.DURATION + "[\\]]{0,1}[ ]*$";
-
-    public static final Pattern pattern = Pattern.compile(REGEX);
 
     /**
      * Create event from log entry.
@@ -150,30 +161,19 @@ public class ShenandoahInitUpdateEvent extends ShenandoahCollector implements Bl
         this.duration = duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
     public long getDuration() {
         return duration;
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString();
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public long getTimestamp() {
+        return timestamp;
     }
 }

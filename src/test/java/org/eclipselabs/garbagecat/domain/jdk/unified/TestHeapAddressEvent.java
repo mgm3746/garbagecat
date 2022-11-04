@@ -31,11 +31,11 @@ import org.junit.jupiter.api.Test;
 class TestHeapAddressEvent {
 
     @Test
-    void testLogLine() {
-        String logLine = "[0.004s][info][gc,heap,coops] Heap address: 0x00000000fc000000, size: 64 MB, "
-                + "Compressed Oops mode: 32-bit";
-        assertTrue(HeapAddressEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_ADDRESS.toString() + ".");
+    void testCompressedOops() {
+        String logLine = "[0.019s][info][gc,heap,coops] Heap address: 0x00000006c2800000, size: 4056 MB, "
+                + "Compressed Oops mode: Zero based, Oop shift amount: 3";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapAddressEvent,
+                JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not parsed.");
     }
 
     @Test
@@ -47,11 +47,11 @@ class TestHeapAddressEvent {
     }
 
     @Test
-    void testParseLogLine() {
+    void testLogLine() {
         String logLine = "[0.004s][info][gc,heap,coops] Heap address: 0x00000000fc000000, size: 64 MB, "
                 + "Compressed Oops mode: 32-bit";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapAddressEvent,
-                JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not parsed.");
+        assertTrue(HeapAddressEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_ADDRESS.toString() + ".");
     }
 
     @Test
@@ -63,25 +63,17 @@ class TestHeapAddressEvent {
     }
 
     @Test
+    void testParseLogLine() {
+        String logLine = "[0.004s][info][gc,heap,coops] Heap address: 0x00000000fc000000, size: 64 MB, "
+                + "Compressed Oops mode: 32-bit";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapAddressEvent,
+                JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not parsed.");
+    }
+
+    @Test
     void testReportable() {
         assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.HEAP_ADDRESS),
                 JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
-    void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.HEAP_ADDRESS);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not indentified as unified.");
-    }
-
-    @Test
-    void testCompressedOops() {
-        String logLine = "[0.019s][info][gc,heap,coops] Heap address: 0x00000006c2800000, size: 4056 MB, "
-                + "Compressed Oops mode: Zero based, Oop shift amount: 3";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapAddressEvent,
-                JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not parsed.");
     }
 
     @Test
@@ -90,5 +82,13 @@ class TestHeapAddressEvent {
                 + "Compressed Oops mode: 32-bit";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapAddressEvent,
                 JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not parsed.");
+    }
+
+    @Test
+    void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.HEAP_ADDRESS);
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not indentified as unified.");
     }
 }

@@ -27,6 +27,111 @@ import org.junit.jupiter.api.Test;
 class TestParallelCompactingOldEvent {
 
     @Test
+    void testAllocationFailureTrigger() {
+        String logLine = "3203650.654: [Full GC (Allocation Failure) [PSYoungGen: 393482K->393073K(532992K)] "
+                + "[ParOldGen: 1398224K->1398199K(1398272K)] 1791707K->1791273K(1931264K), "
+                + "[Metaspace: 170955K->170731K(1220608K)], 3.5730395 secs] "
+                + "[Times: user=26.24 sys=0.09, real=3.57 secs]";
+        assertTrue(ParallelCompactingOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
+        assertEquals(Long.parseLong("3203650654"), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE),
+                "Trigger not recognized as " + JdkUtil.TriggerType.ALLOCATION_FAILURE.toString() + ".");
+        assertEquals(kilobytes(393482), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(393073), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
+        assertEquals(kilobytes(532992), event.getYoungSpace(), "Young available size not parsed correctly.");
+        assertEquals(kilobytes(1398224), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
+        assertEquals(kilobytes(1398199), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
+        assertEquals(kilobytes(1398272), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(kilobytes(170955), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(170731), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(1220608), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+        assertEquals(3573039, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(2624, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(9, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(357, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(738, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
+    void testDatestamp() {
+        String logLine = "2017-02-01T17:09:50.180+0000: [Full GC (Heap Dump Initiated GC) "
+                + "[PSYoungGen: 33192K->0K(397312K)] [ParOldGen: 885002K->812903K(890368K)] "
+                + "918194K->812903K(1287680K), [Metaspace: 142181K->141753K(1185792K)], 2.3728899 secs] "
+                + "[Times: user=7.55 sys=0.60, real=2.37 secs]";
+        assertTrue(ParallelCompactingOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
+        assertEquals(Long.parseLong("539266190180"), event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testHeapDumpInitiatedGcTrigger() {
+        String logLine = "2017-02-01T17:09:50.180+0000: 1029482.070: [Full GC (Heap Dump Initiated GC) "
+                + "[PSYoungGen: 33192K->0K(397312K)] [ParOldGen: 885002K->812903K(890368K)] "
+                + "918194K->812903K(1287680K), [Metaspace: 142181K->141753K(1185792K)], 2.3728899 secs] "
+                + "[Times: user=7.55 sys=0.60, real=2.37 secs]";
+        assertTrue(ParallelCompactingOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
+        assertEquals(Long.parseLong("1029482070"), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC),
+                "Trigger not recognized as " + JdkUtil.TriggerType.HEAP_DUMP_INITIATED_GC.toString() + ".");
+        assertEquals(kilobytes(33192), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
+        assertEquals(kilobytes(397312), event.getYoungSpace(), "Young available size not parsed correctly.");
+        assertEquals(kilobytes(885002), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
+        assertEquals(kilobytes(812903), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
+        assertEquals(kilobytes(890368), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(kilobytes(142181), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(141753), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(1185792), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+        assertEquals(2372889, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(755, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(60, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(237, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(344, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
+    void testHeapInspectionInitiatedGcTrigger() {
+        String logLine = "285197.105: [Full GC (Heap Inspection Initiated GC) [PSYoungGen: 47669K->0K(1514496K)] "
+                + "[ParOldGen: 2934846K->851463K(4718592K)] 2982516K->851463K(6233088K), "
+                + "[Metaspace: 3959933K->3959881K(3977216K)], 2.4308400 secs] "
+                + "[Times: user=6.95 sys=0.03, real=2.43 secs]";
+        assertTrue(ParallelCompactingOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
+        assertEquals((long) 285197105, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC),
+                "Trigger not recognized as " + JdkUtil.TriggerType.HEAP_INSPECTION_INITIATED_GC.toString() + ".");
+        assertEquals(kilobytes(47669), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
+        assertEquals(kilobytes(1514496), event.getYoungSpace(), "Young available size not parsed correctly.");
+        assertEquals(kilobytes(2934846), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
+        assertEquals(kilobytes(851463), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
+        assertEquals(kilobytes(4718592), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(kilobytes(3959933), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(3959881), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(3977216), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+        assertEquals(2430840, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(695, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(3, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(243, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(288, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
+    void testIsBlocking() {
+        String logLine = "2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] "
+                + "[ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) "
+                + "[PSPermGen: 81960K->81783K(164352K)], 2.4749181 secs]";
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + " not indentified as blocking.");
+    }
+
+    @Test
     void testLogLine() {
         String logLine = "2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] "
                 + "[ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) "
@@ -48,12 +153,31 @@ class TestParallelCompactingOldEvent {
     }
 
     @Test
-    void testLogLineWhiteSpaceAtEnd() {
-        String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
-                + "[ParOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
-                + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]  ";
+    void testLogLineErgonomicsTrigger() {
+        String logLine = "21415.385: [Full GC (Ergonomics) [PSYoungGen: 105768K->0K(547840K)] "
+                + "[ParOldGen: 1390311K->861344K(1398272K)] 1496080K->861344K(1946112K), "
+                + "[Metaspace: 136339K->135256K(1177600K)], 3.4522057 secs] "
+                + "[Times: user=11.58 sys=0.64, real=3.45 secs]";
         assertTrue(ParallelCompactingOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
+        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
+        assertEquals((long) 21415385, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ERGONOMICS),
+                "Trigger not recognized as " + JdkUtil.TriggerType.ERGONOMICS.toString() + ".");
+        assertEquals(kilobytes(105768), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
+        assertEquals(kilobytes(547840), event.getYoungSpace(), "Young available size not parsed correctly.");
+        assertEquals(kilobytes(1390311), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
+        assertEquals(kilobytes(861344), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
+        assertEquals(kilobytes(1398272), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(kilobytes(136339), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
+        assertEquals(kilobytes(135256), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
+        assertEquals(kilobytes(1177600), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(3452205, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1158, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(64, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(345, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(355, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
     @Test
@@ -135,136 +259,12 @@ class TestParallelCompactingOldEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] "
-                + "[ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) "
-                + "[PSPermGen: 81960K->81783K(164352K)], 2.4749181 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + " not indentified as blocking.");
-    }
-
-    @Test
-    void testLogLineErgonomicsTrigger() {
-        String logLine = "21415.385: [Full GC (Ergonomics) [PSYoungGen: 105768K->0K(547840K)] "
-                + "[ParOldGen: 1390311K->861344K(1398272K)] 1496080K->861344K(1946112K), "
-                + "[Metaspace: 136339K->135256K(1177600K)], 3.4522057 secs] "
-                + "[Times: user=11.58 sys=0.64, real=3.45 secs]";
+    void testLogLineWhiteSpaceAtEnd() {
+        String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
+                + "[ParOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
+                + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]  ";
         assertTrue(ParallelCompactingOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
-        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
-        assertEquals((long) 21415385, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ERGONOMICS),
-                "Trigger not recognized as " + JdkUtil.TriggerType.ERGONOMICS.toString() + ".");
-        assertEquals(kilobytes(105768), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(547840), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(1390311), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(861344), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1398272), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(136339), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(135256), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1177600), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(3452205, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(1158, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(64, event.getTimeSys(), "Sys time not parsed correctly.");
-        assertEquals(345, event.getTimeReal(), "Real time not parsed correctly.");
-        assertEquals(355, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testHeapInspectionInitiatedGcTrigger() {
-        String logLine = "285197.105: [Full GC (Heap Inspection Initiated GC) [PSYoungGen: 47669K->0K(1514496K)] "
-                + "[ParOldGen: 2934846K->851463K(4718592K)] 2982516K->851463K(6233088K), "
-                + "[Metaspace: 3959933K->3959881K(3977216K)], 2.4308400 secs] "
-                + "[Times: user=6.95 sys=0.03, real=2.43 secs]";
-        assertTrue(ParallelCompactingOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
-        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
-        assertEquals((long) 285197105, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC),
-                "Trigger not recognized as " + JdkUtil.TriggerType.HEAP_INSPECTION_INITIATED_GC.toString() + ".");
-        assertEquals(kilobytes(47669), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(1514496), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(2934846), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(851463), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(4718592), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(3959933), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
-        assertEquals(kilobytes(3959881), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
-        assertEquals(kilobytes(3977216), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
-        assertEquals(2430840, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(695, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(3, event.getTimeSys(), "Sys time not parsed correctly.");
-        assertEquals(243, event.getTimeReal(), "Real time not parsed correctly.");
-        assertEquals(288, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testAllocationFailureTrigger() {
-        String logLine = "3203650.654: [Full GC (Allocation Failure) [PSYoungGen: 393482K->393073K(532992K)] "
-                + "[ParOldGen: 1398224K->1398199K(1398272K)] 1791707K->1791273K(1931264K), "
-                + "[Metaspace: 170955K->170731K(1220608K)], 3.5730395 secs] "
-                + "[Times: user=26.24 sys=0.09, real=3.57 secs]";
-        assertTrue(ParallelCompactingOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
-        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
-        assertEquals(Long.parseLong("3203650654"), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE),
-                "Trigger not recognized as " + JdkUtil.TriggerType.ALLOCATION_FAILURE.toString() + ".");
-        assertEquals(kilobytes(393482), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(393073), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(532992), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(1398224), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(1398199), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1398272), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(170955), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
-        assertEquals(kilobytes(170731), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
-        assertEquals(kilobytes(1220608), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
-        assertEquals(3573039, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(2624, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(9, event.getTimeSys(), "Sys time not parsed correctly.");
-        assertEquals(357, event.getTimeReal(), "Real time not parsed correctly.");
-        assertEquals(738, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testHeapDumpInitiatedGcTrigger() {
-        String logLine = "2017-02-01T17:09:50.180+0000: 1029482.070: [Full GC (Heap Dump Initiated GC) "
-                + "[PSYoungGen: 33192K->0K(397312K)] [ParOldGen: 885002K->812903K(890368K)] "
-                + "918194K->812903K(1287680K), [Metaspace: 142181K->141753K(1185792K)], 2.3728899 secs] "
-                + "[Times: user=7.55 sys=0.60, real=2.37 secs]";
-        assertTrue(ParallelCompactingOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
-        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
-        assertEquals(Long.parseLong("1029482070"), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC),
-                "Trigger not recognized as " + JdkUtil.TriggerType.HEAP_DUMP_INITIATED_GC.toString() + ".");
-        assertEquals(kilobytes(33192), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(397312), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(885002), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(812903), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(890368), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(142181), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
-        assertEquals(kilobytes(141753), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
-        assertEquals(kilobytes(1185792), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
-        assertEquals(2372889, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(755, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(60, event.getTimeSys(), "Sys time not parsed correctly.");
-        assertEquals(237, event.getTimeReal(), "Real time not parsed correctly.");
-        assertEquals(344, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testDatestamp() {
-        String logLine = "2017-02-01T17:09:50.180+0000: [Full GC (Heap Dump Initiated GC) "
-                + "[PSYoungGen: 33192K->0K(397312K)] [ParOldGen: 885002K->812903K(890368K)] "
-                + "918194K->812903K(1287680K), [Metaspace: 142181K->141753K(1185792K)], 2.3728899 secs] "
-                + "[Times: user=7.55 sys=0.60, real=2.37 secs]";
-        assertTrue(ParallelCompactingOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
-        ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
-        assertEquals(Long.parseLong("539266190180"), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

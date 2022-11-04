@@ -195,17 +195,9 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_EVENT = "^(" + JdkRegEx.DECORATOR
             + " \\[(Concurrent (cleanup|marking)|Pause Full)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\))?, " + UnifiedRegEx.DURATION + "\\])$";
+            + JdkRegEx.SIZE + "\\))?, " + JdkRegEx.DURATION_MS + "\\])$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_EVENT_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_EVENT);
-
-    /**
-     * Indicates the current log entry is either the beginning of a @link
-     * org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent} or @link
-     * org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent} that spans multiple logging lines, or it is a single
-     * line logging event.
-     */
-    private static final String TOKEN_BEGINNING_SHENANDOAH = "TOKEN_BEGINNING_OF_SHENANDOAH";
 
     /**
      * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
@@ -213,7 +205,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      * 
      * , 27.5589374 secs]
      */
-    private static final String REGEX_RETAIN_DURATION = "(, " + UnifiedRegEx.DURATION + "\\])[ ]*";
+    private static final String REGEX_RETAIN_DURATION = "(, " + JdkRegEx.DURATION_MS + "\\])[ ]*";
 
     private static final Pattern REGEX_RETAIN_DURATION_PATTERN = Pattern.compile(REGEX_RETAIN_DURATION);
 
@@ -224,8 +216,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_END_METASPACE = "(, \\[Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\)\\])[ ]*";
-    private static final Pattern REGEX_RETAIN_END_METASPACE_PATTERN = Pattern.compile(REGEX_RETAIN_END_METASPACE);
 
+    private static final Pattern REGEX_RETAIN_END_METASPACE_PATTERN = Pattern.compile(REGEX_RETAIN_END_METASPACE);
     /**
      * Regular expression for retained middle metaspace data.
      *
@@ -256,9 +248,9 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             + "\\))( NonClass: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) Class: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\))?$";
+
     private static final Pattern REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_METASPACE_DATA);
-
     /**
      * Regular expressions for lines thrown away.
      */
@@ -362,6 +354,14 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      * non-concurrent event.
      */
     public static final String TOKEN = "SHENANDOAH_PREPROCESS_ACTION_TOKEN";
+
+    /**
+     * Indicates the current log entry is either the beginning of a @link
+     * org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent} or @link
+     * org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent} that spans multiple logging lines, or it is a single
+     * line logging event.
+     */
+    private static final String TOKEN_BEGINNING_SHENANDOAH = "TOKEN_BEGINNING_OF_SHENANDOAH";
 
     /**
      * Indicates the current log entry is either the beginning of a @link

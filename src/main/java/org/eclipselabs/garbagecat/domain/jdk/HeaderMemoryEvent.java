@@ -50,28 +50,35 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class HeaderMemoryEvent implements LogEvent {
 
+    private static Pattern pattern = Pattern.compile(HeaderMemoryEvent.REGEX);
+
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^Memory: (4|8)k page, physical " + HeaderMemoryEvent.SIZE + "\\("
+            + HeaderMemoryEvent.SIZE + " free\\)(, swap " + HeaderMemoryEvent.SIZE + "\\(" + HeaderMemoryEvent.SIZE
+            + " free\\))?$";
+
     /**
      * Regular expression for memory size.
      */
     private static final String SIZE = "(\\d{1,9})k";
 
     /**
-     * Regular expressions defining the logging.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private static final String REGEX = "^Memory: (4|8)k page, physical " + SIZE + "\\(" + SIZE + " free\\)(, swap "
-            + SIZE + "\\(" + SIZE + " free\\))?$";
-
-    private static Pattern pattern = Pattern.compile(REGEX);
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
 
     /**
      * Physical memory (kilobytes).
@@ -92,6 +99,11 @@ public class HeaderMemoryEvent implements LogEvent {
      * Swap free (kilobytes).
      */
     private int swapFree;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
     /**
      * Create event from log entry.
@@ -121,10 +133,6 @@ public class HeaderMemoryEvent implements LogEvent {
         return JdkUtil.LogEventType.HEADER_MEMORY.toString();
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
     public int getPhysicalMemory() {
         return physicalMemory;
     }
@@ -141,14 +149,7 @@ public class HeaderMemoryEvent implements LogEvent {
         return swapFree;
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public long getTimestamp() {
+        return timestamp;
     }
 }

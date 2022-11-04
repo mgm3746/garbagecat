@@ -29,19 +29,59 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedUtil {
 
     @Test
-    void testUsingSerialIsUnifiedLogging() {
+    void testUnifiedCmsConcurrentIsUnifiedLogging() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.USING_SERIAL);
+        eventTypes.add(LogEventType.UNIFIED_CONCURRENT);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.USING_SERIAL.toString() + " should be identified as unified.");
+                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " should be identified as unified.");
     }
 
     @Test
-    void testUsingParallelIsUnifiedLogging() {
+    void testUnifiedCmsInitialMarkIsUnifiedLogging() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.USING_PARALLEL);
+        eventTypes.add(LogEventType.UNIFIED_CMS_INITIAL_MARK);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.USING_PARALLEL.toString() + " should be identified as unified.");
+                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " should be identified as unified.");
+    }
+
+    @Test
+    void testUnifiedG1ConcurrentIsUnifiedLogging() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.UNIFIED_CONCURRENT);
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " should be identified as unified.");
+    }
+
+    @Test
+    void testUnifiedOldIsUnifiedLogging() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.UNIFIED_OLD);
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " should be identified as unified.");
+    }
+
+    @Test
+    void testUnifiedRemarkIsUnifiedLogging() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.UNIFIED_REMARK);
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " should be identified as unified.");
+    }
+
+    @Test
+    void testUnifiedYoungIsUnifiedLogging() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.UNIFIED_YOUNG);
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " should be identified as unified.");
+    }
+
+    @Test
+    void testUnknownIsNotUnifiedLogging() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.UNKNOWN);
+        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " should not be identified as unified.");
     }
 
     @Test
@@ -61,58 +101,18 @@ class TestUnifiedUtil {
     }
 
     @Test
-    void testUnifiedYoungIsUnifiedLogging() {
+    void testUsingParallelIsUnifiedLogging() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_YOUNG);
+        eventTypes.add(LogEventType.USING_PARALLEL);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " should be identified as unified.");
+                JdkUtil.LogEventType.USING_PARALLEL.toString() + " should be identified as unified.");
     }
 
     @Test
-    void testUnifiedOldIsUnifiedLogging() {
+    void testUsingSerialIsUnifiedLogging() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_OLD);
+        eventTypes.add(LogEventType.USING_SERIAL);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " should be identified as unified.");
-    }
-
-    @Test
-    void testUnifiedCmsInitialMarkIsUnifiedLogging() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_CMS_INITIAL_MARK);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " should be identified as unified.");
-    }
-
-    @Test
-    void testUnifiedCmsConcurrentIsUnifiedLogging() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_CONCURRENT);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " should be identified as unified.");
-    }
-
-    @Test
-    void testUnifiedG1ConcurrentIsUnifiedLogging() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_CONCURRENT);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " should be identified as unified.");
-    }
-
-    @Test
-    void testUnifiedRemarkIsUnifiedLogging() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_REMARK);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " should be identified as unified.");
-    }
-
-    @Test
-    void testUnknownIsNotUnifiedLogging() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNKNOWN);
-        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " should not be identified as unified.");
+                JdkUtil.LogEventType.USING_SERIAL.toString() + " should be identified as unified.");
     }
 }

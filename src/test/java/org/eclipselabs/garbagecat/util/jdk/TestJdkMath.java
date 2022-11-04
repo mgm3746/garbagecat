@@ -150,6 +150,13 @@ class TestJdkMath {
     }
 
     @Test
+    void testConvertMicrosToCentis() {
+        long micros = 123456;
+        assertEquals(12, JdkMath.convertMicrosToCentis(micros).longValue(),
+                "Micros not converted to centiseconds with expected rounding mode.");
+    }
+
+    @Test
     void testConvertMillisToMicros() {
         String millis = "0.0975";
         assertEquals(97, JdkMath.convertMillisToMicros(millis).intValue(),

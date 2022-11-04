@@ -114,6 +114,19 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class ParNewEvent extends CmsIncrementalModeCollector
         implements BlockingEvent, YoungCollection, ParallelEvent, YoungData, OldData, TriggerData, TimesData {
 
+    private static final Pattern pattern = Pattern.compile(ParNewEvent.REGEX);
+
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
+            + "\\)[ ]{0,1})?(\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K + "\\)\\])?)?"
+            + JdkRegEx.DECORATOR + " \\[(Full)?[ ]{0,1}GC( )?(\\(" + ParNewEvent.TRIGGER + "\\))?( )?(("
+            + JdkRegEx.DECORATOR + " )?\\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?:)? "
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] ("
+            + JdkRegEx.SIZE_K + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)" + JdkRegEx.ICMS_DC_BLOCK
+            + "?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+
     /**
      * Trigger(s) regular expression(s).
      */
@@ -122,21 +135,15 @@ public class ParNewEvent extends CmsIncrementalModeCollector
             + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")";
 
     /**
-     * Regular expressions defining the logging.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
-            + "\\)[ ]{0,1})?(\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K + "\\)\\])?)?"
-            + JdkRegEx.DECORATOR + " \\[(Full)?[ ]{0,1}GC( )?(\\(" + TRIGGER + "\\))?( )?((" + JdkRegEx.DECORATOR
-            + " )?\\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?:)? " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] (" + JdkRegEx.SIZE_K
-            + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, "
-            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
-
-    private static final Pattern pattern = Pattern.compile(ParNewEvent.REGEX);
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -144,24 +151,9 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     private long duration;
 
     /**
-     * The time when the GC event started in milliseconds after JVM startup.
+     * The log entry for the event. Can be used for debugging purposes.
      */
-    private long timestamp;
-
-    /**
-     * Young generation size at beginning of GC event.
-     */
-    private Memory young;
-
-    /**
-     * Young generation size at end of GC event.
-     */
-    private Memory youngEnd;
-
-    /**
-     * Available space in young generation. Equals young generation allocation minus one survivor space.
-     */
-    private Memory youngAvailable;
+    private String logEntry;
 
     /**
      * Old generation size at beginning of GC event.
@@ -169,24 +161,24 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     private Memory old;
 
     /**
-     * Old generation size at end of GC event.
-     */
-    private Memory oldEnd;
-
-    /**
      * Space allocated to old generation.
      */
     private Memory oldAllocation;
 
     /**
-     * The trigger for the GC event.
+     * Old generation size at end of GC event.
      */
-    private String trigger;
+    private Memory oldEnd;
 
     /**
-     * The time of all user (non-kernel) threads added together in centiseconds.
+     * The wall (clock) time in centiseconds.
      */
-    private int timeUser;
+    private int timeReal;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
     /**
      * The time of all system (kernel) threads added together in centiseconds.
@@ -194,9 +186,29 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     private int timeSys;
 
     /**
-     * The wall (clock) time in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
-    private int timeReal;
+    private int timeUser;
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
+
+    /**
+     * Young generation size at beginning of GC event.
+     */
+    private Memory young;
+
+    /**
+     * Available space in young generation. Equals young generation allocation minus one survivor space.
+     */
+    private Memory youngAvailable;
+
+    /**
+     * Young generation size at end of GC event.
+     */
+    private Memory youngEnd;
 
     /**
      * Create event from log entry.
@@ -268,74 +280,63 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         this.duration = duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
     public long getDuration() {
         return duration;
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public Memory getYoungOccupancyInit() {
-        return young;
-    }
-
-    public Memory getYoungOccupancyEnd() {
-        return youngEnd;
-    }
-
-    public Memory getYoungSpace() {
-        return youngAvailable;
-    }
-
-    public Memory getOldOccupancyInit() {
-        return old;
-    }
-
-    public Memory getOldOccupancyEnd() {
-        return oldEnd;
-    }
-
-    public Memory getOldSpace() {
-        return oldAllocation;
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.PAR_NEW.toString();
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Memory getOldOccupancyEnd() {
+        return oldEnd;
     }
 
-    public int getTimeUser() {
-        return timeUser;
+    public Memory getOldOccupancyInit() {
+        return old;
     }
 
-    public int getTimeSys() {
-        return timeSys;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
+    public Memory getOldSpace() {
+        return oldAllocation;
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public String getTrigger() {
+        return trigger;
+    }
+
+    public Memory getYoungOccupancyEnd() {
+        return youngEnd;
+    }
+
+    public Memory getYoungOccupancyInit() {
+        return young;
+    }
+
+    public Memory getYoungSpace() {
+        return youngAvailable;
     }
 }

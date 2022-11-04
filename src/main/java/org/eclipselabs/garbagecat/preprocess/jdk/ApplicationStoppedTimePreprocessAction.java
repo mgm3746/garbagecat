@@ -50,7 +50,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </pre>
  * 
  * <p>
- * 2) Decorator missing:
+ * 2) No decorator (e.g. appended to the previous line):
  * </p>
  *
  * <pre>
@@ -90,6 +90,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <pre>
  * 2021-10-27T10:52:38.345-0400: 2021-10-27T10:52:38.345-04000.181: : Total time for which application threads were stopped: 0.0013170 seconds, Stopping threads took: 0.0000454 seconds
  * 2021-10-27T19:39:02.591-0400: 2021-10-27T19:39:02.591-0400: 0.210: Total time for which application threads were stopped: 0.0007018 seconds, Stopping threads took: 0.0000202 seconds
+ * 2022-11-01T22:22:52.436+08002022-11-01T22:22:52.436+0800: : 583259.869: Total time for which application threads were stopped: 0.0590826 seconds, Stopping threads took: 0.0001473 seconds
  * </pre>
  *
  * <p>
@@ -116,26 +117,34 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 2021-10-28T07:41:40.468-0400: 0.179: Total time for which application threads were stopped: 0.0012393 seconds, Stopping threads took: 0.0000233 seconds
  * </pre>
  * 
+ * <p>
+ * 6) DATESTAMP: TIMESTAMP: DATESTAMP: TIMESTAMP:
+ * </p>
+ *
+ * <pre>
+ * 2022-11-01T22:19:41.968+0800: 583069.402: 2022-11-01T22:19:41.968+0800: 583069.402: Total time for which application threads were stopped: 0.1477543 seconds, Stopping threads took: 0.0000903 seconds
+ * </pre>
+ *
+ * <p>
+ * Preprocessed:
+ * </p>
+ * 
+ * <p>
+ * 7) TIMESTAMP:
+ * </p>
+ *
+ * <pre>
+ * : 492683.478: Total time for which application threads were stopped: 0.1442017 seconds, Stopping threads took: 0.0001502 seconds
+ * </pre>
+ *
+ * <pre>
+ * 492683.478: Total time for which application threads were stopped: 0.1442017 seconds, Stopping threads took: 0.0001502 seconds
+ * </pre>
  *
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  *
  */
 public class ApplicationStoppedTimePreprocessAction implements PreprocessAction {
-
-    /**
-     * Regular expression for no preprocessing needed
-     */
-    private static final String REGEX_NO_PREPROCESSING = "^(" + ApplicationStoppedTimeEvent.REGEX + ")$";
-
-    private static final Pattern REGEX_NO_PREPROCESSING_PATTERN = Pattern.compile(REGEX_NO_PREPROCESSING);
-
-    /**
-     * Regular expression missing decorator.
-     */
-    private static final String REGEX_DECORATOR_MISSING = "^: (Total time for which application threads were stopped: "
-            + "(-)?\\d{1,4}[\\.\\,]\\d{7} seconds, Stopping threads took: (-)?\\d{1,4}[\\.\\,]\\d{7} seconds)[ ]*$";
-
-    private static final Pattern REGEX_DECORATOR_MISSING_PATTERN = Pattern.compile(REGEX_DECORATOR_MISSING);
 
     /**
      * Regular expression DATESTAMP: DATESTAMP:.
@@ -155,9 +164,9 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
      * 2021-10-27T10:52:38.345-0400: 2021-10-27T10:52:38.345-04000.181: : Total time for which application threads were
      * stopped: 0.0013170 seconds, Stopping threads took: 0.0000454 seconds
      */
-    private static final String REGEX_DATESTAMP_DATESTAMP_TIMESTAMP = "^" + JdkRegEx.DATESTAMP + ": "
-            + JdkRegEx.DATESTAMP + "(: )?" + JdkRegEx.TIMESTAMP
-            + ": (: )?(Total time for which application threads were stopped: "
+    private static final String REGEX_DATESTAMP_DATESTAMP_TIMESTAMP = "^" + JdkRegEx.DATESTAMP + "(: )?"
+            + JdkRegEx.DATESTAMP + "(: ){0,2}" + JdkRegEx.TIMESTAMP
+            + "(: ){0,2}(Total time for which application threads were stopped: "
             + "(-)?\\d{1,4}[\\.\\,]\\d{7} seconds, Stopping threads took: (-)?\\d{1,4}[\\.\\,]\\d{7} seconds)[ ]*$";
 
     private static final Pattern REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_PATTERN = Pattern
@@ -170,8 +179,8 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
      * threads were stopped: 0.0012393 seconds, Stopping threads took: 0.0000233 seconds
      */
     private static final String REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP = "^" + JdkRegEx.DATESTAMP + ": "
-            + JdkRegEx.DATESTAMP + ": " + JdkRegEx.TIMESTAMP + ": " + JdkRegEx.TIMESTAMP
-            + "(: )?(Total time for which application threads were stopped: "
+            + JdkRegEx.DATESTAMP + ": " + JdkRegEx.TIMESTAMP + "(: )?" + JdkRegEx.TIMESTAMP
+            + "(: ){0,2}(Total time for which application threads were stopped: "
             + "(-)?\\d{1,4}[\\.\\,]\\d{7} seconds, Stopping threads took: (-)?\\d{1,4}[\\.\\,]\\d{7} seconds)[ ]*$";
 
     private static final Pattern REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP_PATTERN = Pattern
@@ -192,10 +201,69 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
             .compile(REGEX_DATESTAMP_TIMESTAMP_DATESTAMP);
 
     /**
+     * Regular expression DATESTAMP: TIMESTAMP: DATESTAMP: TIMESTAMP:.
+     *
+     * 2022-11-01T22:19:41.968+0800: 583069.402: 2022-11-01T22:19:41.968+0800: 583069.402: Total time for which
+     * application threads were stopped: 0.1477543 seconds, Stopping threads took: 0.0000903 seconds
+     */
+    private static final String REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_TIMESTAMP = "^" + JdkRegEx.DATESTAMP + ": "
+            + JdkRegEx.TIMESTAMP + ": " + JdkRegEx.DATESTAMP + ": " + JdkRegEx.TIMESTAMP
+            + ": (Total time for which application threads were stopped: (-)?\\d{1,4}[\\.\\,]\\d{7} seconds, Stopping "
+            + "threads took: (-)?\\d{1,4}[\\.\\,]\\d{7} seconds)[ ]*$";
+
+    private static final Pattern REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_TIMESTAMP_PATTERN = Pattern
+            .compile(REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_TIMESTAMP);
+
+    /**
+     * Regular expression missing decorator.
+     */
+    private static final String REGEX_DECORATOR_MISSING = "^: (Total time for which application threads were stopped: "
+            + "(-)?\\d{1,4}[\\.\\,]\\d{7} seconds, Stopping threads took: (-)?\\d{1,4}[\\.\\,]\\d{7} seconds)[ ]*$";
+
+    private static final Pattern REGEX_DECORATOR_MISSING_PATTERN = Pattern.compile(REGEX_DECORATOR_MISSING);
+
+    /**
+     * Regular expression for no preprocessing needed
+     */
+    private static final String REGEX_NO_PREPROCESSING = "^(" + ApplicationStoppedTimeEvent.REGEX + ")$";
+
+    private static final Pattern REGEX_NO_PREPROCESSING_PATTERN = Pattern.compile(REGEX_NO_PREPROCESSING);
+
+    /**
+     * Regular expression TIMESTAMP: (with preceding cruft).
+     *
+     * : 492683.478: Total time for which application threads were stopped: 0.1442017 seconds, Stopping threads took:
+     * 0.0001502 seconds
+     */
+    private static final String REGEX_TIMESTAMP = "^: " + JdkRegEx.TIMESTAMP
+            + ": (Total time for which application threads were stopped: (-)?\\d{1,4}[\\.\\,]\\d{7} seconds, Stopping "
+            + "threads took: (-)?\\d{1,4}[\\.\\,]\\d{7} seconds)[ ]*$";
+
+    private static final Pattern REGEX_TIMESTAMP_PATTERN = Pattern.compile(REGEX_TIMESTAMP);
+
+    /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
      * context is necessary to detangle multi-line events where logging patterns are shared among preprocessors.
      */
     public static final String TOKEN = "APPLICATION_STOPPED_TIME_PREPROCESS_ACTION_TOKEN";
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     *
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return REGEX_NO_PREPROCESSING_PATTERN.matcher(logLine).matches()
+                || REGEX_DECORATOR_MISSING_PATTERN.matcher(logLine).matches()
+                || REGEX_TIMESTAMP_PATTERN.matcher(logLine).matches()
+                || REGEX_DATESTAMP_DATESTAMP_PATTERN.matcher(logLine).matches()
+                || REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_PATTERN.matcher(logLine).matches()
+                || REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_PATTERN.matcher(logLine).matches()
+                || REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP_PATTERN.matcher(logLine).matches()
+                || REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_TIMESTAMP_PATTERN.matcher(logLine).matches();
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -242,7 +310,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
         } else if ((matcher = REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(10) + ": " + matcher.group(20) + ": " + matcher.group(22);
+                this.logEntry = matcher.group(11) + ": " + matcher.group(21) + ": " + matcher.group(23);
             }
             context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_PATTERN.matcher(logEntry)).matches()) {
@@ -254,7 +322,19 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
         } else if ((matcher = REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1) + ": " + matcher.group(20) + ": " + matcher.group(22);
+                this.logEntry = matcher.group(1) + ": " + matcher.group(21) + ": " + matcher.group(23);
+            }
+            context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if ((matcher = REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_TIMESTAMP_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1) + ": " + matcher.group(10) + ": " + matcher.group(21);
+            }
+            context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if ((matcher = REGEX_TIMESTAMP_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(1) + ": " + matcher.group(2);
             }
             context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         }
@@ -266,21 +346,5 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
 
     public String getName() {
         return JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString();
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     *
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return REGEX_NO_PREPROCESSING_PATTERN.matcher(logLine).matches()
-                || REGEX_DECORATOR_MISSING_PATTERN.matcher(logLine).matches()
-                || REGEX_DATESTAMP_DATESTAMP_PATTERN.matcher(logLine).matches()
-                || REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_PATTERN.matcher(logLine).matches()
-                || REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_PATTERN.matcher(logLine).matches()
-                || REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP_PATTERN.matcher(logLine).matches();
     }
 }

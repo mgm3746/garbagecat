@@ -25,6 +25,13 @@ import org.junit.jupiter.api.Test;
 class TestBlankLineEvent {
 
     @Test
+    void testLogLine() {
+        String logLine = "";
+        assertTrue(BlankLineEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.BLANK_LINE.toString() + ".");
+    }
+
+    @Test
     void testParseLogLine() {
         String logLine = "";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof BlankLineEvent,
@@ -36,13 +43,6 @@ class TestBlankLineEvent {
         String logLine = "";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
                 JdkUtil.LogEventType.BLANK_LINE.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
-    void testLogLine() {
-        String logLine = "";
-        assertTrue(BlankLineEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.BLANK_LINE.toString() + ".");
     }
 
 }

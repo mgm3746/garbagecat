@@ -67,18 +67,6 @@ class TestG1FullGcEvent {
     }
 
     @Test
-    void testLogLinePreprocessedDatestamp() {
-        String logLine = "2017-02-27T02:55:32.523+0300: [Full GC (Allocation Failure) 21G->20G(22G), "
-                + "40.6782890 secs][Eden: 0.0B(1040.0M)->0.0B(1120.0M) Survivors: 80.0M->0.0B "
-                + "Heap: 22.0G(22.0G)->20.6G(22.0G)], [Perm: 1252884K->1252884K(2097152K)] "
-                + "[Times: user=56.34 sys=1.78, real=40.67 secs]";
-        assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
-        G1FullGcEvent event = new G1FullGcEvent(logLine);
-        assertEquals(541450532523L, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
     void testLogLinePreprocessedClassHistogram() {
         String logLine = "49689.217: [Full GC49689.217: [Class Histogram (before full gc):, 8.8690440 secs]"
                 + " 11G->2270M(12G), 19.8185620 secs][Eden: 0.0B(612.0M)->0.0B(7372.0M) Survivors: 0.0B->0.0B "
@@ -97,6 +85,18 @@ class TestG1FullGcEvent {
         assertEquals(kilobytes(730823), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(2097152), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
         assertEquals(19818562, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLinePreprocessedDatestamp() {
+        String logLine = "2017-02-27T02:55:32.523+0300: [Full GC (Allocation Failure) 21G->20G(22G), "
+                + "40.6782890 secs][Eden: 0.0B(1040.0M)->0.0B(1120.0M) Survivors: 80.0M->0.0B "
+                + "Heap: 22.0G(22.0G)->20.6G(22.0G)], [Perm: 1252884K->1252884K(2097152K)] "
+                + "[Times: user=56.34 sys=1.78, real=40.67 secs]";
+        assertTrue(G1FullGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+        G1FullGcEvent event = new G1FullGcEvent(logLine);
+        assertEquals(541450532523L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

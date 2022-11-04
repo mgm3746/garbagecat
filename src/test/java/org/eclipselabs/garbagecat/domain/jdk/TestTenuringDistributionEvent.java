@@ -26,31 +26,10 @@ import org.junit.jupiter.api.Test;
 class TestTenuringDistributionEvent {
 
     @Test
-    void testNotBlocking() {
-        String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
-        assertTrue(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " incorrectly indentified as not reportable.");
-    }
-
-    @Test
-    void testIdentifyEventType() {
-        String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
-        assertTrue(JdkUtil.identifyEventType(logLine).equals(LogEventType.TENURING_DISTRIBUTION),
-                JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " not indentified.");
-    }
-
-    @Test
-    void testParseLogLine() {
-        String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof TenuringDistributionEvent,
-                JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " not indentified.");
+    void testAgeLine() {
+        String logLine = "- age 1: 3177664 bytes, 3177664 total";
+        assertTrue(TenuringDistributionEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + ".");
     }
 
     @Test
@@ -61,10 +40,31 @@ class TestTenuringDistributionEvent {
     }
 
     @Test
-    void testAgeLine() {
-        String logLine = "- age 1: 3177664 bytes, 3177664 total";
-        assertTrue(TenuringDistributionEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + ".");
+    void testIdentifyEventType() {
+        String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
+        assertTrue(JdkUtil.identifyEventType(logLine).equals(LogEventType.TENURING_DISTRIBUTION),
+                JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " not indentified.");
+    }
+
+    @Test
+    void testNotBlocking() {
+        String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " incorrectly indentified as blocking.");
+    }
+
+    @Test
+    void testParseLogLine() {
+        String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof TenuringDistributionEvent,
+                JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " not indentified.");
+    }
+
+    @Test
+    void testReportable() {
+        String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
+        assertTrue(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " incorrectly indentified as not reportable.");
     }
 
 }

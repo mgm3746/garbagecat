@@ -82,69 +82,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class ParallelScavengeEvent extends ParallelCollector
         implements BlockingEvent, YoungCollection, ParallelEvent, YoungData, OldData, TriggerData, TimesData {
 
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
+    private static final Pattern pattern = Pattern.compile(ParallelScavengeEvent.REGEX);
 
     /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
+     * Regular expressions defining the logging.
      */
-    private long duration;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
-
-    /**
-     * Young generation size at beginning of GC event.
-     */
-    private Memory young;
-
-    /**
-     * Young generation size at end of GC event.
-     */
-    private Memory youngEnd;
-
-    /**
-     * Available space in young generation. Equals young generation allocation minus one survivor space.
-     */
-    private Memory youngAvailable;
-
-    /**
-     * Old generation size at beginning of GC event.
-     */
-    private Memory old;
-
-    /**
-     * Old generation size at end of GC event.
-     */
-    private Memory oldEnd;
-
-    /**
-     * Space allocated to old generation.
-     */
-    private Memory oldAllocation;
-
-    /**
-     * The trigger for the GC event.
-     */
-    private String trigger;
-    /**
-     * The time of all user (non-kernel) threads added together in centiseconds.
-     */
-    private int timeUser;
-
-    /**
-     * The time of all system (kernel) threads added together in centiseconds.
-     */
-    private int timeSys;
-
-    /**
-     * The wall (clock) time in centiseconds.
-     */
-    private int timeReal;
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC(--)? (\\(" + ParallelScavengeEvent.TRIGGER
+            + "\\) )?(--)?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\)\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
+            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Trigger(s) regular expression(s).
@@ -155,14 +101,79 @@ public class ParallelScavengeEvent extends ParallelCollector
             + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + ")";
 
     /**
-     * Regular expressions defining the logging.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC(--)? (\\(" + TRIGGER
-            + "\\) )?(--)?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\)\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
-            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
-    private static final Pattern pattern = Pattern.compile(ParallelScavengeEvent.REGEX);
+    /**
+     * The elapsed clock time for the GC event in microseconds (rounded).
+     */
+    private long duration;
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * Old generation size at beginning of GC event.
+     */
+    private Memory old;
+
+    /**
+     * Space allocated to old generation.
+     */
+    private Memory oldAllocation;
+
+    /**
+     * Old generation size at end of GC event.
+     */
+    private Memory oldEnd;
+
+    /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
+
+    /**
+     * The time of all user (non-kernel) threads added together in centiseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
+
+    /**
+     * Young generation size at beginning of GC event.
+     */
+    private Memory young;
+
+    /**
+     * Available space in young generation. Equals young generation allocation minus one survivor space.
+     */
+    private Memory youngAvailable;
+
+    /**
+     * Young generation size at end of GC event.
+     */
+    private Memory youngEnd;
 
     /**
      * Create event from log entry.
@@ -216,74 +227,63 @@ public class ParallelScavengeEvent extends ParallelCollector
         this.duration = duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
     public long getDuration() {
         return duration;
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public Memory getYoungOccupancyInit() {
-        return young;
-    }
-
-    public Memory getYoungOccupancyEnd() {
-        return youngEnd;
-    }
-
-    public Memory getYoungSpace() {
-        return youngAvailable;
-    }
-
-    public Memory getOldOccupancyInit() {
-        return old;
-    }
-
-    public Memory getOldOccupancyEnd() {
-        return oldEnd;
-    }
-
-    public Memory getOldSpace() {
-        return oldAllocation;
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString();
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Memory getOldOccupancyEnd() {
+        return oldEnd;
     }
 
-    public int getTimeUser() {
-        return timeUser;
+    public Memory getOldOccupancyInit() {
+        return old;
     }
 
-    public int getTimeSys() {
-        return timeSys;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
+    public Memory getOldSpace() {
+        return oldAllocation;
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public String getTrigger() {
+        return trigger;
+    }
+
+    public Memory getYoungOccupancyEnd() {
+        return youngEnd;
+    }
+
+    public Memory getYoungOccupancyInit() {
+        return young;
+    }
+
+    public Memory getYoungSpace() {
+        return youngAvailable;
     }
 }

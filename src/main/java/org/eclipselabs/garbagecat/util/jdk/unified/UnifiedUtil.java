@@ -30,16 +30,16 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 public final class UnifiedUtil {
 
     /**
-     * Arbitrary date for determining time intervals when gc logging includes only uptime.
-     */
-    public static final Date JVM_START_DATE = GcUtil.parseDateStamp("2000-01-01T00:00:00.000-0500");
-
-    /**
      * The number of regex patterns in <code>UnifiedRegEx.DECORATOR</code>. Convenience field to make the code resilient
      * to decorator pattern changes.
      */
     public static final int DECORATOR_SIZE = Pattern.compile(UnifiedRegEx.DECORATOR)
             .matcher("[2020-02-14T15:21:55.207-0500] GC(44) Pause Young (Normal) (G1 Evacuation Pause)").groupCount();
+
+    /**
+     * Arbitrary date for determining time intervals when gc logging includes only uptime.
+     */
+    public static final Date JVM_START_DATE = GcUtil.parseDateStamp("2000-01-01T00:00:00.000-0500");
 
     /**
      * @param eventTypes

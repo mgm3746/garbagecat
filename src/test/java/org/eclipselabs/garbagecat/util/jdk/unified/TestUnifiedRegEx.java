@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.util.jdk.unified;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -109,13 +110,13 @@ class TestUnifiedRegEx {
     @Test
     void testDurationJdk9() {
         String duration = "2.969ms";
-        assertTrue(duration.matches(UnifiedRegEx.DURATION), "'" + duration + "' is a valid duration.");
+        assertTrue(duration.matches(JdkRegEx.DURATION_MS), "'" + duration + "' is a valid duration.");
     }
 
     @Test
     void testDurationJdk9WithSpace() {
         String duration = "15.91 ms";
-        assertTrue(duration.matches(UnifiedRegEx.DURATION), "'" + duration + "' is a valid duration.");
+        assertTrue(duration.matches(JdkRegEx.DURATION_MS), "'" + duration + "' is a valid duration.");
     }
 
     @Test

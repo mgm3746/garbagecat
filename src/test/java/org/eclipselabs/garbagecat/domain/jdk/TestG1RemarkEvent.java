@@ -24,6 +24,18 @@ import org.junit.jupiter.api.Test;
  */
 class TestG1RemarkEvent {
 
+    public void TestG1RemarkPreprocessedEvent() {
+        String logLine = "2971.469: [GC remark, 0.2274544 secs] [Times: user=0.22 sys=0.00, real=0.22 secs]";
+        assertTrue(G1RemarkEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");
+    }
+
+    public void TestG1RemarkPreprocessedEventWhiteSpacesAtEnd() {
+        String logLine = "2971.469: [GC remark, 0.2274544 secs] [Times: user=0.22 sys=0.00, real=0.22 secs]     ";
+        assertTrue(G1RemarkEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");
+    }
+
     @Test
     void testIsBlocking() {
         String logLine = "106.129: [GC remark, 0.0450170 secs]";
@@ -41,16 +53,14 @@ class TestG1RemarkEvent {
         assertEquals(45017, event.getDuration(), "Duration not parsed correctly.");
     }
 
-    public void TestG1RemarkPreprocessedEvent() {
-        String logLine = "2971.469: [GC remark, 0.2274544 secs] [Times: user=0.22 sys=0.00, real=0.22 secs]";
+    @Test
+    void testRemarkDatestamp() {
+        String logLine = "2016-11-08T09:40:55.346-0800: [GC remark, 0.0827210 secs] "
+                + "[Times: user=0.37 sys=0.00, real=0.08 secs]";
         assertTrue(G1RemarkEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");
-    }
-
-    public void TestG1RemarkPreprocessedEventWhiteSpacesAtEnd() {
-        String logLine = "2971.469: [GC remark, 0.2274544 secs] [Times: user=0.22 sys=0.00, real=0.22 secs]     ";
-        assertTrue(G1RemarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");
+        G1RemarkEvent event = new G1RemarkEvent(logLine);
+        assertEquals(531924055346L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -65,15 +75,5 @@ class TestG1RemarkEvent {
         assertEquals(37, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(8, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(463, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testRemarkDatestamp() {
-        String logLine = "2016-11-08T09:40:55.346-0800: [GC remark, 0.0827210 secs] "
-                + "[Times: user=0.37 sys=0.00, real=0.08 secs]";
-        assertTrue(G1RemarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");
-        G1RemarkEvent event = new G1RemarkEvent(logLine);
-        assertEquals(531924055346L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 }

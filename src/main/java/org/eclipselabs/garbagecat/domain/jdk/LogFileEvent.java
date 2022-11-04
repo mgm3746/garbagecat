@@ -56,6 +56,24 @@ public class LogFileEvent implements ThrowAwayEvent {
             "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} GC log rotation request has been received\\..+$" };
 
     /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        boolean isMatch = false;
+        for (int i = 0; i < REGEX.length; i++) {
+            if (logLine.matches(REGEX[i])) {
+                isMatch = true;
+                break;
+            }
+        }
+        return isMatch;
+    }
+
+    /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
@@ -86,23 +104,5 @@ public class LogFileEvent implements ThrowAwayEvent {
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        boolean isMatch = false;
-        for (int i = 0; i < REGEX.length; i++) {
-            if (logLine.matches(REGEX[i])) {
-                isMatch = true;
-                break;
-            }
-        }
-        return isMatch;
     }
 }

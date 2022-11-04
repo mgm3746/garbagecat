@@ -61,7 +61,7 @@ public class ShenandoahFinalEvacEvent extends ShenandoahCollector implements Blo
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Pause Final Evac[,]{0,1} " + UnifiedRegEx.DURATION + "[\\]]{0,1}[ ]*$";
+            + ") [\\[]{0,1}Pause Final Evac[,]{0,1} " + JdkRegEx.DURATION_MS + "[\\]]{0,1}[ ]*$";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.

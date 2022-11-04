@@ -34,33 +34,6 @@ import org.junit.jupiter.api.Test;
 class TestShenandoahDegeneratedGcMarkEvent {
 
     @Test
-    void testLogLine() {
-        String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
-        assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
-                "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
-        ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
-        assertEquals((long) (52937 - 53), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(megabytes(60), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
-        assertEquals(megabytes(30), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(megabytes(64), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(53697, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testIdentityEventType() {
-        String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
-        assertEquals(SHENANDOAH_DEGENERATED_GC_MARK, JdkUtil.identifyEventType(logLine),
-                SHENANDOAH_DEGENERATED_GC_MARK + "not identified.");
-    }
-
-    @Test
-    void testParseLogLine() {
-        String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahDegeneratedGcMarkEvent,
-                SHENANDOAH_DEGENERATED_GC_MARK + " not parsed.");
-    }
-
-    @Test
     void testBlocking() {
         String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
@@ -80,25 +53,23 @@ class TestShenandoahDegeneratedGcMarkEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(SHENANDOAH_DEGENERATED_GC_MARK),
-                SHENANDOAH_DEGENERATED_GC_MARK + " not indentified as reportable.");
+    void testIdentityEventType() {
+        String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
+        assertEquals(SHENANDOAH_DEGENERATED_GC_MARK, JdkUtil.identifyEventType(logLine),
+                SHENANDOAH_DEGENERATED_GC_MARK + "not identified.");
     }
 
     @Test
-    void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(SHENANDOAH_DEGENERATED_GC_MARK);
-        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
-                SHENANDOAH_DEGENERATED_GC_MARK + " incorrectly indentified as unified.");
-    }
-
-    @Test
-    void testLogLineWhitespaceAtEnd() {
-        String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) "
-                + "53.697ms   ";
+    void testLogLine() {
+        String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
         assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
                 "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
+        ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
+        assertEquals((long) (52937 - 53), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(megabytes(60), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
+        assertEquals(megabytes(30), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(megabytes(64), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(53697, event.getDuration(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -116,15 +87,6 @@ class TestShenandoahDegeneratedGcMarkEvent {
     }
 
     @Test
-    void testLogLineJdk8Timestamp() {
-        String logLine = "854868.165: [Pause Degenerated GC (Mark) 93058M->29873M(98304M), 1285.045 ms]";
-        assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
-                "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
-        ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
-        assertEquals((long) 854868165, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
     void testLogLineJdk8Datestamp() {
         String logLine = "2020-08-18T14:05:42.515+0000: [Pause Degenerated GC (Mark) "
                 + "93058M->29873M(98304M), 1285.045 ms]";
@@ -136,6 +98,15 @@ class TestShenandoahDegeneratedGcMarkEvent {
         assertEquals(megabytes(29873), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(98304), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
         assertEquals(1285045, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Timestamp() {
+        String logLine = "854868.165: [Pause Degenerated GC (Mark) 93058M->29873M(98304M), 1285.045 ms]";
+        assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
+                "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
+        ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
+        assertEquals((long) 854868165, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -157,20 +128,11 @@ class TestShenandoahDegeneratedGcMarkEvent {
     }
 
     @Test
-    void testLogLineTriggerOutsideOfCycle() {
-        String logLine = "[8.084s] GC(136) Pause Degenerated GC (Outside of Cycle) 90M->6M(96M) 23.018ms "
-                + "Metaspace: 3847K->3847K(1056768K)";
+    void testLogLinePreprocessedEvacuationMetaspace() {
+        String logLine = "2021-03-23T20:19:44.992+0000: 2871.667: [Pause Degenerated GC (Evacuation) "
+                + "1605M->1053M(1690M), 496.640 ms], [Metaspace: 256569K->256569K(1292288K)]";
         assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
                 "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
-        ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
-        assertEquals((long) (8084 - 23), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(megabytes(90), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
-        assertEquals(megabytes(6), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(megabytes(96), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(23018, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(kilobytes(3847), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
-        assertEquals(kilobytes(3847), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
-        assertEquals(kilobytes(1056768), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
     }
 
     @Test
@@ -199,10 +161,48 @@ class TestShenandoahDegeneratedGcMarkEvent {
     }
 
     @Test
-    void testLogLinePreprocessedEvacuationMetaspace() {
-        String logLine = "2021-03-23T20:19:44.992+0000: 2871.667: [Pause Degenerated GC (Evacuation) "
-                + "1605M->1053M(1690M), 496.640 ms], [Metaspace: 256569K->256569K(1292288K)]";
+    void testLogLineTriggerOutsideOfCycle() {
+        String logLine = "[8.084s] GC(136) Pause Degenerated GC (Outside of Cycle) 90M->6M(96M) 23.018ms "
+                + "Metaspace: 3847K->3847K(1056768K)";
         assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
                 "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
+        ShenandoahDegeneratedGcMarkEvent event = new ShenandoahDegeneratedGcMarkEvent(logLine);
+        assertEquals((long) (8084 - 23), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(megabytes(90), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
+        assertEquals(megabytes(6), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(megabytes(96), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(23018, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(kilobytes(3847), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(3847), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(1056768), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineWhitespaceAtEnd() {
+        String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) "
+                + "53.697ms   ";
+        assertTrue(ShenandoahDegeneratedGcMarkEvent.match(logLine),
+                "Log line not recognized as " + SHENANDOAH_DEGENERATED_GC_MARK + ".");
+    }
+
+    @Test
+    void testParseLogLine() {
+        String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahDegeneratedGcMarkEvent,
+                SHENANDOAH_DEGENERATED_GC_MARK + " not parsed.");
+    }
+
+    @Test
+    void testReportable() {
+        assertTrue(JdkUtil.isReportable(SHENANDOAH_DEGENERATED_GC_MARK),
+                SHENANDOAH_DEGENERATED_GC_MARK + " not indentified as reportable.");
+    }
+
+    @Test
+    void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(SHENANDOAH_DEGENERATED_GC_MARK);
+        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
+                SHENANDOAH_DEGENERATED_GC_MARK + " incorrectly indentified as unified.");
     }
 }

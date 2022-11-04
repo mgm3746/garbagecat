@@ -23,6 +23,11 @@ import org.eclipselabs.garbagecat.util.Memory;
 public interface YoungData {
 
     /**
+     * @return Young generation end occupancy.
+     */
+    Memory getYoungOccupancyEnd();
+
+    /**
      * @return Young generation initial occupancy.
      */
     Memory getYoungOccupancyInit();
@@ -32,9 +37,4 @@ public interface YoungData {
      *         generation allocation minus one survivor space.
      */
     Memory getYoungSpace();
-
-    /**
-     * @return Young generation end occupancy.
-     */
-    Memory getYoungOccupancyEnd();
 }

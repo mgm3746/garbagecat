@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.OtherTime;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.TimesData;
@@ -55,14 +56,25 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <pre>
- * [16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) Humongous regions: 0-&gt;0 Metaspace: 3801K-&gt;3801K(1056768K) 15M-&gt;12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s
+ * [16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) Other: 0.1ms Humongous regions: 0-&gt;0 Metaspace: 3801K-&gt;3801K(1056768K) 15M-&gt;12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
 public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogging, BlockingEvent, YoungCollection,
-        ParallelEvent, PermMetaspaceData, CombinedData, TriggerData, TimesData {
+        ParallelEvent, PermMetaspaceData, CombinedData, TriggerData, TimesData, OtherTime {
+
+    /**
+     * Regular expression defining preprocessed logging.
+     */
+    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(Mixed\\) \\("
+            + UnifiedG1MixedPauseEvent.TRIGGER + "\\) " + OtherTime.REGEX
+            + " Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
+
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
     /**
      * Trigger(s) regular expression(s).
@@ -71,39 +83,15 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
             + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
 
     /**
-     * Regular expression defining preprocessed logging.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(Mixed\\) \\("
-            + TRIGGER + "\\) Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE
-            + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
-
-    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
-
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
-
-    /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
-     */
-    private long duration;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
-
-    /**
-     * Combined young + old generation size at beginning of GC event.
-     */
-    private Memory combinedBegin;
-
-    /**
-     * Combined young + old generation size at end of GC event.
-     */
-    private Memory combinedEnd;
+    public static final boolean match(String logLine) {
+        return REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+    }
 
     /**
      * Combined young + old generation allocation.
@@ -111,14 +99,33 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
     private Memory combinedAllocation;
 
     /**
-     * Permanent generation size at beginning of GC event.
+     * Combined young + old generation size at beginning of GC event.
      */
-    private Memory permGen;
+    private Memory combinedBegin;
+    /**
+     * Combined young + old generation size at end of GC event.
+     */
+    private Memory combinedEnd;
+    /**
+     * The elapsed clock time for the GC event in microseconds (rounded).
+     */
+    private long eventTime;
 
     /**
-     * Permanent generation size at end of GC event.
+     * The log entry for the event. Can be used for debugging purposes.
      */
-    private Memory permGenEnd;
+    private String logEntry;
+
+    /**
+     * Time spent outside of garbage collection in microseconds (rounded).
+     */
+    private long otherTime;
+
+    /**
+     * Permanent generation size at beginning of GC event.
+     * 
+     */
+    private Memory permGen;
 
     /**
      * Space allocated to permanent generation.
@@ -126,14 +133,19 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
     private Memory permGenAllocation;
 
     /**
-     * The trigger for the GC event.
+     * Permanent generation size at end of GC event.
      */
-    private String trigger;
+    private Memory permGenEnd;
 
     /**
-     * The time of all user (non-kernel) threads added together in centiseconds.
+     * The wall (clock) time in centiseconds.
      */
-    private int timeUser;
+    private int timeReal;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
     /**
      * The time of all system (kernel) threads added together in centiseconds.
@@ -141,9 +153,14 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
     private int timeSys;
 
     /**
-     * The wall (clock) time in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
-    private int timeReal;
+    private int timeUser;
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Create event from log entry.
@@ -173,23 +190,28 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
                 }
             }
             trigger = matcher.group(DECORATOR_SIZE + 1);
-            permGen = memory(matcher.group(DECORATOR_SIZE + 2), matcher.group(DECORATOR_SIZE + 4).charAt(0))
+            if (matcher.group(DECORATOR_SIZE + 3) != null) {
+                otherTime = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 3)).intValue();
+            } else {
+                otherTime = TimesData.NO_DATA;
+            }
+            permGen = memory(matcher.group(DECORATOR_SIZE + 4), matcher.group(DECORATOR_SIZE + 6).charAt(0))
                     .convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(DECORATOR_SIZE + 9), matcher.group(DECORATOR_SIZE + 11).charAt(0))
+            permGenEnd = memory(matcher.group(DECORATOR_SIZE + 11), matcher.group(DECORATOR_SIZE + 13).charAt(0))
                     .convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 12), matcher.group(DECORATOR_SIZE + 14).charAt(0))
+            permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 14), matcher.group(DECORATOR_SIZE + 16).charAt(0))
                     .convertTo(KILOBYTES);
-            combinedBegin = memory(matcher.group(DECORATOR_SIZE + 15), matcher.group(DECORATOR_SIZE + 17).charAt(0))
+            combinedBegin = memory(matcher.group(DECORATOR_SIZE + 17), matcher.group(DECORATOR_SIZE + 19).charAt(0))
                     .convertTo(KILOBYTES);
-            combinedEnd = memory(matcher.group(DECORATOR_SIZE + 18), matcher.group(DECORATOR_SIZE + 20).charAt(0))
+            combinedEnd = memory(matcher.group(DECORATOR_SIZE + 20), matcher.group(DECORATOR_SIZE + 22).charAt(0))
                     .convertTo(KILOBYTES);
-            combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 21),
-                    matcher.group(DECORATOR_SIZE + 23).charAt(0)).convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 24)).intValue();
-            if (matcher.group(DECORATOR_SIZE + 25) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 26)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 27)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 28)).intValue();
+            combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 23),
+                    matcher.group(DECORATOR_SIZE + 25).charAt(0)).convertTo(KILOBYTES);
+            eventTime = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 26)).intValue();
+            if (matcher.group(DECORATOR_SIZE + 27) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 28)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 29)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 30)).intValue();
             } else {
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
@@ -210,89 +232,83 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
     public UnifiedG1MixedPauseEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
-        this.duration = duration;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString();
-    }
-
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public Memory getCombinedOccupancyInit() {
-        return combinedBegin;
+        this.eventTime = duration;
     }
 
     public Memory getCombinedOccupancyEnd() {
         return combinedEnd;
     }
 
+    public Memory getCombinedOccupancyInit() {
+        return combinedBegin;
+    }
+
     public Memory getCombinedSpace() {
         return combinedAllocation;
     }
 
-    public Memory getPermOccupancyInit() {
-        return permGen;
+    public long getDuration() {
+        return eventTime + otherTime;
     }
 
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
+    public String getLogEntry() {
+        return logEntry;
     }
 
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
+    public String getName() {
+        return JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString();
     }
 
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
-    }
-
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
-    }
-
-    public String getTrigger() {
-        return trigger;
-    }
-
-    public int getTimeUser() {
-        return timeUser;
-    }
-
-    public int getTimeSys() {
-        return timeSys;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
+    @Override
+    public long getOtherTime() {
+        return otherTime;
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+    public Memory getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    public Memory getPermOccupancyInit() {
+        return permGen;
+    }
+
+    public Memory getPermSpace() {
+        return permGenAllocation;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public String getTrigger() {
+        return trigger;
+    }
+
+    protected void setPermOccupancyEnd(Memory permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    protected void setPermOccupancyInit(Memory permGen) {
+        this.permGen = permGen;
+    }
+
+    protected void setPermSpace(Memory permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
     }
 }

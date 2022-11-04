@@ -40,20 +40,6 @@ import org.junit.jupiter.api.Test;
 class TestClassUnloadingEvent {
 
     @Test
-    void testNotBlocking() {
-        String logLine = " [Unloading class $Proxy225]";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = " [Unloading class $Proxy225]";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
     void testLine() {
         String logLine = "[Unloading class $Proxy61]";
         assertTrue(ClassUnloadingEvent.match(logLine),
@@ -72,6 +58,20 @@ class TestClassUnloadingEvent {
         String logLine = " [Unloading class $Proxy225]";
         assertTrue(ClassUnloadingEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
+    }
+
+    @Test
+    void testNotBlocking() {
+        String logLine = " [Unloading class $Proxy225]";
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as blocking.");
+    }
+
+    @Test
+    void testReportable() {
+        String logLine = " [Unloading class $Proxy225]";
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as reportable.");
     }
 
     /**

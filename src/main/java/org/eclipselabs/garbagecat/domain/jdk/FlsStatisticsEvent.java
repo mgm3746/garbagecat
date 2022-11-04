@@ -200,6 +200,31 @@ public class FlsStatisticsEvent implements ThrowAwayEvent {
 
     private static final List<Pattern> REGEX_LIST = new ArrayList<>(REGEX.length);
 
+    static {
+        for (String regex : REGEX) {
+            REGEX_LIST.add(Pattern.compile(regex));
+        }
+    }
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        boolean isMatch = false;
+        for (int i = 0; i < REGEX_LIST.size(); i++) {
+            Pattern pattern = REGEX_LIST.get(i);
+            if (pattern.matcher(logLine).matches()) {
+                isMatch = true;
+                break;
+            }
+        }
+        return isMatch;
+    }
+
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -209,12 +234,6 @@ public class FlsStatisticsEvent implements ThrowAwayEvent {
      * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
-
-    static {
-        for (String regex : REGEX) {
-            REGEX_LIST.add(Pattern.compile(regex));
-        }
-    }
 
     /**
      * Create event from log entry.
@@ -237,24 +256,5 @@ public class FlsStatisticsEvent implements ThrowAwayEvent {
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        boolean isMatch = false;
-        for (int i = 0; i < REGEX_LIST.size(); i++) {
-            Pattern pattern = REGEX_LIST.get(i);
-            if (pattern.matcher(logLine).matches()) {
-                isMatch = true;
-                break;
-            }
-        }
-        return isMatch;
     }
 }

@@ -27,6 +27,26 @@ import org.junit.jupiter.api.Test;
 class TestParallelSerialOldEvent {
 
     @Test
+    void testDatestamp() {
+        String logLine = "2018-12-06T19:04:46.807-0500: [Full GC (Ergonomics) [PSYoungGen: 508K->385K(1536K)] "
+                + "[PSOldGen: 408K->501K(2048K)] 916K->887K(3584K), "
+                + "[Metaspace: 3680K->3680K(1056768K)], 0.0030057 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]";
+        assertTrue(ParallelSerialOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
+        ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
+        assertEquals(597438286807L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testIsBlocking() {
+        String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
+                + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
+                + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]";
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not indentified as blocking.");
+    }
+
+    @Test
     void testLogLine() {
         String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
                 + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
@@ -45,15 +65,6 @@ class TestParallelSerialOldEvent {
         assertEquals(kilobytes(13094), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(131072), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
         assertEquals(69936, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineWhiteSpaceAtEnd() {
-        String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
-                + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
-                + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]  ";
-        assertTrue(ParallelSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
     }
 
     @Test
@@ -107,23 +118,12 @@ class TestParallelSerialOldEvent {
     }
 
     @Test
-    void testIsBlocking() {
+    void testLogLineWhiteSpaceAtEnd() {
         String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
                 + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
-                + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not indentified as blocking.");
-    }
-
-    @Test
-    void testDatestamp() {
-        String logLine = "2018-12-06T19:04:46.807-0500: [Full GC (Ergonomics) [PSYoungGen: 508K->385K(1536K)] "
-                + "[PSOldGen: 408K->501K(2048K)] 916K->887K(3584K), "
-                + "[Metaspace: 3680K->3680K(1056768K)], 0.0030057 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]";
+                + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]  ";
         assertTrue(ParallelSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
-        ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
-        assertEquals(597438286807L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

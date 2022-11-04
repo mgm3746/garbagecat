@@ -77,7 +77,7 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Tenured: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE
             + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "(\\("
             + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
     /**
      * Trigger(s) regular expression(s).
      */

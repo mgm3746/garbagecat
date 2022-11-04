@@ -14,17 +14,12 @@ package org.eclipselabs.garbagecat.domain;
 
 /**
  * <p>
- * Base "stop-the-world" event where application threads are paused.
+ * Base "stop-the-world" garbage collection event.
  * </p>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
 public interface BlockingEvent extends SafepointEvent {
-
-    /**
-     * @return The elapsed clock time for the event in microseconds (rounded).
-     */
-    long getDuration();
 
 }

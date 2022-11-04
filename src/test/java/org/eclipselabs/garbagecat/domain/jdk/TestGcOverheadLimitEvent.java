@@ -25,15 +25,15 @@ import org.junit.jupiter.api.Test;
 class TestGcOverheadLimitEvent {
 
     @Test
-    void testLineWouldExceed() {
-        String logLine = "GC time would exceed GCTimeLimit of 98%";
+    void testLineIsExceeding() {
+        String logLine = "GC time is exceeding GCTimeLimit of 98%";
         assertTrue(GcOverheadLimitEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + ".");
     }
 
     @Test
-    void testLineIsExceeding() {
-        String logLine = "GC time is exceeding GCTimeLimit of 98%";
+    void testLineWouldExceed() {
+        String logLine = "GC time would exceed GCTimeLimit of 98%";
         assertTrue(GcOverheadLimitEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + ".");
     }

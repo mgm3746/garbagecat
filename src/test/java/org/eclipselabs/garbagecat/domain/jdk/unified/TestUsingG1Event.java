@@ -41,15 +41,6 @@ import org.junit.jupiter.api.Test;
 class TestUsingG1Event {
 
     @Test
-    void testLine() {
-        String logLine = "[0.005s][info][gc] Using G1";
-        assertTrue(UsingG1Event.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
-        UsingG1Event event = new UsingG1Event(logLine);
-        assertEquals((long) 5, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[0.005s][info][gc] Using G1";
         assertEquals(JdkUtil.LogEventType.USING_G1, JdkUtil.identifyEventType(logLine),
@@ -57,45 +48,12 @@ class TestUsingG1Event {
     }
 
     @Test
-    void testParseLogLine() {
+    void testLine() {
         String logLine = "[0.005s][info][gc] Using G1";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingG1Event,
-                JdkUtil.LogEventType.USING_G1.toString() + " not parsed.");
-    }
-
-    @Test
-    void testNotBlocking() {
-        String logLine = "[0.005s][info][gc] Using G1";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.USING_G1.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_G1),
-                JdkUtil.LogEventType.USING_G1.toString() + " not indentified as reportable.");
-    }
-
-    @Test
-    void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.USING_G1);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.USING_G1.toString() + " not indentified as unified.");
-    }
-
-    @Test
-    void testLineWithSpaces() {
-        String logLine = "[0.005s][info][gc] Using G1   ";
         assertTrue(UsingG1Event.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
-    }
-
-    @Test
-    void testLineDetailedLogging() {
-        String logLine = "[0.003s][info][gc     ] Using G1";
-        assertTrue(UsingG1Event.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
+        UsingG1Event event = new UsingG1Event(logLine);
+        assertEquals((long) 5, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -117,12 +75,26 @@ class TestUsingG1Event {
     }
 
     @Test
+    void testLineDetailedLogging() {
+        String logLine = "[0.003s][info][gc     ] Using G1";
+        assertTrue(UsingG1Event.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
+    }
+
+    @Test
     void testLineUtcNoInfo() {
         String logLine = "[2022-08-03T06:58:37.056+0000][gc] Using G1";
         assertTrue(UsingG1Event.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
         UsingG1Event event = new UsingG1Event(logLine);
         assertEquals(712807117056L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLineWithSpaces() {
+        String logLine = "[0.005s][info][gc] Using G1   ";
+        assertTrue(UsingG1Event.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
     }
 
     /**
@@ -143,5 +115,33 @@ class TestUsingG1Event {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_G1),
                 "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
+    }
+
+    @Test
+    void testNotBlocking() {
+        String logLine = "[0.005s][info][gc] Using G1";
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.USING_G1.toString() + " incorrectly indentified as blocking.");
+    }
+
+    @Test
+    void testParseLogLine() {
+        String logLine = "[0.005s][info][gc] Using G1";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingG1Event,
+                JdkUtil.LogEventType.USING_G1.toString() + " not parsed.");
+    }
+
+    @Test
+    void testReportable() {
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_G1),
+                JdkUtil.LogEventType.USING_G1.toString() + " not indentified as reportable.");
+    }
+
+    @Test
+    void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.USING_G1);
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.USING_G1.toString() + " not indentified as unified.");
     }
 }

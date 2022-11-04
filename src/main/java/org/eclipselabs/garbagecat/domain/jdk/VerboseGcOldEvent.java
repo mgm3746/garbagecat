@@ -64,20 +64,37 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class VerboseGcOldEvent extends UnknownCollector
         implements BlockingEvent, OldCollection, CombinedData, TriggerData {
 
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
+    private static Pattern pattern = Pattern.compile(VerboseGcOldEvent.REGEX);
 
     /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
+     * Regular expressions defining the logging.
      */
-    private long duration;
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC( \\(" + VerboseGcOldEvent.TRIGGER
+            + "\\) )? (" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")->(" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE
+            + ")\\((" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
 
     /**
-     * The time when the GC event started in milliseconds after JVM startup.
+     * Trigger(s) regular expression(s).
      */
-    private long timestamp;
+    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+            + JdkRegEx.TRIGGER_ERGONOMICS + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
+
+    /**
+     * Combined young + old generation allocation.
+     */
+    private Memory combinedAllocation;
 
     /**
      * Combined young + old generation size at beginning of GC event.
@@ -90,30 +107,24 @@ public class VerboseGcOldEvent extends UnknownCollector
     private Memory combinedEnd;
 
     /**
-     * Combined young + old generation allocation.
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private Memory combinedAllocation;
+    private long duration;
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
     /**
      * The trigger for the GC event.
      */
     private String trigger;
-
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_ERGONOMICS + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
-
-    /**
-     * Regular expressions defining the logging.
-     */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC( \\(" + TRIGGER + "\\) )? ("
-            + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")->(" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")\\(("
-            + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
-
-    private static Pattern pattern = Pattern.compile(VerboseGcOldEvent.REGEX);
 
     /**
      * Create event from log entry.
@@ -169,46 +180,35 @@ public class VerboseGcOldEvent extends UnknownCollector
         this.duration = duration;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.VERBOSE_GC_OLD.toString();
-    }
-
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
+    public Memory getCombinedOccupancyEnd() {
+        return combinedEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
         return combinedBegin;
     }
 
-    public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
-    }
-
     public Memory getCombinedSpace() {
         return combinedAllocation;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public long getDuration() {
+        return duration;
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public String getLogEntry() {
+        return logEntry;
+    }
+
+    public String getName() {
+        return JdkUtil.LogEventType.VERBOSE_GC_OLD.toString();
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getTrigger() {
+        return trigger;
     }
 }

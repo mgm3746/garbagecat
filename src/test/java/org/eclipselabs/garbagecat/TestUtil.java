@@ -23,14 +23,18 @@ import java.util.Date;
  */
 public final class TestUtil {
 
-    private TestUtil() {
-        super();
-    }
-
     public static File getFile(String name) {
         try {
             return new File(TestUtil.class.getClassLoader().getResource("data/" + name).toURI());
         } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Date parse(SimpleDateFormat pattern, String date) {
+        try {
+            return pattern.parse(date);
+        } catch (ParseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -43,12 +47,8 @@ public final class TestUtil {
         return parse(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"), date + " " + time);
     }
 
-    private static Date parse(SimpleDateFormat pattern, String date) {
-        try {
-            return pattern.parse(date);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+    private TestUtil() {
+        super();
     }
 
 }

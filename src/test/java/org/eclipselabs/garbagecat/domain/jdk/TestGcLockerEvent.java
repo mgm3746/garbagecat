@@ -27,17 +27,10 @@ import org.junit.jupiter.api.Test;
 class TestGcLockerEvent {
 
     @Test
-    void testNotBlocking() {
+    void testIdentifyEventType() {
         String logLine = "GC locker: Trying a full collection because scavenge failed";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.GC_LOCKER.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = "GC locker: Trying a full collection because scavenge failed";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.GC_LOCKER.toString() + " incorrectly indentified as reportable.");
+        assertTrue(JdkUtil.identifyEventType(logLine) == JdkUtil.LogEventType.GC_LOCKER,
+                JdkUtil.LogEventType.GC_LOCKER.toString() + " event not identified.");
     }
 
     @Test
@@ -50,6 +43,13 @@ class TestGcLockerEvent {
     }
 
     @Test
+    void testNotBlocking() {
+        String logLine = "GC locker: Trying a full collection because scavenge failed";
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.GC_LOCKER.toString() + " incorrectly indentified as blocking.");
+    }
+
+    @Test
     void testParseLogLine() {
         String logLine = "GC locker: Trying a full collection because scavenge failed";
         LogEvent event = JdkUtil.parseLogLine(logLine);
@@ -58,9 +58,9 @@ class TestGcLockerEvent {
     }
 
     @Test
-    void testIdentifyEventType() {
+    void testReportable() {
         String logLine = "GC locker: Trying a full collection because scavenge failed";
-        assertTrue(JdkUtil.identifyEventType(logLine) == JdkUtil.LogEventType.GC_LOCKER,
-                JdkUtil.LogEventType.GC_LOCKER.toString() + " event not identified.");
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.GC_LOCKER.toString() + " incorrectly indentified as reportable.");
     }
 }

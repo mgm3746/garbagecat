@@ -13,10 +13,11 @@
 package org.eclipselabs.garbagecat.domain;
 
 /**
- * Times data block output at the end of some garbage collection logging events. It is cpu time only and computed with a
- * different clock than gc time. Therefore, it's possible that the real time does not match the gc total time. For
- * example, if something delays writing to the gc log file, the gc time will be longer because it includes time waiting
- * doing nothing (no cpu used).
+ * CPU time at the end of some <code>LogEvent</code>, computed with a different clock than the clock used to compute
+ * <code>BlockingEvent</code> duration.
+ * 
+ * <code>BlockingEvent</code> duration includes <code>OtherTime</code> when CPU time may not be used (e.g. I/O delays
+ * writing to a log file), so it's possible that the "real" time is less than the <code>BlockingEvent</code> duration.
  * 
  * <h2>Example Logging</h2>
  * 
@@ -42,6 +43,11 @@ package org.eclipselabs.garbagecat.domain;
 public interface TimesData {
 
     /**
+     * Use for logging events that do not include times data.
+     */
+    public static final int NO_DATA = -Integer.MIN_VALUE;
+
+    /**
      * Regular expression for times data block.
      * 
      * [Times: user=0.44 sys=0.00, real=0.08 secs]
@@ -58,28 +64,23 @@ public interface TimesData {
             + "Real=(\\d{1,5}[\\.\\,]\\d{2})s)";
 
     /**
-     * Use for logging events that do not include times data.
-     */
-    public static final int NO_DATA = -Integer.MIN_VALUE;
-
-    /**
-     * @return The user (non-kernll) time of all threads added together in centiseconds.
-     */
-    int getTimeUser();
-
-    /**
-     * @return The system (kernel) time of all threads added together in centiseconds.
-     */
-    int getTimeSys();
-
-    /**
-     * @return The wall (clock) time in centiseconds.
-     */
-    int getTimeReal();
-
-    /**
      * @return Percent (user+sys):real time rounded up the the nearest whole number. With good parallelism, the user+sys
      *         time will be (# threads) x (real time).
      */
     int getParallelism();
+
+    /**
+     * @return The wall (clock) cpu time in centiseconds when cpu it being used.
+     */
+    int getTimeReal();
+
+    /**
+     * @return The system (kernel) cpu time of all threads added together in centiseconds.
+     */
+    int getTimeSys();
+
+    /**
+     * @return The user (non-kernel) cpu time of all threads added together in centiseconds.
+     */
+    int getTimeUser();
 }

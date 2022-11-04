@@ -41,6 +41,13 @@ import org.junit.jupiter.api.Test;
 class TestUsingCmsEvent {
 
     @Test
+    void testIdentityEventType() {
+        String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
+        assertEquals(JdkUtil.LogEventType.USING_CMS, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.USING_CMS + "not identified.");
+    }
+
+    @Test
     void testLine() {
         String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
         assertTrue(UsingCmsEvent.match(logLine),
@@ -50,57 +57,10 @@ class TestUsingCmsEvent {
     }
 
     @Test
-    void testIdentityEventType() {
-        String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
-        assertEquals(JdkUtil.LogEventType.USING_CMS, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.USING_CMS + "not identified.");
-    }
-
-    @Test
-    void testParseLogLine() {
-        String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingCmsEvent,
-                JdkUtil.LogEventType.USING_CMS.toString() + " not parsed.");
-    }
-
-    @Test
-    void testNotBlocking() {
-        String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.USING_CMS.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_CMS),
-                JdkUtil.LogEventType.USING_CMS.toString() + " not indentified as reportable.");
-    }
-
-    @Test
-    void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.USING_CMS);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.USING_CMS.toString() + " not indentified as unified.");
-    }
-
-    @Test
     void testLineWithSpaces() {
         String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep     ";
         assertTrue(UsingCmsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.USING_CMS.toString() + ".");
-    }
-
-    /**
-     * Test with uptime decorator.
-     */
-    @Test
-    void testMillis() {
-        String logLine = "[3ms] GC(6) Using Concurrent Mark Sweep";
-        assertTrue(UsingCmsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_CMS.toString() + ".");
-        UsingCmsEvent event = new UsingCmsEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.USING_CMS.toString(), event.getName(), "Event name incorrect.");
     }
 
     /**
@@ -121,5 +81,45 @@ class TestUsingCmsEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_CMS),
                 "Log line not recognized as " + JdkUtil.LogEventType.USING_CMS.toString() + ".");
+    }
+
+    /**
+     * Test with uptime decorator.
+     */
+    @Test
+    void testMillis() {
+        String logLine = "[3ms] GC(6) Using Concurrent Mark Sweep";
+        assertTrue(UsingCmsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_CMS.toString() + ".");
+        UsingCmsEvent event = new UsingCmsEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.USING_CMS.toString(), event.getName(), "Event name incorrect.");
+    }
+
+    @Test
+    void testNotBlocking() {
+        String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.USING_CMS.toString() + " incorrectly indentified as blocking.");
+    }
+
+    @Test
+    void testParseLogLine() {
+        String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingCmsEvent,
+                JdkUtil.LogEventType.USING_CMS.toString() + " not parsed.");
+    }
+
+    @Test
+    void testReportable() {
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_CMS),
+                JdkUtil.LogEventType.USING_CMS.toString() + " not indentified as reportable.");
+    }
+
+    @Test
+    void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.USING_CMS);
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.USING_CMS.toString() + " not indentified as unified.");
     }
 }

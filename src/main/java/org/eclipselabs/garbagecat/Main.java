@@ -82,9 +82,10 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 public class Main {
 
     /**
-     * The maximum number of rejected log lines to track. A throttle to limit memory consumption.
+     * Report double line break
      */
-    public static final int REJECT_LIMIT = 1000;
+    private static final String LINEBREAK_DOUBLE = "==================================================================="
+            + "====" + LINE_SEPARATOR;
 
     /**
      * Report single line break
@@ -93,40 +94,9 @@ public class Main {
             + "----" + LINE_SEPARATOR;
 
     /**
-     * Report double line break
+     * The maximum number of rejected log lines to track. A throttle to limit memory consumption.
      */
-    private static final String LINEBREAK_DOUBLE = "==================================================================="
-            + "====" + LINE_SEPARATOR;
-
-    /**
-     * @param args
-     *            The argument list includes one or more scope options followed by the name of the gc log file to
-     *            inspect.
-     * @throws IOException
-     *             if gc log file cannot be read.
-     */
-    public static void main(String... args) throws IOException {
-        try {
-            CommandLine cmd = parseOptions(args);
-            if (cmd == null || cmd.hasOption(OPTION_HELP_LONG) || cmd.hasOption(OPTION_HELP_LONG)) {
-                usage();
-            } else {
-                createReport(cmd);
-            }
-        } catch (ParseException pe) {
-            System.out.println(pe.getMessage());
-            usage();
-        }
-    }
-
-    /**
-     * Output usage help.
-     */
-    private static void usage() {
-        // Use the built in formatter class
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("garbagecat [OPTION]... [FILE]", options);
-    }
+    public static final int REJECT_LIMIT = 1000;
 
     public static void createReport(CommandLine cmd) throws IOException {
         // Determine JVM environment information.
@@ -342,6 +312,12 @@ public class Main {
                     printWriter
                             .write("sys > user Max: " + jvmRun.getWorstSysGtUserEvent().getLogEntry() + LINE_SEPARATOR);
                 }
+                // duration > real
+                if (jvmRun.getDurationGtRealCount() > 0) {
+                    printWriter.write("# Duration > real: " + jvmRun.getDurationGtRealCount() + LINE_SEPARATOR);
+                    printWriter.write("Duration > real Max: " + jvmRun.getWorstDurationGtRealTimeEvent().getLogEntry()
+                            + LINE_SEPARATOR);
+                }
                 // NewRatio
                 if (jvmRun.getMaxYoungSpace() != null && jvmRun.getMaxOldSpace() != null
                         && jvmRun.getMaxYoungSpace().getValue(KILOBYTES) > 0) {
@@ -432,7 +408,7 @@ public class Main {
                 }
 
                 // GC max pause
-                BigDecimal maxGcPause = JdkMath.convertMicrosToSecs(jvmRun.getMaxGcPause());
+                BigDecimal maxGcPause = JdkMath.convertMicrosToSecs(jvmRun.getDurationMax());
                 printWriter.write("GC Pause Max: ");
                 if (maxGcPause.compareTo(BigDecimal.ZERO) == 0 && jvmRun.getBlockingEventCount() > 0) {
                     // Provide rounding clue
@@ -441,7 +417,7 @@ public class Main {
                 printWriter.write(maxGcPause.toString());
                 printWriter.write(" secs" + LINE_SEPARATOR);
                 // GC total pause time
-                BigDecimal totalGcPause = JdkMath.convertMicrosToSecs(jvmRun.getGcPauseTotal());
+                BigDecimal totalGcPause = JdkMath.convertMicrosToSecs(jvmRun.getDurationTotal());
                 printWriter.write("GC Pause Total: ");
                 if (totalGcPause.compareTo(BigDecimal.ZERO) == 0 && jvmRun.getBlockingEventCount() > 0) {
                     // Provide rounding clue
@@ -652,6 +628,36 @@ public class Main {
                 }
             }
         }
+    }
+
+    /**
+     * @param args
+     *            The argument list includes one or more scope options followed by the name of the gc log file to
+     *            inspect.
+     * @throws IOException
+     *             if gc log file cannot be read.
+     */
+    public static void main(String... args) throws IOException {
+        try {
+            CommandLine cmd = parseOptions(args);
+            if (cmd == null || cmd.hasOption(OPTION_HELP_LONG) || cmd.hasOption(OPTION_HELP_LONG)) {
+                usage();
+            } else {
+                createReport(cmd);
+            }
+        } catch (ParseException pe) {
+            System.out.println(pe.getMessage());
+            usage();
+        }
+    }
+
+    /**
+     * Output usage help.
+     */
+    private static void usage() {
+        // Use the built in formatter class
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("garbagecat [OPTION]... [FILE]", options);
     }
 
 }

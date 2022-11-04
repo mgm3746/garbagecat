@@ -173,6 +173,65 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class CmsPreprocessAction implements PreprocessAction {
 
     /**
+     * Regular expression for retained beginning CMS_CONCURRENT mixed with APPLICATION_CONCURRENT_TIME event.
+     * 
+     * 2017-06-18T05:23:03.452-0500: 2.182: 2017-06-18T05:23:03.452-0500: [CMS-concurrent-preclean: 0.016/0.048
+     * secs]2.182: Application time: 0.0055079 seconds
+     */
+    private static final String REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME = "^("
+            + JdkRegEx.DECORATOR + " )(" + JdkRegEx.DECORATOR + " )?(\\[CMS-concurrent-(mark|preclean): "
+            + JdkRegEx.DURATION_FRACTION + "\\])((" + JdkRegEx.DECORATOR
+            + " )?Application time: \\d{1,4}\\.\\d{7} seconds)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME);
+
+    /**
+     * Regular expression for retained beginning CMS_CONCURRENT mixed with APPLICATION_STOPPED_TIME event.
+     * 
+     * 234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for which application threads were
+     * stopped: 0.0123330 seconds
+     */
+    private static final String REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME = "^("
+            + JdkRegEx.DECORATOR + ")?( \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION
+            + "\\])[:]{0,1}[ ]{0,1}(Total time for which application threads were stopped: \\d{1,4}\\.\\d{7} seconds"
+            + "(, Stopping threads took: \\d{1,4}\\.\\d{7} seconds)?)$";
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME);
+
+    /**
+     * Regular expression for beginning PAR_NEW collection.
+     * 
+     * 29.839: [GC 36.226: [ParNew
+     * 
+     * 182314.858: [GC 182314.859: [ParNew (promotion failed)
+     * 
+     * 2017-04-22T12:43:48.008+0100: 466904.470: [GC 466904.473: [ParNew: 516864K->516864K(516864K), 0.0001999
+     * secs]466904.473: [Class Histogram:
+     * 
+     * 2017-05-03T14:47:00.002-0400: 1784.661: [GC 2017-05-03T14:47:00.006-0400: 1784.664: [ParNew:
+     * 4147200K->4147200K(4147200K), 0.0677200 secs]2017-05-03T14:47:00.075-0400: 1784.735: [Class Histogram:
+     */
+    private static final String REGEX_RETAIN_BEGINNING_PARNEW = "^(" + JdkRegEx.DECORATOR + " \\[GC( )?( \\(("
+            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\) )?" + JdkRegEx.DECORATOR + " \\[ParNew( \\(("
+            + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?(: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[Class Histogram:)?)[ ]*$";
+
+    /**
+     * Regular expression for retained beginning PAR_NEW bailing out collection.
+     */
+    private static final String REGEX_RETAIN_BEGINNING_PARNEW_BAILING = "^(" + JdkRegEx.DECORATOR + " \\[GC "
+            + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: " + JdkRegEx.SIZE_K
+            + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.DECORATOR
+            + " \\[CMS(Java HotSpot\\(TM\\) Server VM warning: )?bailing out to foreground collection)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_BAILING_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_PARNEW_BAILING);
+
+    /**
      * Regular expression for retained beginning PAR_NEW mixed with CMS_CONCURRENT collection.
      * 
      * 3576157.596: [GC 3576157.596: [CMS-concurrent-abortable-preclean: 0.997/1.723 secs] [Times: user=3.20 sys=0.03,
@@ -206,80 +265,7 @@ public class CmsPreprocessAction implements PreprocessAction {
     private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS);
 
-    /**
-     * Regular expression for beginning CMS_SERIAL_OLD collection.
-     * 
-     * 2017-05-03T14:51:32.659-0400: 2057.323: [Full GC 2017-05-03T14:51:32.680-0400: 2057.341: [Class Histogram:
-     */
-    private static final String REGEX_RETAIN_BEGINNING_SERIAL = "^(" + JdkRegEx.DECORATOR + " \\[Full GC "
-            + JdkRegEx.DECORATOR + " \\[Class Histogram:)[ ]*$";
-
-    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL);
-
-    /**
-     * Regular expression for beginning PAR_NEW collection.
-     * 
-     * 29.839: [GC 36.226: [ParNew
-     * 
-     * 182314.858: [GC 182314.859: [ParNew (promotion failed)
-     * 
-     * 2017-04-22T12:43:48.008+0100: 466904.470: [GC 466904.473: [ParNew: 516864K->516864K(516864K), 0.0001999
-     * secs]466904.473: [Class Histogram:
-     * 
-     * 2017-05-03T14:47:00.002-0400: 1784.661: [GC 2017-05-03T14:47:00.006-0400: 1784.664: [ParNew:
-     * 4147200K->4147200K(4147200K), 0.0677200 secs]2017-05-03T14:47:00.075-0400: 1784.735: [Class Histogram:
-     */
-    private static final String REGEX_RETAIN_BEGINNING_PARNEW = "^(" + JdkRegEx.DECORATOR + " \\[GC( )?( \\(("
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")\\) )?" + JdkRegEx.DECORATOR + " \\[ParNew( \\(("
-            + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?(: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
-            + " \\[Class Histogram:)?)[ ]*$";
-
     private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_PARNEW);
-
-    /**
-     * Regular expression for retained beginning CMS_SERIAL_OLD mixed with CMS_CONCURRENT collection.
-     * 
-     * 2017-06-22T21:22:03.269-0400: 23.858: [Full GC 23.859: [CMS CMS: abort preclean due to time
-     * 2017-06-22T21:22:03.269-0400: 23.859: [CMS-concurrent-abortable-preclean: 0.338/5.115 secs] [Times: user=14.57
-     * sys=0.83, real=5.11 secs]
-     */
-    private static final String REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT = "^(" + JdkRegEx.DECORATOR
-            + " \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)[ ]{0,1})?" + JdkRegEx.DECORATOR
-            + " \\[CMS)( CMS: abort preclean due to time )?(" + JdkRegEx.DECORATOR
-            + " \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]"
-            + TimesData.REGEX + "?)[ ]*$";
-
-    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT_PATTERN = Pattern
-            .compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
-
-    /**
-     * Regular expression for retained beginning CMS_SERIAL_OLD bailing out collection.
-     */
-    private static final String REGEX_RETAIN_BEGINNING_SERIAL_BAILING = "^(" + JdkRegEx.DECORATOR + " \\[Full GC "
-            + JdkRegEx.TIMESTAMP + ": \\[CMSbailing out to foreground collection)[ ]*$";
-
-    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_BAILING_PATTERN = Pattern
-            .compile(REGEX_RETAIN_BEGINNING_SERIAL_BAILING);
-
-    /**
-     * Regular expression for retained CMS_SERIAL_OLD with -XX:+UseGCOverheadLimit at end.
-     * 
-     * 3743.645: [Full GC [PSYoungGen: 419840K->415020K(839680K)] [PSOldGen: 5008922K->5008922K(5033984K)]
-     * 5428762K->5423942K(5873664K) [PSPermGen: 193275K->193275K(262144K)] GC time would exceed GCTimeLimit of 98%
-     * 
-     */
-    private static final String REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[Full GC \\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\)\\] \\[(PS|Par)OldGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\)\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\) \\[PSPermGen: "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\)\\])(      |\t)GC time (would exceed|is exceeding) GCTimeLimit of 98%$";
-
-    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED_PATTERN = Pattern
-            .compile(REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED);
 
     /**
      * Regular expression for retained beginning PrintHeapAtGC collection.
@@ -300,193 +286,68 @@ public class CmsPreprocessAction implements PreprocessAction {
             .compile(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC);
 
     /**
-     * Regular expression for retained beginning PAR_NEW bailing out collection.
+     * Regular expression for beginning CMS_SERIAL_OLD collection.
+     * 
+     * 2017-05-03T14:51:32.659-0400: 2057.323: [Full GC 2017-05-03T14:51:32.680-0400: 2057.341: [Class Histogram:
      */
-    private static final String REGEX_RETAIN_BEGINNING_PARNEW_BAILING = "^(" + JdkRegEx.DECORATOR + " \\[GC "
-            + JdkRegEx.TIMESTAMP + ": \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?: " + JdkRegEx.SIZE_K
-            + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.DECORATOR
-            + " \\[CMS(Java HotSpot\\(TM\\) Server VM warning: )?bailing out to foreground collection)[ ]*$";
-
-    private static final Pattern REGEX_RETAIN_BEGINNING_PARNEW_BAILING_PATTERN = Pattern
-            .compile(REGEX_RETAIN_BEGINNING_PARNEW_BAILING);
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL = "^(" + JdkRegEx.DECORATOR + " \\[Full GC "
+            + JdkRegEx.DECORATOR + " \\[Class Histogram:)[ ]*$";
 
     /**
-     * Regular expression for retained beginning CMS_CONCURRENT mixed with APPLICATION_CONCURRENT_TIME event.
-     * 
-     * 2017-06-18T05:23:03.452-0500: 2.182: 2017-06-18T05:23:03.452-0500: [CMS-concurrent-preclean: 0.016/0.048
-     * secs]2.182: Application time: 0.0055079 seconds
+     * Regular expression for retained beginning CMS_SERIAL_OLD bailing out collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME = "^("
-            + JdkRegEx.DECORATOR + " )(" + JdkRegEx.DECORATOR + " )?(\\[CMS-concurrent-(mark|preclean): "
-            + JdkRegEx.DURATION_FRACTION + "\\])((" + JdkRegEx.DECORATOR
-            + " )?Application time: \\d{1,4}\\.\\d{7} seconds)[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL_BAILING = "^(" + JdkRegEx.DECORATOR + " \\[Full GC "
+            + JdkRegEx.TIMESTAMP + ": \\[CMSbailing out to foreground collection)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN = Pattern
-            .compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME);
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_BAILING_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_SERIAL_BAILING);
 
     /**
-     * Regular expression for retained beginning CMS_CONCURRENT mixed with APPLICATION_STOPPED_TIME event.
+     * Regular expression for retained beginning CMS_SERIAL_OLD mixed with CMS_CONCURRENT collection.
      * 
-     * 234784.781: [CMS-concurrent-abortable-preclean: 0.038/0.118 secs]Total time for which application threads were
-     * stopped: 0.0123330 seconds
+     * 2017-06-22T21:22:03.269-0400: 23.858: [Full GC 23.859: [CMS CMS: abort preclean due to time
+     * 2017-06-22T21:22:03.269-0400: 23.859: [CMS-concurrent-abortable-preclean: 0.338/5.115 secs] [Times: user=14.57
+     * sys=0.83, real=5.11 secs]
      */
-    private static final String REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME = "^("
-            + JdkRegEx.DECORATOR + ")?( \\[CMS-concurrent-abortable-preclean: " + JdkRegEx.DURATION_FRACTION
-            + "\\])[:]{0,1}[ ]{0,1}(Total time for which application threads were stopped: \\d{1,4}\\.\\d{7} seconds"
-            + "(, Stopping threads took: \\d{1,4}\\.\\d{7} seconds)?)$";
-
-    private static final Pattern REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME_PATTERN = Pattern
-            .compile(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME);
-
-    /**
-     * Regular expression for retained beginning concurrent mode failure.
-     * 
-     * (concurrent mode failure): 7835032K->8154090K(9216000K), 56.0787320 secs]2017-05-03T14:48:13.002-0400: 1857.661:
-     * [Class Histogram
-     */
-    private static final String REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE = "^( \\(concurrent mode failure\\): "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.DECORATOR + " \\[Class Histogram(:)?)[ ]*$";
-
-    private static final Pattern REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE_PATTERN = Pattern
-            .compile(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE);
-
-    /**
-     * Middle line when logging is split over 3 lines (e.g. bailing).
-     * 
-     * 233307.273: [CMS-concurrent-mark: 16.547/16.547 secs]
-     */
-    private static final String REGEX_RETAIN_MIDDLE_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
-
-    private static final Pattern REGEX_RETAIN_MIDDLE_CONCURRENT_PATTERN = Pattern
-            .compile(REGEX_RETAIN_MIDDLE_CONCURRENT);
-
-    /**
-     * Middle line when mixed serial and concurrent logging.
-     * 
-     * 28282.075: [CMS28284.687: [CMS-concurrent-preclean: 3.706/3.706 secs]
-     * 
-     * : 917504K->917504K(917504K), 5.5887120 secs]877375.047: [CMS877378.691: [CMS-concurrent-mark: 5.714/11.380 secs]
-     * [Times: user=14.72 sys=4.81, real=11.38 secs]
-     * 
-     * 471419.156: [CMS CMS: abort preclean due to time 2017-04-22T13:59:06.831+0100: 471423.282:
-     * [CMS-concurrent-abortable-preclean: 3.663/31.735 secs] [Times: user=39.81 sys=0.23, real=31.74 secs]
-     * 
-     * 2017-05-03T14:47:16.910-0400: 1801.570: [CMS2017-05-03T14:47:22.416-0400: 1807.075: [CMS-concurrent-mark:
-     * 29.707/71.001 secs] [Times: user=121.03 sys=35.41, real=70.99 secs]
-     */
-    private static final String REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED = "^((: " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?" + JdkRegEx.DECORATOR
-            + " \\[CMS)(( CMS: abort preclean due to time )?" + JdkRegEx.DECORATOR
-            + " \\[CMS-concurrent-(abortable-preclean|preclean|mark|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]"
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT = "^(" + JdkRegEx.DECORATOR
+            + " \\[Full GC( )?(\\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
+            + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
+            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\)[ ]{0,1})?" + JdkRegEx.DECORATOR
+            + " \\[CMS)( CMS: abort preclean due to time )?(" + JdkRegEx.DECORATOR
+            + " \\[CMS-concurrent-(mark|abortable-preclean|preclean|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]"
             + TimesData.REGEX + "?)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED_PATTERN = Pattern
-            .compile(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED);
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT);
 
     /**
-     * Middle line when mixed PAR_NEW and concurrent logging.
+     * Regular expression for retained CMS_SERIAL_OLD with -XX:+UseGCOverheadLimit at end.
      * 
-     * : 153344K->153344K(153344K), 0.2049130 secs]2017-02-15T16:22:05.602+0900: 1223922.433:
-     * [CMS2017-02-15T16:22:06.001+0900: 1223922.832: [CMS-concurrent-mark: 3.589/4.431 secs] [Times: user=6.13
-     * sys=0.89, real=4.43 secs]
+     * 3743.645: [Full GC [PSYoungGen: 419840K->415020K(839680K)] [PSOldGen: 5008922K->5008922K(5033984K)]
+     * 5428762K->5423942K(5873664K) [PSPermGen: 193275K->193275K(262144K)] GC time would exceed GCTimeLimit of 98%
      * 
-     * 2017-03-19T11:48:55.207+0000: 356616.193: [ParNew2017-03-19T11:48:55.211+0000: 356616.198:
-     * [CMS-concurrent-abortable-preclean: 1.046/3.949 secs] [Times: user=1.16 sys=0.05, real=3.95 secs]
      */
-    private static final String REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED = "^((" + JdkRegEx.DECORATOR
-            + " \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?)?(: " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
-            + " \\[CMS)?)(" + JdkRegEx.DECORATOR + " \\[CMS-concurrent-(abortable-preclean|preclean|mark): "
-            + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+    private static final String REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED = "^(" + JdkRegEx.TIMESTAMP
+            + ": \\[Full GC \\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\)\\] \\[(PS|Par)OldGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\)\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\) \\[PSPermGen: "
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\)\\])(      |\t)GC time (would exceed|is exceeding) GCTimeLimit of 98%$";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED_PATTERN = Pattern
-            .compile(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED);
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED);
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_SERIAL_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_SERIAL);
 
     /**
-     * Middle line PAR_NEW with FLS_STATISTICS
+     * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
+     * multiple lines. Check the TOKEN to see if in the middle of preprocessing an event that spans multiple lines.
      * 
-     * 1.118: [ParNew: 377487K->8426K(5505024K), 0.0535260 secs] 377487K->8426K(43253760K)After GC:
-     * 
-     * 2017-02-27T14:29:54.534+0000: 2.730: [ParNew: 2048000K->191475K(2304000K), 0.0366288 secs]
-     * 2048000K->191475K(7424000K)After GC:
-     * 
-     * 2017-02-28T00:43:55.587+0000: 36843.783: [ParNew (0: promotion failure size = 200) (1: promotion failure size =
-     * 8) (2: promotion failure size = 200) (3: promotion failure size = 200) (4: promotion failure size = 200) (5:
-     * promotion failure size = 200) (6: promotion failure size = 200) (7: promotion failure size = 200) (8: promotion
-     * failure size = 10) (9: promotion failure size = 10) (10: promotion failure size = 10) (11: promotion failure size
-     * = 200) (12: promotion failure size = 200) (13: promotion failure size = 10) (14: promotion failure size = 200)
-     * (15: promotion failure size = 200) (16: promotion failure size = 200) (17: promotion failure size = 200) (18:
-     * promotion failure size = 200) (19: promotion failure size = 200) (20: promotion failure size = 10) (21: promotion
-     * failure size = 200) (22: promotion failure size = 10) (23: promotion failure size = 45565) (24: promotion failure
-     * size = 10) (25: promotion failure size = 4) (26: promotion failure size = 200) (27: promotion failure size = 200)
-     * (28: promotion failure size = 10) (29: promotion failure size = 200) (30: promotion failure size = 200) (31:
-     * promotion failure size = 200) (32: promotion failure size = 200) (promotion failed):
-     * 2304000K->2304000K(2304000K), 0.4501923 secs]2017-02-28T00:43:56.037+0000: 36844.234: [CMSCMS: Large block
-     * 0x0000000730892bb8
-     * 
-     * : 66097K->7194K(66368K), 0.0440189 secs] 5274098K->5219953K(10478400K)After GC:
+     * , 27.5589374 secs]
      */
-    private static final String REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS = "^((" + JdkRegEx.DECORATOR + " \\[ParNew("
-            + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?)?: "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)(, " + JdkRegEx.DURATION
-            + "\\])?( " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\))?("
-            + JdkRegEx.DECORATOR + " \\[CMS)?)(After GC:|CMS: Large block " + JdkRegEx.ADDRESS + ")$";
+    private static final String REGEX_RETAIN_DURATION = "(, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*";
 
-    private static final Pattern REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS_PATTERN = Pattern
-            .compile(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS);
-
-    /**
-     * Middle serial line with FLS_STATISTICS
-     * 
-     * : 2818067K->2769354K(5120000K), 3.8341757 secs] 5094036K->2769354K(7424000K), [Metaspace:
-     * 18583K->18583K(1067008K)]After GC:
-     */
-    private static final String REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS = "^(: " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), \\[Metaspace: " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\])After GC:$";
-
-    private static final Pattern REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS_PATTERN = Pattern
-            .compile(REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS);
-
-    /**
-     * Middle line with PrintHeapAtGC.
-     */
-    private static final String REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC = "^((" + JdkRegEx.TIMESTAMP + ": \\[CMS)?( \\("
-            + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\))?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)(, \\[CMS Perm : " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)])?)Heap after gc invocations=\\d{1,10}:[ ]*$";
-
-    private static final Pattern REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC_PATTERN = Pattern
-            .compile(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC);
-
-    /**
-     * Middle line with PrintClassHistogram
-     */
-    private static final String REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM = "^((" + JdkRegEx.TIMESTAMP + ": \\[CMS)?: "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]"
-            + JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?)[ ]*$";
-
-    private static final Pattern REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN = Pattern
-            .compile(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM);
-
-    /**
-     * Regular expression for CMS_REMARK without <code>-XX:+PrintGCDetails</code>.
-     * 
-     * 2017-04-03T03:12:02.134-0500: 30.385: [GC (CMS Final Remark) 890910K->620060K(7992832K), 0.1223879 secs]
-     * 
-     * 2017-06-18T05:23:16.634-0500: 15.364: [GC (CMS Final Remark) 2017-06-18T05:23:16.634-0500: 15.364: [ParNew
-     */
-    private static final String REGEX_RETAIN_MIDDLE_CMS_REMARK = "^(" + JdkRegEx.DECORATOR + " \\[GC (\\("
-            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\))?(  " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?( " + JdkRegEx.DECORATOR + " \\[ParNew)?)[ ]*$";
-
-    private static final Pattern REGEX_RETAIN_MIDDLE_CMS_REMARK_PATTERN = Pattern
-            .compile(REGEX_RETAIN_MIDDLE_CMS_REMARK);
+    private static final Pattern REGEX_RETAIN_DURATION_PATTERN = Pattern.compile(REGEX_RETAIN_DURATION);
 
     /**
      * Regular expression for retained end.
@@ -528,8 +389,6 @@ public class CmsPreprocessAction implements PreprocessAction {
             + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, "
             + JdkRegEx.DURATION + "\\])?" + TimesData.REGEX + "?)[ ]*$";
 
-    private static final Pattern REGEX_RETAIN_END_PATTERN = Pattern.compile(REGEX_RETAIN_END);
-
     /**
      * Regular expression for retained PAR_NEW end.
      * 
@@ -543,15 +402,156 @@ public class CmsPreprocessAction implements PreprocessAction {
 
     private static final Pattern REGEX_RETAIN_END_PAR_NEW_PATTERN = Pattern.compile(REGEX_RETAIN_END_PAR_NEW);
 
-    /**
-     * Regular expression for retained duration. This can come in the middle or at the end of a logging event split over
-     * multiple lines. Check the TOKEN to see if in the middle of preprocessing an event that spans multiple lines.
-     * 
-     * , 27.5589374 secs]
-     */
-    private static final String REGEX_RETAIN_DURATION = "(, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*";
+    private static final Pattern REGEX_RETAIN_END_PATTERN = Pattern.compile(REGEX_RETAIN_END);
 
-    private static final Pattern REGEX_RETAIN_DURATION_PATTERN = Pattern.compile(REGEX_RETAIN_DURATION);
+    /**
+     * Regular expression for CMS_REMARK without <code>-XX:+PrintGCDetails</code>.
+     * 
+     * 2017-04-03T03:12:02.134-0500: 30.385: [GC (CMS Final Remark) 890910K->620060K(7992832K), 0.1223879 secs]
+     * 
+     * 2017-06-18T05:23:16.634-0500: 15.364: [GC (CMS Final Remark) 2017-06-18T05:23:16.634-0500: 15.364: [ParNew
+     */
+    private static final String REGEX_RETAIN_MIDDLE_CMS_REMARK = "^(" + JdkRegEx.DECORATOR + " \\[GC (\\("
+            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + "\\))?(  " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?( " + JdkRegEx.DECORATOR + " \\[ParNew)?)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_CMS_REMARK_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_CMS_REMARK);
+
+    /**
+     * Middle line when logging is split over 3 lines (e.g. bailing).
+     * 
+     * 233307.273: [CMS-concurrent-mark: 16.547/16.547 secs]
+     */
+    private static final String REGEX_RETAIN_MIDDLE_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
+            + ": \\[CMS-concurrent-mark: " + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+
+    /**
+     * Regular expression for retained beginning concurrent mode failure.
+     * 
+     * (concurrent mode failure): 7835032K->8154090K(9216000K), 56.0787320 secs]2017-05-03T14:48:13.002-0400: 1857.661:
+     * [Class Histogram
+     */
+    private static final String REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE = "^( \\(concurrent mode failure\\): "
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.DECORATOR + " \\[Class Histogram(:)?)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE);
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_CONCURRENT_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_CONCURRENT);
+
+    /**
+     * Middle line PAR_NEW with FLS_STATISTICS
+     * 
+     * 1.118: [ParNew: 377487K->8426K(5505024K), 0.0535260 secs] 377487K->8426K(43253760K)After GC:
+     * 
+     * 2017-02-27T14:29:54.534+0000: 2.730: [ParNew: 2048000K->191475K(2304000K), 0.0366288 secs]
+     * 2048000K->191475K(7424000K)After GC:
+     * 
+     * 2017-02-28T00:43:55.587+0000: 36843.783: [ParNew (0: promotion failure size = 200) (1: promotion failure size =
+     * 8) (2: promotion failure size = 200) (3: promotion failure size = 200) (4: promotion failure size = 200) (5:
+     * promotion failure size = 200) (6: promotion failure size = 200) (7: promotion failure size = 200) (8: promotion
+     * failure size = 10) (9: promotion failure size = 10) (10: promotion failure size = 10) (11: promotion failure size
+     * = 200) (12: promotion failure size = 200) (13: promotion failure size = 10) (14: promotion failure size = 200)
+     * (15: promotion failure size = 200) (16: promotion failure size = 200) (17: promotion failure size = 200) (18:
+     * promotion failure size = 200) (19: promotion failure size = 200) (20: promotion failure size = 10) (21: promotion
+     * failure size = 200) (22: promotion failure size = 10) (23: promotion failure size = 45565) (24: promotion failure
+     * size = 10) (25: promotion failure size = 4) (26: promotion failure size = 200) (27: promotion failure size = 200)
+     * (28: promotion failure size = 10) (29: promotion failure size = 200) (30: promotion failure size = 200) (31:
+     * promotion failure size = 200) (32: promotion failure size = 200) (promotion failed):
+     * 2304000K->2304000K(2304000K), 0.4501923 secs]2017-02-28T00:43:56.037+0000: 36844.234: [CMSCMS: Large block
+     * 0x0000000730892bb8
+     * 
+     * : 66097K->7194K(66368K), 0.0440189 secs] 5274098K->5219953K(10478400K)After GC:
+     */
+    private static final String REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS = "^((" + JdkRegEx.DECORATOR + " \\[ParNew("
+            + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?)?: "
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)(, " + JdkRegEx.DURATION
+            + "\\])?( " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\))?("
+            + JdkRegEx.DECORATOR + " \\[CMS)?)(After GC:|CMS: Large block " + JdkRegEx.ADDRESS + ")$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS);
+
+    /**
+     * Middle line when mixed PAR_NEW and concurrent logging.
+     * 
+     * : 153344K->153344K(153344K), 0.2049130 secs]2017-02-15T16:22:05.602+0900: 1223922.433:
+     * [CMS2017-02-15T16:22:06.001+0900: 1223922.832: [CMS-concurrent-mark: 3.589/4.431 secs] [Times: user=6.13
+     * sys=0.89, real=4.43 secs]
+     * 
+     * 2017-03-19T11:48:55.207+0000: 356616.193: [ParNew2017-03-19T11:48:55.211+0000: 356616.198:
+     * [CMS-concurrent-abortable-preclean: 1.046/3.949 secs] [Times: user=1.16 sys=0.05, real=3.95 secs]
+     */
+    private static final String REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED = "^((" + JdkRegEx.DECORATOR
+            + " \\[ParNew( \\(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + "\\))?)?(: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[CMS)?)(" + JdkRegEx.DECORATOR + " \\[CMS-concurrent-(abortable-preclean|preclean|mark): "
+            + JdkRegEx.DURATION_FRACTION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED);
+
+    /**
+     * Middle line with PrintClassHistogram
+     */
+    private static final String REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM = "^((" + JdkRegEx.TIMESTAMP + ": \\[CMS)?: "
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.TIMESTAMP + ": \\[Class Histogram(:)?)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM);
+
+    /**
+     * Middle line with PrintHeapAtGC.
+     */
+    private static final String REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC = "^((" + JdkRegEx.TIMESTAMP + ": \\[CMS)?( \\("
+            + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "\\))?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\)(, \\[CMS Perm : " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\)])?)Heap after gc invocations=\\d{1,10}:[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC);
+
+    /**
+     * Middle line when mixed serial and concurrent logging.
+     * 
+     * 28282.075: [CMS28284.687: [CMS-concurrent-preclean: 3.706/3.706 secs]
+     * 
+     * : 917504K->917504K(917504K), 5.5887120 secs]877375.047: [CMS877378.691: [CMS-concurrent-mark: 5.714/11.380 secs]
+     * [Times: user=14.72 sys=4.81, real=11.38 secs]
+     * 
+     * 471419.156: [CMS CMS: abort preclean due to time 2017-04-22T13:59:06.831+0100: 471423.282:
+     * [CMS-concurrent-abortable-preclean: 3.663/31.735 secs] [Times: user=39.81 sys=0.23, real=31.74 secs]
+     * 
+     * 2017-05-03T14:47:16.910-0400: 1801.570: [CMS2017-05-03T14:47:22.416-0400: 1807.075: [CMS-concurrent-mark:
+     * 29.707/71.001 secs] [Times: user=121.03 sys=35.41, real=70.99 secs]
+     */
+    private static final String REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED = "^((: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?" + JdkRegEx.DECORATOR
+            + " \\[CMS)(( CMS: abort preclean due to time )?" + JdkRegEx.DECORATOR
+            + " \\[CMS-concurrent-(abortable-preclean|preclean|mark|sweep): " + JdkRegEx.DURATION_FRACTION + "\\]"
+            + TimesData.REGEX + "?)[ ]*$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED);
+
+    /**
+     * Middle serial line with FLS_STATISTICS
+     * 
+     * : 2818067K->2769354K(5120000K), 3.8341757 secs] 5094036K->2769354K(7424000K), [Metaspace:
+     * 18583K->18583K(1067008K)]After GC:
+     */
+    private static final String REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS = "^(: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), \\[Metaspace: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\])After GC:$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS);
 
     /**
      * Regular expression for PAR_NEW with extraneous prefix.
@@ -569,6 +569,44 @@ public class CmsPreprocessAction implements PreprocessAction {
      * context is necessary to detangle multi-line events where logging patterns are shared among preprocessors.
      */
     public static final String TOKEN = "CMS_PREPROCESS_ACTION_TOKEN";
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     *
+     * @param logLine
+     *            The log line to test.
+     * @param priorLogLine
+     *            The last log entry processed.
+     * @param nextLogLine
+     *            The next log entry processed.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
+        return REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_SERIAL_BAILING_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_SERIAL_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_PARNEW_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_PARNEW_BAILING_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_CONCURRENT_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_CMS_REMARK_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_END_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_END_PAR_NEW_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_DURATION_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_PAR_NEW_PATTERN.matcher(logLine).matches();
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -802,52 +840,6 @@ public class CmsPreprocessAction implements PreprocessAction {
         }
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.PreprocessActionType.CMS.toString();
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     *
-     * @param logLine
-     *            The log line to test.
-     * @param priorLogLine
-     *            The last log entry processed.
-     * @param nextLogLine
-     *            The next log entry processed.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
-        return REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_SERIAL_BAILING_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_SERIAL_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_PARNEW_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_PARNEW_BAILING_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_MIDDLE_CONCURRENT_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_MIDDLE_CMS_REMARK_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_END_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_END_PAR_NEW_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_DURATION_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_PAR_NEW_PATTERN.matcher(logLine).matches();
-    }
-
     /**
      * TODO: Move to superclass.
      * 
@@ -865,6 +857,14 @@ public class CmsPreprocessAction implements PreprocessAction {
             // Reset entangled log lines
             entangledLogLines.clear();
         }
+    }
+
+    public String getLogEntry() {
+        return logEntry;
+    }
+
+    public String getName() {
+        return JdkUtil.PreprocessActionType.CMS.toString();
     }
 
     /**

@@ -63,12 +63,23 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class HeaderCommandLineFlagsEvent implements LogEvent {
 
+    private static Pattern pattern = Pattern.compile(HeaderCommandLineFlagsEvent.REGEX);
+
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(CommandLine flags:|  JAVA_OPTS:)[ ]{1,2}(.+)$";
 
-    private static Pattern pattern = Pattern.compile(HeaderCommandLineFlagsEvent.REGEX);
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -91,29 +102,6 @@ public class HeaderCommandLineFlagsEvent implements LogEvent {
         this.timestamp = 0L;
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString();
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
-    }
-
     /**
      * @return JVM options.
      */
@@ -124,6 +112,18 @@ public class HeaderCommandLineFlagsEvent implements LogEvent {
             jvmOptions = matcher.group(2);
         }
         return jvmOptions;
+    }
+
+    public String getLogEntry() {
+        return logEntry;
+    }
+
+    public String getName() {
+        return JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString();
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 
 }

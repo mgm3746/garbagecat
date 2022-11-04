@@ -64,10 +64,24 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 public class UnifiedCmsInitialMarkEvent extends CmsCollector
         implements UnifiedLogging, BlockingEvent, ParallelEvent, TimesData {
 
+    private static final Pattern pattern = Pattern.compile(UnifiedCmsInitialMarkEvent.REGEX);
+
     /**
-     * The log entry for the event. Can be used for debugging purposes.
+     * Regular expressions defining the logging.
      */
-    private String logEntry;
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "?[ ]*$";
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -75,19 +89,9 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
     private long duration;
 
     /**
-     * The time when the GC event started in milliseconds after JVM startup.
+     * The log entry for the event. Can be used for debugging purposes.
      */
-    private long timestamp;
-
-    /**
-     * The time of all user (non-kernel) threads added together in centiseconds.
-     */
-    private int timeUser;
-
-    /**
-     * The time of all system (kernel) threads added together in centiseconds.
-     */
-    private int timeSys;
+    private String logEntry;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -95,12 +99,19 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
     private int timeReal;
 
     /**
-     * Regular expressions defining the logging.
+     * The time when the GC event started in milliseconds after JVM startup.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "?[ ]*$";
+    private long timestamp;
 
-    private static final Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
+
+    /**
+     * The time of all user (non-kernel) threads added together in centiseconds.
+     */
+    private int timeUser;
 
     /**
      * Create event from log entry.
@@ -158,46 +169,35 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
         this.duration = duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
     public long getDuration() {
         return duration;
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public int getTimeUser() {
-        return timeUser;
-    }
-
-    public int getTimeSys() {
-        return timeSys;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
-    }
-
-    public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString();
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public int getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
     }
 }

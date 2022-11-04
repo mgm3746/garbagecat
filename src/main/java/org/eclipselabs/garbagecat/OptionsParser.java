@@ -82,6 +82,37 @@ public class OptionsParser {
     }
 
     /**
+     * @return version string.
+     */
+    static String getLatestVersion() {
+        String url = "https://github.com/mgm3746/garbagecat/releases/latest";
+        try {
+            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+            httpClient = HttpClients.custom()
+                    .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                    .build();
+            HttpGet request = new HttpGet(url);
+            request.addHeader("Accept", "application/json");
+            request.addHeader("content-type", "application/json");
+            HttpResponse result = httpClient.execute(request);
+            String json = EntityUtils.toString(result.getEntity(), "UTF-8");
+            return new JSONObject(json).getString("tag_name");
+        }
+
+        catch (Exception ex) {
+            ex.printStackTrace();
+            return "Unable to retrieve";
+        }
+    }
+
+    /**
+     * @return version string.
+     */
+    static String getVersion() {
+        return ResourceBundle.getBundle("META-INF/maven/garbagecat/garbagecat/pom").getString("version");
+    }
+
+    /**
      * Parse command line options.
      * 
      * @param args
@@ -156,37 +187,6 @@ public class OptionsParser {
             if (!isValidStartDateTime(startdatetimeOptionValue)) {
                 throw new ParseException("Invalid startdatetime: '" + startdatetimeOptionValue + "'");
             }
-        }
-    }
-
-    /**
-     * @return version string.
-     */
-    static String getVersion() {
-        return ResourceBundle.getBundle("META-INF/maven/garbagecat/garbagecat/pom").getString("version");
-    }
-
-    /**
-     * @return version string.
-     */
-    static String getLatestVersion() {
-        String url = "https://github.com/mgm3746/garbagecat/releases/latest";
-        try {
-            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-            httpClient = HttpClients.custom()
-                    .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-                    .build();
-            HttpGet request = new HttpGet(url);
-            request.addHeader("Accept", "application/json");
-            request.addHeader("content-type", "application/json");
-            HttpResponse result = httpClient.execute(request);
-            String json = EntityUtils.toString(result.getEntity(), "UTF-8");
-            return new JSONObject(json).getString("tag_name");
-        }
-
-        catch (Exception ex) {
-            ex.printStackTrace();
-            return "Unable to retrieve";
         }
     }
 

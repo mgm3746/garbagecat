@@ -51,11 +51,32 @@ class TestSerialNewEvent {
     }
 
     @Test
-    void testLogLineWhitespaceAtEnd() {
-        String logLine = "7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] "
-                + "41677K->10314K(126720K), 0.0210210 secs] ";
+    void testLogLineDatestamp() {
+        String logLine = "2016-11-22T09:07:01.358+0100: [GC2016-11-22T09:07:01.359+0100: [DefNew: "
+                + "68160K->4425K(76672K), 0,0354890 secs] 68160K->4425K(3137216K), 0,0360580 secs] "
+                + "[Times: user=0,04 sys=0,00, real=0,03 secs]";
         assertTrue(SerialNewEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
+        SerialNewEvent event = new SerialNewEvent(logLine);
+        assertEquals(533099221358L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineDatestampTimestamp() {
+        String logLine = "2016-11-22T09:07:01.358+0100: 1,319: [GC2016-11-22T09:07:01.359+0100: 1,320: [DefNew: "
+                + "68160K->4425K(76672K), 0,0354890 secs] 68160K->4425K(3137216K), 0,0360580 secs] "
+                + "[Times: user=0,04 sys=0,00, real=0,03 secs]";
+        assertTrue(SerialNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
+        SerialNewEvent event = new SerialNewEvent(logLine);
+        assertEquals((long) 1319, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(68160), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(4425), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
+        assertEquals(kilobytes(76672), event.getYoungSpace(), "Young available size not parsed correctly.");
+        assertEquals(kilobytes(68160 - 68160), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
+        assertEquals(kilobytes(4425 - 4425), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
+        assertEquals(kilobytes(3137216 - 76672), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(36058, event.getDuration(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -80,35 +101,6 @@ class TestSerialNewEvent {
     }
 
     @Test
-    void testLogLineDatestampTimestamp() {
-        String logLine = "2016-11-22T09:07:01.358+0100: 1,319: [GC2016-11-22T09:07:01.359+0100: 1,320: [DefNew: "
-                + "68160K->4425K(76672K), 0,0354890 secs] 68160K->4425K(3137216K), 0,0360580 secs] "
-                + "[Times: user=0,04 sys=0,00, real=0,03 secs]";
-        assertTrue(SerialNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
-        SerialNewEvent event = new SerialNewEvent(logLine);
-        assertEquals((long) 1319, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(68160), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(4425), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(76672), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(68160 - 68160), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(4425 - 4425), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(3137216 - 76672), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(36058, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineDatestamp() {
-        String logLine = "2016-11-22T09:07:01.358+0100: [GC2016-11-22T09:07:01.359+0100: [DefNew: "
-                + "68160K->4425K(76672K), 0,0354890 secs] 68160K->4425K(3137216K), 0,0360580 secs] "
-                + "[Times: user=0,04 sys=0,00, real=0,03 secs]";
-        assertTrue(SerialNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
-        SerialNewEvent event = new SerialNewEvent(logLine);
-        assertEquals(533099221358L, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
     void testLogLineTimestamp() {
         String logLine = "1,319: [GC1,320: [DefNew: 68160K->4425K(76672K), 0,0354890 secs] 68160K->4425K(3137216K), "
                 + "0,0360580 secs] [Times: user=0,04 sys=0,00, real=0,03 secs]";
@@ -116,6 +108,14 @@ class TestSerialNewEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
         SerialNewEvent event = new SerialNewEvent(logLine);
         assertEquals((long) 1319, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineWhitespaceAtEnd() {
+        String logLine = "7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] "
+                + "41677K->10314K(126720K), 0.0210210 secs] ";
+        assertTrue(SerialNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
     }
 
     @Test

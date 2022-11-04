@@ -127,6 +127,13 @@ public final class JdkRegEx {
     public static final String DURATION_FRACTION = "(\\d{1,4}[\\.\\,]\\d{3}\\/\\d{1,5}[\\.\\,]\\d{3}) secs";
 
     /**
+     * The duration of the event in milliseconds with 1-3 decimal places.
+     * 
+     * For example: 2.969ms, 0.2ms, 15.91 ms
+     */
+    public static final String DURATION_MS = "(\\d{1,}[\\.\\,]\\d{1,3})[ ]{0,1}ms";
+
+    /**
      * Gigabyte units identifier.
      */
     public static final String GIGABYTES = "G";

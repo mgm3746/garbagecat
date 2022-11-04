@@ -44,6 +44,20 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedOldEvent {
 
     @Test
+    void testIdentityEventType() {
+        String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_OLD, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_OLD + "not identified.");
+    }
+
+    @Test
+    void testIsBlocking() {
+        String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not indentified as blocking.");
+    }
+
+    @Test
     void testLogLine() {
         String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
         assertTrue(UnifiedOldEvent.match(logLine),
@@ -60,10 +74,10 @@ class TestUnifiedOldEvent {
     }
 
     @Test
-    void testIdentityEventType() {
-        String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_OLD, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.UNIFIED_OLD + "not identified.");
+    void testLogLineWhitespaceAtEnd() {
+        String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms     ";
+        assertTrue(UnifiedOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
     }
 
     @Test
@@ -71,34 +85,6 @@ class TestUnifiedOldEvent {
         String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedOldEvent,
                 JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not parsed.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not indentified as blocking.");
-    }
-
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_OLD),
-                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not indentified as reportable.");
-    }
-
-    @Test
-    void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_OLD);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not indentified as unified.");
-    }
-
-    @Test
-    void testLogLineWhitespaceAtEnd() {
-        String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms     ";
-        assertTrue(UnifiedOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
     }
 
     @Test
@@ -126,22 +112,17 @@ class TestUnifiedOldEvent {
     }
 
     @Test
-    void testUnifiedOldStandardLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset148.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_PARALLEL),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_OLD),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING),
-                Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.");
+    void testReportable() {
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_OLD),
+                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not indentified as reportable.");
+    }
+
+    @Test
+    void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.UNIFIED_OLD);
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not indentified as unified.");
     }
 
     @Test
@@ -163,6 +144,25 @@ class TestUnifiedOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
         assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN),
                 Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.");
+    }
+
+    @Test
+    void testUnifiedOldStandardLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset148.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_PARALLEL),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_OLD),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
+        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING),
+                Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.");
     }
 
     @Test

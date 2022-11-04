@@ -191,14 +191,14 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
      */
     private static final String[] REGEX = {
             //
-            "^" + UnifiedRegEx.DECORATOR + " Concurrent Cycle( " + UnifiedRegEx.DURATION + ")?$",
+            "^" + UnifiedRegEx.DECORATOR + " Concurrent Cycle( " + JdkRegEx.DURATION_MS + ")?$",
             //
             "^" + UnifiedRegEx.DECORATOR
                     + " Concurrent (Cleanup for Next Mark|Clear Claimed Marks|Create Live Data|Mark|Mark Abort|"
                     + "Mark Cycle|Mark Free|Mark From Roots|Preclean|Process Non-Strong References|"
                     + "Rebuild Remembered Sets|Relocate|Reset|Scan Root Regions|Select Relocation Set|"
                     + "String Deduplication.*|Sweep)( \\(" + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP
-                    + "s)?\\))?( " + UnifiedRegEx.DURATION + ")?" + TimesData.REGEX_JDK9 + "?[ ]*$",
+                    + "s)?\\))?( " + JdkRegEx.DURATION_MS + ")?" + TimesData.REGEX_JDK9 + "?[ ]*$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$",
             //
@@ -210,18 +210,6 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
         for (String regex : REGEX) {
             REGEX_PATTERN_LIST.add(Pattern.compile(regex));
         }
-    }
-
-    public String getLogEntry() {
-        throw new UnsupportedOperationException("Event does not include log entry information");
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString();
-    }
-
-    public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
     }
 
     /**
@@ -241,5 +229,17 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
             }
         }
         return match;
+    }
+
+    public String getLogEntry() {
+        throw new UnsupportedOperationException("Event does not include log entry information");
+    }
+
+    public String getName() {
+        return JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString();
+    }
+
+    public long getTimestamp() {
+        throw new UnsupportedOperationException("Event does not include timestamp information");
     }
 }

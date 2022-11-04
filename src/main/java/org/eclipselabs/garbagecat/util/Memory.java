@@ -33,18 +33,13 @@ public class Memory implements Comparable<Memory> {
 
         BYTES("B") {
             @Override
+            public double convert(double sourceValue, Unit sourceUnit) {
+                return sourceUnit.toBytes(sourceValue);
+            }
+
+            @Override
             public double toBytes(double v) {
                 return v;
-            }
-
-            @Override
-            public double toKiloBytes(double v) {
-                return v / K;
-            }
-
-            @Override
-            public double toMegaBytes(double v) {
-                return v / K / K;
             }
 
             @Override
@@ -53,24 +48,50 @@ public class Memory implements Comparable<Memory> {
             }
 
             @Override
-            public double convert(double sourceValue, Unit sourceUnit) {
-                return sourceUnit.toBytes(sourceValue);
-            }
-        },
-        KILOBYTES("K") {
-            @Override
-            public double toBytes(double v) {
-                return v * K;
-            }
-
-            @Override
             public double toKiloBytes(double v) {
-                return v;
+                return v / K;
             }
 
             @Override
             public double toMegaBytes(double v) {
-                return v / K;
+                return v / K / K;
+            }
+        },
+        GIGABYTES("G") {
+            @Override
+            public double convert(double sourceValue, Unit sourceUnit) {
+                return sourceUnit.toGigaBytes(sourceValue);
+            }
+
+            @Override
+            public double toBytes(double v) {
+                return v * K * K * K;
+            }
+
+            @Override
+            public double toGigaBytes(double v) {
+                return v;
+            }
+
+            @Override
+            public double toKiloBytes(double v) {
+                return v * K * K;
+            }
+
+            @Override
+            public double toMegaBytes(double v) {
+                return v * K;
+            }
+        },
+        KILOBYTES("K") {
+            @Override
+            public double convert(double sourceValue, Unit sourceUnit) {
+                return sourceUnit.toKiloBytes(sourceValue);
+            }
+
+            @Override
+            public double toBytes(double v) {
+                return v * K;
             }
 
             @Override
@@ -79,24 +100,24 @@ public class Memory implements Comparable<Memory> {
             }
 
             @Override
-            public double convert(double sourceValue, Unit sourceUnit) {
-                return sourceUnit.toKiloBytes(sourceValue);
-            }
-        },
-        MEGABYTES("M") {
-            @Override
-            public double toBytes(double v) {
-                return v * K * K;
-            }
-
-            @Override
             public double toKiloBytes(double v) {
-                return v * K;
+                return v;
             }
 
             @Override
             public double toMegaBytes(double v) {
-                return v;
+                return v / K;
+            }
+        },
+        MEGABYTES("M") {
+            @Override
+            public double convert(double sourceValue, Unit sourceUnit) {
+                return sourceUnit.toMegaBytes(sourceValue);
+            }
+
+            @Override
+            public double toBytes(double v) {
+                return v * K * K;
             }
 
             @Override
@@ -105,58 +126,17 @@ public class Memory implements Comparable<Memory> {
             }
 
             @Override
-            public double convert(double sourceValue, Unit sourceUnit) {
-                return sourceUnit.toMegaBytes(sourceValue);
-            }
-        },
-        GIGABYTES("G") {
-            @Override
-            public double toBytes(double v) {
-                return v * K * K * K;
-            }
-
-            @Override
             public double toKiloBytes(double v) {
-                return v * K * K;
-            }
-
-            @Override
-            public double toMegaBytes(double v) {
                 return v * K;
             }
 
             @Override
-            public double toGigaBytes(double v) {
+            public double toMegaBytes(double v) {
                 return v;
-            }
-
-            @Override
-            public double convert(double sourceValue, Unit sourceUnit) {
-                return sourceUnit.toGigaBytes(sourceValue);
             }
         };
 
         private static final int K = 1024;
-
-        private String name;
-
-        public abstract double toBytes(double v);
-
-        public abstract double toKiloBytes(double v);
-
-        public abstract double toMegaBytes(double v);
-
-        public abstract double toGigaBytes(double v);
-
-        public abstract double convert(double sourceValue, Unit sourceUnit);
-
-        private Unit(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
 
         public static Unit forUnit(char unit) {
             return forUnit(String.valueOf(unit));
@@ -171,24 +151,31 @@ public class Memory implements Comparable<Memory> {
             throw new IllegalArgumentException("Unexpected units value: " + unit);
         }
 
+        private String name;
+
+        private Unit(String name) {
+            this.name = name;
+        }
+
+        public abstract double convert(double sourceValue, Unit sourceUnit);
+
+        public String getName() {
+            return name;
+        }
+
+        public abstract double toBytes(double v);
+
+        public abstract double toGigaBytes(double v);
+
+        public abstract double toKiloBytes(double v);
+
+        public abstract double toMegaBytes(double v);
+
     }
 
     private static final Pattern optionSizePattern = Pattern.compile("(\\d{1,12})(" + JdkRegEx.OPTION_SIZE + ")?");
 
     public static final Memory ZERO = new Memory(0, BYTES);
-
-    public static Memory memory(long value, Unit unit) {
-        return value == 0 ? ZERO : new Memory(value, unit);
-    }
-
-    public static Memory memory(String string) {
-        return new Memory(Long.parseLong(string.substring(0, string.length() - 1)),
-                forUnit(string.charAt(string.length() - 1)));
-    }
-
-    public static Memory memory(String value, char unit) {
-        return memory(Long.parseLong(value), forUnit(unit));
-    }
 
     public static Memory bytes(long value) {
         return memory(value, BYTES);
@@ -196,34 +183,6 @@ public class Memory implements Comparable<Memory> {
 
     public static Memory bytes(String value) {
         return bytes(parseLong(value));
-    }
-
-    public static Memory kilobytes(long value) {
-        return memory(value, KILOBYTES);
-    }
-
-    public static Memory kilobytes(String value) {
-        return kilobytes(parseLong(value));
-    }
-
-    public static Memory megabytes(long value) {
-        return memory(value, MEGABYTES);
-    }
-
-    public static Memory megabytes(String value) {
-        return megabytes(parseLong(value));
-    }
-
-    public static Memory gigabytes(long value) {
-        return memory(value, GIGABYTES);
-    }
-
-    public static Memory gigabytes(String value) {
-        return gigabytes(parseLong(value));
-    }
-
-    private static double get(Memory memory, Unit unit) {
-        return unit.convert(memory.value, memory.size);
     }
 
     /**
@@ -253,6 +212,47 @@ public class Memory implements Comparable<Memory> {
                 : null;
     }
 
+    private static double get(Memory memory, Unit unit) {
+        return unit.convert(memory.value, memory.size);
+    }
+
+    public static Memory gigabytes(long value) {
+        return memory(value, GIGABYTES);
+    }
+
+    public static Memory gigabytes(String value) {
+        return gigabytes(parseLong(value));
+    }
+
+    public static Memory kilobytes(long value) {
+        return memory(value, KILOBYTES);
+    }
+
+    public static Memory kilobytes(String value) {
+        return kilobytes(parseLong(value));
+    }
+
+    public static Memory megabytes(long value) {
+        return memory(value, MEGABYTES);
+    }
+
+    public static Memory megabytes(String value) {
+        return megabytes(parseLong(value));
+    }
+
+    public static Memory memory(long value, Unit unit) {
+        return value == 0 ? ZERO : new Memory(value, unit);
+    }
+
+    public static Memory memory(String string) {
+        return new Memory(Long.parseLong(string.substring(0, string.length() - 1)),
+                forUnit(string.charAt(string.length() - 1)));
+    }
+
+    public static Memory memory(String value, char unit) {
+        return memory(Long.parseLong(value), forUnit(unit));
+    }
+
     private final Unit size;
 
     private final long value;
@@ -269,6 +269,10 @@ public class Memory implements Comparable<Memory> {
     @Override
     public int compareTo(Memory other) {
         return Double.compare(get(this, BYTES), get(other, BYTES));
+    }
+
+    public Memory convertTo(Unit target) {
+        return new Memory(getValue(target), target);
     }
 
     @Override
@@ -304,10 +308,6 @@ public class Memory implements Comparable<Memory> {
 
     private Unit smaller(Unit size1, Unit size2) {
         return size1.compareTo(size2) < 0 ? size1 : size2;
-    }
-
-    public Memory convertTo(Unit target) {
-        return new Memory(getValue(target), target);
     }
 
     @Override

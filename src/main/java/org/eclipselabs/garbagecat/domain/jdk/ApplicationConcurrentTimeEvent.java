@@ -44,15 +44,26 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class ApplicationConcurrentTimeEvent implements ThrowAwayEvent {
 
     /**
+     * RegEx pattern.
+     */
+    private static Pattern pattern = Pattern.compile(ApplicationConcurrentTimeEvent.REGEX);
+
+    /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR
             + " )?Application time: \\d{1,4}\\.\\d{7} seconds[ ]*$";
 
     /**
-     * RegEx pattern.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private static Pattern pattern = Pattern.compile(ApplicationConcurrentTimeEvent.REGEX);
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     public String getLogEntry() {
         throw new UnsupportedOperationException("Event does not include log entry information");
@@ -64,17 +75,6 @@ public class ApplicationConcurrentTimeEvent implements ThrowAwayEvent {
 
     public long getTimestamp() {
         throw new UnsupportedOperationException("Event does not include timestamp information");
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
     }
 
 }

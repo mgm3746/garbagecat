@@ -47,6 +47,11 @@ import org.eclipselabs.garbagecat.util.Memory;
 public interface PermMetaspaceData {
 
     /**
+     * @return Perm generation end occupancy in kilobytes.
+     */
+    Memory getPermOccupancyEnd();
+
+    /**
      * @return Perm generation initial occupancy in kilobytes.
      */
     Memory getPermOccupancyInit();
@@ -55,9 +60,4 @@ public interface PermMetaspaceData {
      * @return Total perm generation space at the end of the event (i.e. it reflects any resizing) in kilobytes.
      */
     Memory getPermSpace();
-
-    /**
-     * @return Perm generation end occupancy in kilobytes.
-     */
-    Memory getPermOccupancyEnd();
 }

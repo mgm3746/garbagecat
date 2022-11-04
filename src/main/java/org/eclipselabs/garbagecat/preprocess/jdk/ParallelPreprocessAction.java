@@ -100,6 +100,19 @@ public class ParallelPreprocessAction implements PreprocessAction {
             .compile(REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED);
 
     /**
+     * Regular expression beginning PARALLEL_COMPACTING_OLD or PARALLEL_SERIAL_OLD with -XX:+PrintAdaptiveSizePolicy
+     * logging.
+     * 
+     * 2021-04-09T07:19:43.692-0400: 74865.313: [Full GC (Ergonomics) AdaptiveSizeStart: 74869.165 collection: 1223
+     * 
+     */
+    private static final String REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY = "^(" + JdkRegEx.DECORATOR
+            + " \\[Full GC \\(Ergonomics\\) )AdaptiveSizeStart: " + JdkRegEx.TIMESTAMP + " collection: \\d{1,}[ ]{0,}$";
+
+    private static final Pattern REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY_PATTERN = Pattern
+            .compile(REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY);
+
+    /**
      * Regular expression beginning PARALLEL_SCAVENGE.
      * 
      * 10.392: [GC
@@ -122,19 +135,6 @@ public class ParallelPreprocessAction implements PreprocessAction {
 
     private static final Pattern REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY);
-
-    /**
-     * Regular expression beginning PARALLEL_COMPACTING_OLD or PARALLEL_SERIAL_OLD with -XX:+PrintAdaptiveSizePolicy
-     * logging.
-     * 
-     * 2021-04-09T07:19:43.692-0400: 74865.313: [Full GC (Ergonomics) AdaptiveSizeStart: 74869.165 collection: 1223
-     * 
-     */
-    private static final String REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY = "^(" + JdkRegEx.DECORATOR
-            + " \\[Full GC \\(Ergonomics\\) )AdaptiveSizeStart: " + JdkRegEx.TIMESTAMP + " collection: \\d{1,}[ ]{0,}$";
-
-    private static final Pattern REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY_PATTERN = Pattern
-            .compile(REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY);
 
     /**
      * Regular expression for retained end of collection.
@@ -183,16 +183,45 @@ public class ParallelPreprocessAction implements PreprocessAction {
      */
     public static final String TOKEN = "PARALLEL_PREPROCESS_ACTION_TOKEN";
 
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
-
     static {
         for (String regex : REGEX_THROWAWAY) {
             REGEX_THROWAWAY_LIST.add(Pattern.compile(regex));
         }
     }
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        boolean match = false;
+        if (REGEX_BEGINNING_UNLOADING_CLASS_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_END_PATTERN.matcher(logLine).matches()) {
+            match = true;
+        } else {
+            // TODO: Get rid of this and make them throwaway events?
+            for (int i = 0; i < REGEX_THROWAWAY_LIST.size(); i++) {
+                Pattern pattern = REGEX_THROWAWAY_LIST.get(i);
+                if (pattern.matcher(logLine).matches()) {
+                    match = true;
+                    break;
+                }
+            }
+        }
+        return match;
+    }
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
     /**
      * Create event from log entry.
@@ -271,14 +300,6 @@ public class ParallelPreprocessAction implements PreprocessAction {
         }
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.PreprocessActionType.PARALLEL.toString();
-    }
-
     /**
      * TODO: Move to superclass.
      * 
@@ -299,32 +320,11 @@ public class ParallelPreprocessAction implements PreprocessAction {
         }
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        boolean match = false;
-        if (REGEX_BEGINNING_UNLOADING_CLASS_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_END_PATTERN.matcher(logLine).matches()) {
-            match = true;
-        } else {
-            // TODO: Get rid of this and make them throwaway events?
-            for (int i = 0; i < REGEX_THROWAWAY_LIST.size(); i++) {
-                Pattern pattern = REGEX_THROWAWAY_LIST.get(i);
-                if (pattern.matcher(logLine).matches()) {
-                    match = true;
-                    break;
-                }
-            }
-        }
-        return match;
+    public String getLogEntry() {
+        return logEntry;
+    }
+
+    public String getName() {
+        return JdkUtil.PreprocessActionType.PARALLEL.toString();
     }
 }

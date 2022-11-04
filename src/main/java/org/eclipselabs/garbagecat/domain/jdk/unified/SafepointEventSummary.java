@@ -23,14 +23,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
 public class SafepointEventSummary {
 
     /**
-     * The <code>Trigger</code>
-     */
-    private Trigger trigger;
-
-    /**
      * Total number of events.
      */
     private long count;
+
+    /**
+     * Max pause time (milliseconds).
+     */
+    private int pauseMax;
 
     /**
      * Total pause time (milliseconds).
@@ -38,9 +38,9 @@ public class SafepointEventSummary {
     private long pauseTotal;
 
     /**
-     * Max pause time (milliseconds).
+     * The <code>Trigger</code>
      */
-    private int pauseMax;
+    private Trigger trigger;
 
     /**
      * Default constructor.
@@ -61,19 +61,19 @@ public class SafepointEventSummary {
         this.pauseMax = pauseMax;
     }
 
-    public Trigger getTrigger() {
-        return trigger;
-    }
-
     public long getCount() {
         return count;
+    }
+
+    public long getPauseMax() {
+        return pauseMax;
     }
 
     public long getPauseTotal() {
         return pauseTotal;
     }
 
-    public long getPauseMax() {
-        return pauseMax;
+    public Trigger getTrigger() {
+        return trigger;
     }
 }

@@ -40,12 +40,23 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  */
 public class UsingCmsEvent extends CmsCollector implements UnifiedLogging {
 
+    private static Pattern pattern = Pattern.compile(UsingCmsEvent.REGEX);
+
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Using Concurrent Mark Sweep[ ]*$";
 
-    private static Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -100,16 +111,5 @@ public class UsingCmsEvent extends CmsCollector implements UnifiedLogging {
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
     }
 }

@@ -44,6 +44,14 @@ import org.junit.jupiter.api.Test;
  */
 class TestUnifiedPreprocessAction {
     @Test
+    void tesG1tMutatorAllocstionStats() {
+        String logLine = "[2022-10-09T13:16:49.276+0000][3792.764s][debug][gc,alloc,region   ] GC(9) Mutator "
+                + "Allocation stats, regions: 418, wasted size: 4224B ( 0.0%)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testAdaptiveSizeNoFullAfterScavenge() {
         String logLine = "[2021-06-15T16:04:45.320-0400][339.481s] No full after scavenge average_promoted "
                 + "103380024 padded_average_promoted 303467488 free in old gen 13724280784";
@@ -599,6 +607,23 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testG1ActivatedWorker() {
+        String logLine = "[2022-10-09T13:16:49.276+0000][3792.764s][debug][gc,refine         ] Activated worker 0, "
+                + "on threshold: 19, current: 80";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testG1BasicInformation() {
+        String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,ihop           ] GC(9) Basic information "
+                + "(value update), threshold: 7701161574B (70.00), target occupancy: 11001659392B, current occupancy: "
+                + "115332592B, recent";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testG1Cleanup() {
         String logLine = "[0.117s][info][gc            ] GC(2) Pause Cleanup 1M->1M(5M) 0.024ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -643,6 +668,14 @@ class TestUnifiedPreprocessAction {
     @Test
     void testG1EvacuateDatestampMillis() {
         String logLine = "[2019-05-09T01:39:00.820+0000][5412ms] GC(0)   Evacuate Collection Set: 56.4ms";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testG1FinishChoosingCSet() {
+        String logLine = "[2022-10-09T13:16:49.276+0000][3792.764s][debug][gc,ergo,cset      ] GC(9) Finish choosing "
+                + "CSet. old: 0 regions, predicted old region time: 0.00ms, time remaining: 0.43";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -772,6 +805,23 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testG1GcTerminationStats() {
+        String logLine = "[2022-10-09T13:16:49.277+0000][3792.765s][debug][gc,task,stats     ] GC(9) GC Termination "
+                + "Stats";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testG1HeapBeforeGc() {
+        String logLine = "[2022-10-09T13:16:39.707+0000][3783.195s][debug][gc,heap ] GC(9) Heap before GC "
+                + "invocations=9 (full 0): garbage-first heap total 10743808K, used 1819374K [0x0000000570400000, "
+                + "0x0000000800000000)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testG1Humongous() {
         String logLine = "[2021-09-22T10:57:21.297-0500][5259442ms] GC(5172) Humongous regions: 13->13";
         String nextLogLine = "[2021-09-22T10:57:21.297-0500][5259442ms] GC(5172) Metaspace: 82409K->82409K(1126400K)";
@@ -787,6 +837,14 @@ class TestUnifiedPreprocessAction {
     @Test
     void testG1HumongousDatestampMillis() {
         String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Humongous regions: 0->0";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testG1HumongousRegister() {
+        String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,phases         ] GC(9)     Humongous "
+                + "Register: 0.1ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -860,20 +918,46 @@ class TestUnifiedPreprocessAction {
     @Test
     void testG1Other() {
         String logLine = "[0.101s][info][gc,phases    ] GC(0)   Other: 0.2ms";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(" Other: 0.2ms", event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
     void testG1Other5Spaces() {
         String logLine = "[16.072s][info][gc,phases     ] GC(971)   Other: 0.1ms";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(" Other: 0.1ms", event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
     void testG1OtherDatestampMillis() {
         String logLine = "[2019-05-09T01:39:00.820+0000][5412ms] GC(0)   Other: 0.3ms";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(" Other: 0.3ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testG1PantomRef() {
+        String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,phases,ref     ] GC(9)         "
+                + "PhantomRef (ms):          Min:  0.0, Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.0, Workers: 1";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -973,6 +1057,14 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testG1ScannedCards() {
+        String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,phases         ] GC(9)       Scanned "
+                + "Cards:            Min: 194, Avg: 509.4, Max: 1890, Diff: 1696, Sum: 4075, Workers: 8";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testG1StringTable() {
         String logLine = "[16.053s][info][gc,stringtable] GC(969) Cleaned string and symbol table, strings: "
                 + "5786 processed, 4 removed, symbols: 38663 processed, 11 removed";
@@ -1006,6 +1098,23 @@ class TestUnifiedPreprocessAction {
     @Test
     void testG1SurvivorDatestampMillis() {
         String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) Survivor regions: 0->9(9)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testG1TlabTotals() {
+        String logLine = "[2022-10-09T13:16:49.276+0000][3792.764s][debug][gc,tlab           ] GC(9) TLAB totals: "
+                + "thrds: 223  refills: 9596 max: 462 slow allocs: 767 max 41 waste:  1.5% gc: 16198888B max: 1568112B "
+                + "slow: 6511096B max: 409312B fast: 0B max: 0B";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testG1UpdatedRefinementZones() {
+        String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,ergo,refine    ] GC(9) Updated "
+                + "Refinement Zones: green: 16, yellow: 48, red: 80";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -1111,6 +1220,15 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testG1YoungPlab() {
+        String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,plab           ] GC(9) Young PLAB "
+                + "allocation: allocated: 28620256B, wasted: 14568B, unused: 2989832B, used: 25615856B, undo waste: "
+                + "0B,";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testJdk17G1() throws IOException {
         File testFile = TestUtil.getFile("dataset235.txt");
         GcManager gcManager = new GcManager();
@@ -1138,20 +1256,6 @@ class TestUnifiedPreprocessAction {
     @Test
     void testMetaspace2Spaces() {
         String logLine = "[16.072s][info][gc,metaspace  ] GC(971) Metaspace: 10793K->10793K(1058816K)";
-        assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
-    }
-
-    @Test
-    void testSafepointEnteringShenandoahInitMark() {
-        String logLine = "[2021-10-27T13:03:16.666-0400] Entering safepoint region: ShenandoahInitMark";
-        assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
-    }
-
-    @Test
-    void testSafepointEnteringShenandoahInitUpdateRefs() {
-        String logLine = "[2021-10-27T13:03:16.666-0400] Entering safepoint region: ShenandoahInitUpdateRefs";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -1948,6 +2052,14 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testRunningG1() {
+        String logLine = "[2022-10-09T13:16:49.287+0000][3792.776s][debug][gc,ergo           ] GC(9) Running G1 Clear "
+                + "Card Table Task using 4 workers for 4 units of work for 446 regions.";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testSafepoint() throws IOException {
         File testFile = TestUtil.getFile("dataset215.txt");
         GcManager gcManager = new GcManager();
@@ -1987,6 +2099,20 @@ class TestUnifiedPreprocessAction {
     @Test
     void testSafepointEnteringG1CollectFull() {
         String logLine = "[2021-09-22T10:31:58.206-0500][3736351ms] Entering safepoint region: G1CollectFull";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testSafepointEnteringShenandoahInitMark() {
+        String logLine = "[2021-10-27T13:03:16.666-0400] Entering safepoint region: ShenandoahInitMark";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testSafepointEnteringShenandoahInitUpdateRefs() {
+        String logLine = "[2021-10-27T13:03:16.666-0400] Entering safepoint region: ShenandoahInitUpdateRefs";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -2212,6 +2338,14 @@ class TestUnifiedPreprocessAction {
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
         assertEquals(" 166M->160M(1678M) 189.216ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testSkippedPhase() {
+        String logLine = "[2022-10-09T13:16:49.288+0000][3792.776s][debug][gc,ref            ] GC(9) Skipped phase1 "
+                + "of Reference Processing due to unavailable references";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
 
     @Test
@@ -2682,6 +2816,13 @@ class TestUnifiedPreprocessAction {
     @Test
     void testZRelocationStallC2() {
         String logLine = "[0.407s] Relocation Stall (C2 CompilerThread0) 0.702ms";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZRelocationStallReferenceHandler() {
+        String logLine = "[0.407s] Relocation Stall (Reference Handler) 0.702ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }

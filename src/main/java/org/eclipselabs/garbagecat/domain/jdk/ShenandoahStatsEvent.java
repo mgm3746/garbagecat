@@ -139,18 +139,6 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
         }
     }
 
-    public String getLogEntry() {
-        throw new UnsupportedOperationException("Event does not include log entry information");
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_STATS.toString();
-    }
-
-    public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
-    }
-
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
      * 
@@ -168,5 +156,17 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             }
         }
         return match;
+    }
+
+    public String getLogEntry() {
+        throw new UnsupportedOperationException("Event does not include log entry information");
+    }
+
+    public String getName() {
+        return JdkUtil.LogEventType.SHENANDOAH_STATS.toString();
+    }
+
+    public long getTimestamp() {
+        throw new UnsupportedOperationException("Event does not include timestamp information");
     }
 }

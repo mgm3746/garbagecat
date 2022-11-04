@@ -64,7 +64,7 @@ public class UnifiedRemarkEvent extends UnknownCollector
      * Regular expressions defining the logging JDK9+.
      */
     private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Remark " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + "[ ]*$";
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + "[ ]*$";
 
     private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
@@ -72,15 +72,21 @@ public class UnifiedRemarkEvent extends UnknownCollector
      * Regular expression defining preprocessed logging.
      */
     private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Remark " + JdkRegEx.SIZE
-            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9
             + "[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
     /**
-     * The log entry for the event. Can be used for debugging purposes.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private String logEntry;
+    public static final boolean match(String logLine) {
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+    }
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -88,14 +94,19 @@ public class UnifiedRemarkEvent extends UnknownCollector
     private long duration;
 
     /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
+
+    /**
      * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
-
-    /**
-     * The time of all user (non-kernel) threads added together in centiseconds.
-     */
-    private int timeUser;
 
     /**
      * The time of all system (kernel) threads added together in centiseconds.
@@ -103,9 +114,9 @@ public class UnifiedRemarkEvent extends UnknownCollector
     private int timeSys;
 
     /**
-     * The wall (clock) time in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
-    private int timeReal;
+    private int timeUser;
 
     /**
      * Create event from log entry.
@@ -191,46 +202,35 @@ public class UnifiedRemarkEvent extends UnknownCollector
         this.duration = duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
     public long getDuration() {
         return duration;
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.UNIFIED_REMARK.toString();
     }
 
-    public int getTimeUser() {
-        return timeUser;
-    }
-
-    public int getTimeSys() {
-        return timeSys;
+    public int getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     public int getTimeReal() {
         return timeReal;
     }
 
-    public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
     }
 }

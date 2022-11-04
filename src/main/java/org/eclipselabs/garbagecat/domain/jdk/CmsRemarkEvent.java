@@ -121,47 +121,6 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
         implements BlockingEvent, TriggerData, ParallelEvent, TimesData {
 
     /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
-
-    /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
-     */
-    private long duration;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
-
-    /**
-     * The trigger for the GC event.
-     */
-    private String trigger;
-
-    /**
-     * Whether or not the <code>-XX:+CMSClassUnloadingEnabled</code> JVM option is enabled to allow perm gen / metaspace
-     * collections. The concurrent low pause collector does not allow for class unloading by default.
-     */
-    private boolean classUnloading;
-
-    /**
-     * The time of all user (non-kernel) threads added together in centiseconds.
-     */
-    private int timeUser;
-
-    /**
-     * The time of all system (kernel) threads added together in centiseconds.
-     */
-    private int timeSys;
-
-    /**
-     * The wall (clock) time in centiseconds.
-     */
-    private int timeReal;
-
-    /**
      * Regular expression defining standard logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
@@ -171,8 +130,6 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             + " \\[scrub string table, " + JdkRegEx.DURATION + "\\])?[ ]{0,1}\\[1 CMS-remark: " + JdkRegEx.SIZE_K
             + "\\(" + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
             + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
-
-    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
     /**
      * Regular expression for class unloading enabled with <code>-XX:+CMSClassUnloadingEnabled</code> (default JDK8
@@ -206,6 +163,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
 
     private static final Pattern REGEX_CLASS_UNLOADING_PATTERN = Pattern.compile(REGEX_CLASS_UNLOADING);
 
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+
     /**
      * Regular expression defining truncated logging due to -XX:+CMSScavengeBeforeRemark -XX:+PrintHeapAtGC:
      */
@@ -214,6 +173,59 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             + JdkRegEx.SIZE_K + "\\)\\]$";
 
     private static final Pattern REGEX_TRUNCATED_PATTERN = Pattern.compile(REGEX_TRUNCATED);
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_CLASS_UNLOADING_PATTERN.matcher(logLine).matches()
+                || REGEX_TRUNCATED_PATTERN.matcher(logLine).matches();
+    }
+
+    /**
+     * Whether or not the <code>-XX:+CMSClassUnloadingEnabled</code> JVM option is enabled to allow perm gen / metaspace
+     * collections. The concurrent low pause collector does not allow for class unloading by default.
+     */
+    private boolean classUnloading;
+
+    /**
+     * The elapsed clock time for the GC event in microseconds (rounded).
+     */
+    private long duration;
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
+
+    /**
+     * The time of all system (kernel) threads added together in centiseconds.
+     */
+    private int timeSys;
+
+    /**
+     * The time of all user (non-kernel) threads added together in centiseconds.
+     */
+    private int timeUser;
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Create event from log entry.
@@ -328,20 +340,36 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
         this.duration = duration;
     }
 
+    public long getDuration() {
+        return duration;
+    }
+
     public String getLogEntry() {
         return logEntry;
     }
 
-    public long getDuration() {
-        return duration;
+    public String getName() {
+        return JdkUtil.LogEventType.CMS_REMARK.toString();
+    }
+
+    public int getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
+    }
+
+    public int getTimeReal() {
+        return timeReal;
     }
 
     public long getTimestamp() {
         return timestamp;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.CMS_REMARK.toString();
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
     }
 
     public String getTrigger() {
@@ -350,33 +378,5 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
 
     public boolean isClassUnloading() {
         return classUnloading;
-    }
-
-    public int getTimeUser() {
-        return timeUser;
-    }
-
-    public int getTimeSys() {
-        return timeSys;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
-    }
-
-    public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_CLASS_UNLOADING_PATTERN.matcher(logLine).matches()
-                || REGEX_TRUNCATED_PATTERN.matcher(logLine).matches();
     }
 }

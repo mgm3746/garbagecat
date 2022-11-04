@@ -41,6 +41,13 @@ import org.junit.jupiter.api.Test;
 class TestUsingShenandoahEvent {
 
     @Test
+    void testIdentityEventType() {
+        String logLine = "[0.006s][info][gc] Using Shenandoah";
+        assertEquals(JdkUtil.LogEventType.USING_SHENANDOAH, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.USING_SHENANDOAH + "not identified.");
+    }
+
+    @Test
     void testLine() {
         String logLine = "[0.006s][info][gc] Using Shenandoah";
         assertTrue(UsingShenandoahEvent.match(logLine),
@@ -50,50 +57,15 @@ class TestUsingShenandoahEvent {
     }
 
     @Test
-    void testIdentityEventType() {
-        String logLine = "[0.006s][info][gc] Using Shenandoah";
-        assertEquals(JdkUtil.LogEventType.USING_SHENANDOAH, JdkUtil.identifyEventType(logLine),
-                JdkUtil.LogEventType.USING_SHENANDOAH + "not identified.");
-    }
-
-    @Test
-    void testParseLogLine() {
-        String logLine = "[0.006s][info][gc] Using Shenandoah";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingShenandoahEvent,
-                JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not parsed.");
-    }
-
-    @Test
-    void testNotBlocking() {
-        String logLine = "[0.006s][info][gc] Using Shenandoah";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_SHENANDOAH),
-                JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not indentified as reportable.");
-    }
-
-    @Test
-    void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.USING_SHENANDOAH);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not indentified as unified.");
-    }
-
-    @Test
-    void testLineWithSpaces() {
-        String logLine = "[0.006s][info][gc] Using Shenandoah    ";
+    void testLineDetailedLogging() {
+        String logLine = "[0.005s][info][gc     ] Using Shenandoah";
         assertTrue(UsingShenandoahEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
     }
 
     @Test
-    void testLineDetailedLogging() {
-        String logLine = "[0.005s][info][gc     ] Using Shenandoah";
+    void testLineWithSpaces() {
+        String logLine = "[0.006s][info][gc] Using Shenandoah    ";
         assertTrue(UsingShenandoahEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
     }
@@ -125,5 +97,33 @@ class TestUsingShenandoahEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_SHENANDOAH),
                 "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
+    }
+
+    @Test
+    void testNotBlocking() {
+        String logLine = "[0.006s][info][gc] Using Shenandoah";
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " incorrectly indentified as blocking.");
+    }
+
+    @Test
+    void testParseLogLine() {
+        String logLine = "[0.006s][info][gc] Using Shenandoah";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingShenandoahEvent,
+                JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not parsed.");
+    }
+
+    @Test
+    void testReportable() {
+        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.USING_SHENANDOAH),
+                JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not indentified as reportable.");
+    }
+
+    @Test
+    void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.USING_SHENANDOAH);
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not indentified as unified.");
     }
 }

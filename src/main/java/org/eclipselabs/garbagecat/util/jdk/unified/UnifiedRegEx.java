@@ -97,16 +97,10 @@ public class UnifiedRegEx {
      */
     public static final String DECORATOR = "\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
             + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
-            + ")\\])?(\\[\\d{1,}\\])?(\\[info[ ]{0,}\\])?(\\[(gc|safepoint)(,(age|cds|cpu|ergo|heap|init|load|marking|"
-            + "metaspace|mmu|nmethod|phases|ref|reloc|stats|start|stringtable|stringdedup|task))?(,(coops|exit|start))?"
-            + "[ ]{0,}\\])?( " + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
-
-    /**
-     * The duration of the event in milliseconds with 3 decimal places, introduced JDK9.
-     * 
-     * For example: 2.969ms, 0.2ms, 15.91 ms
-     */
-    public static final String DURATION = "(\\d{1,}[\\.\\,]\\d{1,3})[ ]{0,1}ms";
+            + ")\\])?(\\[\\d{1,}\\])?(\\[(debug|info)[ ]{0,}\\])?(\\[(gc|safepoint)(,(age|alloc|cds|cpu|ergo|heap|ihop|"
+            + "init|load|marking|metaspace|mmu|nmethod|phases|plab|ref|reloc|stats|start|stringtable|stringdedup|task|"
+            + "tlab))?(,(coops|cset|exit|ref|refine|region|start|stats))?" + "[ ]{0,}\\])?( "
+            + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
 
     /**
      * The garbage collection event number in JDK9+ unified logging.

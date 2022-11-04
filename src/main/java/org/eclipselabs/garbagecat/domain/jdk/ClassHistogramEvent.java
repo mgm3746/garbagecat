@@ -72,14 +72,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class ClassHistogramEvent implements ThrowAwayEvent {
 
     /**
-     * Regular expression for cruft left after class histogram preprocessing.
-     * 
-     * 2021-10-07T10:05:34.135+0100: 69302.241: [Class Histogram (before full gc):, 4.7148918 secs]
-     */
-    public static final String REGEX_PREPROCESSED = "" + JdkRegEx.DECORATOR
-            + " \\[Class Histogram( \\((before|after) full gc\\))?(:)?[ ]{0,1}?, " + JdkRegEx.DURATION + "\\]";
-
-    /**
      * Regular expressions defining the logging.
      */
     private static final String[] REGEX = {
@@ -102,9 +94,42 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
             /*
              * Preprocessed block as a single line
              */
-            "^" + REGEX_PREPROCESSED + TimesData.REGEX + "?[ ]*$" };
+            "^" + ClassHistogramEvent.REGEX_PREPROCESSED + TimesData.REGEX + "?[ ]*$" };
 
     private static final List<Pattern> REGEX_LIST = new ArrayList<>(REGEX.length);
+
+    /**
+     * Regular expression for cruft left after class histogram preprocessing.
+     * 
+     * 2021-10-07T10:05:34.135+0100: 69302.241: [Class Histogram (before full gc):, 4.7148918 secs]
+     */
+    public static final String REGEX_PREPROCESSED = "" + JdkRegEx.DECORATOR
+            + " \\[Class Histogram( \\((before|after) full gc\\))?(:)?[ ]{0,1}?, " + JdkRegEx.DURATION + "\\]";
+
+    static {
+        for (String regex : REGEX) {
+            REGEX_LIST.add(Pattern.compile(regex));
+        }
+    }
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        boolean isMatch = false;
+        for (int i = 0; i < REGEX_LIST.size(); i++) {
+            Pattern pattern = REGEX_LIST.get(i);
+            if (pattern.matcher(logLine).matches()) {
+                isMatch = true;
+                break;
+            }
+        }
+        return isMatch;
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -115,12 +140,6 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
      * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
-
-    static {
-        for (String regex : REGEX) {
-            REGEX_LIST.add(Pattern.compile(regex));
-        }
-    }
 
     /**
      * Create event from log entry.
@@ -143,24 +162,5 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        boolean isMatch = false;
-        for (int i = 0; i < REGEX_LIST.size(); i++) {
-            Pattern pattern = REGEX_LIST.get(i);
-            if (pattern.matcher(logLine).matches()) {
-                isMatch = true;
-                break;
-            }
-        }
-        return isMatch;
     }
 }

@@ -45,6 +45,43 @@ class TestCmsInitialMarkEvent {
     }
 
     @Test
+    void testLogLineDatestamp() {
+        String logLine = "2016-10-10T18:43:50.728-0700: [GC (CMS Initial Mark) [1 CMS-initial-mark: "
+                + "6993K(8218240K)] 26689K(8371584K), 0.0091989 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]";
+        assertTrue(CmsInitialMarkEvent.match(logLine), "Log line not recognized as CMS Initial Mark event.");
+        CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
+        assertEquals(529447430728L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineDatestampTimestamp() {
+        String logLine = "2016-10-10T18:43:50.728-0700: 3.065: [GC (CMS Initial Mark) [1 CMS-initial-mark: "
+                + "6993K(8218240K)] 26689K(8371584K), 0.0091989 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]";
+        assertTrue(CmsInitialMarkEvent.match(logLine), "Log line not recognized as CMS Initial Mark event.");
+        CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
+        assertEquals((long) 3065, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK), "Trigger not parsed correctly.");
+        assertEquals(9198, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(3, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(1, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(300, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8WithTrigger() {
+        String logLine = "8.722: [GC (CMS Initial Mark) [1 CMS-initial-mark: 0K(989632K)] 187663K(1986432K), "
+                + "0.0157899 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]";
+        assertTrue(CmsInitialMarkEvent.match(logLine), "Log line not recognized as CMS Initial Mark event.");
+        CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
+        assertEquals((long) 8722, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK), "Trigger not parsed correctly.");
+        assertEquals(15789, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(6, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(2, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(300, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
     void testLogLineWhitespaceAtEnd() {
         String logLine = "251.763: [GC [1 CMS-initial-mark: 4133273K(8218240K)] "
                 + "4150346K(8367360K), 0.0174433 secs]         ";
@@ -63,42 +100,5 @@ class TestCmsInitialMarkEvent {
         assertEquals(2, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(2, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testLogLineJdk8WithTrigger() {
-        String logLine = "8.722: [GC (CMS Initial Mark) [1 CMS-initial-mark: 0K(989632K)] 187663K(1986432K), "
-                + "0.0157899 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]";
-        assertTrue(CmsInitialMarkEvent.match(logLine), "Log line not recognized as CMS Initial Mark event.");
-        CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
-        assertEquals((long) 8722, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK), "Trigger not parsed correctly.");
-        assertEquals(15789, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(6, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(2, event.getTimeReal(), "Real time not parsed correctly.");
-        assertEquals(300, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testLogLineDatestampTimestamp() {
-        String logLine = "2016-10-10T18:43:50.728-0700: 3.065: [GC (CMS Initial Mark) [1 CMS-initial-mark: "
-                + "6993K(8218240K)] 26689K(8371584K), 0.0091989 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]";
-        assertTrue(CmsInitialMarkEvent.match(logLine), "Log line not recognized as CMS Initial Mark event.");
-        CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
-        assertEquals((long) 3065, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_CMS_INITIAL_MARK), "Trigger not parsed correctly.");
-        assertEquals(9198, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(3, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(1, event.getTimeReal(), "Real time not parsed correctly.");
-        assertEquals(300, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testLogLineDatestamp() {
-        String logLine = "2016-10-10T18:43:50.728-0700: [GC (CMS Initial Mark) [1 CMS-initial-mark: "
-                + "6993K(8218240K)] 26689K(8371584K), 0.0091989 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]";
-        assertTrue(CmsInitialMarkEvent.match(logLine), "Log line not recognized as CMS Initial Mark event.");
-        CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
-        assertEquals(529447430728L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 }

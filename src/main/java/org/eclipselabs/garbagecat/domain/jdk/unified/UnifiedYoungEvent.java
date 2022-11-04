@@ -76,7 +76,7 @@ public class UnifiedYoungEvent extends UnknownCollector
      * Regular expression defining the logging.
      */
     private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + UnifiedYoungEvent.TRIGGER
-            + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION
+            + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
             + TimesData.REGEX_JDK9 + "?[ ]*$";
 
     /**

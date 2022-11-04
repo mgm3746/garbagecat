@@ -34,54 +34,6 @@ import org.junit.jupiter.api.Test;
 class TestShenandoahFullGcEvent {
 
     @Test
-    void testLogLineJdk8() {
-        String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
-                + "[Metaspace: 282195K->281648K(1314816K)]";
-        assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
-        ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
-        assertEquals((long) (120839710), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(megabytes(1589), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
-        assertEquals(megabytes(1002), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(megabytes(1690), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(kilobytes(282195), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
-        assertEquals(kilobytes(281648), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
-        assertEquals(kilobytes(1314816), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
-        assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineJdk8Timestamp() {
-        String logLine = "120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
-                + "[Metaspace: 282195K->281648K(1314816K)]";
-        assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
-        ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
-        assertEquals((long) (120839710), event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineJdk8Datestamp() {
-        String logLine = "2021-03-23T20:57:46.427+0000: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
-                + "[Metaspace: 282195K->281648K(1314816K)]";
-        assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
-        ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
-        assertEquals(669830266427L, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testIdentityEventType() {
-        String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
-                + "[Metaspace: 282195K->281648K(1314816K)]";
-        assertEquals(SHENANDOAH_FULL_GC, JdkUtil.identifyEventType(logLine), SHENANDOAH_FULL_GC + "not identified.");
-    }
-
-    @Test
-    void testParseLogLine() {
-        String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
-                + "[Metaspace: 282195K->281648K(1314816K)]";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahFullGcEvent, SHENANDOAH_FULL_GC + " not parsed.");
-    }
-
-    @Test
     void testBlocking() {
         String logLine = "[2020-02-14T15:21:55.207-0500][052ms] [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
                 + "[Metaspace: 282195K->281648K(1314816K)]";
@@ -102,16 +54,44 @@ class TestShenandoahFullGcEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(SHENANDOAH_FULL_GC), SHENANDOAH_FULL_GC + " not indentified as reportable.");
+    void testIdentityEventType() {
+        String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
+                + "[Metaspace: 282195K->281648K(1314816K)]";
+        assertEquals(SHENANDOAH_FULL_GC, JdkUtil.identifyEventType(logLine), SHENANDOAH_FULL_GC + "not identified.");
     }
 
     @Test
-    void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(SHENANDOAH_FULL_GC);
-        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
-                SHENANDOAH_FULL_GC + " incorrectly indentified as unified.");
+    void testLogLineJdk8() {
+        String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
+                + "[Metaspace: 282195K->281648K(1314816K)]";
+        assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
+        ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
+        assertEquals((long) (120839710), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(megabytes(1589), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
+        assertEquals(megabytes(1002), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(megabytes(1690), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(kilobytes(282195), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(281648), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(1314816), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+        assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Datestamp() {
+        String logLine = "2021-03-23T20:57:46.427+0000: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
+                + "[Metaspace: 282195K->281648K(1314816K)]";
+        assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
+        ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
+        assertEquals(669830266427L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testLogLineJdk8Timestamp() {
+        String logLine = "120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
+                + "[Metaspace: 282195K->281648K(1314816K)]";
+        assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
+        ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
+        assertEquals((long) (120839710), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -122,23 +102,10 @@ class TestShenandoahFullGcEvent {
     }
 
     @Test
-    void testParseLogLineUnifiedUptime() {
-        String logLine = "[100.052s] [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
+    void testParseLogLine() {
+        String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
                 + "[Metaspace: 282195K->281648K(1314816K)]";
-        assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
-        ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
-        assertEquals((long) (100052 - 4077), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testParseLogLineUnifiedUptimemillis() {
-        String logLine = "[100052ms] [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
-                + "[Metaspace: 282195K->281648K(1314816K)]";
-        assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
-        ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
-        assertEquals((long) (100052 - 4077), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahFullGcEvent, SHENANDOAH_FULL_GC + " not parsed.");
     }
 
     @Test
@@ -169,5 +136,38 @@ class TestShenandoahFullGcEvent {
         ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
         assertEquals((long) (100052 - 4077), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testParseLogLineUnifiedUptime() {
+        String logLine = "[100.052s] [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
+                + "[Metaspace: 282195K->281648K(1314816K)]";
+        assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
+        ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
+        assertEquals((long) (100052 - 4077), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testParseLogLineUnifiedUptimemillis() {
+        String logLine = "[100052ms] [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
+                + "[Metaspace: 282195K->281648K(1314816K)]";
+        assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
+        ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
+        assertEquals((long) (100052 - 4077), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testReportable() {
+        assertTrue(JdkUtil.isReportable(SHENANDOAH_FULL_GC), SHENANDOAH_FULL_GC + " not indentified as reportable.");
+    }
+
+    @Test
+    void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(SHENANDOAH_FULL_GC);
+        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
+                SHENANDOAH_FULL_GC + " incorrectly indentified as unified.");
     }
 }

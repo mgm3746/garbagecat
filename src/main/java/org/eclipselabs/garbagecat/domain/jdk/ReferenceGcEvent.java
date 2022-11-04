@@ -40,12 +40,23 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class ReferenceGcEvent implements ThrowAwayEvent {
 
+    private static final Pattern pattern = Pattern.compile(ReferenceGcEvent.REGEX);
+
     /**
      * Regular expression defining the logging.
      */
     private static final String REGEX = "^" + JdkRegEx.DECORATOR + ".+(Soft|Weak|Phantom)Reference.+$";
 
-    private static final Pattern pattern = Pattern.compile(ReferenceGcEvent.REGEX);
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -90,16 +101,5 @@ public class ReferenceGcEvent implements ThrowAwayEvent {
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
     }
 }

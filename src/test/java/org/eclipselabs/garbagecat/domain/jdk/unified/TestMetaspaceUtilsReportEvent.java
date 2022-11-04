@@ -48,28 +48,6 @@ class TestMetaspaceUtilsReportEvent {
     }
 
     @Test
-    void testParseLogLine() {
-        String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Usage:";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof MetaspaceUtilsReportEvent,
-                JdkUtil.LogEventType.METASPACE_UTILS_REPORT.toString() + " not parsed.");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Usage:";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
-                JdkUtil.LogEventType.METASPACE_UTILS_REPORT.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
-    void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.METASPACE_UTILS_REPORT);
-        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.METASPACE_UTILS_REPORT.toString() + " not indentified as unified.");
-    }
-
-    @Test
     void testLineTimeUptimeMillis() {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Usage:";
         assertTrue(MetaspaceUtilsReportEvent.match(logLine),
@@ -94,5 +72,27 @@ class TestMetaspaceUtilsReportEvent {
         // assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+    }
+
+    @Test
+    void testParseLogLine() {
+        String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Usage:";
+        assertTrue(JdkUtil.parseLogLine(logLine) instanceof MetaspaceUtilsReportEvent,
+                JdkUtil.LogEventType.METASPACE_UTILS_REPORT.toString() + " not parsed.");
+    }
+
+    @Test
+    void testReportable() {
+        String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Usage:";
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+                JdkUtil.LogEventType.METASPACE_UTILS_REPORT.toString() + " incorrectly indentified as reportable.");
+    }
+
+    @Test
+    void testUnified() {
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.METASPACE_UTILS_REPORT);
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.METASPACE_UTILS_REPORT.toString() + " not indentified as unified.");
     }
 }

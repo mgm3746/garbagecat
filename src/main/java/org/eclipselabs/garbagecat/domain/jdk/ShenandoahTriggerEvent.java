@@ -82,7 +82,7 @@ public class ShenandoahTriggerEvent extends ShenandoahCollector implements Throw
             "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Learning \\d{1,} of \\d{1,}. Free \\(" + JdkRegEx.SIZE
                     + "\\) is below initial threshold \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             // Average
-            "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Average GC time \\(" + UnifiedRegEx.DURATION
+            "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Average GC time \\(" + JdkRegEx.DURATION_MS
                     + "\\) is above the time for( (average|instantaneous))? allocation rate \\("
                     + JdkRegEx.ALLOCATION_RATE + "\\) to deplete free headroom \\(" + JdkRegEx.SIZE
                     + "\\)( \\((margin of error|spike threshold) = \\d{1,}\\.\\d{2}\\))?[ ]*$",
@@ -104,18 +104,6 @@ public class ShenandoahTriggerEvent extends ShenandoahCollector implements Throw
         }
     }
 
-    public String getLogEntry() {
-        throw new UnsupportedOperationException("Event does not include log entry information");
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString();
-    }
-
-    public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
-    }
-
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
      * 
@@ -133,5 +121,17 @@ public class ShenandoahTriggerEvent extends ShenandoahCollector implements Throw
             }
         }
         return match;
+    }
+
+    public String getLogEntry() {
+        throw new UnsupportedOperationException("Event does not include log entry information");
+    }
+
+    public String getName() {
+        return JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString();
+    }
+
+    public long getTimestamp() {
+        throw new UnsupportedOperationException("Event does not include timestamp information");
     }
 }

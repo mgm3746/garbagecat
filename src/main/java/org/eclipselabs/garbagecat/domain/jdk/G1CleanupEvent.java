@@ -69,6 +69,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class G1CleanupEvent extends G1Collector implements BlockingEvent, ParallelEvent, CombinedData, TimesData {
 
+    private static final Pattern pattern = Pattern.compile(G1CleanupEvent.REGEX);
+
     /**
      * Regular expressions defining the logging.
      */
@@ -78,21 +80,16 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
             + JdkRegEx.SIZE_BYTES + " bytes \\(\\d{1,2}\\.\\d{2} %\\)\\])?(" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\))?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(REGEX);
     /**
-     * The log entry for the event. Can be used for debugging purposes.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private String logEntry;
-
-    /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
-     */
-    private long duration;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * Young generation size at beginning of GC event.
@@ -100,19 +97,34 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
     private Memory combined = Memory.ZERO;
 
     /**
-     * Young generation size at end of GC event.
-     */
-    private Memory combinedEnd = Memory.ZERO;
-
-    /**
      * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
     private Memory combinedAvailable = Memory.ZERO;
 
     /**
-     * The time of all user (non-kernel) threads added together in centiseconds.
+     * Young generation size at end of GC event.
      */
-    private int timeUser;
+    private Memory combinedEnd = Memory.ZERO;
+
+    /**
+     * The elapsed clock time for the GC event in microseconds (rounded).
+     */
+    private long duration;
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
     /**
      * The time of all system (kernel) threads added together in centiseconds.
@@ -120,9 +132,9 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
     private int timeSys;
 
     /**
-     * The wall (clock) time in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
-    private int timeReal;
+    private int timeUser;
 
     /**
      * Create event from log entry.
@@ -172,58 +184,47 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
         this.duration = duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
+    public Memory getCombinedOccupancyEnd() {
+        return combinedEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
         return combined;
     }
 
-    public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
-    }
-
     public Memory getCombinedSpace() {
         return combinedAvailable;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.G1_CLEANUP.toString();
     }
 
-    public int getTimeUser() {
-        return timeUser;
-    }
-
-    public int getTimeSys() {
-        return timeSys;
+    public int getParallelism() {
+        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
     public int getTimeReal() {
         return timeReal;
     }
 
-    public int getParallelism() {
-        return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
     }
 }

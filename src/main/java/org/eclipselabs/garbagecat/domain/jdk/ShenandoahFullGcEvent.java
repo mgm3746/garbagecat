@@ -58,20 +58,26 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 public class ShenandoahFullGcEvent extends ShenandoahCollector
         implements BlockingEvent, ParallelEvent, CombinedData, PermMetaspaceData {
 
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
+    private static final Pattern pattern = Pattern.compile(ShenandoahFullGcEvent.REGEX);
 
     /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
+     * Regular expressions defining the logging.
      */
-    private long duration;
+    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+            + ") [\\[]{0,1}Pause Full " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[,]{0,1} "
+            + JdkRegEx.DURATION_MS + "[]]{0,1}([,]{0,1} [\\[]{0,1}" + "Metaspace: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[]]{0,1})?[ ]*$";
 
     /**
-     * The time when the GC event started in milliseconds after JVM startup.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private long timestamp;
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     /**
      * Combined size at beginning of GC event.
@@ -79,14 +85,24 @@ public class ShenandoahFullGcEvent extends ShenandoahCollector
     private Memory combined;
 
     /**
+     * Combined available space.
+     */
+    private Memory combinedAvailable;
+
+    /**
      * Combined size at end of GC event.
      */
     private Memory combinedEnd;
 
     /**
-     * Combined available space.
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private Memory combinedAvailable;
+    private long duration;
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
     /**
      * Permanent generation size at beginning of GC event.
@@ -94,24 +110,19 @@ public class ShenandoahFullGcEvent extends ShenandoahCollector
     private Memory permGen;
 
     /**
-     * Permanent generation size at end of GC event.
-     */
-    private Memory permGenEnd;
-
-    /**
      * Space allocated to permanent generation.
      */
     private Memory permGenAllocation;
 
     /**
-     * Regular expressions defining the logging.
+     * Permanent generation size at end of GC event.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Pause Full " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[,]{0,1} "
-            + UnifiedRegEx.DURATION + "[]]{0,1}([,]{0,1} [\\[]{0,1}" + "Metaspace: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[]]{0,1})?[ ]*$";
+    private Memory permGenEnd;
 
-    private static final Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
     /**
      * Create event from log entry.
@@ -199,66 +210,55 @@ public class ShenandoahFullGcEvent extends ShenandoahCollector
         this.duration = duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
+    public Memory getCombinedOccupancyEnd() {
+        return combinedEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
         return combined;
     }
 
-    public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
-    }
-
     public Memory getCombinedSpace() {
         return combinedAvailable;
     }
 
-    public Memory getPermOccupancyInit() {
-        return permGen;
+    public long getDuration() {
+        return duration;
     }
 
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
-    }
-
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
-    }
-
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.SHENANDOAH_FULL_GC.toString();
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+    public Memory getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    public Memory getPermOccupancyInit() {
+        return permGen;
+    }
+
+    public Memory getPermSpace() {
+        return permGenAllocation;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    protected void setPermOccupancyEnd(Memory permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    protected void setPermOccupancyInit(Memory permGen) {
+        this.permGen = permGen;
+    }
+
+    protected void setPermSpace(Memory permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
     }
 }

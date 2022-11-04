@@ -117,6 +117,11 @@ public class JvmDao {
     List<CollectorFamily> collectorFamilies = new ArrayList<>();
 
     /**
+     * Number of <code>BlockingEvent</code>s where duration &gt; <code>TimesData</code> "real" time.
+     */
+    private long durationGtRealCount;
+
+    /**
      * List of all event types associate with JVM run.
      */
     List<LogEventType> eventTypes = new ArrayList<>();
@@ -217,6 +222,12 @@ public class JvmDao {
      * JVM version.
      */
     private String version;
+
+    /**
+     * The <code>BlockingEvent</code> with the greatest difference between the <code>BlockingEvent</code> duration and
+     * the <code>TimesData</code> "other" time.
+     */
+    private LogEvent worstDurationGtRealTimeEvent;
 
     /**
      * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
@@ -343,6 +354,28 @@ public class JvmDao {
         return collectorFamilies;
     }
 
+    public long getDurationGtRealCount() {
+        return durationGtRealCount;
+    }
+
+    /**
+     * The maximum <code>BlockingEvent</code> pause time.
+     * 
+     * @return maximum pause duration (microseconds).
+     */
+    public synchronized long getDurationMax() {
+        return longs(this.blockingEvents, BlockingEvent::getDuration).mapToLong(Long::valueOf).max().orElse(0);
+    }
+
+    /**
+     * The total <code>BlockEvent</code> pause time.
+     * 
+     * @return total pause duration (microseconds).
+     */
+    public synchronized long getDurationTotal() {
+        return longs(this.blockingEvents, BlockingEvent::getDuration).collect(summingLong(Long::valueOf));
+    }
+
     public List<LogEventType> getEventTypes() {
         return eventTypes;
     }
@@ -390,15 +423,6 @@ public class JvmDao {
      */
     private synchronized UnifiedSafepointEvent getFirstUnifiedSafepointEvent() {
         return unifiedSafepointEvents.isEmpty() ? null : unifiedSafepointEvents.get(0);
-    }
-
-    /**
-     * The total blocking event pause time.
-     * 
-     * @return total pause duration (microseconds).
-     */
-    public synchronized long getGcPauseTotal() {
-        return longs(this.blockingEvents, BlockingEvent::getDuration).collect(summingLong(Long::valueOf));
     }
 
     /**
@@ -457,15 +481,6 @@ public class JvmDao {
      */
     private synchronized UnifiedSafepointEvent getLastUnifiedSafepointEvent() {
         return unifiedSafepointEvents.isEmpty() ? null : unifiedSafepointEvents.get(unifiedSafepointEvents.size() - 1);
-    }
-
-    /**
-     * The maximum GC blocking event pause time.
-     * 
-     * @return maximum pause duration (microseconds).
-     */
-    public synchronized long getMaxGcPause() {
-        return longs(this.blockingEvents, BlockingEvent::getDuration).mapToLong(Long::valueOf).max().orElse(0);
     }
 
     /**
@@ -818,6 +833,10 @@ public class JvmDao {
         return version;
     }
 
+    public LogEvent getWorstDurationGtRealTimeEvent() {
+        return worstDurationGtRealTimeEvent;
+    }
+
     /**
      * @return The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
      */
@@ -855,6 +874,10 @@ public class JvmDao {
                 .map(clazz::cast).map(func) //
                 .filter(Objects::nonNull) //
                 .mapToLong(m -> m.getValue(KILOBYTES));
+    }
+
+    public void setDurationGtRealCount(long durationGtRealCount) {
+        this.durationGtRealCount = durationGtRealCount;
     }
 
     /**
@@ -983,6 +1006,10 @@ public class JvmDao {
      */
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public void setWorstDurationGtRealTimeEvent(LogEvent worstDurationGtRealTimeEvent) {
+        this.worstDurationGtRealTimeEvent = worstDurationGtRealTimeEvent;
     }
 
     /**

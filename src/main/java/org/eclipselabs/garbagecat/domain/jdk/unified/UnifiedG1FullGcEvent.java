@@ -62,6 +62,16 @@ public class UnifiedG1FullGcEvent extends G1Collector
         PermMetaspaceCollection, CombinedData, PermMetaspaceData, TriggerData, TimesData {
 
     /**
+     * Regular expression defining preprocessed logging.
+     */
+    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\("
+            + UnifiedG1FullGcEvent.TRIGGER + "\\) Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE
+            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
+
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
+
+    /**
      * Trigger(s) regular expression(s).
      */
     private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
@@ -70,29 +80,20 @@ public class UnifiedG1FullGcEvent extends G1Collector
             + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
 
     /**
-     * Regular expression defining preprocessed logging.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + TRIGGER
-            + "\\) Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
-            + UnifiedRegEx.DURATION + TimesData.REGEX_JDK9 + "[ ]*$";
-
-    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
-
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
+    public static final boolean match(String logLine) {
+        return REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+    }
 
     /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
+     * Combined young + old generation allocation.
      */
-    private long duration;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
+    private Memory combinedAllocation;
 
     /**
      * Combined young + old generation size at beginning of GC event.
@@ -105,9 +106,14 @@ public class UnifiedG1FullGcEvent extends G1Collector
     private Memory combinedEnd;
 
     /**
-     * Combined young + old generation allocation.
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private Memory combinedAllocation;
+    private long duration;
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
 
     /**
      * Permanent generation size at beginning of GC event.
@@ -115,24 +121,24 @@ public class UnifiedG1FullGcEvent extends G1Collector
     private Memory permGen;
 
     /**
-     * Permanent generation size at end of GC event.
-     */
-    private Memory permGenEnd;
-
-    /**
      * Space allocated to permanent generation.
      */
     private Memory permGenAllocation;
 
     /**
-     * The trigger for the GC event.
+     * Permanent generation size at end of GC event.
      */
-    private String trigger;
+    private Memory permGenEnd;
 
     /**
-     * The time of all user (non-kernel) threads added together in centiseconds.
+     * The wall (clock) time in centiseconds.
      */
-    private int timeUser;
+    private int timeReal;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
     /**
      * The time of all system (kernel) threads added together in centiseconds.
@@ -140,9 +146,14 @@ public class UnifiedG1FullGcEvent extends G1Collector
     private int timeSys;
 
     /**
-     * The wall (clock) time in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
-    private int timeReal;
+    private int timeUser;
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Create event from log entry.
@@ -212,86 +223,75 @@ public class UnifiedG1FullGcEvent extends G1Collector
         this.duration = duration;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString();
-    }
-
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
+    public Memory getCombinedOccupancyEnd() {
+        return combinedEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
         return combinedBegin;
     }
 
-    public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
-    }
-
     public Memory getCombinedSpace() {
         return combinedAllocation;
     }
 
-    public Memory getPermOccupancyInit() {
-        return permGen;
+    public long getDuration() {
+        return duration;
     }
 
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
+    public String getLogEntry() {
+        return logEntry;
     }
 
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
-    }
-
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
-    }
-
-    public String getTrigger() {
-        return trigger;
-    }
-
-    public int getTimeUser() {
-        return timeUser;
-    }
-
-    public int getTimeSys() {
-        return timeSys;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
+    public String getName() {
+        return JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString();
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+    public Memory getPermOccupancyEnd() {
+        return permGenEnd;
+    }
+
+    public Memory getPermOccupancyInit() {
+        return permGen;
+    }
+
+    public Memory getPermSpace() {
+        return permGenAllocation;
+    }
+
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public String getTrigger() {
+        return trigger;
+    }
+
+    protected void setPermOccupancyEnd(Memory permGenEnd) {
+        this.permGenEnd = permGenEnd;
+    }
+
+    protected void setPermOccupancyInit(Memory permGen) {
+        this.permGen = permGen;
+    }
+
+    protected void setPermSpace(Memory permGenAllocation) {
+        this.permGenAllocation = permGenAllocation;
     }
 }

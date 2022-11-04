@@ -52,12 +52,23 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class GcOverheadLimitEvent implements LogEvent {
 
+    private static final Pattern PATTERN = Pattern.compile(GcOverheadLimitEvent.REGEX);
+
     /**
      * Regular expression defining the logging.
      */
     private static final String REGEX = "^GC time (would exceed|is exceeding) GCTimeLimit of 98%$";
 
-    private static final Pattern PATTERN = Pattern.compile(REGEX);
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return PATTERN.matcher(logLine).matches();
+    }
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -90,16 +101,5 @@ public class GcOverheadLimitEvent implements LogEvent {
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return PATTERN.matcher(logLine).matches();
     }
 }

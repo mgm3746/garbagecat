@@ -59,33 +59,34 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
         implements UnifiedLogging, BlockingEvent, YoungCollection, ParallelEvent, CombinedData, TriggerData, TimesData {
 
     /**
+     * Regular expression defining standard logging (no details).
+     */
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\("
+            + UnifiedG1YoungInitialMarkEvent.TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
+
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+
+    /**
      * Trigger(s) regular expression(s).
      */
     static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")";
 
     /**
-     * Regular expression defining standard logging (no details).
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\(" + TRIGGER + "\\) "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + UnifiedRegEx.DURATION
-            + TimesData.REGEX_JDK9 + "[ ]*$";
-
-    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
-
-    /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
+    public static final boolean match(String logLine) {
+        return REGEX_PATTERN.matcher(logLine).matches();
+    }
 
     /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
+     * Combined young + old generation allocation.
      */
-    private long duration;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
+    private Memory combinedAllocation;
 
     /**
      * Combined young + old generation size at beginning of GC event.
@@ -98,28 +99,38 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
     private Memory combinedEnd;
 
     /**
-     * Combined young + old generation allocation.
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private Memory combinedAllocation;
+    private long duration;
 
     /**
-     * The trigger for the GC event.
+     * The log entry for the event. Can be used for debugging purposes.
      */
-    private String trigger;
+    private String logEntry;
 
     /**
-     * The time of all user (non-kernel) threads added together in centiseconds.
+     * The wall (clock) time in centiseconds.
      */
-    private int timeUser;
+    private int timeReal;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
     /**
      * The time of all system (kernel) threads added together in centiseconds.
      */
     private int timeSys;
     /**
-     * The wall (clock) time in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
-    private int timeReal;
+    private int timeUser;
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Create event from log entry.
@@ -182,62 +193,51 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
         this.duration = duration;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString();
-    }
-
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
+    public Memory getCombinedOccupancyEnd() {
+        return combinedEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
         return combinedBegin;
     }
 
-    public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
-    }
-
     public Memory getCombinedSpace() {
         return combinedAllocation;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public long getDuration() {
+        return duration;
     }
 
-    public int getTimeUser() {
-        return timeUser;
+    public String getLogEntry() {
+        return logEntry;
     }
 
-    public int getTimeSys() {
-        return timeSys;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
+    public String getName() {
+        return JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString();
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return REGEX_PATTERN.matcher(logLine).matches();
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public String getTrigger() {
+        return trigger;
     }
 }

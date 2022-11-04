@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
+import org.eclipselabs.garbagecat.domain.OtherTime;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
@@ -60,7 +61,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2970.268: [GC pause (G1 Evacuation Pause) (young) (initial-mark), 0.0698627 secs][Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 13.6G(30.0G)-&gt;13.5G(30.0G)] [Times: user=0.28 sys=0.00, real=0.08 secs]
+ * 2020-02-26T17:18:26.505+0000: 130.241: [GC pause (System.gc()) (young) (initial-mark), 0.1009346 secs][Other: 7.5 ms][Eden: 220.0M(241.0M)-&gt;0.0B(277.0M) Survivors: 28.0M-&gt;34.0M Heap: 924.5M(2362.0M)-&gt;713.5M(2362.0M)] [Times: user=0.19 sys=0.00, real=0.10 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -68,7 +69,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class G1YoungInitialMarkEvent extends G1Collector
-        implements BlockingEvent, CombinedData, TriggerData, ParallelEvent, TimesData {
+        implements BlockingEvent, CombinedData, TriggerData, ParallelEvent, TimesData, OtherTime {
 
     /**
      * Regular expressions defining the logging.
@@ -96,27 +97,23 @@ public class G1YoungInitialMarkEvent extends G1Collector
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
             + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|"
             + JdkRegEx.TRIGGER_SYSTEM_GC + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\(("
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?(\\[Eden: " + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?)?[ ]*$";
+            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?" + OtherTime.REGEX
+            + "?(\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?)?[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
     /**
-     * The log entry for the event. Can be used for debugging purposes.
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
      */
-    private String logEntry;
-
-    /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
-     */
-    private long duration;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
+    public static final boolean match(String logLine) {
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+    }
 
     /**
      * Combined generation size at beginning of GC event.
@@ -124,24 +121,38 @@ public class G1YoungInitialMarkEvent extends G1Collector
     private Memory combined = Memory.ZERO;
 
     /**
+     * Available space in multiple generation.
+     */
+    private Memory combinedAvailable = Memory.ZERO;
+    /**
      * Combined generation size at end of GC event.
      */
     private Memory combinedEnd = Memory.ZERO;
 
     /**
-     * Available space in multiple generation.
+     * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private Memory combinedAvailable = Memory.ZERO;
+    private long eventTime;
 
     /**
-     * The trigger for the GC event.
+     * The log entry for the event. Can be used for debugging purposes.
      */
-    private String trigger;
+    private String logEntry;
 
     /**
-     * The time of all user (non-kernel) threads added together in centiseconds.
+     * Time spent outside of garbage collection in microseconds (rounded).
      */
-    private int timeUser;
+    private long otherTime;
+
+    /**
+     * The wall (clock) time in centiseconds.
+     */
+    private int timeReal;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp;
 
     /**
      * The time of all system (kernel) threads added together in centiseconds.
@@ -149,9 +160,14 @@ public class G1YoungInitialMarkEvent extends G1Collector
     private int timeSys;
 
     /**
-     * The wall (clock) time in centiseconds.
+     * The time of all user (non-kernel) threads added together in centiseconds.
      */
-    private int timeReal;
+    private int timeUser;
+
+    /**
+     * The trigger for the GC event.
+     */
+    private String trigger;
 
     /**
      * Create event from log entry.
@@ -180,7 +196,7 @@ public class G1YoungInitialMarkEvent extends G1Collector
                 combined = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
                 combinedEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
                 combinedAvailable = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
-                duration = JdkMath.convertSecsToMicros(matcher.group(26)).intValue();
+                eventTime = JdkMath.convertSecsToMicros(matcher.group(26)).intValue();
                 if (matcher.group(29) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
                     timeSys = JdkMath.convertSecsToCentis(matcher.group(31)).intValue();
@@ -204,23 +220,28 @@ public class G1YoungInitialMarkEvent extends G1Collector
                 } else if (matcher.group(19) != null) {
                     trigger = matcher.group(19);
                 }
-                if (matcher.group(20) != null) {
-                    duration = JdkMath.convertSecsToMicros(matcher.group(21)).intValue();
+                if (matcher.group(25) != null) {
+                    otherTime = JdkMath.convertMillisToMicros(matcher.group(25)).intValue();
                 } else {
-                    if (matcher.group(55) != null) {
+                    otherTime = OtherTime.NO_DATA;
+                }
+                if (matcher.group(20) != null) {
+                    eventTime = JdkMath.convertSecsToMicros(matcher.group(21)).intValue();
+                } else {
+                    if (matcher.group(57) != null) {
                         // Use Times block duration
-                        duration = JdkMath.convertSecsToMicros(matcher.group(57)).intValue();
+                        eventTime = JdkMath.convertSecsToMicros(matcher.group(59)).intValue();
                     }
                 }
-                if (matcher.group(24) != null) {
-                    combined = JdkMath.convertSizeToKilobytes(matcher.group(43), matcher.group(45).charAt(0));
-                    combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(49), matcher.group(51).charAt(0));
-                    combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(52), matcher.group(54).charAt(0));
+                if (matcher.group(26) != null) {
+                    combined = JdkMath.convertSizeToKilobytes(matcher.group(45), matcher.group(47).charAt(0));
+                    combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(51), matcher.group(53).charAt(0));
+                    combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(54), matcher.group(56).charAt(0));
                 }
-                if (matcher.group(55) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(57)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(58)).intValue();
+                if (matcher.group(57) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(58)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(59)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(60)).intValue();
                 }
             }
         }
@@ -239,65 +260,59 @@ public class G1YoungInitialMarkEvent extends G1Collector
     public G1YoungInitialMarkEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
-        this.duration = duration;
-    }
-
-    public String getLogEntry() {
-        return logEntry;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public Memory getCombinedOccupancyInit() {
-        return combined;
+        this.eventTime = duration;
     }
 
     public Memory getCombinedOccupancyEnd() {
         return combinedEnd;
     }
 
+    public Memory getCombinedOccupancyInit() {
+        return combined;
+    }
+
     public Memory getCombinedSpace() {
         return combinedAvailable;
+    }
+
+    public long getDuration() {
+        return eventTime + otherTime;
+    }
+
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString();
     }
 
-    public String getTrigger() {
-        return trigger;
-    }
-
-    public int getTimeUser() {
-        return timeUser;
-    }
-
-    public int getTimeSys() {
-        return timeSys;
-    }
-
-    public int getTimeReal() {
-        return timeReal;
+    @Override
+    public long getOtherTime() {
+        return otherTime;
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+    public int getTimeReal() {
+        return timeReal;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getTimeSys() {
+        return timeSys;
+    }
+
+    public int getTimeUser() {
+        return timeUser;
+    }
+
+    public String getTrigger() {
+        return trigger;
     }
 }

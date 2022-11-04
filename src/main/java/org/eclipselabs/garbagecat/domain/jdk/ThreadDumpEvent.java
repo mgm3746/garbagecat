@@ -106,6 +106,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class ThreadDumpEvent implements ThrowAwayEvent {
 
+    private static final Pattern PATTERN[];
+
     /**
      * Regular expressions defining the logging.
      */
@@ -144,11 +146,28 @@ public class ThreadDumpEvent implements ThrowAwayEvent {
             "JNI global refs: \\d{1,}, weak refs: \\d{1,}"
             //
     };
-    private static final Pattern PATTERN[] = new Pattern[REGEX.length];
 
     static {
+        PATTERN = new Pattern[ThreadDumpEvent.REGEX.length];
+
         for (int i = 0; i < REGEX.length; i++)
             PATTERN[i] = Pattern.compile(REGEX[i]);
+    }
+
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        for (int i = 0; i < PATTERN.length; i++) {
+            if (PATTERN[i].matcher(logLine).matches()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -181,22 +200,6 @@ public class ThreadDumpEvent implements ThrowAwayEvent {
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        for (int i = 0; i < PATTERN.length; i++) {
-            if (PATTERN[i].matcher(logLine).matches()) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

@@ -50,12 +50,23 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  */
 public class ShenandoahCancellingGcEvent extends ShenandoahCollector implements ThrowAwayEvent {
 
+    private static Pattern pattern = Pattern.compile(ShenandoahCancellingGcEvent.REGEX);
+
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + UnifiedRegEx.DECORATOR + " )?Cancelling GC: Stopping VM[ ]*$";
 
-    private static Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * Determine if the logLine matches the logging pattern(s) for this event.
+     * 
+     * @param logLine
+     *            The log line to test.
+     * @return true if the log line matches the event pattern, false otherwise.
+     */
+    public static final boolean match(String logLine) {
+        return pattern.matcher(logLine).matches();
+    }
 
     public String getLogEntry() {
         throw new UnsupportedOperationException("Event does not include log entry information");
@@ -67,16 +78,5 @@ public class ShenandoahCancellingGcEvent extends ShenandoahCollector implements 
 
     public long getTimestamp() {
         throw new UnsupportedOperationException("Event does not include timestamp information");
-    }
-
-    /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
-     * @param logLine
-     *            The log line to test.
-     * @return true if the log line matches the event pattern, false otherwise.
-     */
-    public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
     }
 }
