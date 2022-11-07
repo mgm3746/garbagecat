@@ -46,7 +46,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * <p>
  * G1 mixed generation collection. Performed at the same time as a young collection, so it is a collection of the young
  * space and the low liveness regions of the old space. The <code>-XX:InitiatingHeapOccupancyPercent</code> defines the
- * heap occupancy threshold for initiating a mixed pause.
+ * heap occupancy threshold to start a concurrent GC cycle.
  * </p>
  * 
  * <h2>Example Logging</h2>

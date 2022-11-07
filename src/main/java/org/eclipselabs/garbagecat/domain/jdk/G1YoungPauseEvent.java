@@ -171,11 +171,6 @@ public class G1YoungPauseEvent extends G1Collector
     private Memory combinedEnd;
 
     /**
-     * The elapsed clock time for the GC event in microseconds (rounded).
-     */
-    private long eventTime;
-
-    /**
      * Combined generation size at beginning of GC event.
      */
     private Memory eden;
@@ -185,6 +180,11 @@ public class G1YoungPauseEvent extends G1Collector
      * 
      */
     private Memory edenEnd;
+
+    /**
+     * The elapsed clock time for the GC event in microseconds (rounded).
+     */
+    private long eventTime;
 
     /**
      * The log entry for the event. Can be used for debugging purposes.

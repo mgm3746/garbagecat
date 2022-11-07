@@ -36,8 +36,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * G1 mixed generation collection. Performed at the same time as a young collection, so it is a collection of the young
- * space and the low liveness regions of the old space. The <code>-XX:InitiatingHeapOccupancyPercent</code> defines the
- * heap occupancy threshold for initiating a mixed pause.
+ * space and the low liveness regions of the old space.
+ * </p>
+ * 
+ * <p>
+ * The <code>-XX:InitiatingHeapOccupancyPercent</code> defines the heap occupancy threshold to start a concurrent GC
+ * cycle (G1 marking) Default is 45%. Lower it to start marking earlier to avoid marking not finishing before heap fills
+ * up (analogous to CMS concurrent mode failure). A value of 0 results in constant GC cycles.
  * </p>
  * 
  * <h2>Example Logging</h2>

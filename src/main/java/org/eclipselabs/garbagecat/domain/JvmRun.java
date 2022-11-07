@@ -168,14 +168,6 @@ public class JvmRun {
      */
     private Memory maxPermOccupancy;
 
-    public LogEvent getWorstDurationGtRealTimeEvent() {
-        return worstDurationGtRealTimeEvent;
-    }
-
-    public void setWorstDurationGtRealTimeEvent(LogEvent worstDurationGtRealTimeEvent) {
-        this.worstDurationGtRealTimeEvent = worstDurationGtRealTimeEvent;
-    }
-
     /**
      * Used for tracking max perm occupancy outside of <code>BlockingEvent</code>s.
      */
@@ -200,6 +192,7 @@ public class JvmRun {
      * Number of <code>ParallelCollection</code> events.
      */
     private long parallelCount;
+
     /**
      * Whether or not the JVM events are from a preprocessed file.
      */
@@ -209,7 +202,6 @@ public class JvmRun {
      * <code>SafepointEvent</code>s where throughput does not meet the throughput goal.
      */
     private List<String> safepointBottlenecks;
-
     /**
      * <code>SafepointEventSummary</code> used for reporting.
      */
@@ -1291,6 +1283,10 @@ public class JvmRun {
         return unifiedSafepointTimeTotal;
     }
 
+    public LogEvent getWorstDurationGtRealTimeEvent() {
+        return worstDurationGtRealTimeEvent;
+    }
+
     public LogEvent getWorstInvertedParallelismEvent() {
         return worstInvertedParallelismEvent;
     }
@@ -1484,6 +1480,10 @@ public class JvmRun {
 
     public void setUnifiedSafepointTimeTotal(long unifiedSafepointTimeTotal) {
         this.unifiedSafepointTimeTotal = unifiedSafepointTimeTotal;
+    }
+
+    public void setWorstDurationGtRealTimeEvent(LogEvent worstDurationGtRealTimeEvent) {
+        this.worstDurationGtRealTimeEvent = worstDurationGtRealTimeEvent;
     }
 
     public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {
