@@ -36,7 +36,7 @@ public class UnifiedSafepoint {
         //
         GC_HEAP_INSPECTION, GEN_COLLECT_FOR_ALLOCATION, GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES,
         //
-        GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK, IC_BUFFER_FULL, NO_VM_OPERATION,
+        GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK, HEAP_DUMPER, IC_BUFFER_FULL, NO_VM_OPERATION,
         //
         PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS,
         //
@@ -239,6 +239,13 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
+     * Full heap dump (a heap summary does not require a safepoint).
+     * </p>
+     */
+    public static final String HEAP_DUMPER = "HeapDumper";
+
+    /**
+     * <p>
      * Safepoint for managing inline cache buffer when it is full (clear? resize?).
      * </p>
      */
@@ -424,6 +431,8 @@ public class UnifiedSafepoint {
             return Trigger.HALT;
         if (HANDSHAKE_FALL_BACK.matches(triggerLiteral))
             return Trigger.HANDSHAKE_FALL_BACK;
+        if (HEAP_DUMPER.matches(triggerLiteral))
+            return Trigger.HEAP_DUMPER;
         if (IC_BUFFER_FULL.matches(triggerLiteral))
             return Trigger.IC_BUFFER_FULL;
         if (NO_VM_OPERATION.matches(triggerLiteral))
@@ -543,6 +552,9 @@ public class UnifiedSafepoint {
         case HANDSHAKE_FALL_BACK:
             triggerLiteral = HANDSHAKE_FALL_BACK;
             break;
+        case HEAP_DUMPER:
+            triggerLiteral = HEAP_DUMPER;
+            break;
         case IC_BUFFER_FULL:
             triggerLiteral = IC_BUFFER_FULL;
             break;
@@ -655,6 +667,8 @@ public class UnifiedSafepoint {
             return Trigger.HALT;
         if (Trigger.HANDSHAKE_FALL_BACK.name().matches(trigger))
             return Trigger.HANDSHAKE_FALL_BACK;
+        if (Trigger.HEAP_DUMPER.name().matches(trigger))
+            return Trigger.HEAP_DUMPER;
         if (Trigger.IC_BUFFER_FULL.name().matches(trigger))
             return Trigger.IC_BUFFER_FULL;
         if (Trigger.NO_VM_OPERATION.name().matches(trigger))

@@ -24,6 +24,7 @@ import org.eclipselabs.garbagecat.domain.OtherTime;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
+import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -68,15 +69,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <pre>
- * 2017-06-22T12:25:26.515+0530: 66155.261: [GC pause (G1 Humongous Allocation) (mixed) (to-space exhausted), 0.2466797 secs][Other: 23.0 ms][Eden: 32.0M(204.0M)-&gt;0.0B(204.0M) Survivors: 0.0B-&gt;0.0B Heap: 3816.0M(4096.0M)-&gt;3734.5M(4096.0M)] [Times: user=0.39 sys=0.03, real=0.25 secs]
+ * 2017-06-22T12:25:26.515+0530: 66155.261: [GC pause (G1 Humongous Allocation) (mixed) (to-space exhausted), 0.2466797 secs][Ext Root Scanning (ms): 1.8][Other: 23.0 ms][Eden: 32.0M(204.0M)-&gt;0.0B(204.0M) Survivors: 0.0B-&gt;0.0B Heap: 3816.0M(4096.0M)-&gt;3734.5M(4096.0M)] [Times: user=0.39 sys=0.03, real=0.25 secs]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author James Livingston
  * 
  */
-public class G1MixedPauseEvent extends G1Collector
-        implements BlockingEvent, ParallelEvent, CombinedData, TriggerData, TimesData, OtherTime {
+public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, ParallelEvent, CombinedData, TriggerData,
+        TimesData, OtherTime, G1ExtRootScanningData {
 
     /**
      * Regular expression standard format.
@@ -92,10 +93,10 @@ public class G1MixedPauseEvent extends G1Collector
      */
     private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause( \\("
             + G1MixedPauseEvent.TRIGGER + "\\))? \\(mixed\\)( \\(" + G1MixedPauseEvent.TRIGGER + "\\))?, "
-            + JdkRegEx.DURATION + "\\]" + OtherTime.REGEX + "\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
+            + JdkRegEx.DURATION + "\\]" + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + OtherTime.REGEX + "\\[Eden: "
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
@@ -136,6 +137,11 @@ public class G1MixedPauseEvent extends G1Collector
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private long eventTime;
+
+    /**
+     * The elapsed clock time for external root scanning in microseconds (rounded).
+     */
+    private long extRootScanningTime;
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -223,18 +229,23 @@ public class G1MixedPauseEvent extends G1Collector
                     trigger = matcher.group(15);
                 }
                 eventTime = JdkMath.convertSecsToMicros(matcher.group(18)).intValue();
-                if (matcher.group(22) != null) {
-                    otherTime = JdkMath.convertMillisToMicros(matcher.group(22)).intValue();
+                if (matcher.group(21) != null) {
+                    extRootScanningTime = JdkMath.convertMillisToMicros(matcher.group(22)).intValue();
                 } else {
-                    otherTime = TimesData.NO_DATA;
+                    extRootScanningTime = G1ExtRootScanningData.NO_DATA;
                 }
-                combined = JdkMath.convertSizeToKilobytes(matcher.group(41), matcher.group(43).charAt(0));
-                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(47), matcher.group(49).charAt(0));
-                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(50), matcher.group(52).charAt(0));
-                if (matcher.group(53) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(54)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(55)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
+                if (matcher.group(23) != null) {
+                    otherTime = JdkMath.convertMillisToMicros(matcher.group(24)).intValue();
+                } else {
+                    otherTime = OtherTime.NO_DATA;
+                }
+                combined = JdkMath.convertSizeToKilobytes(matcher.group(43), matcher.group(45).charAt(0));
+                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(49), matcher.group(51).charAt(0));
+                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(52), matcher.group(54).charAt(0));
+                if (matcher.group(55) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(57)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(58)).intValue();
                 }
             }
         }
@@ -270,6 +281,10 @@ public class G1MixedPauseEvent extends G1Collector
 
     public long getDuration() {
         return eventTime + otherTime;
+    }
+
+    public long getExtRootScanningTime() {
+        return extRootScanningTime;
     }
 
     public String getLogEntry() {

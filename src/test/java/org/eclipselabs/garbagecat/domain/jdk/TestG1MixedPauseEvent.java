@@ -44,8 +44,8 @@ class TestG1MixedPauseEvent {
     @Test
     void testDoubleTriggerToSpaceExhausted() {
         String logLine = "506146.808: [GC pause (G1 Evacuation Pause) (mixed) (to-space exhausted), 8.6429024 secs]"
-                + "[Other: 23.0 ms][Eden: 22.9G(24.3G)->0.0B(24.3G) Survivors: 112.0M->0.0B "
-                + "Heap: 27.7G(28.0G)->23.5G(28.0G)] [Times: user=34.39 sys=13.70, real=8.64 secs]";
+                + "[Ext Root Scanning (ms): 1.8][Other: 23.0 ms][Eden: 22.9G(24.3G)->0.0B(24.3G) Survivors: "
+                + "112.0M->0.0B Heap: 27.7G(28.0G)->23.5G(28.0G)] [Times: user=34.39 sys=13.70, real=8.64 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
@@ -56,6 +56,7 @@ class TestG1MixedPauseEvent {
         assertEquals(kilobytes(24641536), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(28 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
+        assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(23000, event.getOtherTime(), "Other time not parsed correctly.");
         assertEquals(8665902, event.getDuration(), "Duration not parsed correctly.");
         assertEquals(3439, event.getTimeUser(), "User time not parsed correctly.");
@@ -115,9 +116,9 @@ class TestG1MixedPauseEvent {
 
     @Test
     void testLogLinePreprocessedhDatestamp() {
-        String logLine = "2016-02-09T23:27:04.149-0500: [GC pause (mixed), 0.0762060 secs][Other: 23.0 ms]"
-                + "[Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: 40.0M->40.0M Heap: 11.8G(26.0G)->9058.4M(26.0G)] "
-                + "[Times: user=0.30 sys=0.00, real=0.08 secs]";
+        String logLine = "2016-02-09T23:27:04.149-0500: [GC pause (mixed), 0.0762060 secs][Ext Root Scanning (ms): 1.8]"
+                + "[Other: 23.0 ms][Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: 40.0M->40.0M Heap: "
+                + "11.8G(26.0G)->9058.4M(26.0G)] [Times: user=0.30 sys=0.00, real=0.08 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
@@ -126,9 +127,9 @@ class TestG1MixedPauseEvent {
 
     @Test
     void testLogLinePreprocessedhDatestampTimestamp() {
-        String logLine = "2016-02-09T23:27:04.149-0500: 3082.652: [GC pause (mixed), 0.0762060 secs][Other: 23.0 ms]"
-                + "[Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: 40.0M->40.0M Heap: 11.8G(26.0G)->9058.4M(26.0G)] "
-                + "[Times: user=0.30 sys=0.00, real=0.08 secs]";
+        String logLine = "2016-02-09T23:27:04.149-0500: 3082.652: [GC pause (mixed), 0.0762060 secs]"
+                + "[Ext Root Scanning (ms): 1.8][Other: 23.0 ms][Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: "
+                + "40.0M->40.0M Heap: 11.8G(26.0G)->9058.4M(26.0G)] [Times: user=0.30 sys=0.00, real=0.08 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
@@ -138,6 +139,7 @@ class TestG1MixedPauseEvent {
         assertEquals(kilobytes(9275802), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(26 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
+        assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(23000, event.getOtherTime(), "Other time not parsed correctly.");
         assertEquals(99206, event.getDuration(), "Duration not parsed correctly.");
         assertEquals(30, event.getTimeUser(), "User time not parsed correctly.");
@@ -148,7 +150,7 @@ class TestG1MixedPauseEvent {
 
     @Test
     void testLogLinePreprocessedNoTrigger() {
-        String logLine = "3082.652: [GC pause (mixed), 0.0762060 secs][Other: 23.0 ms]"
+        String logLine = "3082.652: [GC pause (mixed), 0.0762060 secs][Ext Root Scanning (ms): 1.8][Other: 23.0 ms]"
                 + "[Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: 40.0M->40.0M Heap: 11.8G(26.0G)->9058.4M(26.0G)]"
                 + " [Times: user=0.30 sys=0.00, real=0.08 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
@@ -160,6 +162,7 @@ class TestG1MixedPauseEvent {
         assertEquals(kilobytes(9275802), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(26 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
+        assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(23000, event.getOtherTime(), "Other time not parsed correctly.");
         assertEquals(99206, event.getDuration(), "Duration not parsed correctly.");
         assertEquals(30, event.getTimeUser(), "User time not parsed correctly.");
@@ -170,7 +173,7 @@ class TestG1MixedPauseEvent {
 
     @Test
     void testLogLinePreprocessedNoTriggerWholeSizes() {
-        String logLine = "449412.888: [GC pause (mixed), 0.06137400 secs][Other: 23.0 ms]"
+        String logLine = "449412.888: [GC pause (mixed), 0.06137400 secs][Ext Root Scanning (ms): 1.8][Other: 23.0 ms]"
                 + "[Eden: 2044M(2044M)->0B(1792M) Survivors: 4096K->256M Heap: 2653M(12288M)->435M(12288M)] "
                 + "[Times: user=0.43 sys=0.00, real=0.06 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
@@ -182,6 +185,7 @@ class TestG1MixedPauseEvent {
         assertEquals(kilobytes(435 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(12288 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
+        assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(23000, event.getOtherTime(), "Other time not parsed correctly.");
         assertEquals(84374, event.getDuration(), "Duration not parsed correctly.");
         assertEquals(43, event.getTimeUser(), "User time not parsed correctly.");
@@ -192,9 +196,9 @@ class TestG1MixedPauseEvent {
 
     @Test
     void testLogLinePreprocessedTriggerBeforeG1EvacuationPause() {
-        String logLine = "2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs][Other: 23.0 ms]"
-                + "[Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: 12.9G(30.0G)->11.3G(30.0G)]"
-                + " [Times: user=0.19 sys=0.00, real=0.05 secs]";
+        String logLine = "2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs][Ext Root Scanning (ms): "
+                + "1.8][Other: 23.0 ms][Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: "
+                + "12.9G(30.0G)->11.3G(30.0G)] [Times: user=0.19 sys=0.00, real=0.05 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
@@ -205,6 +209,7 @@ class TestG1MixedPauseEvent {
         assertEquals(kilobytes(11848909), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(30 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
+        assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(23000, event.getOtherTime(), "Other time not parsed correctly.");
         assertEquals(68750, event.getDuration(), "Duration not parsed correctly.");
         assertEquals(19, event.getTimeUser(), "User time not parsed correctly.");
@@ -248,9 +253,9 @@ class TestG1MixedPauseEvent {
 
     @Test
     void testNoTriggerToSpaceExhausted() {
-        String logLine = "615375.044: [GC pause (mixed) (to-space exhausted), 1.5026320 secs][Other: 23.0 ms]"
-                + "[Eden: 3416.0M(3416.0M)->0.0B(3464.0M) Survivors: 264.0M->216.0M Heap: 17.7G(18.0G)->17.8G(18.0G)] "
-                + "[Times: user=11.35 sys=0.00, real=1.50 secs]";
+        String logLine = "615375.044: [GC pause (mixed) (to-space exhausted), 1.5026320 secs][Ext Root Scanning (ms): "
+                + "1.8][Other: 23.0 ms][Eden: 3416.0M(3416.0M)->0.0B(3464.0M) Survivors: 264.0M->216.0M Heap: "
+                + "17.7G(18.0G)->17.8G(18.0G)] [Times: user=11.35 sys=0.00, real=1.50 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
@@ -261,6 +266,7 @@ class TestG1MixedPauseEvent {
         assertEquals(kilobytes(18664653), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(18 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
+        assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(23000, event.getOtherTime(), "Other time not parsed correctly.");
         assertEquals(1525632, event.getDuration(), "Duration not parsed correctly.");
         assertEquals(1135, event.getTimeUser(), "User time not parsed correctly.");
@@ -383,9 +389,9 @@ class TestG1MixedPauseEvent {
 
     @Test
     void testTriggerGcLockerInitiatedGc() {
-        String logLine = "55.647: [GC pause (GCLocker Initiated GC) (mixed), 0.0210214 secs][Other: 23.0 ms][Eden: "
-                + "44.0M(44.0M)->0.0B(248.0M) Survivors: 31.0M->10.0M Heap: 1141.0M(1500.0M)->1064.5M(1500.0M)] "
-                + "[Times: user=0.07 sys=0.00, real=0.02 secs]";
+        String logLine = "55.647: [GC pause (GCLocker Initiated GC) (mixed), 0.0210214 secs][Ext Root Scanning (ms): "
+                + "1.8][Other: 23.0 ms][Eden: 44.0M(44.0M)->0.0B(248.0M) Survivors: 31.0M->10.0M Heap: "
+                + "1141.0M(1500.0M)->1064.5M(1500.0M)] [Times: user=0.07 sys=0.00, real=0.02 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
@@ -395,6 +401,7 @@ class TestG1MixedPauseEvent {
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(1090048), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(1500 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
+        assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(23000, event.getOtherTime(), "Other time not parsed correctly.");
         assertEquals(44021, event.getDuration(), "Duration not parsed correctly.");
         assertEquals(7, event.getTimeUser(), "User time not parsed correctly.");

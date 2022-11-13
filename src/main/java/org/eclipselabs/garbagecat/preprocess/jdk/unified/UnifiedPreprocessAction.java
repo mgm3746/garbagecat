@@ -309,6 +309,13 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             .compile(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG);
 
     /**
+     * Regular expression for external root scanning block.
+     *
+     * Ext Root Scanning (ms): 1.8
+     */
+    public static final String REGEX_G1_EXT_ROOT_SCANNING = "(Ext Root Scanning \\(ms\\): (\\d{1,}[\\.,]\\d) )";
+
+    /**
      * Regular expression for retained 1st line of safepoint logging.
      * 
      * [2021-09-14T11:40:53.379-0500][144.035s][info][safepoint ] Entering safepoint region:
@@ -586,6 +593,20 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     private static final Pattern REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN = Pattern.compile(REGEX_RETAIN_MIDDLE_SAFEPOINT);
 
     /**
+     * Regular expression for retained external root scanning data. Root scanning is multi-threaded. Use the "Max" value
+     * for the duration.
+     * 
+     * [2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,phases ] GC(9) Ext Root Scanning (ms): Min: 0.9, Avg: 1.0,
+     * Max: 1.0, Diff: 0.1, Sum: 7.8, Workers: 8
+     */
+    private static final String REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING = "^" + UnifiedRegEx.DECORATOR
+            + "[ ]{5}Ext Root Scanning \\(ms\\):   Min:  \\d{1,}[\\.,]\\d, Avg:  \\d{1,}[\\.,]\\d, "
+            + "Max:  (\\d{1,}[\\.,]\\d), Diff:  \\d{1,}[\\.,]\\d, Sum:  \\d{1,}[\\.,]\\d, Workers: \\d{1,}$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING);
+
+    /**
      * Regular expression for retained middle space data.
      * 
      * <p>
@@ -856,7 +877,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // Indented 5 spaces
             "^" + UnifiedRegEx.DECORATOR
                     + "     (AOT Root Scanning|Clear Card Table|Code Root Scanning|DerivedPointerTable Update|"
-                    + "Expand Heap After Collection|Ext Root Scanning|Free Collection Set|GC Worker (Other|Total)|"
+                    + "Expand Heap After Collection|Free Collection Set|GC Worker (Other|Total)|"
                     + "Humongous (Reclaim|Register)|Merge Per-Thread State|Object Copy|Redirty Cards|"
                     + "Reference Processing|Scan RS|Start New Collection Set|Termination|Update RS|Weak Processing).*$",
             // Indented 7 spaces
@@ -992,6 +1013,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_MIDDLE_G1_HUMONGOUS_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_SPACE_DATA_PATTERN.matcher(logLine).matches()
@@ -1168,6 +1190,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 }
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = " Ext Root Scanning (ms): " + matcher.group(DECORATOR_SIZE + 1);
+                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {

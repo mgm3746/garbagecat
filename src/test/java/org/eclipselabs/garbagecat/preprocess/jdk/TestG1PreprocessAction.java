@@ -475,8 +475,25 @@ class TestG1PreprocessAction {
     @Test
     void testExtRootScanning() {
         String logLine = "      [Ext Root Scanning (ms): Min: 2.7, Avg: 3.0, Max: 3.5, Diff: 0.8, Sum: 18.1]";
+        Set<String> context = new HashSet<String>();
         assertTrue(G1PreprocessAction.match(logLine, null, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals("[Ext Root Scanning (ms): 3.5]", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testExtRootScanningEarlyImplementation() {
+        String logLine = "      [Ext Root Scanning (ms):  27,4  33,8  26,4  24,8  28,6  19,5  28,4  8,9  18,9  31,9  "
+                + "29,6  28,0  28,1";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, null, null),
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context);
+        // Ignore this old pattern
+        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test

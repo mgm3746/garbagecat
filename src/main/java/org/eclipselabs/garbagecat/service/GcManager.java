@@ -58,6 +58,7 @@ import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
+import org.eclipselabs.garbagecat.domain.jdk.G1ExtRootScanningData;
 import org.eclipselabs.garbagecat.domain.jdk.G1FullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungPauseEvent;
@@ -299,6 +300,8 @@ public class GcManager {
         jvmRun.setMaxPermSpaceNonBlocking(kilobytes(jvmDao.getMaxPermSpaceNonBlocking()));
         jvmRun.setDurationGtRealCount(jvmDao.getDurationGtRealCount());
         jvmRun.setWorstDurationGtRealTimeEvent(jvmDao.getWorstDurationGtRealTimeEvent());
+        jvmRun.setExtRootScanningTimeMax(jvmDao.getExtRootScanningTimeMax());
+        jvmRun.setExtRootScanningTimeTotal(jvmDao.getExtRootScanningTimeTotal());
         jvmRun.doAnalysis();
         return jvmRun;
     }
@@ -1223,6 +1226,18 @@ public class GcManager {
                                 }
                             }
                         }
+                    }
+                }
+
+                // 23 <code>G1ExtRootScanningData</code>
+                if (event instanceof G1ExtRootScanningData
+                        && ((G1ExtRootScanningData) event).getExtRootScanningTime() != G1ExtRootScanningData.NO_DATA) {
+                    long extRootScanningTime = ((G1ExtRootScanningData) event).getExtRootScanningTime();
+                    if (extRootScanningTime > 0) {
+                        if (extRootScanningTime > jvmDao.getExtRootScanningTimeMax()) {
+                            jvmDao.setExtRootScanningTimeMax(extRootScanningTime);
+                        }
+                        jvmDao.setExtRootScanningTimeTotal(jvmDao.getExtRootScanningTimeTotal() + extRootScanningTime);
                     }
                 }
 

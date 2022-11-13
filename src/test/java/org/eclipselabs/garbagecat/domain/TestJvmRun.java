@@ -518,6 +518,26 @@ class TestJvmRun {
     }
 
     @Test
+    void testSummaryStatsG1ExtRootScanning() throws IOException {
+        File testFile = TestUtil.getFile("dataset262.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals((long) 400, jvmRun.getExtRootScanningTimeMax(),
+                "Max ext root scanning time not calculated correctly.");
+        assertEquals((long) 800, jvmRun.getExtRootScanningTimeTotal(),
+                "Total ext root scanning time not calculated correctly.");
+        assertEquals(5, jvmRun.getEventTypes().size(), "GC Event count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector incorrectly identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
+                JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
+    }
+
+    @Test
     void testSummaryStatsParallel() throws IOException {
         File testFile = TestUtil.getFile("dataset1.txt");
         GcManager gcManager = new GcManager();

@@ -62,36 +62,36 @@ class TestUnifiedG1YoungPauseEvent {
 
     @Test
     void testIdentityEventType() {
-        String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) "
-                + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) 24M->13M(31M) 0.401ms "
-                + "User=0.00s Sys=0.00s Real=0.00s";
+        String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) Ext Root "
+                + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) "
+                + "24M->13M(31M) 0.401ms User=0.00s Sys=0.00s Real=0.00s";
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE, JdkUtil.identifyEventType(logLine),
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
-        String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) "
-                + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) 24M->13M(31M) 0.401ms "
-                + "User=0.00s Sys=0.00s Real=0.00s";
+        String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) Ext Root "
+                + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) "
+                + "24M->13M(31M) 0.401ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " not indentified as blocking.");
     }
 
     @Test
     void testJdk17() {
-        String logLine = "[0.037s][info][gc,start    ] GC(0) Pause Young (Normal) (G1 Preventive Collection) "
-                + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 331K(512K)->331K(512K) 1M->1M(4M) 0.792ms "
-                + "User=0.00s Sys=0.00s Real=0.00s";
+        String logLine = "[0.037s][info][gc,start    ] GC(0) Pause Young (Normal) (G1 Preventive Collection) Ext Root "
+                + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 331K(512K)->331K(512K) "
+                + "1M->1M(4M) 0.792ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
     }
 
     @Test
     void testParseLogLine() {
-        String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) "
-                + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) 24M->13M(31M) 0.401ms "
-                + "User=0.00s Sys=0.00s Real=0.00s";
+        String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) Ext Root "
+                + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) "
+                + "24M->13M(31M) 0.401ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1YoungPauseEvent,
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " not parsed.");
     }
@@ -121,9 +121,9 @@ class TestUnifiedG1YoungPauseEvent {
 
     @Test
     void testPreprocessed() {
-        String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) "
-                + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) 24M->13M(31M) 0.401ms "
-                + "User=0.00s Sys=0.00s Real=0.00s";
+        String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) Ext Root "
+                + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) "
+                + "24M->13M(31M) 0.401ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
@@ -144,8 +144,8 @@ class TestUnifiedG1YoungPauseEvent {
     @Test
     void testPreprocessedConcurrentStartTriggerMetaGcThreshold() {
         String logLine = "[2020-06-24T18:11:52.676-0700][58671ms] GC(44) Pause Young (Concurrent Start) "
-                + "(Metadata GC Threshold) Other: 0.1ms Humongous regions: 13->13 Metaspace: 88802K->88802K(1134592K) "
-                + "733M->588M(1223M) 105.541ms User=0.18s Sys=0.00s Real=0.11s";
+                + "(Metadata GC Threshold) Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 "
+                + "Metaspace: 88802K->88802K(1134592K) 733M->588M(1223M) 105.541ms User=0.18s Sys=0.00s Real=0.11s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
@@ -170,9 +170,9 @@ class TestUnifiedG1YoungPauseEvent {
 
     @Test
     void testPreprocessedJdk11Time() {
-        String logLine = "[2019-05-09T01:39:00.763+0000] GC(0) Pause Young (Normal) (G1 Evacuation Pause) "
-                + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 26116K->26116K(278528K) 65M->8M(1304M) 57.263ms "
-                + "User=0.02s Sys=0.01s Real=0.06s";
+        String logLine = "[2019-05-09T01:39:00.763+0000] GC(0) Pause Young (Normal) (G1 Evacuation Pause) Ext Root "
+                + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 26116K->26116K(278528K) "
+                + "65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
@@ -182,9 +182,9 @@ class TestUnifiedG1YoungPauseEvent {
 
     @Test
     void testPreprocessedJdk11TimeUptime() {
-        String logLine = "[2019-05-09T01:39:00.763+0000][5.355s] GC(0) Pause Young (Normal) (G1 Evacuation Pause) "
-                + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 26116K->26116K(278528K) 65M->8M(1304M) 57.263ms "
-                + "User=0.02s Sys=0.01s Real=0.06s";
+        String logLine = "[2019-05-09T01:39:00.763+0000][5.355s] GC(0) Pause Young (Normal) (G1 Evacuation Pause) Ext "
+                + "Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 26116K->26116K(278528K) "
+                + "65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
@@ -194,9 +194,9 @@ class TestUnifiedG1YoungPauseEvent {
 
     @Test
     void testPreprocessedJdk11TimeUptimeMillis() {
-        String logLine = "[2019-05-09T01:39:00.763+0000][5355ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) "
-                + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 26116K->26116K(278528K) 65M->8M(1304M) 57.263ms "
-                + "User=0.02s Sys=0.01s Real=0.06s";
+        String logLine = "[2019-05-09T01:39:00.763+0000][5355ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) Ext "
+                + "Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 26116K->26116K(278528K) "
+                + "65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
@@ -221,8 +221,9 @@ class TestUnifiedG1YoungPauseEvent {
 
     @Test
     void testPreprocessedJdk11UptimeMillis() {
-        String logLine = "[325ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) Other: 0.1ms Humongous regions: "
-                + "13->13 Metaspace: 4300K->4300K(1056768K) 24M->3M(504M) 7.691ms User=0.05s Sys=0.03s Real=0.00s";
+        String logLine = "[325ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) Ext Root Scanning (ms): 1.6 Other: "
+                + "0.1ms Humongous regions: 13->13 Metaspace: 4300K->4300K(1056768K) 24M->3M(504M) 7.691ms User=0.05s "
+                + "Sys=0.03s Real=0.00s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
@@ -233,8 +234,8 @@ class TestUnifiedG1YoungPauseEvent {
     @Test
     void testPreprocessedTimeUptimemillisTriggerGcLocker() {
         String logLine = "[2019-05-09T01:39:07.136+0000][11728ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC) "
-                + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 35318K->35318K(288768K) 78M->22M(1304M) 35.722ms "
-                + "User=0.02s Sys=0.00s Real=0.04s";
+                + "Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: "
+                + "35318K->35318K(288768K) 78M->22M(1304M) 35.722ms User=0.02s Sys=0.00s Real=0.04s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
@@ -260,8 +261,8 @@ class TestUnifiedG1YoungPauseEvent {
     @Test
     void testPreprocessedTriggerG1EvacuationPause() {
         String logLine = "[2021-03-13T03:57:33.494+0530][81046562ms] GC(10044) Pause Young (Concurrent Start) "
-                + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 13->13 Metaspace: 214120K->214120K(739328K) "
-                + "8185M->8185M(8192M) 2.859ms User=0.01s Sys=0.00s Real=0.00s";
+                + "(G1 Evacuation Pause) Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: "
+                + "214120K->214120K(739328K) 8185M->8185M(8192M) 2.859ms User=0.01s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
     }
@@ -269,8 +270,9 @@ class TestUnifiedG1YoungPauseEvent {
     @Test
     void testPreprocessedTriggerMetadataGcThreshold() {
         String logLine = "[2021-09-14T11:38:33.217-0500][3.874s][info][gc,start     ] GC(0) Pause Young "
-                + "(Concurrent Start) (Metadata GC Threshold) Other: 0.1ms Humongous regions: 13->13 "
-                + "Metaspace: 20058K->20058K(1069056K) 56M->7M(8192M) 10.037ms User=0.04s Sys=0.00s Real=0.01s";
+                + "(Concurrent Start) (Metadata GC Threshold) Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous "
+                + "regions: 13->13 Metaspace: 20058K->20058K(1069056K) 56M->7M(8192M) 10.037ms User=0.04s "
+                + "Sys=0.00s Real=0.01s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
     }
@@ -419,8 +421,8 @@ class TestUnifiedG1YoungPauseEvent {
     @Test
     void testWhitespaceAtEnd() {
         String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) "
-                + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) 24M->13M(31M) "
-                + "0.401ms User=0.00s Sys=0.00s Real=0.00s    ";
+                + "Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: "
+                + "3771K->3771K(1056768K) 24M->13M(31M) 0.401ms User=0.00s Sys=0.00s Real=0.00s    ";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
     }

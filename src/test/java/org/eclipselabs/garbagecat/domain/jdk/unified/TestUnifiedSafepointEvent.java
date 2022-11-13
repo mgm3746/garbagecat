@@ -275,6 +275,35 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
+    void testPreprocessedTriggerHeapDumper() {
+        String logLine = "[2022-11-08T16:34:57.002-0500] Entering safepoint region: HeapDumper"
+                + "[2022-11-08T16:34:57.010-0500] Leaving safepoint region"
+                + "[2022-11-08T16:34:57.010-0500] Total time for which application threads were stopped: 0.0076837 "
+                + "seconds, Stopping threads took: 0.0000163 seconds";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.HEAP_DUMPER, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(721240497002L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(16300, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(7683700, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
+    void testPreprocessedTriggerShenandoahDegeneratedGc() {
+        String logLine = "[2.909s] Entering safepoint region: ShenandoahDegeneratedGC[2.926s] Leaving safepoint region"
+                + "[2.926s] Total time for which application threads were stopped: 0.0171471 seconds, Stopping threads "
+                + "took: 0.0000157 seconds";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.SHENANDOAH_DEGENERATED_GC, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(2909, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(15700, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(17147100, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
     void testReportable() {
         assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_SAFEPOINT),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " incorrectly indentified as reportable.");

@@ -501,8 +501,9 @@ public enum Analysis {
     WARN_G1_JDK8_PRIOR_U40_RECS("warn.g1.jdk8.prior.u40.recs"),
 
     /**
-     * Property key for the occupancy threshold for a region to be considered as a candidate region for a G1_CLEANUP
-     * collection being specified with <code>-XX:G1MixedGCLiveThresholdPercent=NN</code>.
+     * Property key for the occupancy threshold for a region to be considered as a candidate region for a @link
+     * org.eclipselabs.garbagecat.domain.jdk.G1CleanupEvent} collection being specified with
+     * <code>-XX:G1MixedGCLiveThresholdPercent=NN</code>.
      */
     WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT("warn.g1.mixed.gc.live.thrshld.prcnt"),
 

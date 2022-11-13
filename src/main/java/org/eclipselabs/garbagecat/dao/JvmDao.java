@@ -127,6 +127,16 @@ public class JvmDao {
     List<LogEventType> eventTypes = new ArrayList<>();
 
     /**
+     * Maximum external root scanning time (microseconds).
+     */
+    private long extRootScanningTimeMax;
+
+    /**
+     * Total external root scanning time (microseconds).
+     */
+    private long extRootScanningTimeTotal;
+
+    /**
      * Number of <code>ParallelCollection</code> with "inverted" parallelism.
      */
     private long invertedParallelismCount;
@@ -378,6 +388,14 @@ public class JvmDao {
 
     public List<LogEventType> getEventTypes() {
         return eventTypes;
+    }
+
+    public long getExtRootScanningTimeMax() {
+        return extRootScanningTimeMax;
+    }
+
+    public long getExtRootScanningTimeTotal() {
+        return extRootScanningTimeTotal;
     }
 
     /**
@@ -878,6 +896,14 @@ public class JvmDao {
 
     public void setDurationGtRealCount(long durationGtRealCount) {
         this.durationGtRealCount = durationGtRealCount;
+    }
+
+    public void setExtRootScanningTimeMax(long extRootScanningTimeMax) {
+        this.extRootScanningTimeMax = extRootScanningTimeMax;
+    }
+
+    public void setExtRootScanningTimeTotal(long extRootScanningTimeTotal) {
+        this.extRootScanningTimeTotal = extRootScanningTimeTotal;
     }
 
     /**

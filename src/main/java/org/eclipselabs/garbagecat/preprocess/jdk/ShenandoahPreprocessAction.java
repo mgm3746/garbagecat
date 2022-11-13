@@ -34,7 +34,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
- * Shenandoah logging preprocessing.
+ * Shenandoah logging (both non-unified and unified) preprocessing.
  * </p>
  *
  * <h2>Example Logging</h2>
@@ -295,7 +295,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                     + JdkRegEx.SIZE,
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalEvacEvent}
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for Evacuation. Used CSet: " + JdkRegEx.SIZE + ", Free: "
-                    + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: \\d{1,}\\.\\dx$",
+                    + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: (\\d{1,}\\.\\d|inf)x$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahConcurrentEvent}
             "^[ ]{1,4}Using \\d{1,2} of \\d{1,2} workers for concurrent "
                     + "(reset|marking|preclean|evacuation|reference update)$",

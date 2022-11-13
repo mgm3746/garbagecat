@@ -84,6 +84,16 @@ public class JvmRun {
     private List<LogEventType> eventTypes;
 
     /**
+     * Maximum external root scanning time (microseconds).
+     */
+    private long extRootScanningTimeMax;
+
+    /**
+     * Total external root scanning time (microseconds).
+     */
+    private long extRootScanningTimeTotal;
+
+    /**
      * The first blocking event.
      */
     private BlockingEvent firstGcEvent;
@@ -192,7 +202,6 @@ public class JvmRun {
      * Number of <code>ParallelCollection</code> events.
      */
     private long parallelCount;
-
     /**
      * Whether or not the JVM events are from a preprocessed file.
      */
@@ -202,6 +211,7 @@ public class JvmRun {
      * <code>SafepointEvent</code>s where throughput does not meet the throughput goal.
      */
     private List<String> safepointBottlenecks;
+
     /**
      * <code>SafepointEventSummary</code> used for reporting.
      */
@@ -983,6 +993,14 @@ public class JvmRun {
         return eventTypes;
     }
 
+    public long getExtRootScanningTimeMax() {
+        return extRootScanningTimeMax;
+    }
+
+    public long getExtRootScanningTimeTotal() {
+        return extRootScanningTimeTotal;
+    }
+
     /**
      * @return The first gc or stopped event.
      */
@@ -1332,6 +1350,14 @@ public class JvmRun {
 
     public void setEventTypes(List<LogEventType> eventTypes) {
         this.eventTypes = eventTypes;
+    }
+
+    public void setExtRootScanningTimeMax(long extRootScanningTimeMax) {
+        this.extRootScanningTimeMax = extRootScanningTimeMax;
+    }
+
+    public void setExtRootScanningTimeTotal(long extRootScanningTimeTotal) {
+        this.extRootScanningTimeTotal = extRootScanningTimeTotal;
     }
 
     public void setFirstGcEvent(BlockingEvent firstGcEvent) {

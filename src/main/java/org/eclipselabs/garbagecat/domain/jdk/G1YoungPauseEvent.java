@@ -25,6 +25,7 @@ import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
+import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -79,9 +80,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author James Livingston
  *
  */
-public class G1YoungPauseEvent extends G1Collector
-        implements BlockingEvent, YoungCollection, ParallelEvent, CombinedData, TriggerData, TimesData, OtherTime {
-
+public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, YoungCollection, ParallelEvent,
+        CombinedData, TriggerData, TimesData, OtherTime, G1ExtRootScanningData {
     /**
      * Regular expression standard format.
      *
@@ -107,18 +107,18 @@ public class G1YoungPauseEvent extends G1Collector
     /**
      * Regular expression preprocessed with G1 details.
      *
-     * 2017-05-25T12:24:06.040+0000: 206.156: [GC pause (young) (to-space overflow), 0.77121400 secs][Other: 544.6
-     * ms][Eden: 1270M(1270M)->0B(723M) Survivors: 124M->175M Heap: 2468M(3072M)->1695M(3072M)] [Times: user=1.51
-     * sys=0.14, real=0.77 secs]
+     * 2017-05-25T12:24:06.040+0000: 206.156: [GC pause (young) (to-space overflow), 0.77121400 secs][Ext Root Scanning
+     * (ms): 1.8][Other: 544.6 ms][Eden: 1270M(1270M)->0B(723M) Survivors: 124M->175M Heap: 2468M(3072M)->1695M(3072M)]
+     * [Times: user=1.51 sys=0.14, real=0.77 secs]
      */
     private static final String REGEX_PREPROCESSED_DETAILS = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
             + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
             + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\) )?\\(young\\)( \\(("
             + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW + ")\\))?, "
-            + JdkRegEx.DURATION + "\\]" + OtherTime.REGEX + "?\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
+            + JdkRegEx.DURATION + "\\]" + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + "?" + OtherTime.REGEX
+            + "?\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_DETAILS_PATTERN = Pattern.compile(REGEX_PREPROCESSED_DETAILS);
 
@@ -185,6 +185,11 @@ public class G1YoungPauseEvent extends G1Collector
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private long eventTime;
+
+    /**
+     * The elapsed clock time for external root scanning in microseconds (rounded).
+     */
+    private long extRootScanningTime;
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -270,21 +275,26 @@ public class G1YoungPauseEvent extends G1Collector
                     // trigger before (young):
                     trigger = matcher.group(15);
                 }
-                if (matcher.group(22) != null) {
-                    otherTime = JdkMath.convertMillisToMicros(matcher.group(22)).intValue();
-                } else {
-                    otherTime = TimesData.NO_DATA;
-                }
                 eventTime = JdkMath.convertSecsToMicros(matcher.group(18)).intValue();
-                eden = JdkMath.convertSizeToKilobytes(matcher.group(23), matcher.group(25).charAt(0));
-                edenEnd = JdkMath.convertSizeToKilobytes(matcher.group(29), matcher.group(31).charAt(0));
-                combined = JdkMath.convertSizeToKilobytes(matcher.group(41), matcher.group(43).charAt(0));
-                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(47), matcher.group(49).charAt(0));
-                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(50), matcher.group(52).charAt(0));
-                if (matcher.group(53) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(54)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(55)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
+                if (matcher.group(21) != null) {
+                    extRootScanningTime = JdkMath.convertMillisToMicros(matcher.group(22)).intValue();
+                } else {
+                    extRootScanningTime = G1ExtRootScanningData.NO_DATA;
+                }
+                if (matcher.group(24) != null) {
+                    otherTime = JdkMath.convertMillisToMicros(matcher.group(24)).intValue();
+                } else {
+                    otherTime = OtherTime.NO_DATA;
+                }
+                eden = JdkMath.convertSizeToKilobytes(matcher.group(25), matcher.group(27).charAt(0));
+                edenEnd = JdkMath.convertSizeToKilobytes(matcher.group(31), matcher.group(33).charAt(0));
+                combined = JdkMath.convertSizeToKilobytes(matcher.group(43), matcher.group(45).charAt(0));
+                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(49), matcher.group(51).charAt(0));
+                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(52), matcher.group(54).charAt(0));
+                if (matcher.group(55) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(57)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(58)).intValue();
                 }
             }
         } else if ((matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry)).matches()) {
@@ -375,6 +385,10 @@ public class G1YoungPauseEvent extends G1Collector
 
     public Memory getEdenOccupancyInit() {
         return eden;
+    }
+
+    public long getExtRootScanningTime() {
+        return extRootScanningTime;
     }
 
     public String getLogEntry() {

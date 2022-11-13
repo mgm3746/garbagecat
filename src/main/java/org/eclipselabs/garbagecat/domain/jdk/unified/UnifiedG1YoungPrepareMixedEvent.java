@@ -189,7 +189,7 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements Unif
             if (matcher.group(DECORATOR_SIZE + 3) != null) {
                 otherTime = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 3)).intValue();
             } else {
-                otherTime = TimesData.NO_DATA;
+                otherTime = OtherTime.NO_DATA;
             }
             permGen = memory(matcher.group(DECORATOR_SIZE + 4), matcher.group(DECORATOR_SIZE + 6).charAt(0))
                     .convertTo(KILOBYTES);

@@ -425,6 +425,28 @@ public class Main {
                 }
                 printWriter.write(totalGcPause.toString());
                 printWriter.write(" secs" + LINE_SEPARATOR);
+
+                // G1 external root scanning
+                if (jvmRun.getExtRootScanningTimeTotal() > 0) {
+                    // max
+                    BigDecimal extRootScanningMax = JdkMath.convertMicrosToSecs(jvmRun.getExtRootScanningTimeMax());
+                    printWriter.write("Ext Root Scanning Max: ");
+                    if (extRootScanningMax.compareTo(BigDecimal.ZERO) == 0 && jvmRun.getBlockingEventCount() > 0) {
+                        // Provide rounding clue
+                        printWriter.write("~");
+                    }
+                    printWriter.write(extRootScanningMax.toString());
+                    printWriter.write(" secs" + LINE_SEPARATOR);
+                    // total
+                    BigDecimal extRootScanningTotal = JdkMath.convertMicrosToSecs(jvmRun.getExtRootScanningTimeTotal());
+                    printWriter.write("Ext Root Scanning Total: ");
+                    if (extRootScanningTotal.compareTo(BigDecimal.ZERO) == 0 && jvmRun.getBlockingEventCount() > 0) {
+                        // Provide rounding clue
+                        printWriter.write("~");
+                    }
+                    printWriter.write(extRootScanningTotal.toString());
+                    printWriter.write(" secs" + LINE_SEPARATOR);
+                }
             }
             if (jvmRun.getStoppedTimeEventCount() > 0) {
                 // Stopped time throughput

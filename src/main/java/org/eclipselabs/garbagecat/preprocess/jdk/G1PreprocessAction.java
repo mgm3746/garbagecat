@@ -75,7 +75,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 0.304: [GC pause (young), 0.00376500 secs][Other:   0.1 ms] 8192K-&gt;2112K(59M) [Times: user=0.01 sys=0.00, real=0.01 secs]
+ * 0.304: [GC pause (young), 0.00376500 secs][Ext Root Scanning (ms): 0.6][Other:   0.1 ms] 8192K-&gt;2112K(59M) [Times: user=0.01 sys=0.00, real=0.01 secs]
  * </pre>
  * 
  * <p>
@@ -113,7 +113,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 2.192: [GC pause (G1 Evacuation Pause) (young), 0.0209631 secs][Other: 8.2 ms][Eden: 128.0M(128.0M)-&gt;0.0B(112.0M) Survivors: 0.0B-&gt;16.0M Heap: 128.0M(30.0G)-&gt;24.9M(30.0G)] [Times: user=0.09 sys=0.02, real=0.03 secs]
+ * 2.192: [GC pause (G1 Evacuation Pause) (young), 0.0209631 secs][Ext Root Scanning (ms): 18.1][Other: 8.2 ms][Eden: 128.0M(128.0M)-&gt;0.0B(112.0M) Survivors: 0.0B-&gt;16.0M Heap: 128.0M(30.0G)-&gt;24.9M(30.0G)] [Times: user=0.09 sys=0.02, real=0.03 secs]
  * </pre>
  * 
  * <p>
@@ -152,7 +152,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 5.293: [GC pause (GCLocker Initiated GC) (young), 0.0176868 secs][Other: 8.3 ms][Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 415.0M(30.0G)-&gt;313.0M(30.0G)] [Times: user=0.01 sys=0.00, real=0.02 secs]
+ * 5.293: [GC pause (GCLocker Initiated GC) (young), 0.0176868 secs][Ext Root Scanning (ms): 23.2][Other: 8.3 ms][Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 415.0M(30.0G)-&gt;313.0M(30.0G)] [Times: user=0.01 sys=0.00, real=0.02 secs]
  * </pre>
  * 
  * <p>
@@ -213,7 +213,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <pre>
- * 2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs][Other: 2.7 ms][Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 12.9G(30.0G)-&gt;11.3G(30.0G)] [Times: user=0.19 sys=0.00, real=0.05 secs]
+ * 2973.338: [GC pause (G1 Evacuation Pause) (mixed), 0.0457502 secs][Ext Root Scanning (ms): 153.0][Other: 2.7 ms][Eden: 112.0M(112.0M)-&gt;0.0B(112.0M) Survivors: 16.0M-&gt;16.0M Heap: 12.9G(30.0G)-&gt;11.3G(30.0G)] [Times: user=0.19 sys=0.00, real=0.05 secs]
  * </pre>
  * 
  * <p>
@@ -584,6 +584,26 @@ public class G1PreprocessAction implements PreprocessAction {
     private static final Pattern REGEX_RETAIN_MIDDLE_EDEN_PATTERN = Pattern.compile(REGEX_RETAIN_MIDDLE_EDEN);
 
     /**
+     * Regular expression for retained external root scanning data. Root scanning is multi-threaded. Use the "Max" value
+     * for the duration.
+     * 
+     * [Ext Root Scanning (ms): Min: 2.7, Avg: 3.0, Max: 3.5, Diff: 0.8, Sum: 18.1]
+     */
+    private static final String REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING = "^[ ]{6}\\[Ext Root Scanning \\(ms\\): "
+            + "Min: \\d{1,}[\\.,]\\d, Avg: \\d{1,}[\\.,]\\d, Max: (\\d{1,}[\\.,]\\d), Diff: \\d{1,}[\\.,]\\d, "
+            + "Sum: \\d{1,}[\\.,]\\d\\]$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING);
+
+    /**
+     * Regular expression for external root scanning block.
+     *
+     * [Ext Root Scanning (ms): 1.8]
+     */
+    public static final String REGEX_EXT_ROOT_SCANNING = "(\\[Ext Root Scanning \\(ms\\): (\\d{1,}[\\.,]\\d)\\])";
+
+    /**
      * Regular expression for retained <code>OtherTime</code> data.
      * 
      * [Other: 0.9 ms]
@@ -632,8 +652,8 @@ public class G1PreprocessAction implements PreprocessAction {
             "^      \\[GC Worker Start( Time)? \\(ms\\):(  \\d{1,10}(\\.|,)\\d)+(\\])?$",
             //
             "^      \\[GC Worker( (End|Other|Total))?( Time)? \\(ms\\):.+$",
-            //
-            "^      \\[Ext Root Scanning \\(ms\\):.+$",
+            // Throw away this old pattern, apparently from very early implementations
+            "^      \\[Ext Root Scanning \\(ms\\):(  \\d{1,}[\\.,]\\d){1,}$",
             //
             "^      \\[SATB Filtering \\(ms\\):.+",
             //
@@ -815,6 +835,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_MIDDLE_YOUNG_PAUSE_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN.matcher(logLine).matches()
+                || REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_EDEN_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_MIDDLE_DURATION_PATTERN.matcher(logLine).matches()
@@ -1016,6 +1037,12 @@ public class G1PreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = "[Ext Root Scanning (ms): " + matcher.group(1) + "]";
+                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
