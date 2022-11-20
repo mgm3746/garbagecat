@@ -32,18 +32,42 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_SHORT;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.io.TempDir;
 
 class TestMain {
 
     private static void assertHasOption(CommandLine cmd, String option) {
         assertTrue(cmd.hasOption(option), "'-" + option + "' is a valid option");
+    }
+
+    @Test
+    void testLogFileEqualsReportFile(@TempDir File temporaryFolder) throws Exception {
+        // Method arguments
+        String[] args = new String[] { //
+                "-o", //
+                temporaryFolder.getAbsolutePath(), //
+                "-v", //
+                "-l", //
+                // Instead of a file, use a location sure to exist.
+                temporaryFolder.getAbsolutePath() //
+        };
+        CommandLine cmd = OptionsParser.parseOptions(args);
+        // we cannot use lambdas while source level is not at least 1.8 (and we cannot
+        // use effective final)
+        assertThrows(IllegalArgumentException.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                Main.createReport(cmd);
+            }
+        });
     }
 
     @Test

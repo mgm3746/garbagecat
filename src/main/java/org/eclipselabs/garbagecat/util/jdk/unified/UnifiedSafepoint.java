@@ -74,7 +74,7 @@ public class UnifiedSafepoint {
     /**
      * <p>
      * Various cleanup operations that require a safepoint: deflate monitors, update inline caches, compilation policy,
-     * symbol table rehash, string table rehash, CLD purge, dictionary resize.
+     * symbol table rehash, string table rehash, ClassLoaderData (CLD) purge, dictionary resize.
      * </p>
      */
     public static final String CLEANUP = "Cleanup";

@@ -99,13 +99,21 @@ public class Main {
     public static final int REJECT_LIMIT = 1000;
 
     public static void createReport(CommandLine cmd) throws IOException {
+        String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
+        File logFile = new File(logFileName);
+        String outputFileName = cmd.hasOption(OPTION_OUTPUT_LONG) ? cmd.getOptionValue(OPTION_OUTPUT_SHORT)
+                : OUTPUT_FILE_NAME;
+        File reportFile = new File(outputFileName);
+        if (logFile.equals(reportFile)) {
+            throw new IllegalArgumentException("Log file and report are the same file.");
+        }
+
         // Determine JVM environment information.
         Date jvmStartDate = cmd.hasOption(OPTION_STARTDATETIME_LONG)
                 ? parseStartDateTime(cmd.getOptionValue(OPTION_STARTDATETIME_SHORT))
                 : null;
         String jvmOptions = cmd.hasOption(OPTION_JVMOPTIONS_LONG) ? cmd.getOptionValue(OPTION_JVMOPTIONS_SHORT) : null;
-        String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
-        File logFile = new File(logFileName);
+
         URI logFileUri = logFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
 
@@ -137,14 +145,11 @@ public class Main {
         int throughputThreshold = cmd.hasOption(OPTION_THRESHOLD_LONG)
                 ? Integer.parseInt(cmd.getOptionValue(OPTION_THRESHOLD_SHORT))
                 : DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
-
         JvmRun jvmRun = gcManager.getJvmRun(jvm, throughputThreshold);
-        String outputFileName = cmd.hasOption(OPTION_OUTPUT_LONG) ? cmd.getOptionValue(OPTION_OUTPUT_SHORT)
-                : OUTPUT_FILE_NAME;
         boolean reportConsole = cmd.hasOption(OPTION_REPORT_CONSOLE_LONG);
         boolean version = cmd.hasOption(OPTION_VERSION_LONG);
         boolean latestVersion = cmd.hasOption(OPTION_LATEST_VERSION_LONG);
-        createReport(jvmRun, reportConsole, outputFileName, version, latestVersion, logFileName);
+        createReport(jvmRun, reportConsole, reportFile, version, latestVersion, logFileName);
     }
 
     /**
@@ -154,8 +159,8 @@ public class Main {
      *            JVM run data.
      * @param reportConsole
      *            Whether print the report to the console or to a file.
-     * @param reportFileName
-     *            Report file name.
+     * @param reportFile
+     *            Report file.
      * @param version
      *            Whether or not to report garbagecat version.
      * @param latestVersion
@@ -163,9 +168,8 @@ public class Main {
      * @param gcLogFileName
      *            The gc log file analyzed.
      */
-    public static void createReport(JvmRun jvmRun, boolean reportConsole, String reportFileName, boolean version,
+    public static void createReport(JvmRun jvmRun, boolean reportConsole, File reportFile, boolean version,
             boolean latestVersion, String gcLogFileName) {
-        File reportFile = new File(reportFileName);
         FileWriter fileWriter = null;
         PrintWriter printWriter = null;
         try {

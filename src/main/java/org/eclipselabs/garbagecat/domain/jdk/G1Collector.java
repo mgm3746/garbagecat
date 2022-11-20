@@ -17,6 +17,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 /**
  * G1 collector.
  * 
+ * There are 3 main phases:
+ * 
+ * 1) One or more {@code org.eclipselabs.garbagecat.domain.jdk.G1YoungPauseEvent} collections.
+ * 
+ * 2) Marking cycle (triggered when <code>InitiatingHeapOccupancyPercent</code> reached).
+ * 
+ * 3) One or more {@code org.eclipselabs.garbagecat.domain.jdk.G1MixedPauseEvent} until the amount of space that can be
+ * reclaimed in the Collection Set (CSet) is less than <code>G1HeapWastePercent</code> (default 5%).
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
