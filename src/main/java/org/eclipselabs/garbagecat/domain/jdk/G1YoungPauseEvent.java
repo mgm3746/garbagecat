@@ -37,9 +37,23 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  *
  * <p>
- * G1 young generation collection. Live objects from Eden and Survivor regions are copied to new regions, either to a
- * survivor region or promoted to the old space.
+ * G1 young generation collection. Live objects from eden and survivor regions are copied to a survivor region or
+ * promoted to an old space region.
  * </p>
+ * 
+ * <p>
+ * This event triggers a {@link org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent} if any of the following
+ * calculations determines space reclamation is needed:
+ * </p>
+ * 
+ * <ul>
+ * <li>The old generation occupancy as a percent of the total heap size reaches (>=) Initiating Heap Occupancy Percent
+ * (IHOP). IHOP is initially set to <code>InitiatingHeapOccupancyPercent</code> (default 45) and adaptive based on
+ * ergonomics. If adaptive IHOP is disabled with <code>-XX:-G1UseAdaptiveIHOP</code>, IHOP is fixed at
+ * <code>InitiatingHeapOccupancyPercent</code>.</li>
+ * <li>The percent of free space reaches (<=) <code>G1ReservePercent</code> (default 10) if adaptive IHOP is
+ * enabled.</li>
+ * </ul>
  *
  * <h2>Example Logging</h2>
  *

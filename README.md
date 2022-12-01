@@ -23,7 +23,7 @@ JDK8:
 1) datestamp:
 
 ```
--XX:+PrintGC -Xloggc:gc_%p_%t.log -XX:+PrintGCDetails -XX:-PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -XX:+UseGCLogFileRotation -XX:GCLogFileSize=50M -XX:NumberOfGCLogFiles=4
+-XX:+PrintGC -XX:+PrintGCDetails -XX:-PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -Xloggc:gc_%p_%t.log -XX:+UseGCLogFileRotation -XX:GCLogFileSize=50M -XX:NumberOfGCLogFiles=4
 
 
 2021-10-08T20:22:22.788-0600: [GC (Allocation Failure) [PSYoungGen: 328070K->55019K(503808K)] 649122K->396284K(1078272K), 0.3093583 secs] [Times: user=0.43 sys=0.12, real=0.31 secs]
@@ -32,7 +32,7 @@ JDK8:
 2) timestamp:
 
 ```
--XX:+PrintGC -Xloggc:gc_%p_%t.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime -XX:+UseGCLogFileRotation -XX:GCLogFileSize=50M -XX:NumberOfGCLogFiles=4
+-XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime -Xloggc:gc_%p_%t.log -XX:+UseGCLogFileRotation -XX:GCLogFileSize=50M -XX:NumberOfGCLogFiles=4
 
 
 668.806: [GC (Allocation Failure) [PSYoungGen: 328070K->55019K(503808K)] 649122K->396284K(1078272K), 0.3093583 secs] [Times: user=0.43 sys=0.12, real=0.31 secs]
@@ -41,7 +41,7 @@ JDK8:
 3) datestamp: timestamp:
 
 ```
--XX:+PrintGC -Xloggc:gc_%p_%t.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -XX:+UseGCLogFileRotation -XX:GCLogFileSize=50M -XX:NumberOfGCLogFiles=4
+-XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -Xloggc:gc_%p_%t.log -XX:+UseGCLogFileRotation -XX:GCLogFileSize=50M -XX:NumberOfGCLogFiles=4
 
 
 2021-10-08T20:22:22.788-0600: 668.806: [GC (Allocation Failure) [PSYoungGen: 328070K->55019K(503808K)] 649122K->396284K(1078272K), 0.3093583 secs] [Times: user=0.43 sys=0.12, real=0.31 secs]
