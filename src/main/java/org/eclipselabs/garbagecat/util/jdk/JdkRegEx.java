@@ -373,12 +373,13 @@ public final class JdkRegEx {
     /**
      * Humongous object allocation trigger.
      * 
-     * If it triggers a {@link org.eclipselabs.garbagecat.YoungCollection}, it means the humongous allocation failed.
+     * If it triggers a {@link org.eclipselabs.garbagecat.domain.YoungCollection}, it means the humongous allocation
+     * failed.
      * 
      * If it triggers a {@link org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent} or
      * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEvent}, it means the Initiating
      * Heap Occupancy Percent (IHOP) check performed with every humongous allocation failed. The old generation
-     * occupancy as a percent of the total heap size reached (>=) IHOP. IHOP is initially set to
+     * occupancy as a percent of the total heap size reached (&gt;=) IHOP. IHOP is initially set to
      * <code>InitiatingHeapOccupancyPercent</code> (default 45) and adaptive based on ergonomics. If adaptive IHOP is
      * disabled with <code>-XX:-G1UseAdaptiveIHOP</code>, IHOP is fixed at <code>InitiatingHeapOccupancyPercent</code>.
      */

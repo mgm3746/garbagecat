@@ -47,11 +47,11 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <ul>
- * <li>The old generation occupancy as a percent of the total heap size reaches (>=) Initiating Heap Occupancy Percent
- * (IHOP). IHOP is initially set to <code>InitiatingHeapOccupancyPercent</code> (default 45) and adaptive based on
- * ergonomics. If adaptive IHOP is disabled with <code>-XX:-G1UseAdaptiveIHOP</code>, IHOP is fixed at
+ * <li>The old generation occupancy as a percent of the total heap size reaches (&gt;=) Initiating Heap Occupancy
+ * Percent (IHOP). IHOP is initially set to <code>InitiatingHeapOccupancyPercent</code> (default 45) and adaptive based
+ * on ergonomics. If adaptive IHOP is disabled with <code>-XX:-G1UseAdaptiveIHOP</code>, IHOP is fixed at
  * <code>InitiatingHeapOccupancyPercent</code>.</li>
- * <li>The percent of free space reaches (<=) <code>G1ReservePercent</code> (default 10) if adaptive IHOP is
+ * <li>The percent of free space reaches (&lt;=) <code>G1ReservePercent</code> (default 10) if adaptive IHOP is
  * enabled.</li>
  * </ul>
  *
