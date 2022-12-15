@@ -497,55 +497,47 @@ public class Main {
                     printWriter
                             .write("GC/Safepoint Ratio: " + jvmRun.getGcUnifiedSafepointRatio() + "%" + LINE_SEPARATOR);
                 }
-            }
-
-            // Safepoint summary
-            if (jvmRun.getUnifiedSafepointEventCount() > 0) {
+                // Safepoint summary
                 printWriter.write(LINEBREAK_DOUBLE);
-
-                if (jvmRun.getUnifiedSafepointEventCount() > 0) {
-                    printWriter.printf("%-30s%10s%12s%7s%12s%n", "SAFEPOINT:", "#", "Time (s)", "", "Max (s)");
-                    printWriter.write(LINEBREAK_SINGLE);
-                    List<SafepointEventSummary> summaries = jvmRun.getSafepointEventSummaries();
-                    Iterator<SafepointEventSummary> iterator = summaries.iterator();
-                    while (iterator.hasNext()) {
-                        SafepointEventSummary summary = iterator.next();
-                        BigDecimal pauseTotal = JdkMath.convertMillisToSecs(summary.getPauseTotal());
-                        String pauseTotalString = null;
-                        if (pauseTotal.toString().equals("0.000")) {
-                            // give rounding hint
-                            pauseTotalString = "~" + pauseTotal.toString();
-                        } else {
-                            pauseTotalString = pauseTotal.toString();
-                        }
-                        BigDecimal percent;
-                        if (jvmRun.getUnifiedSafepointTimeTotal() > 0) {
-                            percent = new BigDecimal(summary.getPauseTotal());
-                            percent = percent.divide(new BigDecimal(jvmRun.getUnifiedSafepointTimeTotal()), 2,
-                                    RoundingMode.HALF_EVEN);
-                            percent = percent.movePointRight(2);
-                        } else {
-                            percent = new BigDecimal(100);
-                        }
-                        String percentString = null;
-                        if (percent.intValue() == 0) {
-                            // give rounding hint
-                            percentString = "~" + percent.toString();
-                        } else {
-                            percentString = percent.toString();
-                        }
-                        BigDecimal pauseMax = JdkMath.convertMillisToSecs(summary.getPauseMax());
-                        String pauseMaxString = null;
-                        if (pauseMax.toString().equals("0.000")) {
-                            // give rounding hint
-                            pauseMaxString = "~" + pauseMax.toString();
-                        } else {
-                            pauseMaxString = pauseMax.toString();
-                        }
-                        printWriter.printf("%-30s%10s%12s%6s%%%12s%n",
-                                UnifiedSafepoint.getTriggerLiteral(summary.getTrigger()), summary.getCount(),
-                                pauseTotalString, percentString, pauseMaxString);
+                printWriter.printf("%-30s%10s%12s%7s%12s%n", "SAFEPOINT:", "#", "Time (s)", "", "Max (s)");
+                printWriter.write(LINEBREAK_SINGLE);
+                List<SafepointEventSummary> summaries = jvmRun.getSafepointEventSummaries();
+                Iterator<SafepointEventSummary> iterator = summaries.iterator();
+                while (iterator.hasNext()) {
+                    SafepointEventSummary summary = iterator.next();
+                    BigDecimal pauseTotal = JdkMath.convertMillisToSecs(summary.getPauseTotal());
+                    String pauseTotalString = null;
+                    if (pauseTotal.toString().equals("0.000")) {
+                        // give rounding hint
+                        pauseTotalString = "~" + pauseTotal.toString();
+                    } else {
+                        pauseTotalString = pauseTotal.toString();
                     }
+                    BigDecimal percent;
+                    if (jvmRun.getUnifiedSafepointTimeTotal() > 0) {
+                        percent = pauseTotal.divide(totalSafepointTime, 2, RoundingMode.HALF_EVEN);
+                        percent = percent.movePointRight(2);
+                    } else {
+                        percent = new BigDecimal(100);
+                    }
+                    String percentString = null;
+                    if (percent.intValue() == 0) {
+                        // give rounding hint
+                        percentString = "~" + percent.toString();
+                    } else {
+                        percentString = percent.toString();
+                    }
+                    BigDecimal pauseMax = JdkMath.convertMillisToSecs(summary.getPauseMax());
+                    String pauseMaxString = null;
+                    if (pauseMax.toString().equals("0.000")) {
+                        // give rounding hint
+                        pauseMaxString = "~" + pauseMax.toString();
+                    } else {
+                        pauseMaxString = pauseMax.toString();
+                    }
+                    printWriter.printf("%-30s%10s%12s%6s%%%12s%n",
+                            UnifiedSafepoint.getTriggerLiteral(summary.getTrigger()), summary.getCount(),
+                            pauseTotalString, percentString, pauseMaxString);
                 }
             }
 
