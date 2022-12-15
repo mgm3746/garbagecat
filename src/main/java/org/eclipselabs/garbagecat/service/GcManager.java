@@ -1212,7 +1212,8 @@ public class GcManager {
                     if (duration > 0) {
                         duration = JdkMath.convertMicrosToCentis(duration).intValue();
                         int real = ((TimesData) event).getTimeReal();
-                        if (duration > real) {
+                        // 1 centisecond margin of error to avoid false reporting
+                        if (duration > real + 1) {
                             jvmDao.setDurationGtRealCount(jvmDao.getDurationGtRealCount() + 1);
                             LogEvent worstEvent = jvmDao.getWorstDurationGtRealTimeEvent();
                             if (worstEvent == null) {
