@@ -607,6 +607,13 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testEnteringSafepointMarkActiveNMethods() {
+        String logLine = "[2022-12-15T16:09:39.476+0300][335136.892s] Entering safepoint region: MarkActiveNMethods";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testExtRootScanning() {
         String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,phases         ] GC(9)     Ext Root "
                 + "Scanning (ms):   Min:  0.9, Avg:  1.0, Max:  1.0, Diff:  0.1, Sum:  7.8, Workers: 8";

@@ -36,15 +36,15 @@ public class UnifiedSafepoint {
         //
         GC_HEAP_INSPECTION, GEN_COLLECT_FOR_ALLOCATION, GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES,
         //
-        GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK, HEAP_DUMPER, IC_BUFFER_FULL, NO_VM_OPERATION,
+        GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK, HEAP_DUMPER, IC_BUFFER_FULL, MARK_ACTIVE_N_METHODS,
         //
-        PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS,
+        NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS,
         //
-        SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS,
+        REDEFINE_CLASSES, REVOKE_BIAS, SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_MARK_START_EVAC,
         //
-        SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN, Z_MARK_END, Z_MARK_START,
+        SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN,
         //
-        Z_RELOCATE_START
+        Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
     };
 
     /**
@@ -253,6 +253,14 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
+     * Stack scanning of active methods required by the code cache sweeper thread, which tries to free space when the
+     * code cache fills. This safepoint is an indication of code cache memory pressure.
+     * </p>
+     */
+    public static final String MARK_ACTIVE_N_METHODS = "MarkActiveNMethods";
+
+    /**
+     * <p>
      * Guaranteed safepoint to process non-urgent JVM operations. The interval is enabled by
      * <code>-XX:+UnlockDiagnosticVMOptions</code> and controlled by <code>-XX:GuaranteedSafepointInterval=N</code>
      * (default 300000 seconds = 5 minutes).
@@ -435,6 +443,8 @@ public class UnifiedSafepoint {
             return Trigger.HEAP_DUMPER;
         if (IC_BUFFER_FULL.matches(triggerLiteral))
             return Trigger.IC_BUFFER_FULL;
+        if (MARK_ACTIVE_N_METHODS.matches(triggerLiteral))
+            return Trigger.MARK_ACTIVE_N_METHODS;
         if (NO_VM_OPERATION.matches(triggerLiteral))
             return Trigger.NO_VM_OPERATION;
         if (PARALLEL_GC_FAILED_ALLOCATION.matches(triggerLiteral))
@@ -558,6 +568,9 @@ public class UnifiedSafepoint {
         case IC_BUFFER_FULL:
             triggerLiteral = IC_BUFFER_FULL;
             break;
+        case MARK_ACTIVE_N_METHODS:
+            triggerLiteral = MARK_ACTIVE_N_METHODS;
+            break;
         case NO_VM_OPERATION:
             triggerLiteral = NO_VM_OPERATION;
             break;
@@ -671,6 +684,8 @@ public class UnifiedSafepoint {
             return Trigger.HEAP_DUMPER;
         if (Trigger.IC_BUFFER_FULL.name().matches(trigger))
             return Trigger.IC_BUFFER_FULL;
+        if (Trigger.MARK_ACTIVE_N_METHODS.name().matches(trigger))
+            return Trigger.MARK_ACTIVE_N_METHODS;
         if (Trigger.NO_VM_OPERATION.name().matches(trigger))
             return Trigger.NO_VM_OPERATION;
         if (Trigger.PARALLEL_GC_FAILED_ALLOCATION.name().matches(trigger))
