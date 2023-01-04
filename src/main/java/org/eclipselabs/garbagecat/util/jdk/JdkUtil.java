@@ -193,7 +193,7 @@ public final class JdkUtil {
      * to decorator pattern changes.
      */
     public static final int DECORATOR_SIZE = Pattern.compile(JdkRegEx.DECORATOR)
-            .matcher("2020-03-10T08:03:29.311-0400: 0.373:").groupCount();;
+            .matcher("2020-03-10T08:03:29.311-0400: 0.373:").groupCount();
 
     /**
      * Convert datestamp to milliseconds. For example: Convert 2019-02-05T14:47:34.229-0200 to 23.
