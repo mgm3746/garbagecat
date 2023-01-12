@@ -1044,8 +1044,8 @@ public class JvmRun {
 
     /**
      * @param key
-     *            The <code>Analysis</code> to check.
-     * @return True if the <code>Analysis</code> exists, false otherwise.
+     *            The {@link org.eclipselabs.garbagecat.util.jdk.Analysis} to check.
+     * @return True if the {@link org.eclipselabs.garbagecat.util.jdk.Analysis} exists, false otherwise.
      */
     public boolean hasAnalysis(Analysis key) {
         return analysis.contains(key);
@@ -1053,8 +1053,8 @@ public class JvmRun {
 
     /**
      * @param key
-     *            The <code>Analysis</code> to check.
-     * @return True if the <code>Analysis</code> exists, false otherwise.
+     *            The {@link org.github.joa.util.Analysis} to check.
+     * @return True if the {@link org.github.joa.util.Analysis} exists, false otherwise.
      */
     public boolean hasAnalysis(org.github.joa.util.Analysis key) {
         boolean hasAnalysis = false;
