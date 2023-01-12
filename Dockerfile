@@ -6,7 +6,7 @@ COPY settings.xml /usr/src/app
 WORKDIR /usr/src/app
 RUN java -version && mvn -v
 RUN mvn --batch-mode -s /usr/src/app/settings.xml -f /usr/src/app/pom.xml package &&\
-  mvn --batch-mode -s /usr/sr/app/settings.xml -f /usr/src/app/pom.xml javadoc:javadoc
+  mvn --batch-mode -s /usr/src/app/settings.xml -f /usr/src/app/pom.xml javadoc:javadoc
 
 # Package stage
 FROM docker.io/library/openjdk:17-jdk-slim
