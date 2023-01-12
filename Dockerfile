@@ -2,10 +2,11 @@
 FROM docker.io/library/maven:3.8.5-openjdk-17-slim AS build
 COPY src /usr/src/app/src
 COPY pom.xml /usr/src/app
+COPY settings.xml /usr/src/app
 WORKDIR /usr/src/app
 RUN java -version && mvn -v
-RUN mvn --batch-mode -f /usr/src/app/pom.xml package &&\
-  mvn --batch-mode -f /usr/src/app/pom.xml javadoc:javadoc
+RUN mvn --batch-mode -s /usr/src/app/settings.xml -f /usr/src/app/pom.xml package &&\
+  mvn --batch-mode -s /usr/sr/app/settings.xml -f /usr/src/app/pom.xml javadoc:javadoc
 
 # Package stage
 FROM docker.io/library/openjdk:17-jdk-slim
