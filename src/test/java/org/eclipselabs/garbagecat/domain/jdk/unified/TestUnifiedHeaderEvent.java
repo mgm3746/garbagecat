@@ -440,6 +440,13 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testVersion() {
+        String logLine = "[2022-12-29T10:13:48.750+0000][0.028s] Version: 17.0.5+8-LTS (release)";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+    }
+
+    @Test
     void testZ() throws IOException {
         File testFile = TestUtil.getFile("dataset241.txt");
         GcManager gcManager = new GcManager();
