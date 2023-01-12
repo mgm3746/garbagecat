@@ -155,6 +155,19 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
+    void testJdk17G1TryInitiateConcMark() {
+        String logLine = "[2023-01-11T16:09:59.190+0000][19084.729s] Safepoint \"G1TryInitiateConcMark\", Time since "
+                + "last: 720212197 ns, Reaching safepoint: 477437 ns, At safepoint: 119597295 ns, Total: 120074732 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.G1_TRY_INITIATE_CONC_MARK, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(19084729, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(477437, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(119597295, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
     void testJdk17ICBufferFull() {
         String logLine = "[2022-12-29T10:13:49.155+0000][0.433s] Safepoint \"ICBufferFull\", Time since last: "
                 + "392373271 ns, Reaching safepoint: 553351 ns, At safepoint: 23698 ns, Total: 577049 ns";

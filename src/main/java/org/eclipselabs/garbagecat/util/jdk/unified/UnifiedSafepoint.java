@@ -34,17 +34,17 @@ public class UnifiedSafepoint {
         //
         FORCE_SAFEPOINT, G1_COLLECT_FOR_ALLOCATION, G1_COLLECT_FULL, G1_CONCURRENT, G1_INC_COLLECTION_PAUSE,
         //
-        GC_HEAP_INSPECTION, GEN_COLLECT_FOR_ALLOCATION, GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES,
+        G1_TRY_INITIATE_CONC_MARK, GC_HEAP_INSPECTION, GEN_COLLECT_FOR_ALLOCATION, GEN_COLLECT_FULL_CONCURRENT,
         //
-        GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK, HEAP_DUMPER, IC_BUFFER_FULL, MARK_ACTIVE_N_METHODS,
+        GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK, HEAP_DUMPER, IC_BUFFER_FULL,
         //
-        NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS,
+        MARK_ACTIVE_N_METHODS, NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC,
         //
-        REDEFINE_CLASSES, REVOKE_BIAS, SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_MARK_START_EVAC,
+        PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS, SHENANDOAH_DEGENERATED_GC,
         //
-        SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN,
+        SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK,
         //
-        Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
+        SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN, Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
     };
 
     /**
@@ -186,6 +186,13 @@ public class UnifiedSafepoint {
      * </p>
      */
     public static final String G1_INC_COLLECTION_PAUSE = "G1IncCollectionPause";
+
+    /**
+     * <p>
+     * G1 concurrent mark.
+     * </p>
+     */
+    public static final String G1_TRY_INITIATE_CONC_MARK = "G1TryInitiateConcMark";
 
     /**
      * <p>
@@ -427,6 +434,8 @@ public class UnifiedSafepoint {
             return Trigger.G1_CONCURRENT;
         if (G1_INC_COLLECTION_PAUSE.matches(triggerLiteral))
             return Trigger.G1_INC_COLLECTION_PAUSE;
+        if (G1_TRY_INITIATE_CONC_MARK.matches(triggerLiteral))
+            return Trigger.G1_TRY_INITIATE_CONC_MARK;
         if (GEN_COLLECT_FOR_ALLOCATION.matches(triggerLiteral))
             return Trigger.GEN_COLLECT_FOR_ALLOCATION;
         if (GEN_COLLECT_FULL_CONCURRENT.matches(triggerLiteral))
@@ -543,6 +552,9 @@ public class UnifiedSafepoint {
             break;
         case G1_INC_COLLECTION_PAUSE:
             triggerLiteral = G1_INC_COLLECTION_PAUSE;
+            break;
+        case G1_TRY_INITIATE_CONC_MARK:
+            triggerLiteral = G1_TRY_INITIATE_CONC_MARK;
             break;
         case GEN_COLLECT_FOR_ALLOCATION:
             triggerLiteral = GEN_COLLECT_FOR_ALLOCATION;
@@ -668,6 +680,8 @@ public class UnifiedSafepoint {
             return Trigger.G1_CONCURRENT;
         if (Trigger.G1_INC_COLLECTION_PAUSE.name().matches(trigger))
             return Trigger.G1_INC_COLLECTION_PAUSE;
+        if (Trigger.G1_TRY_INITIATE_CONC_MARK.name().matches(trigger))
+            return Trigger.G1_TRY_INITIATE_CONC_MARK;
         if (Trigger.GEN_COLLECT_FOR_ALLOCATION.name().matches(trigger))
             return Trigger.GEN_COLLECT_FOR_ALLOCATION;
         if (Trigger.GEN_COLLECT_FULL_CONCURRENT.name().matches(trigger))

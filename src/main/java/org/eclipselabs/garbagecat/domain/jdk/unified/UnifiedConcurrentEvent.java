@@ -181,6 +181,10 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [0.134s] GC(0) Concurrent Relocate 2.550ms
  * </pre>
  * 
+ * <pre>
+ * [2023-01-11T16:09:59.244+0000][19084.784s] GC(300) Concurrent Undo Cycle 54.191ms
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -197,7 +201,7 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
                     + " Concurrent (Cleanup for Next Mark|Clear Claimed Marks|Create Live Data|Mark|Mark Abort|"
                     + "Mark Cycle|Mark Free|Mark From Roots|Preclean|Process Non-Strong References|"
                     + "Rebuild Remembered Sets|Relocate|Reset|Scan Root Regions|Select Relocation Set|"
-                    + "String Deduplication.*|Sweep)( \\(" + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP
+                    + "String Deduplication.*|Undo Cycle|Sweep)( \\(" + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP
                     + "s)?\\))?( " + JdkRegEx.DURATION_MS + ")?" + TimesData.REGEX_JDK9 + "?[ ]*$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$",

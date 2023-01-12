@@ -115,7 +115,7 @@ public class JvmDao {
      * Number of <code>BlockingEvent</code>s where duration &gt; <code>TimesData</code> "real" time.
      */
     private long durationGtRealCount;
-    
+
     /**
      * List of all event types associate with JVM run.
      */

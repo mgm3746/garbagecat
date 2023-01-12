@@ -202,6 +202,13 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testConcurrentUndoCycle() {
+        String logLine = "[2023-01-11T16:09:59.244+0000][19084.784s] GC(300) Concurrent Undo Cycle 54.191ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testCreateLiveData() {
         String logLine = "[2.730s][info][gc,marking    ] GC(52) Concurrent Create Live Data";
         assertTrue(UnifiedConcurrentEvent.match(logLine),

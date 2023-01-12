@@ -654,8 +654,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     /**
      * Regular expressions for lines thrown away.
      * 
-     * <pre>
+     * In general, concurrent logging without an ending duration is thrown away, and the corresponding logging with the
+     * ending duration is retained with the concurrent event.
      * 
+     * <pre>
      * Z:
      * 
      * [2021-12-01T10:04:06.358-0500] GC(0) Garbage Collection (Warmup)
@@ -779,6 +781,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [2022-10-09T13:16:39.707+0000][3783.195s][debug][gc,heap ] GC(9) Heap before GC invocations=9 (full 0): 
      * garbage-first heap total 10743808K, used 1819374K [0x0000000570400000, 0x0000000800000000)
      * 
+     * [2023-01-11T16:09:59.244+0000][19084.784s] GC(300) Concurrent Undo Cycle 54.191ms
+     * 
+     * [2023-01-11T17:46:35.751+0000][24881.291s] GC(452)   Merge Optional Heap Roots: 0.3m
+     * 
      * PARALLEL_COMPACTING_OLD:
      * 
      * [0.083s][info][gc,phases,start] GC(3) Marking Phase
@@ -843,7 +849,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Using \\d{1,2} workers of \\d{1,2} for (evacuation|full compaction|"
                     + "marking)$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "   (Pre Evacuate|Evacuate|Post Evacuate) Collection Set: "
+            "^" + UnifiedRegEx.DECORATOR + "   (Pre Evacuate|Evacuate( Optional)?|Post Evacuate) Collection Set: "
                     + JdkRegEx.DURATION_MS + "$",
             //
             "^" + UnifiedRegEx.DECORATOR + " (Eden|Survivor|Old) regions: \\d{1,4}->\\d{1,4}(\\(\\d{1,4}\\))?$",
@@ -862,7 +868,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " Attempting maximally compacting collection$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "   Merge Heap Roots:.+$",
+            "^" + UnifiedRegEx.DECORATOR + "   Merge (Optional )?Heap Roots:.+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Archive regions:.+$",
             //
@@ -899,7 +905,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR
                     + " Concurrent (Clear Claimed (Marks|Roots)|Cycle|Mark|Mark Abort|Mark From Roots|"
-                    + "Mark reset for overflow|Preclean|Reset|Scan Root Regions|Sweep)[ ]{0,}$",
+                    + "Mark reset for overflow|Preclean|Reset|Scan Root Regions|Undo Cycle|Sweep)[ ]{0,}$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Application time:.+$",
             //

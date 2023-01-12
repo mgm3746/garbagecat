@@ -122,7 +122,7 @@ public class JvmRun {
      * The first blocking event.
      */
     private BlockingEvent firstGcEvent;
-    
+
     /**
      * The first safepoint event.
      */
