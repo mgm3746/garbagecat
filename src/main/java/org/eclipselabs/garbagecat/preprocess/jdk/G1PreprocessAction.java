@@ -290,13 +290,20 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class G1PreprocessAction implements PreprocessAction {
 
     /**
+     * Regular expression for external root scanning block.
+     *
+     * [Ext Root Scanning (ms): 1.8]
+     */
+    public static final String REGEX_EXT_ROOT_SCANNING = "(\\[Ext Root Scanning \\(ms\\): (\\d{1,}[\\.,]\\d)\\])";
+
+    /**
      * Regular expression for retained beginning G1_CLEANUP collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_CLEANUP = "^(" + JdkRegEx.DECORATOR + " \\[GC cleanup "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\])[ ]*$";
-
     private static final Pattern REGEX_RETAIN_BEGINNING_CLEANUP_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_CLEANUP);
+
     /**
      * Regular expressions for retained beginning G1_CONCURRENT collection.
      *
@@ -360,9 +367,9 @@ public class G1PreprocessAction implements PreprocessAction {
             + JdkRegEx.TIMESTAMP + "(: ){0,1}" + JdkRegEx.DATESTAMP + "(: ){1,2}" + JdkRegEx.TIMESTAMP
             + ": ))[ ]{0,1}(\\[GC concurrent-((root-region-scan|mark|cleanup)-(start|end|abort))(, " + JdkRegEx.DURATION
             + ")?\\])[ ]*$";
-
     private static final Pattern REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_CONCURRENT);
+
     /**
      * Regular expression for retained beginning G1_FULL_GC mixed with G1_CONCURRENT collection.
      * 
@@ -595,13 +602,6 @@ public class G1PreprocessAction implements PreprocessAction {
 
     private static final Pattern REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING);
-
-    /**
-     * Regular expression for external root scanning block.
-     *
-     * [Ext Root Scanning (ms): 1.8]
-     */
-    public static final String REGEX_EXT_ROOT_SCANNING = "(\\[Ext Root Scanning \\(ms\\): (\\d{1,}[\\.,]\\d)\\])";
 
     /**
      * Regular expression for retained <code>OtherTime</code> data.

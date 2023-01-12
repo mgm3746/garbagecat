@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
@@ -89,6 +90,54 @@ public class HeaderVersionEvent implements LogEvent {
     public HeaderVersionEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
+    }
+
+    /**
+     * @return The JDK version (e.g. '8'), or `0` if it could not be determined. Not available in unified logging
+     *         (JDK11+).
+     */
+    public int getJdkVersionMajor() {
+        int jdkVersionMajor = 0;
+        String regex = "^.+JRE \\(1\\.(5|6|7|8|9|10).+$";
+        if (logEntry != null) {
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                if (matcher.group(1) != null) {
+                    jdkVersionMajor = Integer.parseInt(matcher.group(1));
+                }
+            }
+        }
+        return jdkVersionMajor;
+    }
+
+    /**
+     * @return The JDK update (e.g. '60'), or `0` if it could not be determined.
+     */
+    public int getJdkVersionMinor() {
+        int jdkVersionMinor = 0;
+        String regex = "^.+JRE \\(1\\.(5|6|7|8|9|10)\\.\\d_(\\d{1,3})-.+$";
+        if (logEntry != null) {
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                if (matcher.group(1) != null) {
+                    jdkVersionMinor = Integer.parseInt(matcher.group(2));
+                }
+            }
+        }
+        return jdkVersionMinor;
+    }
+
+    /**
+     * @return True if 32 bit, false otherwise.
+     */
+    public boolean is32Bit() {
+        boolean is32Bit = false;
+        if (logEntry != null) {
+            is32Bit = logEntry.matches("^.+32-Bit.+$");
+        }
+        return is32Bit;
     }
 
     public String getLogEntry() {

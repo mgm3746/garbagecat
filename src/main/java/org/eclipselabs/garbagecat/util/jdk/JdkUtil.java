@@ -125,13 +125,6 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 public final class JdkUtil {
 
     /**
-     * Defined collector families.
-     */
-    public enum CollectorFamily {
-        CMS, G1, PARALLEL, SERIAL, SHENANDOAH, UNKNOWN, Z
-    }
-
-    /**
      * Defined logging events.
      */
     public enum LogEventType {

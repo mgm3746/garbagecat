@@ -38,7 +38,6 @@ import static org.eclipselabs.garbagecat.util.Memory.ZERO;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.MEGABYTES;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_PERM_GEN;
-import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -62,11 +61,9 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEventSummary;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Memory;
-import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 
@@ -140,12 +137,11 @@ public class Main {
         gcManager.store(logLines, reorder);
 
         // Create report
-        Jvm jvm = new Jvm(jvmOptions, jvmStartDate);
         // Determine report options
         int throughputThreshold = cmd.hasOption(OPTION_THRESHOLD_LONG)
                 ? Integer.parseInt(cmd.getOptionValue(OPTION_THRESHOLD_SHORT))
                 : DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, throughputThreshold);
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, jvmStartDate, throughputThreshold);
         boolean reportConsole = cmd.hasOption(OPTION_REPORT_CONSOLE_LONG);
         boolean version = cmd.hasOption(OPTION_VERSION_LONG);
         boolean latestVersion = cmd.hasOption(OPTION_LATEST_VERSION_LONG);
@@ -219,19 +215,20 @@ public class Main {
             }
 
             // JVM information
-            if (jvmRun.getJvm().getVersion() != null || jvmRun.getJvm().getOptions() != null
-                    || jvmRun.getJvm().getMemory() != null) {
+            if (jvmRun.getJvmOptions().getJvmContext().getVersionMajor() > 0
+                    || jvmRun.getJvmOptions().getJvmContext().getOptions() != null || jvmRun.getMemory() != null) {
                 printWriter.write(LINEBREAK_DOUBLE);
                 printWriter.write("JVM:" + LINE_SEPARATOR);
                 printWriter.write(LINEBREAK_SINGLE);
-                if (jvmRun.getJvm().getVersion() != null) {
-                    printWriter.write("Version: " + jvmRun.getJvm().getVersion() + LINE_SEPARATOR);
+                if (jvmRun.getJvmOptions().getJvmContext().getVersionMajor() > 0) {
+                    printWriter.write("Version: " + jvmRun.getJdkVersion() + LINE_SEPARATOR);
                 }
-                if (jvmRun.getJvm().getOptions() != null) {
-                    printWriter.write("Options: " + jvmRun.getJvm().getOptions() + LINE_SEPARATOR);
+                if (jvmRun.getJvmOptions().getJvmContext().getOptions() != null) {
+                    printWriter
+                            .write("Options: " + jvmRun.getJvmOptions().getJvmContext().getOptions() + LINE_SEPARATOR);
                 }
-                if (jvmRun.getJvm().getMemory() != null) {
-                    printWriter.write("Memory: " + jvmRun.getJvm().getMemory() + LINE_SEPARATOR);
+                if (jvmRun.getMemory() != null) {
+                    printWriter.write("Memory: " + jvmRun.getMemory() + LINE_SEPARATOR);
                 }
             }
 
@@ -288,7 +285,7 @@ public class Main {
                 }
                 printWriter.write(LINE_SEPARATOR);
                 // Inverted parallelism
-                if (jvmRun.getCollectorFamilies() != null && !jvmRun.getCollectorFamilies().isEmpty()
+                if (!jvmRun.getJvmOptions().getJvmContext().getGarbageCollectors().isEmpty()
                         && jvmRun.getParallelCount() > 0) {
                     printWriter.write("# Parallel Events: " + jvmRun.getParallelCount() + LINE_SEPARATOR);
                     if (jvmRun.getInvertedParallelismCount() > 0) {
@@ -299,7 +296,7 @@ public class Main {
                     }
                 }
                 // Inverted serialism
-                if (jvmRun.getCollectorFamilies() != null && !jvmRun.getCollectorFamilies().isEmpty()
+                if (!jvmRun.getJvmOptions().getJvmContext().getGarbageCollectors().isEmpty()
                         && jvmRun.getSerialCount() > 0) {
                     printWriter.write("# Serial Events: " + jvmRun.getSerialCount() + LINE_SEPARATOR);
                     if (jvmRun.getInvertedSerialismCount() > 0) {
@@ -310,7 +307,7 @@ public class Main {
                     }
                 }
                 // sys > user
-                if (jvmRun.getCollectorFamilies() != null && !jvmRun.getCollectorFamilies().isEmpty()
+                if (!jvmRun.getJvmOptions().getJvmContext().getGarbageCollectors().isEmpty()
                         && jvmRun.getSysGtUserCount() > 0) {
                     printWriter.write("# sys > user: " + jvmRun.getSysGtUserCount() + LINE_SEPARATOR);
                     printWriter
@@ -353,7 +350,7 @@ public class Main {
                 }
 
                 if (jvmRun.getMaxPermSpace().greaterThan(ZERO)) {
-                    if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(INFO_PERM_GEN)) {
+                    if (jvmRun.getAnalysis() != null && jvmRun.hasAnalysis(INFO_PERM_GEN)) {
                         // Max perm occupancy.
                         printWriter.write("Perm Gen Occupancy Max: " + jvmRun.getMaxPermOccupancy().convertTo(KILOBYTES)
                                 + LINE_SEPARATOR);
@@ -375,7 +372,7 @@ public class Main {
                                 + LINE_SEPARATOR);
                     }
                 } else if (jvmRun.getMaxPermSpaceNonBlocking().greaterThan(ZERO)) {
-                    if (jvmRun.getAnalysis() != null && jvmRun.getAnalysis().contains(INFO_PERM_GEN)) {
+                    if (jvmRun.getAnalysis() != null && jvmRun.hasAnalysis(INFO_PERM_GEN)) {
                         // Max perm occupancy.
                         printWriter.write("Perm Gen Occupancy Max: "
                                 + jvmRun.getMaxPermOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
@@ -401,7 +398,7 @@ public class Main {
                 printWriter.write(jvmRun.getGcThroughput() + "%" + LINE_SEPARATOR);
 
                 // As of now the allocation rate is only implemented for G1GC collector.
-                if (jvmRun.getJvm().getUseG1Gc() != null
+                if (jvmRun.getJvmOptions().getUseG1Gc() != null
                         || jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE)) {
                     BigDecimal allocationRate = jvmRun.getAllocationRate();
                     if (allocationRate.longValue() > 0) {
@@ -544,24 +541,24 @@ public class Main {
             printWriter.write(LINEBREAK_DOUBLE);
 
             // Analysis
-            List<Analysis> analysis = jvmRun.getAnalysis();
+            List<String[]> analysis = jvmRun.getAnalysis();
             if (!analysis.isEmpty()) {
 
                 // Determine analysis levels
-                List<Analysis> error = new ArrayList<Analysis>();
-                List<Analysis> warn = new ArrayList<Analysis>();
-                List<Analysis> info = new ArrayList<Analysis>();
+                List<String[]> error = new ArrayList<String[]>();
+                List<String[]> warn = new ArrayList<String[]>();
+                List<String[]> info = new ArrayList<String[]>();
 
-                for (Analysis a : analysis) {
-                    String level = a.getKey().split("\\.")[0];
+                Iterator<String[]> iteratorAnalysis = analysis.iterator();
+                while (iteratorAnalysis.hasNext()) {
+                    String[] a = iteratorAnalysis.next();
+                    String level = a[0].split("\\.")[0];
                     if (level.equals("error")) {
                         error.add(a);
                     } else if (level.equals("warn")) {
                         warn.add(a);
                     } else if (level.equals("info")) {
                         info.add(a);
-                    } else {
-                        throw new IllegalArgumentException("Unknown analysis level: " + level);
                     }
                 }
 
@@ -569,7 +566,7 @@ public class Main {
 
                 boolean printHeader = true;
                 // ERROR
-                for (Analysis a : error) {
+                for (String[] a : error) {
                     if (printHeader) {
                         printWriter.write(LINEBREAK_SINGLE);
                         printWriter.write("error" + LINE_SEPARATOR);
@@ -577,12 +574,12 @@ public class Main {
                     }
                     printHeader = false;
                     printWriter.write("*");
-                    printWriter.write(a.getValue());
+                    printWriter.write(a[1]);
                     printWriter.write(LINE_SEPARATOR);
                 }
                 // WARN
                 printHeader = true;
-                for (Analysis a : warn) {
+                for (String[] a : warn) {
                     if (printHeader) {
                         printWriter.write(LINEBREAK_SINGLE);
                         printWriter.write("warn" + LINE_SEPARATOR);
@@ -590,12 +587,12 @@ public class Main {
                     }
                     printHeader = false;
                     printWriter.write("*");
-                    printWriter.write(a.getValue());
+                    printWriter.write(a[1]);
                     printWriter.write(LINE_SEPARATOR);
                 }
                 // INFO
                 printHeader = true;
-                for (Analysis a : info) {
+                for (String[] a : info) {
                     if (printHeader) {
                         printWriter.write(LINEBREAK_SINGLE);
                         printWriter.write("info" + LINE_SEPARATOR);
@@ -603,11 +600,7 @@ public class Main {
                     }
                     printHeader = false;
                     printWriter.write("*");
-                    printWriter.write(a.getValue());
-                    if (INFO_UNACCOUNTED_OPTIONS_DISABLED.equals(a)) {
-                        printWriter.write(jvmRun.getJvm().getUnaccountedDisabledOptions());
-                        printWriter.write(".");
-                    }
+                    printWriter.write(a[1]);
                     printWriter.write(LINE_SEPARATOR);
                 }
                 printWriter.write(LINEBREAK_DOUBLE);

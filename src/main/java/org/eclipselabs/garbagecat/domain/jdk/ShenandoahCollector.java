@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * Shenandoah collector.
@@ -23,7 +23,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 public class ShenandoahCollector extends GcEvent {
 
     @Override
-    public CollectorFamily getCollectorFamily() {
-        return CollectorFamily.SHENANDOAH;
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH;
     }
 }

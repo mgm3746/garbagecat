@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -27,6 +27,6 @@ public abstract class GcEvent {
     /**
      * @return The collector family.
      */
-    public abstract CollectorFamily getCollectorFamily();
+    public abstract GarbageCollector getGarbageCollector();
 
 }

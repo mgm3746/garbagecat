@@ -12,18 +12,12 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-
 /**
  * Parallel collector.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ParallelCollector extends GcEvent {
+public abstract class ParallelCollector extends GcEvent {
 
-    @Override
-    public CollectorFamily getCollectorFamily() {
-        return CollectorFamily.PARALLEL;
-    }
 }

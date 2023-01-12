@@ -46,10 +46,10 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
+import org.github.joa.domain.JvmContext;
 
 /**
  * <p>
@@ -104,7 +104,7 @@ public class JvmDao {
     /**
      * Analysis property keys.
      */
-    private List<Analysis> analysis = new ArrayList<>();
+    private List<Analysis> analysis = new ArrayList<Analysis>();
 
     /**
      * GC events that are blocking.
@@ -112,15 +112,10 @@ public class JvmDao {
     private List<BlockingEvent> blockingEvents = new ArrayList<>();
 
     /**
-     * Collector families for JVM run.
-     */
-    List<CollectorFamily> collectorFamilies = new ArrayList<>();
-
-    /**
      * Number of <code>BlockingEvent</code>s where duration &gt; <code>TimesData</code> "real" time.
      */
     private long durationGtRealCount;
-
+    
     /**
      * List of all event types associate with JVM run.
      */
@@ -147,6 +142,16 @@ public class JvmDao {
     private long invertedSerialismCount;
 
     /**
+     * Convenience field for the JDK version string.
+     */
+    private String jdkVersion;
+
+    /**
+     * The JVM context.
+     */
+    private JvmContext jvmContext = new JvmContext(null);
+
+    /**
      * Used for tracking max heap occupancy outside of <code>BlockingEvent</code>s.
      */
     private int maxHeapOccupancyNonBlocking;
@@ -170,11 +175,6 @@ public class JvmDao {
      * JVM memory information.
      */
     private String memory;
-
-    /**
-     * The JVM options for the JVM run.
-     */
-    private String options;
 
     /**
      * Number of <code>ParallelCollection</code> events.
@@ -227,11 +227,6 @@ public class JvmDao {
      * Safepoint events.
      */
     private List<UnifiedSafepointEvent> unifiedSafepointEvents = new ArrayList<>();
-
-    /**
-     * JVM version.
-     */
-    private String version;
 
     /**
      * The <code>BlockingEvent</code> with the greatest difference between the <code>BlockingEvent</code> duration and
@@ -360,10 +355,6 @@ public class JvmDao {
                 .map(JvmDao::toBlockingEvent).collect(toList());
     }
 
-    public List<CollectorFamily> getCollectorFamilies() {
-        return collectorFamilies;
-    }
-
     public long getDurationGtRealCount() {
         return durationGtRealCount;
     }
@@ -455,6 +446,14 @@ public class JvmDao {
      */
     public long getInvertedSerialismCount() {
         return invertedSerialismCount;
+    }
+
+    public String getJdkVersion() {
+        return jdkVersion;
+    }
+
+    public JvmContext getJvmContext() {
+        return jvmContext;
     }
 
     /**
@@ -634,13 +633,6 @@ public class JvmDao {
      */
     public String getMemory() {
         return memory;
-    }
-
-    /**
-     * @return The JVM options.
-     */
-    public String getOptions() {
-        return options;
     }
 
     /**
@@ -844,13 +836,6 @@ public class JvmDao {
                 .collect(summingLong(Long::valueOf));
     }
 
-    /**
-     * @return The JVM version information.
-     */
-    public String getVersion() {
-        return version;
-    }
-
     public LogEvent getWorstDurationGtRealTimeEvent() {
         return worstDurationGtRealTimeEvent;
     }
@@ -922,6 +907,10 @@ public class JvmDao {
         this.invertedSerialismCount = invertedSerialismCount;
     }
 
+    public void setJdkVersion(String jdkVersion) {
+        this.jdkVersion = jdkVersion;
+    }
+
     /**
      * @param maxHeapOccupancyNonBlocking
      *            The maximum heap occupancy in non <code>BlockingEvent</code>s.
@@ -960,14 +949,6 @@ public class JvmDao {
      */
     public void setMemory(String memory) {
         this.memory = memory;
-    }
-
-    /**
-     * @param options
-     *            The JVM options to set.
-     */
-    public void setOptions(String options) {
-        this.options = options;
     }
 
     /**
@@ -1024,14 +1005,6 @@ public class JvmDao {
      */
     public void setSysGtUserCount(long sysGtUserCount) {
         this.sysGtUserCount = sysGtUserCount;
-    }
-
-    /**
-     * @param version
-     *            The JVM version information to set.
-     */
-    public void setVersion(String version) {
-        this.version = version;
     }
 
     public void setWorstDurationGtRealTimeEvent(LogEvent worstDurationGtRealTimeEvent) {

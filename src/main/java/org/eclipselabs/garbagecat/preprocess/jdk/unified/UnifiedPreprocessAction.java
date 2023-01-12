@@ -239,6 +239,13 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 public class UnifiedPreprocessAction implements PreprocessAction {
 
     /**
+     * Regular expression for external root scanning block.
+     *
+     * Ext Root Scanning (ms): 1.8
+     */
+    public static final String REGEX_G1_EXT_ROOT_SCANNING = "(Ext Root Scanning \\(ms\\): (\\d{1,}[\\.,]\\d) )";
+
+    /**
      * Regular expression for retained beginning @link
      * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent}.
      * 
@@ -307,13 +314,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
 
     private static final Pattern REGEX_RETAIN_BEGINNING_PAUSE_YOUNG_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG);
-
-    /**
-     * Regular expression for external root scanning block.
-     *
-     * Ext Root Scanning (ms): 1.8
-     */
-    public static final String REGEX_G1_EXT_ROOT_SCANNING = "(Ext Root Scanning \\(ms\\): (\\d{1,}[\\.,]\\d) )";
 
     /**
      * Regular expression for retained 1st line of safepoint logging.
@@ -424,6 +424,20 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     private static final Pattern REGEX_RETAIN_END_TIMES_DATA_PATTERN = Pattern.compile(REGEX_RETAIN_END_TIMES_DATA);
 
     /**
+     * Regular expression for retained external root scanning data. Root scanning is multi-threaded. Use the "Max" value
+     * for the duration.
+     * 
+     * [2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,phases ] GC(9) Ext Root Scanning (ms): Min: 0.9, Avg: 1.0,
+     * Max: 1.0, Diff: 0.1, Sum: 7.8, Workers: 8
+     */
+    private static final String REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING = "^" + UnifiedRegEx.DECORATOR
+            + "[ ]{5}Ext Root Scanning \\(ms\\):   Min:  \\d{1,}[\\.,]\\d, Avg:  \\d{1,}[\\.,]\\d, "
+            + "Max:  (\\d{1,}[\\.,]\\d), Diff:  \\d{1,}[\\.,]\\d, Sum:  \\d{1,}[\\.,]\\d, Workers: \\d{1,}$";
+
+    private static final Pattern REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN = Pattern
+            .compile(REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING);
+
+    /**
      * Regular expression for retained G1 humongous data used to distinguish
      * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent} from
      * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent}
@@ -469,7 +483,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
 
     private static final Pattern REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
-
     /**
      * Regular expression for retained middle metaspace data.
      *
@@ -500,6 +513,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
 
     private static final Pattern REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_METASPACE_DATA);
+
     /**
      * Regular expression for retained <code>OtherTime</code> data.
      * 
@@ -591,20 +605,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + " Leaving safepoint region$)";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN = Pattern.compile(REGEX_RETAIN_MIDDLE_SAFEPOINT);
-
-    /**
-     * Regular expression for retained external root scanning data. Root scanning is multi-threaded. Use the "Max" value
-     * for the duration.
-     * 
-     * [2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,phases ] GC(9) Ext Root Scanning (ms): Min: 0.9, Avg: 1.0,
-     * Max: 1.0, Diff: 0.1, Sum: 7.8, Workers: 8
-     */
-    private static final String REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING = "^" + UnifiedRegEx.DECORATOR
-            + "[ ]{5}Ext Root Scanning \\(ms\\):   Min:  \\d{1,}[\\.,]\\d, Avg:  \\d{1,}[\\.,]\\d, "
-            + "Max:  (\\d{1,}[\\.,]\\d), Diff:  \\d{1,}[\\.,]\\d, Sum:  \\d{1,}[\\.,]\\d, Workers: \\d{1,}$";
-
-    private static final Pattern REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN = Pattern
-            .compile(REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING);
 
     /**
      * Regular expression for retained middle space data.

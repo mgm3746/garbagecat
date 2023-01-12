@@ -32,7 +32,6 @@ import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -127,15 +126,15 @@ class TestCmsSerialOldEvent {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
                 JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC),
                 Analysis.WARN_HEAP_INSPECTION_INITIATED_GC + " analysis not identified.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis incorrectly identified.");
     }
 
@@ -519,15 +518,15 @@ class TestCmsSerialOldEvent {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
                 JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_INITIATED_GC),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_HEAP_DUMP_INITIATED_GC),
                 Analysis.WARN_HEAP_DUMP_INITIATED_GC + " analysis not identified.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis incorrectly identified.");
     }
 
@@ -738,7 +737,7 @@ class TestCmsSerialOldEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -746,9 +745,9 @@ class TestCmsSerialOldEvent {
                 LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
                 LogEventType.CMS_CONCURRENT.toString() + " collector not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INCREMENTAL_MODE),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_CMS_INCREMENTAL_MODE),
                 Analysis.WARN_CMS_INCREMENTAL_MODE + " analysis not identified.");
     }
 
@@ -979,7 +978,7 @@ class TestCmsSerialOldEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -987,7 +986,7 @@ class TestCmsSerialOldEvent {
                 "Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
 
@@ -1130,7 +1129,7 @@ class TestCmsSerialOldEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -1138,7 +1137,7 @@ class TestCmsSerialOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INCREMENTAL_MODE),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_CMS_INCREMENTAL_MODE),
                 Analysis.WARN_CMS_INCREMENTAL_MODE + " analysis not identified.");
     }
 
@@ -1150,7 +1149,7 @@ class TestCmsSerialOldEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -1158,7 +1157,7 @@ class TestCmsSerialOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
 
@@ -1170,13 +1169,13 @@ class TestCmsSerialOldEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
 
@@ -1188,7 +1187,7 @@ class TestCmsSerialOldEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -1198,9 +1197,9 @@ class TestCmsSerialOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_INITIAL_MARK),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED),
+        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED),
                 Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
 
@@ -1212,7 +1211,7 @@ class TestCmsSerialOldEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -1220,7 +1219,7 @@ class TestCmsSerialOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
 
@@ -1237,7 +1236,7 @@ class TestCmsSerialOldEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 LogEventType.UNKNOWN.toString() + " collector identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
@@ -1245,9 +1244,9 @@ class TestCmsSerialOldEvent {
                 "Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_PRINT_HEAP_AT_GC),
                 Analysis.WARN_PRINT_HEAP_AT_GC + " analysis not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
 

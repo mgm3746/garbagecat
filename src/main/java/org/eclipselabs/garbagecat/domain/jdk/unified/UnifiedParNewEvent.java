@@ -27,12 +27,13 @@ import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
-import org.eclipselabs.garbagecat.domain.jdk.ParallelCollector;
+import org.eclipselabs.garbagecat.domain.jdk.CmsCollector;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -60,7 +61,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedParNewEvent extends ParallelCollector implements UnifiedLogging, BlockingEvent, YoungCollection,
+public class UnifiedParNewEvent extends CmsCollector implements UnifiedLogging, BlockingEvent, YoungCollection,
         ParallelEvent, YoungData, OldData, PermMetaspaceData, TriggerData, TimesData {
 
     private static final Pattern pattern = Pattern.compile(UnifiedParNewEvent.REGEX_PREPROCESSED);
@@ -241,6 +242,11 @@ public class UnifiedParNewEvent extends ParallelCollector implements UnifiedLogg
 
     public long getDuration() {
         return duration;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.CMS;
     }
 
     public String getLogEntry() {

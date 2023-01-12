@@ -123,7 +123,11 @@
 			<artifactId>json</artifactId>
 			<version>20210307</version>
 		</dependency>
-
+		<dependency>
+			<groupId>joa</groupId>
+			<artifactId>joa</artifactId>
+			<version>1.0.11</version>
+		</dependency>
 	</dependencies>
 	<reporting>
 		<plugins>
@@ -149,4 +153,11 @@
 		<maven.build.timestamp.format>yyyyMMdd-HHmm
 		</maven.build.timestamp.format>
 	</properties>
+	<repositories>
+		<repository>
+			<id>github</id>
+			<name>GitHub mgm3746 Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/mgm3746/joa</url>
+		</repository>
+	</repositories>
 </project>

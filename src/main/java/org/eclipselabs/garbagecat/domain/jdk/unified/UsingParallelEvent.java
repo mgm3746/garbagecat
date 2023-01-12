@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ParallelCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -101,6 +102,11 @@ public class UsingParallelEvent extends ParallelCollector implements UnifiedLogg
                 }
             }
         }
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.PARALLEL_SCAVENGE;
     }
 
     public String getLogEntry() {

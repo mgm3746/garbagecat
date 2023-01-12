@@ -33,7 +33,6 @@ import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -51,15 +50,14 @@ class TestParNewEvent {
     void testCmsIncrementalModeAnalysis() throws IOException {
         File testFile = TestUtil.getFile("dataset68.txt");
         String jvmOptions = "Xss128k -XX:+CMSIncrementalMode -XX:CMSInitiatingOccupancyFraction=70 -Xms2048M";
-        Jvm jvm = new Jvm(jvmOptions, null);
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INCREMENTAL_MODE),
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_CMS_INCREMENTAL_MODE),
                 Analysis.WARN_CMS_INCREMENTAL_MODE + " analysis not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT),
                 Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT + " analysis not identified.");
     }
 
@@ -457,16 +455,15 @@ class TestParNewEvent {
     void testParNewDatestampNoTimestampJvmStartDate() throws IOException {
         File testFile = TestUtil.getFile("dataset113.txt");
         Date jvmStartDate = GcUtil.parseDateStamp("2017-02-28T11:26:24.135+0100");
-        Jvm jvm = new Jvm(null, jvmStartDate);
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, jvmStartDate, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED),
+        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED),
                 Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis incorrectly identified.");
     }
 
@@ -478,18 +475,17 @@ class TestParNewEvent {
     @Test
     void testParNewDatestampNoTimestampNoJvmStartDate() throws IOException {
         File testFile = TestUtil.getFile("dataset113.txt");
-        Jvm jvm = new Jvm(null, null);
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         // Don't report datestamp only lines unidentified
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE),
                 Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE + " analysis incorrectly identified.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST),
+        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST),
                 Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST + " analysis incorrectly identified.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT),
                 Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT + " analysis incorrectly identified.");
     }
 
@@ -507,7 +503,7 @@ class TestParNewEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");

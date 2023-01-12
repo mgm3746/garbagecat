@@ -32,7 +32,6 @@ import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -49,15 +48,15 @@ class TestG1YoungInitialMarkEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_INITIAL_MARK),
                 "Log line not recognized as " + LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1),
                 Analysis.ERROR_EXPLICIT_GC_SERIAL_G1 + " analysis incorrectly identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK),
                 Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK + " analysis not identified.");
 
     }

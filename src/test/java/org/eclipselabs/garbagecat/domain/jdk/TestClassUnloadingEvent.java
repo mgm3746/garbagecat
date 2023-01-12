@@ -27,10 +27,8 @@ import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
-import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -88,13 +86,15 @@ class TestClassUnloadingEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD),
                 JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING),
-                Analysis.WARN_TRACE_CLASS_UNLOADING + " analysis not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.CLASS_UNLOADING),
+                JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " not identified.");
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING),
+                org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING + " analysis not identified.");
     }
 }

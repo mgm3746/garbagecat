@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
+import static org.eclipselabs.garbagecat.util.Memory.bytes;
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.eclipselabs.garbagecat.util.Memory.megabytes;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.BYTES;
@@ -35,7 +36,8 @@ import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.github.joa.JvmOptions;
+import org.github.joa.domain.JvmContext;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -57,7 +59,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals((long) 2097502, jvmRun.getDurationTotal(), "GC pause total not correct.");
         assertEquals((long) 16517, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
         assertEquals((long) 31432, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
@@ -88,7 +90,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
@@ -108,7 +110,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
@@ -128,7 +130,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
@@ -147,16 +149,27 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE),
                 JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD),
                 JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL),
                 Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL + " analysis not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL),
                 Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis not identified.");
+    }
+
+    @Test
+    void testgetCompressedClassSpaceSizeBytes() {
+        JvmRun jvmRun = new JvmRun(0);
+        String opts = "-XX:CompressedClassSpaceSize=768m";
+        JvmContext jvmContext = new JvmContext(opts);
+        JvmOptions jvmOptions = new JvmOptions(jvmContext);
+        jvmRun.setJvmOptions(jvmOptions);
+        assertEquals(bytes(805306368), jvmRun.getCompressedClassSpaceSizeBytes(),
+                "Compressed class space size bytes incorrect.");
     }
 
     /**
@@ -172,7 +185,8 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
@@ -182,32 +196,8 @@ class TestJvmRun {
                 JdkUtil.LogEventType.HEADER_MEMORY.toString() + " not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION),
                 JdkUtil.LogEventType.HEADER_VERSION.toString() + " not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_DISABLED),
-                Analysis.WARN_EXPLICIT_GC_DISABLED + " analysis not identified.");
-    }
-
-    @Test
-    void testJdk8GcLogNoRotationFileOverwrite() {
-        String jvmOptions = "-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps ";
-        GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.getEventTypes().add(LogEventType.PARALLEL_SCAVENGE);
-        jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_OVERWRITE),
-                Analysis.WARN_GC_LOG_FILE_OVERWRITE + " analysis not identified.");
-    }
-
-    @Test
-    void testJdk8GcLogRotationDisabledFileOverwrite() {
-        String jvmOptions = "-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps "
-                + "-XX:-UseGCLogFileRotation";
-        GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_LOG_FILE_OVERWRITE),
-                Analysis.WARN_GC_LOG_FILE_OVERWRITE + " analysis not identified.");
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_EXPLICIT_GC_DISABLED),
+                org.github.joa.util.Analysis.WARN_EXPLICIT_GC_DISABLED + " analysis not identified.");
     }
 
     /**
@@ -216,11 +206,12 @@ class TestJvmRun {
      */
     @Test
     void testJvmOptionsPassedInOnCommandLine() {
-        String options = "MGM was here!";
+        String jvmOptions = "MGM was here!";
         GcManager gcManager = new GcManager();
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(options, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.getJvm().getOptions().equals(options), "JVM options passed in are missing or have changed.");
+        assertTrue(jvmRun.getJvmOptions().getJvmContext().getOptions().equals(jvmOptions),
+                "JVM options passed in are missing or have changed.");
     }
 
     @Test
@@ -228,8 +219,69 @@ class TestJvmRun {
         GcManager gcManager = new GcManager();
         List<String> logLines = null;
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertNull(jvmRun.getLastGcEvent(), "Last GC event not correct.");
+    }
+
+    @Test
+    void testMaxHeapBytes() {
+        JvmRun jvmRun = new JvmRun(0);
+        String opts = "-Xss128k -Xmx2048m -XX:MaxMetaspaceSize=1280m";
+        JvmContext jvmContext = new JvmContext(opts);
+        JvmOptions jvmOptions = new JvmOptions(jvmContext);
+        jvmRun.setJvmOptions(jvmOptions);
+        assertEquals(bytes(2147483648L), jvmRun.getMaxHeapBytes(), "Max heap bytes incorrect.");
+    }
+
+    @Test
+    void testMaxHeapBytesUnknown() {
+        JvmRun jvmRun = new JvmRun(0);
+        String opts = "-Xss128k -XX:MaxMetaspaceSize=1280m";
+        JvmContext jvmContext = new JvmContext(opts);
+        JvmOptions jvmOptions = new JvmOptions(jvmContext);
+        jvmRun.setJvmOptions(jvmOptions);
+        assertEquals(bytes(0L), jvmRun.getMaxHeapBytes(), "Max heap bytes incorrect.");
+    }
+
+    @Test
+    void testMaxMetaspaceBytes() {
+        JvmRun jvmRun = new JvmRun(0);
+        String opts = "-Xss128k -Xmx2048m -XX:MaxMetaspaceSize=1280m";
+        JvmContext jvmContext = new JvmContext(opts);
+        JvmOptions jvmOptions = new JvmOptions(jvmContext);
+        jvmRun.setJvmOptions(jvmOptions);
+        assertEquals(megabytes(2048), jvmRun.getMaxHeapBytes(), "Max heap bytes incorrect.");
+        assertEquals(bytes(1342177280), jvmRun.getMaxMetaspaceBytes(), "Max metaspace bytes incorrect.");
+    }
+
+    @Test
+    void testMaxMetaspaceBytesUnknown() {
+        JvmRun jvmRun = new JvmRun(0);
+        String opts = "-Xss128k";
+        JvmContext jvmContext = new JvmContext(opts);
+        JvmOptions jvmOptions = new JvmOptions(jvmContext);
+        jvmRun.setJvmOptions(jvmOptions);
+        assertEquals(bytes(0L), jvmRun.getMaxMetaspaceBytes(), "Max metaspace bytes incorrect.");
+    }
+
+    @Test
+    void testMaxPermBytes() {
+        JvmRun jvmRun = new JvmRun(0);
+        String opts = "-Xss128k -Xmx2048m -XX:MaxPermSize=1280m";
+        JvmContext jvmContext = new JvmContext(opts);
+        JvmOptions jvmOptions = new JvmOptions(jvmContext);
+        jvmRun.setJvmOptions(jvmOptions);
+        assertEquals(bytes(1342177280), jvmRun.getMaxPermBytes(), "Max perm space bytes incorrect.");
+    }
+
+    @Test
+    void testMaxPermBytesUnknown() {
+        JvmRun jvmRun = new JvmRun(0);
+        String opts = "-Xss128k";
+        JvmContext jvmContext = new JvmContext(opts);
+        JvmOptions jvmOptions = new JvmOptions(jvmContext);
+        jvmRun.setJvmOptions(jvmOptions);
+        assertEquals(bytes(0L), jvmRun.getMaxPermBytes(), "Max perm space bytes incorrect.");
     }
 
     /**
@@ -244,7 +296,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(kilobytes(1100288), jvmRun.getMaxYoungSpace(), "Max young space not calculated correctly.");
         assertEquals(kilobytes(1100288), jvmRun.getMaxOldSpace(), "Max old space not calculated correctly.");
         assertEquals((long) 1, jvmRun.getNewRatio(), "NewRatio not calculated correctly.");
@@ -256,7 +308,7 @@ class TestJvmRun {
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME),
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_NEW_RATIO_INVERTED),
+        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_NEW_RATIO_INVERTED),
                 Analysis.INFO_NEW_RATIO_INVERTED + " analysis not identified.");
     }
 
@@ -267,13 +319,12 @@ class TestJvmRun {
     void testPercentSwapFreeAtThreshold() {
         String jvmOptions = null;
         GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.getJvm().setSwap(new Memory(1000, BYTES));
-        jvmRun.getJvm().setSwapFree(new Memory(946, BYTES));
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.setSwap(new Memory(1000, BYTES));
+        jvmRun.setSwapFree(new Memory(946, BYTES));
         jvmRun.doAnalysis();
-        assertEquals((long) 95, jvmRun.getJvm().getPercentSwapFree(), "Percent swap free not correct.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.INFO_SWAPPING),
+        assertEquals((long) 95, jvmRun.getPercentSwapFree(), "Percent swap free not correct.");
+        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_SWAPPING),
                 Analysis.INFO_SWAPPING + " analysis incorrectly identified.");
     }
 
@@ -284,14 +335,12 @@ class TestJvmRun {
     void testPercentSwapFreeBelowThreshold() {
         String jvmOptions = null;
         GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.getJvm().setSwap(new Memory(1000, BYTES));
-        jvmRun.getJvm().setSwapFree(new Memory(945, BYTES));
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.setSwap(new Memory(1000, BYTES));
+        jvmRun.setSwapFree(new Memory(945, BYTES));
         jvmRun.doAnalysis();
-        assertEquals((long) 94, jvmRun.getJvm().getPercentSwapFree(), "Percent swap free not correct.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.INFO_SWAPPING),
-                Analysis.INFO_SWAPPING + " analysis not identified.");
+        assertEquals((long) 94, jvmRun.getPercentSwapFree(), "Percent swap free not correct.");
+        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_SWAPPING), Analysis.INFO_SWAPPING + " analysis not identified.");
     }
 
     /**
@@ -301,11 +350,10 @@ class TestJvmRun {
     void testPhysicalMemoryEqualJvmAllocation() {
         String jvmOptions = "-Xmx1024M -XX:MaxPermSize=128M";
         GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.getJvm().setPhysicalMemory(new Memory(1207959552, BYTES));
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.setPhysicalMemory(new Memory(1207959552, BYTES));
         jvmRun.doAnalysis();
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY),
                 Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.");
     }
 
@@ -316,11 +364,10 @@ class TestJvmRun {
     void testPhysicalMemoryLessThanJvmAllocation() {
         String jvmOptions = "-Xmx1024M -XX:MaxPermSize=128M";
         GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.getJvm().setPhysicalMemory(new Memory(1207959551, BYTES));
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.setPhysicalMemory(new Memory(1207959551, BYTES));
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_PHYSICAL_MEMORY),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY),
                 Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.");
     }
 
@@ -332,31 +379,14 @@ class TestJvmRun {
     @Test
     void testPrintGcApplicationConcurrentTimeAnalysis() throws IOException {
         File testFile = TestUtil.getFile("dataset104.txt");
-        Jvm jvm = new Jvm(null, null);
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME),
-                Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
-    }
-
-    /**
-     * Test if PrintGCDetails disabled with -XX:-PrintGCDetails.
-     */
-    @Test
-    void testPrintGCDetailsDisabled() {
-        String jvmOptions = "-Xss128k -XX:-PrintGCDetails -Xms2048M";
-        GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_DISABLED),
-                Analysis.WARN_PRINT_GC_DETAILS_DISABLED + " analysis not identified.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_DETAILS_MISSING),
-                Analysis.WARN_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.");
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME),
+                org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
     }
 
     /**
@@ -366,42 +396,13 @@ class TestJvmRun {
     void testPrintReferenceGCByLogging() {
         String jvmOptions = null;
         GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.REFERENCE_GC);
         jvmRun.setEventTypes(eventTypes);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED),
-                Analysis.WARN_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.");
-    }
-
-    /**
-     * Test if -XX:+PrintReferenceGC enabled by inspecting jvm options.
-     */
-    @Test
-    void testPrintReferenceGCByOptions() {
-        String jvmOptions = "-Xss128k -XX:+PrintReferenceGC -Xms2048M";
-        GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED),
-                Analysis.WARN_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.");
-    }
-
-    /**
-     * Test if -XX:+PrintStringDeduplicationStatistics enabled by inspecting jvm options.
-     */
-    @Test
-    void testPrintStringDeduplicationStatistics() {
-        String jvmOptions = "-Xss128k -XX:+PrintStringDeduplicationStatistics -Xms2048M";
-        GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED),
-                Analysis.WARN_PRINT_STRING_DEDUP_STATS_ENABLED + " analysis not identified.");
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED),
+                org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.");
     }
 
     /**
@@ -418,7 +419,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
@@ -432,12 +433,14 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME),
-                Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME),
+                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME),
+                org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
 
     }
 
@@ -455,15 +458,15 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD),
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED),
                 Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED + " analysis not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED),
                 Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED + " analysis not identified.");
     }
 
@@ -479,7 +482,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(3, jvmRun.getEventTypes().size(), "GC event type count not correct.");
         assertEquals(160, jvmRun.getBlockingEventCount(), "GC blocking event count not correct.");
         assertEquals((long) 2568199604L, jvmRun.getDurationTotal(), "GC pause total not correct.");
@@ -496,7 +499,7 @@ class TestJvmRun {
         assertEquals((long) 2827917, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
         assertEquals((long) 9, jvmRun.getGcThroughput(), "GC throughput not correct.");
         assertEquals((long) 4, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
         assertEquals((long) 0, jvmRun.getInvertedParallelismCount(), "Inverted parallelism event count not correct.");
     }
@@ -513,7 +516,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals((long) 0, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
     }
 
@@ -525,7 +528,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals((long) 400, jvmRun.getExtRootScanningTimeMax(),
                 "Max ext root scanning time not calculated correctly.");
         assertEquals((long) 800, jvmRun.getExtRootScanningTimeTotal(),
@@ -544,7 +547,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(kilobytes(248192), jvmRun.getMaxYoungSpace(), "Max young space not calculated correctly.");
         assertEquals(kilobytes(786432), jvmRun.getMaxOldSpace(), "Max old space not calculated correctly.");
         assertEquals((long) 3, jvmRun.getNewRatio(), "NewRatio not calculated correctly.");
@@ -562,9 +565,9 @@ class TestJvmRun {
                 JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD),
                 JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING),
                 Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL),
                 Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis not identified.");
     }
 
@@ -575,7 +578,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(kilobytes(348864), jvmRun.getMaxYoungSpace(), "Max young space not calculated correctly.");
         assertEquals(kilobytes(699392), jvmRun.getMaxOldSpace(), "Max old space not calculated correctly.");
         assertEquals((long) 2, jvmRun.getNewRatio(), "NewRatio not calculated correctly.");
@@ -593,7 +596,7 @@ class TestJvmRun {
                 JdkUtil.LogEventType.PAR_NEW.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
                 JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_CMS),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
 
@@ -611,7 +614,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "GC event type count not correct.");
         assertEquals(2, jvmRun.getBlockingEventCount(), "GC blocking event count not correct.");
         assertEquals((long) 82616, jvmRun.getDurationTotal(), "GC pause total not correct.");
@@ -630,7 +633,7 @@ class TestJvmRun {
         assertEquals((long) 2920, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
         assertEquals((long) 97, jvmRun.getGcThroughput(), "GC throughput not correct.");
         assertEquals((long) 64, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis not identified.");
     }
 
@@ -642,7 +645,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "GC Event count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_FULL_GC),
                 JdkUtil.LogEventType.SHENANDOAH_FULL_GC.toString() + " collector not identified.");
@@ -655,7 +658,7 @@ class TestJvmRun {
         assertEquals(kilobytes(1314816), jvmRun.getMaxPermSpace(), "Max metaspace space not calculated correctly.");
         assertEquals(4077274, jvmRun.getDurationMax(), "Max pause not calculated correctly.");
         assertEquals(4077274, jvmRun.getDurationTotal(), "Total GC duration not calculated correctly.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.ERROR_SHENANDOAH_FULL_GC),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SHENANDOAH_FULL_GC),
                 Analysis.ERROR_SHENANDOAH_FULL_GC + " analysis not identified.");
     }
 
@@ -667,7 +670,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
                 JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME),
@@ -688,7 +691,7 @@ class TestJvmRun {
         assertEquals((long) 3884, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
         assertEquals((long) 98, jvmRun.getGcThroughput(), "GC throughput not correct.");
         assertEquals((long) 73, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis not identified.");
     }
 
@@ -700,7 +703,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector incorrectly identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
@@ -731,10 +734,10 @@ class TestJvmRun {
         assertEquals((long) 86, jvmRun.getGcThroughput(), "GC throughput not correct.");
         assertEquals((long) 25565000, jvmRun.getUnifiedSafepointTimeTotal(), "Safepoint total time not correct.");
         assertEquals((long) 85, jvmRun.getUnifiedSafepointThroughput(), "Safepoint throughput not correct.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
         assertEquals((long) 96, jvmRun.getGcUnifiedSafepointRatio(), "GC/Safepoint ratio not correct.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_GC_SAFEPOINT_RATIO),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_SAFEPOINT_RATIO),
                 Analysis.WARN_GC_SAFEPOINT_RATIO + " incorrectly not identified.");
     }
 
@@ -745,7 +748,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(new Jvm(null, null), Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(3, jvmRun.getEventTypes().size(), "GC Event count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector incorrectly identified.");
@@ -779,25 +782,10 @@ class TestJvmRun {
         assertEquals((long) 100, jvmRun.getGcThroughput(), "GC throughput not correct.");
         assertEquals((long) 100, jvmRun.getUnifiedSafepointThroughput(), "Safepoint throughput not correct.");
         assertEquals((long) 100, jvmRun.getGcStoppedRatio(), "GC/Stopped ratio not correct.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_GC_STOPPED_RATIO),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
         assertEquals((long) 8, jvmRun.getGcUnifiedSafepointRatio(), "GC/Safepoint ratio not correct.");
-        assertFalse(jvmRun.getAnalysis().contains(Analysis.WARN_GC_SAFEPOINT_RATIO),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_SAFEPOINT_RATIO),
                 Analysis.WARN_GC_SAFEPOINT_RATIO + " analysis incorrectly identified.");
     }
-
-    /**
-     * Test if PAR_NEW collector disabled with -XX:-UseParNewGC.
-     */
-    @Test
-    void testUseParNewGcDisabled() {
-        String jvmOptions = "-Xss128k -XX:-UseParNewGC -Xms2048M";
-        GcManager gcManager = new GcManager();
-        Jvm jvm = new Jvm(jvmOptions, null);
-        JvmRun jvmRun = gcManager.getJvmRun(jvm, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        assertTrue(jvmRun.getAnalysis().contains(Analysis.WARN_CMS_PAR_NEW_DISABLED),
-                Analysis.WARN_CMS_PAR_NEW_DISABLED + " analysis not identified.");
-    }
-
 }

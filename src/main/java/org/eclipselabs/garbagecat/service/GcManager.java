@@ -70,7 +70,6 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
@@ -92,9 +91,10 @@ import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.eclipselabs.garbagecat.util.jdk.Jvm;
+import org.github.joa.JvmOptions;
+import org.github.joa.domain.Bit;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -135,10 +135,8 @@ public class GcManager {
 
     /**
      * Allocation rate in KB per second.
-     * 
-     * @param jvm
      */
-    private BigDecimal getAllocationRate(Jvm jvm) {
+    private BigDecimal getAllocationRate() {
         List<BlockingEvent> blockingEvents = jvmDao.getBlockingEvents(LogEventType.G1_YOUNG_PAUSE);
 
         if (blockingEvents.isEmpty())
@@ -178,14 +176,14 @@ public class GcManager {
     /**
      * Determine <code>BlockingEvent</code>s where throughput since last event does not meet the throughput goal.
      * 
-     * @param jvm
-     *            The JVM environment information.
+     * @param startDate
+     *            The JVM start date.
      * @param throughputThreshold
      *            The bottleneck reporting throughput threshold.
      * @return A <code>List</code> of <code>BlockingEvent</code>s where the throughput between events is less than the
      *         throughput threshold goal.
      */
-    private List<String> getGcBottlenecks(Jvm jvm, int throughputThreshold) {
+    private List<String> getGcBottlenecks(Date startDate, int throughputThreshold) {
         List<String> bottlenecks = new ArrayList<String>();
         List<BlockingEvent> blockingEvents = jvmDao.getBlockingEvents();
         BlockingEvent priorEvent = null;
@@ -193,29 +191,28 @@ public class GcManager {
             if (priorEvent != null && JdkUtil.isBottleneck(event, priorEvent, throughputThreshold)) {
                 if (bottlenecks.isEmpty()) {
                     // Add current and prior event
-                    if (jvm.getStartDate() != null) {
+                    if (startDate != null) {
                         // Convert timestamps to date/time
-                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
-                                jvm.getStartDate()));
-                        bottlenecks.add(
-                                JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm.getStartDate()));
+                        bottlenecks
+                                .add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate));
+                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
                     } else {
                         bottlenecks.add(priorEvent.getLogEntry());
                         bottlenecks.add(event.getLogEntry());
                     }
                 } else {
-                    if (jvm.getStartDate() != null) {
+                    if (startDate != null) {
                         // Compare datetime, since bottleneck has datetime
-                        if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm.getStartDate())
+                        if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate)
                                 .equals(bottlenecks.get(bottlenecks.size() - 1))) {
                             bottlenecks.add("...");
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
-                                    jvm.getStartDate()));
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(),
-                                    jvm.getStartDate()));
+                            bottlenecks.add(
+                                    JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate));
+                            bottlenecks
+                                    .add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
                         } else {
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(),
-                                    jvm.getStartDate()));
+                            bottlenecks
+                                    .add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
                         }
                     } else {
                         // Compare timestamps, since bottleneck has timestamp
@@ -237,72 +234,77 @@ public class GcManager {
     /**
      * Get JVM run data.
      * 
-     * @param jvm
-     *            JVM environment information.
+     * @param jvmOptions
+     *            The JVM options for the JVM run.
+     * @param jvmStartDate
+     *            The date and time the JVM was started.
      * @param throughputThreshold
      *            The throughput threshold for bottleneck reporting.
      * @return The JVM run data.
      */
-    public JvmRun getJvmRun(Jvm jvm, int throughputThreshold) {
-        JvmRun jvmRun = new JvmRun(jvm, throughputThreshold);
-        jvmRun.setPreprocessed(this.preprocessed);
-        jvmRun.setLastLogLineUnprocessed(lastLogLineUnprocessed);
-        // Override any options passed in on command line
-        if (jvmDao.getOptions() != null) {
-            jvmRun.getJvm().setOptions(jvmDao.getOptions());
+    public JvmRun getJvmRun(String jvmOptions, Date jvmStartDate, int throughputThreshold) {
+        JvmRun jvmRun = new JvmRun(throughputThreshold);
+        // Use jvm options passed in on the command line if none found in the logging
+        if (jvmOptions != null && jvmDao.getJvmContext().getOptions() == null) {
+            jvmDao.getJvmContext().setOptions(jvmOptions);
         }
-        jvmRun.getJvm().setMemory(jvmDao.getMemory());
-        jvmRun.getJvm().setPhysicalMemory(new Memory(jvmDao.getPhysicalMemory(), BYTES));
-        jvmRun.getJvm().setPhysicalMemoryFree(new Memory(jvmDao.getPhysicalMemoryFree(), BYTES));
-        jvmRun.getJvm().setSwap(new Memory(jvmDao.getSwap(), BYTES));
-        jvmRun.getJvm().setSwapFree(new Memory(jvmDao.getSwapFree(), BYTES));
-        jvmRun.getJvm().setVersion(jvmDao.getVersion());
-        jvmRun.setFirstGcEvent(jvmDao.getFirstGcEvent());
-        jvmRun.setLastGcEvent(jvmDao.getLastGcEvent());
-        jvmRun.setMaxYoungSpace(kilobytes(jvmDao.getMaxYoungSpace()));
-        jvmRun.setMaxOldSpace(kilobytes(jvmDao.getMaxOldSpace()));
-        jvmRun.setMaxHeapSpace(kilobytes(jvmDao.getMaxHeapSpace()));
-        jvmRun.setMaxHeapOccupancy(kilobytes(jvmDao.getMaxHeapOccupancy()));
-        jvmRun.setMaxHeapAfterGc(kilobytes(jvmDao.getMaxHeapAfterGc()));
-        jvmRun.setMaxPermSpace(kilobytes(jvmDao.getMaxPermSpace()));
-        jvmRun.setMaxPermOccupancy(kilobytes(jvmDao.getMaxPermOccupancy()));
-        jvmRun.setMaxPermAfterGc(kilobytes(jvmDao.getMaxPermAfterGc()));
-        jvmRun.setGcPauseMax(jvmDao.getDurationMax());
-        jvmRun.setGcPauseTotal(jvmDao.getDurationTotal());
-        jvmRun.setBlockingEventCount(jvmDao.getBlockingEventCount());
-        jvmRun.setFirstSafepointEvent(jvmDao.getFirstSafepointEvent());
-        jvmRun.setLastSafepointEvent(jvmDao.getLastSafepointEvent());
-        jvmRun.setStoppedTimeMax(jvmDao.getStoppedTimeMax());
-        jvmRun.setStoppedTimeTotal(jvmDao.getStoppedTimeTotal());
-        jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
-        jvmRun.setUnifiedSafepointTimeMax(jvmDao.getUnifiedSafepointTimeMax());
-        jvmRun.setUnifiedSafepointTimeTotal(jvmDao.getUnifiedSafepointTimeTotal());
-        jvmRun.setUnifiedSafepointEventCount(jvmDao.getUnifiedSafepointEventCount());
-        jvmRun.setSafepointEventSummaries(jvmDao.getSafepointEventSummaries());
-        jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
-        jvmRun.setEventTypes(jvmDao.getEventTypes());
-        jvmRun.setCollectorFamilies(jvmDao.getCollectorFamilies());
+        jvmRun.setJvmOptions(new JvmOptions(jvmDao.getJvmContext()));
+
+        jvmRun.setAllocationRate(getAllocationRate());
         jvmRun.setAnalysis(jvmDao.getAnalysis());
-        jvmRun.setGcBottlenecks(getGcBottlenecks(jvm, throughputThreshold));
-        jvmRun.setSafepointBottlenecks(getSafepointBottlenecks(jvm, throughputThreshold));
-        jvmRun.setAllocationRate(getAllocationRate(jvm));
-        jvmRun.setParallelCount(jvmDao.getParallelCount());
-        jvmRun.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount());
-        jvmRun.setWorstInvertedParallelismEvent(jvmDao.getWorstInvertedParallelismEvent());
-        jvmRun.setSerialCount(jvmDao.getSerialCount());
-        jvmRun.setInvertedSerialismCount(jvmDao.getInvertedSerialismCount());
-        jvmRun.setWorstInvertedSerialismEvent(jvmDao.getWorstInvertedSerialismEvent());
-        jvmRun.setSysGtUserCount(jvmDao.getSysGtUserCount());
-        jvmRun.setWorstSysGtUserEvent(jvmDao.getWorstSysGtUserEvent());
-        jvmRun.setMaxHeapOccupancyNonBlocking(kilobytes(jvmDao.getMaxHeapOccupancyNonBlocking()));
-        jvmRun.setMaxHeapSpaceNonBlocking(kilobytes(jvmDao.getMaxHeapSpaceNonBlocking()));
-        jvmRun.setMaxPermOccupancyNonBlocking(kilobytes(jvmDao.getMaxPermOccupancyNonBlocking()));
-        jvmRun.setMaxPermSpaceNonBlocking(kilobytes(jvmDao.getMaxPermSpaceNonBlocking()));
+        jvmRun.setBlockingEventCount(jvmDao.getBlockingEventCount());
         jvmRun.setDurationGtRealCount(jvmDao.getDurationGtRealCount());
-        jvmRun.setWorstDurationGtRealTimeEvent(jvmDao.getWorstDurationGtRealTimeEvent());
+        jvmRun.setEventTypes(jvmDao.getEventTypes());
         jvmRun.setExtRootScanningTimeMax(jvmDao.getExtRootScanningTimeMax());
         jvmRun.setExtRootScanningTimeTotal(jvmDao.getExtRootScanningTimeTotal());
+        jvmRun.setFirstGcEvent(jvmDao.getFirstGcEvent());
+        jvmRun.setFirstSafepointEvent(jvmDao.getFirstSafepointEvent());
+        jvmRun.setGcBottlenecks(getGcBottlenecks(jvmStartDate, throughputThreshold));
+        jvmRun.setGcPauseMax(jvmDao.getDurationMax());
+        jvmRun.setGcPauseTotal(jvmDao.getDurationTotal());
+        jvmRun.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount());
+        jvmRun.setInvertedSerialismCount(jvmDao.getInvertedSerialismCount());
+        jvmRun.setJdkVersion(jvmDao.getJdkVersion());
+        jvmRun.setLastGcEvent(jvmDao.getLastGcEvent());
+        jvmRun.setLastLogLineUnprocessed(lastLogLineUnprocessed);
+        jvmRun.setLastSafepointEvent(jvmDao.getLastSafepointEvent());
+        jvmRun.setMaxHeapAfterGc(kilobytes(jvmDao.getMaxHeapAfterGc()));
+        jvmRun.setMaxHeapOccupancy(kilobytes(jvmDao.getMaxHeapOccupancy()));
+        jvmRun.setMaxHeapOccupancyNonBlocking(kilobytes(jvmDao.getMaxHeapOccupancyNonBlocking()));
+        jvmRun.setMaxHeapSpace(kilobytes(jvmDao.getMaxHeapSpace()));
+        jvmRun.setMaxHeapSpaceNonBlocking(kilobytes(jvmDao.getMaxHeapSpaceNonBlocking()));
+        jvmRun.setMaxOldSpace(kilobytes(jvmDao.getMaxOldSpace()));
+        jvmRun.setMaxPermAfterGc(kilobytes(jvmDao.getMaxPermAfterGc()));
+        jvmRun.setMaxPermOccupancy(kilobytes(jvmDao.getMaxPermOccupancy()));
+        jvmRun.setMaxPermOccupancyNonBlocking(kilobytes(jvmDao.getMaxPermOccupancyNonBlocking()));
+        jvmRun.setMaxPermSpace(kilobytes(jvmDao.getMaxPermSpace()));
+        jvmRun.setMaxPermSpaceNonBlocking(kilobytes(jvmDao.getMaxPermSpaceNonBlocking()));
+        jvmRun.setMaxYoungSpace(kilobytes(jvmDao.getMaxYoungSpace()));
+        jvmRun.setMemory(jvmDao.getMemory());
+        jvmRun.setParallelCount(jvmDao.getParallelCount());
+        jvmRun.setPhysicalMemory(new Memory(jvmDao.getPhysicalMemory(), BYTES));
+        jvmRun.setPhysicalMemoryFree(new Memory(jvmDao.getPhysicalMemoryFree(), BYTES));
+        jvmRun.setSafepointBottlenecks(getSafepointBottlenecks(jvmStartDate, throughputThreshold));
+        jvmRun.setSafepointEventSummaries(jvmDao.getSafepointEventSummaries());
+        jvmRun.setSerialCount(jvmDao.getSerialCount());
+        jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
+        jvmRun.setStoppedTimeMax(jvmDao.getStoppedTimeMax());
+        jvmRun.setStoppedTimeTotal(jvmDao.getStoppedTimeTotal());
+        jvmRun.setSwap(new Memory(jvmDao.getSwap(), BYTES));
+        jvmRun.setSwapFree(new Memory(jvmDao.getSwapFree(), BYTES));
+        jvmRun.setSysGtUserCount(jvmDao.getSysGtUserCount());
+        jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
+        jvmRun.setUnifiedSafepointEventCount(jvmDao.getUnifiedSafepointEventCount());
+        jvmRun.setUnifiedSafepointTimeMax(jvmDao.getUnifiedSafepointTimeMax());
+        jvmRun.setUnifiedSafepointTimeTotal(jvmDao.getUnifiedSafepointTimeTotal());
+        jvmRun.setWorstDurationGtRealTimeEvent(jvmDao.getWorstDurationGtRealTimeEvent());
+        jvmRun.setWorstInvertedParallelismEvent(jvmDao.getWorstInvertedParallelismEvent());
+        jvmRun.setWorstInvertedSerialismEvent(jvmDao.getWorstInvertedSerialismEvent());
+        jvmRun.setWorstSysGtUserEvent(jvmDao.getWorstSysGtUserEvent());
+        jvmRun.setPreprocessed(this.preprocessed);
+
         jvmRun.doAnalysis();
+
         return jvmRun;
     }
 
@@ -352,11 +354,6 @@ public class GcManager {
 
             if (isThrowawayEvent(currentLogLine)) {
                 // Analysis
-                if (!jvmDao.getAnalysis().contains(Analysis.WARN_TRACE_CLASS_UNLOADING)) {
-                    if (ClassUnloadingEvent.match(currentLogLine)) {
-                        jvmDao.getAnalysis().add(Analysis.WARN_TRACE_CLASS_UNLOADING);
-                    }
-                }
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC)) {
                     // Only match initial line, as FooterHeapEvent and HeatAtGcEvent share patterns
                     if (currentLogLine.matches("^.+Heap (after|before) (gc|GC) invocations.+$")) {
@@ -368,29 +365,14 @@ public class GcManager {
                         jvmDao.getAnalysis().add(Analysis.WARN_CLASS_HISTOGRAM);
                     }
                 }
-                if (!jvmDao.getAnalysis().contains(Analysis.INFO_PRINT_FLS_STATISTICS)) {
-                    if (FlsStatisticsEvent.match(currentLogLine)) {
-                        jvmDao.getAnalysis().add(Analysis.INFO_PRINT_FLS_STATISTICS);
-                    }
-                }
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_TENURING_DISTRIBUTION)) {
                     if (TenuringDistributionEvent.match(currentLogLine)) {
                         jvmDao.getAnalysis().add(Analysis.WARN_PRINT_TENURING_DISTRIBUTION);
                     }
                 }
-                if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME)) {
-                    if (ApplicationConcurrentTimeEvent.match(currentLogLine)) {
-                        jvmDao.getAnalysis().add(Analysis.WARN_PRINT_GC_APPLICATION_CONCURRENT_TIME);
-                    }
-                }
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_APPLICATION_LOGGING)) {
                     if (ApplicationLoggingEvent.match(currentLogLine)) {
                         jvmDao.getAnalysis().add(Analysis.WARN_APPLICATION_LOGGING);
-                    }
-                }
-                if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED)) {
-                    if (ReferenceGcEvent.match(currentLogLine)) {
-                        jvmDao.getAnalysis().add(Analysis.WARN_PRINT_REFERENCE_GC_ENABLED);
                     }
                 }
                 if (!jvmDao.getAnalysis().contains(Analysis.INFO_THREAD_DUMP)) {
@@ -402,6 +384,23 @@ public class GcManager {
                     if (OomeMetaspaceEvent.match(currentLogLine)) {
                         jvmDao.getAnalysis().add(Analysis.ERROR_OOME_METASPACE);
                     }
+                }
+                // Events saved for analysis
+                if (FlsStatisticsEvent.match(currentLogLine)
+                        && !jvmDao.getEventTypes().contains(LogEventType.FLS_STATISTICS)) {
+                    jvmDao.getEventTypes().add(LogEventType.FLS_STATISTICS);
+                }
+                if (ApplicationConcurrentTimeEvent.match(currentLogLine)
+                        && !jvmDao.getEventTypes().contains(LogEventType.APPLICATION_CONCURRENT_TIME)) {
+                    jvmDao.getEventTypes().add(LogEventType.APPLICATION_CONCURRENT_TIME);
+                }
+                if (ClassUnloadingEvent.match(currentLogLine)
+                        && !jvmDao.getEventTypes().contains(LogEventType.CLASS_UNLOADING)) {
+                    jvmDao.getEventTypes().add(LogEventType.CLASS_UNLOADING);
+                }
+                if (HeaderCommandLineFlagsEvent.match(currentLogLine)
+                        && !jvmDao.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS)) {
+                    jvmDao.getEventTypes().add(LogEventType.HEADER_COMMAND_LINE_FLAGS);
                 }
                 currentLogLine = null;
             } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
@@ -495,19 +494,20 @@ public class GcManager {
             }
         }
         return preprocessedLogLine;
+
     }
 
     /**
      * Determine <code>SafepointEvent</code>s where throughput since last event does not meet the throughput goal.
      * 
-     * @param jvm
-     *            The JVM environment information.
+     * @param startDate
+     *            The JVM start date.
      * @param throughputThreshold
      *            The bottleneck reporting throughput threshold.
      * @return A <code>List</code> of <code>SafepointEvent</code>s where the throughput between events is less than the
      *         throughput threshold goal.
      */
-    private List<String> getSafepointBottlenecks(Jvm jvm, int throughputThreshold) {
+    private List<String> getSafepointBottlenecks(Date startDate, int throughputThreshold) {
         List<String> bottlenecks = new ArrayList<String>();
         List<SafepointEvent> safepointEvents = jvmDao.getSafepointEvents();
         SafepointEvent priorEvent = null;
@@ -515,29 +515,28 @@ public class GcManager {
             if (priorEvent != null && JdkUtil.isBottleneck(event, priorEvent, throughputThreshold)) {
                 if (bottlenecks.isEmpty()) {
                     // Add current and prior event
-                    if (jvm.getStartDate() != null) {
+                    if (startDate != null) {
                         // Convert timestamps to date/time
-                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
-                                jvm.getStartDate()));
-                        bottlenecks.add(
-                                JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvm.getStartDate()));
+                        bottlenecks
+                                .add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate));
+                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
                     } else {
                         bottlenecks.add(priorEvent.getLogEntry());
                         bottlenecks.add(event.getLogEntry());
                     }
                 } else {
-                    if (jvm.getStartDate() != null) {
+                    if (startDate != null) {
                         // Compare datetime, since bottleneck has datetime
-                        if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvm.getStartDate())
+                        if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate)
                                 .equals(bottlenecks.get(bottlenecks.size() - 1))) {
                             bottlenecks.add("...");
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
-                                    jvm.getStartDate()));
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(),
-                                    jvm.getStartDate()));
+                            bottlenecks.add(
+                                    JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate));
+                            bottlenecks
+                                    .add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
                         } else {
-                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(),
-                                    jvm.getStartDate()));
+                            bottlenecks
+                                    .add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
                         }
                     } else {
                         // Compare timestamps, since bottleneck has timestamp
@@ -876,9 +875,9 @@ public class GcManager {
                 if (event instanceof TriggerData) {
                     String trigger = ((TriggerData) event).getTrigger();
                     if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)) {
-                        CollectorFamily collectorFamily = ((GcEvent) event).getCollectorFamily();
+                        GarbageCollector garbageCollector = ((GcEvent) event).getGarbageCollector();
 
-                        switch (collectorFamily) {
+                        switch (garbageCollector) {
                         case G1:
                             if (!jvmDao.getAnalysis().contains(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1)
                                     && event instanceof G1FullGcEvent) {
@@ -893,7 +892,7 @@ public class GcManager {
                                 jvmDao.addAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS);
                             }
                             break;
-                        case PARALLEL:
+                        case PARALLEL_OLD:
                             if (event instanceof ParallelSerialOldEvent) {
                                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL)) {
                                     jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL);
@@ -931,7 +930,7 @@ public class GcManager {
                     if (event instanceof TriggerData) {
                         trigger = ((TriggerData) event).getTrigger();
                     }
-                    CollectorFamily collectorFamily = ((GcEvent) event).getCollectorFamily();
+                    GarbageCollector collectorFamily = ((GcEvent) event).getGarbageCollector();
 
                     if (trigger == null || (!trigger.matches(JdkRegEx.TRIGGER_SYSTEM_GC)
                             && !trigger.matches(JdkRegEx.TRIGGER_CLASS_HISTOGRAM)
@@ -948,7 +947,7 @@ public class GcManager {
                                 jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC_CMS);
                             }
                             break;
-                        case PARALLEL:
+                        case PARALLEL_OLD:
                             if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_PARALLEL)) {
                                 jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL);
                             }
@@ -1050,9 +1049,9 @@ public class GcManager {
                 if (event instanceof TriggerData) {
                     String trigger = ((TriggerData) event).getTrigger();
                     if (trigger != null && trigger.matches(JdkRegEx.TRIGGER_PROMOTION_FAILED)) {
-                        CollectorFamily collectorFamily = ((GcEvent) event).getCollectorFamily();
+                        GarbageCollector collectorFamily = ((GcEvent) event).getGarbageCollector();
                         if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED)
-                                && collectorFamily.equals(CollectorFamily.CMS)) {
+                                && collectorFamily.equals(GarbageCollector.CMS)) {
                             jvmDao.addAnalysis(Analysis.ERROR_CMS_PROMOTION_FAILED);
                         }
                     }
@@ -1249,7 +1248,7 @@ public class GcManager {
             } else if (event instanceof UnifiedSafepointEvent) {
                 jvmDao.addSafepointEvent((UnifiedSafepointEvent) event);
             } else if (event instanceof HeaderCommandLineFlagsEvent) {
-                jvmDao.setOptions(((HeaderCommandLineFlagsEvent) event).getJvmOptions());
+                jvmDao.getJvmContext().setOptions(((HeaderCommandLineFlagsEvent) event).getJvmOptions());
             } else if (event instanceof HeaderMemoryEvent) {
                 jvmDao.setMemory(((HeaderMemoryEvent) event).getLogEntry());
                 jvmDao.setPhysicalMemory((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemory()));
@@ -1258,7 +1257,12 @@ public class GcManager {
                 jvmDao.setSwap((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwap()));
                 jvmDao.setSwapFree((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwapFree()));
             } else if (event instanceof HeaderVersionEvent) {
-                jvmDao.setVersion(((HeaderVersionEvent) event).getLogEntry());
+                jvmDao.getJvmContext().setVersionMajor(((HeaderVersionEvent) event).getJdkVersionMajor());
+                jvmDao.getJvmContext().setVersionMinor(((HeaderVersionEvent) event).getJdkVersionMinor());
+                if (((HeaderVersionEvent) event).is32Bit()) {
+                    jvmDao.getJvmContext().setBit(Bit.BIT32);
+                }
+                jvmDao.setJdkVersion(((HeaderVersionEvent) event).getLogEntry());
             } else if (event instanceof GcOverheadLimitEvent) {
                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED)) {
                     jvmDao.getAnalysis().add(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED);
@@ -1301,22 +1305,17 @@ public class GcManager {
                     jvmDao.getUnidentifiedLogLines().add(logLine);
                 }
             }
-
             // Populate events list.
-            List<JdkUtil.LogEventType> eventTypes = jvmDao.getEventTypes();
             JdkUtil.LogEventType eventType = JdkUtil.determineEventType(event.getName());
-            if (!eventTypes.contains(eventType)) {
-                eventTypes.add(eventType);
+            if (!jvmDao.getEventTypes().contains(eventType)) {
+                jvmDao.getEventTypes().add(eventType);
             }
-
-            // Populate collector type list.
+            // Populate collector list.
             if (event instanceof GcEvent) {
-                List<JdkUtil.CollectorFamily> collectorFamilies = jvmDao.getCollectorFamilies();
-                if (!collectorFamilies.contains(((GcEvent) event).getCollectorFamily())) {
-                    collectorFamilies.add(((GcEvent) event).getCollectorFamily());
+                if (!jvmDao.getJvmContext().getGarbageCollectors().contains(((GcEvent) event).getGarbageCollector())) {
+                    jvmDao.getJvmContext().getGarbageCollectors().add(((GcEvent) event).getGarbageCollector());
                 }
             }
-
             // Check for partial last line
             if (!iterator.hasNext()) {
                 if (event instanceof UnknownEvent && jvmDao.getUnidentifiedLogLines().size() == 1) {
