@@ -161,7 +161,7 @@ public class OptionsParser {
     private static void validateOptions(CommandLine cmd) throws ParseException {
         // Ensure command line input.
         if (cmd.getArgList().size() == 0) {
-            throw new ParseException("Missing command line.");
+            throw new ParseException("Missing input.");
         } else {
             // Ensure file input.
             String logFileName = (String) cmd.getArgList().get(cmd.getArgList().size() - 1);
