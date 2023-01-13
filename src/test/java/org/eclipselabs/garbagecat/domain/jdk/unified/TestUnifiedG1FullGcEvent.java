@@ -105,6 +105,20 @@ class TestUnifiedG1FullGcEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
     }
 
+    /**
+     * Test Metadata max size before/after.
+     */
+    @Test
+    void testMetadataMaxBeforeAndAfter() {
+        String logLine = "[2023-01-12T07:17:50.709+0000][1110134471ms] GC(13141) Pause Full (G1 Evacuation Pause) "
+                + "Humongous regions: 1->1 Metaspace: 519911K(834476K)->519307K(834476K) 1962M->1929M(1968M) "
+                + "3371.651ms User=6.35s Sys=0.00s Real=3.38s";
+        assertTrue(UnifiedG1FullGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+        UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString(), event.getName(), "Event name incorrect.");
+    }
+
     @Test
     void testParseLogLine() {
         String logLine = "[2021-03-13T03:37:40.051+0530][79853119ms] GC(8646) Pause Full (G1 Evacuation Pause) "
