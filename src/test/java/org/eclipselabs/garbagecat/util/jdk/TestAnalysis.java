@@ -321,8 +321,8 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_FAST_UNORDERED_TIMESTAMPS),
-                org.github.joa.util.Analysis.WARN_FAST_UNORDERED_TIMESTAMPS + " analysis incorrectly identified.");
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_FAST_UNORDERED_TIMESTAMPS),
+                org.github.joa.util.Analysis.WARN_FAST_UNORDERED_TIMESTAMPS + " analysis not identified.");
     }
 
     @Test
