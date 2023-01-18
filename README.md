@@ -160,9 +160,9 @@ Build it:
 ```
 $ cd garbagecat
 $ /opt/apache-maven-3.6.3/bin/mvn clean (rebuilding)
-$ /opt/apache-maven-3.6.3/bin/mvn package
+$ /opt/apache-maven-3.6.3/bin/mvn --settings settings.xml package
 $ export JAVA_HOME=/usr/lib/jvm/java/ (or wherever a JDK is installed)
-$ /opt/apache-maven-3.6.3/bin/mvn javadoc:javadoc
+$ /opt/apache-maven-3.6.3/bin/mvn --settings settings.xml javadoc:javadoc
 ```
 
 If you get the following error:
