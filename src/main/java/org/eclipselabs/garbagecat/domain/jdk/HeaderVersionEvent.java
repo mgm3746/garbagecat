@@ -93,11 +93,11 @@ public class HeaderVersionEvent implements LogEvent {
     }
 
     /**
-     * @return The JDK version (e.g. '8'), or `0` if it could not be determined. Not available in unified logging
-     *         (JDK11+).
+     * @return The JDK version (e.g. '8'), or <code>org.github.joa.domain.JvmContext.UNKNOWN</code> if it cannot be
+     *         determined. Not available in unified logging (JDK11+).
      */
     public int getJdkVersionMajor() {
-        int jdkVersionMajor = 0;
+        int jdkVersionMajor = org.github.joa.domain.JvmContext.UNKNOWN;
         String regex = "^.+JRE \\(1\\.(5|6|7|8|9|10).+$";
         if (logEntry != null) {
             Pattern pattern = Pattern.compile(regex);
@@ -112,10 +112,12 @@ public class HeaderVersionEvent implements LogEvent {
     }
 
     /**
-     * @return The JDK update (e.g. '60'), or `0` if it could not be determined.
+     * @return The JDK update (e.g. '60'), or <code>org.github.joa.domain.JvmContext.UNKNOWN</code> if it cannot be
+     *         determined.
      */
     public int getJdkVersionMinor() {
-        int jdkVersionMinor = 0;
+        int jdkVersionMinor = org.github.joa.domain.JvmContext.UNKNOWN;
+        ;
         String regex = "^.+JRE \\(1\\.(5|6|7|8|9|10)\\.\\d_(\\d{1,3})-.+$";
         if (logEntry != null) {
             Pattern pattern = Pattern.compile(regex);
