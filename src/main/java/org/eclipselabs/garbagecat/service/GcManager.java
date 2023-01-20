@@ -249,7 +249,7 @@ public class GcManager {
             jvmDao.getJvmContext().setOptions(jvmOptions);
         }
         jvmRun.setJvmOptions(new JvmOptions(jvmDao.getJvmContext()));
-        
+
         jvmRun.setAllocationRate(getAllocationRate());
         jvmRun.setAnalysis(jvmDao.getAnalysis());
         jvmRun.setBlockingEventCount(jvmDao.getBlockingEventCount());
@@ -1252,6 +1252,8 @@ public class GcManager {
             } else if (event instanceof HeaderMemoryEvent) {
                 jvmDao.setMemory(((HeaderMemoryEvent) event).getLogEntry());
                 jvmDao.setPhysicalMemory((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemory()));
+                jvmDao.getJvmContext().setMemory(org.github.joa.util.JdkUtil.convertSize(jvmDao.getPhysicalMemory(),
+                        'B', org.github.joa.util.Constants.PRECISION));
                 jvmDao.setPhysicalMemoryFree(
                         (long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemoryFree()));
                 jvmDao.setSwap((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwap()));
