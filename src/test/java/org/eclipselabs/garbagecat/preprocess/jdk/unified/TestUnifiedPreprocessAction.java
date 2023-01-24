@@ -692,8 +692,8 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
-    void testG1Eden3Digits() {
-        String logLine = "[0.335s][info][gc,heap      ] GC(0) Eden regions: 24->0(149)";
+    void testG1Eden5Digits() {
+        String logLine = "[2023-01-15T00:03:39.675+0200][info][gc,heap     ] GC(21) Eden regions: 103888->0(47034)";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -708,6 +708,13 @@ class TestUnifiedPreprocessAction {
     @Test
     void testG1EdenDatestampMillisRegions4Digits() {
         String logLine = "[2020-09-11T05:33:44.563+0000][1732868ms] GC(42) Eden regions: 307->0(1659)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testG1EdenTotal6Digits() {
+        String logLine = "[2023-01-15T00:01:29.656+0200][info][gc,heap     ] GC(20) Eden regions: 2216->0(103888)";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -886,6 +893,20 @@ class TestUnifiedPreprocessAction {
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
         assertEquals(" Humongous regions: 13->13", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testG1Humongous4Digit() {
+        String logLine = "[2023-01-15T00:03:39.675+0200][info][gc,heap     ] GC(21) Humongous regions: 9739->9739";
+        String nextLogLine = "[2023-01-15T00:03:39.675+0200][info][gc,metaspace] GC(21) Metaspace: "
+                + "243951K(262400K)->243951K(262400K)";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(" Humongous regions: 9739->9739", event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -1198,6 +1219,14 @@ class TestUnifiedPreprocessAction {
     @Test
     void testG1UsingWorkersForEvacuation2Digits() {
         String logLine = "[0.333s][info][gc,task      ] GC(0) Using 10 workers of 10 for evacuation";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testG1UsingWorkersForEvacuation3Digit() {
+        String logLine = "[2023-01-14T23:33:54.519+0200][info][gc,task  ] GC(0) Using 143 workers of 143 for"
+                + " evacuation";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }

@@ -846,18 +846,18 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // ***** SERIAL *****
             "^" + UnifiedRegEx.DECORATOR + " Phase \\d: .+?$",
             // ***** G1 *****
-            "^" + UnifiedRegEx.DECORATOR + " Using \\d{1,2} workers of \\d{1,2} for (evacuation|full compaction|"
+            "^" + UnifiedRegEx.DECORATOR + " Using \\d{1,} workers of \\d{1,} for (evacuation|full compaction|"
                     + "marking)$",
             //
             "^" + UnifiedRegEx.DECORATOR + "   (Pre Evacuate|Evacuate( Optional)?|Post Evacuate) Collection Set: "
                     + JdkRegEx.DURATION_MS + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " (Eden|Survivor|Old) regions: \\d{1,4}->\\d{1,4}(\\(\\d{1,4}\\))?$",
+            "^" + UnifiedRegEx.DECORATOR + " (Eden|Survivor|Old) regions: \\d{1,}->\\d{1,}(\\(\\d{1,}\\))?$",
             "^" + UnifiedRegEx.DECORATOR + " Pause Remark$",
             //
             "^" + UnifiedRegEx.DECORATOR
-                    + " Cleaned string and symbol table, strings: \\d{1,7} processed, \\d{1,6} removed, "
-                    + "symbols: \\d{1,7} processed, \\d{1,5} removed$",
+                    + " Cleaned string and symbol table, strings: \\d{1,} processed, \\d{1,} removed, "
+                    + "symbols: \\d{1,} processed, \\d{1,} removed$",
 
             //
             "^" + UnifiedRegEx.DECORATOR + " Mark (closed|open) archive regions in map:.+$",
@@ -872,7 +872,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " Archive regions:.+$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "[ ]{1,4}Using \\d{1,2} of \\d{1,2} workers for "
+            "^" + UnifiedRegEx.DECORATOR + "[ ]{1,}Using \\d{1,} of \\d{1,} workers for "
                     + "concurrent class unloading$",
             // main headings
             "^" + UnifiedRegEx.DECORATOR
