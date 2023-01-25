@@ -398,7 +398,7 @@ public class JvmRun {
                         getEventTypes().add(LogEventType.G1_FULL_GC_SERIAL);
                         getEventTypes().remove(LogEventType.VERBOSE_GC_OLD);
                     }
-                    if (!hasAnalysis(Analysis.ERROR_SERIAL_GC_G1)) {
+                    if (!hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey())) {
                         analysis.add(Analysis.ERROR_SERIAL_GC_G1);
                     }
                 }
@@ -406,7 +406,7 @@ public class JvmRun {
         }
         // Don't double report
         if (hasAnalysis(org.github.joa.util.Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED.getKey())
-                && hasAnalysis(WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
+                && hasAnalysis(WARN_CMS_CLASS_UNLOADING_NOT_ENABLED.getKey())) {
             analysis.remove(WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
         }
         // Check for partial log
@@ -1050,15 +1050,6 @@ public class JvmRun {
 
     public LogEvent getWorstSysGtUserEvent() {
         return worstSysGtUserEvent;
-    }
-
-    /**
-     * @param key
-     *            The {@link org.eclipselabs.garbagecat.util.jdk.Analysis} to check.
-     * @return True if the {@link org.eclipselabs.garbagecat.util.jdk.Analysis} exists, false otherwise.
-     */
-    public boolean hasAnalysis(Analysis key) {
-        return analysis.contains(key);
     }
 
     /**
