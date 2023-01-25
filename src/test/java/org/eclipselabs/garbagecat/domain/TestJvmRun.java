@@ -155,9 +155,9 @@ class TestJvmRun {
                 JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD),
                 JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL.getKey()),
                 Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL.getKey()),
                 Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis not identified.");
     }
 
@@ -196,7 +196,7 @@ class TestJvmRun {
                 JdkUtil.LogEventType.HEADER_MEMORY.toString() + " not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION),
                 JdkUtil.LogEventType.HEADER_VERSION.toString() + " not identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_EXPLICIT_GC_DISABLED),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_EXPLICIT_GC_DISABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_EXPLICIT_GC_DISABLED + " analysis not identified.");
     }
 
@@ -221,6 +221,28 @@ class TestJvmRun {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertNull(jvmRun.getLastGcEvent(), "Last GC event not correct.");
+    }
+
+    /**
+     * Test if logging to stdout.
+     * 
+     * JDK8 GC logging "CommandLine flags" header will not include the -Xloggc option. It's not possible to distinguish
+     * between logging to stdout and -Xloggc with no other logging options, so assume if there are log file options
+     * (e.g. size, rotation), the logging is sent to a file.
+     * 
+     * @throws IOException
+     */
+    @Test
+    void testLoggingToStdOutNot() throws IOException {
+        File testFile = TestUtil.getFile("dataset107.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT.getKey()),
+                org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT + " analysis incorrectly identified.");
     }
 
     @Test
@@ -308,7 +330,7 @@ class TestJvmRun {
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_STOPPED_TIME),
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_NEW_RATIO_INVERTED),
+        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_NEW_RATIO_INVERTED.getKey()),
                 Analysis.INFO_NEW_RATIO_INVERTED + " analysis not identified.");
     }
 
@@ -324,7 +346,7 @@ class TestJvmRun {
         jvmRun.setSwapFree(new Memory(946, BYTES));
         jvmRun.doAnalysis();
         assertEquals((long) 95, jvmRun.getPercentSwapFree(), "Percent swap free not correct.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_SWAPPING),
+        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_SWAPPING.getKey()),
                 Analysis.INFO_SWAPPING + " analysis incorrectly identified.");
     }
 
@@ -340,7 +362,8 @@ class TestJvmRun {
         jvmRun.setSwapFree(new Memory(945, BYTES));
         jvmRun.doAnalysis();
         assertEquals((long) 94, jvmRun.getPercentSwapFree(), "Percent swap free not correct.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_SWAPPING), Analysis.INFO_SWAPPING + " analysis not identified.");
+        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_SWAPPING.getKey()),
+                Analysis.INFO_SWAPPING + " analysis not identified.");
     }
 
     /**
@@ -353,7 +376,7 @@ class TestJvmRun {
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.setPhysicalMemory(new Memory(1207959552, BYTES));
         jvmRun.doAnalysis();
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY.getKey()),
                 Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.");
     }
 
@@ -367,7 +390,7 @@ class TestJvmRun {
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.setPhysicalMemory(new Memory(1207959551, BYTES));
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY.getKey()),
                 Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.");
     }
 
@@ -385,7 +408,7 @@ class TestJvmRun {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME.getKey()),
                 org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
     }
 
@@ -401,7 +424,7 @@ class TestJvmRun {
         eventTypes.add(LogEventType.REFERENCE_GC);
         jvmRun.setEventTypes(eventTypes);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED.getKey()),
                 org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.");
     }
 
@@ -439,7 +462,7 @@ class TestJvmRun {
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME),
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME.getKey()),
                 org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
 
     }
@@ -464,9 +487,9 @@ class TestJvmRun {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD),
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED.getKey()),
                 Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED.getKey()),
                 Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED + " analysis not identified.");
     }
 
@@ -499,7 +522,7 @@ class TestJvmRun {
         assertEquals((long) 2827917, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
         assertEquals((long) 9, jvmRun.getGcThroughput(), "GC throughput not correct.");
         assertEquals((long) 4, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO.getKey()),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
         assertEquals((long) 0, jvmRun.getInvertedParallelismCount(), "Inverted parallelism event count not correct.");
     }
@@ -565,9 +588,9 @@ class TestJvmRun {
                 JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD),
                 JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING.getKey()),
                 Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL.getKey()),
                 Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis not identified.");
     }
 
@@ -596,7 +619,7 @@ class TestJvmRun {
                 JdkUtil.LogEventType.PAR_NEW.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
                 JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " collector not identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
 
@@ -633,7 +656,7 @@ class TestJvmRun {
         assertEquals((long) 2920, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
         assertEquals((long) 97, jvmRun.getGcThroughput(), "GC throughput not correct.");
         assertEquals((long) 64, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO.getKey()),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis not identified.");
     }
 
@@ -658,7 +681,7 @@ class TestJvmRun {
         assertEquals(kilobytes(1314816), jvmRun.getMaxPermSpace(), "Max metaspace space not calculated correctly.");
         assertEquals(4077274, jvmRun.getDurationMax(), "Max pause not calculated correctly.");
         assertEquals(4077274, jvmRun.getDurationTotal(), "Total GC duration not calculated correctly.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SHENANDOAH_FULL_GC),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SHENANDOAH_FULL_GC.getKey()),
                 Analysis.ERROR_SHENANDOAH_FULL_GC + " analysis not identified.");
     }
 
@@ -691,7 +714,7 @@ class TestJvmRun {
         assertEquals((long) 3884, jvmRun.getJvmRunDuration(), "JVM run duration not correct.");
         assertEquals((long) 98, jvmRun.getGcThroughput(), "GC throughput not correct.");
         assertEquals((long) 73, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO.getKey()),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis not identified.");
     }
 
@@ -734,10 +757,10 @@ class TestJvmRun {
         assertEquals((long) 86, jvmRun.getGcThroughput(), "GC throughput not correct.");
         assertEquals((long) 25565000, jvmRun.getUnifiedSafepointTimeTotal(), "Safepoint total time not correct.");
         assertEquals((long) 85, jvmRun.getUnifiedSafepointThroughput(), "Safepoint throughput not correct.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO.getKey()),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
         assertEquals((long) 96, jvmRun.getGcUnifiedSafepointRatio(), "GC/Safepoint ratio not correct.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_SAFEPOINT_RATIO),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_SAFEPOINT_RATIO.getKey()),
                 Analysis.WARN_GC_SAFEPOINT_RATIO + " incorrectly not identified.");
     }
 
@@ -782,10 +805,10 @@ class TestJvmRun {
         assertEquals((long) 100, jvmRun.getGcThroughput(), "GC throughput not correct.");
         assertEquals((long) 100, jvmRun.getUnifiedSafepointThroughput(), "Safepoint throughput not correct.");
         assertEquals((long) 100, jvmRun.getGcStoppedRatio(), "GC/Stopped ratio not correct.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO.getKey()),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
         assertEquals((long) 8, jvmRun.getGcUnifiedSafepointRatio(), "GC/Safepoint ratio not correct.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_SAFEPOINT_RATIO),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_SAFEPOINT_RATIO.getKey()),
                 Analysis.WARN_GC_SAFEPOINT_RATIO + " analysis incorrectly identified.");
     }
 }

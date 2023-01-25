@@ -54,7 +54,7 @@ class TestG1FullGcEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_SERIAL),
                 JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + " collector not identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_G1),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey()),
                 Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.");
     }
 
@@ -384,7 +384,7 @@ class TestG1FullGcEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_SERIAL),
                 JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + " collector not identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_G1),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey()),
                 Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.");
     }
 }

@@ -94,7 +94,7 @@ class TestClassUnloadingEvent {
                 JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CLASS_UNLOADING),
                 JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " not identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING.getKey()),
                 org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING + " analysis not identified.");
     }
 }

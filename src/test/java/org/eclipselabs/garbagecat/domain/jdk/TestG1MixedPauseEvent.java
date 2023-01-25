@@ -294,7 +294,7 @@ class TestG1MixedPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_MIXED_PAUSE),
                 JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " collector not identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
                 Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
     }
 
@@ -318,7 +318,7 @@ class TestG1MixedPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_MIXED_PAUSE),
                 JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " collector not identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
                 Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
     }
 
@@ -342,7 +342,7 @@ class TestG1MixedPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_MIXED_PAUSE),
                 JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " collector not identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
                 Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
     }
 

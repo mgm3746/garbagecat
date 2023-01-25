@@ -54,9 +54,9 @@ class TestG1YoungInitialMarkEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_INITIAL_MARK),
                 "Log line not recognized as " + LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1.getKey()),
                 Analysis.ERROR_EXPLICIT_GC_SERIAL_G1 + " analysis incorrectly identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK.getKey()),
                 Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK + " analysis not identified.");
 
     }

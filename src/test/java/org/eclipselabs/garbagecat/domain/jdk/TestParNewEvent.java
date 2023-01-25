@@ -55,9 +55,9 @@ class TestParNewEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_CMS_INCREMENTAL_MODE),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_CMS_INCREMENTAL_MODE.getKey()),
                 Analysis.WARN_CMS_INCREMENTAL_MODE + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT.getKey()),
                 Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT + " analysis not identified.");
     }
 
@@ -463,7 +463,7 @@ class TestParNewEvent {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
-        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED),
+        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED.getKey()),
                 Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis incorrectly identified.");
     }
 
@@ -481,11 +481,11 @@ class TestParNewEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         // Don't report datestamp only lines unidentified
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE.getKey()),
                 Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE + " analysis incorrectly identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST),
+        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST.getKey()),
                 Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST + " analysis incorrectly identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT.getKey()),
                 Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT + " analysis incorrectly identified.");
     }
 

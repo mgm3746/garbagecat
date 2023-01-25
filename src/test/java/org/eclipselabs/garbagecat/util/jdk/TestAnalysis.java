@@ -48,9 +48,9 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_HEAP_MIN_NOT_EQUAL_MAX),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_HEAP_MIN_NOT_EQUAL_MAX.getKey()),
                 org.github.joa.util.Analysis.INFO_HEAP_MIN_NOT_EQUAL_MAX + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_ADAPTIVE_SIZE_POLICY_DISABLED),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_ADAPTIVE_SIZE_POLICY_DISABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_ADAPTIVE_SIZE_POLICY_DISABLED + " analysis not identified.");
         assertFalse(jvmRun.getJvmOptions().hasAnalysis(org.github.joa.util.Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED),
                 org.github.joa.util.Analysis.INFO_UNACCOUNTED_OPTIONS_DISABLED + " analysis incorrectly identified.");
@@ -69,9 +69,9 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_PERM_SIZE_NOT_SET),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_PERM_SIZE_NOT_SET.getKey()),
                 Analysis.WARN_PERM_SIZE_NOT_SET + " analysis not identified.");
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT),
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT.getKey()),
                 org.github.joa.util.Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT + " analysis not identified.");
     }
 
@@ -89,10 +89,10 @@ class TestAnalysis {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_LOGGING),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_LOGGING.getKey()),
                 Analysis.WARN_APPLICATION_LOGGING + " analysis not identified.");
         assertEquals(Bit.BIT64, jvmRun.getJvmOptions().getJvmContext().getBit(), "64-bit not identified.");
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_NOT_SET_32),
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_NOT_SET_32.getKey()),
                 org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_NOT_SET_32 + " analysis incorrectly identified.");
 
     }
@@ -106,7 +106,7 @@ class TestAnalysis {
         jvmRun.setEventTypes(eventTypes);
         jvmRun.getAnalysis().clear();
         jvmRun.doAnalysis();
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING.getKey()),
                 Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis incorrectly identified.");
     }
 
@@ -116,9 +116,9 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_CGROUP_MEMORY_LIMIT),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_CGROUP_MEMORY_LIMIT.getKey()),
                 org.github.joa.util.Analysis.WARN_CGROUP_MEMORY_LIMIT + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_EXPERIMENTAL_VM_OPTIONS_ENABLED),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_EXPERIMENTAL_VM_OPTIONS_ENABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_EXPERIMENTAL_VM_OPTIONS_ENABLED + " analysis not identified.");
     }
 
@@ -135,13 +135,13 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED + " analysis not identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED.getKey()),
                 Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED + " analysis incorrectly identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_CLASS_UNLOADING_DISABLED),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_CLASS_UNLOADING_DISABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_CLASS_UNLOADING_DISABLED + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA.getKey()),
                 org.github.joa.util.Analysis.INFO_CRUFT_EXP_GC_INV_CON_AND_UNL_CLA + " analysis not identified.");
     }
 
@@ -158,7 +158,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM.getKey()),
                 Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis not identified.");
     }
 
@@ -175,7 +175,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_CMS_REMARK_LOW_PARALLELISM.getKey()),
                 Analysis.WARN_CMS_REMARK_LOW_PARALLELISM + " analysis not identified.");
     }
 
@@ -200,9 +200,9 @@ class TestAnalysis {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS.getKey()),
                 Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS + " analysis not identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis incorrectly identified.");
     }
 
@@ -219,13 +219,14 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED.getKey()),
                 Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED + " analysis not identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED.getKey()),
                 Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED + " analysis incorrectly identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT.getKey()),
                 org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT + " analysis not identified.");
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED),
+        assertFalse(
+                jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED
                         + " analysis incorrectly identified.");
     }
@@ -245,11 +246,11 @@ class TestAnalysis {
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals("-XX:MaxHeapSize=45097156608", jvmRun.getJvmOptions().getMaxHeapSize(),
                 "Max heap value not parsed correctly.");
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_OOPS_DISABLED_HEAP_LT_32G),
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_OOPS_DISABLED_HEAP_LT_32G.getKey()),
                 org.github.joa.util.Analysis.WARN_COMP_OOPS_DISABLED_HEAP_LT_32G + " analysis incorrectly identified.");
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_OOPS_ENABLED_HEAP_GT_32G),
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_OOPS_ENABLED_HEAP_GT_32G.getKey()),
                 org.github.joa.util.Analysis.WARN_COMP_OOPS_ENABLED_HEAP_GT_32G + " analysis incorrectly identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_CLASS_SIZE_HEAP_GT_32G),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_CLASS_SIZE_HEAP_GT_32G.getKey()),
                 org.github.joa.util.Analysis.WARN_COMP_CLASS_SIZE_HEAP_GT_32G + " analysis not identified.");
     }
 
@@ -266,9 +267,9 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JMX_ENABLED),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JMX_ENABLED.getKey()),
                 org.github.joa.util.Analysis.INFO_JMX_ENABLED + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED.getKey()),
                 org.github.joa.util.Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED + " analysis not identified.");
     }
 
@@ -287,7 +288,7 @@ class TestAnalysis {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC.getKey()),
                 Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC + " analysis not identified.");
     }
 
@@ -304,7 +305,7 @@ class TestAnalysis {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.VM_WARNING),
                 JdkUtil.LogEventType.VM_WARNING.toString() + " collector identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SHARED_MEMORY_12),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SHARED_MEMORY_12.getKey()),
                 Analysis.ERROR_SHARED_MEMORY_12 + " analysis identified.");
     }
 
@@ -321,7 +322,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_FAST_UNORDERED_TIMESTAMPS),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_FAST_UNORDERED_TIMESTAMPS.getKey()),
                 org.github.joa.util.Analysis.WARN_FAST_UNORDERED_TIMESTAMPS + " analysis not identified.");
     }
 
@@ -333,7 +334,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED),
+        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED.getKey()),
                 Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis incorrectly identified.");
     }
 
@@ -354,7 +355,7 @@ class TestAnalysis {
         assertEquals(5, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_PRINT_HEAP_AT_GC),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_PRINT_HEAP_AT_GC.getKey()),
                 Analysis.WARN_PRINT_HEAP_AT_GC + " analysis identified.");
     }
 
@@ -365,7 +366,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT),
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT.getKey()),
                 org.github.joa.util.Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT + " analysis incorrectly identified.");
     }
 
@@ -382,7 +383,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_SIZE_SMALL),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_SIZE_SMALL.getKey()),
                 org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_SIZE_SMALL + " analysis not identified.");
     }
 
@@ -401,7 +402,7 @@ class TestAnalysis {
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION),
                 JdkUtil.LogEventType.HEADER_VERSION.toString() + " information not identified.");
         // Usually no reason to set the thread stack size on 64 bit.
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_NOT_SET_32),
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_NOT_SET_32.getKey()),
                 org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_NOT_SET_32 + " analysis incorrectly identified.");
     }
 
@@ -413,7 +414,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_PATH_FILENAME),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_PATH_FILENAME.getKey()),
                 org.github.joa.util.Analysis.WARN_HEAP_DUMP_PATH_FILENAME + " analysis not identified.");
     }
 
@@ -430,7 +431,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_HEAP_DUMP_PATH_MISSING),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_HEAP_DUMP_PATH_MISSING.getKey()),
                 org.github.joa.util.Analysis.INFO_HEAP_DUMP_PATH_MISSING + " analysis not identified.");
     }
 
@@ -447,13 +448,14 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_HUMONGOUS_JDK_OLD.getKey()),
                 Analysis.ERROR_G1_HUMONGOUS_JDK_OLD + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT.getKey()),
                 org.github.joa.util.Analysis.WARN_G1_MIXED_GC_LIVE_THRSHOLD_PRCNT + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_EXPERIMENTAL_VM_OPTIONS_ENABLED),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_EXPERIMENTAL_VM_OPTIONS_ENABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_EXPERIMENTAL_VM_OPTIONS_ENABLED + " analysis not identified.");
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED),
+        assertFalse(
+                jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED
                         + " analysis incorrectly identified.");
     }
@@ -467,7 +469,8 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_THREAD_DUMP), Analysis.INFO_THREAD_DUMP + " analysis identified.");
+        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_THREAD_DUMP.getKey()),
+                Analysis.INFO_THREAD_DUMP + " analysis identified.");
     }
 
     /**
@@ -483,9 +486,9 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM.getKey()),
                 Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis incorrectly identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_SWAP_DISABLED),
+        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_SWAP_DISABLED.getKey()),
                 Analysis.INFO_SWAP_DISABLED + " analysis incorrectly identified.");
     }
 
@@ -502,7 +505,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM.getKey()),
                 Analysis.WARN_CMS_INITIAL_MARK_LOW_PARALLELISM + " analysis incorrectly identified.");
     }
 
@@ -516,7 +519,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE.getKey()),
                 org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.");
     }
 
@@ -530,7 +533,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE.getKey()),
                 org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.");
     }
 
@@ -544,7 +547,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE.getKey()),
                 org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.");
     }
 
@@ -578,7 +581,7 @@ class TestAnalysis {
         assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_OOME_METASPACE),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_OOME_METASPACE.getKey()),
                 Analysis.ERROR_OOME_METASPACE + " analysis identified.");
     }
 
@@ -602,9 +605,9 @@ class TestAnalysis {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD),
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_PARALLEL),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_PARALLEL.getKey()),
                 Analysis.WARN_EXPLICIT_GC_PARALLEL + " analysis not identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL.getKey()),
                 Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis incorrectly identified.");
         assertEquals((long) 0, jvmRun.getInvertedParallelismCount(), "Inverted parallelism event count not correct.");
     }
@@ -633,11 +636,12 @@ class TestAnalysis {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_CMS_PAR_NEW_DISABLED),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_CMS_PAR_NEW_DISABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_JDK8_CMS_PAR_NEW_DISABLED + " analysis not identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC.getKey()),
                 Analysis.ERROR_SERIAL_GC + " analysis incorrectly identified.");
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED),
+        assertFalse(
+                jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED
                         + " analysis incorrectly identified.");
     }
@@ -662,7 +666,7 @@ class TestAnalysis {
         assertEquals(bytes(0L), jvmRun.getMaxMetaspaceBytes(), "Metaspace size not parsed correctly.");
         assertEquals(bytes(0L), jvmRun.getCompressedClassSpaceSizeBytes(),
                 "Class compressed pointer space size not parsed correctly.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY),
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY.getKey()),
                 Analysis.ERROR_PHYSICAL_MEMORY + " analysis not identified.");
     }
 
@@ -684,7 +688,7 @@ class TestAnalysis {
         assertEquals(bytes(3221225472L), jvmRun.getMaxMetaspaceBytes(), "Metaspace size not parsed correctly.");
         assertEquals(bytes(2147483648L), jvmRun.getCompressedClassSpaceSizeBytes(),
                 "Class compressed pointer space size not parsed correctly.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY.getKey()),
                 Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.");
     }
 
@@ -707,7 +711,7 @@ class TestAnalysis {
         // Class compressed pointer space has a size, but it is ignored when calculating JVM memory.
         assertEquals(bytes(1073741824L), jvmRun.getCompressedClassSpaceSizeBytes(),
                 "Class compressed pointer space size not parsed correctly.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY.getKey()),
                 Analysis.ERROR_PHYSICAL_MEMORY + " analysis incorrectly identified.");
     }
 
@@ -720,7 +724,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_PRINT_COMMANDLINE_FLAGS),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_PRINT_COMMANDLINE_FLAGS.getKey()),
                 Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis identified.");
     }
 
@@ -733,7 +737,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_PRINT_COMMANDLINE_FLAGS),
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_PRINT_COMMANDLINE_FLAGS.getKey()),
                 Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis identified.");
     }
 
@@ -750,13 +754,13 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_FLS_STATISTICS),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_FLS_STATISTICS.getKey()),
                 org.github.joa.util.Analysis.INFO_JDK8_PRINT_FLS_STATISTICS + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_PROMOTION_FAILURE),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_PROMOTION_FAILURE.getKey()),
                 org.github.joa.util.Analysis.INFO_JDK8_PRINT_PROMOTION_FAILURE + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_USE_MEMBAR),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_USE_MEMBAR.getKey()),
                 org.github.joa.util.Analysis.WARN_USE_MEMBAR + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_CMS_INIT_OCCUPANCY_ONLY_MISSING),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_CMS_INIT_OCCUPANCY_ONLY_MISSING.getKey()),
                 org.github.joa.util.Analysis.INFO_CMS_INIT_OCCUPANCY_ONLY_MISSING + " analysis not identified.");
     }
 
@@ -775,9 +779,9 @@ class TestAnalysis {
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG),
                 JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + " collector not identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_DISABLED),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_DISABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_DISABLED + " analysis not identified.");
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_MISSING),
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_MISSING.getKey()),
                 org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_MISSING + " analysis incorrectly identified.");
     }
 
@@ -805,7 +809,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_CMS_PROMOTION_FAILED),
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_CMS_PROMOTION_FAILED.getKey()),
                 Analysis.ERROR_CMS_PROMOTION_FAILED + " analysis incorrectly identified.");
     }
 
@@ -822,7 +826,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_SWAP_DISABLED),
+        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_SWAP_DISABLED.getKey()),
                 Analysis.INFO_SWAP_DISABLED + " analysis not identified.");
     }
 
@@ -834,7 +838,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_NOT_SET_32),
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_NOT_SET_32.getKey()),
                 org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_NOT_SET_32 + " analysis incorrectly identified.");
     }
 
@@ -847,7 +851,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_LARGE),
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_LARGE.getKey()),
                 org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_LARGE + " analysis not identified.");
     }
 
@@ -865,7 +869,7 @@ class TestAnalysis {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         // VERGOSE_GC_OLD looks the same as G1_FULL without -XX:+PrintGCDetails
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN.getKey()),
                 Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.");
     }
 
@@ -882,7 +886,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN),
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN.getKey()),
                 Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.");
     }
 }

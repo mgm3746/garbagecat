@@ -405,7 +405,7 @@ public class JvmRun {
             }
         }
         // Don't double report
-        if (hasAnalysis(org.github.joa.util.Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED)
+        if (hasAnalysis(org.github.joa.util.Analysis.WARN_CMS_CLASS_UNLOADING_DISABLED.getKey())
                 && hasAnalysis(WARN_CMS_CLASS_UNLOADING_NOT_ENABLED)) {
             analysis.remove(WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
         }
@@ -447,8 +447,8 @@ public class JvmRun {
         }
 
         // Check if logging indicates gc details missing
-        if (!hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_MISSING)
-                && !hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_DISABLED)) {
+        if (!hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_MISSING.getKey())
+                && !hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_DISABLED.getKey())) {
             if (getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)
                     || getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG)) {
                 jvmOptions.addAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_MISSING);
@@ -456,7 +456,7 @@ public class JvmRun {
         }
 
         // Check for -XX:+PrintReferenceGC by event type
-        if (!hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED)) {
+        if (!hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED.getKey())) {
             if (getEventTypes().contains(LogEventType.REFERENCE_GC)) {
                 jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED);
             }
@@ -545,7 +545,7 @@ public class JvmRun {
             }
         }
         // Don't double report: If explicit gc detected, remove generic warning.
-        if (hasAnalysis(org.github.joa.util.Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT)
+        if (hasAnalysis(org.github.joa.util.Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT.getKey())
                 && (analysis.contains(ERROR_EXPLICIT_GC_SERIAL_G1)
                         || analysis.contains(ERROR_EXPLICIT_GC_SERIAL_CMS))) {
             jvmOptions.removeAnalysis(org.github.joa.util.Analysis.WARN_EXPLICIT_GC_NOT_CONCURRENT);
@@ -611,7 +611,17 @@ public class JvmRun {
             Iterator<String[]> itJvmOptionsAnalysis = jvmOptions.getAnalysis().iterator();
             while (itJvmOptionsAnalysis.hasNext()) {
                 String[] item = itJvmOptionsAnalysis.next();
-                a.add(item);
+                if (item[0].equals(org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT.toString())) {
+                    // JDK8 GC logging "CommandLine flags" header will not include the -Xloggc option. It's not possible
+                    // to distinguish between logging to stdout and -Xloggc with no other logging options, so assume if
+                    // there are log file options (e.g. size, rotation), the logging is sent to a file.
+                    if (jvmOptions.getUseGcLogFileRotation() == null && jvmOptions.getGcLogFileSize() == null
+                            && jvmOptions.getNumberOfGcLogFiles() == null) {
+                        a.add(item);
+                    }
+                } else {
+                    a.add(item);
+                }
             }
         }
         return a;
@@ -1053,13 +1063,21 @@ public class JvmRun {
 
     /**
      * @param key
-     *            The {@link org.github.joa.util.Analysis} to check.
+     *            The analysis to check.
      * @return True if the {@link org.github.joa.util.Analysis} exists, false otherwise.
      */
-    public boolean hasAnalysis(org.github.joa.util.Analysis key) {
+    public boolean hasAnalysis(String key) {
         boolean hasAnalysis = false;
-        if (jvmOptions != null && jvmOptions.hasAnalysis(key)) {
-            hasAnalysis = true;
+        List<String[]> analysis = getAnalysis();
+        if (!analysis.isEmpty()) {
+            Iterator<String[]> i = analysis.iterator();
+            while (i.hasNext()) {
+                String[] a = i.next();
+                if (a[0].equals(key)) {
+                    hasAnalysis = true;
+                    break;
+                }
+            }
         }
         return hasAnalysis;
     }
