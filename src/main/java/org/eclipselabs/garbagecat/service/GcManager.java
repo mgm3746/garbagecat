@@ -1253,7 +1253,7 @@ public class GcManager {
                 jvmDao.setMemory(((HeaderMemoryEvent) event).getLogEntry());
                 jvmDao.setPhysicalMemory((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemory()));
                 jvmDao.getJvmContext().setMemory(org.github.joa.util.JdkUtil.convertSize(jvmDao.getPhysicalMemory(),
-                        'B', org.github.joa.util.Constants.PRECISION));
+                        'B', org.github.joa.util.Constants.UNITS));
                 jvmDao.setPhysicalMemoryFree(
                         (long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemoryFree()));
                 jvmDao.setSwap((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwap()));

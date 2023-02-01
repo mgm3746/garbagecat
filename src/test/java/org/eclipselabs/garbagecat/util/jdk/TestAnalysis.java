@@ -660,7 +660,7 @@ class TestAnalysis {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(bytes(1968287744L), jvmRun.getPhysicalMemory(), "Physical not parsed correctly.");
-        assertEquals(org.github.joa.util.JdkUtil.convertSize(1968287744L, 'B', org.github.joa.util.Constants.PRECISION),
+        assertEquals(org.github.joa.util.JdkUtil.convertSize(1968287744L, 'B', org.github.joa.util.Constants.UNITS),
                 jvmRun.getJvmOptions().getJvmContext().getMemory(), "JVM context memory not correct.");
         assertEquals(bytes(4718592000L), jvmRun.getMaxHeapBytes(), "Heap size not parsed correctly.");
         assertEquals(bytes(0L), jvmRun.getMaxMetaspaceBytes(), "Metaspace size not parsed correctly.");
