@@ -203,7 +203,7 @@ Notes:
   1. Preprocessing is sometimes required (e.g. when non-standard JVM options are used). It removes extraneous logging and makes any format adjustments needed for parsing (e.g. combining logging that the JVM sometimes splits across multiple lines).
   1. When preprocessing is enabled, a preprocessed file will be created in the same location as the input file with a ".pp" file extension added.
   1. Reordering is for gc logging that has gotten out of time/date order. Very rare, but some logging management systems/processes are susceptible to this happening (e.g. logging stored in a central repository).
-  1. The startdatetime option is used to convert uptime (e.g. 121.107) to datestamps (e.g. 2017-04-03T03:13:06.756-0500) in the report (e.g. throughput, inverted parallelism max, etc.).
+  1. The startdatetime option is used to convert uptime (e.g. 121.107) to datestamp (e.g. 2017-04-03T03:13:06.756-0500) in the report (e.g. throughput, inverted parallelism max, etc.).
   1. If threshold is not defined, it defaults to 90.
   1. Throughput = (Time spent not doing gc) / (Total Time). Throughput of 100 means no time spent doing gc (good). Throughput of 0 means all time spent doing gc (bad).
 
