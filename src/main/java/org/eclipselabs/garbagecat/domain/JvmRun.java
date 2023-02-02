@@ -351,13 +351,14 @@ public class JvmRun {
     private LogEvent worstSysGtUserEvent;
 
     /**
-     * Constructor accepting throughput threshold.
-     * 
      * @param throughputThreshold
-     *            throughput threshold for identifying bottlenecks.
+     *            The threshold for throughput reporting.
+     * @param startDate
+     *            The JVM start date.
      */
-    public JvmRun(int throughputThreshold) {
+    public JvmRun(int throughputThreshold, Date startDate) {
         this.throughputThreshold = throughputThreshold;
+        this.startDate = startDate;
     }
 
     /**

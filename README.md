@@ -189,7 +189,7 @@ usage: garbagecat [OPTION]... [FILE]
  -p,--preprocess            do preprocessing
  -r,--reorder               reorder logging by timestamp
  -s,--startdatetime <arg>   JVM start datetime (yyyy-MM-dd HH:mm:ss.SSS)
-                            required for handling datestamp-only logging
+                            to convert uptime to datestamp
  -t,--threshold <arg>       threshold (0-100) for throughput bottleneck
                             reporting
  -v,--version               version
@@ -203,7 +203,7 @@ Notes:
   1. Preprocessing is sometimes required (e.g. when non-standard JVM options are used). It removes extraneous logging and makes any format adjustments needed for parsing (e.g. combining logging that the JVM sometimes splits across multiple lines).
   1. When preprocessing is enabled, a preprocessed file will be created in the same location as the input file with a ".pp" file extension added.
   1. Reordering is for gc logging that has gotten out of time/date order. Very rare, but some logging management systems/processes are susceptible to this happening (e.g. logging stored in a central repository).
-  1. The startdatetime option is required when the gc logging has datestamps (e.g. 2017-04-03T03:13:06.756-0500) but no timestamps (e.g. 121.107), something that will not happen when using the standard recommended JVM options. Timestamps are required for garbagecat analysis, so if the logging does not have timestamps, you will need to pass in the JVM startup datetime so gc logging timestamps can be computed.
+  1. The startdatetime option is used to convert uptime (e.g. 121.107) to datestamps (e.g. 2017-04-03T03:13:06.756-0500) in the report (e.g. throughput, inverted parallelism max, etc.).
   1. If threshold is not defined, it defaults to 90.
   1. Throughput = (Time spent not doing gc) / (Total Time). Throughput of 100 means no time spent doing gc (good). Throughput of 0 means all time spent doing gc (bad).
 

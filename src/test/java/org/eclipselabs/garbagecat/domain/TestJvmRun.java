@@ -163,7 +163,7 @@ class TestJvmRun {
 
     @Test
     void testgetCompressedClassSpaceSizeBytes() {
-        JvmRun jvmRun = new JvmRun(0);
+        JvmRun jvmRun = new JvmRun(0, null);
         String opts = "-XX:CompressedClassSpaceSize=768m";
         JvmContext jvmContext = new JvmContext(opts);
         JvmOptions jvmOptions = new JvmOptions(jvmContext);
@@ -247,7 +247,7 @@ class TestJvmRun {
 
     @Test
     void testMaxHeapBytes() {
-        JvmRun jvmRun = new JvmRun(0);
+        JvmRun jvmRun = new JvmRun(0, null);
         String opts = "-Xss128k -Xmx2048m -XX:MaxMetaspaceSize=1280m";
         JvmContext jvmContext = new JvmContext(opts);
         JvmOptions jvmOptions = new JvmOptions(jvmContext);
@@ -257,7 +257,7 @@ class TestJvmRun {
 
     @Test
     void testMaxHeapBytesUnknown() {
-        JvmRun jvmRun = new JvmRun(0);
+        JvmRun jvmRun = new JvmRun(0, null);
         String opts = "-Xss128k -XX:MaxMetaspaceSize=1280m";
         JvmContext jvmContext = new JvmContext(opts);
         JvmOptions jvmOptions = new JvmOptions(jvmContext);
@@ -267,7 +267,7 @@ class TestJvmRun {
 
     @Test
     void testMaxMetaspaceBytes() {
-        JvmRun jvmRun = new JvmRun(0);
+        JvmRun jvmRun = new JvmRun(0, null);
         String opts = "-Xss128k -Xmx2048m -XX:MaxMetaspaceSize=1280m";
         JvmContext jvmContext = new JvmContext(opts);
         JvmOptions jvmOptions = new JvmOptions(jvmContext);
@@ -278,7 +278,7 @@ class TestJvmRun {
 
     @Test
     void testMaxMetaspaceBytesUnknown() {
-        JvmRun jvmRun = new JvmRun(0);
+        JvmRun jvmRun = new JvmRun(0, null);
         String opts = "-Xss128k";
         JvmContext jvmContext = new JvmContext(opts);
         JvmOptions jvmOptions = new JvmOptions(jvmContext);
@@ -288,7 +288,7 @@ class TestJvmRun {
 
     @Test
     void testMaxPermBytes() {
-        JvmRun jvmRun = new JvmRun(0);
+        JvmRun jvmRun = new JvmRun(0, null);
         String opts = "-Xss128k -Xmx2048m -XX:MaxPermSize=1280m";
         JvmContext jvmContext = new JvmContext(opts);
         JvmOptions jvmOptions = new JvmOptions(jvmContext);
@@ -298,7 +298,7 @@ class TestJvmRun {
 
     @Test
     void testMaxPermBytesUnknown() {
-        JvmRun jvmRun = new JvmRun(0);
+        JvmRun jvmRun = new JvmRun(0, null);
         String opts = "-Xss128k";
         JvmContext jvmContext = new JvmContext(opts);
         JvmOptions jvmOptions = new JvmOptions(jvmContext);

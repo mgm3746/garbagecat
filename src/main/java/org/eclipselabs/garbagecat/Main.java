@@ -291,8 +291,14 @@ public class Main {
                     if (jvmRun.getInvertedParallelismCount() > 0) {
                         printWriter.write(
                                 "# Inverted Parallelism: " + jvmRun.getInvertedParallelismCount() + LINE_SEPARATOR);
-                        printWriter.write("Inverted Parallelism Max: "
-                                + jvmRun.getWorstInvertedParallelismEvent().getLogEntry() + LINE_SEPARATOR);
+                        printWriter.write("Inverted Parallelism Max: ");
+                        if (jvmRun.getStartDate() != null) {
+                            printWriter.write(JdkUtil.convertLogEntryTimestampsToDateStamp(
+                                    jvmRun.getWorstInvertedParallelismEvent().getLogEntry(), jvmRun.getStartDate()));
+                        } else {
+                            printWriter.write(jvmRun.getWorstInvertedParallelismEvent().getLogEntry());
+                        }
+                        printWriter.write(LINE_SEPARATOR);
                     }
                 }
                 // Inverted serialism
@@ -302,22 +308,40 @@ public class Main {
                     if (jvmRun.getInvertedSerialismCount() > 0) {
                         printWriter
                                 .write("# Inverted Serialism: " + jvmRun.getInvertedSerialismCount() + LINE_SEPARATOR);
-                        printWriter.write("Inverted Serialism Max: "
-                                + jvmRun.getWorstInvertedSerialismEvent().getLogEntry() + LINE_SEPARATOR);
+                        printWriter.write("Inverted Serialism Max: ");
+                        if (jvmRun.getStartDate() != null) {
+                            printWriter.write(JdkUtil.convertLogEntryTimestampsToDateStamp(
+                                    jvmRun.getWorstInvertedSerialismEvent().getLogEntry(), jvmRun.getStartDate()));
+                        } else {
+                            printWriter.write(jvmRun.getWorstInvertedSerialismEvent().getLogEntry());
+                        }
+                        printWriter.write(LINE_SEPARATOR);
                     }
                 }
                 // sys > user
                 if (!jvmRun.getJvmOptions().getJvmContext().getGarbageCollectors().isEmpty()
                         && jvmRun.getSysGtUserCount() > 0) {
                     printWriter.write("# sys > user: " + jvmRun.getSysGtUserCount() + LINE_SEPARATOR);
-                    printWriter
-                            .write("sys > user Max: " + jvmRun.getWorstSysGtUserEvent().getLogEntry() + LINE_SEPARATOR);
+                    printWriter.write("sys > user Max: ");
+                    if (jvmRun.getStartDate() != null) {
+                        printWriter.write(JdkUtil.convertLogEntryTimestampsToDateStamp(
+                                jvmRun.getWorstSysGtUserEvent().getLogEntry(), jvmRun.getStartDate()));
+                    } else {
+                        printWriter.write(jvmRun.getWorstSysGtUserEvent().getLogEntry());
+                    }
+                    printWriter.write(LINE_SEPARATOR);
                 }
                 // duration > real
                 if (jvmRun.getDurationGtRealCount() > 0) {
                     printWriter.write("# Duration > real: " + jvmRun.getDurationGtRealCount() + LINE_SEPARATOR);
-                    printWriter.write("Duration > real Max: " + jvmRun.getWorstDurationGtRealTimeEvent().getLogEntry()
-                            + LINE_SEPARATOR);
+                    printWriter.write("Duration > real Max: ");
+                    if (jvmRun.getStartDate() != null) {
+                        printWriter.write(JdkUtil.convertLogEntryTimestampsToDateStamp(
+                                jvmRun.getWorstDurationGtRealTimeEvent().getLogEntry(), jvmRun.getStartDate()));
+                    } else {
+                        printWriter.write(jvmRun.getWorstDurationGtRealTimeEvent().getLogEntry());
+                    }
+                    printWriter.write(LINE_SEPARATOR);
                 }
                 // NewRatio
                 if (jvmRun.getMaxYoungSpace() != null && jvmRun.getMaxOldSpace() != null

@@ -243,7 +243,7 @@ public class GcManager {
      * @return The JVM run data.
      */
     public JvmRun getJvmRun(String jvmOptions, Date jvmStartDate, int throughputThreshold) {
-        JvmRun jvmRun = new JvmRun(throughputThreshold);
+        JvmRun jvmRun = new JvmRun(throughputThreshold, jvmStartDate);
         // Use jvm options passed in on the command line if none found in the logging
         if (jvmOptions != null && jvmDao.getJvmContext().getOptions() == null) {
             jvmDao.getJvmContext().setOptions(jvmOptions);
@@ -494,7 +494,6 @@ public class GcManager {
             }
         }
         return preprocessedLogLine;
-
     }
 
     /**
