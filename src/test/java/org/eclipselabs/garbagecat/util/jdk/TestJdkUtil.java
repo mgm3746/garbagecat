@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
@@ -329,10 +331,20 @@ class TestJdkUtil {
     }
 
     @Test
+    void testConvertTimestampToDatestamp() throws ParseException {
+        String logLine = "288072.852: [GC (System.gc()) [PSYoungGen: 908968K->13952K(1375744K)] "
+                + "1855009K->960233K(4172288K), 0.0356413 secs] [Times: user=0.09 sys=0.00, real=0.04 secs]";
+        Date startDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse("2023-01-30 20:14:31.000");
+        assertEquals("2023-02-03 04:15:43.852", JdkUtil.getDateStamp(logLine, startDate),
+                "Datestamp not parsed correctly.");
+    }
+
+    @Test
     void testDateStampBeginning() {
         String logLine = "2017-01-30T10:06:50.070+0400: 2232356.357: [GC [PSYoungGen: 242595K->5980K(1324544K)] "
                 + "1264815K->1037853K(4121088K), 0.0173240 secs] [Times: user=0.08 sys=0.00, real=0.02 secs]";
-        assertEquals("2017-01-30T10:06:50.070+0400", JdkUtil.getDateStamp(logLine), "Datestamp not parsed correctly.");
+        assertEquals("2017-01-30T10:06:50.070+0400", JdkUtil.getDateStamp(logLine, null),
+                "Datestamp not parsed correctly.");
     }
 
     @Test
@@ -346,7 +358,8 @@ class TestJdkUtil {
     void testDateStampMiddle() {
         String logLine = "85030.389: [Full GC 85030.390: [CMS2012-06-20T12:29:58.094+0200: 85030.443: "
                 + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
-        assertEquals("2012-06-20T12:29:58.094+0200", JdkUtil.getDateStamp(logLine), "Datestamp not parsed correctly.");
+        assertEquals("2012-06-20T12:29:58.094+0200", JdkUtil.getDateStamp(logLine, null),
+                "Datestamp not parsed correctly.");
     }
 
     @Test

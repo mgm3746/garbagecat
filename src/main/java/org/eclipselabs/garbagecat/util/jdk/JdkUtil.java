@@ -237,17 +237,32 @@ public final class JdkUtil {
     }
 
     /**
-     * Check to see if a log line includes any datestamps.
-     * 
      * @param logLine
-     *            The log line.
-     * @return The log line with a datestamp, null otherwise.
+     *            The log line
+     * @param jvmStartDate
+     *            The JVM start date.
+     * @return The datestamp, or null if the log line does not include any datestamps, and the JVM start date is not
+     *         provided to convert uptime to a datestamp.
      */
-    public static final String getDateStamp(String logLine) {
-        String regex = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(logLine);
-        return matcher.find() ? matcher.group(2) : null;
+    public static final String getDateStamp(String logLine, Date jvmStartDate) {
+        String dateStamp = null;
+        String regexDatestamp = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
+        Pattern patternDatestamp = Pattern.compile(regexDatestamp);
+        Matcher matcher = patternDatestamp.matcher(logLine);
+        if (matcher.find()) {
+            dateStamp = matcher.group(2);
+        } else if (jvmStartDate != null) {
+            String regexTimestamp = JdkRegEx.TIMESTAMP + "(: )";
+            Pattern patternTimestamp = Pattern.compile(regexTimestamp);
+            matcher = patternTimestamp.matcher(logLine);
+            if (matcher.find()) {
+                Date date = GcUtil.getDatePlusTimestamp(jvmStartDate,
+                        JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                dateStamp = formatter.format(date);
+            }
+        }
+        return dateStamp;
     }
 
     /**
