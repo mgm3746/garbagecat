@@ -174,8 +174,11 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.hasDatestamps(), "Datestamp incorrectly identified.");
         assertEquals("2016-10-18 01:50:54.000", jvmRun.getFirstEventDatestamp(), "First event datestamp not correct.");
         assertEquals("2016-10-18 01:50:54.036", jvmRun.getLastEventDatestamp(), "Last event datestamp not correct.");
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_DATESTAMP_APPROXIMATE.getKey()),
+                Analysis.WARN_DATESTAMP_APPROXIMATE + " analysis not identified.");
     }
 
     @Test

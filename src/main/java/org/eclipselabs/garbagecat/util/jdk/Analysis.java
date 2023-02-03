@@ -214,6 +214,11 @@ public enum Analysis {
     WARN_CMS_REMARK_LOW_PARALLELISM("warn.cms.remark.low.parallelism"),
 
     /**
+     * Property key for reporting approximate datestamps.
+     */
+    WARN_DATESTAMP_APPROXIMATE("warn.datestamp.approximate"),
+
+    /**
      * Property key for diagnostic initiated gc.
      */
     WARN_EXPLICIT_GC_DIAGNOSTIC("warn.explicit.gc.diagnostic"),

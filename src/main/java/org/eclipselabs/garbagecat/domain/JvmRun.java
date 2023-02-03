@@ -705,6 +705,30 @@ public class JvmRun {
         return event;
     }
 
+    /**
+     * @return The first event datestamp, or null if the logging does not include datestamps.
+     */
+    public final String getFirstEventDatestamp() {
+        String datestamp = null;
+        LogEvent firstEvent = getFirstEvent();
+        String regexDatestamp = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
+        Pattern patternDatestamp = Pattern.compile(regexDatestamp);
+        Matcher matcher = patternDatestamp.matcher(firstEvent.getLogEntry());
+        if (matcher.find()) {
+            datestamp = matcher.group(2);
+        } else if (startDate != null) {
+            String regexTimestamp = JdkRegEx.TIMESTAMP + "(: )";
+            Pattern patternTimestamp = Pattern.compile(regexTimestamp);
+            matcher = patternTimestamp.matcher(firstEvent.getLogEntry());
+            if (matcher.find()) {
+                Date date = GcUtil.getDatePlusTimestamp(startDate, firstEvent.getTimestamp());
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                datestamp = formatter.format(date);
+            }
+        }
+        return datestamp;
+    }
+
     public BlockingEvent getFirstGcEvent() {
         return firstGcEvent;
     }
@@ -814,6 +838,30 @@ public class JvmRun {
         long lastStoppedEventTimestamp = lastSafepointEvent == null ? 0 : lastSafepointEvent.getTimestamp();
         return lastGcEvent != null && lastGcEventTimeStamp >= lastStoppedEventTimestamp ? lastGcEvent
                 : lastSafepointEvent;
+    }
+
+    /**
+     * @return The last event datestamp, or null if the logging does not include datestamps.
+     */
+    public final String getLastEventDatestamp() {
+        String datestamp = null;
+        LogEvent lastEvent = getLastEvent();
+        String regexDatestamp = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
+        Pattern patternDatestamp = Pattern.compile(regexDatestamp);
+        Matcher matcher = patternDatestamp.matcher(lastEvent.getLogEntry());
+        if (matcher.find()) {
+            datestamp = matcher.group(2);
+        } else if (startDate != null) {
+            String regexTimestamp = JdkRegEx.TIMESTAMP + "(: )";
+            Pattern patternTimestamp = Pattern.compile(regexTimestamp);
+            matcher = patternTimestamp.matcher(lastEvent.getLogEntry());
+            if (matcher.find()) {
+                Date date = GcUtil.getDatePlusTimestamp(startDate, lastEvent.getTimestamp());
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                datestamp = formatter.format(date);
+            }
+        }
+        return datestamp;
     }
 
     public BlockingEvent getLastGcEvent() {
@@ -1087,6 +1135,19 @@ public class JvmRun {
     }
 
     /**
+     * @return True if the logging events include datestamps, false otherwise.
+     */
+    public boolean hasDatestamps() {
+        boolean hasDatestamps = false;
+        String regexDatestamp = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
+        if (getFirstEvent() != null && getFirstEvent().getLogEntry() != null
+                && getFirstEvent().getLogEntry().matches(regexDatestamp)) {
+            hasDatestamps = true;
+        }
+        return hasDatestamps;
+    }
+
+    /**
      * @return true if there is data, false otherwise (e.g. no logging lines recognized).
      */
     public boolean haveData() {
@@ -1261,6 +1322,10 @@ public class JvmRun {
         this.serialCount = serialCount;
     }
 
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
     public void setStoppedTimeEventCount(int stoppedTimeEventCount) {
         this.stoppedTimeEventCount = stoppedTimeEventCount;
     }
@@ -1319,67 +1384,5 @@ public class JvmRun {
 
     public void setWorstSysGtUserEvent(LogEvent worstSysGtUserEvent) {
         this.worstSysGtUserEvent = worstSysGtUserEvent;
-    }
-
-    /**
-     * @return The first event datestamp, or null if the logging does not include datestamps.
-     */
-    public final String getFirstEventDatestamp() {
-        String datestamp = null;
-        LogEvent firstEvent = getFirstEvent();
-        String regexDatestamp = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
-        Pattern patternDatestamp = Pattern.compile(regexDatestamp);
-        Matcher matcher = patternDatestamp.matcher(firstEvent.getLogEntry());
-        if (matcher.find()) {
-            datestamp = matcher.group(2);
-        } else {
-            String regexTimestamp = JdkRegEx.TIMESTAMP + "(: )";
-            Pattern patternTimestamp = Pattern.compile(regexTimestamp);
-            matcher = patternTimestamp.matcher(firstEvent.getLogEntry());
-            if (matcher.find()) {
-                if (startDate != null) {
-                    Date date = GcUtil.getDatePlusTimestamp(startDate, firstEvent.getTimestamp());
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                    datestamp = formatter.format(date);
-                } else if (logFileDate != null) {
-                    // Use the log file create date
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                    datestamp = formatter.format(logFileDate);
-                }
-            }
-        }
-        return datestamp;
-    }
-
-    /**
-     * @return The last event datestamp, or null if the logging does not include datestamps.
-     */
-    public final String getLastEventDatestamp() {
-        String datestamp = null;
-        LogEvent lastEvent = getLastEvent();
-        String regexDatestamp = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
-        Pattern patternDatestamp = Pattern.compile(regexDatestamp);
-        Matcher matcher = patternDatestamp.matcher(lastEvent.getLogEntry());
-        if (matcher.find()) {
-            datestamp = matcher.group(2);
-        } else {
-            String regexTimestamp = JdkRegEx.TIMESTAMP + "(: )";
-            Pattern patternTimestamp = Pattern.compile(regexTimestamp);
-            matcher = patternTimestamp.matcher(lastEvent.getLogEntry());
-            if (matcher.find()) {
-                if (startDate != null) {
-                    Date date = GcUtil.getDatePlusTimestamp(startDate, lastEvent.getTimestamp());
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                    datestamp = formatter.format(date);
-                } else if (logFileDate != null) {
-                    LogEvent firstEvent = getFirstEvent();
-                    Date date = GcUtil.getDatePlusTimestamp(logFileDate,
-                            lastEvent.getTimestamp() - firstEvent.getTimestamp());
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                    datestamp = formatter.format(date);
-                }
-            }
-        }
-        return datestamp;
     }
 }

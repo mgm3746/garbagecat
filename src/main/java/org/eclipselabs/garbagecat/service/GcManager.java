@@ -195,7 +195,7 @@ public class GcManager {
                 if (bottlenecks.isEmpty()) {
                     // Add current and prior event
                     if (startDate != null) {
-                        // Convert timestamps to date/time
+                        // Convert uptime to datetime
                         bottlenecks
                                 .add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate));
                         bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
@@ -306,6 +306,15 @@ public class GcManager {
         jvmRun.setWorstInvertedSerialismEvent(jvmDao.getWorstInvertedSerialismEvent());
         jvmRun.setWorstSysGtUserEvent(jvmDao.getWorstSysGtUserEvent());
         jvmRun.setPreprocessed(this.preprocessed);
+
+        if (!jvmRun.hasDatestamps() && jvmStartDate == null && jvmRun.getLogFileDate() != null
+                && jvmRun.getFirstEvent() != null && jvmRun.getFirstEvent().getLogEntry() != null) {
+            // Approximate JVM start date: log file create date - first event timestamp
+            jvmRun.setStartDate(
+                    GcUtil.getDateMinusTimestamp(jvmRun.getLogFileDate(), jvmRun.getFirstEvent().getTimestamp()));
+            jvmDao.getAnalysis().add(0, Analysis.WARN_DATESTAMP_APPROXIMATE);
+            jvmRun.setAnalysis(jvmDao.getAnalysis());
+        }
 
         jvmRun.doAnalysis();
 

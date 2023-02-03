@@ -198,7 +198,8 @@ public class Main {
                 printWriter.write("GC throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
                 printWriter.write(LINEBREAK_SINGLE);
                 for (String gcBottleneck : gcBottlenecks) {
-                    printWriter.write(gcBottleneck + LINE_SEPARATOR);
+                    printWriter.write(JdkUtil.convertLogEntryTimestampsToDateStamp(gcBottleneck, jvmRun.getStartDate())
+                            + LINE_SEPARATOR);
                 }
             }
 
@@ -210,7 +211,9 @@ public class Main {
                         "Safepoint throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
                 printWriter.write(LINEBREAK_SINGLE);
                 for (String safepointBottleneck : safepointBottlenecks) {
-                    printWriter.write(safepointBottleneck + LINE_SEPARATOR);
+                    printWriter.write(
+                            JdkUtil.convertLogEntryTimestampsToDateStamp(safepointBottleneck, jvmRun.getStartDate())
+                                    + LINE_SEPARATOR);
                 }
             }
 
