@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -69,7 +70,7 @@ public class JvmDao {
     private static Connection connection;
 
     private static boolean created;
-
+    
     /**
      * SQL statement(s) to create table.
      */
@@ -150,6 +151,11 @@ public class JvmDao {
      * The JVM context.
      */
     private JvmContext jvmContext = new JvmContext(null);
+
+    /**
+     * The date and time the log file was created.
+     */
+    private Date logFileDate;
 
     /**
      * Used for tracking max heap occupancy outside of <code>BlockingEvent</code>s.
@@ -498,6 +504,10 @@ public class JvmDao {
      */
     private synchronized UnifiedSafepointEvent getLastUnifiedSafepointEvent() {
         return unifiedSafepointEvents.isEmpty() ? null : unifiedSafepointEvents.get(unifiedSafepointEvents.size() - 1);
+    }
+
+    public Date getLogFileDate() {
+        return logFileDate;
     }
 
     /**
@@ -909,6 +919,10 @@ public class JvmDao {
 
     public void setJdkVersion(String jdkVersion) {
         this.jdkVersion = jdkVersion;
+    }
+
+    public void setLogFileDate(Date logFileDate) {
+        this.logFileDate = logFileDate;
     }
 
     /**

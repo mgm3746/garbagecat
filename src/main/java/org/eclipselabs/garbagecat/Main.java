@@ -240,11 +240,9 @@ public class Main {
             // First/last timestamps
             if (jvmRun.getBlockingEventCount() > 0 || jvmRun.getStoppedTimeEventCount() > 0) {
                 // First event
-                String firstEventDatestamp = JdkUtil.getDateStamp(jvmRun.getFirstEvent().getLogEntry(),
-                        jvmRun.getStartDate());
-                if (firstEventDatestamp != null) {
+                if (jvmRun.getFirstEventDatestamp() != null) {
                     printWriter.write("Datestamp First: ");
-                    printWriter.write(firstEventDatestamp);
+                    printWriter.write(jvmRun.getFirstEventDatestamp());
                     printWriter.write(LINE_SEPARATOR);
                 }
                 if (!jvmRun.getFirstEvent().getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
@@ -254,11 +252,9 @@ public class Main {
                     printWriter.write(" secs" + LINE_SEPARATOR);
                 }
                 // Last event
-                String lastEventDatestamp = JdkUtil.getDateStamp(jvmRun.getLastEvent().getLogEntry(),
-                        jvmRun.getStartDate());
-                if (lastEventDatestamp != null) {
+                if (jvmRun.getLastEventDatestamp() != null) {
                     printWriter.write("Datestamp Last: ");
-                    printWriter.write(lastEventDatestamp);
+                    printWriter.write(jvmRun.getLastEventDatestamp());
                     printWriter.write(LINE_SEPARATOR);
                 }
                 if (!jvmRun.getLastEvent().getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {

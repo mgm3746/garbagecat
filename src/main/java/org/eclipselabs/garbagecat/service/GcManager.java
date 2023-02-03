@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 import org.eclipselabs.garbagecat.Main;
 import org.eclipselabs.garbagecat.dao.JvmDao;
@@ -68,6 +69,7 @@ import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
+import org.eclipselabs.garbagecat.domain.jdk.LogFileEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
@@ -86,6 +88,7 @@ import org.eclipselabs.garbagecat.preprocess.jdk.SerialPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ShenandoahPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -268,6 +271,7 @@ public class GcManager {
         jvmRun.setLastGcEvent(jvmDao.getLastGcEvent());
         jvmRun.setLastLogLineUnprocessed(lastLogLineUnprocessed);
         jvmRun.setLastSafepointEvent(jvmDao.getLastSafepointEvent());
+        jvmRun.setLogFileDate(jvmDao.getLogFileDate());
         jvmRun.setMaxHeapAfterGc(kilobytes(jvmDao.getMaxHeapAfterGc()));
         jvmRun.setMaxHeapOccupancy(kilobytes(jvmDao.getMaxHeapOccupancy()));
         jvmRun.setMaxHeapOccupancyNonBlocking(kilobytes(jvmDao.getMaxHeapOccupancyNonBlocking()));
@@ -1264,6 +1268,13 @@ public class GcManager {
                     jvmDao.getJvmContext().setBit(Bit.BIT32);
                 }
                 jvmDao.setJdkVersion(((HeaderVersionEvent) event).getLogEntry());
+            } else if (event instanceof LogFileEvent) {
+                if (((LogFileEvent) event).isCreated()) {
+                    Matcher matcher = LogFileEvent.pattern.matcher(((LogFileEvent) event).getLogEntry());
+                    if (matcher.find()) {
+                        jvmDao.setLogFileDate(GcUtil.parseDatetime(logLine));
+                    }
+                }
             } else if (event instanceof GcOverheadLimitEvent) {
                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED)) {
                     jvmDao.getAnalysis().add(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED);

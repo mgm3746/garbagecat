@@ -21,12 +21,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.junit.jupiter.api.Test;
 
@@ -40,6 +42,8 @@ class TestLogFileEvent {
         String logLine = "2016-10-18 01:50:54 GC log file created /path/to/gc.log";
         assertTrue(LogFileEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.LOG_FILE.toString() + ".");
+        LogFileEvent event = new LogFileEvent(logLine);
+        assertTrue(event.isCreated(), "Log line not recognized as created event.");
     }
 
     @Test
@@ -48,6 +52,8 @@ class TestLogFileEvent {
                 + "/path/to/gc.log.2021-10-08_21-57-44.0";
         assertTrue(LogFileEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.LOG_FILE.toString() + ".");
+        LogFileEvent event = new LogFileEvent(logLine);
+        assertFalse(event.isCreated(), "Log line incorrectly recognized as created event.");
     }
 
     @Test
@@ -88,6 +94,8 @@ class TestLogFileEvent {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        Date logFileDate = GcUtil.parseDatetime("2016-10-18 01:50:54");
+        assertEquals(logFileDate, jvmRun.getLogFileDate(), "Log file date not correct.");
     }
 }

@@ -52,6 +52,19 @@ public final class GcUtil {
     }
 
     /**
+     * Subtract milliseconds from a given <code>Date</code>.
+     * 
+     * @param start
+     *            Start <code>Date</code>.
+     * @param timestamp
+     *            Time interval in milliseconds.
+     * @return start <code>Date</code> - timestamp.
+     */
+    public static Date getDateMinusTimestamp(Date start, long timestamp) {
+        return new Date(start.getTime() - timestamp);
+    }
+
+    /**
      * Add milliseconds to a given <code>Date</code>.
      * 
      * @param start
@@ -110,6 +123,21 @@ public final class GcUtil {
     public static Date parseDateStamp(String datestamp) {
         try {
             return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZ").parse(datestamp);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Convert datetime <code>String</code> to a <code>Date</code>.
+     * 
+     * @param datetime
+     *            The datetime <code>String</code> in <code>JdkRegEx.DATETIME</code> format.
+     * @return the datetime in <code>Date</code> format.
+     */
+    public static Date parseDatetime(String datetime) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(datetime);
         } catch (ParseException e) {
             return null;
         }

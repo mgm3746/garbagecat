@@ -236,35 +236,7 @@ public final class JdkUtil {
         return null;
     }
 
-    /**
-     * @param logLine
-     *            The log line
-     * @param jvmStartDate
-     *            The JVM start date.
-     * @return The datestamp, or null if the log line does not include any datestamps, and the JVM start date is not
-     *         provided to convert uptime to a datestamp.
-     */
-    public static final String getDateStamp(String logLine, Date jvmStartDate) {
-        String dateStamp = null;
-        String regexDatestamp = "^(.*)" + JdkRegEx.DATESTAMP + "(.*)$";
-        Pattern patternDatestamp = Pattern.compile(regexDatestamp);
-        Matcher matcher = patternDatestamp.matcher(logLine);
-        if (matcher.find()) {
-            dateStamp = matcher.group(2);
-        } else if (jvmStartDate != null) {
-            String regexTimestamp = JdkRegEx.TIMESTAMP + "(: )";
-            Pattern patternTimestamp = Pattern.compile(regexTimestamp);
-            matcher = patternTimestamp.matcher(logLine);
-            if (matcher.find()) {
-                Date date = GcUtil.getDatePlusTimestamp(jvmStartDate,
-                        JdkMath.convertSecsToMillis(matcher.group(1)).longValue());
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                dateStamp = formatter.format(date);
-            }
-        }
-        return dateStamp;
-    }
-
+  
     /**
      * Get log line decorator.
      * 
@@ -281,26 +253,6 @@ public final class JdkUtil {
             decorator = matcher.find() ? matcher.group(1) : null;
         }
         return decorator;
-    }
-
-    /**
-     * Parse out the JVM option scalar value. For example, the value for <code>-Xss128k</code> is 128k. The value for
-     * <code>-XX:PermSize=128M</code> is 128M.
-     * 
-     * @param option
-     *            The JVM option.
-     * @return The JVM option value.
-     */
-    public static final String getOptionValue(String option) {
-        if (option != null) {
-            String regex = "^-[a-zA-Z:.]+(=)?(\\d{1,12}(" + JdkRegEx.OPTION_SIZE + ")?)$";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(option);
-            if (matcher.find()) {
-                return matcher.group(2);
-            }
-        }
-        return null;
     }
 
     /**

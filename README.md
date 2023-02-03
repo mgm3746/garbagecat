@@ -189,7 +189,7 @@ usage: garbagecat [OPTION]... [FILE]
  -p,--preprocess            do preprocessing
  -r,--reorder               reorder logging by timestamp
  -s,--startdatetime <arg>   JVM start datetime (yyyy-MM-dd HH:mm:ss.SSS)
-                            to convert uptime to datestamp
+                            to convert uptime to datestamp in report
  -t,--threshold <arg>       threshold (0-100) for throughput bottleneck
                             reporting
  -v,--version               version

@@ -12,7 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
+import java.util.regex.Pattern;
+
+import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -38,22 +40,15 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class LogFileEvent implements ThrowAwayEvent {
+public class LogFileEvent implements LogEvent {
+
+    public static final Pattern pattern = Pattern.compile(LogFileEvent.REGEX);
 
     /**
-     * Regular expressions defining the logging.
+     * Regular expressions defining the logging JDK8 and prior.
      */
-    private static final String[] REGEX = {
-            /*
-             * Log file created
-             */
-            "^" + JdkRegEx.DATETIME + " GC log file created.+$",
-            /*
-             * Log file rotation
-             */
-            "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} GC log file has reached the maximum size\\..+$",
-            //
-            "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} GC log rotation request has been received\\..+$" };
+    private static final String REGEX = "^(" + JdkRegEx.DATETIME
+            + ") GC log (file created|file has reached the maximum size|rotation request has been received).+$";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -63,14 +58,7 @@ public class LogFileEvent implements ThrowAwayEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        boolean isMatch = false;
-        for (int i = 0; i < REGEX.length; i++) {
-            if (logLine.matches(REGEX[i])) {
-                isMatch = true;
-                break;
-            }
-        }
-        return isMatch;
+        return pattern.matcher(logLine).matches();
     }
 
     /**
@@ -91,7 +79,8 @@ public class LogFileEvent implements ThrowAwayEvent {
      */
     public LogFileEvent(String logEntry) {
         this.logEntry = logEntry;
-        this.timestamp = 0L;
+        // no reason to calculate
+        timestamp = 0L;
     }
 
     public String getLogEntry() {
@@ -105,4 +94,12 @@ public class LogFileEvent implements ThrowAwayEvent {
     public long getTimestamp() {
         return timestamp;
     }
+
+    /**
+     * @return True if the event is when the log file is created, false otherwise.
+     */
+    public boolean isCreated() {
+        return logEntry.matches("^" + JdkRegEx.DATETIME + " GC log file created.+$");
+    }
+
 }

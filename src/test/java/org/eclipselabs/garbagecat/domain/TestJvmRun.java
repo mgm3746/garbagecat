@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -159,6 +160,22 @@ class TestJvmRun {
                 Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL + " analysis not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL.getKey()),
                 Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis not identified.");
+    }
+
+    /**
+     * @throws IOException
+     * @throws ParseException
+     */
+    @Test
+    void testFirstAndLastEventDatestamp() throws IOException, ParseException {
+        File testFile = TestUtil.getFile("dataset86.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals("2016-10-18 01:50:54.000", jvmRun.getFirstEventDatestamp(), "First event datestamp not correct.");
+        assertEquals("2016-10-18 01:50:54.036", jvmRun.getLastEventDatestamp(), "Last event datestamp not correct.");
     }
 
     @Test

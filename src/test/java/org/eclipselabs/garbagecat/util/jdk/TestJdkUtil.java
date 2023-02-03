@@ -17,12 +17,9 @@ import static org.eclipselabs.garbagecat.util.Memory.bytes;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
@@ -331,35 +328,10 @@ class TestJdkUtil {
     }
 
     @Test
-    void testConvertTimestampToDatestamp() throws ParseException {
-        String logLine = "288072.852: [GC (System.gc()) [PSYoungGen: 908968K->13952K(1375744K)] "
-                + "1855009K->960233K(4172288K), 0.0356413 secs] [Times: user=0.09 sys=0.00, real=0.04 secs]";
-        Date startDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse("2023-01-30 20:14:31.000");
-        assertEquals("2023-02-03 04:15:43.852", JdkUtil.getDateStamp(logLine, startDate),
-                "Datestamp not parsed correctly.");
-    }
-
-    @Test
-    void testDateStampBeginning() {
-        String logLine = "2017-01-30T10:06:50.070+0400: 2232356.357: [GC [PSYoungGen: 242595K->5980K(1324544K)] "
-                + "1264815K->1037853K(4121088K), 0.0173240 secs] [Times: user=0.08 sys=0.00, real=0.02 secs]";
-        assertEquals("2017-01-30T10:06:50.070+0400", JdkUtil.getDateStamp(logLine, null),
-                "Datestamp not parsed correctly.");
-    }
-
-    @Test
     void testDateStampInMiddle() {
         String logLine = "85030.389: [Full GC 85030.390: [CMS2012-06-20T12:29:58.094+0200: 85030.443: "
                 + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
         assertTrue(JdkUtil.isLogLineWithDateStamp(logLine), "Datestamp not found.");
-    }
-
-    @Test
-    void testDateStampMiddle() {
-        String logLine = "85030.389: [Full GC 85030.390: [CMS2012-06-20T12:29:58.094+0200: 85030.443: "
-                + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
-        assertEquals("2012-06-20T12:29:58.094+0200", JdkUtil.getDateStamp(logLine, null),
-                "Datestamp not parsed correctly.");
     }
 
     @Test
@@ -374,19 +346,6 @@ class TestJdkUtil {
         String logLine = "2021-10-26T09:58:12.090-0400: 123.456: [GC remark, 0.0010683 secs]";
         assertEquals("2021-10-26T09:58:12.090-0400: 123.456:", JdkUtil.getDecorator(logLine),
                 "Decorator not parsed correctly.");
-    }
-
-    @Test
-    void testGetOptionValue() {
-        assertEquals("256k", JdkUtil.getOptionValue("-Xss256k"), "Option value not correct.");
-        assertEquals("2G", JdkUtil.getOptionValue("-Xmx2G"), "Option value not correct.");
-        assertEquals("128M", JdkUtil.getOptionValue("-XX:MaxPermSize=128M"), "Option value not correct.");
-        assertEquals("3865051136", JdkUtil.getOptionValue("-XX:InitialHeapSize=3865051136"),
-                "Option value not correct.");
-        assertEquals("7730102272", JdkUtil.getOptionValue("-XX:MaxHeapSize=7730102272"), "Option value not correct.");
-        assertEquals("268435456", JdkUtil.getOptionValue("-XX:MaxPermSize=268435456"), "Option value not correct.");
-        assertEquals("67108864", JdkUtil.getOptionValue("-XX:PermSize=67108864"), "Option value not correct.");
-        assertNull(JdkUtil.getOptionValue(null), "Option value not correct.");
     }
 
     /**
