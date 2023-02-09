@@ -114,7 +114,7 @@ public class Main {
         URI logFileUri = logFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
 
-        GcManager gcManager = new GcManager();
+        GcManager gcManager = new GcManager(jvmStartDate);
 
         // Do preprocessing
         if (cmd.hasOption(OPTION_PREPROCESS_LONG) || cmd.hasOption(OPTION_STARTDATETIME_LONG)) {
@@ -141,7 +141,7 @@ public class Main {
         int throughputThreshold = cmd.hasOption(OPTION_THRESHOLD_LONG)
                 ? Integer.parseInt(cmd.getOptionValue(OPTION_THRESHOLD_SHORT))
                 : DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
-        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, jvmStartDate, throughputThreshold);
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, throughputThreshold);
         boolean reportConsole = cmd.hasOption(OPTION_REPORT_CONSOLE_LONG);
         boolean version = cmd.hasOption(OPTION_VERSION_LONG);
         boolean latestVersion = cmd.hasOption(OPTION_LATEST_VERSION_LONG);

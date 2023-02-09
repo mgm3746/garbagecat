@@ -24,7 +24,7 @@ public interface PreprocessAction {
      * Defined preprocessing events.
      */
     public enum PreprocessEvent {
-        PRINT_TENURING_DISTRIBUTION, REFERENCE_GC
+        REFERENCE_GC
     }
 
     /**

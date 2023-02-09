@@ -93,7 +93,7 @@ class TestLogFileEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         Date logFileDate = GcUtil.parseDatetime("2016-10-18 01:50:54");
         assertEquals(logFileDate, jvmRun.getLogFileDate(), "Log file date not correct.");

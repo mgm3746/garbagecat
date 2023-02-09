@@ -23,7 +23,7 @@ public final class JdkRegEx {
     /**
      * A memory address.
      */
-    public static final String ADDRESS = "(0x[0-9a-f]{16})";
+    public static final String ADDRESS = "(0x[0-9a-f]{8,16})";
 
     /**
      * Allocation rate.
@@ -195,9 +195,18 @@ public final class JdkRegEx {
     public static final String PRINT_PROMOTION_FAILURE = "( \\(\\d{1,2}: promotion failure size = \\d{1,10}\\) ){1,64}";
 
     /**
-     * Logging with -XX:+PrintReferenceGC.
+     * -XX:+PrintReferenceGC output.
      */
-    public static final String PRINT_REFERENCE_GC = "^" + JdkRegEx.DECORATOR + ".+(Soft|Weak|Phantom)Reference.+$";
+    public static final String PRINT_REFERENCE_GC_BLOCK = JdkRegEx.DECORATOR + " \\[SoftReference, \\d{1,} refs, "
+            + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR + " \\[WeakReference, \\d{1,} refs, " + JdkRegEx.DURATION
+            + "\\]" + JdkRegEx.DECORATOR + " \\[FinalReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.DECORATOR + " \\[PhantomReference, \\d{1,} refs, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.DECORATOR + " \\[JNI Weak Reference, " + JdkRegEx.DURATION + "\\]";
+
+    /**
+     * -XX:+PrintHeapAtGC output.
+     */
+    public static final String PRINT_HEAP_AT_GC = "{Heap before gc invocations=146:";
 
     /**
      * <p>

@@ -424,10 +424,10 @@ class TestCmsRemarkEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertEquals(5, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(7, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS),
                 JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY),

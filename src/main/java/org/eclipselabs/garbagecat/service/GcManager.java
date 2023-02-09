@@ -27,7 +27,6 @@ import java.util.regex.Matcher;
 
 import org.eclipselabs.garbagecat.Main;
 import org.eclipselabs.garbagecat.dao.JvmDao;
-import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.JvmRun;
@@ -42,15 +41,11 @@ import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ApplicationConcurrentTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsIncrementalModeCollector;
 import org.eclipselabs.garbagecat.domain.jdk.CmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
-import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.domain.jdk.G1ExtRootScanningData;
 import org.eclipselabs.garbagecat.domain.jdk.G1FullGcEvent;
@@ -67,13 +62,9 @@ import org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
-import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.OomeMetaspaceEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
-import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
@@ -114,6 +105,11 @@ public class GcManager {
     private JvmDao jvmDao;
 
     /**
+     * The date and time the JVM was started.
+     */
+    private Date jvmStartDate;
+
+    /**
      * Last log line unprocessed.
      */
     private String lastLogLineUnprocessed;
@@ -127,7 +123,18 @@ public class GcManager {
      * Default constructor.
      */
     public GcManager() {
+        this(null);
+    }
+
+    /**
+     * Alternate constructor.
+     * 
+     * @param jvmStartDate
+     *            The JVM start date.
+     */
+    public GcManager(Date jvmStartDate) {
         this.jvmDao = new JvmDao();
+        this.jvmStartDate = jvmStartDate;
     }
 
     /**
@@ -173,14 +180,12 @@ public class GcManager {
     /**
      * Determine <code>BlockingEvent</code>s where throughput since last event does not meet the throughput goal.
      * 
-     * @param startDate
-     *            The JVM start date.
      * @param throughputThreshold
      *            The bottleneck reporting throughput threshold.
      * @return A <code>List</code> of <code>BlockingEvent</code>s where the throughput between events is less than the
      *         throughput threshold goal.
      */
-    private List<String> getGcBottlenecks(Date startDate, int throughputThreshold) {
+    private List<String> getGcBottlenecks(int throughputThreshold) {
         List<String> bottlenecks = new ArrayList<String>();
         List<BlockingEvent> blockingEvents = jvmDao.getBlockingEvents();
         BlockingEvent priorEvent = null;
@@ -188,28 +193,29 @@ public class GcManager {
             if (priorEvent != null && JdkUtil.isBottleneck(event, priorEvent, throughputThreshold)) {
                 if (bottlenecks.isEmpty()) {
                     // Add current and prior event
-                    if (startDate != null) {
+                    if (jvmStartDate != null) {
                         // Convert uptime to datetime
+                        bottlenecks.add(
+                                JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvmStartDate));
                         bottlenecks
-                                .add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate));
-                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
+                                .add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvmStartDate));
                     } else {
                         bottlenecks.add(priorEvent.getLogEntry());
                         bottlenecks.add(event.getLogEntry());
                     }
                 } else {
-                    if (startDate != null) {
+                    if (jvmStartDate != null) {
                         // Compare datetime, since bottleneck has datetime
-                        if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate)
+                        if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvmStartDate)
                                 .equals(bottlenecks.get(bottlenecks.size() - 1))) {
                             bottlenecks.add("...");
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
+                                    jvmStartDate));
                             bottlenecks.add(
-                                    JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate));
-                            bottlenecks
-                                    .add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
+                                    JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvmStartDate));
                         } else {
-                            bottlenecks
-                                    .add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
+                            bottlenecks.add(
+                                    JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvmStartDate));
                         }
                     } else {
                         // Compare timestamps, since bottleneck has timestamp
@@ -233,13 +239,11 @@ public class GcManager {
      * 
      * @param jvmOptions
      *            The JVM options for the JVM run.
-     * @param jvmStartDate
-     *            The date and time the JVM was started.
      * @param throughputThreshold
      *            The throughput threshold for bottleneck reporting.
      * @return The JVM run data.
      */
-    public JvmRun getJvmRun(String jvmOptions, Date jvmStartDate, int throughputThreshold) {
+    public JvmRun getJvmRun(String jvmOptions, int throughputThreshold) {
         JvmRun jvmRun = new JvmRun(throughputThreshold, jvmStartDate);
         // Use jvm options passed in on the command line if none found in the logging
         if (jvmOptions != null && jvmDao.getJvmContext().getOptions() == null) {
@@ -256,7 +260,7 @@ public class GcManager {
         jvmRun.setExtRootScanningTimeTotal(jvmDao.getExtRootScanningTimeTotal());
         jvmRun.setFirstGcEvent(jvmDao.getFirstGcEvent());
         jvmRun.setFirstSafepointEvent(jvmDao.getFirstSafepointEvent());
-        jvmRun.setGcBottlenecks(getGcBottlenecks(jvmStartDate, throughputThreshold));
+        jvmRun.setGcBottlenecks(getGcBottlenecks(throughputThreshold));
         jvmRun.setGcPauseMax(jvmDao.getDurationMax());
         jvmRun.setGcPauseTotal(jvmDao.getDurationTotal());
         jvmRun.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount());
@@ -340,7 +344,8 @@ public class GcManager {
      *            is added to the previous entry (it's part of a multi-line event) or a new entry (it's a single-line
      *            event.
      * @param context
-     *            Information to make preprocessing decisions.
+     *            Information to make preprocessing decisions. For example, the context collector type accounts for
+     *            common logging patterns across collector families (e.g. , 0.0209631 secs).
      * @return The preprocessed log line(s), or null if it will be thrown away. Multiple lines are delimited by a
      *         newline.
      */
@@ -350,69 +355,11 @@ public class GcManager {
         String preprocessedLogLine = null;
 
         if (currentLogLine != null) {
-
-            // Record preprocessing events for later analysis.
-            if (!jvmDao.getPreprocessEvents().contains(PreprocessEvent.REFERENCE_GC)
-                    && currentLogLine.matches(JdkRegEx.PRINT_REFERENCE_GC)) {
-                jvmDao.getPreprocessEvents().add(PreprocessEvent.REFERENCE_GC);
-            }
-
-            /*
-             * Other preprocessing.
-             * 
-             * Check context collector type to account for common logging patterns across collector families. For
-             * example the following logging output is common to CMS and G1:
-             * 
-             * , 0.0209631 secs]
-             */
             if (isThrowawayEvent(currentLogLine)) {
-                // Analysis
-                if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC)) {
-                    // Only match initial line, as FooterHeapEvent and HeatAtGcEvent share patterns
-                    if (currentLogLine.matches("^.+Heap (after|before) (gc|GC) invocations.+$")) {
-                        jvmDao.getAnalysis().add(Analysis.WARN_PRINT_HEAP_AT_GC);
-                    }
-                }
-                if (!jvmDao.getAnalysis().contains(Analysis.WARN_CLASS_HISTOGRAM)) {
-                    if (ClassHistogramEvent.match(currentLogLine)) {
-                        jvmDao.getAnalysis().add(Analysis.WARN_CLASS_HISTOGRAM);
-                    }
-                }
-                if (!jvmDao.getPreprocessEvents().contains(PreprocessEvent.PRINT_TENURING_DISTRIBUTION)
-                        && TenuringDistributionEvent.match(currentLogLine)) {
-                    jvmDao.getPreprocessEvents().add(PreprocessEvent.PRINT_TENURING_DISTRIBUTION);
-                }
-                if (!jvmDao.getAnalysis().contains(Analysis.WARN_APPLICATION_LOGGING)) {
-                    if (ApplicationLoggingEvent.match(currentLogLine)) {
-                        jvmDao.getAnalysis().add(Analysis.WARN_APPLICATION_LOGGING);
-                    }
-                }
-                if (!jvmDao.getAnalysis().contains(Analysis.INFO_THREAD_DUMP)) {
-                    if (JdkUtil.parseLogLine(currentLogLine) instanceof ThreadDumpEvent) {
-                        jvmDao.getAnalysis().add(Analysis.INFO_THREAD_DUMP);
-                    }
-                }
-                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_OOME_METASPACE)) {
-                    if (OomeMetaspaceEvent.match(currentLogLine)) {
-                        jvmDao.getAnalysis().add(Analysis.ERROR_OOME_METASPACE);
-                    }
-                }
-                // Events saved for analysis
-                if (FlsStatisticsEvent.match(currentLogLine)
-                        && !jvmDao.getEventTypes().contains(LogEventType.FLS_STATISTICS)) {
-                    jvmDao.getEventTypes().add(LogEventType.FLS_STATISTICS);
-                }
-                if (ApplicationConcurrentTimeEvent.match(currentLogLine)
-                        && !jvmDao.getEventTypes().contains(LogEventType.APPLICATION_CONCURRENT_TIME)) {
-                    jvmDao.getEventTypes().add(LogEventType.APPLICATION_CONCURRENT_TIME);
-                }
-                if (ClassUnloadingEvent.match(currentLogLine)
-                        && !jvmDao.getEventTypes().contains(LogEventType.CLASS_UNLOADING)) {
-                    jvmDao.getEventTypes().add(LogEventType.CLASS_UNLOADING);
-                }
-                if (HeaderCommandLineFlagsEvent.match(currentLogLine)
-                        && !jvmDao.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS)) {
-                    jvmDao.getEventTypes().add(LogEventType.HEADER_COMMAND_LINE_FLAGS);
+                LogEvent throwAwayEvent = JdkUtil.parseLogLine(currentLogLine);
+                JdkUtil.LogEventType throwAwayEventType = JdkUtil.determineEventType(throwAwayEvent.getName());
+                if (!jvmDao.getEventTypes().contains(throwAwayEventType)) {
+                    jvmDao.getEventTypes().add(throwAwayEventType);
                 }
                 currentLogLine = null;
             } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
@@ -446,12 +393,6 @@ public class GcManager {
                     && !context.contains(ShenandoahPreprocessAction.TOKEN)
                     && !context.contains(UnifiedPreprocessAction.TOKEN)
                     && CmsPreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
-                if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC)) {
-                    // Only match initial line, as FooterHeapEvent and HeapAtGcEvent share patterns
-                    if (currentLogLine.matches("^.+Heap (after|before) (gc|GC) invocations.+$")) {
-                        jvmDao.getAnalysis().add(Analysis.WARN_PRINT_HEAP_AT_GC);
-                    }
-                }
                 CmsPreprocessAction action = new CmsPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                         entangledLogLines, context);
                 if (action.getLogEntry() != null) {
@@ -463,7 +404,7 @@ public class GcManager {
                     && !context.contains(UnifiedPreprocessAction.TOKEN)
                     && G1PreprocessAction.match(currentLogLine, priorLogLine, nextLogLine)) {
                 G1PreprocessAction action = new G1PreprocessAction(priorLogLine, currentLogLine, nextLogLine,
-                        entangledLogLines, context);
+                        entangledLogLines, context, jvmDao.getPreprocessEvents());
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
@@ -506,20 +447,19 @@ public class GcManager {
             }
         }
         return preprocessedLogLine;
-
     }
 
     /**
      * Determine <code>SafepointEvent</code>s where throughput since last event does not meet the throughput goal.
      * 
-     * @param startDate
+     * @param jvmStartDate
      *            The JVM start date.
      * @param throughputThreshold
      *            The bottleneck reporting throughput threshold.
      * @return A <code>List</code> of <code>SafepointEvent</code>s where the throughput between events is less than the
      *         throughput threshold goal.
      */
-    private List<String> getSafepointBottlenecks(Date startDate, int throughputThreshold) {
+    private List<String> getSafepointBottlenecks(Date jvmStartDate, int throughputThreshold) {
         List<String> bottlenecks = new ArrayList<String>();
         List<SafepointEvent> safepointEvents = jvmDao.getSafepointEvents();
         SafepointEvent priorEvent = null;
@@ -527,28 +467,29 @@ public class GcManager {
             if (priorEvent != null && JdkUtil.isBottleneck(event, priorEvent, throughputThreshold)) {
                 if (bottlenecks.isEmpty()) {
                     // Add current and prior event
-                    if (startDate != null) {
+                    if (jvmStartDate != null) {
                         // Convert timestamps to date/time
+                        bottlenecks.add(
+                                JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvmStartDate));
                         bottlenecks
-                                .add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate));
-                        bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
+                                .add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvmStartDate));
                     } else {
                         bottlenecks.add(priorEvent.getLogEntry());
                         bottlenecks.add(event.getLogEntry());
                     }
                 } else {
-                    if (startDate != null) {
+                    if (jvmStartDate != null) {
                         // Compare datetime, since bottleneck has datetime
-                        if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate)
+                        if (!JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), jvmStartDate)
                                 .equals(bottlenecks.get(bottlenecks.size() - 1))) {
                             bottlenecks.add("...");
+                            bottlenecks.add(JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(),
+                                    jvmStartDate));
                             bottlenecks.add(
-                                    JdkUtil.convertLogEntryTimestampsToDateStamp(priorEvent.getLogEntry(), startDate));
-                            bottlenecks
-                                    .add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
+                                    JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvmStartDate));
                         } else {
-                            bottlenecks
-                                    .add(JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), startDate));
+                            bottlenecks.add(
+                                    JdkUtil.convertLogEntryTimestampsToDateStamp(event.getLogEntry(), jvmStartDate));
                         }
                     } else {
                         // Compare timestamps, since bottleneck has timestamp
@@ -1194,10 +1135,6 @@ public class GcManager {
                     if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SHARED_MEMORY_12)) {
                         jvmDao.addAnalysis(Analysis.ERROR_SHARED_MEMORY_12);
                     }
-                }
-            } else if (event instanceof ThreadDumpEvent) {
-                if (!jvmDao.getAnalysis().contains(Analysis.INFO_THREAD_DUMP)) {
-                    jvmDao.addAnalysis(Analysis.INFO_THREAD_DUMP);
                 }
             } else if (event instanceof UnknownEvent) {
                 if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
@@ -26,7 +25,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * <code>-XX:+PrintHeapAtGC</code> logging. This data is currently not being used for any analysis.
+ * <code>-XX:+PrintHeapAtGC</code> logging. This data is currently not being used for any analysis. The middle logging
+ * is is a generic {@link org.eclipselabs.garbagecat.domain.jdk.HeapEvent} used by multiple events.
  * </p>
  * 
  * <h2>Example Logging</h2>
@@ -248,33 +248,15 @@ public class HeapAtGcEvent implements ThrowAwayEvent {
      */
     private static final String[] REGEX = {
             //
-            "^ (PSYoungGen|PSOldGen|ParOldGen|PSPermGen)[ ]+total " + JdkRegEx.SIZE_K + ", used " + JdkRegEx.SIZE_K
-                    + ".+$",
-            //
-            "^ ((par|def) new generation|concurrent mark-sweep generation|concurrent-mark-sweep perm gen"
-                    + "|tenured generation|compacting perm gen)" + "[ ]+total " + JdkRegEx.SIZE_K + ", used "
-                    + JdkRegEx.SIZE_K + ".+$",
-            //
-            "^  (eden|from|to|object| the)[ ]+space " + JdkRegEx.SIZE_K + ",[ ]+\\d{1,3}% used.+$",
-            //
-            "^(" + JdkRegEx.DECORATOR + " )? (Metaspace| class space)[ ]+used " + JdkRegEx.SIZE_K + ", capacity "
-                    + JdkRegEx.SIZE_K + ", committed " + JdkRegEx.SIZE_K + ", reserved " + JdkRegEx.SIZE_K + "$",
-            //
-            "^}$",
+
             //
             "^\\{Heap before (GC|gc) invocations=\\d{1,10}( \\(full \\d{1,10}\\))?:$",
             //
             "^Heap after (GC|gc) invocations=\\d{1,10}( \\(full \\d{1,10}\\))?:$",
             //
-            "No shared spaces configured.",
+            "^}$"
             //
-            "^Heap$",
-            //
-            "^ garbage-first heap   total.+$",
-            //
-            "^  region size .+$",
-            //
-            "^  the space.+$" };
+    };
 
     private static final List<Pattern> REGEX_LIST = new ArrayList<>(REGEX.length);
 

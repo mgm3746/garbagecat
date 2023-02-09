@@ -291,9 +291,14 @@ public enum Analysis {
     WARN_PERM_SIZE_NOT_SET("warn.perm.size.not.set"),
 
     /**
-     * Property key for adding option to output command line flags at beginning of gc logging.
+     * Property key to add -XX:+PrintCommandLineFlags to output command line flags at beginning of gc logging.
      */
     WARN_PRINT_COMMANDLINE_FLAGS("warn.print.commandline.flags"),
+
+    /**
+     * Property key for -XX:-PrintCommandLineFlags disabling command line flags output at beginning of gc logging.
+     */
+    WARN_PRINT_COMMANDLINE_FLAGS_DISABLED("warn.print.commandline.flags.disabled"),
 
     /**
      * Property key for -XX:-PrintGCCause.
@@ -309,11 +314,6 @@ public enum Analysis {
      * Property key for -XX:_PrintGCCause not enabled.
      */
     WARN_PRINT_GC_CAUSE_NOT_ENABLED("warn.print.gc.cause.not.enabled"),
-
-    /**
-     * Property key for printing additional heap data (-XX:+PrintHeapAtGC).
-     */
-    WARN_PRINT_HEAP_AT_GC("warn.print.heap.at.gc"),
 
     /**
      * Property key for inverted serialism.

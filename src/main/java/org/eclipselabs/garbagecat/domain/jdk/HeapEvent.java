@@ -23,12 +23,13 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
- * FOOTER_HEAP
+ * HEAP
  * </p>
  * 
  * <p>
- * Heap information at the end of a {@link org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent}, Shenandoah gc
- * logging, and unified detailed gc logging (<code>-Xlog:gc*:file=&lt;file&gt;</code>).
+ * Heap information in {@link org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent} and at the end of a
+ * {@link org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent}, aShenandoah gc logging, and unified detailed gc
+ * logging (<code>-Xlog:gc*:file=&lt;file&gt;</code>).
  * </p>
  * 
  * <h2>Example Logging</h2>
@@ -175,17 +176,18 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class FooterHeapEvent implements ThrowAwayEvent {
+public class HeapEvent implements ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
      */
     private static final String REGEX[] = {
             //
-            "^" + UnifiedRegEx.DECORATOR + "  garbage-first heap   total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE
-                    + " \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )? garbage-first heap   total " + JdkRegEx.SIZE + ", used "
+                    + JdkRegEx.SIZE + " \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "(, " + JdkRegEx.ADDRESS
+                    + ")?\\)[ ]*$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "   region size " + JdkRegEx.SIZE + ", \\d{1,3} young \\(" + JdkRegEx.SIZE
+            "^(" + UnifiedRegEx.DECORATOR + " )?  region size " + JdkRegEx.SIZE + ", \\d{1,3} young \\(" + JdkRegEx.SIZE
                     + "\\), \\d{1,2} survivors \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )? - \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
@@ -195,20 +197,26 @@ public class FooterHeapEvent implements ThrowAwayEvent {
             "^(" + UnifiedRegEx.DECORATOR + " )? " + JdkRegEx.SIZE + " (total|max)(, " + JdkRegEx.SIZE + " soft max)?, "
                     + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "  Metaspace       used " + JdkRegEx.SIZE + "(, capacity " + JdkRegEx.SIZE
-                    + ")?, committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + " |" + JdkRegEx.DECORATOR + " )? Metaspace       used " + JdkRegEx.SIZE
+                    + "(, capacity " + JdkRegEx.SIZE + ")?, committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE
+                    + "$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )? \\d{1,4} x " + JdkRegEx.SIZE + " regions$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "   class space    used " + JdkRegEx.SIZE + "(, capacity " + JdkRegEx.SIZE
-                    + ")?, " + "committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + " |" + JdkRegEx.DECORATOR + " )?  class space    used " + JdkRegEx.SIZE
+                    + "(, capacity " + JdkRegEx.SIZE + ")?, " + "committed " + JdkRegEx.SIZE + ", reserved "
+                    + JdkRegEx.SIZE + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR
-                    + "  ((concurrent mark-sweep|def new|par new|tenured) generation|ParOldGen|PSOldGen|PSYoungGen)"
-                    + "[ ]{1,8}total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + " " + "\\[" + JdkRegEx.ADDRESS
+            "^(" + UnifiedRegEx.DECORATOR + " )? ((concurrent mark-sweep|def new|par new|tenured) generation)"
+                    + "[ ]{1,}total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + " " + "\\[" + JdkRegEx.ADDRESS
                     + ", " + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "   (eden|from|object| the|to  ) space " + JdkRegEx.SIZE
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )? (compacting perm gen|concurrent-mark-sweep perm gen|ParOldGen|PSOldGen|PSPermGen|PSYoungGen)"
+                    + "[ ]{1,}total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + " " + "\\[" + JdkRegEx.ADDRESS
+                    + ", " + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR + " )?  (eden|from|object| the|to  ) space " + JdkRegEx.SIZE
                     + ",[ ]{1,3}\\d{1,3}% used \\[" + JdkRegEx.ADDRESS + ",[ ]{0,1}" + JdkRegEx.ADDRESS + ",[ ]{0,1}"
                     + JdkRegEx.ADDRESS + "(,[ ]{0,1}" + JdkRegEx.ADDRESS + ")?\\)$",
             //
@@ -221,10 +229,12 @@ public class FooterHeapEvent implements ThrowAwayEvent {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )? - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$",
             //
-            //
             "^" + UnifiedRegEx.DECORATOR + "  ZHeap           used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
-                    + ", max capacity " + JdkRegEx.SIZE + "$"
+                    + ", max capacity " + JdkRegEx.SIZE + "$",
             //
+            "^No shared spaces configured.$"
+            //
+
     };
 
     private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);
@@ -270,7 +280,7 @@ public class FooterHeapEvent implements ThrowAwayEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public FooterHeapEvent(String logEntry) {
+    public HeapEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
     }
@@ -280,7 +290,7 @@ public class FooterHeapEvent implements ThrowAwayEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.FOOTER_HEAP.toString();
+        return JdkUtil.LogEventType.HEAP.toString();
     }
 
     public long getTimestamp() {

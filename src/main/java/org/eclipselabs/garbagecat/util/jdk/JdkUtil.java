@@ -35,7 +35,6 @@ import org.eclipselabs.garbagecat.domain.jdk.CmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsRemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
-import org.eclipselabs.garbagecat.domain.jdk.FooterHeapEvent;
 import org.eclipselabs.garbagecat.domain.jdk.FooterStatsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1CleanupEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1ConcurrentEvent;
@@ -51,6 +50,7 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.HeapEvent;
 import org.eclipselabs.garbagecat.domain.jdk.LogFileEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent;
@@ -129,35 +129,35 @@ public final class JdkUtil {
     public enum LogEventType {
         APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, BLANK_LINE, CLASS_HISTOGRAM,
         //
-        CLASS_UNLOADING, CMS_CONCURRENT, CMS_INITIAL_MARK, CMS_REMARK, CMS_SERIAL_OLD, FLS_STATISTICS, FOOTER_HEAP,
+        CLASS_UNLOADING, CMS_CONCURRENT, CMS_INITIAL_MARK, CMS_REMARK, CMS_SERIAL_OLD, FLS_STATISTICS, FOOTER_STATS,
         //
-        FOOTER_STATS, G1_CLEANUP, G1_CONCURRENT, G1_FULL_GC_PARALLEL, G1_FULL_GC_SERIAL, G1_MIXED_PAUSE, G1_REMARK,
+        G1_CLEANUP, G1_CONCURRENT, G1_FULL_GC_PARALLEL, G1_FULL_GC_SERIAL, G1_MIXED_PAUSE, G1_REMARK,
         //
         G1_YOUNG_INITIAL_MARK, G1_YOUNG_PAUSE, GC_INFO, GC_LOCKER, GC_OVERHEAD_LIMIT, HEADER_COMMAND_LINE_FLAGS,
         //
-        HEADER_MEMORY, HEADER_VERSION, HEAP_ADDRESS, HEAP_AT_GC, HEAP_REGION_SIZE, LOG_FILE, METASPACE_UTILS_REPORT,
+        HEADER_MEMORY, HEADER_VERSION, HEAP, HEAP_ADDRESS, HEAP_AT_GC, HEAP_REGION_SIZE, LOG_FILE,
         //
-        OOME_METASPACE, PAR_NEW, PARALLEL_COMPACTING_OLD, PARALLEL_SCAVENGE, PARALLEL_SERIAL_OLD, SERIAL_NEW,
+        METASPACE_UTILS_REPORT, OOME_METASPACE, PAR_NEW, PARALLEL_COMPACTING_OLD, PARALLEL_SCAVENGE,
         //
-        SERIAL_OLD, SHENANDOAH_CANCELLING_GC, SHENANDOAH_CONCURRENT, SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK,
+        PARALLEL_SERIAL_OLD, SERIAL_NEW, SERIAL_OLD, SHENANDOAH_CANCELLING_GC, SHENANDOAH_CONCURRENT,
         //
-        SHENANDOAH_DEGENERATED_GC_MARK, SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_UPDATE,
+        SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK, SHENANDOAH_DEGENERATED_GC_MARK, SHENANDOAH_FINAL_EVAC,
         //
-        SHENANDOAH_FULL_GC, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE, SHENANDOAH_STATS,
+        SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_UPDATE, SHENANDOAH_FULL_GC, SHENANDOAH_INIT_MARK,
         //
-        SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION, THREAD_DUMP, UNIFIED_BLANK_LINE, UNIFIED_CMS_INITIAL_MARK,
+        SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE, SHENANDOAH_STATS, SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION,
         //
-        UNIFIED_CONCURRENT, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE,
+        THREAD_DUMP, UNIFIED_BLANK_LINE, UNIFIED_CMS_INITIAL_MARK, UNIFIED_CONCURRENT, UNIFIED_G1_CLEANUP,
         //
-        UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER,
+        UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE,
         //
-        UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
+        UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER, UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD,
         //
-        UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, UNKNOWN, USING_CMS, USING_G1,
+        UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD,
         //
-        USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH, USING_Z, VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING,
+        UNIFIED_YOUNG, UNKNOWN, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH, USING_Z,
         //
-        Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
+        VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
     };
 
     /**
@@ -371,8 +371,8 @@ public final class JdkUtil {
     public static final LogEventType identifyEventType(String logLine) {
 
         // Unified (alphabetical)
-        if (FooterHeapEvent.match(logLine))
-            return LogEventType.FOOTER_HEAP;
+        if (HeapEvent.match(logLine))
+            return LogEventType.HEAP;
         if (HeapAddressEvent.match(logLine))
             return LogEventType.HEAP_ADDRESS;
         if (HeapRegionSizeEvent.match(logLine))
@@ -583,7 +583,7 @@ public final class JdkUtil {
         case CLASS_UNLOADING:
         case CMS_CONCURRENT:
         case FLS_STATISTICS:
-        case FOOTER_HEAP:
+        case HEAP:
         case FOOTER_STATS:
         case GC_INFO:
         case GC_LOCKER:
@@ -715,7 +715,7 @@ public final class JdkUtil {
         case CLASS_HISTOGRAM:
         case CLASS_UNLOADING:
         case FLS_STATISTICS:
-        case FOOTER_HEAP:
+        case HEAP:
         case FOOTER_STATS:
         case GC_INFO:
         case GC_LOCKER:
@@ -809,8 +809,8 @@ public final class JdkUtil {
             return new UsingShenandoahEvent(logLine);
         case USING_Z:
             return new UsingZEvent(logLine);
-        case FOOTER_HEAP:
-            return new FooterHeapEvent(logLine);
+        case HEAP:
+            return new HeapEvent(logLine);
         case FOOTER_STATS:
             return new FooterStatsEvent(logLine);
         case USING_PARALLEL:

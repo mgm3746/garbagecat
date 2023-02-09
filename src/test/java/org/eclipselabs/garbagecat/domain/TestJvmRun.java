@@ -59,7 +59,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals((long) 2097502, jvmRun.getDurationTotal(), "GC pause total not correct.");
         assertEquals((long) 16517, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
         assertEquals((long) 31432, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
@@ -90,7 +90,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
@@ -110,7 +110,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
@@ -130,7 +130,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
@@ -149,7 +149,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SCAVENGE),
                 JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " collector not identified.");
@@ -172,7 +172,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.hasDatestamps(), "Datestamp incorrectly identified.");
         assertEquals("2016-10-18 01:50:54.000", jvmRun.getFirstEventDatestamp(), "First event datestamp not correct.");
         assertEquals("2016-10-18 01:50:54.036", jvmRun.getLastEventDatestamp(), "Last event datestamp not correct.");
@@ -204,7 +204,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -227,7 +227,7 @@ class TestJvmRun {
     void testJvmOptionsPassedInOnCommandLine() {
         String jvmOptions = "MGM was here!";
         GcManager gcManager = new GcManager();
-        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.doAnalysis();
         assertTrue(jvmRun.getJvmOptions().getJvmContext().getOptions().equals(jvmOptions),
                 "JVM options passed in are missing or have changed.");
@@ -238,7 +238,7 @@ class TestJvmRun {
         GcManager gcManager = new GcManager();
         List<String> logLines = null;
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertNull(jvmRun.getLastGcEvent(), "Last GC event not correct.");
     }
 
@@ -259,7 +259,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT.getKey()),
                 org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT + " analysis incorrectly identified.");
     }
@@ -337,7 +337,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(kilobytes(1100288), jvmRun.getMaxYoungSpace(), "Max young space not calculated correctly.");
         assertEquals(kilobytes(1100288), jvmRun.getMaxOldSpace(), "Max old space not calculated correctly.");
         assertEquals((long) 1, jvmRun.getNewRatio(), "NewRatio not calculated correctly.");
@@ -360,7 +360,7 @@ class TestJvmRun {
     void testPercentSwapFreeAtThreshold() {
         String jvmOptions = null;
         GcManager gcManager = new GcManager();
-        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.setSwap(new Memory(1000, BYTES));
         jvmRun.setSwapFree(new Memory(946, BYTES));
         jvmRun.doAnalysis();
@@ -376,7 +376,7 @@ class TestJvmRun {
     void testPercentSwapFreeBelowThreshold() {
         String jvmOptions = null;
         GcManager gcManager = new GcManager();
-        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.setSwap(new Memory(1000, BYTES));
         jvmRun.setSwapFree(new Memory(945, BYTES));
         jvmRun.doAnalysis();
@@ -392,7 +392,7 @@ class TestJvmRun {
     void testPhysicalMemoryEqualJvmAllocation() {
         String jvmOptions = "-Xmx1024M -XX:MaxPermSize=128M";
         GcManager gcManager = new GcManager();
-        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.setPhysicalMemory(new Memory(1207959552, BYTES));
         jvmRun.doAnalysis();
         assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY.getKey()),
@@ -406,7 +406,7 @@ class TestJvmRun {
     void testPhysicalMemoryLessThanJvmAllocation() {
         String jvmOptions = "-Xmx1024M -XX:MaxPermSize=128M";
         GcManager gcManager = new GcManager();
-        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         jvmRun.setPhysicalMemory(new Memory(1207959551, BYTES));
         jvmRun.doAnalysis();
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_PHYSICAL_MEMORY.getKey()),
@@ -426,7 +426,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME.getKey()),
                 org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
     }
@@ -445,8 +445,10 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
     }
@@ -459,8 +461,10 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME),
@@ -484,7 +488,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -508,7 +512,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(3, jvmRun.getEventTypes().size(), "GC event type count not correct.");
         assertEquals(160, jvmRun.getBlockingEventCount(), "GC blocking event count not correct.");
         assertEquals((long) 2568199604L, jvmRun.getDurationTotal(), "GC pause total not correct.");
@@ -542,7 +546,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals((long) 0, jvmRun.getStoppedTimeThroughput(), "Stopped time throughput not correct.");
     }
 
@@ -554,7 +558,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals((long) 400, jvmRun.getExtRootScanningTimeMax(),
                 "Max ext root scanning time not calculated correctly.");
         assertEquals((long) 800, jvmRun.getExtRootScanningTimeTotal(),
@@ -573,7 +577,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(kilobytes(248192), jvmRun.getMaxYoungSpace(), "Max young space not calculated correctly.");
         assertEquals(kilobytes(786432), jvmRun.getMaxOldSpace(), "Max old space not calculated correctly.");
         assertEquals((long) 3, jvmRun.getNewRatio(), "NewRatio not calculated correctly.");
@@ -604,7 +608,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(kilobytes(348864), jvmRun.getMaxYoungSpace(), "Max young space not calculated correctly.");
         assertEquals(kilobytes(699392), jvmRun.getMaxOldSpace(), "Max old space not calculated correctly.");
         assertEquals((long) 2, jvmRun.getNewRatio(), "NewRatio not calculated correctly.");
@@ -640,8 +644,10 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2, jvmRun.getEventTypes().size(), "GC event type count not correct.");
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(3, jvmRun.getEventTypes().size(), "GC event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertEquals(2, jvmRun.getBlockingEventCount(), "GC blocking event count not correct.");
         assertEquals((long) 82616, jvmRun.getDurationTotal(), "GC pause total not correct.");
         assertEquals((long) 1002192, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
@@ -671,8 +677,10 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1, jvmRun.getEventTypes().size(), "GC Event count not correct.");
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(4, jvmRun.getEventTypes().size(), "GC Event count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_FULL_GC),
                 JdkUtil.LogEventType.SHENANDOAH_FULL_GC.toString() + " collector not identified.");
         assertEquals(megabytes(1589), jvmRun.getMaxHeapOccupancy(), "Max heap occupancy not calculated correctly.");
@@ -696,12 +704,14 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
                 JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME),
                 JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " not identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "GC Event count not correct.");
+        assertEquals(3, jvmRun.getEventTypes().size(), "GC Event count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertEquals((long) 82616, jvmRun.getDurationTotal(), "GC pause total not correct.");
         assertEquals((long) 2192, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
         assertEquals((long) 2847, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
@@ -729,7 +739,7 @@ class TestJvmRun {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector incorrectly identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
@@ -774,7 +784,7 @@ class TestJvmRun {
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(3, jvmRun.getEventTypes().size(), "GC Event count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector incorrectly identified.");
